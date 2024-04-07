@@ -3,7 +3,7 @@ using Terraria.ModLoader.Utilities;
 
 namespace SpiritReforged.Content.Ocean.NPCs;
 
-[AutoloadCritterItem]
+[AutoloadCritter]
 public class Floater : ModNPC
 {
 	public override void SetStaticDefaults()

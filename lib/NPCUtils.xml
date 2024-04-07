@@ -9,7 +9,7 @@
             Apply this to a ModNPC's class to autoload their items as NPCNameBanner and NPCNameBannerItem.
             </summary>
         </member>
-        <member name="T:NPCUtils.AutoloadCritterItemAttribute">
+        <member name="T:NPCUtils.AutoloadCritterAttribute">
             <summary>
             Autoloads the given critter item if placed on an NPC.
             </summary>
@@ -210,7 +210,15 @@
         </member>
         <member name="M:NPCUtils.BestiaryExtensions.AddInfo(Terraria.GameContent.Bestiary.BestiaryEntry,Terraria.ModLoader.ModNPC,System.String)">
             <summary>
-            Automatically applies the localized entry and conditions to the npc.
+            Automatically applies the localized entry and conditions to the npc.<br/><br/>
+            Valid entries are as follows:<br/><b>Biomes:</b><br/><c>TheCorruption TheCrimson Surface Graveyard UndergroundJungle TheUnderworld TheDungeon Underground TheHallow UndergroundMushroom
+            Jungle Caverns UndergroundSnow Ocean SurfaceMushroom UndergroundDesert Snow Desert Meteor Oasis SpiderNest TheTemple CorruptUndergroundDesert CrimsonUndergroundDesert
+            HallowUndergroundDesert HallowDesert CorruptDesert CrimsonDesert Granite UndergroundCorruption UndergroundCrimson UndergroundHallow Marble CorruptIce HallowIce CrimsonIce
+            Sky NebulaPillar VortexPillar StardustPillar SolarPillar</c><br/>
+            <b>Times:</b><br/><c>DayTime NightTime</c><br/>
+            <b>Events:</b><br/><c>Rain SlimeRain WindyDay BloodMoon Halloween Christmas Eclipse Party Blizzard Sandstorm</c><br/><br/>
+            For example, adding an entry could be like this:<br/><br/>
+            <code>entry.AddInfo(this, "NightTime Snow");</code>
             </summary>
             <param name="bestiaryEntry">The entry to modify.</param>
             <param name="npc">The NPC this entry is attatched to.</param>
@@ -380,7 +388,7 @@
         </member>
         <member name="M:NPCUtils.NPCUtils.AutoloadModBannersAndCritters(Terraria.ModLoader.Mod)">
             <summary>
-            Autoloads all banners and critter items in the mod, given that the associated NPC uses <see cref="T:NPCUtils.AutoloadBannerAttribute"/> or <see cref="T:NPCUtils.AutoloadCritterItemAttribute"/>.<br/>
+            Autoloads all banners and critter items in the mod, given that the associated NPC uses <see cref="T:NPCUtils.AutoloadBannerAttribute"/> or <see cref="T:NPCUtils.AutoloadCritterAttribute"/>.<br/>
             Make sure to use <see cref="M:NPCUtils.NPCUtils.UnloadMod(Terraria.ModLoader.Mod)"/> if you use this in order to properly reload content if needed.
             </summary>
             <param name="mod">The mod to autoload banners from.</param>

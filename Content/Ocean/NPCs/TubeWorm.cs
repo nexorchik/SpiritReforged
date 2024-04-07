@@ -3,7 +3,7 @@ using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Ocean.NPCs;
 
-[AutoloadCritterItem]
+[AutoloadCritter]
 public class TubeWorm : ModNPC
 {
 	public override void SetStaticDefaults() => Main.npcFrameCount[NPC.type] = 6;

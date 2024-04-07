@@ -7,7 +7,7 @@ using SpiritReforged.Content.Ocean.Items;
 
 namespace SpiritReforged.Content.Ocean.NPCs;
 
-[AutoloadCritterItem]
+[AutoloadCritter]
 public class Pelican : ModNPC
 {
 	/// <summary>

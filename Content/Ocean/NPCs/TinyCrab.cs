@@ -2,7 +2,7 @@ using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Ocean.NPCs;
 
-[AutoloadCritterItem]
+[AutoloadCritter]
 public class TinyCrab : ModNPC
 {
 	public override void SetStaticDefaults() => Main.npcFrameCount[NPC.type] = 4;

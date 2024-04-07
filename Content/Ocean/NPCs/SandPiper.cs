@@ -3,7 +3,7 @@ using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean.NPCs;
 
-[AutoloadCritterItem]
+[AutoloadCritter]
 public class SandPiper : ModNPC
 {
 	private ref float State => ref NPC.ai[0];
