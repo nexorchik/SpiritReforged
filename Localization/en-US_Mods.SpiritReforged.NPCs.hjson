@@ -1,0 +1,36 @@
+Crinoid: {
+	DisplayName: Crinoid
+	Entry: ""
+}
+
+Floater.DisplayName: Floater
+
+Floater1: {
+	DisplayName: Floater1
+	Entry: ""
+}
+
+Pelican: {
+	DisplayName: Pelican
+	Entry: ""
+}
+
+ReaverShark: {
+	DisplayName: Reaver Shark
+	Entry: ""
+}
+
+TinyCrab: {
+	DisplayName: Tiny Crab
+	Entry: ""
+}
+
+TubeWorm: {
+	DisplayName: Tube Worm
+	Entry: ""
+}
+
+SandPiper: {
+	DisplayName: Sand Piper
+	Entry: ""
+}

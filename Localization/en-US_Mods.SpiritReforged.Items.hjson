@@ -1,0 +1,113 @@
+DuelistLegacy: {
+	DisplayName: First Mate
+	Tooltip:
+		'''
+		Right click to fire a powerful shotgun blast 
+		Charges up a super attack after 2 swings
+		Release this special attack as either a slash or a blast
+		'''
+}
+
+Kelp: {
+	DisplayName: Kelp
+	Tooltip: Must be planted in water
+}
+
+LadyLuck: {
+	DisplayName: Lady Luck
+	Tooltip:
+		'''
+		Right click to throw out a lucky coin
+		Shoot this coin to ricochet the bullet towards nearby enemies
+		'Luck favors the rich'
+		'''
+}
+
+PirateChest: {
+	DisplayName: Pirate Chest
+	Tooltip: ""
+}
+
+PirateKey: {
+	DisplayName: Secret Key
+	Tooltip: "'The pirates must have hidden treasure somewhere...'"
+}
+
+RawFish: {
+	DisplayName: Raw Fish
+	Tooltip: "'Can be eaten...maybe cook it first?'"
+}
+
+SulfurDeposit: {
+	DisplayName: Sulfur Deposit
+	Tooltip: "'Highly explosive!'"
+}
+
+SunkenTreasure: {
+	DisplayName: Sunken Treasure
+	Tooltip:
+		'''
+		Right-click to open
+		'Perhaps it is still full of valuable treasure'
+		'''
+}
+
+DriftwoodTileItem: {
+	DisplayName: Driftwood Block
+	Tooltip: ""
+}
+
+LargeKelpItem: {
+	DisplayName: Large Glowing Plant
+	Tooltip: ""
+}
+
+LargeVentItem: {
+	DisplayName: Large Hydrothermal Vent
+	Tooltip: ""
+}
+
+MusselItem: {
+	DisplayName: Mussel
+	Tooltip: ""
+}
+
+SmallKelpItem: {
+	DisplayName: Small Glowing Plant
+	Tooltip: ""
+}
+
+SmallVentItem: {
+	DisplayName: Small Hydrothermal Vent
+	Tooltip: ""
+}
+
+CrinoidItem: {
+	DisplayName: Crinoid
+	Tooltip: ""
+}
+
+FloaterItem: {
+	DisplayName: Luminous Floater
+	Tooltip: "'A beacon at the beach'"
+}
+
+PelicanItem: {
+	DisplayName: Pelican
+	Tooltip: ""
+}
+
+SandPiperItem: {
+	DisplayName: Sand Piper
+	Tooltip: ""
+}
+
+TinyCrabItem: {
+	DisplayName: Palecrab
+	Tooltip: ""
+}
+
+TubeWormItem: {
+	DisplayName: Tubeworm
+	Tooltip: ""
+}

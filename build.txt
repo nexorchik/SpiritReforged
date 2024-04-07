@@ -1,0 +1,4 @@
+displayName = Spirit Reforged
+author = Team Spirit
+version = 0.1
+dllReferences = NPCUtils

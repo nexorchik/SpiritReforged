@@ -1,0 +1,55 @@
+Tiles: {
+	SunkenTreasureTile.MapEntry: Sunken Treasure Tile
+	Breakable1x2Vent.MapEntry: Breakable1x2 Vent
+	Breakable1x3Vent.MapEntry: Breakable1x3 Vent
+	Coral1x2.MapEntry: Coral1x2
+	Coral2x2.MapEntry: Coral2x2
+	Coral3x3.MapEntry: Coral3x3
+	HydrothermalVent1x2.MapEntry: Hydrothermal Vent1x2
+	HydrothermalVent1x3.MapEntry: Hydrothermal Vent1x3
+	Kelp1x2.MapEntry: Kelp1x2
+	Kelp2x2.MapEntry: Kelp2x2
+	Kelp2x3.MapEntry: Kelp2x3
+	OceanPirateChest.MapEntry: Ocean Pirate Chest
+}
+
+Projectiles: {
+	DuelistSlash.DisplayName: Duelist Slash
+	LadyLuckFlash.DisplayName: Lady Luck Flash
+	LadyLuckProj.DisplayName: Lady Luck Proj
+	HydrothermalVentPlume.DisplayName: Hydrothermal Vent Plume
+}
+
+Configs: {
+	ReforgeClientConfig: {
+		DisplayName: Reforge Client Config
+
+		OceanShape: {
+			Label: Ocean Shape
+			Tooltip: ""
+		}
+
+		SurfaceWaterTransparency: {
+			Label: Surface Water Transparency
+			Tooltip: ""
+		}
+	}
+
+	OceanShape: {
+		Tooltip: ""
+		Default.Label: Default
+		SlantedSine.Label: Slanted Sine
+		Piecewise.Label: Piecewise
+		Piecewise_M.Label: Piecewise_ M
+		Piecewise_V.Label: Piecewise_ V
+	}
+
+	ReforgedServerConfig: {
+		DisplayName: Reforged Server Config
+
+		VentCritters: {
+			Label: Vent Critters
+			Tooltip: ""
+		}
+	}
+}

@@ -1,0 +1,45 @@
+# Hi. This is how the mod will be organized internally.
+# I chose this organization because it groups similar content very close together very consistently, even if it's not the same type of entity or object.
+# It also allows us to fully ignore old namespaces and content when creating new content, generating less mess and a nicer codebase.
+
+Content/ # This is for all CONTENT: In short, all entities or ModTypes. This includes non-mechanic ModPlayers, ModSystems and the like.
+	Major Content Piece/ # This is one piece of cohesive content. For example, Ocean, Starjinx, Bismite would all be cohesive content pieces.
+		NPCs/
+			...
+		Tiles/
+			...
+		MainSystem.cs # This should only be done when there is ONE major ModSystem, ModPlayer, or so on of one type for the given content piece.
+	2nd Major Content Piece
+		Items/
+		NPCs/
+	...
+		...
+Common/ # This is for systems and mechanics. Each sub-folder should be split into the content it functions alongside the most.
+	TileCommon/ 
+		...
+
+Assets/ # Assets, such as sound, texture and shaders.
+	SFX/
+	Music/
+	Textures/
+	Effects/
+
+# Additionally, there's some rules on how many classes can be per file.
+# All files must contain one cohesive piece of content - much like the folder structure.
+# However, since a lot of content is boilerplate, you MAY include multiple classes in one file. 
+# The main class is whatever you want it to be, a large enough piece of content. 
+# All subclasses MUST be entirely or mostly boilerplate or superfluous, such as this:
+
+public class SomeTile : ModTile
+{
+	// Content here, not included for brevity
+	
+	public class SomeTileItem : ModItem
+	{
+		public override SetDefaults() => Item.DefaultToPlaceableTile(ModContent.TileType<SomeTile>());
+	}
+}
+
+# PLEASE keep multiple classes in check, If you have 2+ subclasses in one file, consider splitting it up.
+# I want to avoid constantly needing to reference other namespaces for what are generally extremely short files, especially in the case of items -
+# but this gets out of hand pretty quickly. Use your own discretion!
