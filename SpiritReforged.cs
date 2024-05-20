@@ -24,11 +24,13 @@ public class SpiritReforgedMod : Mod
 	{
 		NPCUtils.NPCUtils.AutoloadModBannersAndCritters(this);
 		NPCUtils.NPCUtils.TryLoadBestiaryHelper();
+		Common.Misc.AutoloadMinionDictionary.AddBuffs(Code);
 	}
 
 	public override void Unload()
 	{
 		NPCUtils.NPCUtils.UnloadMod(this);
 		NPCUtils.NPCUtils.UnloadBestiaryHelper();
+		Common.Misc.AutoloadMinionDictionary.Unload();
 	}
 }
