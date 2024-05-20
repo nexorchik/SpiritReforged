@@ -4,7 +4,7 @@ namespace SpiritReforged.Content.Ocean.Items.ReefWrath;
 
 public class ReefWrathProj_Alt : ModProjectile
 {
-	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Projectiles.ReefWrathProjectile_1.DisplayName");
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Projectiles.ReefWrathProj.DisplayName");
 
 	public override string Texture => "Terraria/Images/Projectile_1"; //Use a basic texture because this projectile is hidden
 

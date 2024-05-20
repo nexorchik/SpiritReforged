@@ -64,7 +64,6 @@ public class HydrothermalVent1x2 : ModTile
 		DustType = DustID.Stone;
 
 		LocalizedText name = CreateMapEntryName();
-		// name.SetDefault("Hydrothermal Vent");
 		AddMapEntry(new Color(64, 54, 66), name);
 	}
 

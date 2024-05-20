@@ -1,29 +1,28 @@
 Tiles: {
-	SunkenTreasureTile.MapEntry: Sunken Treasure Tile
-	Breakable1x2Vent.MapEntry: Breakable1x2 Vent
-	Breakable1x3Vent.MapEntry: Breakable1x3 Vent
-	Coral1x2.MapEntry: Coral1x2
-	Coral2x2.MapEntry: Coral2x2
-	Coral3x3.MapEntry: Coral3x3
-	HydrothermalVent1x2.MapEntry: Hydrothermal Vent1x2
-	HydrothermalVent1x3.MapEntry: Hydrothermal Vent1x3
-	Kelp1x2.MapEntry: Kelp1x2
-	Kelp2x2.MapEntry: Kelp2x2
-	Kelp2x3.MapEntry: Kelp2x3
-	OceanPirateChest.MapEntry: Ocean Pirate Chest
+	SunkenTreasureTile.MapEntry: Sunken Treasure
+	Breakable1x2Vent.MapEntry: Hydrothermal Vent
+	Breakable1x3Vent.MapEntry: Hydrothermal Vent
+	Coral1x2.MapEntry: Coral
+	Coral2x2.MapEntry: Coral
+	Coral3x3.MapEntry: Coral
+	HydrothermalVent1x2.MapEntry: Hydrothermal Vent
+	HydrothermalVent1x3.MapEntry: Hydrothermal Vent
+	Kelp1x2.MapEntry: Kelp
+	Kelp2x2.MapEntry: Kelp
+	Kelp2x3.MapEntry: Kelp
+	OceanPirateChest.MapEntry: Pirate Chest
 }
 
 Projectiles: {
 	DuelistSlash.DisplayName: Duelist Slash
-	LadyLuckFlash.DisplayName: Lady Luck Flash
-	LadyLuckProj.DisplayName: Lady Luck Proj
-	HydrothermalVentPlume.DisplayName: Hydrothermal Vent Plume
-	BaskingSharkProj.DisplayName: Basking Shark Proj
-	BubbleMineBubble.DisplayName: Bubble Mine Bubble
-	CoralCatcherHook.DisplayName: Coral Catcher Hook
-	JellyfishBolt.DisplayName: Jellyfish Bolt
-	JellyfishMinion.DisplayName: Jellyfish Minion
-	ReefWrathProj.DisplayName: Reef Wrath Proj
+	LadyLuckProj.DisplayName: Lucky Coin
+	HydrothermalVentPlume.DisplayName: Smoke Plume
+	BaskingSharkProj.DisplayName: Chum
+	BubbleMineBubble.DisplayName: Bubble
+	CoralCatcherHook.DisplayName: "{$ProjectileName.BobberWooden}"
+	JellyfishBolt.DisplayName: Electric Bolt
+	JellyfishMinion.DisplayName: Little Jellyfish
+	ReefWrathProj.DisplayName: Coral Reef
 }
 
 Configs: {

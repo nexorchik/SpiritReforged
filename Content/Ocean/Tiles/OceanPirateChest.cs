@@ -1,11 +1,8 @@
 using SpiritReforged.Content.Ocean.Items;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.Enums;
 using Terraria.GameContent.ObjectInteractions;
 using Terraria.GameInput;
-using Terraria.Localization;
-using Terraria.ObjectData;
 
 namespace SpiritReforged.Content.Ocean.Tiles;
 
