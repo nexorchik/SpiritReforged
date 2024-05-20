@@ -18,6 +18,12 @@ Projectiles: {
 	LadyLuckFlash.DisplayName: Lady Luck Flash
 	LadyLuckProj.DisplayName: Lady Luck Proj
 	HydrothermalVentPlume.DisplayName: Hydrothermal Vent Plume
+	BaskingSharkProj.DisplayName: Basking Shark Proj
+	BubbleMineBubble.DisplayName: Bubble Mine Bubble
+	CoralCatcherHook.DisplayName: Coral Catcher Hook
+	JellyfishBolt.DisplayName: Jellyfish Bolt
+	JellyfishMinion.DisplayName: Jellyfish Minion
+	ReefWrathProj.DisplayName: Reef Wrath Proj
 }
 
 Configs: {
@@ -53,3 +59,22 @@ Configs: {
 		}
 	}
 }
+
+Buffs: {
+	MantarayBuff: {
+		DisplayName: Manta Ray
+		Description: Swift as the tides!
+	}
+
+	JellyfishMinion_Buff: {
+		DisplayName: Jellyfish
+		Description: A cute, bouncy Jellyfish fights for you!
+	}
+}
+
+SetBonuses.Cascade:
+	'''
+	Dealing damage to enemies builds up a bubble shield,
+	which at full size grants heavy damage resistance against the next attack,
+	damaging and knocking back nearby enemies.
+	'''

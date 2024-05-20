@@ -22,7 +22,7 @@ public class HydrothermalVentPlume : ModProjectile
 	{
 		if (Projectile.timeLeft % 7 == 0 && Main.rand.NextBool(2))
 		{
-			int type = Main.rand.Next(new int[] { ModContent.ItemType<SulfurDeposit>() }); // ModContent.ItemType<Items.Sets.CascadeSet.DeepCascadeShard>(),  TODO
+			int type = Main.rand.Next(new int[] { ModContent.ItemType<SulfurDeposit>(), ModContent.ItemType<DeepCascadeShard>() });
             int slot = Item.NewItem(Projectile.GetSource_FromAI(), new Vector2(Projectile.Center.X + Main.rand.Next(-10, 10), Projectile.Center.Y + Main.rand.Next(-10, 10)), 0, 0, type, 1, false, 0, false);
 
 			if (Main.netMode != NetmodeID.SinglePlayer)
@@ -31,9 +31,7 @@ public class HydrothermalVentPlume : ModProjectile
 
 		if (Projectile.ai[0] == 0f)
 		{
-			Projectile.ai[1] += 1f;
-
-			if (Projectile.ai[1] >= 60f)
+			if (++Projectile.ai[1] >= 60f)
 				Projectile.Kill();
 
 			for (int num1200 = 0; num1200 < 3; num1200++)
