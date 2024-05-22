@@ -96,6 +96,8 @@ internal class LadyLuckFlash : ModProjectile
 
 	int direction = 0;
 
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.LadyLuck.DisplayName");
+
 	public override void SetStaticDefaults() => Main.projFrames[Projectile.type] = 3;
 
 	public override void SetDefaults()

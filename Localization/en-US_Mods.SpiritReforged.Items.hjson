@@ -112,32 +112,56 @@ TubeWormItem: {
 	Tooltip: ""
 }
 
-ClawCannon: {
-	DisplayName: Claw Cannon
-	Tooltip: ""
+BaskingShark: {
+	DisplayName: Basking Shark
+	Tooltip: Converts bullets into chum chunks
 }
 
-IridescentScale: {
-	DisplayName: Iridescent Scale
-	Tooltip: ""
+BubbleMine: {
+	DisplayName: Bubble Mine
+	Tooltip: Right-click to make bubble mines detonate
 }
 
-PendantOfTheOcean: {
-	DisplayName: Pendant Of The Ocean
-	Tooltip: ""
+CascadeChestplate: {
+	DisplayName: Cascade Chestplate
+	Tooltip: 50% knockback resistance
 }
 
-ReefSpear: {
-	DisplayName: Reef Spear
-	Tooltip: ""
+CascadeHelmet: {
+	DisplayName: Cascade Helmet
+	Tooltip: Allows for breathing underwater
 }
 
-SkullSentry: {
-	DisplayName: Skull Sentry
-	Tooltip: ""
+CascadeLeggings: {
+	DisplayName: Cascade Greaves
+	Tooltip: 15% increased movement in water
 }
 
-UrchinStaff: {
-	DisplayName: Urchin Staff
-	Tooltip: ""
+CoralCatcher: {
+	DisplayName: Coral Catcher
+	Tooltip: Detects hooked fish
+}
+
+DeepCascadeShard: {
+	DisplayName: Deep Cascade Shard
+	Tooltip: "'Where magma meets seawater'"
+}
+
+JellyfishStaff: {
+	DisplayName: Jellyfish Staff
+	Tooltip: Summons a tiny jellyfish to fight for you!
+}
+
+MantarayHuntingHarpoon: {
+	DisplayName: Manta Harpoon
+	Tooltip:
+		'''
+		Summons a rideable manta ray mount
+		The manta Ray is incapable of movement on land
+		'''
+}
+
+ReefWrath: {
+	DisplayName: Reef Wrath
+	Tooltip: Conjures harmful coral spires along the ground
 }

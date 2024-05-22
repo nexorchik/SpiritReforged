@@ -398,7 +398,7 @@ internal class DuelistBlast : ModProjectile
 
 	int direction = 0;
 
-	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritMod.Items.DuelistLegacy.DisplayName"); // TODO
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.DuelistLegacy.DisplayName"); // TODO
 
     public override void SetStaticDefaults() => Main.projFrames[Projectile.type] = 6;
 
@@ -490,7 +490,7 @@ internal class DuelistBlastSpecial : DuelistBlast
 {
 	protected override Color Color => new Color(255, 255, 255, 120) * 0.8f;
 
-	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritMod.Items.DuelistLegacy.DisplayName"); // TODO
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.DuelistLegacy.DisplayName"); // TODO
 
     public override void SetStaticDefaults() => Main.projFrames[Projectile.type] = 11;
 
@@ -520,7 +520,7 @@ internal class DuelistBlastSpecial : DuelistBlast
 
 internal class DuelistActivation : ModProjectile
 {
-	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritMod.Items.DuelistLegacy.DisplayName"); // TODO
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.DuelistLegacy.DisplayName"); // TODO
 
     public override void SetStaticDefaults() => Main.projFrames[Projectile.type] = 19;
 
