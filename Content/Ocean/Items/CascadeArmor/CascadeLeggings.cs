@@ -3,12 +3,6 @@ namespace SpiritReforged.Content.Ocean.Items.CascadeArmor;
 [AutoloadEquip(EquipType.Legs)]
 public class CascadeLeggings : ModItem
 {
-	//public override void SetStaticDefaults()
-	//{
-		// DisplayName.SetDefault("Cascade Greaves");
-		// Tooltip.SetDefault("15% increased movement in water");
-	//}
-
 	public override void SetDefaults()
 	{
 		Item.width = 38;

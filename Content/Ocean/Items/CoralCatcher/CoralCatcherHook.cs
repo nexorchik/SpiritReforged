@@ -15,7 +15,7 @@ public class CoralCatcherHook : ModProjectile
 			int type = Main.player[Projectile.owner].inventory[Main.player[Projectile.owner].selectedItem].type;
 			float gravDir = Main.player[Projectile.owner].gravDir;
 
-			if (type == Mod.Find<ModItem>("Coral_Catcher").Type)
+			if (type == ModContent.ItemType<CoralCatcher>())
 			{
 				pPosX += (float)(45 * Main.player[Projectile.owner].direction);
 				if (Main.player[Projectile.owner].direction < 0)
@@ -32,7 +32,6 @@ public class CoralCatcherHook : ModProjectile
 			float projPosX = Projectile.position.X + (float)Projectile.width * 0.5f - value.X;
 			float projPosY = Projectile.position.Y + (float)Projectile.height * 0.5f - value.Y;
 			Math.Sqrt((double)(projPosX * projPosX + projPosY * projPosY));
-			float rotation2 = (float)Math.Atan2((double)projPosY, (double)projPosX) - 1.57f;
 			bool flag2 = true;
 			if (projPosX == 0f && projPosY == 0f)
 			{
@@ -114,7 +113,7 @@ public class CoralCatcherHook : ModProjectile
 						}
 					}
 
-					rotation2 = (float)Math.Atan2((double)projPosY, (double)projPosX) - 1.57f;
+					float rotation2 = (float)Math.Atan2((double)projPosY, (double)projPosX) - 1.57f;
 					Color color2 = Lighting.GetColor((int)value.X / 16, (int)(value.Y / 16f), new Color(200, 12, 50, 100));
 
 					Main.EntitySpriteDraw(TextureAssets.FishingLine.Value, new Vector2(value.X - Main.screenPosition.X + (float)TextureAssets.FishingLine.Value.Width * 0.5f, value.Y - Main.screenPosition.Y + (float)TextureAssets.FishingLine.Value.Height * 0.5f), new Rectangle(0, 0, TextureAssets.FishingLine.Value.Width, (int)num), color2, rotation2, new Vector2((float)TextureAssets.FishingLine.Value.Width * 0.5f, 0f), 1f, SpriteEffects.None, 0f);
