@@ -1,4 +1,3 @@
-using SpiritReforged.Common.Misc;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -34,7 +33,7 @@ public class ClawCannon : ModItem
 			Dust.NewDust(position, 0, 0, DustID.BubbleBurst_Blue, velocity.X * Main.rand.NextFloat(0.15f, 0.25f), velocity.Y * Main.rand.NextFloat(0.15f, 0.25f), 0, default, Main.rand.NextFloat(0.5f, 1f));
 
 		for (int i = 0; i < 5; ++i)
-			Dust.NewDust(position, 0, 0, ModContent.DustType<BubbleDust>(), velocity.X * Main.rand.NextFloat(1.5f, 2.25f), velocity.Y * Main.rand.NextFloat(1.5f, 2.25f), 0, default, Main.rand.NextFloat(1.5f, 2f));
+			Dust.NewDust(position, 0, 0, ModContent.DustType<Dusts.BubbleDust>(), velocity.X * Main.rand.NextFloat(1.5f, 2.25f), velocity.Y * Main.rand.NextFloat(1.5f, 2.25f), 0, default, Main.rand.NextFloat(1.5f, 2f));
 		return true;
 	}
 
