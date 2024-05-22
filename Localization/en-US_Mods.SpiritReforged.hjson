@@ -18,6 +18,13 @@ Projectiles: {
 	LadyLuckFlash.DisplayName: Lady Luck Flash
 	LadyLuckProj.DisplayName: Lady Luck Proj
 	HydrothermalVentPlume.DisplayName: Hydrothermal Vent Plume
+	Cannonbubble.DisplayName: Cannonbubble
+	SkullSentryEye.DisplayName: Skull Sentry Eye
+	SkullSentryMucus.DisplayName: Skull Sentry Mucus
+	SkullSentrySentry.DisplayName: Skull Sentry Sentry
+	UrchinBall.DisplayName: Urchin Ball
+	UrchinSpike.DisplayName: Urchin Spike
+	UrchinStaffProjectile.DisplayName: Urchin Staff Projectile
 }
 
 Configs: {
@@ -51,5 +58,17 @@ Configs: {
 			Label: Vent Critters
 			Tooltip: ""
 		}
+	}
+}
+
+Buffs: {
+	EmpoweredSwim: {
+		DisplayName: Empowered Swim
+		Description: Mods.SpiritReforged.Buffs.EmpoweredSwim.Description
+	}
+
+	SwimmingFatigue: {
+		DisplayName: Swimming Fatigue
+		Description: Mods.SpiritReforged.Buffs.SwimmingFatigue.Description
 	}
 }

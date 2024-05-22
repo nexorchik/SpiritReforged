@@ -111,3 +111,33 @@ TubeWormItem: {
 	DisplayName: Tubeworm
 	Tooltip: ""
 }
+
+ClawCannon: {
+	DisplayName: Claw Cannon
+	Tooltip: ""
+}
+
+IridescentScale: {
+	DisplayName: Iridescent Scale
+	Tooltip: ""
+}
+
+PendantOfTheOcean: {
+	DisplayName: Pendant Of The Ocean
+	Tooltip: ""
+}
+
+ReefSpear: {
+	DisplayName: Reef Spear
+	Tooltip: ""
+}
+
+SkullSentry: {
+	DisplayName: Skull Sentry
+	Tooltip: ""
+}
+
+UrchinStaff: {
+	DisplayName: Urchin Staff
+	Tooltip: ""
+}

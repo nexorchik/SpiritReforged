@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Content.Ocean.Items;
+using SpiritReforged.Content.Ocean.Items.Reefhunter;
 
 namespace SpiritReforged.Content.Ocean.Projectiles;
 

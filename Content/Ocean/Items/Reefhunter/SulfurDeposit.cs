@@ -1,4 +1,4 @@
-namespace SpiritReforged.Content.Ocean.Items;
+namespace SpiritReforged.Content.Ocean.Items.Reefhunter;
 
 public class SulfurDeposit : ModItem
 {

@@ -1,22 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\tModLoader.targets" />
   <PropertyGroup>
     <AssemblyName>SpiritReforged</AssemblyName>
-    <TargetFramework>net6.0</TargetFramework>
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>latest</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Common\Misc\BubbleDust.png" />
     <None Remove="Content\Dusts\BoneDust.png" />
     <None Remove="Content\Dusts\FireClubDust.png" />
     <None Remove="Content\Ocean\Items\Kelp.png" />
     <None Remove="Content\Ocean\Items\PirateChest.png" />
     <None Remove="Content\Ocean\Items\PirateKey.png" />
     <None Remove="Content\Ocean\Items\RawFish.png" />
-    <None Remove="Content\Ocean\Items\SulfurDeposit.png" />
-    <None Remove="Content\Ocean\Items\SulfurDeposit_World.png" />
     <None Remove="Content\Ocean\Items\SunkenTreasure.png" />
     <None Remove="Content\Ocean\Items\SunkenTreasureTile.png" />
     <None Remove="Content\Ocean\NPCs\Crinoid.png" />
@@ -61,9 +58,6 @@
     <None Remove="content\ORGANIZATION.txt" />
     <None Remove="Localization\en-US_Mods.SpiritReforged.Items.hjson" />
     <None Remove="Localization\en-US_Mods.SpiritReforged.NPCs.hjson" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="NPCUtils">
