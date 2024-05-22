@@ -168,30 +168,30 @@ ReefWrath: {
 
 ClawCannon: {
 	DisplayName: Claw Cannon
-	Tooltip: ""
+	Tooltip: "'Clannon...clawnon...clawanon...'"
 }
 
 IridescentScale: {
 	DisplayName: Iridescent Scale
-	Tooltip: ""
+	Tooltip: "'Glints beautifully under the water'"
 }
 
 PendantOfTheOcean: {
 	DisplayName: Pendant of the Ocean
-	Tooltip: ""
+	Tooltip: Double tap {0} to gain unhindered movement underwater for a short time
 }
 
 ReefSpear: {
-	DisplayName: Reef Spear
-	Tooltip: ""
+	DisplayName: Reef Trident
+	Tooltip: Right click to throw the trident, poisoning enemies for a short time
 }
 
 SkullSentry: {
-	DisplayName: Skull Sentry
-	Tooltip: ""
+	DisplayName: Maneater Skull
+	Tooltip: Summons a skull infested by maneater worms that fire red mucus at nearby enemies
 }
 
 UrchinStaff: {
-	DisplayName: Urchin Staff
+	DisplayName: Urchin Lobber
 	Tooltip: ""
 }
