@@ -4,6 +4,7 @@ using Terraria.Utilities;
 using Terraria.UI;
 using System.IO;
 using SpiritReforged.Content.Ocean.Items;
+using SpiritReforged.Content.Ocean.Tiles;
 
 namespace SpiritReforged.Content.Ocean.NPCs;
 
@@ -29,8 +30,7 @@ public class Pelican : ModNPC
 		choice = new(Main.rand);
 		choice.Add(ItemID.None, 6);
 		choice.Add(ModContent.ItemType<Kelp>(), 0.25f);
-		//choice.Add(ModContent.ItemType<Items.Placeable.FishCrate>(), 0.05f); // TODO
-		//choice.Add(ModContent.ItemType<Items.Sets.FloatingItems.Driftwood.DriftwoodTileItem>(), 0.1f);
+		choice.Add(ModContent.ItemType<DriftwoodTileItem>(), 0.1f);
 		choice.Add(ItemID.RedSnapper, 1f);
 		choice.Add(ItemID.Shrimp, 0.5f);
 		choice.Add(ItemID.Trout, 1.5f);

@@ -10,7 +10,7 @@ public class ReefSpearProjectile : ModProjectile
 	public int maxTimeLeft = 0;
 	public float maxRotation = 0;
 
-	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritMod.Items.ReefSpear.DisplayName"); // TODO
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.ReefSpear.DisplayName");
 
 	public override void SetDefaults()
 	{

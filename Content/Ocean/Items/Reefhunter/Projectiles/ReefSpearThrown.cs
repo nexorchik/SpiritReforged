@@ -1,4 +1,5 @@
-﻿using Terraria.Audio;
+﻿using SpiritReforged.Common.ProjectileCommon;
+using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
@@ -9,11 +10,10 @@ public class ReefSpearThrown : ModProjectile
 	private bool hasTarget = false;
 	private Vector2 relativePoint = Vector2.Zero;
 
-	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritMod.Items.ReefSpear.DisplayName"); // TODO
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.ReefSpear.DisplayName");
 
 	public override void SetStaticDefaults()
 	{
-		// DisplayName.SetDefault("Reef Trident");
 		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
 		ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
 	}
@@ -87,10 +87,10 @@ public class ReefSpearThrown : ModProjectile
 		const int halfTipWidth = 15;
 		var drawOrigin = new Vector2(Projectile.spriteDirection > 0 ? projTex.Width - halfTipWidth : halfTipWidth, projTex.Height / 2);
 
-		//if (!hasTarget) // TODO
-		//	Projectile.QuickDrawTrail(Main.spriteBatch, 0.25f, drawOrigin: drawOrigin);
+		if (!hasTarget)
+			Projectile.QuickDrawTrail(Main.spriteBatch, 0.25f, drawOrigin: drawOrigin);
 
-		//Projectile.QuickDraw(Main.spriteBatch, drawOrigin: drawOrigin);
+		Projectile.QuickDraw(Main.spriteBatch, origin: drawOrigin);
 		return false;
 	}
 
