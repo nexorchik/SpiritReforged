@@ -34,7 +34,7 @@ public class EcotoneEdgeDefinitions : ILoadable
 	public void Load(Mod mod)
 	{
 		AddEcotone(new EcotoneEdgeDefinition(TileID.Dirt, "Forest", TileID.Grass, TileID.Dirt, TileID.ClayBlock));
-		AddEcotone(new EcotoneEdgeDefinition(TileID.Sandstone, "Desert", TileID.Sand));
+		AddEcotone(new EcotoneEdgeDefinition(TileID.Adamantite, "Desert", TileID.Sand));
 		AddEcotone(new EcotoneEdgeDefinition(TileID.SnowBlock, "Snow", TileID.SnowBlock, TileID.IceBlock));
 		AddEcotone(new EcotoneEdgeDefinition(TileID.ChlorophyteBrick, "Jungle", TileID.JungleGrass));
 		AddEcotone(new EcotoneEdgeDefinition(TileID.DemoniteBrick, "Corruption", TileID.CorruptGrass, TileID.Ebonsand, TileID.Ebonstone, TileID.CorruptIce));

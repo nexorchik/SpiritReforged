@@ -31,18 +31,20 @@ internal class EcotoneSurfaceMapping : ModSystem
 
 	private void MapEcotones(GenerationProgress progress, GameConfiguration configuration)
 	{
+		const int StartX = 100;
+
 		progress.Message = "Mapping ecotones";
 
 		int y = 0;
 
-		while (Main.tile[150, ++y].TileType != TileID.Sand)
+		while (Main.tile[StartX, ++y].TileType != TileID.Sand)
 		{
 		}
 
 		int transitionCount = 0;
-		EcotoneEntry entry = new EcotoneEntry(new Point(150, y), EcotoneEdgeDefinitions.GetEcotone("Desert"));
+		EcotoneEntry entry = new EcotoneEntry(new Point(StartX, y), EcotoneEdgeDefinitions.GetEcotone("Desert"));
 
-		for (int x = 150; x < Main.maxTilesX - 150; ++x)
+		for (int x = StartX; x < Main.maxTilesX - StartX; ++x)
 		{
 			int dir = WorldGen.SolidOrSlopedTile(x, y) ? -1 : 1;
 
@@ -70,10 +72,12 @@ internal class EcotoneSurfaceMapping : ModSystem
 				transitionCount = 0;
 			}
 
-			WorldGen.PlaceTile(x, y - 2, entry.Definition.DisplayId, true, true);
 			WorldGen.PlaceTile(x, y - 3, entry.Definition.DisplayId, true, true);
 			entry.SurfacePoints.Add(new Point(x, y));
 		}
+
+		entry.End = new Point(Main.maxTilesX - StartX, y);
+		Entries.Add(entry);
 
 		foreach (var item in Entries)
 		{
