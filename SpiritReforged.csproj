@@ -61,8 +61,6 @@
     <None Remove="Localization\en-US_Mods.SpiritReforged.NPCs.hjson" />
   </ItemGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="NPCUtils">
       <HintPath>lib\NPCUtils.dll</HintPath>
     </Reference>
