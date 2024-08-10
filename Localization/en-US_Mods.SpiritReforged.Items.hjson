@@ -195,3 +195,8 @@ UrchinStaff: {
 	DisplayName: Urchin Lobber
 	Tooltip: ""
 }
+
+GarInAJar: {
+	Tooltip: ""
+	DisplayName: Gar In A Jar
+}

@@ -11,6 +11,7 @@ Tiles: {
 	Kelp2x2.MapEntry: Kelp
 	Kelp2x3.MapEntry: Kelp
 	OceanPirateChest.MapEntry: Pirate Chest
+	GarInAJar_Tile.MapEntry: Gar In A Jar_ Tile
 }
 
 Projectiles: {
