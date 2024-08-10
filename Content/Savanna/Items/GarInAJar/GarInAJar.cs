@@ -61,11 +61,22 @@ public class GarInAJar_Tile : ModTile
 	   It looks funny and kinda forces the gar to loop bumping into the wall, but occasionally looks glitchy.
 	   I've commented it out for now, but anyone testing should compare it to the generic animation below and let me know if it works. 
 	 */ 
-	
+	/*
 	public override void AnimateIndividualTile(int type, int i, int j, ref int frameXOffset, ref int frameYOffset)
 	{
 		Tile tile = Main.tile[i, j];
 		int tileCageFrameIndex = TileDrawing.GetWaterAnimalCageFrame(i, j, tile.TileFrameX, tile.TileFrameY);
 		frameYOffset = Main.fishBowlFrame[tileCageFrameIndex] * AnimationFrameHeight;
+	}
+	*/
+	public override void AnimateTile(ref int frame, ref int frameCounter)
+	{
+		frameCounter++;
+		if (frameCounter >= 10)
+		{
+			frameCounter = 0;
+			frame++;
+			frame %= 19;
+		}
 	}
 }
