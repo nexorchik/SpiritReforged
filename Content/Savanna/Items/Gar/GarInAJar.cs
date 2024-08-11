@@ -1,8 +1,4 @@
-using SpiritReforged.Content.Ocean.Tiles;
-using Terraria.DataStructures;
-using Terraria.GameContent.Drawing;
-
-namespace SpiritReforged.Content.Savanna.Items.GarInAJar;
+namespace SpiritReforged.Content.Savanna.Items.Gar;
 
 public class GarInAJar : ModItem
 {
@@ -24,7 +20,7 @@ public class GarInAJar : ModItem
 	public override void AddRecipes()
 	{
 		Recipe recipe = CreateRecipe();
-		//recipe.AddIngredient(ModContent.ItemType<LuvdiscItem>(), 1); TODO: Gar Item
+		//recipe.AddIngredient(ModContent.ItemType<GarItem>(), 1);
 		recipe.AddIngredient(ItemID.BottledWater, 1);
 		recipe.AddTile(TileID.WorkBenches);
 		recipe.Register();
@@ -52,15 +48,18 @@ public class GarInAJar_Tile : ModTile
 		LocalizedText name = CreateMapEntryName();
 		AddMapEntry(new Color(200, 200, 200), name);
 	}
-	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY)
-	{
+	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = 2;
+	/*{
 		offsetY = 2; 
 		Main.critterCage = true;
-	}
+	}*/
+
 	/* This is the vanilla way of doing fishbowls, where the animation is stuttered, pauses occasionally, and is more varied
 	   It looks funny and kinda forces the gar to loop bumping into the wall, but occasionally looks glitchy.
 	   I've commented it out for now, but anyone testing should compare it to the generic animation below and let me know if it works. 
+	   Delete all of this before release!!
 	 */ 
+
 	/*
 	public override void AnimateIndividualTile(int type, int i, int j, ref int frameXOffset, ref int frameYOffset)
 	{

@@ -200,3 +200,8 @@ GarInAJar: {
 	Tooltip: ""
 	DisplayName: Gar In A Jar
 }
+
+GarItem: {
+	DisplayName: Gar Item
+	Tooltip: ""
+}
