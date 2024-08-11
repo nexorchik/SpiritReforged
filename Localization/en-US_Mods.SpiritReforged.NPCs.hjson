@@ -34,3 +34,8 @@ SandPiper: {
 	DisplayName: Sand Piper
 	Entry: ""
 }
+
+Gar: {
+	DisplayName: Gar
+	Entry: ""
+}
