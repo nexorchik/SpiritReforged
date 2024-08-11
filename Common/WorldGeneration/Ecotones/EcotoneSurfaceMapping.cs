@@ -13,20 +13,32 @@ internal class EcotoneSurfaceMapping : ModSystem
 		public Point End;
 		public HashSet<Point> SurfacePoints = [];
 		public EcotoneEdgeDefinition Definition = definition;
+		public EcotoneEdgeDefinition Left;
+		public EcotoneEdgeDefinition Right;
 
 		public bool TileFits(int i, int j) => Definition.ValidIds.Contains(Main.tile[i, j].TileType);
+		public bool SurroundedBy(string one, string two) => Left.Name == one && Right.Name == two || Left.Name == two && Right.Name == one;
 
-		public override string ToString() => $"{Start} to {End}; of {Definition}";
+		public override string ToString() => $"{Start} to {End}; of {Definition}:{SurfacePoints.Count}";
 	}
 
-	public List<EcotoneEntry> Entries = [];
+	private List<EcotoneEntry> Entries = [];
 
 	public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
 	{
-		int index = tasks.FindIndex(x => x.Name == "Tile Cleanup");
+		int index = tasks.FindIndex(x => x.Name == "Full Desert");
 
 		if (index != -1)
+		{
 			tasks.Insert(index + 1, new PassLegacy("Map Ecotones", MapEcotones));
+			tasks.Insert(index + 2, new PassLegacy("Ecotones", GenEcotones));
+		}
+	}
+
+	private void GenEcotones(GenerationProgress progress, GameConfiguration configuration)
+	{
+		foreach (var ecotone in EcotoneBase.Ecotones)
+			ecotone.Generate(progress, configuration, Entries);
 	}
 
 	private void MapEcotones(GenerationProgress progress, GameConfiguration configuration)
@@ -42,7 +54,8 @@ internal class EcotoneSurfaceMapping : ModSystem
 		}
 
 		int transitionCount = 0;
-		EcotoneEntry entry = new EcotoneEntry(new Point(StartX, y), EcotoneEdgeDefinitions.GetEcotone("Desert"));
+		EcotoneEntry entry = new EcotoneEntry(new Point(StartX, y), EcotoneEdgeDefinitions.GetEcotone("Ocean"));
+		entry.Left = EcotoneEdgeDefinitions.GetEcotone("Ocean");
 
 		for (int x = StartX; x < Main.maxTilesX - StartX; ++x)
 		{
@@ -64,29 +77,33 @@ internal class EcotoneSurfaceMapping : ModSystem
 			if (!entry.TileFits(x, y))
 				transitionCount++;
 
-			if (transitionCount > 20 && EcotoneEdgeDefinitions.TryGetEcotoneByTile(Main.tile[x, y].TileType, out var newDefinition))
-			{
+			if (transitionCount > 20 && EcotoneEdgeDefinitions.TryGetEcotoneByTile(Main.tile[x, y].TileType, out var def) && def.Name != entry.Definition.Name)
+			{ 
+				EcotoneEdgeDefinition old = entry.Definition;
 				entry.End = new Point(x, y);
+				entry.Right = def;
 				Entries.Add(entry);
-				entry = new EcotoneEntry(new Point(x, y), newDefinition);
+				entry = new EcotoneEntry(new Point(x, y), def);
+				entry.Left = old;
 				transitionCount = 0;
 			}
 
-			WorldGen.PlaceTile(x, y - 3, entry.Definition.DisplayId, true, true);
+			//WorldGen.PlaceTile(x, y - 3, entry.Definition.DisplayId, true, true);
 			entry.SurfacePoints.Add(new Point(x, y));
 		}
 
 		entry.End = new Point(Main.maxTilesX - StartX, y);
+		entry.Right = EcotoneEdgeDefinitions.GetEcotone("Ocean");
 		Entries.Add(entry);
 
-		foreach (var item in Entries)
-		{
-			for (int x = item.Start.X; x < item.End.X; ++x)
-			{
-				for (int nY = 40; nY < 80; ++nY)
-					WorldGen.PlaceTile(x, nY, item.Definition.DisplayId, true, true);
-			}
-		}
+		//foreach (var item in Entries)
+		//{
+		//	for (int x = item.Start.X; x < item.End.X; ++x)
+		//	{
+		//		for (int nY = 40; nY < 80; ++nY)
+		//			WorldGen.PlaceTile(x, nY, item.Definition.DisplayId, true, true);
+		//	}
+		//}
 	}
 
 	private static bool SolidTileOrWall(int x, int y) => WorldGen.SolidOrSlopedTile(x, y) || Main.tile[x, y].WallType != WallID.None;

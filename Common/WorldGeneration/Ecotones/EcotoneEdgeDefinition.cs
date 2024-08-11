@@ -6,7 +6,7 @@ public readonly struct EcotoneEdgeDefinition(int displayId, string name, params 
 	public readonly int[] ValidIds = validIds;
 	public readonly int DisplayId = displayId;
 
-	public override string ToString() => Name + $"({DisplayId})";
+	public override string ToString() => Name + $"(Display: {DisplayId})";
 }
 
 public class EcotoneEdgeDefinitions : ILoadable
@@ -35,6 +35,7 @@ public class EcotoneEdgeDefinitions : ILoadable
 	{
 		AddEcotone(new EcotoneEdgeDefinition(TileID.Dirt, "Forest", TileID.Grass, TileID.Dirt, TileID.ClayBlock));
 		AddEcotone(new EcotoneEdgeDefinition(TileID.Adamantite, "Desert", TileID.Sand));
+		AddEcotone(new EcotoneEdgeDefinition(TileID.CobaltBrick, "Ocean"));
 		AddEcotone(new EcotoneEdgeDefinition(TileID.SnowBlock, "Snow", TileID.SnowBlock, TileID.IceBlock));
 		AddEcotone(new EcotoneEdgeDefinition(TileID.ChlorophyteBrick, "Jungle", TileID.JungleGrass));
 		AddEcotone(new EcotoneEdgeDefinition(TileID.DemoniteBrick, "Corruption", TileID.CorruptGrass, TileID.Ebonsand, TileID.Ebonstone, TileID.CorruptIce));
