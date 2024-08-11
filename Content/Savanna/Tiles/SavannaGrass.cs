@@ -9,10 +9,12 @@ public class SavannaGrass : ModTile
 		Main.tileSolid[Type] = true;
 		Main.tileMerge[Type][Type] = true;
 		Main.tileBlockLight[Type] = true;
+
 		Main.tileMerge[ModContent.TileType<SavannaDirt>()][Type] = true;
 		Main.tileMerge[Type][ModContent.TileType<SavannaDirt>()] = true;
 
 		TileID.Sets.Grass[Type] = true;
+		TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<SavannaDirt>();
 		TileID.Sets.Conversion.Grass[Type] = true;
 		TileID.Sets.CanBeDugByShovel[Type] = true;
 

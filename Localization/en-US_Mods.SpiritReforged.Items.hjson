@@ -205,3 +205,8 @@ GarItem: {
 	DisplayName: Gar Item
 	Tooltip: ""
 }
+
+SavannaDirtItem: {
+	DisplayName: Savanna Dirt Item
+	Tooltip: ""
+}

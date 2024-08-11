@@ -13,5 +13,5 @@ internal abstract class EcotoneBase : ILoadable
 	{
 	}
 
-	public abstract void Generate(GenerationProgress progress, GameConfiguration config, List<EcotoneSurfaceMapping.EcotoneEntry> entries);
+	public abstract void AddTasks(List<GenPass> tasks, List<EcotoneSurfaceMapping.EcotoneEntry> entries, HashSet<Point> totalSurfacePoints);
 }

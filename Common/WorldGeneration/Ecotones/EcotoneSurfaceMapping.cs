@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using rail;
+using System.Linq;
 using Terraria.GameContent.Generation;
 using Terraria.IO;
 using Terraria.WorldBuilding;
@@ -23,29 +24,29 @@ internal class EcotoneSurfaceMapping : ModSystem
 	}
 
 	private List<EcotoneEntry> Entries = [];
+	private HashSet<Point> TotalSurfacePoints = [];
 
 	public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
 	{
-		int index = tasks.FindIndex(x => x.Name == "Full Desert");
+		int mapIndex = tasks.FindIndex(x => x.Name == "Shimmer");
 
-		if (index != -1)
-		{
-			tasks.Insert(index + 1, new PassLegacy("Map Ecotones", MapEcotones));
-			tasks.Insert(index + 2, new PassLegacy("Ecotones", GenEcotones));
-		}
-	}
+		if (mapIndex == -1)
+			return;
 
-	private void GenEcotones(GenerationProgress progress, GameConfiguration configuration)
-	{
 		foreach (var ecotone in EcotoneBase.Ecotones)
-			ecotone.Generate(progress, configuration, Entries);
+			ecotone.AddTasks(tasks, Entries, TotalSurfacePoints);
+
+		tasks.Insert(mapIndex + 1, new PassLegacy("Map Ecotones", MapEcotones));
 	}
 
 	private void MapEcotones(GenerationProgress progress, GameConfiguration configuration)
 	{
-		const int StartX = 100;
+		const int StartX = 250;
 
 		progress.Message = "Mapping ecotones";
+
+		Entries.Clear();
+		TotalSurfacePoints.Clear();
 
 		int y = 0;
 
@@ -83,6 +84,12 @@ internal class EcotoneSurfaceMapping : ModSystem
 				entry.End = new Point(x, y);
 				entry.Right = def;
 				Entries.Add(entry);
+
+				if (entry.SurroundedBy("Desert", "Jungle"))
+				{
+					int oie = 0;
+				}
+				
 				entry = new EcotoneEntry(new Point(x, y), def);
 				entry.Left = old;
 				transitionCount = 0;
@@ -90,11 +97,13 @@ internal class EcotoneSurfaceMapping : ModSystem
 
 			//WorldGen.PlaceTile(x, y - 3, entry.Definition.DisplayId, true, true);
 			entry.SurfacePoints.Add(new Point(x, y));
+			TotalSurfacePoints.Add(new Point(x, y));
 		}
 
 		entry.End = new Point(Main.maxTilesX - StartX, y);
 		entry.Right = EcotoneEdgeDefinitions.GetEcotone("Ocean");
 		Entries.Add(entry);
+		Entries = new(Entries.OrderBy(x => x.Start.X));
 
 		//foreach (var item in Entries)
 		//{
@@ -103,6 +112,15 @@ internal class EcotoneSurfaceMapping : ModSystem
 		//		for (int nY = 40; nY < 80; ++nY)
 		//			WorldGen.PlaceTile(x, nY, item.Definition.DisplayId, true, true);
 		//	}
+		//}
+
+		//foreach (var item in TotalSurfacePoints)
+		//{
+		//	WorldGen.KillTile(item.X, item.Y);
+		//	WorldGen.PlaceTile(item.X, item.Y, TileID.GreenCandyCaneBlock, true, true);
+
+		//	WorldGen.KillTile(item.X, item.Y + 1);
+		//	WorldGen.PlaceTile(item.X, item.Y + 1, TileID.GreenCandyCaneBlock, true, true);
 		//}
 	}
 
