@@ -41,7 +41,7 @@ public abstract class FoodItem : ModItem
 	public virtual void StaticDefaults() { }
 	public virtual void Defaults() { }
 
-	public sealed override bool PreDrawInWorld(SpriteBatch sb, Color light, Color a, ref float rotation, ref float scale, int whoAmI)
+	public override bool PreDrawInWorld(SpriteBatch sb, Color light, Color a, ref float rotation, ref float scale, int whoAmI)
 	{
 		Texture2D tex = TextureAssets.Item[Type].Value;
 		sb.Draw(tex, Item.Center - Main.screenPosition, new Rectangle(0, 0, Item.width, Item.height), light, rotation, Item.Size / 2f, scale, SpriteEffects.None, 0f);

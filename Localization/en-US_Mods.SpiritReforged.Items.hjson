@@ -258,3 +258,13 @@ CrystalFish: {
 		'''
 	DisplayName: Crystallized Salmon
 }
+
+RawMeat: {
+	DisplayName: Raw Meat
+	Tooltip: "'Can be eaten...maybe cook it first?'"
+}
+
+CookedMeat: {
+	DisplayName: Cooked Meat
+	Tooltip: ""
+}
