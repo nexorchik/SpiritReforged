@@ -1,4 +1,4 @@
-using SpiritReforged.Content.Ocean.Items;
+using SpiritReforged.Content.Vanilla.Items.Food;
 using Terraria.ModLoader.Utilities;
 
 namespace SpiritReforged.Content.Ocean.NPCs;

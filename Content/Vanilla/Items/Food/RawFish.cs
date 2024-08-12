@@ -1,6 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 
-namespace SpiritReforged.Content.Ocean.Items;
+namespace SpiritReforged.Content.Vanilla.Items.Food;
 
 public class RawFish : FoodItem
 {

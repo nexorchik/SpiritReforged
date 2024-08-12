@@ -20,7 +20,7 @@ public class GarInAJar : ModItem
 	public override void AddRecipes()
 	{
 		Recipe recipe = CreateRecipe();
-		//recipe.AddIngredient(ModContent.ItemType<GarItem>(), 1);
+		recipe.AddIngredient(Mod.Find<ModItem>("GarItem").Type, 1);
 		recipe.AddIngredient(ItemID.BottledWater, 1);
 		recipe.AddTile(TileID.WorkBenches);
 		recipe.Register();

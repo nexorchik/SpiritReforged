@@ -1,11 +1,10 @@
 using SpiritReforged.Content.Vanilla.Items.Food;
-using System.IO;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Gar;
 
 [AutoloadCritter]
-public class Gar : ModNPC
+public class GoldGar : ModNPC
 {
 	public override void SetStaticDefaults()
 	{
@@ -37,15 +36,15 @@ public class Gar : ModNPC
 		bestiaryEntry.AddInfo(this, "Ocean");
 	}
 
-	public bool hasPicked = false;
-	int pickedType;
 	public override void AI()
 	{
-		if (!hasPicked)
+		Lighting.AddLight((int)(NPC.Center.X / 16f), (int)(NPC.Center.Y / 16f), .1f, .1f, .1f);
+
+		if (Main.rand.NextBool(30))
 		{
-			NPC.scale = Main.rand.NextFloat(.9f, 1f);
-			pickedType = Main.rand.Next(0, 2);
-			hasPicked = true;
+			int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoldCoin);
+			Main.dust[d].velocity *= 0f;
+			Main.dust[d].fadeIn += 0.5f;
 		}
 
 		Player target = Main.player[NPC.target];
@@ -76,46 +75,24 @@ public class Gar : ModNPC
 		spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY), NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, effects, 0);
 		return false;
 	}
-	public override void SendExtraAI(BinaryWriter writer)
-	{
-		writer.Write(pickedType);
-		writer.Write(hasPicked);
-	}
-
-	public override void ReceiveExtraAI(BinaryReader reader)
-	{
-		pickedType = reader.ReadInt32();
-		hasPicked = reader.ReadBoolean();
-	}
 	public override void FindFrame(int frameHeight)
 	{
 		NPC.frameCounter += 0.22f;
 		NPC.frameCounter %= Main.npcFrameCount[NPC.type];
 		int frame = (int)NPC.frameCounter;
 		NPC.frame.Y = frame * frameHeight;
-		NPC.frame.X = 80 * pickedType;
-		NPC.frame.Width = 80;
 	}
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		for (int num621 = 0; num621 < 13; num621++)
 		{
-			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, 2f * hit.HitDirection, -2f, 0, default, Main.rand.NextFloat(0.75f, 0.95f));
+			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Sunflower, 2f * hit.HitDirection, -2f, 0, default, Main.rand.NextFloat(0.75f, 0.95f));
 		}
 
 		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
 		{
-
-			if (pickedType == 0)
-			{
-				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore1").Type, 1f);
-				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore2").Type, Main.rand.NextFloat(.5f, .7f));
-			}
-			else
-			{
-				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore3").Type, 1f);
-				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore4").Type, Main.rand.NextFloat(.5f, .7f));
-			}
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore5").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore6").Type, Main.rand.NextFloat(.5f, .7f));
 		}
 	}
 	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>();

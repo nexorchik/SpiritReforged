@@ -39,3 +39,13 @@ Gar: {
 	DisplayName: Gar
 	Entry: ""
 }
+
+GoldenGar: {
+	DisplayName: Golden Gar
+	Entry: ""
+}
+
+GoldGar: {
+	DisplayName: Gold Gar
+	Entry: ""
+}

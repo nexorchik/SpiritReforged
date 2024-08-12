@@ -202,11 +202,59 @@ GarInAJar: {
 }
 
 GarItem: {
-	DisplayName: Gar Item
+	DisplayName: Gar
 	Tooltip: ""
 }
 
 SavannaDirtItem: {
 	DisplayName: Savanna Dirt Item
 	Tooltip: ""
+}
+
+GoldGarItem: {
+	DisplayName: Gold Gar
+	Tooltip: ""
+}
+
+Sushi: {
+	Tooltip:
+		'''
+		Minor improvement to all stats
+		Provides underwater breathing
+		'Cold and fresh!'
+		'''
+	DisplayName: Sushi
+}
+
+Nigiri: {
+	Tooltip:
+		'''
+		Minor improvement to all stats
+		Provides free movement in water
+		'The perfect cut'
+		'''
+	DisplayName: Nigiri
+}
+
+HoneySalmon: {
+	Tooltip:
+		'''
+		Minor improvements to all stats
+		Boosts life regeneration
+		'''
+	DisplayName: Honey-Glazed Salmon
+}
+
+FishChips: {
+	Tooltip: Minor improvements to all stats
+	DisplayName: Fish n' Chips
+}
+
+CrystalFish: {
+	Tooltip:
+		'''
+		Medium improvements to all stats
+		Boosts magic power
+		'''
+	DisplayName: Crystallized Salmon
 }

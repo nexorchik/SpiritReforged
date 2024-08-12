@@ -1,5 +1,5 @@
 using SpiritReforged.Common.NPCCommon;
-using SpiritReforged.Content.Ocean.Items;
+using SpiritReforged.Content.Vanilla.Items.Food;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Ocean.NPCs;
