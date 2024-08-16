@@ -3,13 +3,9 @@ using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
 
-	public class DiverZombie : ModNPC
-	{
-	public override void SetStaticDefaults()
-	{
-		// DisplayName.SetDefault("Zombie");
-		Main.npcFrameCount[NPC.type] = 4;
-	}
+public class DiverZombie : Common.NPCCommon.ZombieNPC
+{
+	public override void StaticDefaults() => Main.npcFrameCount[NPC.type] = 4;
 
 	public override void SetDefaults()
 	{
@@ -43,8 +39,8 @@ namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("DiverZombie" + i).Type, 1f);
 	}
 
-	int frameTimer;
-	int frame;
+	private int frameTimer;
+	private int frame;
 
 	public override void AI()
 	{
@@ -104,4 +100,6 @@ namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
 		npcLoot.AddCommon(ItemID.Flipper, 100);
 		npcLoot.AddOneFromOptions(65, ModContent.ItemType<DiverLegs>(), ModContent.ItemType<DiverHead>(), ModContent.ItemType<DiverBody>());
 	}
+
+	public override bool SpawnConditions(Player player) => player.ZoneBeach;
 }

@@ -2,13 +2,10 @@ using Terraria.GameContent.Bestiary;
 using SpiritReforged.Content.Ocean.Items;
 
 namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
-public class KelpZombie : ModNPC
+
+public class KelpZombie : Common.NPCCommon.ZombieNPC
 {
-	public override void SetStaticDefaults()
-	{
-		// DisplayName.SetDefault("Zombie");
-		Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Zombie];
-	}
+	public override void StaticDefaults() => Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Zombie];
 
 	public override void SetDefaults()
 	{
@@ -37,6 +34,7 @@ public class KelpZombie : ModNPC
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, 2.5f * hit.HitDirection, -2.5f, 0, Color.White, 0.78f);
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, 2.5f * hit.HitDirection, -2.5f, 0, Color.Green, .54f);
 		}
+
 		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
 		{
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("KelpZombie1").Type, 1f);
@@ -64,4 +62,6 @@ public class KelpZombie : ModNPC
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
 		npcLoot.AddCommon(ModContent.ItemType<Kelp>(), 7, 1, 3);
 	}
+
+	public override bool SpawnConditions(Player player) => player.ZoneBeach;
 }

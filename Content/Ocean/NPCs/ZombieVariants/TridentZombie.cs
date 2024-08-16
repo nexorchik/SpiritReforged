@@ -3,11 +3,10 @@ using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
 
-public class TridentZombie : ModNPC
+public class TridentZombie : Common.NPCCommon.ZombieNPC
 {
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
-		// DisplayName.SetDefault("Zombie");
 		Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.ArmedZombie];
 
 		var drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers()
@@ -57,4 +56,8 @@ public class TridentZombie : ModNPC
 		npcLoot.AddCommon(ModContent.ItemType<Kelp>(), 10, 1, 2);
 		npcLoot.AddCommon(ItemID.Trident, 120);
 	}
+
+	public override bool SpawnConditions(Player player) => player.ZoneBeach;
+
+	public override bool ArmedZombie() => true;
 }

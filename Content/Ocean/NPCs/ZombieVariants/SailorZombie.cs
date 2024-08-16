@@ -4,13 +4,9 @@ using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
 
-public class SailorZombie : ModNPC
+public class SailorZombie : Common.NPCCommon.ZombieNPC
 {
-	public override void SetStaticDefaults()
-	{
-		// DisplayName.SetDefault("Zombie");
-		Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Zombie];
-	}
+	public override void StaticDefaults() => Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Zombie];
 
 	public override void SetDefaults()
 	{
@@ -39,6 +35,7 @@ public class SailorZombie : ModNPC
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, 2.5f * hit.HitDirection, -2.5f, 0, Color.White, 0.78f);
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, 2.5f * hit.HitDirection, -2.5f, 0, default, .54f);
 		}
+
 		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
 		{
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("SailorZombie1").Type, 1f);
@@ -67,4 +64,6 @@ public class SailorZombie : ModNPC
 		npcLoot.AddCommon(ModContent.ItemType<Kelp>(), 10, 1, 2);
 		npcLoot.AddCommon(ModContent.ItemType<SailorCap>(), 50);
 	}
+
+	public override bool SpawnConditions(Player player) => player.ZoneBeach;
 }
