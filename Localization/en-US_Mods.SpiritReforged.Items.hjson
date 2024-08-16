@@ -312,3 +312,8 @@ SailorCap: {
 	DisplayName: Sailor Cap
 	Tooltip: ""
 }
+
+SteamedMussels: {
+	Tooltip: ""
+	DisplayName: Steamed Mussels
+}
