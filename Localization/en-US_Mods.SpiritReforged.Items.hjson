@@ -292,3 +292,23 @@ CoconutMilk: {
 		'No cup needed!'
 		'''
 }
+
+DiverBody: {
+	DisplayName: Diver Body
+	Tooltip: ""
+}
+
+DiverHead: {
+	DisplayName: Diver Head
+	Tooltip: ""
+}
+
+DiverLegs: {
+	DisplayName: Diver Legs
+	Tooltip: ""
+}
+
+SailorCap: {
+	DisplayName: Sailor Cap
+	Tooltip: ""
+}

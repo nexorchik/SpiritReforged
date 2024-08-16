@@ -55,7 +55,7 @@ public class OceanGlobalTile : GlobalTile
 	}
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (type == TileID.PalmTree && Main.rand.NextBool(1) && (i < 300 || i > Main.maxTilesX - 300)) //palm trees at/near the beach
+		if (type == TileID.PalmTree && Main.rand.NextBool(10) && (i < 300 || i > Main.maxTilesX - 300)) //palm trees at/near the beach
 		{
 			if (fail)
 			{
