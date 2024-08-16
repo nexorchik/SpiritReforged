@@ -5,6 +5,7 @@ using Terraria.GameContent.Bestiary;
 namespace SpiritReforged.Content.Savanna.NPCs.Gar;
 
 [AutoloadCritter]
+[AutoloadBanner]
 public class Gar : ModNPC
 {
 	public override void SetStaticDefaults()

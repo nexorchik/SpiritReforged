@@ -49,3 +49,8 @@ GoldGar: {
 	DisplayName: Gold Gar
 	Entry: ""
 }
+
+OceanSlime: {
+	DisplayName: Coconut Slime
+	Entry: Look out from above! These tricky slimes reside on the shore, inconspicuously camouflaged as this familiar fruit.
+}

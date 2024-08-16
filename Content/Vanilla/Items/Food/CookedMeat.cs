@@ -4,7 +4,7 @@ namespace SpiritReforged.Content.Vanilla.Items.Food;
 
 public class CookedMeat : FoodItem
 {
-	internal override Point Size => new(30, 22);
+	internal override Point Size => new(30, 24);
 
 	public override bool CanUseItem(Player player)
 	{
