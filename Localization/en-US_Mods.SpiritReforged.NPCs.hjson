@@ -49,3 +49,12 @@ GoldGar: {
 	DisplayName: Gold Gar
 	Entry: ""
 }
+
+OceanSlime: {
+	DisplayName: Coconut Slime
+	Entry: Look out from above! These tricky slimes reside on the shore, inconspicuously camouflaged as this familiar fruit.
+}
+
+DiverZombie.Entry: Who knew those oxygen tanks needed to have actual oxygen in them?
+KelpZombie.Entry: Fish fear me, women fear me, men fear me, children fear me, for I am the undead.
+SailorZombie.Entry: Despite their current status, they used to run this really nice luxury cruiser you should check out sometime.

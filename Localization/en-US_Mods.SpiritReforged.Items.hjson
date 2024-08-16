@@ -266,5 +266,49 @@ RawMeat: {
 
 CookedMeat: {
 	DisplayName: Cooked Meat
+	Tooltip:
+		'''
+		Minor improvements to all stats
+		'Roasted to perfection'
+		'''
+}
+
+GoldenCaviar: {
+	DisplayName: Golden Caviar
+	Tooltip:
+		'''
+		Major improvements to all stats
+		'The pinnacle of gastronomy'
+		'''
+}
+
+GarBannerItem.DisplayName: Gar Banner Item
+
+CoconutMilk: {
+	DisplayName: Coconut Milk
+	Tooltip:
+		'''
+		Minor improvements to all stats
+		'No cup needed!'
+		'''
+}
+
+DiverBody: {
+	DisplayName: Diver Body
+	Tooltip: ""
+}
+
+DiverHead: {
+	DisplayName: Diver Head
+	Tooltip: ""
+}
+
+DiverLegs: {
+	DisplayName: Diver Legs
+	Tooltip: ""
+}
+
+SailorCap: {
+	DisplayName: Sailor Cap
 	Tooltip: ""
 }

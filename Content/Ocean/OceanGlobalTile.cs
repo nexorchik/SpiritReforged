@@ -1,5 +1,7 @@
-﻿using SpiritReforged.Content.Ocean.Tiles;
+﻿using SpiritReforged.Content.Ocean.NPCs.OceanSlime;
+using SpiritReforged.Content.Ocean.Tiles;
 using System.Linq;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean;
 
@@ -8,7 +10,7 @@ public class OceanGlobalTile : GlobalTile
 	public override void RandomUpdate(int i, int j, int type)
 	{
 		int[] sands = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand]; //All valid sands
-		int[] woods = [TileID.WoodBlock, TileID.BorealWood, TileID.Ebonwood, TileID.DynastyWood, TileID.RichMahogany, TileID.PalmWood, TileID.Shadewood, TileID.WoodenBeam, 
+		int[] woods = [TileID.WoodBlock, TileID.BorealWood, TileID.Ebonwood, TileID.DynastyWood, TileID.RichMahogany, TileID.PalmWood, TileID.Shadewood, TileID.WoodenBeam,
 			ModContent.TileType<DriftwoodTile>(), TileID.Pearlwood];
 
 		bool inOcean = (i < Main.maxTilesX / 16 || i > Main.maxTilesX / 16 * 15) && j < (int)Main.worldSurface; //Might need adjustment; don't know if this will be exclusively in the ocean
@@ -35,7 +37,7 @@ public class OceanGlobalTile : GlobalTile
 			}
 			else
 				if (Main.rand.NextBool(6))
-					WorldGen.PlaceTile(i, j - 1, ModContent.TileType<Seagrass>(), true, true, -1, Main.rand.Next(16));
+				WorldGen.PlaceTile(i, j - 1, ModContent.TileType<Seagrass>(), true, true, -1, Main.rand.Next(16));
 
 			for (int k = i - 1; k < i + 2; ++k)
 			{
@@ -48,6 +50,26 @@ public class OceanGlobalTile : GlobalTile
 					if (!cur.HasTile && woods.Contains(cur.TileType) && cur.LiquidAmount > 155 && cur.LiquidType == LiquidID.Water && Main.rand.NextBool(6))
 						WorldGen.PlaceTile(k, l, ModContent.TileType<Mussel>());
 				}
+			}
+		}
+	}
+	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
+	{
+		if (type == TileID.PalmTree && Main.rand.NextBool(10) && (i < 300 || i > Main.maxTilesX - 300)) //palm trees at/near the beach
+		{
+			if (fail)
+			{
+				int x = i;
+				int y = j;
+
+				// Crawl upwards until an air tile is found
+				while (y > 0 && Main.tile[x, y].HasTile)
+				{
+					y--;
+				}
+
+				if (NPC.CountNPCS(ModContent.NPCType<OceanSlime>()) < 1) //too many of these guys has to feel bad... right? feel free to remove if we want to troll players
+					NPC.NewNPC(WorldGen.GetItemSource_FromTreeShake(i, j), x * 16, y * 16, ModContent.NPCType<OceanSlime>());
 			}
 		}
 	}
