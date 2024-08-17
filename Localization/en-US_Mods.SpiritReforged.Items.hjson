@@ -312,3 +312,23 @@ SailorCap: {
 	DisplayName: Sailor Cap
 	Tooltip: ""
 }
+
+LivingBaobabLeafWand: {
+	DisplayName: Living Baobab Leaf Wand
+	Tooltip: ""
+}
+
+LivingBaobabWand: {
+	DisplayName: Living Baobab Wand
+	Tooltip: ""
+}
+
+LivingBaobabWallItem: {
+	DisplayName: Living Baobab Wall Item
+	Tooltip: ""
+}
+
+LivingBaobabLeafWallItem: {
+	DisplayName: Living Baobab Leaf Wall Item
+	Tooltip: ""
+}
