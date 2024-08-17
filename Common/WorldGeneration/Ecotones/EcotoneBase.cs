@@ -13,5 +13,5 @@ internal abstract class EcotoneBase : ILoadable
 	{
 	}
 
-	public abstract void AddTasks(List<GenPass> tasks, List<EcotoneSurfaceMapping.EcotoneEntry> entries, HashSet<Point> totalSurfacePoints);
+	public abstract void AddTasks(List<GenPass> tasks, List<EcotoneSurfaceMapping.EcotoneEntry> entries);
 }

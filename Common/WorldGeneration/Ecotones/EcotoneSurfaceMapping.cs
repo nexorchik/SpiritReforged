@@ -1,5 +1,4 @@
-﻿using rail;
-using System.Linq;
+﻿using System.Linq;
 using Terraria.GameContent.Generation;
 using Terraria.IO;
 using Terraria.WorldBuilding;
@@ -24,17 +23,19 @@ internal class EcotoneSurfaceMapping : ModSystem
 	}
 
 	private List<EcotoneEntry> Entries = [];
-	private HashSet<Point> TotalSurfacePoints = [];
+
+	internal static readonly HashSet<Point> TotalSurfacePoints = [];
+	internal static readonly Dictionary<short, short> TotalSurfaceY = [];
 
 	public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
 	{
-		int mapIndex = tasks.FindIndex(x => x.Name == "Shimmer");
+		int mapIndex = tasks.FindIndex(x => x.Name == "Full Desert");
 
 		if (mapIndex == -1)
 			return;
 
 		foreach (var ecotone in EcotoneBase.Ecotones)
-			ecotone.AddTasks(tasks, Entries, TotalSurfacePoints);
+			ecotone.AddTasks(tasks, Entries);
 
 		tasks.Insert(mapIndex + 1, new PassLegacy("Map Ecotones", MapEcotones));
 	}
@@ -47,32 +48,22 @@ internal class EcotoneSurfaceMapping : ModSystem
 
 		Entries.Clear();
 		TotalSurfacePoints.Clear();
-
-		int y = 0;
-
-		while (Main.tile[StartX, ++y].TileType != TileID.Sand)
-		{
-		}
+		TotalSurfaceY.Clear();
 
 		int transitionCount = 0;
-		EcotoneEntry entry = new EcotoneEntry(new Point(StartX, y), EcotoneEdgeDefinitions.GetEcotone("Ocean"));
-		entry.Left = EcotoneEdgeDefinitions.GetEcotone("Ocean");
+		EcotoneEntry entry = null;
 
 		for (int x = StartX; x < Main.maxTilesX - StartX; ++x)
 		{
-			int dir = WorldGen.SolidOrSlopedTile(x, y) ? -1 : 1;
+			int y = 60;
 
-			if (dir == -1)
-			{
-				while (SolidTileOrWall(x, y))
-					y -= 1;
+			while (!WorldGen.SolidOrSlopedTile(x, y))
+				y++;
 
-				y -= dir;
-			}
-			else
+			if (entry is null)
 			{
-				while (!SolidTileOrWall(x, y))
-					y += 1;
+				entry = new EcotoneEntry(new Point(StartX, y), EcotoneEdgeDefinitions.GetEcotone("Ocean"));
+				entry.Left = EcotoneEdgeDefinitions.GetEcotone("Ocean");
 			}
 
 			if (!entry.TileFits(x, y))
@@ -84,23 +75,20 @@ internal class EcotoneSurfaceMapping : ModSystem
 				entry.End = new Point(x, y);
 				entry.Right = def;
 				Entries.Add(entry);
-
-				if (entry.SurroundedBy("Desert", "Jungle"))
-				{
-					int oie = 0;
-				}
 				
 				entry = new EcotoneEntry(new Point(x, y), def);
 				entry.Left = old;
 				transitionCount = 0;
 			}
 
-			//WorldGen.PlaceTile(x, y - 3, entry.Definition.DisplayId, true, true);
 			entry.SurfacePoints.Add(new Point(x, y));
 			TotalSurfacePoints.Add(new Point(x, y));
+			TotalSurfaceY.Add((short)x, (short)y);
+
+			if (x == Main.maxTilesX - StartX - 1)
+				entry.End = new Point(x, y);
 		}
 
-		entry.End = new Point(Main.maxTilesX - StartX, y);
 		entry.Right = EcotoneEdgeDefinitions.GetEcotone("Ocean");
 		Entries.Add(entry);
 		Entries = new(Entries.OrderBy(x => x.Start.X));
@@ -112,15 +100,6 @@ internal class EcotoneSurfaceMapping : ModSystem
 		//		for (int nY = 40; nY < 80; ++nY)
 		//			WorldGen.PlaceTile(x, nY, item.Definition.DisplayId, true, true);
 		//	}
-		//}
-
-		//foreach (var item in TotalSurfacePoints)
-		//{
-		//	WorldGen.KillTile(item.X, item.Y);
-		//	WorldGen.PlaceTile(item.X, item.Y, TileID.GreenCandyCaneBlock, true, true);
-
-		//	WorldGen.KillTile(item.X, item.Y + 1);
-		//	WorldGen.PlaceTile(item.X, item.Y + 1, TileID.GreenCandyCaneBlock, true, true);
 		//}
 	}
 

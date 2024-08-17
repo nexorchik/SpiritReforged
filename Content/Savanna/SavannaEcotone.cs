@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.WorldGeneration.Ecotones;
 using SpiritReforged.Content.Savanna.Tiles;
 using System.Linq;
+using Terraria.DataStructures;
 using Terraria.GameContent.Generation;
 using Terraria.WorldBuilding;
 
@@ -8,38 +9,56 @@ namespace SpiritReforged.Content.Savanna;
 
 internal class SavannaEcotone : EcotoneBase
 {
-	public override void AddTasks(List<GenPass> tasks, List<EcotoneSurfaceMapping.EcotoneEntry> entries, HashSet<Point> totalSurfacePoints)
+	public override void AddTasks(List<GenPass> tasks, List<EcotoneSurfaceMapping.EcotoneEntry> entries)
 	{
 		int index = tasks.FindIndex(x => x.Name == "Pyramids");
-		int secondIndex = tasks.FindIndex(x => x.Name == "Dye Plants");
+		int secondIndex = tasks.FindIndex(x => x.Name == "Shinies");
 
 		if (index == -1 || secondIndex == -1)
 			return;
 
-		tasks.Insert(index, new PassLegacy("Savanna Base", BaseGeneration(entries, totalSurfacePoints)));
-		tasks.Insert(secondIndex, new PassLegacy("Savanna Cleanup", BaseGeneration(entries, totalSurfacePoints)));
+		tasks.Insert(index, new PassLegacy("Savanna Base", BaseGeneration(entries)));
+		tasks.Insert(secondIndex, new PassLegacy("Savanna Cleanup", BaseGeneration(entries)));
 	}
 
-	private static WorldGenLegacyMethod BaseGeneration(List<EcotoneSurfaceMapping.EcotoneEntry> entries, HashSet<Point> totalSurfacePoints) => (progress, _) =>
+	private static WorldGenLegacyMethod BaseGeneration(List<EcotoneSurfaceMapping.EcotoneEntry> entries) => (progress, _) =>
 	{
 		var entry = entries.Find(x => x.SurroundedBy("Desert", "Jungle"));
 
 		if (entry is null)
 			return;
 
-		int startX = entry.Start.X - 70;
-		int endX = entry.End.X + 70;
+		int startX = entry.Start.X - 0;
+		int endX = entry.End.X + 0;
+		short startY = EcotoneSurfaceMapping.TotalSurfaceY[(short)entry.Start.X];
+		short endY = EcotoneSurfaceMapping.TotalSurfaceY[(short)entry.End.X];
+		int[] validIds = [TileID.Dirt, TileID.Grass, TileID.ClayBlock, TileID.CrimsonGrass, TileID.CorruptGrass];
 
 		for (int x = startX; x < endX; ++x)
 		{
 			float factor = ((float)endX - x) / endX;
-			int y = (int)MathHelper.Lerp(entry.Start.Y, entry.End.Y, factor);
+			int y = (int)MathHelper.Lerp(startY, endY, factor);
 			int depth = WorldGen.genRand.Next(20);
 
-			for (int i = -80; i < 60 + depth; ++i)
+			for (int i = -80; i < 90 + depth; ++i)
 			{
 				Tile tile = Main.tile[x, y + i];
 
+				if (i >= 0)
+				{
+					if (tile.HasTile && !validIds.Contains(tile.TileType) && WorldGen.genRand.NextBool(1))
+					{
+						continue;
+					}
+
+					WorldGen.PlaceTile(x, y + i, ModContent.TileType<SavannaDirt>(), true, true);
+				}
+				else
+				{
+					tile.Clear(TileDataType.All);
+				}
+
+				continue;
 				if (!tile.HasTile || tile.TileType is TileID.Cloud or TileID.RainCloud)
 					continue;
 
@@ -68,43 +87,9 @@ internal class SavannaEcotone : EcotoneBase
 		}
 
 		return;
-		HashSet<Point> points = [.. totalSurfacePoints.Where(x => x.X > entry.Start.X - 70 && x.X < entry.End.X + 70)];
+		//HashSet<Point> points = [.. totalSurfacePoints.Where(x => x.X > entry.Start.X - 70 && x.X < entry.End.X + 70)];
 
-		foreach (Point position in points)
-		{
-			for (int i = -80; i < 60; ++i)
-			{
-				if (position.X < entry.Start.X - 60 && WorldGen.genRand.NextBool(20 - Math.Max(entry.Start.X - 60 - position.X, 1) * 2))
-					continue;
-
-				Tile tile = Main.tile[position.X, position.Y + i];
-
-				if (!tile.HasTile || tile.TileType is TileID.Cloud or TileID.RainCloud)
-					continue;
-
-				if (tile.TileType is TileID.LeafBlock or TileID.LivingWood || tile.WallType == WallID.LivingWoodUnsafe)
-				{
-					if (i < 0)
-						tile.Clear(Terraria.DataStructures.TileDataType.All);
-					else
-					{
-						WorldGen.PlaceTile(position.X, position.Y + i, ModContent.TileType<SavannaDirt>(), true, true);
-						tile.WallType = WallID.Dirt;
-					}
-
-					continue;
-				}
-
-				if (tile.TileType == TileID.Dirt)
-					tile.TileType = !WorldGen.SolidTile(position.X, position.Y + i - 1) ? (ushort)ModContent.TileType<SavannaGrass>() : (ushort)ModContent.TileType<SavannaDirt>();
-				else if (tile.TileType == TileID.Grass)
-					tile.TileType = (ushort)ModContent.TileType<SavannaGrass>();
-				else if (tile.TileType == TileID.Stone)
-					tile.TileType = TileID.ClayBlock;
-
-				WorldGen.TileFrame(position.X, position.Y + i, true);
-			}
-		}
+		
 	};
 
 	//private static void CleanupGeneration(List<GenPass> tasks, EcotoneSurfaceMapping.EcotoneEntry entry, HashSet<Point> totalSurfacePoints)
