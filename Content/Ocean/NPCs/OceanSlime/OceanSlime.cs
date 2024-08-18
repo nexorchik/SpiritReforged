@@ -1,3 +1,4 @@
+using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Content.Vanilla.Items.Food;
 using Terraria.GameContent.Bestiary;
 
@@ -8,7 +9,7 @@ public class OceanSlime : ModNPC
 	public override void SetStaticDefaults()
 	{
 		Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.BlueSlime];
-		//NPCHelper.ImmuneTo(this, BuffID.Poisoned, BuffID.Venom);
+		NPCHelper.ImmuneTo(this, BuffID.Poisoned, BuffID.Venom);
 	}
 
 	public override void SetDefaults()

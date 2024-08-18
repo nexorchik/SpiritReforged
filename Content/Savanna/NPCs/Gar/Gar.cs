@@ -8,6 +8,11 @@ namespace SpiritReforged.Content.Savanna.NPCs.Gar;
 [AutoloadBanner]
 public class Gar : ModNPC
 {
+	private ref float YMovement => ref NPC.ai[0]; // Y Movement (adapted from vanilla)
+	private ref float Proximity => ref NPC.ai[1]; // Player proximity 
+	private ref float Resting => ref NPC.ai[2]; // Player proximity;
+	private ref float RestTimer => ref NPC.ai[3]; // Player proximity 
+
 	public override void SetStaticDefaults()
 	{
 		Main.npcFrameCount[NPC.type] = 12;
@@ -25,14 +30,13 @@ public class Gar : ModNPC
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = .35f;
-		NPC.aiStyle = 16;
+		NPC.aiStyle = -1;
 		NPC.noGravity = true;
 		NPC.npcSlots = 0;
-		AIType = NPCID.Goldfish;
 		NPC.dontCountMe = true;
 	}
 
-	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+	public override void SetBestiary(BestiaryDatabase dataNPC, BestiaryEntry bestiaryEntry)
 	{
 		bestiaryEntry.UIInfoProvider = new CritterUICollectionInfoProvider(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds[Type]);
 		bestiaryEntry.AddInfo(this, "Ocean");
@@ -42,30 +46,220 @@ public class Gar : ModNPC
 	int pickedType;
 	public override void AI()
 	{
-		if (!hasPicked)
-		{
-			NPC.scale = Main.rand.NextFloat(.9f, 1f);
-			pickedType = Main.rand.Next(0, 2);
-			hasPicked = true;
-		}
-
 		Player target = Main.player[NPC.target];
-		if (NPC.DistanceSQ(target.Center) < 65 * 65 && target.wet && NPC.wet)
+		RestTimer++;
+		if (NPC.wet) //swimming AI (adapted from vanilla)
 		{
-			Vector2 vel = NPC.DirectionFrom(target.Center) * 4.5f;
-			NPC.velocity = vel;
-			NPC.rotation = NPC.velocity.X * .06f;
-			if (target.position.X > NPC.position.X)
+			if (NPC.rotation >= 0f)
 			{
-				NPC.spriteDirection = -1;
-				NPC.direction = -1;
+				NPC.rotation *= .9f;
+			}
+			if (NPC.direction == 0)
+			{
+				NPC.TargetClosest();
+			}
+
+			int tileX = (int)NPC.Center.X / 16;
+			int tileY = (int)(NPC.Bottom.Y / 16f);
+
+			// what to do if sloped tiles
+			if (Main.tile[tileX, tileY].TopSlope)
+			{
+				if (Main.tile[tileX, tileY].LeftSlope)
+				{
+					NPC.direction = -1;
+					NPC.velocity.X = Math.Abs(NPC.velocity.X) * -1f;
+				}
+				else
+				{
+					NPC.direction = 1;
+					NPC.velocity.X = Math.Abs(NPC.velocity.X);
+				}
+			}
+			else if (Main.tile[tileX, tileY + 1].TopSlope)
+			{
+				if (Main.tile[tileX, tileY + 1].LeftSlope)
+				{
+					NPC.direction = -1;
+					NPC.velocity.X = Math.Abs(NPC.velocity.X) * -1f;
+				}
+				else
+				{
+					NPC.direction = 1;
+					NPC.velocity.X = Math.Abs(NPC.velocity.X);
+				}
+			}
+
+			// switch directions if colliding
+			if (NPC.collideX)
+			{
+				NPC.velocity.X *= -1f;
+				NPC.direction *= -1;
 				NPC.netUpdate = true;
 			}
-			else if (target.position.X < NPC.position.X)
+
+			// I don't know how often this happens, but if fish bonks head or hits floor, ease it down/up, respectively
+			if (NPC.collideY)
 			{
-				NPC.spriteDirection = 1;
-				NPC.direction = 1;
 				NPC.netUpdate = true;
+
+				if (NPC.velocity.Y > 0f)
+				{
+					NPC.velocity.Y = Math.Abs(NPC.velocity.Y) * -1f;
+					NPC.directionY = -1;
+					YMovement = -1f;
+				}
+				else if (NPC.velocity.Y < 0f)
+				{
+					NPC.velocity.Y = Math.Abs(NPC.velocity.Y);
+					NPC.directionY = 1;
+					YMovement = 1f;
+				}
+			}
+
+			// movement
+			if (Resting != 1)
+			{
+				NPC.velocity.X += NPC.direction * (Main.dayTime ? .06f : .1f);
+
+				if (NPC.velocity.X < (Main.dayTime ? -.8f : 1.1f) || NPC.velocity.X > (Main.dayTime ? .8f : 1.1f))
+				{
+					NPC.velocity.X *= 0.95f;
+				}
+			}
+
+			// fish goes up and down, and goes the other way upon reaching a limit
+			if (YMovement == -1f)
+			{
+				NPC.velocity.Y -= 0.01f;
+				if (NPC.velocity.Y < -0.3f)
+				{
+					YMovement = 1f;
+				}
+			}
+			else
+			{
+				NPC.velocity.Y += 0.01f;
+				if (NPC.velocity.Y > 0.3f)
+				{
+					YMovement = -1f;
+				}
+			}
+
+			// don't swim too close to bottom tiles
+			if (Main.tile[tileX, tileY - 1].LiquidAmount > 128)
+			{
+				if (Main.tile[tileX, tileY + 1].HasTile)
+				{
+					YMovement = -1f;
+				}
+				else if (Main.tile[tileX, tileY + 2].HasTile)
+				{
+					YMovement = -1f;
+				}
+			}
+
+			// limits on y velocity
+			if (NPC.velocity.Y > 0.4f || NPC.velocity.Y < -0.4f)
+			{
+				NPC.velocity.Y *= 0.95f;
+			}
+
+			// Gar Resting AI
+			if (Main.dayTime)
+			{
+				if (RestTimer > 60 * 20 && RestTimer < 60 * 30)
+				{
+					if (Main.rand.NextBool(3))
+					{
+						Resting = 1;
+						NPC.netUpdate = true;
+					}
+					else
+					{
+						Resting = 0;
+					}
+				}
+
+				if (RestTimer > 60 * 60)
+				{
+					RestTimer = 0;
+				}
+			}
+			else
+			{
+				Resting = 0;
+			}
+
+			if (Resting == 1)
+			{
+				if (NPC.velocity.X != 0)
+				{
+					NPC.velocity.X *= 0.5f;
+				}
+			}
+			// check for proximity
+			if (NPC.DistanceSQ(target.Center) < 40 * 65 && target.wet)
+			{
+				Proximity = 1;
+			}
+			else
+			{
+				Proximity = 0;
+			}
+
+			if (Proximity == 1) //Swimming away from player
+			{
+				Vector2 vel = NPC.DirectionFrom(target.Center) * 2.5f;
+				NPC.velocity = vel;
+				NPC.rotation = NPC.velocity.X * .04f;
+				if (target.position.X > NPC.position.X)
+				{
+					NPC.spriteDirection = -1;
+					NPC.direction = -1;
+					NPC.netUpdate = true;
+				}
+				else if (target.position.X < NPC.position.X)
+				{
+					NPC.spriteDirection = 1;
+					NPC.direction = 1;
+					NPC.netUpdate = true;
+				}
+			}
+		}
+		else // flopping around
+		{
+			// falling rotation
+			NPC.rotation = NPC.velocity.Y * NPC.direction * 0.1f;
+			if (NPC.rotation < -0.2f)
+			{
+				NPC.rotation = -0.2f;
+			}
+
+			if (NPC.rotation > 0.2f)
+			{
+				NPC.rotation = 0.2f;
+			}
+
+			// no running away
+			Proximity = 0;
+			Resting = 0;
+			// floppa velocity
+			if (NPC.velocity.Y == 0f) 
+			{
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+				{
+					NPC.velocity.Y = Main.rand.Next(-50, -20) * 0.1f;
+					NPC.velocity.X = Main.rand.Next(-20, 20) * 0.1f;
+					NPC.netUpdate = true;
+				}
+			}
+
+			// fall
+			NPC.velocity.Y += 0.3f;
+			if (NPC.velocity.Y > 10f)
+			{
+				NPC.velocity.Y = 10f;
 			}
 		}
 	}
@@ -88,9 +282,18 @@ public class Gar : ModNPC
 		pickedType = reader.ReadInt32();
 		hasPicked = reader.ReadBoolean();
 	}
+	float frameTimer;
 	public override void FindFrame(int frameHeight)
 	{
-		NPC.frameCounter += 0.22f;
+		if (Resting == 1)
+		{
+			frameTimer = .1f;
+		}
+		else
+		{
+			frameTimer = Math.Abs(.18f * NPC.velocity.X);
+		}
+		NPC.frameCounter += frameTimer;
 		NPC.frameCounter %= Main.npcFrameCount[NPC.type];
 		int frame = (int)NPC.frameCounter;
 		NPC.frame.Y = frame * frameHeight;
