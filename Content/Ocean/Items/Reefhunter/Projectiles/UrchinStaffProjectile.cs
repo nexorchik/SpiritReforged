@@ -6,6 +6,8 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
 public class UrchinStaffProjectile : ModProjectile
 {
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.UrchinStaff.DisplayName");
+
 	public override void SetDefaults()
 	{
 		Projectile.width = 50;

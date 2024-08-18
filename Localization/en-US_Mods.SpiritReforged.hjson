@@ -1,17 +1,10 @@
 Tiles: {
 	SunkenTreasureTile.MapEntry: Sunken Treasure
-	Breakable1x2Vent.MapEntry: Hydrothermal Vent
-	Breakable1x3Vent.MapEntry: Hydrothermal Vent
-	Coral1x2.MapEntry: Coral
-	Coral2x2.MapEntry: Coral
-	Coral3x3.MapEntry: Coral
-	HydrothermalVent1x2.MapEntry: Hydrothermal Vent
-	HydrothermalVent1x3.MapEntry: Hydrothermal Vent
-	Kelp1x2.MapEntry: Kelp
-	Kelp2x2.MapEntry: Kelp
-	Kelp2x3.MapEntry: Kelp
+	VentMapEntry: Hydrothermal Vent
+	CoralMapEntry: Coral
+	KelpMapEntry: Kelp
 	OceanPirateChest.MapEntry: Pirate Chest
-	GarInAJar_Tile.MapEntry: Gar In A Jar_ Tile
+	GarInAJar_Tile.MapEntry: Gar In a Jar
 }
 
 Projectiles: {
@@ -24,7 +17,6 @@ Projectiles: {
 	SkullSentrySentry.DisplayName: Maneater Skull
 	UrchinBall.DisplayName: Urchin Ball
 	UrchinSpike.DisplayName: Urchin Spike
-	UrchinStaffProjectile.DisplayName: Urchin Staff Projectile
 	BaskingSharkProj.DisplayName: Chum
 	BubbleMineBubble.DisplayName: Bubble
 	CoralCatcherHook.DisplayName: "{$ProjectileName.BobberWooden}"
@@ -39,12 +31,21 @@ Configs: {
 
 		OceanShape: {
 			Label: Ocean Shape
-			Tooltip: ""
+			Tooltip:
+				'''
+				Modifies the Ocean generation in certain ways
+				Defaults to a Piecewise_V generation
+				The Piecewise_V generation is recommended for Spirit playthroughs
+				'''
 		}
 
 		SurfaceWaterTransparency: {
 			Label: Surface Water Transparency
-			Tooltip: ""
+			Tooltip:
+				'''
+				Allows for transparent ocean water when on
+				This does not affect any other biome
+				'''
 		}
 	}
 
@@ -62,7 +63,12 @@ Configs: {
 
 		VentCritters: {
 			Label: Vent Critters
-			Tooltip: ""
+			Tooltip:
+				'''
+				Enables the spawning of numerous critters around Hydrothermal Vents
+				These critters do not interfere with regular enemy spawnrates
+				However, they do contribute to the maximum NPC limit
+				'''
 		}
 	}
 }
@@ -70,12 +76,12 @@ Configs: {
 Buffs: {
 	EmpoweredSwim: {
 		DisplayName: Empowered Swim
-		Description: Mods.SpiritReforged.Buffs.EmpoweredSwim.Description
+		Description: You feel much faster in water
 	}
 
 	SwimmingFatigue: {
 		DisplayName: Swimming Fatigue
-		Description: Mods.SpiritReforged.Buffs.SwimmingFatigue.Description
+		Description: You can't swim very well for a bit
 	}
 
 	MantarayBuff: {

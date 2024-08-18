@@ -207,7 +207,7 @@ GarItem: {
 }
 
 SavannaDirtItem: {
-	DisplayName: Savanna Dirt Item
+	DisplayName: Savanna Dirt
 	Tooltip: ""
 }
 
@@ -217,46 +217,46 @@ GoldGarItem: {
 }
 
 Sushi: {
+	DisplayName: Sushi
 	Tooltip:
 		'''
 		Minor improvement to all stats
 		Provides underwater breathing
 		'Cold and fresh!'
 		'''
-	DisplayName: Sushi
 }
 
 Nigiri: {
+	DisplayName: Nigiri
 	Tooltip:
 		'''
 		Minor improvement to all stats
 		Provides free movement in water
 		'The perfect cut'
 		'''
-	DisplayName: Nigiri
 }
 
 HoneySalmon: {
+	DisplayName: Honey-Glazed Salmon
 	Tooltip:
 		'''
 		Minor improvements to all stats
 		Boosts life regeneration
 		'''
-	DisplayName: Honey-Glazed Salmon
 }
 
 FishChips: {
-	Tooltip: Minor improvements to all stats
 	DisplayName: Fish n' Chips
+	Tooltip: Minor improvements to all stats
 }
 
 CrystalFish: {
+	DisplayName: Crystallized Salmon
 	Tooltip:
 		'''
 		Medium improvements to all stats
 		Boosts magic power
 		'''
-	DisplayName: Crystallized Salmon
 }
 
 RawMeat: {
@@ -282,7 +282,7 @@ GoldenCaviar: {
 		'''
 }
 
-GarBannerItem.DisplayName: Gar Banner Item
+GarBannerItem.DisplayName: Gar Banner
 
 CoconutMilk: {
 	DisplayName: Coconut Milk
@@ -294,17 +294,17 @@ CoconutMilk: {
 }
 
 DiverBody: {
-	DisplayName: Diver Body
+	DisplayName: Ancient Diver's Plate
 	Tooltip: ""
 }
 
 DiverHead: {
-	DisplayName: Diver Head
+	DisplayName: Ancient Diver's Helmet
 	Tooltip: ""
 }
 
 DiverLegs: {
-	DisplayName: Diver Legs
+	DisplayName: Ancient Diver's Pants
 	Tooltip: ""
 }
 
@@ -314,6 +314,6 @@ SailorCap: {
 }
 
 SteamedMussels: {
-	Tooltip: ""
 	DisplayName: Steamed Mussels
+	Tooltip: ""
 }
