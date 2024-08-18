@@ -58,7 +58,7 @@ public class SavannaGrass : ModTile
 		//	}
 
 		//Try spread grass
-		if (SpreadHelper.Spread(i, j, Type, 4, TileID.Dirt) && Main.netMode != NetmodeID.SinglePlayer)
+		if (SpreadHelper.Spread(i, j, Type, 4, ModContent.TileType<SavannaDirt>()) && Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None);
 	}
 
