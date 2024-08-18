@@ -3,12 +3,12 @@ Crinoid: {
 	Entry: These curious critters are closely related to starfish. They feed off of whatever sinks down to the bottom of the sea.
 }
 
-Floater.DisplayName: Luminous Floater
-
-Floater1: {
+Floater: {
 	DisplayName: Luminous Floater
 	Entry: Below the waves of the elusive glowing ocean, lies hundreds of small, glowing jellyfish, dancing among the luminescent tide.
 }
+
+FloaterGroup.DisplayName: Luminous Floater Group
 
 Pelican: {
 	DisplayName: Pelican
