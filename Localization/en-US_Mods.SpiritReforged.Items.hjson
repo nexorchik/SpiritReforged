@@ -332,3 +332,8 @@ LivingBaobabLeafWallItem: {
 	DisplayName: Living Baobab Leaf Wall Item
 	Tooltip: ""
 }
+
+BaobabTool: {
+	DisplayName: Baobab Tool
+	Tooltip: ""
+}
