@@ -347,3 +347,8 @@ SteamedMussels: {
 	Tooltip: ""
 	DisplayName: Steamed Mussels
 }
+
+BambooHalberd: {
+	DisplayName: Bamboo Halberd
+	Tooltip: ""
+}
