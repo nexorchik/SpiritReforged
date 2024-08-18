@@ -313,6 +313,36 @@ SailorCap: {
 	Tooltip: ""
 }
 
+StrippedBamboo: {
+	DisplayName: Stripped Bamboo
+	Tooltip: ""
+}
+
+BambooBarrelItem: {
+	DisplayName: Bamboo Barrel
+	Tooltip: ""
+}
+
+BambooBenchItem: {
+	DisplayName: Bamboo Bench
+	Tooltip: ""
+}
+
+BambooBirdCageItem: {
+	DisplayName: Bamboo Bird Cage
+	Tooltip: ""
+}
+
+BambooPikeItem: {
+	DisplayName: Bamboo Pike
+	Tooltip: ""
+}
+
+BambooPotItem: {
+	DisplayName: Bamboo Pot
+	Tooltip: ""
+}
+
 SteamedMussels: {
 	Tooltip: ""
 	DisplayName: Steamed Mussels

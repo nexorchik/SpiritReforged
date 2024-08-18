@@ -12,6 +12,8 @@ Tiles: {
 	Kelp2x3.MapEntry: Kelp
 	OceanPirateChest.MapEntry: Pirate Chest
 	GarInAJar_Tile.MapEntry: Gar In A Jar_ Tile
+	BambooBirdCage.MapEntry: Bamboo Bird Cage
+	BambooPot.MapEntry: Bamboo Pot
 }
 
 Projectiles: {
@@ -86,6 +88,11 @@ Buffs: {
 	JellyfishMinion_Buff: {
 		DisplayName: Jellyfish
 		Description: A cute, bouncy Jellyfish fights for you!
+	}
+
+	Impaled: {
+		DisplayName: Impaled
+		Description: You've been impaled by a pike. Ouch!
 	}
 }
 
