@@ -23,7 +23,7 @@ public class BambooBench : ModTile
 		TileID.Sets.HasOutlines[Type] = true;
 
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Bench"));
-		DustType = DustID.PalmWood;
+		DustType = -1;
 	}
 
 	public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings)
