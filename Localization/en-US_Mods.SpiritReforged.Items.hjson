@@ -352,3 +352,8 @@ BambooHalberd: {
 	DisplayName: Bamboo Halberd
 	Tooltip: ""
 }
+
+BambooKendoBlade: {
+	DisplayName: Bamboo Kendo Blade
+	Tooltip: Right click to dash forward
+}
