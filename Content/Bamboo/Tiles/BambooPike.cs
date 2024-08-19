@@ -1,4 +1,3 @@
-using Terraria.Audio;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Bamboo.Tiles;
@@ -49,29 +48,25 @@ public class BambooPike : ModTile
 		return false;
 	}
 
-	public override void NearbyEffects(int i, int j, bool closer)
+	public static void Strike(Entity entity)
 	{
-		if (!closer || Main.tile[i, j].TileFrameY != 0) //If the local player is not close enough or the tile is not the tip of a pike, return
-			return;
-
-		foreach (var player in Main.player)
-		{
-			if (player.active && player.velocity.Y >= 1.25f && player.getRect().Contains((new Vector2(i, j) * 16 + new Vector2(8)).ToPoint()))
-				StrikePlayer(player);
-		}
-	}
-
-	private static void StrikePlayer(Player player)
-	{
-		float damage = MathHelper.Clamp(player.velocity.Y, 2, 10) * 10f;
-		player.Hurt(PlayerDeathReason.ByOther(3), (int)damage, 0);
-		player.AddBuff(ModContent.BuffType<Buffs.Impaled>(), 500);
-		player.velocity = new Vector2(0, 1);
-
-		SoundEngine.PlaySound(SoundID.NPCDeath12, player.Center);
+		float damage = MathHelper.Clamp(entity.velocity.Y, 1, 10) * 10f;
+		Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath12, entity.Center);
 
 		for (int d = 0; d < 20; d++)
-			Dust.NewDustPerfect(player.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat() * 10, DustID.Blood);
+			Dust.NewDustPerfect(entity.Bottom + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), DustID.Blood);
+
+		if (entity is NPC npc)
+		{
+			npc.SimpleStrikeNPC((int)damage, 1, false, 0);
+			npc.AddBuff(ModContent.BuffType<Buffs.Impaled>(), 500);
+		}
+		else if (entity is Player player)
+		{
+			player.Hurt(PlayerDeathReason.ByOther(3), (int)damage, 0);
+			player.AddBuff(ModContent.BuffType<Buffs.Impaled>(), 500);
+			player.velocity = new Vector2(0, 1);
+		}
 	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
