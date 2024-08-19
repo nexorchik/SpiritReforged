@@ -8,10 +8,10 @@ internal static class BaobabGen
 {
 	public static void GenerateBaobab(int x, int y)
 	{
-		GenerateBase(x, y, out int minX, out int maxX, out int height);
+		GenerateBase(x, y, out int minX, out int maxX, out int height, out int topMinX, out int topMaxX);
 		MineInterior(x - 1, y - WorldGen.genRand.Next(2, 5));
 		CreateRoots(minX, maxX, y);
-		CreateBranches(minX, maxX, y, height);
+		CreateBranches(topMinX, topMaxX, y, height);
 	}
 
 	private static void CreateBranches(int minX, int maxX, int y, int height)
@@ -31,7 +31,7 @@ internal static class BaobabGen
 			PointToPointRunner.SingleTile(new(points), PointToPointRunner.PlaceTileClearSlope(ModContent.TileType<LivingBaobab>(), true));
 			PointToPointRunner.SingleTile(new(points), (ref Vector2 position, ref Vector2 direction) =>
 			{
-				WorldGen.TileRunner((int)position.X, (int)position.Y, 8, 3, ModContent.TileType<LivingBaobabLeaf>(), true, 0, 0, true, false);
+				WorldGen.TileRunner((int)position.X, (int)position.Y, 4, 3, ModContent.TileType<LivingBaobabLeaf>(), true, 0, 0, true, false);
 				WorldGen.SquareTileFrame((int)position.X, (int)position.Y);
 			});
 		}
@@ -64,13 +64,15 @@ internal static class BaobabGen
 		}
 	}
 
-	private static void GenerateBase(int x, int y, out int minX, out int maxX, out int height)
+	private static void GenerateBase(int x, int y, out int minX, out int maxX, out int height, out int topMinX, out int topMinY)
 	{
 		height = WorldGen.genRand.Next(15, 21);
 		(int leftCount, int rightCount) = (1, 1);
 		(int leftAdd, int rightAdd) = (WorldGen.genRand.Next(2) - 1, WorldGen.genRand.Next(2) - 1);
 		(int leftWidth, int rightWidth) = (WorldGen.genRand.Next(1, 4), WorldGen.genRand.Next(1, 4));
 
+		topMinX = x - leftWidth;
+		topMinY = x + rightWidth;
 		minX = x;
 		maxX = x;
 		y -= height;
