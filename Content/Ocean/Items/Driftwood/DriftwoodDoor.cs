@@ -1,4 +1,4 @@
-using SpiritReforged.Common.TileCommon;
+/*using SpiritReforged.Common.TileCommon;
 
 namespace SpiritReforged.Content.Ocean.Items.Driftwood;
 
@@ -18,4 +18,4 @@ public class DriftwoodDoorOpen : BaseDoorOpen
 	public override int CloseID => ModContent.TileType<DriftwoodDoorClosed>();
 
 	public override void StaticDefaults(LocalizedText defaultName) => AddMapEntry(new Color(165, 150, 0), defaultName);
-}
+}*/

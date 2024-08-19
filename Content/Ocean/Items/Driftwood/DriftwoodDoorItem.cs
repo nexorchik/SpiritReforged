@@ -15,7 +15,7 @@ public class DriftwoodDoorItem : ModItem
 		Item.useTurn = true;
 		Item.autoReuse = true;
 		Item.consumable = true;
-		Item.createTile = ModContent.TileType<DriftwoodDoorClosed>();
+		//Item.createTile = ModContent.TileType<DriftwoodDoorClosed>();
 	}
 
 	public override void AddRecipes()

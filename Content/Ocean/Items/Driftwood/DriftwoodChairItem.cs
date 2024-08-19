@@ -14,7 +14,7 @@ public class DriftwoodChairItem : ModItem
 		Item.useTurn = true;
 		Item.autoReuse = true;
 		Item.consumable = true;
-		Item.createTile = ModContent.TileType<DriftwoodChair>();
+		//Item.createTile = ModContent.TileType<DriftwoodChair>();
 	}
 
 	public override void AddRecipes()

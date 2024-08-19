@@ -1,4 +1,4 @@
-using SpiritReforged.Common.TileCommon;
+/*using SpiritReforged.Common.TileCommon;
 using Terraria.DataStructures;
 using Terraria.GameContent.ObjectInteractions;
 
@@ -43,4 +43,4 @@ public class DriftwoodChair : ModTile
 	public override bool RightClick(int i, int j) => FurnitureHelper.RightClick(i, j);
 
 	public override void MouseOver(int i, int j) => FurnitureHelper.MouseOver(i, j, ModContent.ItemType<DriftwoodChairItem>());
-}
+}*/
