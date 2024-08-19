@@ -1,3 +1,4 @@
+using SpiritReforged.Content.Ocean.Items.JellyCandle;
 using SpiritReforged.Content.Vanilla.Items.Food;
 using Terraria.ModLoader.Utilities;
 
@@ -84,5 +85,9 @@ public class Floater : ModNPC
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, 2.5f * hit.HitDirection, -2.5f, 0, Color.White, Main.rand.NextFloat(.2f, .8f));
 	}
 
-	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>();
+	public override void ModifyNPCLoot(NPCLoot npcLoot)
+	{
+		npcLoot.AddCommon(ModContent.ItemType<JellyCandle>(), 75);
+		npcLoot.AddCommon<RawFish>();
+	}
 }

@@ -5,6 +5,9 @@ Tiles: {
 	KelpMapEntry: Kelp
 	OceanPirateChest.MapEntry: Pirate Chest
 	GarInAJar_Tile.MapEntry: Gar In a Jar
+	Driftwood1Tile.MapEntry: Small Driftwood
+	Driftwood2Tile.MapEntry: Medium Driftwood
+	Driftwood3Tile.MapEntry: Large Driftwood
 }
 
 Projectiles: {
@@ -23,6 +26,7 @@ Projectiles: {
 	JellyfishBolt.DisplayName: Electric Bolt
 	JellyfishMinion.DisplayName: Little Jellyfish
 	ReefWrathProj.DisplayName: Coral Reef
+	JellyfishPet.DisplayName: Jellyfish Pet
 }
 
 Configs: {
@@ -93,6 +97,11 @@ Buffs: {
 		DisplayName: Jellyfish
 		Description: A cute, bouncy Jellyfish fights for you!
 	}
+
+	JellyfishBuff: {
+		DisplayName: Jellyfish Buff
+		Description: This energetic jellyfish loves following you around!
+	}
 }
 
 SetBonuses.Cascade:
@@ -100,4 +109,9 @@ SetBonuses.Cascade:
 	Dealing damage to enemies builds up a bubble shield,
 	which at full size grants heavy damage resistance against the next attack,
 	damaging and knocking back nearby enemies.
+	'''
+SetBonusues.Drifwood:
+	'''
+	Allows the wearer to float on water
+	Increased fishing power
 	'''

@@ -184,6 +184,7 @@ public class Gar : ModNPC
 				if (RestTimer > 60 * 60)
 				{
 					RestTimer = 0;
+					Resting = 0;
 				}
 			}
 			else

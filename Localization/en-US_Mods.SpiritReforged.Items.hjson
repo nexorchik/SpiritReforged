@@ -310,10 +310,84 @@ DiverLegs: {
 
 SailorCap: {
 	DisplayName: Sailor Cap
-	Tooltip: ""
+	Tooltip: "'All aboard!'"
 }
 
 SteamedMussels: {
 	DisplayName: Steamed Mussels
+	Tooltip:
+		'''
+		Minor improvements to all stats
+		'Fresh and delightful'
+		'''
+}
+
+JellyCandle: {
+	DisplayName: Jelly Candle
+	Tooltip: Summons a floating jellyfish to follow you around
+}
+
+Driftwood1Item: {
+	DisplayName: Small Driftwood
+	Tooltip: "'Aesthetically pleasing'"
+}
+
+Driftwood2Item: {
+	DisplayName: Medium Driftwood
+	Tooltip: "'Aesthetically pleasing'"
+}
+
+Driftwood3Item: {
+	DisplayName: Large Driftwood
+	Tooltip: "'Aesthetically pleasing'"
+}
+
+DriftwoodChestplate: {
+	DisplayName: Driftwood Chestplate
+	Tooltip: ""
+}
+
+DriftwoodHelmet: {
+	DisplayName: Driftwood Helmet
+	Tooltip: ""
+}
+
+DriftwoodLeggings: {
+	DisplayName: Driftwood Leggings
+	Tooltip: ""
+}
+
+DriftwoodChairItem: {
+	DisplayName: Driftwood Chair Item
+	Tooltip: ""
+}
+
+DriftwoodDoorItem: {
+	DisplayName: Driftwood Door
+	Tooltip: ""
+}
+
+DriftwoodPlatformItem: {
+	DisplayName: Driftwood Platform
+	Tooltip: ""
+}
+
+DriftwoodSword: {
+	DisplayName: Driftwood Sword
+	Tooltip: ""
+}
+
+DriftwoodTableItem: {
+	DisplayName: Driftwood Table
+	Tooltip: ""
+}
+
+DriftwoodWallItem: {
+	DisplayName: Driftwood Wall
+	Tooltip: ""
+}
+
+DriftwoodWorkbenchItem: {
+	DisplayName: Driftwood Workbench
 	Tooltip: ""
 }

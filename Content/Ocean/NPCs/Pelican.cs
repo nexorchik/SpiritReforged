@@ -4,7 +4,7 @@ using Terraria.Utilities;
 using Terraria.UI;
 using System.IO;
 using SpiritReforged.Content.Ocean.Items;
-using SpiritReforged.Content.Ocean.Tiles;
+using SpiritReforged.Content.Ocean.Items.Driftwood;
 
 namespace SpiritReforged.Content.Ocean.NPCs;
 

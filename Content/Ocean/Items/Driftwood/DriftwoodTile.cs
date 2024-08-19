@@ -1,6 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 
-namespace SpiritReforged.Content.Ocean.Tiles;
+namespace SpiritReforged.Content.Ocean.Items.Driftwood;
 
 public class DriftwoodTileItem : FloatingItem
 {
@@ -18,9 +18,9 @@ public class DriftwoodTileItem : FloatingItem
 
 	public override void AddRecipes()
 	{
-		//Recipe recipe = CreateRecipe();
-		//recipe.AddIngredient(ModContent.ItemType<DriftwoodPlatformItem>(), 2);
-		//recipe.Register();
+		Recipe recipe = CreateRecipe();
+		recipe.AddIngredient(ModContent.ItemType<DriftwoodPlatformItem>(), 2);
+		recipe.Register();
 	}
 }
 
