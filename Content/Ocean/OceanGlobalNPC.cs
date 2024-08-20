@@ -7,6 +7,7 @@ internal class OceanGlobalNPC : GlobalNPC
 	public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
 	{
 		//assumedly will add more here
-		npcLoot.AddCommon(ModContent.ItemType<JellyCandle>(), 50);
+		if (npc.type == NPCID.PinkJellyfish)
+			npcLoot.AddCommon(ModContent.ItemType<JellyCandle>(), 50);
 	}
 }
