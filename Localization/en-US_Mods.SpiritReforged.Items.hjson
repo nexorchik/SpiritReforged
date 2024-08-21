@@ -391,3 +391,8 @@ DriftwoodWorkbenchItem: {
 	DisplayName: Driftwood Workbench
 	Tooltip: ""
 }
+
+FloatingDriftwood: {
+	DisplayName: Floating Driftwood
+	Tooltip: ""
+}
