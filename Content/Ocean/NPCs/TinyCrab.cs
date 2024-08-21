@@ -20,10 +20,13 @@ public class TinyCrab : ModNPC
 		NPC.knockBackResist = .45f;
 		NPC.aiStyle = 67;
 		NPC.npcSlots = 0;
+		NPC.alpha = 255;
 		AIType = NPCID.Bunny;
 	}
 
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Ocean");
+
+	public override void AI() => NPC.alpha = Math.Max(NPC.alpha - 5, 0); //Fade in
 
 	public override void FindFrame(int frameHeight)
 	{

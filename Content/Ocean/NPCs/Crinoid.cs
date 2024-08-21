@@ -22,10 +22,9 @@ public class Crinoid : ModNPC
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = 0f;
-		NPC.aiStyle = 0;
+		NPC.aiStyle = -1;
 		NPC.npcSlots = 0;
 		NPC.alpha = 255;
-
 		AIType = NPCID.WebbedStylist;
 	}
 
