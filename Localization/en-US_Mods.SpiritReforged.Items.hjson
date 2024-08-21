@@ -396,3 +396,8 @@ FloatingDriftwood: {
 	DisplayName: Floating Driftwood
 	Tooltip: ""
 }
+
+FishCrate: {
+	DisplayName: Packing Crate
+	Tooltip: ""
+}
