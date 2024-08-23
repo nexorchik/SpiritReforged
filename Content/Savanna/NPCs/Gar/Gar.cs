@@ -46,6 +46,13 @@ public class Gar : ModNPC
 	int pickedType;
 	public override void AI()
 	{
+		if (!hasPicked)
+		{
+			NPC.scale = Main.rand.NextFloat(.7f, 1f);
+			pickedType = Main.rand.Next(0, 2);
+			hasPicked = true;
+		}
+
 		Player target = Main.player[NPC.target];
 		RestTimer++;
 		if (NPC.wet) //swimming AI (adapted from vanilla)
@@ -54,6 +61,7 @@ public class Gar : ModNPC
 			{
 				NPC.rotation *= .9f;
 			}
+
 			if (NPC.direction == 0)
 			{
 				NPC.TargetClosest();
@@ -294,6 +302,7 @@ public class Gar : ModNPC
 		{
 			frameTimer = Math.Abs(.18f * NPC.velocity.X);
 		}
+
 		NPC.frameCounter += frameTimer;
 		NPC.frameCounter %= Main.npcFrameCount[NPC.type];
 		int frame = (int)NPC.frameCounter;
