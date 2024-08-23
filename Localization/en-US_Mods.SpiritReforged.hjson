@@ -102,6 +102,11 @@ Buffs: {
 		DisplayName: Jellyfish Buff
 		Description: This energetic jellyfish loves following you around!
 	}
+
+	BottleMountBuff: {
+		DisplayName: Raft
+		Description: Sending out an SOS
+	}
 }
 
 SetBonuses.Cascade:

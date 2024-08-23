@@ -401,3 +401,21 @@ FishCrate: {
 	DisplayName: Packing Crate
 	Tooltip: ""
 }
+
+Ambergris: {
+	DisplayName: Ambergris
+	Tooltip:
+		'''
+		'Highly valuable'
+		'You don't want to know where this came from'
+		'''
+}
+
+MessageBottle: {
+	DisplayName: Message in a Bottle
+	Tooltip:
+		'''
+		Summons a raft mount
+		Increased fishing power while on the raft
+		'''
+}
