@@ -285,7 +285,7 @@ public class OceanGeneration : ModSystem
 
 		bool success = PlaceChest(chest.X, chest.Y - 1, ModContent.TileType<OceanPirateChest>(), 
 			[
-				//(side == 0 ? ModContent.ItemType<LadyLuck>() : ModContent.ItemType<DuelistLegacy>(), 1)
+				(side == 0 ? ItemID.PirateStaff : ItemID.CoinGun, 1)
 			], 
 			[   
 				(ItemID.GoldCoin, WorldGen.genRand.Next(12, 30)), (ItemID.Diamond, WorldGen.genRand.Next(12, 30)), (ItemID.GoldCrown, 1), (ItemID.GoldDust, WorldGen.genRand.Next(1, 3)),
