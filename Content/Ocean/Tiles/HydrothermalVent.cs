@@ -1,9 +1,29 @@
-﻿using Terraria.DataStructures;
+﻿using System.IO;
+using System.Linq;
+using Terraria.DataStructures;
+using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Ocean.Tiles;
 
 public abstract class HydrothermalVent : ModTile
 {
+	public override void Load() => On_WorldGen.PlaceObject += OnPlaceObject; //Automatically register points during worldgen
+
+	private bool OnPlaceObject(On_WorldGen.orig_PlaceObject orig, int x, int y, int type, bool mute, int style, int alternate, int random, int direction)
+	{
+		bool placed = orig(x, y, type, mute, style, alternate, random, direction);
+
+		if (placed && (type == ModContent.TileType<HydrothermalVent1x2>() || type == ModContent.TileType<HydrothermalVent1x3>()))
+		{
+			var tile = Main.tile[x, y];
+			y -= tile.TileFrameY / 18; //Select the topmost tile
+
+			VentSystem.VentPoints.Add(new Point16(x, y));
+		}
+
+		return placed;
+	}
+
 	public sealed override void SetStaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
@@ -49,7 +69,6 @@ public abstract class HydrothermalVent : ModTile
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
-		var config = ModContent.GetInstance<Common.ConfigurationCommon.ReforgedServerConfig>();
 		Tile t = Framing.GetTileSafely(i, j);
 
 		if (t.TileFrameY != 0)
@@ -70,13 +89,6 @@ public abstract class HydrothermalVent : ModTile
 			dust.noLightEmittence = true;
 		}
 		#endregion
-
-		if (config.VentCritters && t.LiquidAmount > 155)
-		{
-			SpawnCritter<NPCs.TinyCrab>(i, j, 1100);
-			SpawnCritter<NPCs.Crinoid>(i, j, 1350);
-			SpawnCritter<NPCs.TubeWorm>(i, j, 1200);
-		}
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
@@ -88,38 +100,32 @@ public abstract class HydrothermalVent : ModTile
 			(r, g, b) = (0.45f, 0.2f, 0);
 	}
 
-	internal static void SpawnCritter<T>(int i, int j, int denominator) where T : ModNPC
+	public override void PlaceInWorld(int i, int j, Item item)
 	{
-		static Point GetRelativeSpawn(int i, int j, int tileRange = 5)
-		{
-			i += Main.rand.Next(-tileRange, tileRange);
-			for (int a = 0; a < 10; a++)
-			{
-				var on = Framing.GetTileSafely(i, j);
-				var below = Framing.GetTileSafely(i, j + 1);
+		var tile = Main.tile[i, j];
+		j -= tile.TileFrameY / 18; //Select the topmost tile
 
-				if (on.HasTile && Main.tileSolid[on.TileType])
-					j--;
-				else if (!below.HasTile || !Main.tileSolid[below.TileType])
-					j++;
-				else
-					break;
-			}
-
-			return (new Point(i, j).ToVector2() * 16).ToPoint();
-		}
-
-		int npcIndex = -1;
-		int type = ModContent.NPCType<T>();
-
-		var pos = GetRelativeSpawn(i, j);
-		if (Main.rand.NextBool(denominator) && NPC.MechSpawn(pos.X, pos.Y, type) && NPC.CountNPCS(type) < 10)
-			npcIndex = NPC.NewNPC(new EntitySource_TileUpdate(i, j), pos.X, pos.Y, type);
-
-		if (npcIndex >= 0)
-		{
-			Main.npc[npcIndex].value = 0f;
-			Main.npc[npcIndex].npcSlots = 0f;
-		}
+		VentSystem.VentPoints.Add(new Point16(i, j)); //Needs syncing
 	}
+
+	public override void KillMultiTile(int i, int j, int frameX, int frameY) => VentSystem.VentPoints.Remove(new Point16(i, j));
+}
+
+public class VentSystem : ModSystem
+{
+	internal static HashSet<Point16> VentPoints = new();
+
+	/// <summary> Returns all points inside a horizontal boundary around player, used for NPC spawning. </summary>
+	public static List<Point16> GetValidPoints(Player player)
+	{
+		int spawnRange = (int)((double)(NPC.sWidth / 16) * 0.7);
+		int safeRange = (int)((double)(NPC.sWidth / 16) * 0.52);
+		int posX = (int)(player.Center.X / 16);
+
+		return VentPoints.Where(x => Math.Abs(posX - x.X) < spawnRange && Math.Abs(posX - x.X) > safeRange).ToList();
+	}
+
+	public override void SaveWorldData(TagCompound tag) => tag[nameof(VentPoints)] = VentPoints.ToList();
+
+	public override void LoadWorldData(TagCompound tag) => VentPoints = new HashSet<Point16>(tag.GetList<Point16>(nameof(VentPoints)));
 }
