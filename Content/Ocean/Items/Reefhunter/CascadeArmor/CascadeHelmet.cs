@@ -1,4 +1,6 @@
-namespace SpiritReforged.Content.Ocean.Items.CascadeArmor;
+using SpiritReforged.Content.Ocean.Items.Reefhunter;
+
+namespace SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 
 [AutoloadEquip(EquipType.Head)]
 public class CascadeHelmet : ModItem
@@ -25,7 +27,7 @@ public class CascadeHelmet : ModItem
 	public override void AddRecipes()
 	{
 		var recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<DeepCascadeShard>(), 12);
+		recipe.AddIngredient(ModContent.ItemType<SulfurDeposit>(), 12);
 		recipe.AddTile(TileID.WorkBenches);
 		recipe.Register();
 	}

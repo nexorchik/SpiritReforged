@@ -1,6 +1,6 @@
 ﻿using Terraria.Audio;
 
-namespace SpiritReforged.Content.Ocean.Items.CascadeArmor;
+namespace SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 
 public class CascadeArmorPlayer : ModPlayer
 {

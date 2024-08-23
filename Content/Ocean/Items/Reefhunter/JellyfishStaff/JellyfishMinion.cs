@@ -3,7 +3,7 @@ using Terraria.Graphics.Shaders;
 using System.Linq;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Ocean.Items.JellyfishStaff;
+namespace SpiritReforged.Content.Ocean.Items.Reefhunter.JellyfishStaff;
 
 [Common.Misc.AutoloadMinionBuff()]
 public class JellyfishMinion : Common.ProjectileCommon.BaseMinion

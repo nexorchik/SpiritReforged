@@ -1,4 +1,4 @@
-﻿namespace SpiritReforged.Content.Ocean.Items.MantarayHuntingHarpoon;
+﻿namespace SpiritReforged.Content.Ocean.Items.Reefhunter.MantarayHuntingHarpoon;
 
 public class MantarayBuff : ModBuff
 {

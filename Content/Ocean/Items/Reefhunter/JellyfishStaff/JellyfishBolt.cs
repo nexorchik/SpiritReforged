@@ -1,7 +1,7 @@
 ﻿using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 
-namespace SpiritReforged.Content.Ocean.Items.JellyfishStaff;
+namespace SpiritReforged.Content.Ocean.Items.Reefhunter.JellyfishStaff;
 
 public class JellyfishBolt : ModProjectile
 {

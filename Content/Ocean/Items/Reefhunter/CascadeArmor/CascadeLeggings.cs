@@ -1,4 +1,6 @@
-namespace SpiritReforged.Content.Ocean.Items.CascadeArmor;
+using SpiritReforged.Content.Ocean.Items.Reefhunter;
+
+namespace SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 
 [AutoloadEquip(EquipType.Legs)]
 public class CascadeLeggings : ModItem
@@ -21,7 +23,7 @@ public class CascadeLeggings : ModItem
 	public override void AddRecipes()
 	{
 		var recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<DeepCascadeShard>(), 10);
+		recipe.AddIngredient(ModContent.ItemType<SulfurDeposit>(), 10);
 		recipe.AddTile(TileID.Anvils);
 		recipe.Register();
 	}
