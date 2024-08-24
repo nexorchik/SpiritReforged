@@ -33,4 +33,13 @@ public class SpiritReforgedMod : Mod
 		NPCUtils.NPCUtils.UnloadBestiaryHelper();
 		Common.Misc.AutoloadMinionDictionary.Unload();
 	}
+
+	public ModPacket GetPacket(Common.Misc.ReforgedMultiplayer.MessageType type, int capacity)
+	{
+		ModPacket packet = GetPacket(capacity + 1);
+		packet.Write((byte)type);
+		return packet;
+	}
+
+	public override void HandlePacket(System.IO.BinaryReader reader, int whoAmI) => Common.Misc.ReforgedMultiplayer.HandlePacket(reader, whoAmI);
 }

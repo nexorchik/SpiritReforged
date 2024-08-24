@@ -105,7 +105,15 @@ public abstract class HydrothermalVent : ModTile
 		var tile = Main.tile[i, j];
 		j -= tile.TileFrameY / 18; //Select the topmost tile
 
-		VentSystem.VentPoints.Add(new Point16(i, j)); //Needs syncing
+		VentSystem.VentPoints.Add(new Point16(i, j));
+
+		if (Main.netMode != NetmodeID.SinglePlayer)
+		{
+			ModPacket packet = SpiritReforgedMod.Instance.GetPacket(Common.Misc.ReforgedMultiplayer.MessageType.SendVentPoint, 2);
+			packet.Write(i);
+			packet.Write(j);
+			packet.Send(); //Send to server
+		}
 	}
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY) => VentSystem.VentPoints.Remove(new Point16(i, j));
@@ -128,4 +136,32 @@ public class VentSystem : ModSystem
 	public override void SaveWorldData(TagCompound tag) => tag[nameof(VentPoints)] = VentPoints.ToList();
 
 	public override void LoadWorldData(TagCompound tag) => VentPoints = new HashSet<Point16>(tag.GetList<Point16>(nameof(VentPoints)));
+
+	public override void NetSend(BinaryWriter writer)
+	{
+		static void WritePoint16(BinaryWriter writer, Point16 point)
+		{
+			writer.Write(point.X);
+			writer.Write(point.Y);
+		}
+
+		var points = VentPoints.ToList();
+		int count = points.Count;
+
+		writer.Write(count);
+
+		for (int i = 0; i < count; i++)
+			WritePoint16(writer, points[i]);
+	}
+
+	public override void NetReceive(BinaryReader reader)
+	{
+		int count = reader.ReadInt32();
+
+		for (int i = 0; i < count; i++)
+		{
+			var point = new Point16(reader.ReadInt16(), reader.ReadInt16());
+			VentPoints.Add(point);
+		}
+	}
 }
