@@ -18,9 +18,9 @@ public class MessageBottleMount : ModMount
 		MountData.swimSpeed = 3;
 		MountData.jumpSpeed = 0;
 		MountData.blockExtraJumps = true;
-		MountData.totalFrames = 1;
+		MountData.totalFrames = 4;
 		MountData.constantJump = true;
-		MountData.playerYOffsets = new int[] { 12 };
+		MountData.playerYOffsets = [12, 12, 12, 12];
 		MountData.yOffset = 5;
 		MountData.xOffset = -15;
 		MountData.playerHeadOffset = 22;
@@ -34,7 +34,7 @@ public class MessageBottleMount : ModMount
 		MountData.idleFrameDelay = 12;
 		MountData.idleFrameStart = 0;
 		MountData.idleFrameLoop = true;
-		
+
 		if (Main.netMode != NetmodeID.Server)
 		{
 			MountData.textureWidth = MountData.frontTexture.Width();
@@ -67,6 +67,25 @@ public class MessageBottleMount : ModMount
 
 			player.fishingSkill += 10;
 			wetCounter = 15;
+
+			#region visuals
+			float sin = (float)Math.Sin(Main.timeForVisualEffects / 10f);
+
+			if (Main.rand.NextBool(2) && sin > 0)
+			{
+				var dust = Dust.NewDustDirect(player.Bottom - new Vector2((player.direction == 1) ? 40 : 20, 0), 58, 0, DustID.BreatheBubble, Alpha: 150, Scale: Main.rand.NextFloat(1f, 2f));
+				dust.noGravity = true;
+			}
+
+			if (Math.Abs(player.velocity.X) > 2)
+			{
+				var dust = Dust.NewDustDirect(player.Bottom - new Vector2((player.direction == 1) ? 40 : 20, 0), 58, 0, DustID.BubbleBurst_Blue, Scale: Main.rand.NextFloat());
+				dust.velocity = new Vector2(-.1f * player.velocity.X, -2).RotatedByRandom(1);
+			}
+
+			player.velocity.Y += sin * .25f; //Bob
+			player.fullRotation = player.velocity.X * 0.005f * sin;
+			#endregion
 		}
 		else 
 		{
@@ -88,5 +107,18 @@ public class MessageBottleMount : ModMount
 					MountData.runSpeed = 7;
 			}
 		}
+	}
+
+	public override bool UpdateFrame(Player mountedPlayer, int state, Vector2 velocity)
+	{
+		float mult = MathHelper.Clamp(Math.Abs(mountedPlayer.velocity.X / 3f), 0, 1);
+
+		if (mult < .1f)
+			mountedPlayer.mount._frameCounter = 0;
+
+		mountedPlayer.mount._frameCounter += 0.2f * mult;
+		mountedPlayer.mount._frame = (int)(mountedPlayer.mount._frameCounter %= 4);
+
+		return false;
 	}
 }

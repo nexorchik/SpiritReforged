@@ -6,12 +6,6 @@ public class MessageBottle : Common.ItemCommon.FloatingItem
 	public override float Weight => base.Weight * 0.9f;
 	public override float Bouyancy => base.Bouyancy * 1.08f;
 
-	public override void SetStaticDefaults()
-	{
-		// DisplayName.SetDefault("Message in a Bottle");
-		// Tooltip.SetDefault("Summons a raft mount\nIncreased fishing power while on the raft");
-	}
-
 	public override void SetDefaults()
 	{
 		Item.width = 22;
