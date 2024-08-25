@@ -49,6 +49,7 @@ public class OceanSlime : ModNPC
 		{
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Coconut3").Type, Main.rand.NextFloat(.4f, .7f));
 		}
+
 		if (Main.rand.NextBool(16))
 		{
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, 386, Main.rand.NextFloat(.4f, .7f));
