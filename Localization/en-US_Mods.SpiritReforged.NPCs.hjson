@@ -53,3 +53,8 @@ Killifish: {
 	DisplayName: Killifish
 	Entry: ""
 }
+
+GoldKillifish: {
+	DisplayName: Gold Killifish
+	Entry: ""
+}

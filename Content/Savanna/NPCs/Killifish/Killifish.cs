@@ -35,6 +35,7 @@ public class Killifish : ModNPC
 		NPC.npcSlots = 0;
 		NPC.dontCountMe = true;
 		NPC.friendly = true;
+		NPC.dontTakeDamage = false;
 	}
 
 	public override void SetBestiary(BestiaryDatabase dataNPC, BestiaryEntry bestiaryEntry)
@@ -302,7 +303,6 @@ public class Killifish : ModNPC
 		writer.Write(pickedType);
 		writer.Write(hasPicked);
 	}
-
 	public override void ReceiveExtraAI(BinaryReader reader)
 	{
 		pickedType = reader.ReadInt32();
@@ -330,13 +330,13 @@ public class Killifish : ModNPC
 
 			if (pickedType == 0)
 			{
-				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore1").Type, 1f);
-				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore2").Type, Main.rand.NextFloat(.5f, .7f));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("KillifishGore1").Type, 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("KillifishGore2").Type, Main.rand.NextFloat(.5f, .7f));
 			}
 			else
 			{
-				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore3").Type, 1f);
-				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore4").Type, Main.rand.NextFloat(.5f, .7f));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("KillifishGore3").Type, 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("KillifishGore4").Type, Main.rand.NextFloat(.5f, .7f));
 			}
 		}
 	}

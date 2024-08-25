@@ -35,7 +35,6 @@ public class Gar : ModNPC
 		NPC.noGravity = true;
 		NPC.npcSlots = 0;
 		NPC.dontCountMe = true;
-		NPC.friendly = true;
 	}
 
 	public override void SetBestiary(BestiaryDatabase dataNPC, BestiaryEntry bestiaryEntry)
@@ -103,7 +102,7 @@ public class Gar : ModNPC
 			//Predation: seeks out Killifish to kill
 			foreach (var otherNPC in Main.ActiveNPCs)
 			{
-				if (otherNPC.type == ModContent.NPCType<Killifish.Killifish>())
+				if (otherNPC.type == ModContent.NPCType<Killifish.Killifish>() || otherNPC.type == ModContent.NPCType<Killifish.GoldKillifish>())
 				{
 					if (NPC.DistanceSQ(otherNPC.Center) < 100 * 65 && otherNPC.wet)
 					{
@@ -128,12 +127,13 @@ public class Gar : ModNPC
 						Resting = 0;
 						break;
 					}
+					else
+					{
+						//reset friendliness otherwise
+						NPC.damage = 0;
+					}
 				}
 			}
-
-			//reset friendliness otherwise
-			NPC.friendly = true;
-			NPC.damage = 0;
 
 			// switch directions if colliding
 			if (NPC.collideX)
