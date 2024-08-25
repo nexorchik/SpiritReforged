@@ -112,7 +112,7 @@ public abstract class BaseMinion(float TargettingRange, float DeaggroRange, Vect
 			UpdateFrame(framespersecond, startframe, endframe);
 	}
 
-	private static bool CanHit(Vector2 center1, Vector2 center2) => Collision.CanHit(center1, 0, 0, center2, 0, 0);
+	internal static bool CanHit(Vector2 center1, Vector2 center2) => Collision.CanHit(center1, 0, 0, center2, 0, 0);
 
 	public virtual void IdleMovement(Player player) { }
 
