@@ -8,6 +8,7 @@ Tiles: {
 	Driftwood1Tile.MapEntry: Small Driftwood
 	Driftwood2Tile.MapEntry: Medium Driftwood
 	Driftwood3Tile.MapEntry: Large Driftwood
+	CloudstalkTile.MapEntry: Cloudstalk
 }
 
 Projectiles: {
@@ -101,6 +102,16 @@ Buffs: {
 	JellyfishBuff: {
 		DisplayName: Jellyfish Buff
 		Description: This energetic jellyfish loves following you around!
+	}
+
+	DoubleJumpPotionBuff: {
+		DisplayName: Aether Jump
+		Description: Temporarily grants an additional jump
+	}
+
+	FlightPotionBuff: {
+		DisplayName: Soaring
+		Description: Increases flight duration by 25%
 	}
 }
 

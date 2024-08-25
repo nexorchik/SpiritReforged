@@ -391,3 +391,28 @@ DriftwoodWorkbenchItem: {
 	DisplayName: Driftwood Workbench
 	Tooltip: ""
 }
+
+Cloudstalk: {
+	DisplayName: Cloudstalk
+	Tooltip: ""
+}
+
+CloudstalkSeed: {
+	DisplayName: Cloudstalk Seed
+	Tooltip: ""
+}
+
+DoubleJumpPotion: {
+	DisplayName: Zephyr Potion
+	Tooltip: Temporarily grants a double jump
+}
+
+FlightPotion: {
+	DisplayName: Soaring Potion
+	Tooltip: Increases the duration of flight by 25%
+}
+
+HangingCloudstalk: {
+	DisplayName: Hanging Cloudstalk
+	Tooltip: ""
+}
