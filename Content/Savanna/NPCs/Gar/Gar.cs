@@ -1,5 +1,6 @@
 using SpiritReforged.Content.Vanilla.Items.Food;
 using System.IO;
+using Terraria;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Gar;
@@ -10,8 +11,8 @@ public class Gar : ModNPC
 {
 	private ref float YMovement => ref NPC.ai[0]; // Y Movement (adapted from vanilla)
 	private ref float Proximity => ref NPC.ai[1]; // Player proximity 
-	private ref float Resting => ref NPC.ai[2]; // Player proximity;
-	private ref float RestTimer => ref NPC.ai[3]; // Player proximity 
+	private ref float Resting => ref NPC.ai[2]; // Resting check;
+	private ref float RestTimer => ref NPC.ai[3]; // Loop through resting phase
 
 	public override void SetStaticDefaults()
 	{
@@ -22,8 +23,8 @@ public class Gar : ModNPC
 
 	public override void SetDefaults()
 	{
-		NPC.width = 80;
-		NPC.height = 28;
+		NPC.width = 40;
+		NPC.height = 22;
 		NPC.damage = 0;
 		NPC.defense = 0;
 		NPC.lifeMax = 5;
@@ -46,14 +47,22 @@ public class Gar : ModNPC
 	int pickedType;
 	public override void AI()
 	{
+		if (!hasPicked)
+		{
+			NPC.scale = Main.rand.NextFloat(.9f, 1f);
+			pickedType = Main.rand.Next(0, 2);
+			hasPicked = true;
+		}
+
 		Player target = Main.player[NPC.target];
 		RestTimer++;
 		if (NPC.wet) //swimming AI (adapted from vanilla)
 		{
-			if (NPC.rotation >= 0f)
+			if (NPC.rotation != 0f)
 			{
 				NPC.rotation *= .9f;
 			}
+
 			if (NPC.direction == 0)
 			{
 				NPC.TargetClosest();
@@ -87,6 +96,42 @@ public class Gar : ModNPC
 				{
 					NPC.direction = 1;
 					NPC.velocity.X = Math.Abs(NPC.velocity.X);
+				}
+			}
+
+			//Predation: seeks out Killifish to kill
+			foreach (var otherNPC in Main.ActiveNPCs)
+			{
+				if (otherNPC.type == ModContent.NPCType<Killifish.Killifish>() || otherNPC.type == ModContent.NPCType<Killifish.GoldKillifish>())
+				{
+					if (NPC.DistanceSQ(otherNPC.Center) < 100 * 65 && otherNPC.wet)
+					{
+						Vector2 vel = NPC.DirectionTo(otherNPC.Center) * 3f;
+						NPC.velocity = vel;
+						NPC.rotation = MathHelper.WrapAngle((float)Math.Atan2(NPC.velocity.Y, NPC.velocity.X) + (NPC.velocity.X < 0 ? MathHelper.Pi : 0));
+						NPC.friendly = false;
+						NPC.damage = 1;
+						if (NPC.velocity.X <= 0)
+						{
+							NPC.spriteDirection = -1;
+							NPC.direction = -1;
+							NPC.netUpdate = true;
+						}
+						else if (NPC.velocity.X > 0)
+						{
+							NPC.spriteDirection = 1;
+							NPC.direction = 1;
+							NPC.netUpdate = true;
+						}
+
+						Resting = 0;
+						break;
+					}
+					else
+					{
+						//reset friendliness otherwise
+						NPC.damage = 0;
+					}
 				}
 			}
 
@@ -294,6 +339,7 @@ public class Gar : ModNPC
 		{
 			frameTimer = Math.Abs(.18f * NPC.velocity.X);
 		}
+
 		NPC.frameCounter += frameTimer;
 		NPC.frameCounter %= Main.npcFrameCount[NPC.type];
 		int frame = (int)NPC.frameCounter;

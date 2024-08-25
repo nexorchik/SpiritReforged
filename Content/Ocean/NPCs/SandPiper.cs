@@ -300,5 +300,11 @@ public class SandPiper : ModNPC
 		}
 	}
 
-	public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.ZoneBeach && Main.dayTime ? spawnInfo.PlayerInTown ? 2f : 1f : 0;
+	public override float SpawnChance(NPCSpawnInfo spawnInfo)
+	{
+		if (spawnInfo.Player.ZoneBeach && Main.dayTime && !spawnInfo.Water)
+			return spawnInfo.PlayerInTown ? 2 : 1;
+
+		return 0;
+	}
 }

@@ -48,3 +48,13 @@ OceanSlime: {
 DiverZombie.Entry: Who knew those oxygen tanks needed to have actual oxygen in them?
 KelpZombie.Entry: Fish fear me, women fear me, men fear me, children fear me, for I am the undead.
 SailorZombie.Entry: Despite their current status, they used to run this really nice luxury cruiser you should check out sometime.
+
+Killifish: {
+	DisplayName: Killifish
+	Entry: ""
+}
+
+GoldKillifish: {
+	DisplayName: Gold Killifish
+	Entry: ""
+}
