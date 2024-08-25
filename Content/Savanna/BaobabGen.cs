@@ -1,6 +1,7 @@
 ﻿using PathOfTerraria.Common.World.Generation;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Savanna.Tiles;
+using System.Linq;
 
 namespace SpiritReforged.Content.Savanna;
 
@@ -16,38 +17,59 @@ internal static class BaobabGen
 
 	private static void CreateBranches(int minX, int maxX, int y, int height)
 	{
-		const float Repeats = 3f;
+		float repeats = WorldGen.genRand.Next(3, 6);
+		int center = (int)((minX + maxX) / 2f);
 
 		y -= height - 2;
 
-		for (int i = 0; i < Repeats; ++i)
+		for (int i = 0; i < repeats; ++i)
 		{
-			int x = (int)MathHelper.Lerp(minX, maxX, i / (Repeats - 1));
-			float xOff = WorldGen.genRand.NextFloat(0.5f, 3f) * (WorldGen.genRand.NextBool() ? -1 : 1);
+			float factor = i / (repeats - 1f);
+			int x = (int)MathHelper.Lerp(minX, maxX, factor);
+			float xOff = MathHelper.Lerp(-3, 3, factor);
 
-			var points = Spline.CreateSpline([new Vector2(x, y),
-				new Vector2(x + xOff, y - WorldGen.genRand.NextFloat(1, 3)),
-				new Vector2(x + xOff * 1.5f, y - WorldGen.genRand.NextFloat(3, 6))], 4);
-			PointToPointRunner.SingleTile(new(points), PointToPointRunner.PlaceTileClearSlope(ModContent.TileType<LivingBaobab>(), true));
-			PointToPointRunner.SingleTile(new(points), (ref Vector2 position, ref Vector2 direction) =>
-			{
-				WorldGen.TileRunner((int)position.X, (int)position.Y, 4, 3, ModContent.TileType<LivingBaobabLeaf>(), true, 0, 0, true, false);
-				WorldGen.SquareTileFrame((int)position.X, (int)position.Y);
-			});
+			var points = GetBranchPositions(x, y, x > center ? -1 : 1, WorldGen.genRand.Next(1, 3), false);
+			PointToPointRunner.SingleTile(new(points), PointToPointRunner.PlaceTileClearSlope(ModContent.TileType<LivingBaobab>(), true), false);
+
+			Vector2 position = points.Last();
+			WorldGen.TileRunner((int)position.X, (int)position.Y, 4, 3, ModContent.TileType<LivingBaobabLeaf>(), true, 0, 0, true, false);
+			WorldGen.SquareTileFrame((int)position.X, (int)position.Y);
 		}
+	}
+
+	private static Vector2[] GetBranchPositions(int x, int y, int dir, int size, bool down)
+	{
+		Point current = new Point(x, y);
+		List<Vector2> points = [current.ToVector2()];
+		bool hori = WorldGen.genRand.NextBool();
+		int vDir = down ? 1 : -1;
+
+		for (int i = 0; i < size; ++i)
+		{
+			if (hori)
+				current.X += WorldGen.genRand.Next(1, 3) * dir;
+			else
+				current.Y += WorldGen.genRand.Next(2, 5) * vDir;
+
+			hori = !hori;
+			points.Add(current.ToVector2());
+		}
+
+		return [.. points];
 	}
 
 	private static void CreateRoots(int minX, int maxX, int y)
 	{
-		const float Repeats = 8f;
+		const float Repeats = 6f;
+
+		int center = (int)((minX + maxX) / 2f);
 
 		for (int i = 0; i < Repeats; ++i)
 		{
 			int x = (int)MathHelper.Lerp(minX, maxX, i / (Repeats - 1));
+			int size = 4 - (int)Math.Abs(i - Repeats / 2);
 
-			var points = Spline.CreateSpline([new Vector2(x, y),
-				new Vector2(x + WorldGen.genRand.NextFloat(-2, 2), y + WorldGen.genRand.NextFloat(1, 4)),
-				new Vector2(x + WorldGen.genRand.NextFloat(-6, 6), y + WorldGen.genRand.NextFloat(4, 9))], 8);
+			var points = Spline.CreateSpline(GetBranchPositions(x, y, x < center ? -1 : 1, size, true), 8);
 			PointToPointRunner.SingleTile(new(points), PointToPointRunner.PlaceTileClearSlope(ModContent.TileType<LivingBaobab>(), true));
 		}
 	}

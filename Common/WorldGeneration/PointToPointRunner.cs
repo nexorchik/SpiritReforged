@@ -4,7 +4,7 @@ internal class PointToPointRunner
 {
 	public delegate void PerPointDelegate(ref Vector2 position, ref Vector2 direction);
 
-	public static void SingleTile(Queue<Vector2> orderedPoints, PerPointDelegate dele)
+	public static void SingleTile(Queue<Vector2> orderedPoints, PerPointDelegate dele, bool perAxis = true)
 	{
 		Vector2 current = orderedPoints.Dequeue();
 		Vector2 next = orderedPoints.Dequeue();
@@ -12,12 +12,22 @@ internal class PointToPointRunner
 		while (true)
 		{
 			Vector2 direction = current.DirectionTo(next);
-			dele(ref current, ref direction);
-			Vector2 offset = direction * MathF.Min(1, current.Distance(next));
-			current.X += offset.X;
-			dele(ref current, ref direction);
-			offset = direction * MathF.Min(1, current.Distance(next));
-			current.Y += offset.Y;
+
+			if (perAxis)
+			{
+				dele(ref current, ref direction);
+				Vector2 offset = direction * MathF.Min(1, current.Distance(next));
+				current.X += offset.X;
+				dele(ref current, ref direction);
+				offset = direction * MathF.Min(1, current.Distance(next));
+				current.Y += offset.Y;
+			}
+			else
+			{
+				dele(ref current, ref direction);
+				Vector2 offset = direction * MathF.Min(1, current.Distance(next));
+				current += offset;
+			}
 
 			if (Vector2.Distance(current, next) < 0.1f)
 			{
