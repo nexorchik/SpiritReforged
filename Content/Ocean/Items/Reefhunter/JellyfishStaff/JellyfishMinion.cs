@@ -17,12 +17,15 @@ public class JellyfishMinion : BaseMinion
 
 	private ref float AiState => ref Projectile.ai[0];
 	private ref float AiTimer => ref Projectile.ai[1];
+	private static Asset<Texture2D> GlowmaskTexture;
 
 	public override void AbstractSetStaticDefaults()
 	{
 		Main.projFrames[Type] = 3;
 		ProjectileID.Sets.TrailCacheLength[Type] = 10;
 		ProjectileID.Sets.TrailingMode[Type] = 2;
+		if (!Main.dedServ)
+			GlowmaskTexture = Mod.Assets.Request<Texture2D>("Content/Ocean/Items/Reefhunter/JellyfishStaff/JellyfishMinion_glow");
 	}
 
 	public override void OnSpawn(IEntitySource source) => IsPink = Main.rand.NextBool(2);
@@ -201,7 +204,7 @@ public class JellyfishMinion : BaseMinion
 
 		void DrawGlowmask(float opacity)
 		{
-			var glowMask = (Texture2D)Mod.Assets.Request<Texture2D>("Content/Ocean/Items/Reefhunter/JellyfishStaff/JellyfishMinion_glow");
+			var glowMask = GlowmaskTexture.Value;
 			Vector2 position = Projectile.Center - Main.screenPosition;
 			for (int j = 0; j < 4; j++)
 			{
