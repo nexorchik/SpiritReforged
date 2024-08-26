@@ -358,7 +358,7 @@ DriftwoodLeggings: {
 }
 
 DriftwoodChairItem: {
-	DisplayName: Driftwood Chair Item
+	DisplayName: Driftwood Chair
 	Tooltip: ""
 }
 
@@ -389,5 +389,42 @@ DriftwoodWallItem: {
 
 DriftwoodWorkbenchItem: {
 	DisplayName: Driftwood Workbench
+	Tooltip: ""
+}
+
+Cloudstalk: {
+	DisplayName: Cloudstalk
+	Tooltip: ""
+}
+
+CloudstalkSeed: {
+	DisplayName: Cloudstalk Seed
+	Tooltip: ""
+}
+
+DoubleJumpPotion: {
+	DisplayName: Zephyr Potion
+	Tooltip: Temporarily grants a double jump
+}
+
+FlightPotion: {
+	DisplayName: Soaring Potion
+	Tooltip: Increases the duration of flight by 25%
+}
+
+HangingCloudstalk: {
+	DisplayName: Hanging Cloudstalk
+	Tooltip: ""
+}
+
+GoldKillifishItem: {
+	DisplayName: Gold Killifish
+	Tooltip: ""
+}
+
+KillifishBannerItem.DisplayName: Killifish Banner Item
+
+KillifishItem: {
+	DisplayName: Killifish
 	Tooltip: ""
 }

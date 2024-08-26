@@ -1,40 +1,44 @@
 using SpiritReforged.Content.Vanilla.Items.Food;
+using System.IO;
 using Terraria.GameContent.Bestiary;
 
-namespace SpiritReforged.Content.Savanna.NPCs.Gar;
+namespace SpiritReforged.Content.Savanna.NPCs.Killifish;
 
 [AutoloadCritter]
-public class GoldGar : ModNPC
+//[AutoloadBanner]
+public class GoldKillifish : ModNPC
 {
 	private ref float YMovement => ref NPC.ai[0]; // Y Movement (adapted from vanilla)
 	private ref float Proximity => ref NPC.ai[1]; // Player proximity 
-	private ref float Resting => ref NPC.ai[2]; // Resting check;
-	private ref float RestTimer => ref NPC.ai[3]; // Loop through resting phase
+	private ref float Turning => ref NPC.ai[2]; // Random turning
+	private ref float TurningTime => ref NPC.ai[3]; // slowdown before turning
+
 	public override void SetStaticDefaults()
 	{
-		Main.npcFrameCount[NPC.type] = 12;
+		Main.npcFrameCount[NPC.type] = 9;
 		Main.npcCatchable[NPC.type] = true;
 		NPCID.Sets.CountsAsCritter[Type] = true;
 	}
 
 	public override void SetDefaults()
 	{
-		NPC.width = 40;
-		NPC.height = 22;
+		NPC.width = 46;
+		NPC.height = 28;
 		NPC.damage = 0;
 		NPC.defense = 0;
 		NPC.lifeMax = 5;
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = .35f;
-		NPC.aiStyle = 16;
+		NPC.aiStyle = -1;
 		NPC.noGravity = true;
 		NPC.npcSlots = 0;
-		AIType = NPCID.Goldfish;
 		NPC.dontCountMe = true;
+		NPC.friendly = true;
+		NPC.dontTakeDamage = false;
 	}
 
-	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+	public override void SetBestiary(BestiaryDatabase dataNPC, BestiaryEntry bestiaryEntry)
 	{
 		bestiaryEntry.UIInfoProvider = new CritterUICollectionInfoProvider(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds[Type]);
 		bestiaryEntry.AddInfo(this, "Ocean");
@@ -52,7 +56,6 @@ public class GoldGar : ModNPC
 		}
 
 		Player target = Main.player[NPC.target];
-		RestTimer++;
 		if (NPC.wet) //swimming AI (adapted from vanilla)
 		{
 			if (NPC.rotation != 0f)
@@ -96,42 +99,45 @@ public class GoldGar : ModNPC
 				}
 			}
 
-			//Predation: seeks out Killifish to kill
-			foreach (var otherNPC in Main.ActiveNPCs)
+			if (Turning == 0)
 			{
-				if (otherNPC.type == ModContent.NPCType<Killifish.Killifish>())
-				{
-					if (NPC.DistanceSQ(otherNPC.Center) < 100 * 65 && otherNPC.wet)
-					{
-						Vector2 vel = NPC.DirectionTo(otherNPC.Center) * 3f;
-						NPC.velocity = vel;
-						NPC.rotation = MathHelper.WrapAngle((float)Math.Atan2(NPC.velocity.Y, NPC.velocity.X) + (NPC.velocity.X < 0 ? MathHelper.Pi : 0));
-						NPC.friendly = false;
-						NPC.damage = 1;
-						if (NPC.velocity.X <= 0)
-						{
-							NPC.spriteDirection = -1;
-							NPC.direction = -1;
-							NPC.netUpdate = true;
-						}
-						else if (NPC.velocity.X > 0)
-						{
-							NPC.spriteDirection = 1;
-							NPC.direction = 1;
-							NPC.netUpdate = true;
-						}
+				NPC.velocity.X += NPC.direction * .12f;
 
-						Resting = 0;
-						break;
-					}
-					else
+				if (NPC.velocity.X < -0.35f || NPC.velocity.X > 0.35f)
+				{
+					NPC.velocity.X *= 0.9f;
+				}
+			}
+			else
+			{
+				NPC.velocity.X *= .96f;
+			}
+
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				if (Turning == 0)
+				{
+					if (Main.rand.NextBool(260))
 					{
-						//reset friendliness otherwise
-						NPC.damage = 0;
+						Turning = 1;
 					}
 				}
 			}
 
+			if (Turning == 1)
+			{
+				TurningTime++;
+				if (TurningTime >= 25)
+				{
+					NPC.velocity.X *= -3.25f;
+					NPC.velocity.Y += Main.rand.NextFloat(0.5f, -0.5f);
+					NPC.direction *= -1;
+					NPC.rotation = NPC.velocity.X * .12f;
+					NPC.netUpdate = true;
+					Turning = 0;
+					TurningTime = 0;
+				}
+			}
 			// switch directions if colliding
 			if (NPC.collideX)
 			{
@@ -156,17 +162,6 @@ public class GoldGar : ModNPC
 					NPC.velocity.Y = Math.Abs(NPC.velocity.Y);
 					NPC.directionY = 1;
 					YMovement = 1f;
-				}
-			}
-
-			// movement
-			if (Resting != 1)
-			{
-				NPC.velocity.X += NPC.direction * (Main.dayTime ? .06f : .1f);
-
-				if (NPC.velocity.X < (Main.dayTime ? -.8f : 1.1f) || NPC.velocity.X > (Main.dayTime ? .8f : 1.1f))
-				{
-					NPC.velocity.X *= 0.95f;
 				}
 			}
 
@@ -207,38 +202,31 @@ public class GoldGar : ModNPC
 				NPC.velocity.Y *= 0.95f;
 			}
 
-			// Gar Resting AI
-			if (Main.dayTime)
+			// Run away from any non killifish npc
+			foreach (var otherNPC in Main.ActiveNPCs)
 			{
-				if (RestTimer > 60 * 20 && RestTimer < 60 * 30)
+				if (otherNPC.type != ModContent.NPCType<GoldKillifish>())
 				{
-					if (Main.rand.NextBool(3))
+					if (NPC.DistanceSQ(otherNPC.Center) < 60 * 65 && otherNPC.wet)
 					{
-						Resting = 1;
-						NPC.netUpdate = true;
-					}
-					else
-					{
-						Resting = 0;
-					}
-				}
+						Vector2 vel = NPC.DirectionFrom(otherNPC.Center) * 6.2f;
+						NPC.velocity = vel;
+						NPC.rotation = MathHelper.WrapAngle((float)Math.Atan2(NPC.velocity.Y, NPC.velocity.X) + (NPC.velocity.X < 0 ? MathHelper.Pi : 0));
+						if (otherNPC.position.X > NPC.position.X)
+						{
+							NPC.spriteDirection = -1;
+							NPC.direction = -1;
+							NPC.netUpdate = true;
+						}
+						else if (otherNPC.position.X <= NPC.position.X)
+						{
+							NPC.spriteDirection = 1;
+							NPC.direction = 1;
+							NPC.netUpdate = true;
+						}
 
-				if (RestTimer > 60 * 60)
-				{
-					RestTimer = 0;
-					Resting = 0;
-				}
-			}
-			else
-			{
-				Resting = 0;
-			}
-
-			if (Resting == 1)
-			{
-				if (NPC.velocity.X != 0)
-				{
-					NPC.velocity.X *= 0.5f;
+						Turning = 0;
+					}
 				}
 			}
 			// check for proximity
@@ -286,9 +274,8 @@ public class GoldGar : ModNPC
 
 			// no running away
 			Proximity = 0;
-			Resting = 0;
 			// floppa velocity
-			if (NPC.velocity.Y == 0f)
+			if (NPC.velocity.Y == 0f) 
 			{
 				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
@@ -306,7 +293,10 @@ public class GoldGar : ModNPC
 			}
 		}
 	}
-
+	public override bool CanHitNPC(NPC target)
+	{
+		return true;
+	}
 	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 	{
 		drawColor = NPC.GetNPCColorTintedByBuffs(drawColor);
@@ -330,8 +320,8 @@ public class GoldGar : ModNPC
 
 		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
 		{
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore5").Type, 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore6").Type, Main.rand.NextFloat(.5f, .7f));
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("KillifishGore5").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("KillifishGore6").Type, Main.rand.NextFloat(.5f, .7f));
 		}
 	}
 	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>();
