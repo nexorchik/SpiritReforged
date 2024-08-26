@@ -1,14 +1,14 @@
 namespace SpiritReforged.Content.Ocean.Items.Driftwood;
 
-public class Driftwood1Item : ModItem
+public class SmallDriftwoodItem : ModItem
 {
-	public override string Texture => base.Texture.Replace("1Item", string.Empty);
+	public override string Texture => base.Texture.Replace("SmallDriftwoodItem", "Driftwood");
 
 	public override void SetStaticDefaults() => Main.RegisterItemAnimation(Type, new Terraria.DataStructures.DrawAnimationVertical(2, 3) { NotActuallyAnimating = true, Frame = 0 });
 
 	public override void SetDefaults()
 	{
-		Item.DefaultToPlaceableTile(ModContent.TileType<Driftwood1Tile>());
+		Item.DefaultToPlaceableTile(ModContent.TileType<SmallDriftwoodTile>());
 		Item.width = 30;
 		Item.height = 18;
 	}
@@ -30,7 +30,7 @@ public class Driftwood1Item : ModItem
 	}
 }
 
-public class Driftwood1Tile : ModTile
+public class SmallDriftwoodTile : ModTile
 {
 	public override void SetStaticDefaults()
 	{
@@ -60,15 +60,15 @@ public class Driftwood1Tile : ModTile
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = 2;
 }
 
-public class Driftwood2Item : ModItem
+public class MediumDriftwoodItem : ModItem
 {
-	public override string Texture => base.Texture.Replace("2Item", string.Empty);
+	public override string Texture => base.Texture.Replace("MediumDriftwoodItem", "Driftwood");
 
 	public override void SetStaticDefaults() => Main.RegisterItemAnimation(Type, new Terraria.DataStructures.DrawAnimationVertical(2, 3) { NotActuallyAnimating = true, Frame = 1 });
 
 	public override void SetDefaults()
 	{
-		Item.DefaultToPlaceableTile(ModContent.TileType<Driftwood2Tile>());
+		Item.DefaultToPlaceableTile(ModContent.TileType<MediumDriftwoodTile>());
 		Item.width = 30;
 		Item.height = 18;
 	}
@@ -90,7 +90,7 @@ public class Driftwood2Item : ModItem
 	}
 }
 
-public class Driftwood2Tile : ModTile
+public class MediumDriftwoodTile : ModTile
 {
 	public override void SetStaticDefaults()
 	{
@@ -120,15 +120,15 @@ public class Driftwood2Tile : ModTile
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = 2;
 }
 
-public class Driftwood3Item : ModItem
+public class LargeDriftwoodItem : ModItem
 {
-	public override string Texture => base.Texture.Replace("3Item", string.Empty);
+	public override string Texture => base.Texture.Replace("LargeDriftwoodItem", "Driftwood");
 
 	public override void SetStaticDefaults() => Main.RegisterItemAnimation(Type, new Terraria.DataStructures.DrawAnimationVertical(2, 3) { NotActuallyAnimating = true, Frame = 2 });
 
 	public override void SetDefaults()
 	{
-		Item.DefaultToPlaceableTile(ModContent.TileType<Driftwood3Tile>());
+		Item.DefaultToPlaceableTile(ModContent.TileType<LargeDriftwoodTile>());
 		Item.width = 30;
 		Item.height = 18;
 	}
@@ -150,7 +150,7 @@ public class Driftwood3Item : ModItem
 	}
 }
 
-public class Driftwood3Tile : ModTile
+public class LargeDriftwoodTile : ModTile
 {
 	public override void SetStaticDefaults()
 	{
