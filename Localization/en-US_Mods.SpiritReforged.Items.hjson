@@ -358,7 +358,7 @@ DriftwoodLeggings: {
 }
 
 DriftwoodChairItem: {
-	DisplayName: Driftwood Chair Item
+	DisplayName: Driftwood Chair
 	Tooltip: ""
 }
 
@@ -443,4 +443,15 @@ MessageBottle: {
 		Summons a raft mount
 		Increased fishing power while on the raft
 		'''
+
+GoldKillifishItem: {
+	DisplayName: Gold Killifish
+	Tooltip: ""
+}
+
+KillifishBannerItem.DisplayName: Killifish Banner Item
+
+KillifishItem: {
+	DisplayName: Killifish
+	Tooltip: ""
 }

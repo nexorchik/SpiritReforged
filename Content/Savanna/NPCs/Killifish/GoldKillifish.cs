@@ -4,7 +4,7 @@ using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Killifish;
 
-//[AutoloadCritter]
+[AutoloadCritter]
 //[AutoloadBanner]
 public class GoldKillifish : ModNPC
 {
