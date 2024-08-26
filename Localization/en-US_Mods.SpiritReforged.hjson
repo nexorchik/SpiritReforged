@@ -9,6 +9,9 @@ Tiles: {
 	Driftwood2Tile.MapEntry: Medium Driftwood
 	Driftwood3Tile.MapEntry: Large Driftwood
 	CloudstalkTile.MapEntry: Cloudstalk
+	LargeDriftwoodTile.MapEntry: Large Driftwood Tile
+	MediumDriftwoodTile.MapEntry: Medium Driftwood Tile
+	SmallDriftwoodTile.MapEntry: Small Driftwood Tile
 }
 
 Projectiles: {

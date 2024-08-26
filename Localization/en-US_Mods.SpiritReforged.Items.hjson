@@ -327,18 +327,18 @@ JellyCandle: {
 	Tooltip: Summons a floating jellyfish to follow you around
 }
 
-Driftwood1Item: {
-	DisplayName: Small Driftwood
+SmallDriftwoodItem: {
+	DisplayName: Small Driftwood Item
 	Tooltip: "'Aesthetically pleasing'"
 }
 
-Driftwood2Item: {
-	DisplayName: Medium Driftwood
+MediumDriftwoodItem: {
+	DisplayName: Medium Driftwood Item
 	Tooltip: "'Aesthetically pleasing'"
 }
 
-Driftwood3Item: {
-	DisplayName: Large Driftwood
+LargeDriftwoodItem: {
+	DisplayName: Large Driftwood Item
 	Tooltip: "'Aesthetically pleasing'"
 }
 
@@ -443,6 +443,7 @@ MessageBottle: {
 		Summons a raft mount
 		Increased fishing power while on the raft
 		'''
+}
 
 GoldKillifishItem: {
 	DisplayName: Gold Killifish
