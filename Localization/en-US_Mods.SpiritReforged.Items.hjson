@@ -358,7 +358,7 @@ DriftwoodLeggings: {
 }
 
 DriftwoodChairItem: {
-	DisplayName: Driftwood Chair Item
+	DisplayName: Driftwood Chair
 	Tooltip: ""
 }
 
@@ -414,5 +414,17 @@ FlightPotion: {
 
 HangingCloudstalk: {
 	DisplayName: Hanging Cloudstalk
+	Tooltip: ""
+}
+
+GoldKillifishItem: {
+	DisplayName: Gold Killifish
+	Tooltip: ""
+}
+
+KillifishBannerItem.DisplayName: Killifish Banner Item
+
+KillifishItem: {
+	DisplayName: Killifish
 	Tooltip: ""
 }

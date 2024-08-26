@@ -4,8 +4,8 @@ using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Killifish;
 
-//[AutoloadCritter]
-//[AutoloadBanner]
+[AutoloadCritter]
+[AutoloadBanner]
 public class Killifish : ModNPC
 {
 	private ref float YMovement => ref NPC.ai[0]; // Y Movement (adapted from vanilla)
