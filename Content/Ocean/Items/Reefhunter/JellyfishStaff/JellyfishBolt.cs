@@ -1,9 +1,14 @@
-﻿using Terraria.Audio;
+﻿using SpiritReforged.Common.PrimitiveRendering;
+using SpiritReforged.Common.PrimitiveRendering.Trail_Components;
+using Terraria;
+using Terraria.Audio;
 using Terraria.Graphics.Shaders;
+using Terraria.ModLoader;
+using Terraria.Net;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.JellyfishStaff;
 
-public class JellyfishBolt : ModProjectile
+public class JellyfishBolt : ModProjectile, ITrailProjectile
 {
 	public bool IsPink
 	{
@@ -28,13 +33,21 @@ public class JellyfishBolt : ModProjectile
 		Projectile.height = 4;
 		Projectile.width = 4;
 		Projectile.hide = true;
-		Projectile.extraUpdates = 3;
+		Projectile.extraUpdates = 2;
 		AIType = ProjectileID.Bullet;
+	}
+
+	//Placeholder to show trails working in reforged, plan on changing visual
+	public void DoTrailCreation(TrailManager trailManager)
+	{
+		Color trailColor = IsPink ? new Color(247, 15, 243, 0) : new Color(0, 191, 255, 0);
+		trailManager.CreateTrail(Projectile, new StandardColorTrail(trailColor), new RoundCap(), new DefaultTrailPosition(), 10f, 150f, new ImageShader((Texture2D)Mod.Assets.Request<Texture2D>("Assets/Textures/EnergyTrail"), Vector2.One, 1f, 1f));
+		trailManager.CreateTrail(Projectile, new GradientTrail(trailColor, new Color(255, 255, 255, 0) * 0.25f), new RoundCap(), new DefaultTrailPosition(), 8f, 250f, new DefaultShader());
 	}
 
 	public override void AI()
 	{
-		for (int i = 0; i < 5; i++)
+		if(Main.rand.NextBool())
 		{
 			Vector2 position = Projectile.Center;
 			Dust dust = Main.dust[Dust.NewDust(position, 0, 0, DustID.Electric, 0f, 0f, 0, new Color(255, 255, 255), .46f)];

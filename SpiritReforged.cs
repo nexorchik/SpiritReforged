@@ -11,6 +11,7 @@ global using Terraria.Enums;
 global using Terraria.ObjectData;
 global using System.Collections.Generic;
 global using NPCUtils;
+using SpiritReforged.Common.PrimitiveRendering;
 
 namespace SpiritReforged;
 
@@ -25,6 +26,18 @@ public class SpiritReforgedMod : Mod
 		NPCUtils.NPCUtils.AutoloadModBannersAndCritters(this);
 		NPCUtils.NPCUtils.TryLoadBestiaryHelper();
 		Common.Misc.AutoloadMinionDictionary.AddBuffs(Code);
+
+		ShaderHelpers.GetWorldViewProjection(out Matrix view, out Matrix projection); 
+		
+		Main.QueueMainThreadAction(() => SpiritReforgedLoadables.BasicShaderEffect = new BasicEffect(Main.graphics.GraphicsDevice)
+		{
+			VertexColorEnabled = true,
+			View = view,
+			Projection = projection
+		});
+
+		SpiritReforgedLoadables.VertexTrailManager = new TrailManager(this);
+		TrailDetours.Initialize();
 	}
 
 	public override void Unload()
@@ -32,5 +45,8 @@ public class SpiritReforgedMod : Mod
 		NPCUtils.NPCUtils.UnloadMod(this);
 		NPCUtils.NPCUtils.UnloadBestiaryHelper();
 		Common.Misc.AutoloadMinionDictionary.Unload();
+		SpiritReforgedLoadables.BasicShaderEffect = null;
+		SpiritReforgedLoadables.VertexTrailManager = null;
+		TrailDetours.Unload();
 	}
 }
