@@ -22,10 +22,9 @@ public class Crinoid : ModNPC
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = 0f;
-		NPC.aiStyle = 0;
+		NPC.aiStyle = -1;
 		NPC.npcSlots = 0;
 		NPC.alpha = 255;
-
 		AIType = NPCID.WebbedStylist;
 	}
 
@@ -95,5 +94,25 @@ public class Crinoid : ModNPC
 			for (int t = 1; t < 3; t++)
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>(goreType + t).Type, Main.rand.NextFloat(.5f, 1.2f));
 		}
+	}
+
+	public override float SpawnChance(NPCSpawnInfo spawnInfo)
+	{
+		var config = ModContent.GetInstance<Common.ConfigurationCommon.ReforgedServerConfig>();
+		if (!config.VentCritters)
+			return 0;
+
+		return spawnInfo.Water && NPC.CountNPCS(Type) < 10 && Tiles.VentSystem.GetValidPoints(spawnInfo.Player).Count > 0 ? .21f : 0;
+	}
+
+	public override int SpawnNPC(int tileX, int tileY)
+	{
+		int index = NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), tileX, tileY, Type);
+		var points = Tiles.VentSystem.GetValidPoints(Main.player[Main.npc[index].FindClosestPlayer()]);
+
+		//Select a random vent position relative to the player
+		Main.npc[index].position = points[Main.rand.Next(points.Count)].ToVector2() * 16;
+
+		return index;
 	}
 }

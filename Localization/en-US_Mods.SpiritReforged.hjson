@@ -113,6 +113,11 @@ Buffs: {
 		DisplayName: Soaring
 		Description: Increases flight duration by 25%
 	}
+
+	BottleMountBuff: {
+		DisplayName: Raft
+		Description: Sending out an SOS
+	}
 }
 
 SetBonuses.Cascade:
