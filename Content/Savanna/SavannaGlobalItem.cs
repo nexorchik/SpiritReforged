@@ -1,0 +1,36 @@
+﻿using SpiritReforged.Content.Savanna.NPCs.Gar;
+
+namespace SpiritReforged.Content.Savanna;
+
+public class SavannaGlobalItem : GlobalItem
+{
+	public override void SetDefaults(Item item)
+	{
+		if (item.type == Mod.Find<ModItem>("GoldGarItem").Type)
+			item.value = Item.sellPrice(0, 10, 0, 0);
+
+		if (item.type == Mod.Find<ModItem>("KillifishItem").Type)
+			item.value = Item.sellPrice(0, 10, 0, 0);
+
+		if (item.type == Mod.Find<ModItem>("KillifishBannerItem").Type)
+			item.value = Item.sellPrice(0, 0, 2, 0);
+
+		if (item.type == Mod.Find<ModItem>("GarBannerItem").Type)
+			item.value = Item.sellPrice(0, 0, 2, 0);
+
+		if (item.type == Mod.Find<ModItem>("GarItem").Type)
+			item.value = Item.sellPrice(0, 0, 5, 37);
+
+		if (item.type == Mod.Find<ModItem>("KillifishItem").Type)
+			item.value = Item.sellPrice(0, 0, 3, 29);
+	}
+	public override void AddRecipes()
+	{
+		Recipe recipe = Recipe.Create(ItemID.HunterPotion, 1);
+		recipe.AddIngredient(ItemID.BottledWater)
+			.AddIngredient(ItemID.Blinkroot)
+			.AddIngredient(Mod.Find<ModItem>("GarItem").Type)
+			.AddTile(TileID.Bottles)
+			.Register();
+	}
+}

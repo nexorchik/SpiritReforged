@@ -1,4 +1,4 @@
-﻿using SpiritReforged.Content.Ocean.Tiles;
+﻿using SpiritReforged.Content.Ocean.Items.Driftwood;
 
 namespace SpiritReforged.Common.Misc;
 

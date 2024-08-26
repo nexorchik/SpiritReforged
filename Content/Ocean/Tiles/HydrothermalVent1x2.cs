@@ -63,8 +63,7 @@ public class HydrothermalVent1x2 : ModTile
 		TileID.Sets.DisableSmartCursor[Type] = true;
 		DustType = DustID.Stone;
 
-		LocalizedText name = CreateMapEntryName();
-		AddMapEntry(new Color(64, 54, 66), name);
+		AddMapEntry(new Color(64, 54, 66), Language.GetText("Mods.SpiritReforged.Tiles.VentMapEntry"));
 	}
 
 	public override bool RightClick(int i, int j)

@@ -7,6 +7,9 @@ public class SkullSentry : ModItem
 {
 	const float MAX_DISTANCE = 600f;
 
+	//temporary until dungeon room is added
+	public override bool IsLoadingEnabled(Mod mod) => false;
+
 	public override void SetDefaults()
 	{
 		Item.CloneDefaults(ItemID.StaffoftheFrostHydra);
