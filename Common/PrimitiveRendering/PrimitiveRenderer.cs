@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+﻿using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 
 namespace SpiritReforged.Common.PrimitiveRendering;
 

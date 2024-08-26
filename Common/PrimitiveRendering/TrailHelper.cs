@@ -11,7 +11,7 @@ public enum TrailLayer
 
 public class TrailManager
 {
-	private readonly List<BaseTrail> _trails = new List<BaseTrail>();
+	private readonly List<BaseTrail> _trails = new();
 	private readonly Effect _effect;
 
 	private BasicEffect _basicEffect; //Not readonly due to thread queue
@@ -27,10 +27,11 @@ public class TrailManager
 		});
 	}
 
-	public void TryTrailKill(Projectile projectile)
+	public static void TryTrailKill(Projectile projectile)
 	{
 		//Contained data originally for determining faster trail dissipation speeds for certain projectiles
 		//But it was all hardcoded for spirit projectiles in this specific file and was a big if else chain and sucked
+		//
 	}
 
 	public void CreateTrail(Projectile projectile, ITrailColor trailType, ITrailCap trailCap, ITrailPosition trailPosition, float widthAtFront, float maxLength, ITrailShader shader = null, TrailLayer layer = TrailLayer.UnderProjectile, float dissolveSpeed = -1)
@@ -95,58 +96,5 @@ public class TrailManager
 			{// uhh put netcode here !!
 			 //SpiritMod.WriteToPacket(SpiritMod.Instance.GetPacket(), (byte)MessageType.SpawnTrail, projectile.whoAmI).Send();
 			}
-	}
-}
-
-public abstract class BaseTrail(Projectile projectile, TrailLayer layer)
-{
-	public bool Dead { get; set; } = false;
-	public Projectile MyProjectile { get; set; } = projectile;
-	public TrailLayer Layer { get; set; } = layer;
-
-	private readonly int _originalProjectileType = projectile.type;
-	private bool _dissolving = false;
-
-	public void BaseUpdate()
-	{
-		if ((!MyProjectile.active || MyProjectile.type != _originalProjectileType) && !_dissolving)
-			StartDissolve();
-
-		if (_dissolving)
-			Dissolve();
-		else
-			Update();
-	}
-
-	public void StartDissolve()
-	{
-		OnStartDissolve();
-		_dissolving = true;
-	}
-
-	/// <summary>
-	/// Behavior for the trail every tick, only called before the trail begins dying
-	/// </summary>
-	public virtual void Update() { }
-
-	/// <summary>
-	/// Behavior for the trail after it starts its death, called every tick after the trail begins dying
-	/// </summary>
-	public virtual void Dissolve() { }
-
-	/// <summary>
-	/// Additional behavior for the trail upon starting its death
-	/// </summary>
-	public virtual void OnStartDissolve() { }
-
-	/// <summary>
-	/// How the trail is drawn to the screen
-	/// </summary>
-	/// <param name="effect"></param>
-	/// <param name="effect2"></param>
-	/// <param name="device"></param>
-	public virtual void Draw(Effect effect, BasicEffect effect2, GraphicsDevice device)
-	{
-
 	}
 }

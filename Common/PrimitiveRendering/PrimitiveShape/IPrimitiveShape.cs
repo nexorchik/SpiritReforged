@@ -1,4 +1,4 @@
-﻿namespace SpiritReforged.Common.PrimitiveRendering;
+﻿namespace SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 
 public interface IPrimitiveShape
 {
