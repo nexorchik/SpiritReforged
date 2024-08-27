@@ -29,4 +29,10 @@ public class SlowdownGlobalNPC : GlobalNPC
 
 		return true;
 	}
+
+	public override void PostAI(NPC npc)
+	{
+		if (BeingSlowed)
+			npc.position -= npc.velocity * (float)(1f - slowCounter);
+	}
 }
