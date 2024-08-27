@@ -198,7 +198,7 @@ UrchinStaff: {
 
 GarInAJar: {
 	Tooltip: ""
-	DisplayName: Gar In A Jar
+	DisplayName: Gar in a Jar
 }
 
 GarItem: {
@@ -480,12 +480,12 @@ GoldKillifishItem: {
 	Tooltip: ""
 }
 
-KillifishBannerItem.DisplayName: Killifish Banner Item
-
 KillifishItem: {
 	DisplayName: Killifish
 	Tooltip: ""
 }
+
+KillifishBannerItem.DisplayName: Killifish Banner
 
 BambooHalberd: {
 	DisplayName: Bamboo Halberd
