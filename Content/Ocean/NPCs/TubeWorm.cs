@@ -1,4 +1,5 @@
 using System.IO;
+using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Ocean.NPCs;
@@ -6,7 +7,9 @@ namespace SpiritReforged.Content.Ocean.NPCs;
 [AutoloadCritter]
 public class TubeWorm : ModNPC
 {
-	public override void SetStaticDefaults() => Main.npcFrameCount[NPC.type] = 6;
+	private int pickedType;
+
+	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 6;
 
 	public override void SetDefaults()
 	{
@@ -19,7 +22,7 @@ public class TubeWorm : ModNPC
 		NPC.HitSound = SoundID.NPCHit2;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = 0f;
-		NPC.aiStyle = 0;
+		NPC.aiStyle = -1;
 		NPC.npcSlots = 0;
 		NPC.alpha = 255;
 		AIType = NPCID.WebbedStylist;
@@ -27,51 +30,38 @@ public class TubeWorm : ModNPC
 
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Ocean");
 
-	bool hasPicked = false;
-	int pickedType;
-
-	public override void AI()
+	public override void OnSpawn(IEntitySource source)
 	{
-		if (NPC.alpha > 0)
-			NPC.alpha -= 5;
-
-		if (!hasPicked)
-		{
-			NPC.scale = Main.rand.NextFloat(.6f, 1.15f);
-			pickedType = Main.rand.Next(0, 4);
-			hasPicked = true;
-		}
+		NPC.scale = Main.rand.NextFloat(.6f, 1.15f);
+		pickedType = Main.rand.Next(4);
+		NPC.netUpdate = true;
 	}
+
+	public override void AI() => NPC.alpha = Math.Max(NPC.alpha - 5, 0); //Fade in
 
 	public override void FindFrame(int frameHeight)
 	{
+		NPC.frame.Width = 18;
+		NPC.frame.X = NPC.frame.Width * pickedType;
+
 		NPC.frameCounter += 0.18f;
-		NPC.frameCounter %= Main.npcFrameCount[NPC.type];
+		NPC.frameCounter %= Main.npcFrameCount[Type];
 		int frame = (int)NPC.frameCounter;
 		NPC.frame.Y = frame * frameHeight;
-		NPC.frame.X = 18 * pickedType;
-		NPC.frame.Width = 18;
 	}
 
-	public override void SendExtraAI(BinaryWriter writer)
-	{
-		writer.Write(pickedType);
-		writer.Write(hasPicked);
-	}
+	public override void SendExtraAI(BinaryWriter writer) => writer.Write(pickedType);
 
-	public override void ReceiveExtraAI(BinaryReader reader)
-	{
-		pickedType = reader.ReadInt32();
-		hasPicked = reader.ReadBoolean();
-	}
+	public override void ReceiveExtraAI(BinaryReader reader) => pickedType = reader.ReadInt32();
 
 	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 	{
-		var drawOrigin = new Vector2(TextureAssets.Npc[NPC.type].Value.Width * 0.5f, (NPC.height * 0.5f));
-		Vector2 drawPos = NPC.Center - screenPos + drawOrigin + new Vector2(-14, -12);
-		Color color = !NPC.IsABestiaryIconDummy ? NPC.GetAlpha(drawColor) : Color.White;
-		var effects = NPC.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-		spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, drawPos, NPC.frame, NPC.GetNPCColorTintedByBuffs(color), NPC.rotation, drawOrigin, NPC.scale, effects, 0f);
+		Vector2 drawPos = NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY);
+		Color color = NPC.GetNPCColorTintedByBuffs(NPC.IsABestiaryIconDummy ? Color.White : NPC.GetAlpha(drawColor));
+		var effects = NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+		spriteBatch.Draw(TextureAssets.Npc[Type].Value, drawPos, NPC.frame, color, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, effects, 0f);
+
 		return false;
 	}
 
@@ -79,5 +69,25 @@ public class TubeWorm : ModNPC
 	{
 		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("TubewormGore").Type, 1f);
+	}
+
+	public override float SpawnChance(NPCSpawnInfo spawnInfo)
+	{
+		var config = ModContent.GetInstance<Common.ConfigurationCommon.ReforgedServerConfig>();
+		if (!config.VentCritters)
+			return 0;
+
+		return spawnInfo.Water && NPC.CountNPCS(Type) < 10 && Tiles.VentSystem.GetValidPoints(spawnInfo.Player).Count > 0 ? .27f : 0;
+	}
+
+	public override int SpawnNPC(int tileX, int tileY)
+	{
+		int index = NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), tileX, tileY, Type);
+		var points = Tiles.VentSystem.GetValidPoints(Main.player[Main.npc[index].FindClosestPlayer()]);
+
+		//Select a random vent position relative to the player
+		Main.npc[index].position = points[Main.rand.Next(points.Count)].ToVector2() * 16;
+
+		return index;
 	}
 }

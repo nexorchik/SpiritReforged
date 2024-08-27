@@ -4,7 +4,7 @@ using Terraria.Utilities;
 using Terraria.UI;
 using System.IO;
 using SpiritReforged.Content.Ocean.Items;
-using SpiritReforged.Content.Ocean.Tiles;
+using SpiritReforged.Content.Ocean.Items.Driftwood;
 
 namespace SpiritReforged.Content.Ocean.NPCs;
 
@@ -269,5 +269,11 @@ public class Pelican : ModNPC
 	public override void SendExtraAI(BinaryWriter writer) => writer.Write(_heldItemType);
 	public override void ReceiveExtraAI(BinaryReader reader) => _heldItemType = reader.ReadInt32();
 
-	public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.ZoneBeach && Main.dayTime ? (spawnInfo.PlayerInTown ? 2f : 1f) : 0;
+	public override float SpawnChance(NPCSpawnInfo spawnInfo)
+	{
+		if (spawnInfo.Player.ZoneBeach && Main.dayTime && !spawnInfo.Water)
+			return spawnInfo.PlayerInTown ? 2 : 1;
+
+		return 0;
+	}
 }

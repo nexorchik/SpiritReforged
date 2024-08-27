@@ -1,7 +1,7 @@
-﻿using SpiritReforged.Content.Ocean.NPCs.OceanSlime;
+﻿using SpiritReforged.Content.Ocean.Items.Driftwood;
+using SpiritReforged.Content.Ocean.NPCs.OceanSlime;
 using SpiritReforged.Content.Ocean.Tiles;
 using System.Linq;
-using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean;
 

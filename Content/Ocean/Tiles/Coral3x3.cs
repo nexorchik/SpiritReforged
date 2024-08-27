@@ -1,12 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.Enums;
-using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.Localization;
-using Terraria.ModLoader;
-using Terraria.ObjectData;
+﻿using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean.Tiles;
 
@@ -32,8 +24,7 @@ public class Coral3x3 : ModTile
 		TileID.Sets.DisableSmartCursor[Type] = true;
 		DustType = DustID.Coralstone;
 
-		LocalizedText name = CreateMapEntryName();
-		AddMapEntry(new Color(87, 61, 51), name);
+		AddMapEntry(new Color(87, 61, 51), Language.GetText("Mods.SpiritReforged.Tiles.CoralMapEntry"));
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
@@ -63,7 +54,7 @@ public class Coral3x3Rubble : Coral3x3
 		TileID.Sets.DisableSmartCursor[Type] = true;
 		DustType = DustID.Coralstone;
 
-		AddMapEntry(new Color(87, 61, 51), Language.GetText($"Mods.SpiritReforged.Tiles.{Name}.MapEntry"));
+		AddMapEntry(new Color(87, 61, 51), Language.GetText("Mods.SpiritReforged.Tiles.CoralMapEntry"));
 
 		FlexibleTileWand.RubblePlacementLarge.AddVariation(ItemID.Coral, Type, 0);
 		RegisterItemDrop(ItemID.Coral);

@@ -207,7 +207,7 @@ GarItem: {
 }
 
 SavannaDirtItem: {
-	DisplayName: Savanna Dirt Item
+	DisplayName: Savanna Dirt
 	Tooltip: ""
 }
 
@@ -217,46 +217,46 @@ GoldGarItem: {
 }
 
 Sushi: {
+	DisplayName: Sushi
 	Tooltip:
 		'''
 		Minor improvement to all stats
 		Provides underwater breathing
 		'Cold and fresh!'
 		'''
-	DisplayName: Sushi
 }
 
 Nigiri: {
+	DisplayName: Nigiri
 	Tooltip:
 		'''
 		Minor improvement to all stats
 		Provides free movement in water
 		'The perfect cut'
 		'''
-	DisplayName: Nigiri
 }
 
 HoneySalmon: {
+	DisplayName: Honey-Glazed Salmon
 	Tooltip:
 		'''
 		Minor improvements to all stats
 		Boosts life regeneration
 		'''
-	DisplayName: Honey-Glazed Salmon
 }
 
 FishChips: {
-	Tooltip: Minor improvements to all stats
 	DisplayName: Fish n' Chips
+	Tooltip: Minor improvements to all stats
 }
 
 CrystalFish: {
+	DisplayName: Crystallized Salmon
 	Tooltip:
 		'''
 		Medium improvements to all stats
 		Boosts magic power
 		'''
-	DisplayName: Crystallized Salmon
 }
 
 RawMeat: {
@@ -282,7 +282,7 @@ GoldenCaviar: {
 		'''
 }
 
-GarBannerItem.DisplayName: Gar Banner Item
+GarBannerItem.DisplayName: Gar Banner
 
 CoconutMilk: {
 	DisplayName: Coconut Milk
@@ -294,23 +294,23 @@ CoconutMilk: {
 }
 
 DiverBody: {
-	DisplayName: Diver Body
+	DisplayName: Ancient Diver's Plate
 	Tooltip: ""
 }
 
 DiverHead: {
-	DisplayName: Diver Head
+	DisplayName: Ancient Diver's Helmet
 	Tooltip: ""
 }
 
 DiverLegs: {
-	DisplayName: Diver Legs
+	DisplayName: Ancient Diver's Pants
 	Tooltip: ""
 }
 
 SailorCap: {
 	DisplayName: Sailor Cap
-	Tooltip: ""
+	Tooltip: "'All aboard!'"
 }
 
 StrippedBamboo: {
@@ -344,8 +344,147 @@ BambooPotItem: {
 }
 
 SteamedMussels: {
-	Tooltip: ""
 	DisplayName: Steamed Mussels
+	Tooltip:
+		'''
+		Minor improvements to all stats
+		'Fresh and delightful'
+		'''
+}
+
+JellyCandle: {
+	DisplayName: Jelly Candle
+	Tooltip: Summons a floating jellyfish to follow you around
+}
+
+SmallDriftwoodItem: {
+	DisplayName: Small Driftwood Item
+	Tooltip: "'Aesthetically pleasing'"
+}
+
+MediumDriftwoodItem: {
+	DisplayName: Medium Driftwood Item
+	Tooltip: "'Aesthetically pleasing'"
+}
+
+LargeDriftwoodItem: {
+	DisplayName: Large Driftwood Item
+	Tooltip: "'Aesthetically pleasing'"
+}
+
+DriftwoodChestplate: {
+	DisplayName: Driftwood Chestplate
+	Tooltip: ""
+}
+
+DriftwoodHelmet: {
+	DisplayName: Driftwood Helmet
+	Tooltip: ""
+}
+
+DriftwoodLeggings: {
+	DisplayName: Driftwood Leggings
+	Tooltip: ""
+}
+
+DriftwoodChairItem: {
+	DisplayName: Driftwood Chair
+	Tooltip: ""
+}
+
+DriftwoodDoorItem: {
+	DisplayName: Driftwood Door
+	Tooltip: ""
+}
+
+DriftwoodPlatformItem: {
+	DisplayName: Driftwood Platform
+	Tooltip: ""
+}
+
+DriftwoodSword: {
+	DisplayName: Driftwood Sword
+	Tooltip: ""
+}
+
+DriftwoodTableItem: {
+	DisplayName: Driftwood Table
+	Tooltip: ""
+}
+
+DriftwoodWallItem: {
+	DisplayName: Driftwood Wall
+	Tooltip: ""
+}
+
+DriftwoodWorkbenchItem: {
+	DisplayName: Driftwood Workbench
+	Tooltip: ""
+}
+
+Cloudstalk: {
+	DisplayName: Cloudstalk
+	Tooltip: ""
+}
+
+CloudstalkSeed: {
+	DisplayName: Cloudstalk Seed
+	Tooltip: ""
+}
+
+DoubleJumpPotion: {
+	DisplayName: Zephyr Potion
+	Tooltip: Temporarily grants a double jump
+}
+
+FlightPotion: {
+	DisplayName: Soaring Potion
+	Tooltip: Increases the duration of flight by 25%
+}
+
+HangingCloudstalk: {
+	DisplayName: Hanging Cloudstalk
+	Tooltip: ""
+}
+
+FloatingDriftwood: {
+	DisplayName: Floating Driftwood
+	Tooltip: ""
+}
+
+FishCrate: {
+	DisplayName: Packing Crate
+	Tooltip: ""
+}
+
+Ambergris: {
+	DisplayName: Ambergris
+	Tooltip:
+		'''
+		'Highly valuable'
+		'You don't want to know where this came from'
+		'''
+}
+
+MessageBottle: {
+	DisplayName: Message in a Bottle
+	Tooltip:
+		'''
+		Summons a raft mount
+		Increased fishing power while on the raft
+		'''
+}
+
+GoldKillifishItem: {
+	DisplayName: Gold Killifish
+	Tooltip: ""
+}
+
+KillifishBannerItem.DisplayName: Killifish Banner Item
+
+KillifishItem: {
+	DisplayName: Killifish
+	Tooltip: ""
 }
 
 BambooHalberd: {
