@@ -12,7 +12,6 @@ global using Terraria.ObjectData;
 global using System.Collections.Generic;
 global using NPCUtils;
 using SpiritReforged.Common.PrimitiveRendering;
-using SpiritReforged.Common.Particle;
 
 namespace SpiritReforged;
 
@@ -39,9 +38,6 @@ public class SpiritReforgedMod : Mod
 
 		SpiritReforgedLoadables.VertexTrailManager = new TrailManager(this);
 		TrailDetours.Initialize();
-
-		ParticleHandler.RegisterParticles();
-		ParticleDetours.Initialize();
 	}
 
 	public override void Unload()
@@ -52,9 +48,6 @@ public class SpiritReforgedMod : Mod
 		SpiritReforgedLoadables.BasicShaderEffect = null;
 		SpiritReforgedLoadables.VertexTrailManager = null;
 		TrailDetours.Unload();
-
-		ParticleHandler.Unload();
-		ParticleDetours.Unload();
 	}
 
 	public ModPacket GetPacket(Common.Misc.ReforgedMultiplayer.MessageType type, int capacity)
