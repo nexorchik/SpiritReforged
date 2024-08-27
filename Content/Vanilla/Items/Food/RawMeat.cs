@@ -4,18 +4,19 @@ namespace SpiritReforged.Content.Vanilla.Items.Food;
 
 public class RawMeat : FoodItem
 {
-	internal override Point Size => new(30, 26);
 	private int subID = -1;
+	private static Asset<Texture2D> WorldTexture;
 
-	public override bool CanUseItem(Player player)
+	internal override Point Size => new(30, 26);
+
+	public override void StaticDefaults()
 	{
-		player.AddBuff(BuffID.Poisoned, 45 * 60);
-		return true;
+		if (!Main.dedServ)
+			WorldTexture = ModContent.Request<Texture2D>(Texture + "_World");
 	}
-	public override void Defaults()
-	{
-		Item.buffTime = 2 * 60 * 60;
-	}
+
+	public override void Defaults() => Item.buffTime = 2 * 60 * 60;
+
 	public override void Update(ref float gravity, ref float maxFallSpeed)
 	{
 		if (subID != -1)
@@ -26,13 +27,20 @@ public class RawMeat : FoodItem
 				_ => 26
 			};
 	}
+
+	public override bool CanUseItem(Player player)
+	{
+		player.AddBuff(BuffID.Poisoned, 45 * 60);
+		return true;
+	}
+
 	public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
 	{
 		if (subID == -1)
 			subID = Main.rand.Next(3);
 
-		Texture2D tex = ModContent.Request<Texture2D>(Texture + "_World").Value;
-		spriteBatch.Draw(tex, Item.position - Main.screenPosition, new Rectangle(0, 28 * subID, 30, 26), GetAlpha(lightColor) ?? lightColor, rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
+		Texture2D texture = WorldTexture.Value;
+		spriteBatch.Draw(texture, Item.position - Main.screenPosition, new Rectangle(0, 28 * subID, 30, 26), GetAlpha(lightColor) ?? lightColor, rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
 		return false;
 	}
 

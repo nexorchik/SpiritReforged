@@ -202,7 +202,7 @@ public class BambooBarrel : ModTile
 		spriteBatch.Draw(texture, drawPos, source, Lighting.GetColor(i, j), 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
 
 		if (Main.InSmartCursorHighlightArea(i, j, out bool actuallySelected))
-			spriteBatch.Draw(ModContent.Request<Texture2D>(HighlightTexture).Value, drawPos, source, actuallySelected ? Color.Yellow : Color.Gray, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
+			spriteBatch.Draw(TextureAssets.HighlightMask[Type].Value, drawPos, source, actuallySelected ? Color.Yellow : Color.Gray, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
 
 		return false;
 	}

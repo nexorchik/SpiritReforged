@@ -1,11 +1,14 @@
 ﻿using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
 public class Cannonbubble : ModProjectile
 {
+	private static Asset<Texture2D> OutlineTexture, InnerTexture, ShineTexture;
+
 	public const float MAX_SPEED = 15f; //Initial projectile velocity, used in item shootspeed
 
 	private const string TexturePath = "SpiritReforged/Content/Ocean/Items/Reefhunter/Projectiles/Cannonbubble";
@@ -15,6 +18,13 @@ public class Cannonbubble : ModProjectile
 	{
 		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 8;
 		ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+
+		if (!Main.dedServ)
+		{
+			OutlineTexture = ModContent.Request<Texture2D>(TexturePath + "_Outline", AssetRequestMode.ImmediateLoad);
+			InnerTexture = ModContent.Request<Texture2D>(TexturePath + "_Inner", AssetRequestMode.ImmediateLoad);
+			ShineTexture = ModContent.Request<Texture2D>(TexturePath + "_Shine", AssetRequestMode.ImmediateLoad);
+		}
 	}
 
 	public override void SetDefaults()
@@ -76,9 +86,9 @@ public class Cannonbubble : ModProjectile
 	//Draw a bubble, with a rotated and squished outline and interior, a semi-transparent interior, and an unchanging shine
 	private void DrawBubble(SpriteBatch spriteBatch, Vector2 position, Color baseColor)
 	{
-		Texture2D outline = ModContent.Request<Texture2D>(TexturePath + "_Outline", AssetRequestMode.ImmediateLoad).Value;
-		Texture2D inner = ModContent.Request<Texture2D>(TexturePath + "_Inner", AssetRequestMode.ImmediateLoad).Value;
-		Texture2D shine = ModContent.Request<Texture2D>(TexturePath + "_Shine", AssetRequestMode.ImmediateLoad).Value;
+		var outline = OutlineTexture.Value;
+		var inner = InnerTexture.Value;
+		var shine = ShineTexture.Value;
 
 		Vector2 squishScale = BubbleSquishScale(0.35f, 0.1f);
 		Color innerColor = baseColor * 0.05f;
