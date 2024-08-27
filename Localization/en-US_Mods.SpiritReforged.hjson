@@ -12,6 +12,8 @@ Tiles: {
 	LargeDriftwoodTile.MapEntry: Large Driftwood Tile
 	MediumDriftwoodTile.MapEntry: Medium Driftwood Tile
 	SmallDriftwoodTile.MapEntry: Small Driftwood Tile
+	BambooBirdCage.MapEntry: Bamboo Bird Cage
+	BambooPot.MapEntry: Bamboo Pot
 }
 
 Projectiles: {
@@ -120,6 +122,11 @@ Buffs: {
 	BottleMountBuff: {
 		DisplayName: Raft
 		Description: Sending out an SOS
+	}
+
+	Impaled: {
+		DisplayName: Impaled
+		Description: You've been impaled by a pike. Ouch!
 	}
 }
 

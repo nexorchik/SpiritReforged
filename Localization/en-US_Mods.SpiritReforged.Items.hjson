@@ -313,6 +313,36 @@ SailorCap: {
 	Tooltip: "'All aboard!'"
 }
 
+StrippedBamboo: {
+	DisplayName: Stripped Bamboo
+	Tooltip: ""
+}
+
+BambooBarrelItem: {
+	DisplayName: Bamboo Barrel
+	Tooltip: ""
+}
+
+BambooBenchItem: {
+	DisplayName: Bamboo Bench
+	Tooltip: ""
+}
+
+BambooBirdCageItem: {
+	DisplayName: Bamboo Bird Cage
+	Tooltip: ""
+}
+
+BambooPikeItem: {
+	DisplayName: Bamboo Pike
+	Tooltip: ""
+}
+
+BambooPotItem: {
+	DisplayName: Bamboo Pot
+	Tooltip: ""
+}
+
 SteamedMussels: {
 	DisplayName: Steamed Mussels
 	Tooltip:
@@ -455,4 +485,14 @@ KillifishBannerItem.DisplayName: Killifish Banner Item
 KillifishItem: {
 	DisplayName: Killifish
 	Tooltip: ""
+}
+
+BambooHalberd: {
+	DisplayName: Bamboo Halberd
+	Tooltip: ""
+}
+
+BambooKendoBlade: {
+	DisplayName: Bamboo Kendo Blade
+	Tooltip: Right click to dash forward
 }
