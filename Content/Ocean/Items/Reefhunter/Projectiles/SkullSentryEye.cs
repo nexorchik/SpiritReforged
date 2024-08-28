@@ -10,7 +10,7 @@ public class SkullSentryEye : ModProjectile
 	public const int MAX_DISTANCE = 600;
 	public const int SHOOT_TIME = 60;
 
-	public static Asset<Texture2D> segmentTex = null;
+	private static Asset<Texture2D> SegmentTexture, PupilTexture;
 
 	public ref float Target => ref Projectile.ai[0];
 	public ref float Timer => ref Projectile.ai[1];
@@ -20,8 +20,16 @@ public class SkullSentryEye : ModProjectile
 	internal Projectile parent = null;
 	internal Chain chain = null;
 
-	public override void SetStaticDefaults() => segmentTex = ModContent.Request<Texture2D>(Texture + "_Segment");
-	public override void Unload() => segmentTex = null;
+	public override void SetStaticDefaults()
+	{
+		if (!Main.dedServ)
+		{
+			SegmentTexture = ModContent.Request<Texture2D>(Texture + "_Segment");
+			PupilTexture = ModContent.Request<Texture2D>(Texture + "_Pupil");
+		}
+	}
+
+	public override void Unload() => SegmentTexture = PupilTexture = null;
 
 	public override void SetDefaults()
 	{
@@ -180,13 +188,13 @@ public class SkullSentryEye : ModProjectile
 		}
 	}
 
-	public void DrawChain(SpriteBatch spriteBatch) => chain?.Draw(spriteBatch, segmentTex.Value, scale: Projectile.scale * 0.75f);
+	public void DrawChain(SpriteBatch spriteBatch) => chain?.Draw(spriteBatch, SegmentTexture.Value, scale: Projectile.scale * 0.75f);
 
 	public void Draw(SpriteBatch spriteBatch, Color lightColor)
 	{
 		Projectile.QuickDraw(spriteBatch);
 
-		Texture2D pupil = ModContent.Request<Texture2D>(Texture + "_Pupil", AssetRequestMode.ImmediateLoad).Value;
+		Texture2D pupil = PupilTexture.Value;
 		Vector2 origin = TextureAssets.Projectile[Projectile.type].Value.Size() / 2f;
 		Vector2 pos = Projectile.Center - Main.screenPosition + origin - new Vector2(2) + pupilPos;
 

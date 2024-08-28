@@ -4,11 +4,13 @@ Tiles: {
 	CoralMapEntry: Coral
 	KelpMapEntry: Kelp
 	OceanPirateChest.MapEntry: Pirate Chest
-	GarInAJar_Tile.MapEntry: Gar In a Jar
-	Driftwood1Tile.MapEntry: Small Driftwood
-	Driftwood2Tile.MapEntry: Medium Driftwood
-	Driftwood3Tile.MapEntry: Large Driftwood
+	GarInAJar_Tile.MapEntry: Gar in a Jar
 	CloudstalkTile.MapEntry: Cloudstalk
+	SmallDriftwoodTile.MapEntry: Small Driftwood
+	MediumDriftwoodTile.MapEntry: Medium Driftwood
+	LargeDriftwoodTile.MapEntry: Large Driftwood
+	BambooBirdCage.MapEntry: Bamboo Bird Cage
+	BambooPot.MapEntry: Bamboo Pot
 }
 
 Projectiles: {
@@ -113,16 +115,28 @@ Buffs: {
 		DisplayName: Soaring
 		Description: Increases flight duration by 25%
 	}
+
+	BottleMountBuff: {
+		DisplayName: Raft
+		Description: Sending out an SOS
+	}
+
+	Impaled: {
+		DisplayName: Impaled
+		Description: You've been impaled by a pike. Ouch!
+	}
 }
 
-SetBonuses.Cascade:
-	'''
-	Dealing damage to enemies builds up a bubble shield,
-	which at full size grants heavy damage resistance against the next attack,
-	damaging and knocking back nearby enemies.
-	'''
-SetBonusues.Drifwood:
-	'''
-	Allows the wearer to float on water
-	Increased fishing power
-	'''
+SetBonuses: {
+	Cascade:
+		'''
+		Dealing damage to enemies builds up a bubble shield,
+		which at full size grants heavy damage resistance against the next attack,
+		damaging and knocking back nearby enemies
+		'''
+	Driftwood:
+		'''
+		Allows the wearer to float on water
+		Increased fishing power
+		'''
+}

@@ -1,12 +1,20 @@
-﻿namespace SpiritReforged.Content.Ocean;
+﻿using Terraria.DataStructures;
+
+namespace SpiritReforged.Content.Ocean;
 
 public class OceanPlayer : ModPlayer
 {
-    /// <summary>
-    /// Helper method that checks how far underwater the player is, continuously. If a tile above the player is not watered enough but is solid, it will still count as submerged.
-    /// </summary>
-    /// <param name="tileDepth">Depth in tiles for the player to be under.</param>
-    public bool Submerged(int tileDepth, out int realDepth, bool countRealDepth = false)
+	public override void CatchFish(FishingAttempt attempt, ref int itemDrop, ref int npcSpawn, ref AdvancedPopupRequest sonar, ref Vector2 sonarPosition)
+	{
+		if (Player.ZoneBeach && attempt.veryrare && Main.rand.NextBool(15))
+			itemDrop = ModContent.ItemType<Items.SunkenTreasure>();
+	}
+
+	/// <summary>
+	/// Helper method that checks how far underwater the player is, continuously. If a tile above the player is not watered enough but is solid, it will still count as submerged.
+	/// </summary>
+	/// <param name="tileDepth">Depth in tiles for the player to be under.</param>
+	public bool Submerged(int tileDepth, out int realDepth, bool countRealDepth = false)
     {
         realDepth = 0;
 

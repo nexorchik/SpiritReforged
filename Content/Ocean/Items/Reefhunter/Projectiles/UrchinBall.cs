@@ -13,10 +13,15 @@ public class UrchinBall : ModProjectile
 	private bool stuckInTile = false;
 	private Point stuckTilePos = new(0, 0);
 
+	private static Asset<Texture2D> GlowmaskTexture;
+
 	public override void SetStaticDefaults()
 	{
 		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
 		ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+
+		if (!Main.dedServ)
+			GlowmaskTexture = ModContent.Request<Texture2D>(Texture + "Glow");
 	}
 
 	public override void SetDefaults()
@@ -121,7 +126,7 @@ public class UrchinBall : ModProjectile
 	{
 		const float Cutoff = 120;
 
-		Texture2D tex = ModContent.Request<Texture2D>(Texture + "Glow", AssetRequestMode.ImmediateLoad).Value;
+		Texture2D tex = GlowmaskTexture.Value;
 
 		float flashTimer = Math.Max(Cutoff - Projectile.timeLeft, 0) / Cutoff;
 		int numFlashes = 6;

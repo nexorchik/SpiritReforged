@@ -198,7 +198,7 @@ UrchinStaff: {
 
 GarInAJar: {
 	Tooltip: ""
-	DisplayName: Gar In A Jar
+	DisplayName: Gar in a Jar
 }
 
 GarItem: {
@@ -313,6 +313,36 @@ SailorCap: {
 	Tooltip: "'All aboard!'"
 }
 
+StrippedBamboo: {
+	DisplayName: Stripped Bamboo
+	Tooltip: ""
+}
+
+BambooBarrelItem: {
+	DisplayName: Bamboo Barrel
+	Tooltip: ""
+}
+
+BambooBenchItem: {
+	DisplayName: Bamboo Bench
+	Tooltip: ""
+}
+
+BambooBirdCageItem: {
+	DisplayName: Bamboo Bird Cage
+	Tooltip: ""
+}
+
+BambooPikeItem: {
+	DisplayName: Bamboo Pike
+	Tooltip: ""
+}
+
+BambooPotItem: {
+	DisplayName: Bamboo Pot
+	Tooltip: ""
+}
+
 SteamedMussels: {
 	DisplayName: Steamed Mussels
 	Tooltip:
@@ -327,18 +357,18 @@ JellyCandle: {
 	Tooltip: Summons a floating jellyfish to follow you around
 }
 
-Driftwood1Item: {
-	DisplayName: Small Driftwood
+SmallDriftwoodItem: {
+	DisplayName: Small Driftwood Item
 	Tooltip: "'Aesthetically pleasing'"
 }
 
-Driftwood2Item: {
-	DisplayName: Medium Driftwood
+MediumDriftwoodItem: {
+	DisplayName: Medium Driftwood Item
 	Tooltip: "'Aesthetically pleasing'"
 }
 
-Driftwood3Item: {
-	DisplayName: Large Driftwood
+LargeDriftwoodItem: {
+	DisplayName: Large Driftwood Item
 	Tooltip: "'Aesthetically pleasing'"
 }
 
@@ -417,14 +447,52 @@ HangingCloudstalk: {
 	Tooltip: ""
 }
 
+FloatingDriftwood: {
+	DisplayName: Floating Driftwood
+	Tooltip: ""
+}
+
+FishCrate: {
+	DisplayName: Packing Crate
+	Tooltip: ""
+}
+
+Ambergris: {
+	DisplayName: Ambergris
+	Tooltip:
+		'''
+		'Highly valuable'
+		'You don't want to know where this came from'
+		'''
+}
+
+MessageBottle: {
+	DisplayName: Message in a Bottle
+	Tooltip:
+		'''
+		Summons a raft mount
+		Increased fishing power while on the raft
+		'''
+}
+
 GoldKillifishItem: {
 	DisplayName: Gold Killifish
 	Tooltip: ""
 }
 
-KillifishBannerItem.DisplayName: Killifish Banner Item
-
 KillifishItem: {
 	DisplayName: Killifish
 	Tooltip: ""
+}
+
+KillifishBannerItem.DisplayName: Killifish Banner
+
+BambooHalberd: {
+	DisplayName: Bamboo Halberd
+	Tooltip: ""
+}
+
+BambooKendoBlade: {
+	DisplayName: Bamboo Kendo Blade
+	Tooltip: Right click to dash forward
 }

@@ -4,6 +4,8 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 
 public class CascadeArmorPlayer : ModPlayer
 {
+	private static Asset<Texture2D> ShieldTexture, OutlineTexture;
+
 	public const float MaxResist = .20f;
 
 	internal float bubbleStrength = 0;
@@ -15,6 +17,17 @@ public class CascadeArmorPlayer : ModPlayer
 	internal Vector2 squishVelocity = Vector2.Zero;
 	internal float bubbleVisual = 0;
 	internal Vector2 realOldVelocity = Vector2.Zero; //Mandatory, player.oldVelocity just doesn't work????????? ???? ???
+
+	public override void SetStaticDefaults()
+	{
+		if (!Main.dedServ)
+		{
+			string texturePath = typeof(CascadeArmorPlayer).Namespace.Replace(".", "/") + "/BubbleShield";
+
+			ShieldTexture = ModContent.Request<Texture2D>(texturePath);
+			OutlineTexture = ModContent.Request<Texture2D>(texturePath + "Outline");
+		}
+	}
 
 	public override void ResetEffects() => setActive = false;
 
@@ -144,11 +157,7 @@ public class CascadeArmorPlayer : ModPlayer
 	{
 		if (bubbleVisual > 0f)
 		{
-			string texturePath = typeof(CascadeArmorPlayer).Namespace.Replace(".", "/") + "/BubbleShield";
-			if (outline)
-				texturePath += "Outline";
-
-			Texture2D texture = ModContent.Request<Texture2D>(texturePath, AssetRequestMode.ImmediateLoad).Value;
+			Texture2D texture = (outline ? OutlineTexture : ShieldTexture).Value;
 
 			Vector2 drawPos = Player.Center - Main.screenPosition + new Vector2(0, Player.gfxOffY);
 
