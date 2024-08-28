@@ -47,12 +47,12 @@ public class KoiTotem_Tile : ModTile
 		TileObjectData.newTile.Height = 2;
 		TileObjectData.newTile.Width = 2;
 		TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
-		TileObjectData.newTile.Direction = TileObjectDirection.PlaceLeft;
+		TileObjectData.newTile.Direction = TileObjectDirection.PlaceRight;
 		TileObjectData.newTile.StyleWrapLimit = 2; 
 		TileObjectData.newTile.StyleMultiplier = 2; 
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
-		TileObjectData.newAlternate.Direction = TileObjectDirection.PlaceRight; 
+		TileObjectData.newAlternate.Direction = TileObjectDirection.PlaceLeft; 
 		TileObjectData.addAlternate(1); 
 		TileObjectData.addTile(Type);
 
