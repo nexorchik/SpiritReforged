@@ -496,3 +496,12 @@ BambooKendoBlade: {
 	DisplayName: Bamboo Kendo Blade
 	Tooltip: Right click to dash forward
 }
+
+KoiTotem: {
+	DisplayName: Koi Totem
+	Tooltip:
+		'''
+		Increases fishing skill when worn or when placed nearby
+		Occasionally replenishes the bait that was last used
+		'''
+}

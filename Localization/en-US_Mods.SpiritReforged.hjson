@@ -11,6 +11,7 @@ Tiles: {
 	LargeDriftwoodTile.MapEntry: Large Driftwood
 	BambooBirdCage.MapEntry: Bamboo Bird Cage
 	BambooPot.MapEntry: Bamboo Pot
+	KoiTotem_Tile.MapEntry: Koi Totem
 }
 
 Projectiles: {
@@ -124,6 +125,11 @@ Buffs: {
 	Impaled: {
 		DisplayName: Impaled
 		Description: You've been impaled by a pike. Ouch!
+	}
+
+	KoiTotemBuff: {
+		DisplayName: Koi Totem
+		Description: Increased fishing skill
 	}
 }
 
