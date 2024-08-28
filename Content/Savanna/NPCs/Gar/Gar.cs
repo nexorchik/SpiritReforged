@@ -1,6 +1,5 @@
 using SpiritReforged.Content.Vanilla.Items.Food;
 using System.IO;
-using Terraria;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Gar;
@@ -47,26 +46,15 @@ public class Gar : ModNPC
 	int pickedType;
 	public override void AI()
 	{
-		if (!hasPicked)
-		{
-			NPC.scale = Main.rand.NextFloat(.9f, 1f);
-			pickedType = Main.rand.Next(0, 2);
-			hasPicked = true;
-		}
-
 		Player target = Main.player[NPC.target];
 		RestTimer++;
 		if (NPC.wet) //swimming AI (adapted from vanilla)
 		{
 			if (NPC.rotation != 0f)
-			{
 				NPC.rotation *= .9f;
-			}
 
 			if (NPC.direction == 0)
-			{
 				NPC.TargetClosest();
-			}
 
 			int tileX = (int)NPC.Center.X / 16;
 			int tileY = (int)(NPC.Bottom.Y / 16f);
@@ -168,9 +156,7 @@ public class Gar : ModNPC
 				NPC.velocity.X += NPC.direction * (Main.dayTime ? .06f : .1f);
 
 				if (NPC.velocity.X < (Main.dayTime ? -.8f : 1.1f) || NPC.velocity.X > (Main.dayTime ? .8f : 1.1f))
-				{
 					NPC.velocity.X *= 0.95f;
-				}
 			}
 
 			// fish goes up and down, and goes the other way upon reaching a limit
@@ -178,37 +164,27 @@ public class Gar : ModNPC
 			{
 				NPC.velocity.Y -= 0.01f;
 				if (NPC.velocity.Y < -0.3f)
-				{
 					YMovement = 1f;
-				}
 			}
 			else
 			{
 				NPC.velocity.Y += 0.01f;
 				if (NPC.velocity.Y > 0.3f)
-				{
 					YMovement = -1f;
-				}
 			}
 
 			// don't swim too close to bottom tiles
 			if (Main.tile[tileX, tileY - 1].LiquidAmount > 128)
 			{
 				if (Main.tile[tileX, tileY + 1].HasTile)
-				{
 					YMovement = -1f;
-				}
 				else if (Main.tile[tileX, tileY + 2].HasTile)
-				{
 					YMovement = -1f;
-				}
 			}
 
 			// limits on y velocity
 			if (NPC.velocity.Y > 0.4f || NPC.velocity.Y < -0.4f)
-			{
 				NPC.velocity.Y *= 0.95f;
-			}
 
 			// Gar Resting AI
 			if (Main.dayTime)
@@ -221,9 +197,7 @@ public class Gar : ModNPC
 						NPC.netUpdate = true;
 					}
 					else
-					{
 						Resting = 0;
-					}
 				}
 
 				if (RestTimer > 60 * 60)
@@ -239,20 +213,22 @@ public class Gar : ModNPC
 
 			if (Resting == 1)
 			{
-				if (NPC.velocity.X != 0)
+				if (Main.rand.NextBool(40))
 				{
-					NPC.velocity.X *= 0.5f;
+					float bubbleX = NPC.position.X + (NPC.width / 2) + (NPC.direction == 1 ? NPC.width / 2 + 20 : -NPC.width / 2 - 20);
+					float bubbleY = NPC.position.Y + NPC.height / 2 - 4;
+
+					Dust.NewDust(new Vector2(bubbleX, bubbleY), 0, 0, DustID.BreatheBubble, .1f * NPC.direction, Main.rand.NextFloat(-1.14f, -1.48f), 0, new Color(255, 255, 255, 200), Main.rand.NextFloat(.65f, .85f));
 				}
+
+				if (NPC.velocity.X != 0)
+					NPC.velocity.X *= 0.5f;
 			}
 			// check for proximity
 			if (NPC.DistanceSQ(target.Center) < 40 * 65 && target.wet)
-			{
 				Proximity = 1;
-			}
 			else
-			{
 				Proximity = 0;
-			}
 
 			if (Proximity == 1) //Swimming away from player
 			{
@@ -276,22 +252,18 @@ public class Gar : ModNPC
 		else // flopping around
 		{
 			// falling rotation
-			NPC.rotation = NPC.velocity.Y * NPC.direction * 0.1f;
+			NPC.rotation = NPC.velocity.Y * 0.1f;
 			if (NPC.rotation < -0.2f)
-			{
 				NPC.rotation = -0.2f;
-			}
 
 			if (NPC.rotation > 0.2f)
-			{
 				NPC.rotation = 0.2f;
-			}
 
 			// no running away
 			Proximity = 0;
 			Resting = 0;
 			// floppa velocity
-			if (NPC.velocity.Y == 0f) 
+			if (NPC.velocity.Y == 0f)
 			{
 				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
@@ -304,9 +276,14 @@ public class Gar : ModNPC
 			// fall
 			NPC.velocity.Y += 0.3f;
 			if (NPC.velocity.Y > 10f)
-			{
 				NPC.velocity.Y = 10f;
-			}
+		}
+
+		if (!hasPicked)
+		{
+			NPC.scale = Main.rand.NextFloat(.9f, 1f);
+			pickedType = Main.rand.Next(0, 2);
+			hasPicked = true;
 		}
 	}
 
@@ -369,5 +346,5 @@ public class Gar : ModNPC
 			}
 		}
 	}
-	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>();
+	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>(3);
 }

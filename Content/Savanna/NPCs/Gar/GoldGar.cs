@@ -27,11 +27,12 @@ public class GoldGar : ModNPC
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = .35f;
-		NPC.aiStyle = 16;
 		NPC.noGravity = true;
 		NPC.npcSlots = 0;
-		AIType = NPCID.Goldfish;
+		//this is literally only here because for some reason the flopping (nonwet) rotation doesn't work as we
+
 		NPC.dontCountMe = true;
+
 	}
 
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
@@ -56,9 +57,7 @@ public class GoldGar : ModNPC
 		if (NPC.wet) //swimming AI (adapted from vanilla)
 		{
 			if (NPC.rotation != 0f)
-			{
 				NPC.rotation *= .9f;
-			}
 
 			if (NPC.direction == 0)
 			{
@@ -165,9 +164,7 @@ public class GoldGar : ModNPC
 				NPC.velocity.X += NPC.direction * (Main.dayTime ? .06f : .1f);
 
 				if (NPC.velocity.X < (Main.dayTime ? -.8f : 1.1f) || NPC.velocity.X > (Main.dayTime ? .8f : 1.1f))
-				{
 					NPC.velocity.X *= 0.95f;
-				}
 			}
 
 			// fish goes up and down, and goes the other way upon reaching a limit
@@ -175,37 +172,28 @@ public class GoldGar : ModNPC
 			{
 				NPC.velocity.Y -= 0.01f;
 				if (NPC.velocity.Y < -0.3f)
-				{
 					YMovement = 1f;
-				}
 			}
 			else
 			{
 				NPC.velocity.Y += 0.01f;
 				if (NPC.velocity.Y > 0.3f)
-				{
 					YMovement = -1f;
-				}
 			}
 
 			// don't swim too close to bottom tiles
 			if (Main.tile[tileX, tileY - 1].LiquidAmount > 128)
 			{
 				if (Main.tile[tileX, tileY + 1].HasTile)
-				{
 					YMovement = -1f;
-				}
+
 				else if (Main.tile[tileX, tileY + 2].HasTile)
-				{
 					YMovement = -1f;
-				}
 			}
 
 			// limits on y velocity
 			if (NPC.velocity.Y > 0.4f || NPC.velocity.Y < -0.4f)
-			{
 				NPC.velocity.Y *= 0.95f;
-			}
 
 			// Gar Resting AI
 			if (Main.dayTime)
@@ -218,9 +206,7 @@ public class GoldGar : ModNPC
 						NPC.netUpdate = true;
 					}
 					else
-					{
 						Resting = 0;
-					}
 				}
 
 				if (RestTimer > 60 * 60)
@@ -230,16 +216,20 @@ public class GoldGar : ModNPC
 				}
 			}
 			else
-			{
 				Resting = 0;
-			}
 
 			if (Resting == 1)
 			{
-				if (NPC.velocity.X != 0)
+				if (Main.rand.NextBool(40))
 				{
-					NPC.velocity.X *= 0.5f;
+					float bubbleX = NPC.position.X + (NPC.width / 2) + (NPC.direction == 1 ? NPC.width / 2 + 20 : -NPC.width / 2 - 20);
+					float bubbleY = NPC.position.Y + NPC.height / 2 - 4;
+
+					Dust.NewDust(new Vector2(bubbleX, bubbleY), 0, 0, DustID.BreatheBubble, .1f * NPC.direction, Main.rand.NextFloat(-1.14f, -1.48f), 0, new Color(255, 255, 255, 200), Main.rand.NextFloat(.65f, .85f));
 				}
+
+				if (NPC.velocity.X != 0)
+					NPC.velocity.X *= 0.5f;
 			}
 			// check for proximity
 			if (NPC.DistanceSQ(target.Center) < 40 * 65 && target.wet)
@@ -272,18 +262,6 @@ public class GoldGar : ModNPC
 		}
 		else // flopping around
 		{
-			// falling rotation
-			NPC.rotation = NPC.velocity.Y * NPC.direction * 0.1f;
-			if (NPC.rotation < -0.2f)
-			{
-				NPC.rotation = -0.2f;
-			}
-
-			if (NPC.rotation > 0.2f)
-			{
-				NPC.rotation = 0.2f;
-			}
-
 			// no running away
 			Proximity = 0;
 			Resting = 0;
@@ -301,9 +279,16 @@ public class GoldGar : ModNPC
 			// fall
 			NPC.velocity.Y += 0.3f;
 			if (NPC.velocity.Y > 10f)
-			{
 				NPC.velocity.Y = 10f;
-			}
+
+			// falling rotation
+			NPC.rotation = NPC.velocity.Y* 0.1f;
+			if (NPC.rotation < -0.4f)
+				NPC.rotation = -0.4f;
+
+			if (NPC.rotation > 0.4f)
+				NPC.rotation = 0.4f;
+
 		}
 	}
 
@@ -334,5 +319,5 @@ public class GoldGar : ModNPC
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore6").Type, Main.rand.NextFloat(.5f, .7f));
 		}
 	}
-	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>();
+	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>(2);
 }

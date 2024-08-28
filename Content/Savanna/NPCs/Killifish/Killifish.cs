@@ -246,7 +246,7 @@ public class Killifish : ModNPC
 		else // flopping around
 		{
 			// falling rotation
-			NPC.rotation = NPC.velocity.Y * NPC.direction * 0.1f;
+			NPC.rotation = NPC.velocity.Y * 0.1f;
 
 			if (NPC.rotation < -0.2f)
 				NPC.rotation = -0.2f;
@@ -323,5 +323,5 @@ public class Killifish : ModNPC
 			}
 		}
 	}
-	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>();
+	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>(3);
 }

@@ -242,7 +242,7 @@ public class GoldKillifish : ModNPC
 		else // flopping around
 		{
 			// falling rotation
-			NPC.rotation = NPC.velocity.Y * NPC.direction * 0.1f;
+			NPC.rotation = NPC.velocity.Y * 0.1f;
 
 			if (NPC.rotation < -0.2f)
 				NPC.rotation = -0.2f;
@@ -300,5 +300,5 @@ public class GoldKillifish : ModNPC
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("KillifishGore6").Type, Main.rand.NextFloat(.5f, .7f));
 		}
 	}
-	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>();
+	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>(2);
 }
