@@ -37,7 +37,8 @@ public class Killifish : ModNPC
 		NPC.friendly = true;
 		NPC.dontTakeDamage = false;
 	}
-
+	public override bool? CanBeHitByItem(Player player, Item item) => true;
+	public override bool? CanBeHitByProjectile(Projectile projectile) => true;
 	public override void SetBestiary(BestiaryDatabase dataNPC, BestiaryEntry bestiaryEntry)
 	{
 		bestiaryEntry.UIInfoProvider = new CritterUICollectionInfoProvider(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds[Type]);
@@ -59,14 +60,10 @@ public class Killifish : ModNPC
 		if (NPC.wet) //swimming AI (adapted from vanilla)
 		{
 			if (NPC.rotation != 0f)
-			{
 				NPC.rotation *= .9f;
-			}
 
 			if (NPC.direction == 0)
-			{
 				NPC.TargetClosest();
-			}
 
 			int tileX = (int)NPC.Center.X / 16;
 			int tileY = (int)(NPC.Bottom.Y / 16f);
@@ -98,6 +95,7 @@ public class Killifish : ModNPC
 					NPC.velocity.X = Math.Abs(NPC.velocity.X);
 				}
 			}
+
 			if (Turning == 0)
 			{
 				NPC.velocity.X += NPC.direction * .12f;
@@ -111,16 +109,16 @@ public class Killifish : ModNPC
 			{
 				NPC.velocity.X *= .96f;
 			}
+
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
 				if (Turning == 0)
 				{
 					if (Main.rand.NextBool(260))
-					{
 						Turning = 1;
-					}
 				}
 			}
+
 			if (Turning == 1)
 			{
 				TurningTime++;
@@ -166,38 +164,31 @@ public class Killifish : ModNPC
 			if (YMovement == -1f)
 			{
 				NPC.velocity.Y -= 0.01f;
+
 				if (NPC.velocity.Y < -0.3f)
-				{
 					YMovement = 1f;
-				}
 			}
 			else
 			{
 				NPC.velocity.Y += 0.01f;
+				
 				if (NPC.velocity.Y > 0.3f)
-				{
 					YMovement = -1f;
-				}
 			}
 
 			// don't swim too close to bottom tiles
 			if (Main.tile[tileX, tileY - 1].LiquidAmount > 128)
 			{
 				if (Main.tile[tileX, tileY + 1].HasTile)
-				{
 					YMovement = -1f;
-				}
+
 				else if (Main.tile[tileX, tileY + 2].HasTile)
-				{
 					YMovement = -1f;
-				}
 			}
 
 			// limits on y velocity
 			if (NPC.velocity.Y > 0.4f || NPC.velocity.Y < -0.4f)
-			{
 				NPC.velocity.Y *= 0.95f;
-			}
 
 			// Run away from any non killifish npc
 			foreach (var otherNPC in Main.ActiveNPCs)
@@ -228,13 +219,10 @@ public class Killifish : ModNPC
 			}
 			// check for proximity
 			if (NPC.DistanceSQ(target.Center) < 40 * 65 && target.wet)
-			{
 				Proximity = 1;
-			}
+			
 			else
-			{
 				Proximity = 0;
-			}
 
 			if (Proximity == 1) //Swimming away from player
 			{
@@ -259,15 +247,12 @@ public class Killifish : ModNPC
 		{
 			// falling rotation
 			NPC.rotation = NPC.velocity.Y * NPC.direction * 0.1f;
+
 			if (NPC.rotation < -0.2f)
-			{
 				NPC.rotation = -0.2f;
-			}
 
 			if (NPC.rotation > 0.2f)
-			{
 				NPC.rotation = 0.2f;
-			}
 
 			// no running away
 			Proximity = 0;
@@ -285,9 +270,7 @@ public class Killifish : ModNPC
 			// fall
 			NPC.velocity.Y += 0.3f;
 			if (NPC.velocity.Y > 10f)
-			{
 				NPC.velocity.Y = 10f;
-			}
 		}
 	}
 

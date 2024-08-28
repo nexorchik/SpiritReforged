@@ -33,6 +33,7 @@ public class KoiTotem : FloatingItem
 		player.GetModPlayer<OceanPlayer>().KoiTotem = true;
 		player.AddBuff(ModContent.BuffType<KoiTotemBuff>(), 2);
 	}
+	public override bool AllowPrefix(int pre) => false;
 }
 
 public class KoiTotem_Tile : ModTile
@@ -56,7 +57,7 @@ public class KoiTotem_Tile : ModTile
 		TileObjectData.addAlternate(1); 
 		TileObjectData.addTile(Type);
 
-		DustType = DustID.Stone;
+		DustType = DustID.Ash;
 
 		LocalizedText name = CreateMapEntryName();
 		AddMapEntry(new Color(107, 90, 64), name);
