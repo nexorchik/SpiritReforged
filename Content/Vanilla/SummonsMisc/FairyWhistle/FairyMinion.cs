@@ -13,6 +13,8 @@ public class FairyMinion : BaseMinion
 {
 	public FairyMinion() : base(400, 500, new Vector2(20, 20)) { }
 
+	public static Color PARTICLE_GREEN = new(124, 255, 47);
+
 	public override void AbstractSetStaticDefaults()
 	{
 		// DisplayName.SetDefault("Fairy");
@@ -76,13 +78,12 @@ public class FairyMinion : BaseMinion
 
 				for (int i = 0; i < 10; i++)
 					ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, Main.rand.NextVector2Unit() * Main.rand.NextFloat(0.5f, 1f),
-						new Color(120, 239, 255) * 0.66f, new Color(94, 255, 126) * 0.66f, Main.rand.NextFloat(0.35f, 0.5f), 25, delegate (Particle p)
-						{
-							p.Velocity = p.Velocity.RotatedByRandom(0.15f) * 0.95f;
-						}));
+						PARTICLE_GREEN * 0.66f, Main.rand.NextFloat(0.35f, 0.5f), 35, 10, p => RandomCurveParticleMovement(p, 0.12f, 0.97f)));
 			}
 		}
 	}
+
+	public static void RandomCurveParticleMovement(Particle p, float maxRadians, float decelerationRate) => p.Velocity = p.Velocity.RotatedByRandom(maxRadians) * decelerationRate;
 
 	public override bool PreDraw(ref Color lightColor)
 	{

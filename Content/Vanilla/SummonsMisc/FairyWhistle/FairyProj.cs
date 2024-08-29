@@ -10,7 +10,7 @@ public class FairyProj : ModProjectile
 	{
 		// DisplayName.SetDefault("Fae Bolt");
 		Main.projFrames[Projectile.type] = 4;
-		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 10;
+		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 15;
 		ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
 		ProjectileID.Sets.MinionShot[Projectile.type] = true;
 	}
@@ -35,13 +35,6 @@ public class FairyProj : ModProjectile
 
 		Projectile.UpdateFrame(6);
 		Lighting.AddLight(Projectile.Center, Color.LimeGreen.ToVector3() / 3);
-
-		if (!Main.dedServ && Main.rand.NextBool(5)) //randomly moving subtle particle trail
-			ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, Vector2.Normalize(Projectile.velocity) / 3 + Main.rand.NextVector2Unit() * Main.rand.NextFloat(1),
-				new Color(120, 239, 255) * 0.66f, new Color(94, 255, 126) * 0.66f, Main.rand.NextFloat(0.2f, 0.3f), 30, delegate (Particle p)
-				{
-					p.Velocity = p.Velocity.RotatedByRandom(0.25f) * 0.95f;
-				}));
 	}
 
 	public override void OnKill(int timeLeft)
@@ -55,25 +48,16 @@ public class FairyProj : ModProjectile
 			velnormal *= 2;
 
 			for (int i = 0; i < 3; i++) //weak burst of particles in direction of movement
-				ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, velnormal.RotatedByRandom(MathHelper.Pi / 6) * Main.rand.NextFloat(2f),
-					new Color(120, 239, 255), new Color(94, 255, 126), Main.rand.NextFloat(0.3f, 0.4f), 25, delegate (Particle p)
-					{
-						p.Velocity = p.Velocity.RotatedByRandom(0.15f) * 0.94f;
-					}));
+				ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, velnormal.RotatedByRandom(MathHelper.Pi / 8) * Main.rand.NextFloat(1f, 2f),
+					FairyMinion.PARTICLE_GREEN, Main.rand.NextFloat(0.5f, 0.6f), 40, 7, p => FairyMinion.RandomCurveParticleMovement(p, 0.12f, 0.95f)));
 
 			for (int i = 0; i < 4; i++) //wide burst of slower moving particles in opposite direction
-				ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, -velnormal.RotatedByRandom(MathHelper.PiOver2) * Main.rand.NextFloat(1.5f),
-					new Color(120, 239, 255), new Color(94, 255, 126), Main.rand.NextFloat(0.3f, 0.4f), 25, delegate (Particle p)
-					{
-						p.Velocity = p.Velocity.RotatedByRandom(0.15f) * 0.94f;
-					}));
+				ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, -velnormal.RotatedByRandom(MathHelper.Pi / 3) * Main.rand.NextFloat(0.25f, 1.5f),
+					FairyMinion.PARTICLE_GREEN, Main.rand.NextFloat(0.5f, 0.6f), 40, 7, p => FairyMinion.RandomCurveParticleMovement(p, 0.12f, 0.95f)));
 
 			for (int i = 0; i < 3; i++) //narrow burst of faster, bigger particles
-				ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, velnormal.RotatedByRandom(MathHelper.Pi / 6) * Main.rand.NextFloat(2.5f),
-					new Color(120, 239, 255), new Color(94, 255, 126), Main.rand.NextFloat(0.3f, 0.4f), 25, delegate (Particle p)
-					{
-						p.Velocity = p.Velocity.RotatedByRandom(0.15f) * 0.94f;
-					}));
+				ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, velnormal.RotatedByRandom(MathHelper.Pi / 12) * Main.rand.NextFloat(1.5f, 3f),
+					FairyMinion.PARTICLE_GREEN, Main.rand.NextFloat(0.4f, 0.5f), 40, 7, p => FairyMinion.RandomCurveParticleMovement(p, 0.15f, 0.97f)));
 		}
 	}
 
