@@ -31,6 +31,8 @@ Projectiles: {
 	JellyfishMinion.DisplayName: Little Jellyfish
 	ReefWrathProj.DisplayName: Coral Reef
 	JellyfishPet.DisplayName: Jellyfish Pet
+	FairyMinion.DisplayName: Fairy Minion
+	FairyProj.DisplayName: Fairy Proj
 }
 
 Configs: {
@@ -120,6 +122,11 @@ Buffs: {
 	BottleMountBuff: {
 		DisplayName: Raft
 		Description: Sending out an SOS
+	}
+
+	FairyMinion_Buff: {
+		DisplayName: Fairy Minion_ Buff
+		Description: Mods.SpiritReforged.Buffs.FairyMinion_Buff.Description
 	}
 }
 

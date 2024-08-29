@@ -456,3 +456,13 @@ KillifishItem: {
 	DisplayName: Killifish
 	Tooltip: ""
 }
+
+FairyWhistleItem: {
+	DisplayName: Fairy Whistle Item
+	Tooltip: ""
+}
+
+FairyWhistle: {
+	DisplayName: Fairy Whistle
+	Tooltip: ""
+}

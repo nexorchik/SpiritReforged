@@ -72,4 +72,29 @@ internal static class ProjectileExtensions
 					effect ?? (proj.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
 		}
 	}
+
+	/// <summary>
+	/// Adjusts the projectile's frame using a given framerate, and within a given range if specified
+	/// </summary>
+	/// <param name="projectile">The projectile to draw.</param>
+	/// <param name="framespersecond">The amount of frames to cycle through each second.</param>
+	/// <param name="loopFrame">The frame to loop to after reaching the maximum frame count. Defaults to zero.</param>
+	/// <param name="maxFrame">The frame to loop the animation upon reaching. If null, will use <see cref="Main.projFrames[projectile.type]"/> to get the default maximum frame count.</param>
+	public static void UpdateFrame(this Projectile projectile, int framespersecond, int loopFrame = 0, int? maxFrame = null)
+	{
+		if (framespersecond == 0)
+			return;
+
+		projectile.frameCounter++;
+
+		if (projectile.frameCounter > 60 / framespersecond)
+		{
+			projectile.frameCounter = 0;
+			projectile.frame++;
+
+			maxFrame ??= Main.projFrames[projectile.type];
+			if (projectile.frame >= maxFrame)
+				projectile.frame = loopFrame;
+		}
+	}
 }

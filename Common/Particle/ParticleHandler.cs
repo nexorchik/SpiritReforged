@@ -2,7 +2,7 @@
 
 public enum ParticleLayer
 {
-	AboveDust,
+	BelowProjectile,
 	AboveProjectile,
 	AboveNPC,
 	AbovePlayer

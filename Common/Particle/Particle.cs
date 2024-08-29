@@ -15,7 +15,6 @@ public class Particle
 	public float Rotation;
 	public float Scale;
 	public uint TimeActive;
-	public ParticleLayer DrawLayer;
 
 	public Texture2D Texture => ParticleHandler.GetTexture(Type);
 
@@ -26,11 +25,10 @@ public class Particle
 	public virtual ParticleDrawType DrawType => ParticleDrawType.DefaultAlphaBlend;
 
 	/// <summary>
-	/// The chance at any given tick that this particle will spawn.
-	/// Return 0f if you want the particle to not naturally spawn (if you want to spawn it yourself).
-	/// This hook will not run if Particle.ActiveCondition returns false.
+	/// Determines which layer the particle is drawn on, i.e. when the drawing is called relative to other vanilla entities.
+	/// Defaults to before projectiles are drawn.
 	/// </summary>
-	public virtual float SpawnChance => 0f;
+	public virtual ParticleLayer DrawLayer => ParticleLayer.BelowProjectile;
 
 	/// <summary>
 	/// Call this when you want to clear your particle and remove it from the world.
@@ -47,10 +45,4 @@ public class Particle
 	/// Allows you to do custom drawing for your particle. Only called if Particle.UseCustomDrawing is true.
 	/// </summary>
 	public virtual void CustomDraw(SpriteBatch spriteBatch) { }
-
-	/// <summary>
-	/// Called if the particle tries to naturally spawn. This can only be called if Particle.SpawnChance returns a value greater than 0f and Particle.ActiveCondition is true.
-	/// Use this to spawn your particle randomly.
-	/// </summary>
-	public virtual void OnSpawnAttempt() { }
 }
