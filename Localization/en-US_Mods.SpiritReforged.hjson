@@ -146,3 +146,10 @@ SetBonuses: {
 		Increased fishing power
 		'''
 }
+
+Biomes: {
+	SavannaBiome: {
+		DisplayName: Savanna
+		TownNPCDialogueName: the Savanna
+	}
+}
