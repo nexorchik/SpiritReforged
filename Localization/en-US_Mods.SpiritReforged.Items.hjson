@@ -505,3 +505,8 @@ KoiTotem: {
 		Occasionally replenishes the bait that was last used
 		'''
 }
+
+FairyWhistle: {
+	DisplayName: Fairy Whistle
+	Tooltip: "Calls a protective fairy that hovers around you"
+}
