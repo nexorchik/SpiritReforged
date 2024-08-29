@@ -91,19 +91,7 @@ public static class ParticleHandler
 		SpawnParticle(particle);
 	}
 
-	public static void SpawnParticle(int type, Vector2 position, Vector2 velocity)
-	{
-		var particle = new Particle();
-		particle.Position = position;
-		particle.Velocity = velocity;
-		particle.Color = Color.White;
-		particle.Origin = Vector2.Zero;
-		particle.Rotation = 0f;
-		particle.Scale = 1f;
-		particle.Type = type;
-
-		SpawnParticle(particle);
-	}
+	public static void SpawnParticle(int type, Vector2 position, Vector2 velocity) => SpawnParticle(type, position, velocity, Vector2.Zero, 0f, 1f);
 
 	/// <summary>
 	/// Deletes the particle at the given index. You typically do not have to use this; use Particle.Kill() instead.
