@@ -69,7 +69,7 @@ public class MessageBottleMount : ModMount
 			wetCounter = 15;
 
 			#region visuals
-			float sin = (float)Math.Sin(Main.timeForVisualEffects / 10f);
+			float sin = (float)Math.Sin(Main.timeForVisualEffects / 12f) * MathHelper.Min(Math.Abs(player.velocity.X) / 2, 1);
 
 			if (Main.rand.NextBool(2) && sin > 0)
 			{
@@ -82,8 +82,12 @@ public class MessageBottleMount : ModMount
 				var dust = Dust.NewDustDirect(player.Bottom - new Vector2((player.direction == 1) ? 40 : 20, 0), 58, 0, DustID.BubbleBurst_Blue, Scale: Main.rand.NextFloat());
 				dust.velocity = new Vector2(-.1f * player.velocity.X, -2).RotatedByRandom(1);
 			}
+			else if (Main.rand.NextBool(8))
+			{
+				var dust = Dust.NewDustDirect(player.Bottom - new Vector2((player.direction == 1) ? 40 : 20, 0), 58, 0, DustID.BreatheBubble, Alpha: 150, Scale: Main.rand.NextFloat(.5f, 1.5f));
+				dust.noGravity = true;
+			}
 
-			player.velocity.Y += sin * .25f; //Bob
 			player.fullRotation = player.velocity.X * 0.005f * sin;
 			#endregion
 		}
