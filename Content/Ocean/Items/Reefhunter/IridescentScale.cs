@@ -3,6 +3,13 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter;
 public class IridescentScale : ModItem
 {
 	private int subID = -1; //Controls the in-world sprite for this item
+	private static Asset<Texture2D> WorldTexture;
+
+	public override void SetStaticDefaults()
+	{
+		if (!Main.dedServ)
+			WorldTexture = ModContent.Request<Texture2D>(Texture + "_World");
+	}
 
 	public override void SetDefaults()
 	{
@@ -29,8 +36,8 @@ public class IridescentScale : ModItem
 		if (subID == -1)
 			subID = Main.rand.Next(3);
 
-		Texture2D tex = ModContent.Request<Texture2D>(Texture + "_World").Value;
-		spriteBatch.Draw(tex, Item.position - Main.screenPosition, new Rectangle(0, 34 * subID, 26, 32), GetAlpha(lightColor) ?? lightColor, rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
+		var texture = WorldTexture.Value;
+		spriteBatch.Draw(texture, Item.position - Main.screenPosition, new Rectangle(0, 34 * subID, 26, 32), GetAlpha(lightColor) ?? lightColor, rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
 		return false;
 	}
 

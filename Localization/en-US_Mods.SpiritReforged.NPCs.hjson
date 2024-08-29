@@ -32,12 +32,12 @@ SandPiper: {
 
 Gar: {
 	DisplayName: Gar
-	Entry: ""
+	Entry: Gars are keen hunters that normally inhabit freshwater bodies. One must always be on guard when swimming with a gar - they can attack from the side, front, or even the rear.
 }
 
 GoldGar: {
 	DisplayName: Gold Gar
-	Entry: ""
+	Entry: Only a monster would rip open a rare Gold Gar for their succulent caviar. Only a monster...
 }
 
 OceanSlime: {
@@ -51,10 +51,10 @@ SailorZombie.Entry: Despite their current status, they used to run this really n
 
 Killifish: {
 	DisplayName: Killifish
-	Entry: ""
+	Entry: True to their name, Killifish are known for their one defining trait, getting killed. Their gorgeous, iridescent scales are there too.
 }
 
 GoldKillifish: {
 	DisplayName: Gold Killifish
-	Entry: ""
+	Entry: Bright gold scales do not help with Killifish's woes.
 }

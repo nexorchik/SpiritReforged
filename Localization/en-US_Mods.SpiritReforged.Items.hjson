@@ -198,7 +198,7 @@ UrchinStaff: {
 
 GarInAJar: {
 	Tooltip: ""
-	DisplayName: Gar In A Jar
+	DisplayName: Gar in a Jar
 }
 
 GarItem: {
@@ -311,6 +311,36 @@ DiverLegs: {
 SailorCap: {
 	DisplayName: Sailor Cap
 	Tooltip: "'All aboard!'"
+}
+
+StrippedBamboo: {
+	DisplayName: Stripped Bamboo
+	Tooltip: ""
+}
+
+BambooBarrelItem: {
+	DisplayName: Bamboo Barrel
+	Tooltip: ""
+}
+
+BambooBenchItem: {
+	DisplayName: Bamboo Bench
+	Tooltip: ""
+}
+
+BambooBirdCageItem: {
+	DisplayName: Bamboo Bird Cage
+	Tooltip: ""
+}
+
+BambooPikeItem: {
+	DisplayName: Bamboo Pike
+	Tooltip: ""
+}
+
+BambooPotItem: {
+	DisplayName: Bamboo Pot
+	Tooltip: ""
 }
 
 SteamedMussels: {
@@ -450,19 +480,33 @@ GoldKillifishItem: {
 	Tooltip: ""
 }
 
-KillifishBannerItem.DisplayName: Killifish Banner Item
-
 KillifishItem: {
 	DisplayName: Killifish
 	Tooltip: ""
 }
 
-FairyWhistleItem: {
-	DisplayName: Fairy Whistle Item
+KillifishBannerItem.DisplayName: Killifish Banner
+
+BambooHalberd: {
+	DisplayName: Bamboo Halberd
 	Tooltip: ""
+}
+
+BambooKendoBlade: {
+	DisplayName: Bamboo Kendo Blade
+	Tooltip: Right click to dash forward
+}
+
+KoiTotem: {
+	DisplayName: Koi Totem
+	Tooltip:
+		'''
+		Increases fishing skill when worn or when placed nearby
+		Occasionally replenishes the bait that was last used
+		'''
 }
 
 FairyWhistle: {
 	DisplayName: Fairy Whistle
-	Tooltip: ""
+	Tooltip: "Calls a protective fairy that hovers around you"
 }

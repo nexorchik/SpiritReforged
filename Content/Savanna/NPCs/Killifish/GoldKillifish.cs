@@ -37,7 +37,8 @@ public class GoldKillifish : ModNPC
 		NPC.friendly = true;
 		NPC.dontTakeDamage = false;
 	}
-
+	public override bool? CanBeHitByItem(Player player, Item item) => true;
+	public override bool? CanBeHitByProjectile(Projectile projectile) => true;
 	public override void SetBestiary(BestiaryDatabase dataNPC, BestiaryEntry bestiaryEntry)
 	{
 		bestiaryEntry.UIInfoProvider = new CritterUICollectionInfoProvider(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds[Type]);
@@ -59,14 +60,10 @@ public class GoldKillifish : ModNPC
 		if (NPC.wet) //swimming AI (adapted from vanilla)
 		{
 			if (NPC.rotation != 0f)
-			{
 				NPC.rotation *= .9f;
-			}
 
 			if (NPC.direction == 0)
-			{
 				NPC.TargetClosest();
-			}
 
 			int tileX = (int)NPC.Center.X / 16;
 			int tileY = (int)(NPC.Bottom.Y / 16f);
@@ -104,14 +101,10 @@ public class GoldKillifish : ModNPC
 				NPC.velocity.X += NPC.direction * .12f;
 
 				if (NPC.velocity.X < -0.35f || NPC.velocity.X > 0.35f)
-				{
 					NPC.velocity.X *= 0.9f;
-				}
 			}
 			else
-			{
 				NPC.velocity.X *= .96f;
-			}
 
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
@@ -169,38 +162,30 @@ public class GoldKillifish : ModNPC
 			if (YMovement == -1f)
 			{
 				NPC.velocity.Y -= 0.01f;
+
 				if (NPC.velocity.Y < -0.3f)
-				{
 					YMovement = 1f;
-				}
 			}
 			else
 			{
 				NPC.velocity.Y += 0.01f;
+
 				if (NPC.velocity.Y > 0.3f)
-				{
 					YMovement = -1f;
-				}
 			}
 
 			// don't swim too close to bottom tiles
 			if (Main.tile[tileX, tileY - 1].LiquidAmount > 128)
 			{
 				if (Main.tile[tileX, tileY + 1].HasTile)
-				{
 					YMovement = -1f;
-				}
 				else if (Main.tile[tileX, tileY + 2].HasTile)
-				{
 					YMovement = -1f;
-				}
 			}
 
 			// limits on y velocity
 			if (NPC.velocity.Y > 0.4f || NPC.velocity.Y < -0.4f)
-			{
 				NPC.velocity.Y *= 0.95f;
-			}
 
 			// Run away from any non killifish npc
 			foreach (var otherNPC in Main.ActiveNPCs)
@@ -231,13 +216,9 @@ public class GoldKillifish : ModNPC
 			}
 			// check for proximity
 			if (NPC.DistanceSQ(target.Center) < 40 * 65 && target.wet)
-			{
 				Proximity = 1;
-			}
 			else
-			{
 				Proximity = 0;
-			}
 
 			if (Proximity == 1) //Swimming away from player
 			{
@@ -261,16 +242,13 @@ public class GoldKillifish : ModNPC
 		else // flopping around
 		{
 			// falling rotation
-			NPC.rotation = NPC.velocity.Y * NPC.direction * 0.1f;
+			NPC.rotation = NPC.velocity.Y * 0.1f;
+
 			if (NPC.rotation < -0.2f)
-			{
 				NPC.rotation = -0.2f;
-			}
 
 			if (NPC.rotation > 0.2f)
-			{
 				NPC.rotation = 0.2f;
-			}
 
 			// no running away
 			Proximity = 0;
@@ -288,9 +266,7 @@ public class GoldKillifish : ModNPC
 			// fall
 			NPC.velocity.Y += 0.3f;
 			if (NPC.velocity.Y > 10f)
-			{
 				NPC.velocity.Y = 10f;
-			}
 		}
 	}
 	public override bool CanHitNPC(NPC target)
@@ -324,5 +300,5 @@ public class GoldKillifish : ModNPC
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("KillifishGore6").Type, Main.rand.NextFloat(.5f, .7f));
 		}
 	}
-	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>();
+	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>(2);
 }

@@ -3,6 +3,13 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter;
 public class SulfurDeposit : ModItem
 {
 	private int subID = -1; //Controls the in-world sprite for this item
+	private static Asset<Texture2D> WorldTexture;
+
+	public override void SetStaticDefaults()
+	{
+		if (!Main.dedServ)
+			WorldTexture = ModContent.Request<Texture2D>(Texture + "_World");
+	}
 
 	public override void SetDefaults()
 	{
@@ -18,8 +25,8 @@ public class SulfurDeposit : ModItem
 		if (subID == -1)
 			subID = Main.rand.Next(4);
 
-		Texture2D tex = ModContent.Request<Texture2D>(Texture + "_World").Value;
-		spriteBatch.Draw(tex, Item.position - Main.screenPosition, new Rectangle(0, 28 * subID, 28, 26), GetAlpha(lightColor) ?? lightColor, rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
+		var texture = WorldTexture.Value;
+		spriteBatch.Draw(texture, Item.position - Main.screenPosition, new Rectangle(0, 28 * subID, 28, 26), GetAlpha(lightColor) ?? lightColor, rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
 		return false;
 	}
 
