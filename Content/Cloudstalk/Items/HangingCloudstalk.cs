@@ -26,9 +26,7 @@ public class HangingCloudstalkTile : ModTile
 {
 	private double windSway;
 
-	public override void Load() => On_TileDrawing.Update += UpdateTileDrawing;
-
-	private void UpdateTileDrawing(On_TileDrawing.orig_Update orig, TileDrawing self)
+	public override void Load() => On_TileDrawing.Update += (On_TileDrawing.orig_Update orig, TileDrawing self) =>
 	{
 		if (!Main.dedServ) //Wind speed calculation
 		{
@@ -39,7 +37,7 @@ public class HangingCloudstalkTile : ModTile
 		}
 
 		orig(self);
-	}
+	};
 
 	public override void SetStaticDefaults()
 	{
@@ -73,55 +71,39 @@ public class HangingCloudstalkTile : ModTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Tile tile = Framing.GetTileSafely(i, j);
-		var topLeft = new Point16(i - tile.TileFrameX % 36 / 18, j - tile.TileFrameY / 18);
+		var tile = Framing.GetTileSafely(i, j);
+		var data = TileObjectData.GetTileData(tile);
 
-		if (new Point16(i, j) != topLeft) //Draw only once on the multitile origin so we have control over iterations
+		if (tile.TileFrameX % (data.Width * 18) != 0 || tile.TileFrameY % (data.Height * 18) != 0) //Top left tile only
 			return false;
 
 		spriteBatch.End();
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);
 		//Restart the spritebatch so the tile isn't blurry
 
-		float GetWindSway()
+		var topLeft = new Point16(i, j);
+		float windCycle = GetWindSway(topLeft, windSway);
+
+		for (int y = 0; y < data.Height; y++)
 		{
-			float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, windSway);
-
-			if (!WorldGen.InAPlaceWithWind(topLeft.X, topLeft.Y, 2, 3))
-				rotation = 0f;
-
-			return rotation + GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, 2, 3, 60, 1.26f, 3, true);
-			//Main.instance.TilesRenderer.GetWindGridPushComplex(topLeft.X, topLeft.Y, 60, 1.26f, 3, true);
-		}
-
-		float windCycle = GetWindSway();
-		Texture2D texture = TextureAssets.Tile[Type].Value;
-		Vector2 offset = (Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1) ? Vector2.Zero : Vector2.One * 12;
-
-		int _i = i;
-		int _j = j;
-
-		for (int y = 0; y < 3; y++)
-		{
-			for (int x = 0; x < 2; x++)
+			for (int x = 0; x < data.Width; x++)
 			{
-				(i, j) = (_i + x, _j + y);
-
+				(i, j) = (topLeft.X + x, topLeft.Y + y);
 				tile = Framing.GetTileSafely(i, j);
 
-				var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 16);
-				var drawPos = new Vector2((i + offset.X) * 16 - (int)Main.screenPosition.X, (j + offset.Y) * 16 - (int)Main.screenPosition.Y);
+				if (!tile.HasTile || tile.TileType != Type)
+					continue;
 
-				var origin = new Vector2(16 - tile.TileFrameX % 36 / 18 * 16, -(tile.TileFrameY / 18 * 16));
-				drawPos += origin;
-				drawPos += new Vector2(TileObjectData.GetTileData(tile.TileType, 0).DrawXOffset, TileObjectData.GetTileData(tile.TileType, 0).DrawYOffset);
+				int frameX = tile.TileFrameX % (data.Width * 18) / 18;
+				int frameY = tile.TileFrameY % (data.Height * 18) / 18;
+				var origin = new Vector2(-(frameX * 16) + data.Origin.X * 16, -(frameY * 16) + data.Origin.Y * 16);
 
-				float swing = 3f * (j - topLeft.Y + 1) / 54f;
-				float rotation = -windCycle * MathHelper.Max(swing, .1f);
+				float swing = 3f * (data.Origin.Y - (frameY + 1)) / (data.Height * 18);
+				float rotation = windCycle * MathHelper.Max(swing, .1f);
 
-				drawPos += new Vector2(windCycle, Math.Abs(windCycle) * -4f * swing);
+				var offset = origin + new Vector2(windCycle, Math.Abs(windCycle) * 4f * swing);
 
-				spriteBatch.Draw(texture, drawPos, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0f);
+				DrawWithWindSway(i, j, spriteBatch, offset, -rotation, origin);
 			}
 		}
 
@@ -131,24 +113,51 @@ public class HangingCloudstalkTile : ModTile
 		return false;
 	}
 
-	private static float GetHighestWindGridPushComplex(int topLeftX, int topLeftY, int sizeX, int sizeY, int totalPushTime, float pushForcePerFrame, int loops, bool swapLoopDir) //Adapted from vanilla
+	private void DrawWithWindSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
-		float result = 0f;
-		int num = int.MaxValue;
-		for (int i = 0; i < 1; i++)
+		var tile = Framing.GetTileSafely(i, j);
+		var texture = TextureAssets.Tile[Type].Value;
+
+		Vector2 lightOffset = (Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1) ? Vector2.Zero : Vector2.One * 12;
+		var drawPos = new Vector2((i + lightOffset.X) * 16 - (int)Main.screenPosition.X, (j + lightOffset.Y) * 16 - (int)Main.screenPosition.Y);
+		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 16);
+
+		spriteBatch.Draw(texture, drawPos + offset, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0f);
+	}
+
+	private static float GetWindSway(Point16 topLeft, double windSway)
+	{
+		static float GetHighestWindGridPushComplex(int topLeftX, int topLeftY, int sizeX, int sizeY, int totalPushTime, float pushForcePerFrame, int loops, bool swapLoopDir) //Adapted from vanilla
 		{
-			for (int j = 0; j < sizeY; j++)
+			float result = 0f;
+			int num = int.MaxValue;
+
+			for (int i = 0; i < sizeX; i++)
 			{
-				Main.instance.TilesRenderer.Wind.GetWindTime(topLeftX + i + sizeX / 2, topLeftY + j, totalPushTime, out var windTimeLeft, out var _, out var _);
-				float windGridPushComplex = Main.instance.TilesRenderer.GetWindGridPushComplex(topLeftX + i, topLeftY + j, totalPushTime, pushForcePerFrame, loops, swapLoopDir);
-				if (windTimeLeft < num && windTimeLeft != 0)
+				for (int j = 0; j < sizeY; j++)
 				{
-					result = windGridPushComplex;
-					num = windTimeLeft;
+					Main.instance.TilesRenderer.Wind.GetWindTime(topLeftX + i + sizeX / 2, topLeftY + j + sizeY / 2, totalPushTime, out int windTimeLeft, out _, out _);
+					float windGridPushComplex = Main.instance.TilesRenderer.GetWindGridPushComplex(topLeftX + i, topLeftY + j, totalPushTime, pushForcePerFrame, loops, swapLoopDir);
+					
+					if (windTimeLeft < num && windTimeLeft != 0)
+					{
+						result = windGridPushComplex;
+						num = windTimeLeft;
+					}
 				}
 			}
+
+			return result;
 		}
 
-		return result;
+		var tile = Framing.GetTileSafely(topLeft);
+		var data = TileObjectData.GetTileData(tile);
+
+		float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, windSway);
+
+		if (!WorldGen.InAPlaceWithWind(topLeft.X, topLeft.Y, data.Width, data.Height))
+			rotation = 0f;
+
+		return rotation + GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 60, 1.26f, 3, true);
 	}
 }
