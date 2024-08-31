@@ -70,7 +70,8 @@ public class FairyMinion : BaseMinion
 		{
 			Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.DirectionTo(target.Center) * 3.5f, ModContent.ProjectileType<FairyProj>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
 			Projectile.velocity -= Projectile.DirectionTo(target.Center) * 4;
-			AiTimer = 0;
+			AiTimer = 0 + Main.rand.Next(-5, 6);
+			Projectile.netUpdate = true;
 
 			if (!Main.dedServ)
 			{

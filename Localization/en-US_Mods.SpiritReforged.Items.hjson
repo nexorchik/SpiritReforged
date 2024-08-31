@@ -508,5 +508,5 @@ KoiTotem: {
 
 FairyWhistle: {
 	DisplayName: Fairy Whistle
-	Tooltip: "Calls a protective fairy that hovers around you"
+	Tooltip: Calls a protective fairy that hovers around you
 }
