@@ -1,19 +1,12 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Forest.Stargrass.Items;
-using Terraria;
-using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
 
 public class StargrassTree : ModTree
 {
-	private const string Path = "SpiritReforged/Content/Forest/Stargrass/Tiles/StargrassTree";
+	public const string TexturePath = "SpiritReforged/Content/Forest/Stargrass/Tiles/StargrassTree";
 
 	public override TreePaintingSettings TreeShaderSettings => new()
 	{
@@ -28,9 +21,9 @@ public class StargrassTree : ModTree
 	public override int CreateDust() => DustID.WoodFurniture;
 	public override int TreeLeaf() => GoreID.TreeLeaf_Normal;
 	public override int DropWood() => ItemID.Wood;
-	public override Asset<Texture2D> GetTexture() => ModContent.Request<Texture2D>(Path);
-	public override Asset<Texture2D> GetTopTextures() => ModContent.Request<Texture2D>($"{Path}_Tops");
-	public override Asset<Texture2D> GetBranchTextures() => ModContent.Request<Texture2D>($"{Path}_Branches");
+	public override Asset<Texture2D> GetTexture() => ModContent.Request<Texture2D>(TexturePath);
+	public override Asset<Texture2D> GetTopTextures() => ModContent.Request<Texture2D>($"{TexturePath}_Tops");
+	public override Asset<Texture2D> GetBranchTextures() => ModContent.Request<Texture2D>($"{TexturePath}_Branches");
 
 	public override int SaplingGrowthType(ref int style)
 	{

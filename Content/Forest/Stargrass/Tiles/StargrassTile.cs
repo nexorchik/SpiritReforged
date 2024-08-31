@@ -34,7 +34,7 @@ internal class StargrassTile : ModTile
 	{
 		if (!Framing.GetTileSafely(i, j - 1).HasTile && Main.rand.NextBool(4))
 		{
-			int style = Main.rand.Next(12);
+			int style = Main.rand.Next(26);
 			WorldGen.PlaceObject(i, j - 1, ModContent.TileType<StargrassFlowers>(), true, style);
 			NetMessage.SendObjectPlacement(-1, i, j - 1, ModContent.TileType<StargrassFlowers>(), style, 0, -1, -1);
 		}

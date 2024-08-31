@@ -1,3 +1,4 @@
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.WorldGeneration;
 using Terraria.GameContent.Metadata;
 
@@ -30,7 +31,7 @@ public class StargrassFlowers : ModTile
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<StargrassTile>()];
 		TileObjectData.newTile.AnchorAlternateTiles = [TileID.ClayPot, TileID.PlanterBox];
 
-		for (int i = 0; i < 11; i++)
+		for (int i = 0; i < 25; i++)
 		{
 			TileObjectData.newSubTile.CopyFrom(TileObjectData.newTile);
 			TileObjectData.addSubTile(TileObjectData.newSubTile.Style);
@@ -51,7 +52,7 @@ public class StargrassFlowers : ModTile
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		// TODO: Grass sway
-		//TileSwaySystem.DrawGrassSway(spriteBatch, TextureAssets.Tile[Type].Value, i, j, Lighting.GetColor(i, j));
+		TileSwaySystem.DrawGrassSway(spriteBatch, TextureAssets.Tile[Type].Value, i, j, Lighting.GetColor(i, j));
 		return false;
 	}
 
@@ -68,6 +69,6 @@ public class StargrassFlowers : ModTile
 		if (dist < MaxDist)
 			strength = MathHelper.Lerp(MinBrightness, 1f, 1 - dist / MaxDist);
 
-		//TileSwaySystem.DrawGrassSway(spriteBatch, Texture + "_Glow", i, j, colour * strength);
+		TileSwaySystem.DrawGrassSway(spriteBatch, Texture + "_Glow", i, j, colour * strength);
 	}
 }
