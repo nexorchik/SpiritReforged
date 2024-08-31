@@ -2,7 +2,7 @@
 
 namespace SpiritReforged.Common.TileCommon.TileSway;
 
-/// <summary> Helps draw a multitile affected by wind - rotates around tile origin. </summary>
+/// <summary> Helps draw a tile affected by wind - rotates around tile origin. </summary>
 public interface ISwayInWind
 {
 	/// <summary> Add natural wind cycle and grid wind push math here. </summary>

@@ -43,7 +43,7 @@ public class ElephantGrass : ModTile, ISwayInWind
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
 		TileObjectData.newTile.Height = 3;
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 18];
-		TileObjectData.newTile.Origin = new(0, TileObjectData.newTile.Height);
+		TileObjectData.newTile.Origin = new(0, 2);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 1, 0);
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
 		TileObjectData.newTile.StyleHorizontal = true;
