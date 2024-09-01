@@ -13,7 +13,7 @@ public class FairyMinion : BaseMinion
 {
 	public FairyMinion() : base(400, 500, new Vector2(20, 20)) { }
 
-	private static Color PARTICLE_GREEN = new(124, 255, 47);
+	internal static Color PARTICLE_GREEN = new(124, 255, 47);
 
 	public override void AbstractSetStaticDefaults()
 	{

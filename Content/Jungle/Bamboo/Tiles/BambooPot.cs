@@ -66,7 +66,7 @@ internal class BambooPotGlobalTile : GlobalTile //Hacky solution for modded clay
 			return base.PreDraw(i, j, type, spriteBatch);
 
 		Tile tile = Framing.GetTileSafely(i, j);
-		Texture2D texture = Mod.Assets.Request<Texture2D>("Tiles/Furniture/Bamboo/BambooPot").Value;
+		Texture2D texture = TextureAssets.Tile[ModContent.TileType<BambooPot>()].Value;
 		var source = new Rectangle(tile.TileFrameX % 16, tile.TileFrameY % 16, 16, 18);
 
 		Vector2 offset = Lighting.LegacyEngine.Mode > 1 ? Vector2.Zero : Vector2.One * 12;

@@ -30,8 +30,6 @@ internal class StargrassTile : ModTile
 	{
 		int chance = (int)Math.Clamp(50 - 7.5f * player.velocity.Length(), 1, 50);
 
-		Main.NewText(chance);
-
 		if (chance >= 1 && Main.rand.NextBool(chance))
 		{
 			if (Main.rand.NextBool(5))
