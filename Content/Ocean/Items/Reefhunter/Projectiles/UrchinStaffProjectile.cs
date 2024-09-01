@@ -60,7 +60,7 @@ public class UrchinStaffProjectile : ModProjectile
 			return;
 
 		Vector2 pos = player.Center + new Vector2(27, -50).RotatedBy(Projectile.rotation);
-		Vector2 vel = ArcVelocityHelper.GetArcVel(pos, TargetPosition + player.MountedCenter, 0.2f, null, 150, 8, 25, 5f);
+		Vector2 vel = ArcVelocityHelper.GetArcVel(pos, TargetPosition + player.MountedCenter, 0.2f, player.HeldItem.shootSpeed);
 
 		if (CanShootUrchin(player, vel))
 		{
@@ -100,8 +100,9 @@ public class UrchinStaffProjectile : ModProjectile
 	public override bool PreDraw(ref Color lightColor)
 	{
 		Texture2D t = TextureAssets.Projectile[Projectile.type].Value;
+		Vector2 textureSize = t.Size() * new Vector2(0, 0.5f);
 
-		Main.spriteBatch.Draw(t, Projectile.Center - Main.screenPosition, new Rectangle(0, 56 * (int)Projectile.ai[0], 50, 54), lightColor, Projectile.rotation, t.Size() * new Vector2(0, 0.5f), 1f, SpriteEffects.None, 1f);
+		Main.spriteBatch.Draw(t, Projectile.Center - Main.screenPosition, new Rectangle(0, 56 * (int)Projectile.ai[0], 50, 54), lightColor, Projectile.rotation, textureSize, 1f, SpriteEffects.None, 1f);
 		return false;
 	}
 

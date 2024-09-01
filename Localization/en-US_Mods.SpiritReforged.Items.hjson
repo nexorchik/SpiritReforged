@@ -461,7 +461,7 @@ Ambergris: {
 	DisplayName: Ambergris
 	Tooltip:
 		'''
-		'Highly valuable'
+		Highly valuable
 		'You don't want to know where this came from'
 		'''
 }
@@ -511,27 +511,7 @@ FairyWhistle: {
 	Tooltip: Calls a protective fairy that hovers around you
 }
 
-EnchantedApple: {
-	DisplayName: Enchanted Apple
-	Tooltip:
-		'''
-		Minor improvements to all stats
-		Increases mana regeneration
-		'Glimmers and shines brightly...'
-		'''
-}
-
-EnchantedStarFruit: {
-	DisplayName: Enchanted Star Fruit
-	Tooltip:
-		'''
-		Minor improvements to all stats
-		Increases mana regeneration
-		'Tastes like the cosmos.'
-		'''
-}
-
-StarPowder: {
-	DisplayName: Starpowder
-	Tooltip: Throw onto grass to invigorate it with starlight!
+TermiteItem: {
+	DisplayName: Termite
+	Tooltip: ""
 }

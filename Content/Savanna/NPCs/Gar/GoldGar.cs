@@ -29,8 +29,6 @@ public class GoldGar : ModNPC
 		NPC.knockBackResist = .35f;
 		NPC.noGravity = true;
 		NPC.npcSlots = 0;
-		//this is literally only here because for some reason the flopping (nonwet) rotation doesn't work as we
-
 		NPC.dontCountMe = true;
 
 	}
@@ -224,7 +222,6 @@ public class GoldGar : ModNPC
 				{
 					float bubbleX = NPC.position.X + (NPC.width / 2) + (NPC.direction == 1 ? NPC.width / 2 + 20 : -NPC.width / 2 - 20);
 					float bubbleY = NPC.position.Y + NPC.height / 2 - 4;
-
 					Dust.NewDust(new Vector2(bubbleX, bubbleY), 0, 0, DustID.BreatheBubble, .1f * NPC.direction, Main.rand.NextFloat(-1.14f, -1.48f), 0, new Color(255, 255, 255, 200), Main.rand.NextFloat(.65f, .85f));
 				}
 
