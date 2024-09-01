@@ -461,7 +461,7 @@ Ambergris: {
 	DisplayName: Ambergris
 	Tooltip:
 		'''
-		'Highly valuable'
+		Highly valuable
 		'You don't want to know where this came from'
 		'''
 }
@@ -512,6 +512,6 @@ FairyWhistle: {
 }
 
 TermiteItem: {
-	DisplayName: Termite Item
+	DisplayName: Termite
 	Tooltip: ""
 }

@@ -23,6 +23,12 @@ public class SavannaGlobalItem : GlobalItem
 
 		if (item.type == Mod.Find<ModItem>("KillifishItem").Type)
 			item.value = Item.sellPrice(0, 0, 3, 29);
+
+		if (item.type == Mod.Find<ModItem>("TermiteItem").Type)
+		{
+			item.value = Item.sellPrice(0, 0, 0, 95);
+			item.bait = 9;
+		}
 	}
 	public override void AddRecipes()
 	{

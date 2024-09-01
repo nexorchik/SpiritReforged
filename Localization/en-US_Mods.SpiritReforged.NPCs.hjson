@@ -59,4 +59,7 @@ GoldKillifish: {
 	Entry: Bright gold scales do not help with Killifish's woes.
 }
 
-Termite.DisplayName: Termite
+Termite: {
+	DisplayName: Termite
+	Entry: If a tree falls in a forest and no one is around to hear it, it's probably a termite's fault.
+}

@@ -34,9 +34,11 @@ public class Killifish : ModNPC
 		NPC.noGravity = true;
 		NPC.npcSlots = 0;
 		NPC.dontCountMe = true;
-		NPC.dontTakeDamageFromHostiles = false;
+		NPC.friendly = true;
 		NPC.dontTakeDamage = false;
 	}
+	public override bool? CanBeHitByItem(Player player, Item item) => true;
+	public override bool? CanBeHitByProjectile(Projectile projectile) => true;
 	public override void SetBestiary(BestiaryDatabase dataNPC, BestiaryEntry bestiaryEntry)
 	{
 		bestiaryEntry.UIInfoProvider = new CritterUICollectionInfoProvider(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds[Type]);
