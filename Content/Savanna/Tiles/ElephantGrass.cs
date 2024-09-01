@@ -1,45 +1,30 @@
-﻿using Terraria.Audio;
+﻿using SpiritReforged.Common.TileCommon.TileSway;
+using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
-public class ElephantGrass : ModTile
+public class ElephantGrass : ModTile, ISwayInWind
 {
-	private static readonly List<Point16> Points = new();
 	private static bool DrawingFront;
 
-	private double windSway;
-
-	public override void Load()
+	public override void Load() => On_Main.DrawPlayers_AfterProjectiles += (On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self) =>
 	{
-		On_TileDrawing.Update += (On_TileDrawing.orig_Update orig, TileDrawing self) =>
+		orig(self);
+
+		Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+		DrawingFront = true;
+
+		var points = TileSwaySystem.Instance.specialDrawPoints; //We don't know which position to draw at, so reuse this point
+		for (int i = points.Count - 1; i >= 0; i--)
 		{
-			if (!Main.dedServ)
-			{
-				double num = Math.Abs(Main.WindForVisuals);
+			if (Framing.GetTileSafely(points[i]).TileType == Type)
+				TileSwayGlobalTile.PreDrawInWind(points[i], Main.spriteBatch);
+		}
 
-				num = Utils.GetLerpValue(0.08f, 1.2f, (float)num, clamped: true);
-				windSway += 1.0 / 180.0 + 1.0 / 180.0 * num * 9.0; //Modified grass speed
-			}
-
-			orig(self);
-		}; //Wind speed calculation
-
-		On_Main.DrawPlayers_AfterProjectiles += (On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self) =>
-		{
-			orig(self);
-
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-			DrawingFront = true;
-
-			for (int i = Points.Count - 1; i >= 0; i--)
-				PreDraw(Points[i].X, Points[i].Y, Main.spriteBatch);
-
-			DrawingFront = false;
-			Main.spriteBatch.End();
-		}; //Front layer drawing
-	}
+		DrawingFront = false;
+		Main.spriteBatch.End();
+	}; //Front layer drawing
 
 	public override void SetStaticDefaults()
 	{
@@ -52,7 +37,7 @@ public class ElephantGrass : ModTile
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
 		TileObjectData.newTile.Height = 3;
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 18];
-		TileObjectData.newTile.Origin = new(0, TileObjectData.newTile.Height);
+		TileObjectData.newTile.Origin = new(0, 2);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 1, 0);
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
 		TileObjectData.newTile.StyleHorizontal = true;
@@ -73,67 +58,6 @@ public class ElephantGrass : ModTile
 			SoundEngine.PlaySound(SoundID.Grass with { Volume = .5f, PitchVariance = 1 }, Main.LocalPlayer.Center);
 	}
 
-	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
-	{
-		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
-
-		if (!tile.HasTile || tile.TileType != Type)
-		{
-			Points.Remove(new Point16(i, j)); //If the tile is invalid, prevent DrawFront from using it
-			return false;
-		}
-
-		if (tile.TileFrameX % (data.Width * 18) != 0 || tile.TileFrameY % (data.Height * 18) != 0) //Top left only
-			return false;
-
-		if (!Points.Contains(new Point16(i, j)))
-			Points.Add(new Point16(i, j)); //Add a point so DrawFront knows where to draw the tile
-
-		if (!DrawingFront)
-		{
-			spriteBatch.End();
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);
-		}
-
-		var topLeft = new Point16(i, j);
-		float windCycle = GetWindSway(topLeft, windSway);
-
-		for (int y = 0; y < data.Height; y++)
-		{
-			for (int x = 0; x < data.Width; x++)
-			{
-				(i, j) = (topLeft.X + x, topLeft.Y + y);
-				tile = Framing.GetTileSafely(i, j);
-
-				if (!tile.HasTile || tile.TileType != Type)
-					continue;
-
-				int frameX = tile.TileFrameX % (data.Width * 18) / 18;
-				int frameY = tile.TileFrameY % (data.Height * 18) / 18;
-				var origin = new Vector2(-(frameX * 16) + data.Origin.X * 16, -(frameY * 16) + data.Origin.Y * 16);
-
-				float swing = 1.5f * (data.Origin.Y - frameY + 1) / data.Height;
-				float rotation = windCycle * MathHelper.Max(swing, .05f) * swing * .05f;
-
-				var offset = origin + new Vector2(windCycle, Math.Abs(windCycle) * 2f * swing);
-
-				if (!DrawingFront)
-					DrawBack(i, j, spriteBatch, offset, rotation, origin);
-				else
-					DrawFront(i, j, spriteBatch, offset, rotation, origin);
-			}
-		}
-
-		if (!DrawingFront)
-		{
-			spriteBatch.End();
-			spriteBatch.Begin();
-		}
-
-		return false;
-	}
-
 	public void DrawFront(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
@@ -152,8 +76,7 @@ public class ElephantGrass : ModTile
 		var tile = Framing.GetTileSafely(i, j);
 		var texture = TextureAssets.Tile[Type].Value;
 
-		Vector2 lightOffset = (Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1) ? Vector2.Zero : Vector2.One * 12;
-		var drawPos = new Vector2((i + lightOffset.X) * 16 - (int)Main.screenPosition.X, (j + lightOffset.Y) * 16 - (int)Main.screenPosition.Y);
+		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
 
 		for (int x = 0; x < (tile.TileFrameX / 18 + i) % 3 + 1; x++)
 		{
@@ -168,39 +91,24 @@ public class ElephantGrass : ModTile
 		}
 	}
 
-	private static float GetWindSway(Point16 topLeft, double windSway)
+	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
-		static float GetHighestWindGridPushComplex(int topLeftX, int topLeftY, int sizeX, int sizeY, int totalPushTime, float pushForcePerFrame, int loops, bool swapLoopDir) //Adapted from vanilla
-		{
-			float result = 0f;
-			int num = int.MaxValue;
+		if (DrawingFront)
+			DrawFront(i, j, spriteBatch, offset, rotation, origin);
+		else
+			DrawBack(i, j, spriteBatch, offset, rotation, origin);
+	}
 
-			for (int i = 0; i < sizeX; i++)
-			{
-				for (int j = 0; j < sizeY; j++)
-				{
-					Main.instance.TilesRenderer.Wind.GetWindTime(topLeftX + i + sizeX / 2, topLeftY + j + sizeY / 2, totalPushTime, out int windTimeLeft, out _, out _);
-					float windGridPushComplex = Main.instance.TilesRenderer.GetWindGridPushComplex(topLeftX + i, topLeftY + j, totalPushTime, pushForcePerFrame, loops, swapLoopDir);
+	public float SetWindSway(Point16 topLeft, ref float swayMult)
+	{
+		swayMult = 1.5f;
 
-					if (windTimeLeft < num && windTimeLeft != 0)
-					{
-						result = windGridPushComplex;
-						num = windTimeLeft;
-					}
-				}
-			}
-
-			return result;
-		}
-
-		var tile = Framing.GetTileSafely(topLeft);
-		var data = TileObjectData.GetTileData(tile);
-
-		float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, windSway);
+		var data = TileObjectData.GetTileData(Framing.GetTileSafely(topLeft));
+		float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, TileSwaySystem.Instance.GrassWindCounter * 2.25f);
 
 		if (!WorldGen.InAPlaceWithWind(topLeft.X, topLeft.Y, data.Width, data.Height))
 			rotation = 0f;
 
-		return rotation + GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 20, 3f, 1, true);
+		return rotation + TileSwayHelper.GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 20, 3f, 1, true);
 	}
 }
