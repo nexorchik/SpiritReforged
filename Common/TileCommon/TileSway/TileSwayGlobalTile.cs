@@ -4,6 +4,24 @@ namespace SpiritReforged.Common.TileCommon.TileSway;
 
 public class TileSwayGlobalTile : GlobalTile
 {
+	public override void Load() => On_Main.DoDraw_Tiles_NonSolid += (On_Main.orig_DoDraw_Tiles_NonSolid orig, Main self) =>
+	{
+		orig(self);
+
+		var points = TileSwaySystem.Instance.specialDrawPoints;
+		for (int i = points.Count - 1; i >= 0; i--)
+		{
+			var tile = Framing.GetTileSafely(points[i]);
+			if (!tile.HasTile || TileLoader.GetTile(tile.TileType) is not ISwayInWind)
+			{
+				points.Remove(points[i]); //If the tile is invalid, don't draw
+				continue;
+			}
+
+			PreDrawInWind(points[i], Main.spriteBatch);
+		}
+	};
+
 	public override bool PreDraw(int i, int j, int type, SpriteBatch spriteBatch)
 	{
 		Tile tile = Framing.GetTileSafely(i, j);
@@ -11,7 +29,7 @@ public class TileSwayGlobalTile : GlobalTile
 		{
 			var data = TileObjectData.GetTileData(tile);
 			if (tile.TileFrameX % (data.Width * 18) == 0 && tile.TileFrameY % (data.Height * 18) == 0)
-				PreDrawInWind(new Point16(i, j), spriteBatch);
+				TileSwaySystem.AddDrawPoint(new Point16(i, j));
 
 			return false;
 		}
@@ -21,21 +39,14 @@ public class TileSwayGlobalTile : GlobalTile
 
 	/// <summary> Automatically does most of the math related to wind effects then calls <see cref="ISwayInWind.DrawInWind"/>. </summary>
 	/// <param name="topLeft"> The top left tile in the multitile. </param>
-	/// <param name="spriteBatch"> The spritebatch used for drawing. </param>
-	/// <param name="restartSpriteBatch"> Whether the spritebatch should be restarted for better visuals in wind. </param>
-	public static void PreDrawInWind(Point16 topLeft, SpriteBatch spriteBatch, bool restartSpriteBatch = true)
+	/// <param name="spriteBatch"> The spritebatch. </param>
+	public static void PreDrawInWind(Point16 topLeft, SpriteBatch spriteBatch)
 	{
 		var tile = Framing.GetTileSafely(topLeft);
 		var data = TileObjectData.GetTileData(tile);
 
 		if (!tile.HasTile || TileLoader.GetTile(tile.TileType) is not ISwayInWind wind)
 			return;
-
-		if (restartSpriteBatch)
-		{
-			spriteBatch.End();
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);
-		}
 
 		float swingMult = 1f;
 		float windCycle = wind.SetWindSway(topLeft, ref swingMult);
@@ -65,12 +76,6 @@ public class TileSwayGlobalTile : GlobalTile
 
 				wind.DrawInWind(i, j, spriteBatch, offset, rotation, origin);
 			}
-		}
-
-		if (restartSpriteBatch)
-		{
-			spriteBatch.End();
-			spriteBatch.Begin();
 		}
 	}
 }

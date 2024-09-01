@@ -1,8 +1,18 @@
-﻿namespace SpiritReforged.Common.TileCommon.TileSway;
+﻿using Terraria.DataStructures;
+
+namespace SpiritReforged.Common.TileCommon.TileSway;
 
 public class TileSwaySystem : ModSystem
 {
 	public static TileSwaySystem Instance => ModContent.GetInstance<TileSwaySystem>();
+
+	public readonly List<Point16> specialDrawPoints = new();
+
+	public static void AddDrawPoint(Point16 point)
+	{
+		if (!Instance.specialDrawPoints.Contains(point))
+			Instance.specialDrawPoints.Add(point);
+	}
 
 	public double TreeWindCounter { get; private set; }
 	public double GrassWindCounter { get; private set; }

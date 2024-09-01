@@ -6,7 +6,6 @@ namespace SpiritReforged.Content.Savanna.Tiles;
 
 public class ElephantGrass : ModTile, ISwayInWind
 {
-	private static readonly List<Point16> DrawPoints = new();
 	private static bool DrawingFront;
 
 	public override void Load() => On_Main.DrawPlayers_AfterProjectiles += (On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self) =>
@@ -16,16 +15,11 @@ public class ElephantGrass : ModTile, ISwayInWind
 		Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 		DrawingFront = true;
 
-		for (int i = DrawPoints.Count - 1; i >= 0; i--)
+		var points = TileSwaySystem.Instance.specialDrawPoints; //We don't know which position to draw at, so reuse this point
+		for (int i = points.Count - 1; i >= 0; i--)
 		{
-			var tile = Framing.GetTileSafely(DrawPoints[i]);
-			if (!tile.HasTile || tile.TileType != Type)
-			{
-				DrawPoints.Remove(DrawPoints[i]); //If the tile is invalid, prevent DrawFront from using it
-				continue;
-			}
-
-			TileSwayGlobalTile.PreDrawInWind(DrawPoints[i], Main.spriteBatch, false);
+			if (Framing.GetTileSafely(points[i]).TileType == Type)
+				TileSwayGlobalTile.PreDrawInWind(points[i], Main.spriteBatch);
 		}
 
 		DrawingFront = false;
@@ -64,15 +58,6 @@ public class ElephantGrass : ModTile, ISwayInWind
 			SoundEngine.PlaySound(SoundID.Grass with { Volume = .5f, PitchVariance = 1 }, Main.LocalPlayer.Center);
 	}
 
-	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
-	{
-		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
-
-		if (tile.TileFrameX % (data.Width * 18) == 0 && tile.TileFrameY % (data.Height * 18) == 0 && !DrawPoints.Contains(new Point16(i, j))) //Top left only
-			DrawPoints.Add(new Point16(i, j)); //Add a point so DrawFront knows where to draw the tile
-	}
-
 	public void DrawFront(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
@@ -91,8 +76,7 @@ public class ElephantGrass : ModTile, ISwayInWind
 		var tile = Framing.GetTileSafely(i, j);
 		var texture = TextureAssets.Tile[Type].Value;
 
-		Vector2 lightOffset = (Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1) ? Vector2.Zero : Vector2.One * 12;
-		var drawPos = new Vector2((i + lightOffset.X) * 16 - (int)Main.screenPosition.X, (j + lightOffset.Y) * 16 - (int)Main.screenPosition.Y);
+		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
 
 		for (int x = 0; x < (tile.TileFrameX / 18 + i) % 3 + 1; x++)
 		{
