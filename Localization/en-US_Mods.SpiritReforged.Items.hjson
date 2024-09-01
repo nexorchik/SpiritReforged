@@ -515,3 +515,28 @@ TermiteItem: {
 	DisplayName: Termite
 	Tooltip: ""
 }
+
+EnchantedApple: {
+	DisplayName: Enchanted Apple
+	Tooltip:
+		'''
+		Minor improvements to all stats
+		Increases mana regeneration
+		'Glimmers and shines brightly...'
+		'''
+}
+
+EnchantedStarFruit: {
+	DisplayName: Enchanted Star Fruit
+	Tooltip:
+		'''
+		Minor improvements to all stats
+		Increases mana regeneration
+		'Tastes like the cosmos.'
+		'''
+}
+
+StarPowder: {
+	DisplayName: Starpowder
+	Tooltip: Throw onto grass to invigorate it with starlight!
+}

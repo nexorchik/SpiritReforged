@@ -13,7 +13,7 @@ public class FairyMinion : BaseMinion
 {
 	public FairyMinion() : base(400, 500, new Vector2(20, 20)) { }
 
-	public static Color PARTICLE_GREEN = new(124, 255, 47);
+	internal static Color PARTICLE_GREEN = new(124, 255, 47);
 
 	public override void AbstractSetStaticDefaults()
 	{
@@ -60,6 +60,7 @@ public class FairyMinion : BaseMinion
 	}
 
 	private const int SHOOTTIME = 50;
+
 	public override void TargettingBehavior(Player player, NPC target)
 	{
 		Projectile.direction = Projectile.spriteDirection = Math.Sign(Projectile.DirectionTo(target.Center).X) > 0 ? -1 : 1;
