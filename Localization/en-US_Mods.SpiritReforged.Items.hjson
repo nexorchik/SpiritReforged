@@ -510,3 +510,8 @@ FairyWhistle: {
 	DisplayName: Fairy Whistle
 	Tooltip: Calls a protective fairy that hovers around you
 }
+
+TermiteItem: {
+	DisplayName: Termite Item
+	Tooltip: ""
+}

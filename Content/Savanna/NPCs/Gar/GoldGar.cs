@@ -29,8 +29,6 @@ public class GoldGar : ModNPC
 		NPC.knockBackResist = .35f;
 		NPC.noGravity = true;
 		NPC.npcSlots = 0;
-		//this is literally only here because for some reason the flopping (nonwet) rotation doesn't work as we
-
 		NPC.dontCountMe = true;
 
 	}
