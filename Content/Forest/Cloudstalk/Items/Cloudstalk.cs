@@ -47,8 +47,8 @@ public class CloudstalkTile : HerbTile
 		AddMapEntry(new Color(178, 234, 234), name);
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.StyleAlch);
-		TileObjectData.newTile.AnchorValidTiles = new int[] { TileID.Grass, TileID.HallowedGrass, TileID.JungleGrass, ModContent.TileType<Savanna.Tiles.SavannaGrass>(), TileID.Cloud, TileID.RainCloud, TileID.SnowCloud };
-		TileObjectData.newTile.AnchorAlternateTiles = new int[] { TileID.ClayPot, TileID.PlanterBox };
+		TileObjectData.newTile.AnchorValidTiles = [TileID.Grass, TileID.HallowedGrass, TileID.JungleGrass, ModContent.TileType<Savanna.Tiles.SavannaGrass>(), TileID.Cloud, TileID.RainCloud, TileID.SnowCloud];
+		TileObjectData.newTile.AnchorAlternateTiles = [TileID.ClayPot, TileID.PlanterBox];
 		TileObjectData.addTile(Type);
 
 		DustType = DustID.Cloud;

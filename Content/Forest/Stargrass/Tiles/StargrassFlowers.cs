@@ -1,4 +1,5 @@
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Common.WorldGeneration;
 using Terraria.GameContent.Metadata;
 
@@ -51,7 +52,6 @@ public class StargrassFlowers : ModTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		// TODO: Grass sway
 		TileSwaySystem.DrawGrassSway(spriteBatch, TextureAssets.Tile[Type].Value, i, j, Lighting.GetColor(i, j));
 		return false;
 	}

@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PostDrawTreeHookSystem;
+using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Common.Visuals;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Forest.Stargrass.Tiles;

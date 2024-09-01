@@ -1,7 +1,7 @@
 using SpiritReforged.Common.TileCommon.TileSway;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Cloudstalk.Items;
+namespace SpiritReforged.Content.Forest.Cloudstalk.Items;
 
 public class HangingCloudstalk : ModItem
 {
@@ -17,7 +17,7 @@ public class HangingCloudstalk : ModItem
 	{
 		Recipe recipe = CreateRecipe();
 		recipe.AddIngredient(ItemID.PotSuspended);
-		recipe.AddIngredient(ModContent.ItemType<Cloudstalk>());
+		recipe.AddIngredient(ModContent.ItemType<HangingCloudstalk>());
 		recipe.Register();
 	}
 }
@@ -36,7 +36,7 @@ public class HangingCloudstalkTile : ModTile, ISwayInWind
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2Top);
 		TileObjectData.newTile.Width = 2;
 		TileObjectData.newTile.Height = 3;
-		TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16, 16 };
+		TileObjectData.newTile.CoordinateHeights = [16, 16, 16];
 		TileObjectData.newTile.DrawYOffset = -2;
 		TileObjectData.newTile.Direction = TileObjectDirection.PlaceLeft;
 		TileObjectData.newTile.StyleHorizontal = true;
