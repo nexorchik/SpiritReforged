@@ -60,6 +60,7 @@ public class FairyMinion : BaseMinion
 	}
 
 	private const int SHOOTTIME = 50;
+
 	public override void TargettingBehavior(Player player, NPC target)
 	{
 		Projectile.direction = Projectile.spriteDirection = Math.Sign(Projectile.DirectionTo(target.Center).X) > 0 ? -1 : 1;

@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PostDrawTreeHookSystem;
+using SpiritReforged.Common.Visuals;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Forest.Stargrass.Tiles;
 using Terraria.DataStructures;
@@ -22,9 +23,7 @@ internal class StargrassTreeGlowEffects : GlobalTile, IPostDrawTree
 	public override void NearbyEffects(int i, int j, int type, bool closer)
 	{
 		if (IsStargrassTree(i, j, type))
-		{
 			Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), new Vector3(0.2f, 0.2f, 0.5f));
-		}
 	}
 
 	public override void DrawEffects(int i, int j, int type, SpriteBatch spriteBatch, ref TileDrawInfo drawData)
