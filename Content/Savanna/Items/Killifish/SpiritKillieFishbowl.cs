@@ -55,14 +55,37 @@ public class SpiritKillieFishbowl_Tile : ModTile
 		AddMapEntry(new Color(200, 200, 200), name);
 	}
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = 2;
+	
+	bool activeAnimation = false;
 	public override void AnimateTile(ref int frame, ref int frameCounter)
 	{
-		frameCounter++;
-		if (frameCounter >= 6)
+		if (Main.rand.NextBool(100) && Main.netMode != NetmodeID.Server)
 		{
-			frameCounter = 0;
-			frame++;
-			frame %= 22;
+			activeAnimation = true;
+		}
+		if (activeAnimation)
+		{
+			frameCounter++;
+			if (frameCounter >= 6)
+			{
+				frameCounter = 0;
+				frame++;
+				frame %= 22;
+			}
+			if (frame == 16)
+				activeAnimation = false;
+		}
+		else
+		{
+			frameCounter++;
+			if (frameCounter >= 26)
+			{
+				frameCounter = 0;
+				frame++;
+				frame %= 22;
+			}
+			if (frame == 18)
+				frame = 17;
 		}
 	}
 }
