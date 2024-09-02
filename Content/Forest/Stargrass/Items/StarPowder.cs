@@ -33,6 +33,8 @@ internal class StarPowderProj : ModProjectile
 
 	public override void SetDefaults() => Projectile.CloneDefaults(ProjectileID.PurificationPowder);
 
+	public override bool? CanCutTiles() => false;
+
 	public override void OnSpawn(IEntitySource source)
 	{
 		for (int i = 0; i < 20; i++)
@@ -67,7 +69,26 @@ internal class StarPowderProj : ModProjectile
 
 				if (tile.TileType == TileID.Grass)
 					tile.TileType = (ushort)ModContent.TileType<StargrassTile>();
+				else if (tile.TileType == TileID.Vines)
+					SpreadVine(i, j);
 			}
+		}
+	}
+
+	private static void SpreadVine(int i, int j)
+	{
+		while (Main.tile[i, j].TileType == TileID.Vines)
+		{
+			j--;
+		}
+
+		j++;
+
+		while (Main.tile[i, j].TileType == TileID.Vines)
+		{
+			Tile tile = Main.tile[i, j];
+			tile.TileType = (ushort)ModContent.TileType<StargrassVine>();
+			j++;
 		}
 	}
 }
