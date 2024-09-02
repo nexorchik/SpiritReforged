@@ -12,6 +12,8 @@ Tiles: {
 	BambooBirdCage.MapEntry: Bamboo Bird Cage
 	BambooPot.MapEntry: Bamboo Pot
 	KoiTotem_Tile.MapEntry: Koi Totem
+	TermiteJar_Tile.MapEntry: Termite Jar_ Tile
+	SpiritKillieFishbowl_Tile.MapEntry: Spirit Killie Fishbowl_ Tile
 }
 
 Projectiles: {

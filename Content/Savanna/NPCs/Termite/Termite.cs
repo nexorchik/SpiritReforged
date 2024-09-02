@@ -67,10 +67,8 @@ public class Termite : ModNPC
 			if (Main.rand.NextBool(300))
 				WorldGen.KillTile(pos.X, pos.Y, true);
 		}
-		termiteTimeLeft--;
 
-		if (termiteTimeLeft <= termiteLifespan / 2 && termiteTimeLeft >= termiteLifespan / 4)
-			NPC.velocity.X *= 1.2f;
+		termiteTimeLeft--;
 
 		if (termiteTimeLeft == termiteLifespan / 4)
 			NPC.velocity.Y -= 2f * (NPC.scale * 2f);

@@ -540,3 +540,13 @@ StarPowder: {
 	DisplayName: Starpowder
 	Tooltip: Throw onto grass to invigorate it with starlight!
 }
+
+TermiteJar: {
+	DisplayName: Termite Jar
+	Tooltip: "'An ecological nightmare'"
+}
+
+SpiritKillieFishbowlItem: {
+	DisplayName: Killifish Bowl
+	Tooltip: "'Maybe a bigger bowl next time?'"
+}
