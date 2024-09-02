@@ -33,6 +33,7 @@ Projectiles: {
 	JellyfishPet.DisplayName: Jellyfish Pet
 	FairyMinion.DisplayName: Fairy Minion
 	FairyProj.DisplayName: Fairy Proj
+	StarPowderProj.DisplayName: Star Powder
 }
 
 Configs: {

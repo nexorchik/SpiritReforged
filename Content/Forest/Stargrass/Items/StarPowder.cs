@@ -67,19 +67,7 @@ internal class StarPowderProj : ModProjectile
 
 				if (tile.TileType == TileID.Grass)
 					tile.TileType = (ushort)ModContent.TileType<StargrassTile>();
-				else if (tile.TileType == TileID.Vines)
-					ReplaceVines(i, j);
 			}
-		}
-	}
-
-	private static void ReplaceVines(int i, int j)
-	{
-		while (Main.tile[i, j].TileType == TileID.Vines)
-		{
-			Tile tile = Main.tile[i, j];
-			tile.TileType = (ushort)ModContent.TileType<StargrassVine>();
-			j++;
 		}
 	}
 }
