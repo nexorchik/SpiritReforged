@@ -160,7 +160,7 @@ public class JellyfishMinion : BaseMinion
 
 			case AISTATE_PREPARESHOOT:
 				float progress = AiTimer / RISETIME;
-				Projectile.rotation -= Projectile.rotation / RISETIME;
+				Projectile.rotation = Utils.AngleLerp(Projectile.rotation, 0, 1f / RISETIME);
 				float speed = MathHelper.Lerp(2, 0.4f, progress);
 				float slowdownLerpSpeed = MathHelper.Lerp(0.07f, 0.2f, progress);
 				Projectile.velocity = Vector2.Lerp(Projectile.velocity, -Vector2.UnitY * speed, slowdownLerpSpeed);

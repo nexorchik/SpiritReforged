@@ -54,13 +54,15 @@ float GetAbsDistance(float inputCoordinate)
 float4 MainPS(VertexShaderOutput input) : COLOR0
 {
     float4 color = input.Color;
-    float dissipateProgress = max((Progress - 0.5f) * 2, 0);
+    float dissipateProgress = pow(Progress, 4);
     
     float2 texCoords = float2((input.TextureCoordinates.x * xMod) + uTime, (input.TextureCoordinates.y / yMod) + (0.5f - 0.5f / yMod));
-    float2 noiseCoords = float2((input.TextureCoordinates.x + uTime / 3) * 30 * xMod, (input.TextureCoordinates.y + uTime) * yMod) / 25;
+    float2 noiseCoords = float2((input.TextureCoordinates.x + (Progress / 8)) * 50 * xMod, (input.TextureCoordinates.y) * yMod) / 15;
     
-    float noiseStrength = (1 - tex2D(noiseSampler, noiseCoords).r) * 0.5f;
-    float strength = pow(tex2D(textureSampler, texCoords).r, 2) * 3;
+    float noiseStrength = pow(tex2D(noiseSampler, noiseCoords).r, 2);
+    float strength = pow(tex2D(textureSampler, texCoords).r, 4);
+    float bloomStrength = pow((1 - GetAbsDistance(input.TextureCoordinates.y)), 3) * pow(1 - Progress, 3) * 2;
+    strength += bloomStrength;
     
     //Fadeout if the absolute x value from the center is 0.95f or greater, 20 here is 1 / 0.05 (1 - the fadeout value)
     float xFadeOut = max(((GetAbsDistance(input.TextureCoordinates.x) - 0.8f) * 5), 0);
@@ -69,7 +71,8 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     
     if (dissipateProgress > noiseStrength)
     {
-        float dissipateStrength = min((dissipateProgress - noiseStrength) * 2, 1);
+        float dissipateStrength = min((dissipateProgress - noiseStrength) * 4, 1);
+        dissipateStrength = pow(dissipateStrength, 0.33f);
         return lerp(color * strength, float4(0, 0, 0, 0), dissipateStrength);
     }
     

@@ -19,8 +19,6 @@ public class JellyfishBolt : ModProjectile
 		set => Projectile.ai[1] = value ? 1 : 0;
 	}
 
-	private int ShaderID => IsPink ? 93 : 96;
-
 	public Vector2 SpawnPosition = new(0, 0);
 
 	public override string Texture => "Terraria/Images/Projectile_1"; //Use a basic texture because this projectile is hidden
@@ -51,24 +49,16 @@ public class JellyfishBolt : ModProjectile
 		}
 	}
 
-	public override void OnKill(int timeLeft)
-	{
-		SoundEngine.PlaySound(SoundID.NPCHit3, Projectile.Center);
-		ParticleHandler.SpawnParticle(new LightningParticle(SpawnPosition, Projectile.Center, IsPink ? new Color(255, 59, 206, 0) : new Color(51, 214, 255, 0), 20, 30f));
-	}
-
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
-		for (int i = 0; i < 10; i++)
+		SoundEngine.PlaySound(SoundID.Item93, Projectile.Center);
+		Color particleColor = IsPink ? new Color(255, 161, 225) : new Color(156, 255, 245);
+		ParticleHandler.SpawnParticle(new LightningParticle(SpawnPosition, target.Center, particleColor, 30, 30f));
+
+		for(int i = 0; i < 15; i++)
 		{
-			int num = Dust.NewDust(target.position, target.width, target.height, DustID.Electric, 0f, -2f, 0, default, 2f);
-			Main.dust[num].noGravity = true;
-			Main.dust[num].shader = GameShaders.Armor.GetSecondaryShader(ShaderID, Main.LocalPlayer);
-			Main.dust[num].position.X += Main.rand.Next(-50, 51) * .05f - 1.5f;
-			Main.dust[num].position.Y += Main.rand.Next(-50, 51) * .05f - 1.5f;
-			Main.dust[num].scale *= .25f;
-			if (Main.dust[num].position != target.Center)
-				Main.dust[num].velocity = target.DirectionTo(Main.dust[num].position) * 3f;
+			Vector2 particleVelBase = -Projectile.oldVelocity;
+			ParticleHandler.SpawnParticle(new GlowParticle(target.Center, particleVelBase.RotatedByRandom(MathHelper.Pi / 3) * Main.rand.NextFloat(2f), particleColor, Main.rand.NextFloat(0.3f, 0.5f), 20, 10));
 		}
 	}
 }
