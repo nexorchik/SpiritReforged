@@ -21,7 +21,7 @@ public class UrchinStaff : ModItem
 		Item.mana = 10;
 		Item.rare = ItemRarityID.Blue;
 		Item.value = Item.sellPrice(gold: 2);
-		Item.useStyle = ItemUseStyleID.Shoot;
+		Item.useStyle = ItemUseStyleID.Swing;
 		Item.shoot = ModContent.ProjectileType<UrchinStaffProjectile>();
 	}
 

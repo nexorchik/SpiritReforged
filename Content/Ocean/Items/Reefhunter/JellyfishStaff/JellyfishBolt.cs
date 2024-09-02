@@ -1,14 +1,11 @@
-﻿using SpiritReforged.Common.PrimitiveRendering;
-using SpiritReforged.Common.PrimitiveRendering.Trail_Components;
-using Terraria;
+﻿using SpiritReforged.Common.Particle;
+using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;
-using Terraria.ModLoader;
-using Terraria.Net;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.JellyfishStaff;
 
-public class JellyfishBolt : ModProjectile, ITrailProjectile
+public class JellyfishBolt : ModProjectile
 {
 	public bool IsPink
 	{
@@ -16,7 +13,15 @@ public class JellyfishBolt : ModProjectile, ITrailProjectile
 		set => Projectile.ai[0] = value ? 1 : 0;
 	}
 
+	public bool SetSpawnPos
+	{
+		get => (int)Projectile.ai[1] != 0;
+		set => Projectile.ai[1] = value ? 1 : 0;
+	}
+
 	private int ShaderID => IsPink ? 93 : 96;
+
+	public Vector2 SpawnPosition = new(0, 0);
 
 	public override string Texture => "Terraria/Images/Projectile_1"; //Use a basic texture because this projectile is hidden
 
@@ -29,46 +34,28 @@ public class JellyfishBolt : ModProjectile, ITrailProjectile
 		Projectile.friendly = true;
 		Projectile.hostile = false;
 		Projectile.penetrate = 1;
-		Projectile.timeLeft = 240;
+		Projectile.timeLeft = 200;
 		Projectile.height = 4;
 		Projectile.width = 4;
 		Projectile.hide = true;
-		Projectile.extraUpdates = 2;
-		AIType = ProjectileID.Bullet;
-	}
-
-	//Placeholder to show trails working in reforged, plan on changing visual
-	public void DoTrailCreation(TrailManager trailManager)
-	{
-		Color trailColor = IsPink ? new Color(247, 15, 243, 0) : new Color(0, 191, 255, 0);
-		trailManager.CreateTrail(Projectile, new StandardColorTrail(trailColor), new RoundCap(), new DefaultTrailPosition(), 10f, 150f, new ImageShader((Texture2D)Mod.Assets.Request<Texture2D>("Assets/Textures/EnergyTrail"), Vector2.One, 1f, 1f));
-		trailManager.CreateTrail(Projectile, new GradientTrail(trailColor, new Color(255, 255, 255, 0) * 0.25f), new RoundCap(), new DefaultTrailPosition(), 8f, 250f, new DefaultShader());
+		Projectile.extraUpdates = 40;
 	}
 
 	public override void AI()
 	{
-		if(Main.rand.NextBool())
+		if(!SetSpawnPos)
 		{
-			Vector2 position = Projectile.Center;
-			Dust dust = Main.dust[Dust.NewDust(position, 0, 0, DustID.Electric, 0f, 0f, 0, new Color(255, 255, 255), .46f)];
-			dust.noLight = true;
-			dust.noGravity = true;
-			dust.velocity = Vector2.Zero;
-			dust.shader = GameShaders.Armor.GetSecondaryShader(ShaderID, Main.LocalPlayer);
-		}
-
-		if (Main.rand.NextBool(3))
-		{
-			Vector2 position = Projectile.Center;
-			Dust dust = Main.dust[Dust.NewDust(position, (int)Projectile.velocity.X, (int)Projectile.velocity.Y, DustID.Electric, 0f, 0f, 0, new Color(255, 255, 255), 0.464947368f)];
-			dust.noLight = true;
-			dust.noGravity = true;
-			dust.velocity *= .6f;
-			dust.shader = GameShaders.Armor.GetSecondaryShader(ShaderID, Main.LocalPlayer);
+			SpawnPosition = Projectile.Center;
+			SetSpawnPos = true;
+			Projectile.netUpdate = true;
 		}
 	}
 
-	public override void OnKill(int timeLeft) => SoundEngine.PlaySound(SoundID.NPCHit3, Projectile.Center);
+	public override void OnKill(int timeLeft)
+	{
+		SoundEngine.PlaySound(SoundID.NPCHit3, Projectile.Center);
+		ParticleHandler.SpawnParticle(new LightningParticle(SpawnPosition, Projectile.Center, IsPink ? new Color(255, 59, 206, 0) : new Color(51, 214, 255, 0), 20, 30f));
+	}
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{

@@ -34,11 +34,15 @@ public class JellyfishMinion : BaseMinion
 	private const int AISTATE_FLYTOPLAYER = 1; //ignore tiles and fly to player if too far
 	private const int AISTATE_AIMTOTARGET = 2; //slowly aim to target, then charge at them
 	private const int AISTATE_DASH = 3; //during the dash
-	private const int AISTATE_SHOOT = 4; //when near target, hover in place and shoot lightning
+	private const int AISTATE_PREPARESHOOT = 4; //between the dash and before shooting, adjust velocity and rotation to rise upwards
+	private const int AISTATE_SHOOT = 5; //when near target, hover in place and shoot lightning
 
 	//Constants used in drawing methods and for the ai pattern
-	private const int SHOOTTIME = 40;
-	private const int DASHTIME = 20;
+	private const int SHOOTTIME = 40; //Time between shots
+	private const int DASHTIME = 25; //Time the dash takes
+	private const int AIMTIME = 40; //Time it takes to aim the dash
+	private const int BOUNCETIME = 50; //General time between bounces
+	private const int RISETIME = 20; //Time it takes to rise upwards after the dash
 
 	public override void IdleMovement(Player player)
 	{
@@ -60,15 +64,15 @@ public class JellyfishMinion : BaseMinion
 				float speed = Projectile.Distance(player.Center) / 30;
 				speed = Math.Min(speed, 5f);
 
-				Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(player.Center) * speed, 0.05f);
+				Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(player.Center) * speed, 0.07f);
 
 				//bounce in general direction of player but moved upwards, semi randomized timing
-				if(AiTimer >= 60 && Main.rand.NextBool(25))
+				if(AiTimer >= BOUNCETIME)
 				{
 					Projectile.velocity += Projectile.DirectionTo(player.Center * Main.rand.NextFloat(4, 8));
-					Projectile.velocity.Y -= Main.rand.NextFloat(3, 4);
+					Projectile.velocity.Y -= Main.rand.NextFloat(2, 3);
 					Projectile.velocity = Projectile.velocity.RotatedByRandom(MathHelper.PiOver4);
-					AiTimer = 0;
+					AiTimer = Main.rand.Next(-BOUNCETIME / 5, BOUNCETIME / 5);
 					Projectile.netUpdate = true;
 				}
 
@@ -122,15 +126,14 @@ public class JellyfishMinion : BaseMinion
 		switch (AiState)
 		{
 			case AISTATE_AIMTOTARGET:
-				int aimTime = 40;
-				float aimProgress = AiTimer / aimTime;
+				float aimProgress = AiTimer / AIMTIME;
 				float aimSpeed = MathHelper.Lerp(8, 0.25f, aimProgress);
 				float interpolationSpeed = MathHelper.Lerp(0.05f, 0.2f, aimProgress);
 
 				Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(target.Center) * aimSpeed, interpolationSpeed);
 				Projectile.rotation = Utils.AngleLerp(Projectile.rotation, AdjustedVelocityAngle, 0.1f);
 
-				if(AiTimer >= aimTime)
+				if(AiTimer >= AIMTIME)
 				{
 					AiState = AISTATE_DASH;
 					AiTimer = 0;
@@ -148,7 +151,23 @@ public class JellyfishMinion : BaseMinion
 				Projectile.velocity *= 0.93f;
 				if(AiTimer >= DASHTIME)
 				{
-					AiState = Projectile.Distance(target.Center) >= ShootRange ? AISTATE_AIMTOTARGET : AISTATE_SHOOT;
+					AiState = Projectile.Distance(target.Center) >= ShootRange ? AISTATE_AIMTOTARGET : AISTATE_PREPARESHOOT;
+					AiTimer = 0;
+					Projectile.netUpdate = true;
+				}
+
+				break;
+
+			case AISTATE_PREPARESHOOT:
+				float progress = AiTimer / RISETIME;
+				Projectile.rotation -= Projectile.rotation / RISETIME;
+				float speed = MathHelper.Lerp(2, 0.4f, progress);
+				float slowdownLerpSpeed = MathHelper.Lerp(0.07f, 0.2f, progress);
+				Projectile.velocity = Vector2.Lerp(Projectile.velocity, -Vector2.UnitY * speed, slowdownLerpSpeed);
+
+				if (AiTimer > RISETIME)
+				{
+					AiState = AISTATE_SHOOT;
 					AiTimer = 0;
 					Projectile.netUpdate = true;
 				}
@@ -156,27 +175,25 @@ public class JellyfishMinion : BaseMinion
 				break;
 
 			case AISTATE_SHOOT:
-				float slowdownTime = SHOOTTIME; //the total length it takes for the minion to slow down fully
-				float slowdownProgress = MathHelper.Clamp(AiTimer / slowdownTime, 0, 1);
-				float speed = MathHelper.Lerp(3, 0.1f, slowdownProgress);
-				float slowdownLerpSpeed = MathHelper.Lerp(0.03f, 0.15f, slowdownProgress);
-
-				Projectile.velocity = Vector2.Lerp(Projectile.velocity, -Vector2.UnitY * speed, slowdownLerpSpeed); //move it upwards slowly
-
-				Projectile.rotation = MathHelper.Lerp(AdjustedVelocityAngle, 0, slowdownProgress);
+				Vector2 aimDirection = Projectile.DirectionTo(target.Center);
+				float ySpeed = 1f;
+				float xSpeed = 0.3f;
+				Projectile.velocity += new Vector2(xSpeed * aimDirection.X / SHOOTTIME, ySpeed / SHOOTTIME);
+				Projectile.rotation = Utils.AngleLerp(Projectile.rotation, 0, 0.1f);
 
 				if (AiTimer % SHOOTTIME == 0)
 				{
-					var bolt = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.DirectionTo(target.Center) * 7, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0);
-					bolt.netUpdate = true;
-					Projectile.netUpdate = true;
-					Projectile.velocity -= Projectile.DirectionTo(target.Center).RotatedByRandom(MathHelper.PiOver4) * Main.rand.NextFloat(0.1f, 0.5f);
-
 					if (Projectile.Distance(target.Center) >= ShootRange)
 					{
 						AiState = AISTATE_AIMTOTARGET;
 						AiTimer = 0;
+						break;
 					}
+
+					var bolt = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0);
+					bolt.netUpdate = true;
+					Projectile.netUpdate = true;
+					Projectile.velocity = 0.5f * new Vector2(-xSpeed * aimDirection.X, -ySpeed);
 				}
 
 				break;
@@ -255,13 +272,14 @@ public class JellyfishMinion : BaseMinion
 	{
 		if (AiState == AISTATE_DASH)
 		{
-			SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+			SoundEngine.PlaySound(SoundID.NPCHit13.WithVolumeScale(0.5f).WithPitchOffset(0.3f), Projectile.Center);
 			Collision.HitTiles(Projectile.Center, Projectile.velocity, Projectile.width, Projectile.height);
 			Projectile.Bounce(oldVelocity, 0.25f);
 		}
 
 		return false;
 	}
+
 	public override bool MinionContactDamage() => AiState == AISTATE_DASH;
 
 	public override bool? CanCutTiles() => false;

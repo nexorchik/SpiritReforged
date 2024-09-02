@@ -42,7 +42,7 @@ public static class ParticleHandler
 
 				string texturePath = type.Namespace.Replace('.', '/') + "/" + type.Name;
 				var particleTexture = ModContent.RequestIfExists(texturePath, out Asset<Texture2D> tex, AssetRequestMode.ImmediateLoad) ? tex.Value 
-					: ModContent.Request<Texture2D>("SpiritReforged/Assets/Textures/ParticleDefault", AssetRequestMode.ImmediateLoad).Value;
+					: ModContent.Request<Texture2D>("SpiritReforged/Assets/Textures/Bloom", AssetRequestMode.ImmediateLoad).Value;
 
 				particleTextures[assignedType] = particleTexture;
 			}
