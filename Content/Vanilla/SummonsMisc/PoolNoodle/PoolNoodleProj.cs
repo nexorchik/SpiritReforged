@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Content.Buffs.SummonTag;
 using Terraria;
 using Terraria.GameContent;
 
@@ -27,5 +28,11 @@ public class PoolNoodleProj : BaseWhipProj
 		Texture2D texture = TextureAssets.Projectile[Type].Value;
 		frame.Width = texture.Width / 3;
 		frame.X = 16 * Style;
+	}
+
+	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+	{
+		base.OnHitNPC(target, hit, damageDone);
+		target.AddBuff(ModContent.BuffType<SummonTag3>(), 360);
 	}
 }
