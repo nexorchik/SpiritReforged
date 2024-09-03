@@ -69,13 +69,20 @@ public abstract class BaseMinion(float TargettingRange, float DeaggroRange, Vect
 	{
 		float maxdist = TargettingRange;
 		NPC miniontarget = Projectile.OwnerMinionAttackTargetNPC;
-		if (miniontarget != null && miniontarget.CanBeChasedBy(this) && (CanHit(Projectile.Center, miniontarget.Center) || HadTarget) && CanHit(Player.Center, miniontarget.Center)
-			&& (miniontarget.Distance(Player.Center) <= maxdist || miniontarget.Distance(Projectile.Center) <= maxdist) && miniontarget.Distance(Player.Center) <= DeaggroRange)
+		bool CanReachTarget(NPC npc, bool initialTargetCheck)
+		{
+			bool success = npc.CanBeChasedBy(this) && CanHit(Projectile.Center, npc.Center) && npc.Distance(Player.Center) <= DeaggroRange;
+			if (npc.Distance(Player.Center) > maxdist && npc.Distance(Projectile.Center) > maxdist && !HadTarget && initialTargetCheck) //Only check when it's looking for a new valid target
+				return false;
+
+			return success;
+		}
+
+		if (miniontarget != null && CanReachTarget(miniontarget, false))
 			_targetNPC = miniontarget;
 		else
 		{
-			var validtargets = Main.npc.Where(x => x != null && x.CanBeChasedBy(this) && (CanHit(Projectile.Center, x.Center) || HadTarget) && CanHit(Player.Center, x.Center)
-													 && (x.Distance(Player.Center) <= maxdist || x.Distance(Projectile.Center) <= maxdist) && x.Distance(Player.Center) <= DeaggroRange);
+			var validtargets = Main.npc.Where(x => x != null && CanReachTarget(x, true));
 
 			if (!validtargets.Contains(_targetNPC))
 				_targetNPC = null;
@@ -112,7 +119,7 @@ public abstract class BaseMinion(float TargettingRange, float DeaggroRange, Vect
 			UpdateFrame(framespersecond, startframe, endframe);
 	}
 
-	internal static bool CanHit(Vector2 center1, Vector2 center2) => Collision.CanHit(center1, 0, 0, center2, 0, 0);
+	internal static bool CanHit(Vector2 center1, Vector2 center2) => Collision.CanHitLine(center1, 0, 0, center2, 0, 0);
 
 	public virtual void IdleMovement(Player player) { }
 

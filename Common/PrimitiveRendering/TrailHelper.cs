@@ -90,7 +90,7 @@ public class TrailManager
 	{
 		if (projectile.ModProjectile is IManualTrailProjectile)
 			if (Main.netMode == NetmodeID.SinglePlayer)
-				(projectile.ModProjectile as IManualTrailProjectile).DoTrailCreation(SpiritReforgedLoadables.VertexTrailManager);
+				(projectile.ModProjectile as IManualTrailProjectile).DoTrailCreation(AssetLoader.VertexTrailManager);
 
 			else
 			{// uhh put netcode here !!

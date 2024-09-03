@@ -57,7 +57,7 @@ public class GlowParticle : Particle
 	public override void CustomDraw(SpriteBatch spriteBatch)
 	{
 		Texture2D tex = ParticleHandler.GetTexture(Type);
-		Texture2D bloom = ModContent.Request<Texture2D>("SpiritReforged/Assets/Textures/Bloom", AssetRequestMode.ImmediateLoad).Value;
+		Texture2D bloom = AssetLoader.LoadedTextures["Bloom"];
 		Color additiveFix = Color;
 		additiveFix.A = 0;
 		float scaleTimeModifier = TimeActive / (float)_maxTime;

@@ -6,7 +6,7 @@ public class SpiritReforgedSystem : ModSystem
 	{
 		if (Main.netMode != NetmodeID.Server)
 		{
-			SpiritReforgedLoadables.VertexTrailManager.UpdateTrails();
+			AssetLoader.VertexTrailManager.UpdateTrails();
 			ParticleHandler.UpdateAllParticles();
 		}
 	}
