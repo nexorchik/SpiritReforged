@@ -5,13 +5,15 @@ using SpiritReforged.Common.ProjectileCommon;
 using Terraria;
 using Terraria.Audio;
 using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.Particle;
+using SpiritReforged.Content.Particles;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.JellyfishStaff;
 
 [Common.Misc.AutoloadMinionBuff()]
 public class JellyfishMinion : BaseMinion
 {
-	public JellyfishMinion() : base(800, 1200, new Vector2(28, 28)) { }
+	public JellyfishMinion() : base(400, 800, new Vector2(28, 28)) { }
 
 	public bool IsPink = false;
 
@@ -38,11 +40,11 @@ public class JellyfishMinion : BaseMinion
 	private const int AISTATE_SHOOT = 5; //when near target, hover in place and shoot lightning
 
 	//Constants used in drawing methods and for the ai pattern
-	private const int SHOOTTIME = 40; //Time between shots
-	private const int DASHTIME = 25; //Time the dash takes
-	private const int AIMTIME = 40; //Time it takes to aim the dash
-	private const int BOUNCETIME = 50; //General time between bounces
-	private const int RISETIME = 20; //Time it takes to rise upwards after the dash
+	private const int SHOOTTIME = 60; //Time between shots
+	private const int DASHTIME = 30; //Time the dash takes
+	private const int AIMTIME = 60; //Time it takes to aim the dash
+	private const int BOUNCETIME = 90; //General time between bounces
+	private const int RISETIME = 30; //Time it takes to rise upwards after the dash
 
 	public override void IdleMovement(Player player)
 	{
@@ -61,16 +63,16 @@ public class JellyfishMinion : BaseMinion
 			case AISTATE_PASSIVEFLOAT:
 				Projectile.rotation -= Utils.AngleLerp(Projectile.rotation, 0, 0.05f);
 
-				float speed = Projectile.Distance(player.Center) / 30;
+				float speed = Projectile.Distance(player.Center) / 50;
 				speed = Math.Min(speed, 5f);
 
-				Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(player.Center) * speed, 0.07f);
+				Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(player.Center) * speed, 0.04f);
 
 				//bounce in general direction of player but moved upwards, semi randomized timing
 				if(AiTimer >= BOUNCETIME)
 				{
-					Projectile.velocity += Projectile.DirectionTo(player.Center * Main.rand.NextFloat(4, 8));
-					Projectile.velocity.Y -= Main.rand.NextFloat(2, 3);
+					Projectile.velocity += Projectile.DirectionTo(player.Center) * Main.rand.NextFloat(1, 2);
+					Projectile.velocity.Y -= Main.rand.NextFloat(3, 4);
 					Projectile.velocity = Projectile.velocity.RotatedByRandom(MathHelper.PiOver4);
 					AiTimer = Main.rand.Next(-BOUNCETIME / 5, BOUNCETIME / 5);
 					Projectile.netUpdate = true;
@@ -114,11 +116,11 @@ public class JellyfishMinion : BaseMinion
 	{
 		Projectile.tileCollide = true;
 		AiTimer++;
-		int ShootRange = 200;
+		int ShootRange = 300;
 
 		if(AiState < AISTATE_AIMTOTARGET)
 		{
-			AiState = Projectile.Distance(target.Center) >= ShootRange ? AISTATE_AIMTOTARGET : AISTATE_SHOOT;
+			AiState = Projectile.Distance(target.Center) >= ShootRange ? AISTATE_AIMTOTARGET : AISTATE_PREPARESHOOT;
 			AiTimer = 0;
 			Projectile.netUpdate = true;
 		}
@@ -127,8 +129,8 @@ public class JellyfishMinion : BaseMinion
 		{
 			case AISTATE_AIMTOTARGET:
 				float aimProgress = AiTimer / AIMTIME;
-				float aimSpeed = MathHelper.Lerp(8, 0.25f, aimProgress);
-				float interpolationSpeed = MathHelper.Lerp(0.05f, 0.2f, aimProgress);
+				float aimSpeed = MathHelper.Lerp(6, 0.25f, aimProgress);
+				float interpolationSpeed = MathHelper.Lerp(0.1f, 0.2f, aimProgress);
 
 				Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(target.Center) * aimSpeed, interpolationSpeed);
 				Projectile.rotation = Utils.AngleLerp(Projectile.rotation, AdjustedVelocityAngle, 0.1f);
@@ -141,6 +143,22 @@ public class JellyfishMinion : BaseMinion
 					Projectile.velocity = Projectile.DirectionTo(target.Center) * DashSpeed;
 					Projectile.rotation = AdjustedVelocityAngle;
 					Projectile.netUpdate = true;
+
+					if(!Main.dedServ)
+					{
+						Color particleColor = IsPink ? new Color(255, 161, 225) : new Color(156, 255, 245);
+						for (int i = 0; i < 8; i++)
+						{
+							var particleVelocity = Projectile.velocity.RotatedByRandom(MathHelper.Pi / 2) * Main.rand.NextFloat(0.03f, 0.05f);
+							ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, particleVelocity, particleColor, Main.rand.NextFloat(0.5f, 1f), Main.rand.Next(10, 30), 4));
+						}
+
+						for (int i = 0; i < 6; i++)
+						{
+							var particleVelocity = Projectile.velocity * Main.rand.NextFloat(0.1f, 0.25f);
+							ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center + Main.rand.NextVector2Circular(10, 10), particleVelocity, particleColor, Main.rand.NextFloat(0.4f, 0.6f), 50, 3, delegate (Particle p) { p.Velocity *= 0.97f; }));
+						}
+					}
 				}
 
 				break;
@@ -148,7 +166,9 @@ public class JellyfishMinion : BaseMinion
 			case AISTATE_DASH:
 				//put vfx here maybe
 
-				Projectile.velocity *= 0.93f;
+				Projectile.velocity *= 0.96f;
+				Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(target.Center) * Projectile.velocity.Length(), 0.025f);
+
 				if(AiTimer >= DASHTIME)
 				{
 					AiState = Projectile.Distance(target.Center) >= ShootRange ? AISTATE_AIMTOTARGET : AISTATE_PREPARESHOOT;
@@ -162,7 +182,7 @@ public class JellyfishMinion : BaseMinion
 				float progress = AiTimer / RISETIME;
 				Projectile.rotation = Utils.AngleLerp(Projectile.rotation, 0, 1f / RISETIME);
 				float speed = MathHelper.Lerp(2, 0.4f, progress);
-				float slowdownLerpSpeed = MathHelper.Lerp(0.07f, 0.2f, progress);
+				float slowdownLerpSpeed = MathHelper.Lerp(0.05f, 0.2f, progress);
 				Projectile.velocity = Vector2.Lerp(Projectile.velocity, -Vector2.UnitY * speed, slowdownLerpSpeed);
 
 				if (AiTimer > RISETIME)
@@ -181,19 +201,22 @@ public class JellyfishMinion : BaseMinion
 				Projectile.velocity += new Vector2(xSpeed * aimDirection.X / SHOOTTIME, ySpeed / SHOOTTIME);
 				Projectile.rotation = Utils.AngleLerp(Projectile.rotation, 0, 0.1f);
 
+				if(Projectile.Distance(target.Center) >= ShootRange * 0.5f) //Really slow movement towards target if too far
+					Projectile.position += Projectile.DirectionTo(target.Center) / 4f;
+
 				if (AiTimer % SHOOTTIME == 0)
 				{
-					if (Projectile.Distance(target.Center) >= ShootRange)
-					{
-						AiState = AISTATE_AIMTOTARGET;
-						AiTimer = 0;
-						break;
-					}
-
 					var bolt = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0);
 					bolt.netUpdate = true;
 					Projectile.netUpdate = true;
 					Projectile.velocity = 0.5f * new Vector2(-xSpeed * aimDirection.X, -ySpeed);
+				}
+
+				if(Projectile.Distance(target.Center) >= ShootRange)
+				{
+					AiState = AISTATE_AIMTOTARGET;
+					AiTimer = 0;
+					Projectile.netUpdate = true;
 				}
 
 				break;
@@ -202,7 +225,7 @@ public class JellyfishMinion : BaseMinion
 
 	public override bool DoAutoFrameUpdate(ref int framespersecond, ref int startframe, ref int endframe)
 	{
-		framespersecond = 8;
+		framespersecond = (AiState == AISTATE_AIMTOTARGET) ? 16 : 8;
 		return true;
 	}
 
@@ -248,7 +271,7 @@ public class JellyfishMinion : BaseMinion
 			Color trailColor = GetColor;
 			trailColor.A = 0;
 			float opacity = (1 - (float)Math.Cos(MathHelper.TwoPi * AiTimer / DASHTIME)) / 4;
-			opacity = EaseFunction.EaseQuadOut.Ease(opacity);
+			opacity = EaseFunction.EaseCircularOut.Ease(opacity);
 			DrawGlowmask(opacity);
 			Projectile.QuickDrawTrail(Main.spriteBatch, opacity, Projectile.rotation, null, trailColor);
 		}
@@ -282,5 +305,9 @@ public class JellyfishMinion : BaseMinion
 
 	public override bool MinionContactDamage() => AiState == AISTATE_DASH;
 
-	public override bool? CanCutTiles() => false;
+	public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
+	{
+		fallThrough = true;
+		return base.TileCollideStyle(ref width, ref height, ref fallThrough, ref hitboxCenterFrac);
+	}
 }

@@ -5,7 +5,6 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
 public class ReefSpearThrown : ModProjectile
 {
-	public override string Texture => Mod.Name + "/Content/Ocean/Items/Reefhunter/Projectiles/ReefSpearProjectile";
 
 	private bool hasTarget = false;
 	private Vector2 relativePoint = Vector2.Zero;

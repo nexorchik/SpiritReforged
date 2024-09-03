@@ -34,7 +34,7 @@ public class ReefSpear : ModItem
 		{
 			Item.shoot = ModContent.ProjectileType<ReefSpearThrown>();
 			Item.damage = 24;
-			Item.shootSpeed = 16f;
+			Item.shootSpeed = 13f;
 			Item.channel = false;
 			Item.useStyle = ItemUseStyleID.Swing;
 			Item.useTime = Item.useAnimation = 35;

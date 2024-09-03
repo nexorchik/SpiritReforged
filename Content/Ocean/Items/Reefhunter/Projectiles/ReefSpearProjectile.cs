@@ -1,14 +1,16 @@
-﻿namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
+﻿using SpiritReforged.Common.Easing;
+
+namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
 public class ReefSpearProjectile : ModProjectile
 {
-	public const int MaxDistance = 40;
+	public const int MaxDistance = 60;
 
-	public Vector2 RealDirection => (direction * MaxDistance).RotatedBy(maxRotation * (Projectile.timeLeft - maxTimeLeft / 2f) / maxTimeLeft);
+	public Vector2 RealDirection => (direction * MaxDistance).RotatedBy(RotationOffset);
 
 	public Vector2 direction = Vector2.Zero;
 	public int maxTimeLeft = 0;
-	public float maxRotation = 0;
+	public float RotationOffset = 0;
 
 	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.ReefSpear.DisplayName");
 
@@ -22,7 +24,7 @@ public class ReefSpearProjectile : ModProjectile
 		Projectile.ignoreWater = true;
 		Projectile.DamageType = DamageClass.Melee;
 		Projectile.aiStyle = -1;
-		Projectile.timeLeft = 18;
+		Projectile.timeLeft = 24;
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = -1;
 
@@ -37,6 +39,7 @@ public class ReefSpearProjectile : ModProjectile
 		p.heldProj = Projectile.whoAmI;
 		p.itemTime = 2;
 		p.itemAnimation = 2;
+		p.reuseDelay = 6;
 
 		p.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Quarter, direction.ToRotation() + 1.57f);
 		p.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Quarter, direction.ToRotation() + 1.57f);
@@ -53,12 +56,14 @@ public class ReefSpearProjectile : ModProjectile
 		{
 			direction = Vector2.Normalize(p.Center - Main.MouseWorld);
 			maxTimeLeft = Projectile.timeLeft;
-			maxRotation = Main.rand.NextFloat(0, MathHelper.Pi * 0.33f);
+			RotationOffset = MathHelper.Pi * Main.rand.NextFloat(-0.07f, 0.07f);
 		}
 
 		float factor = (1 - Projectile.timeLeft / (float)maxTimeLeft) * 2f; //Lerp factor for pushing out and coming back in
 		if (Projectile.timeLeft < maxTimeLeft / 2f)
 			factor = Projectile.timeLeft / (maxTimeLeft / 2f);
+
+		factor = EaseFunction.EaseQuadOut.Ease(factor);
 
 		var offset = new Vector2(0, -2 * p.direction);
 
@@ -69,7 +74,7 @@ public class ReefSpearProjectile : ModProjectile
 
 	public override void ModifyDamageHitbox(ref Rectangle hitbox)
 	{
-		Vector2 pos = Projectile.Center - RealDirection * 1.5f - new Vector2(16);
+		Vector2 pos = Projectile.Center - RealDirection * 1.2f - new Vector2(16);
 
 		hitbox.X = (int)pos.X;
 		hitbox.Y = (int)pos.Y;
@@ -78,7 +83,7 @@ public class ReefSpearProjectile : ModProjectile
 	public override bool PreDraw(ref Color lightColor)
 	{
 		Texture2D t = TextureAssets.Projectile[Projectile.type].Value;
-		Main.spriteBatch.Draw(t, Projectile.Center - Main.screenPosition, null, lightColor, RealDirection.ToRotation() - MathHelper.Pi, new Vector2(16, 14), 1f, SpriteEffects.None, 1f);
+		Main.spriteBatch.Draw(t, Projectile.Center - Main.screenPosition, null, lightColor, RealDirection.ToRotation() - MathHelper.Pi, new Vector2(46, 14), 1f, SpriteEffects.None, 1f);
 		return false;
 	}
 }
