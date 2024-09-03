@@ -89,7 +89,7 @@ public class FairyMinion : BaseMinion
 
 	public override bool PreDraw(ref Color lightColor)
 	{
-		Texture2D bloom = Mod.Assets.Request<Texture2D>("Assets/Textures/Bloom").Value;
+		Texture2D bloom = AssetLoader.LoadedTextures["Bloom"];
 		float bloomOpacity = EaseFunction.EaseQuadOut.Ease(AiTimer / SHOOTTIME); //glow brighter when closer to shot time
 		bloomOpacity = Math.Max(bloomOpacity, 0.2f);
 

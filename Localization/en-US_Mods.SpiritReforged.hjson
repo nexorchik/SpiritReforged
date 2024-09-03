@@ -36,6 +36,11 @@ Projectiles: {
 	FairyMinion.DisplayName: Fairy Minion
 	FairyProj.DisplayName: Fairy Proj
 	StarPowderProj.DisplayName: Star Powder
+	ButterflyMinion.DisplayName: Butterfly Minion
+	PoolNoodleProj.DisplayName: Pool Noodle Proj
+	SandWarriorMinion.DisplayName: Sand Warrior Minion
+	ToucanFeather.DisplayName: Toucan Feather
+	ToucanMinion.DisplayName: Toucan Minion
 }
 
 Configs: {
@@ -140,6 +145,26 @@ Buffs: {
 	KoiTotemBuff: {
 		DisplayName: Koi Totem
 		Description: Increased fishing skill
+	}
+
+	ButterflyMinion_Buff: {
+		DisplayName: Ethereal Butterfly
+		Description: The ethereal butterfly fights for you
+	}
+
+	ToucanMinion_Buff: {
+		DisplayName: Toucans
+		Description: Despite all of my rage
+	}
+
+	SandWarriorMinion_Buff: {
+		DisplayName: Sand Warrior
+		Description: The sand warrior fights for you
+	}
+
+	SummonTag3: {
+		DisplayName: Summon Tag3
+		Description: Mods.SpiritReforged.Buffs.SummonTag3.Description
 	}
 }
 

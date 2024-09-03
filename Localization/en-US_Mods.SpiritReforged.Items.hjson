@@ -1,26 +1,6 @@
-DuelistLegacy: {
-	DisplayName: First Mate
-	Tooltip:
-		'''
-		Right click to fire a powerful shotgun blast 
-		Charges up a super attack after 2 swings
-		Release this special attack as either a slash or a blast
-		'''
-}
-
 Kelp: {
 	DisplayName: Kelp
 	Tooltip: Must be planted in water
-}
-
-LadyLuck: {
-	DisplayName: Lady Luck
-	Tooltip:
-		'''
-		Right click to throw out a lucky coin
-		Shoot this coin to ricochet the bullet towards nearby enemies
-		'Luck favors the rich'
-		'''
 }
 
 PirateChest: {
@@ -549,4 +529,32 @@ TermiteJar: {
 SpiritKillieFishbowlItem: {
 	DisplayName: Killifish Bowl
 	Tooltip: "'Maybe a bigger bowl next time?'"
+}
+
+ButterflyStaff: {
+	DisplayName: Ethereal Butterfly Staff
+	Tooltip:
+		'''
+		Summons a magical butterfly to fight for you
+		'Formed from a perfect cherry blossom'
+		'''
+}
+
+PoolNoodle: {
+	DisplayName: Pool Noodle
+	Tooltip:
+		'''
+		3 summon tag damage
+		{$CommonItemTooltip.Whips}
+		'''
+}
+
+RodofDunes: {
+	DisplayName: Rod of Dunes
+	Tooltip: Summons a sand warrior to fight for you
+}
+
+ToucaneItem: {
+	DisplayName: Toucane
+	Tooltip: Summons an angry toucan to fight for you
 }

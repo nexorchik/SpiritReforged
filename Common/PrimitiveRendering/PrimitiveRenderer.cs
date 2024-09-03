@@ -80,7 +80,7 @@ public static class PrimitiveRenderer
 		//If the inputted effect is null, use the static BasicEffect
 		if (effect == null)
 		{
-			BasicEffect basicEffect = SpiritReforgedLoadables.BasicShaderEffect;
+			BasicEffect basicEffect = AssetLoader.BasicShaderEffect;
 
 			foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
 				pass.Apply();

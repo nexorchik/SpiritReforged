@@ -35,9 +35,8 @@ public class OceanGlobalTile : GlobalTile
 				if (openSpace && Framing.GetTileSafely(i + 1, j).HasTile && Main.tileSolid[Framing.GetTileSafely(i + 1, j).TileType] && Framing.GetTileSafely(i + 1, j).TopSlope && Main.rand.NextBool(90)) //2x3 kelp
 					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Kelp2x3>());
 			}
-			else
-				if (Main.rand.NextBool(6))
-				WorldGen.PlaceTile(i, j - 1, ModContent.TileType<Seagrass>(), true, true, -1, Main.rand.Next(16));
+			else if (Main.rand.NextBool(6))
+				SpawnSeagrass(i, j, 5);
 
 			for (int k = i - 1; k < i + 2; ++k)
 			{
@@ -53,6 +52,26 @@ public class OceanGlobalTile : GlobalTile
 			}
 		}
 	}
+
+	private static void SpawnSeagrass(int i, int j, int rangeFromGrass)
+	{
+		bool GrassInRange()
+		{
+			for (int x = 0; x < rangeFromGrass * 2; x++)
+			{
+				int scanX = i + x % rangeFromGrass * ((x >= rangeFromGrass - 1) ? -1 : 1); //Scan right then left
+
+				if (Framing.GetTileSafely(scanX, j).TileType == TileID.Grass)
+					return true;
+			}
+
+			return false;
+		} //Checks whether grass is in range (left or right) of the tile at these coordinates
+
+		if (GrassInRange())
+			WorldGen.PlaceTile(i, j - 1, ModContent.TileType<Seagrass>(), true, true, -1, Main.rand.Next(16));
+	}
+
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
 		if (type == TileID.PalmTree && Main.rand.NextBool(10) && (i < 300 || i > Main.maxTilesX - 300)) //palm trees at/near the beach
