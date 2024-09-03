@@ -1,4 +1,5 @@
-﻿using Terraria.DataStructures;
+﻿using SpiritReforged.Common.Misc;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.PrimitiveRendering;
 
@@ -48,8 +49,9 @@ public static class TrailDetours
 
 			else
 			{
-				//add netcode here again
-				//SpiritMod.WriteToPacket(SpiritMod.Instance.GetPacket(), (byte)MessageType.SpawnTrail, index).Send();
+				ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.SpawnTrail, 1);
+				packet.Write(index);
+				packet.Send();
 			}
 		}
 
