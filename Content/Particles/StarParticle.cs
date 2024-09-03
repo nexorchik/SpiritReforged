@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Particle;
 
 namespace SpiritReforged.Content.Particles;
 
@@ -16,15 +17,12 @@ public class StarParticle : Particle
 	{
 		Position = position;
 		Velocity = velocity;
-		starColor = StarColor;
-		bloomColor = BloomColor;
+		starColor = StarColor.Additive();
+		bloomColor = BloomColor.Additive();
 		Rotation = Main.rand.NextFloat(MathHelper.TwoPi);
 		Scale = scale;
 		MaxTime = maxTime;
 		rotSpeed = rotationSpeed;
-
-		starColor.A = 0;
-		bloomColor.A = 0;
 	}
 
 	public StarParticle(Vector2 position, Vector2 velocity, Color color, float scale, int maxTime, float rotationSpeed = 1f) : this(position, velocity, color, color, scale, maxTime, rotationSpeed) { }
