@@ -1,7 +1,7 @@
 ﻿using Terraria.DataStructures;
 using Terraria.GameContent.Metadata;
 
-namespace SpiritReforged.Content.Savanna.Tiles;
+namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
 public class AcaciaSapling : ModTile
 {
