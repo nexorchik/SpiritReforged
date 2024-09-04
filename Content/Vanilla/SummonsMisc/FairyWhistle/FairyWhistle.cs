@@ -24,7 +24,7 @@ public class FairyWhistle : ModItem
 		Item.shoot = ModContent.ProjectileType<FairyMinion>();
 
 		if (!Main.dedServ)
-			Item.UseSound = new SoundStyle("SpiritReforged/Assets/SFX/Whistle") with { PitchVariance = 0.3f, Volume = 1.2f };
+			Item.UseSound = new SoundStyle("SpiritReforged/Assets/SFX/Item/Whistle") with { PitchVariance = 0.3f, Volume = 1.2f };
 
 		Item.scale = 0.75f;
 	}

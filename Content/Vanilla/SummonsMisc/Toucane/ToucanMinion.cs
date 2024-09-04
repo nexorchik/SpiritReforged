@@ -200,8 +200,13 @@ public class ToucanMinion : BaseMinion
 
 				if (AiTimer >= FeatherShootTime * (FeatherShots + 1)) //start gliding after enough shots
 				{
-					Projectile.velocity = Projectile.DirectionTo(target.Center).RotatedByRandom(MathHelper.PiOver4) * GlideStartVelocity;
 					AiState = STATE_GLIDING;
+					if (Main.netMode != NetmodeID.Server)
+					{
+						SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown with { PitchVariance = 0.3f, Volume = 0.5f }, Projectile.Center);
+						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/BirdCry_1") with { PitchVariance = 0.3f, Volume = 0.5f }, Projectile.Center);
+					}
+					Projectile.velocity = Projectile.DirectionTo(target.Center).RotatedByRandom(MathHelper.PiOver4) * GlideStartVelocity;
 					AiTimer = 0;
 					Projectile.netUpdate = true;
 					break;
@@ -210,7 +215,7 @@ public class ToucanMinion : BaseMinion
 				if (AiTimer % FeatherShootTime == 0) //shoot feather after given amount of time, with some recoil on the minion
 				{
 					if (Main.netMode != NetmodeID.Server)
-						SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown with { PitchVariance = 0.3f, Volume = 0.5f }, Projectile.Center);
+						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/SmallProjectileWoosh_1") with { PitchVariance = 0.3f, Volume = 1.25f }, Projectile.Center);
 
 					Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.DirectionTo(target.Center) * 8, ModContent.ProjectileType<ToucanFeather>(), (int)(Projectile.damage * 0.8), Projectile.knockBack, Projectile.owner);
 					for (int j = 0; j < 6; j++)

@@ -558,3 +558,8 @@ ToucaneItem: {
 	DisplayName: Toucane
 	Tooltip: Summons an angry toucan to fight for you
 }
+
+QuenchPotion: {
+	DisplayName: Quench Potion
+	Tooltip: Other potions last 25% longer
+}

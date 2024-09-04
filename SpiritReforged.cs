@@ -27,9 +27,10 @@ public class SpiritReforgedMod : Mod
 		NPCUtils.NPCUtils.AutoloadModBannersAndCritters(this);
 		NPCUtils.NPCUtils.TryLoadBestiaryHelper();
 		Common.Misc.AutoloadMinionDictionary.AddBuffs(Code);
-		AssetLoader.Load(this);
 		
 		TrailDetours.Initialize();
+
+		AssetLoader.Load(this);
 
 		ParticleHandler.RegisterParticles();
 		ParticleDetours.Initialize();

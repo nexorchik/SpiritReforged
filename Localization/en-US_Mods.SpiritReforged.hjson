@@ -153,8 +153,8 @@ Buffs: {
 	}
 
 	ToucanMinion_Buff: {
-		DisplayName: Toucans
-		Description: Despite all of my rage
+		DisplayName: Toucane
+		Description: The toucan fights for you
 	}
 
 	SandWarriorMinion_Buff: {
@@ -165,6 +165,11 @@ Buffs: {
 	SummonTag3: {
 		DisplayName: Summon Tag3
 		Description: Mods.SpiritReforged.Buffs.SummonTag3.Description
+	}
+
+	QuenchPotion_Buff: {
+		DisplayName: Quench Potion_ Buff
+		Description: Other potions last 25% longer
 	}
 }
 

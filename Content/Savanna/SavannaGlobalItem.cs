@@ -4,6 +4,19 @@ namespace SpiritReforged.Content.Savanna;
 
 public class SavannaGlobalItem : GlobalItem
 {
+	public override bool? UseItem(Item item, Player player)
+	{
+		if (player.GetModPlayer<SavannaPlayer>().quenchPotion)
+		{
+			if (item.useStyle == ItemUseStyleID.DrinkLiquid)
+			{
+				if (!player.HasBuff(item.buffType))
+					item.buffTime = (int)(item.buffTime * 1.25f);
+			}
+		}	
+
+		return null;
+	}
 	public override void SetDefaults(Item item)
 	{
 		if (item.type == Mod.Find<ModItem>("GoldGarItem").Type)
