@@ -1,4 +1,4 @@
-namespace SpiritReforged.Content.Savanna.Items.Gar;
+namespace SpiritReforged.Content.Savanna.Items.Gar.GarInAJar;
 
 public class GarInAJar : ModItem
 {
