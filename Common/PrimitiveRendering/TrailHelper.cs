@@ -21,12 +21,9 @@ public class TrailManager
 	public TrailManager(Mod mod)
 	{
 		_trails = [];
-		_effect = mod.Assets.Request<Effect>("Assets/Shaders/trailShaders", AssetRequestMode.ImmediateLoad).Value;
+		_effect = AssetLoader.LoadedShaders["trailShaders"];
 
-		Main.QueueMainThreadAction(() => _basicEffect = new BasicEffect(Main.graphics.GraphicsDevice)
-		{
-			VertexColorEnabled = true
-		});
+		_basicEffect = AssetLoader.BasicShaderEffect;
 	}
 
 	public static void TryTrailKill(Projectile projectile)
