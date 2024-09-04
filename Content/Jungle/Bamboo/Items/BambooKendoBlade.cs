@@ -314,7 +314,7 @@ public class KendoBladeLunge : ModProjectile
 		}
 
 		SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown with { Pitch = .8f }, Projectile.Center);
-		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/BigSwing"), target.Center);
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/BigSwing"), target.Center);
 		//SpiritMod.primitives.CreateTrail(new AnimePrimTrailTwo(target));
 	}
 

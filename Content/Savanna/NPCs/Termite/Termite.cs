@@ -42,7 +42,7 @@ public class Termite : ModNPC
 		{
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("TermiteGore").Type, NPC.scale);
 
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Termite/TermiteDeath"), NPC.Center);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/BugDeath"), NPC.Center);
 
 			for (int k = 0; k < 5; k++)
 				Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Scarecrow, 1.05f * hit.HitDirection, -1.95f, 0, new Color(), 0.6f);
@@ -79,7 +79,7 @@ public class Termite : ModNPC
 		if (termiteTimeLeft < termiteLifespan / 4 && (NPC.collideY || NPC.collideX))
 		{
 			SoundEngine.PlaySound(SoundID.Dig with { Volume = .05f }, NPC.Center);
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Termite/TermiteEscape") with { Volume = 1.14f, PitchVariance = 0.4f }, NPC.Center);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/BugChitter") with { Volume = 1.14f, PitchVariance = 0.4f }, NPC.Center);
 
 			for (int num257 = 0; num257 < 3; num257++)
 			{
