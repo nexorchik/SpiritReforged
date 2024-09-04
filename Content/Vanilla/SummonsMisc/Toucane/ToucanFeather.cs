@@ -67,8 +67,7 @@ public class ToucanFeather : ModProjectile
 		{
 			Texture2D bloom = AssetLoader.LoadedTextures["Bloom"];
 
-			var color = Color.Lerp(new Color(255, 0, 89), new Color(255, 47, 0), (float)Math.Sin(Main.GlobalTimeWrappedHourly * 3) / 2 + 0.5f);
-			color.A = 0;
+			var color = Color.Lerp(new Color(255, 0, 89, 0), new Color(255, 47, 0, 0), (float)Math.Sin(Main.GlobalTimeWrappedHourly * 3) / 2 + 0.5f);
 			Vector2 stretch = new Vector2(0.5f, 1f) / 5;
 			Main.spriteBatch.Draw(bloom, Projectile.Center - Main.screenPosition, null, color * 0.5f, Projectile.rotation, bloom.Size() / 2, Projectile.scale * 1.5f * stretch, SpriteEffects.None, 0);
 

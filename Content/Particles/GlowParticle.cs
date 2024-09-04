@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 
 namespace SpiritReforged.Content.Particles;
@@ -58,12 +59,10 @@ public class GlowParticle : Particle
 	{
 		Texture2D tex = ParticleHandler.GetTexture(Type);
 		Texture2D bloom = AssetLoader.LoadedTextures["Bloom"];
-		Color additiveFix = Color;
-		additiveFix.A = 0;
 		float scaleTimeModifier = TimeActive / (float)_maxTime;
 		scaleTimeModifier = EaseFunction.EaseCubicOut.Ease(1 - scaleTimeModifier);
 
-		void Draw(Texture2D drawTex, Vector2 pos, float opacity, float scaleMod) => spriteBatch.Draw(drawTex, pos - Main.screenPosition, null, additiveFix * opacity, 0, drawTex.Size() / 2, scaleMod * Scale * scaleTimeModifier, SpriteEffects.None, 0);
+		void Draw(Texture2D drawTex, Vector2 pos, float opacity, float scaleMod) => spriteBatch.Draw(drawTex, pos - Main.screenPosition, null, Color.Additive() * opacity, 0, drawTex.Size() / 2, scaleMod * Scale * scaleTimeModifier, SpriteEffects.None, 0);
 
 		for (int i = 0; i < oldPositions.Length; i++)
 		{

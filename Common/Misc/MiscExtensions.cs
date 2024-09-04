@@ -52,6 +52,13 @@ internal static class MiscExtensions
 	/// <param name="batch"></param>
 	public static void BeginDefault(this SpriteBatch batch) => batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
+	public static Color Additive(this Color color, byte newAlpha = 0)
+	{
+		var temp = color;
+		temp.A = newAlpha;
+		return temp;
+	}
+
 	/// <summary>
 	/// Tries to move an entity to a given spot, using linear acceleration, and multiplicative inverse deceleration.
 	/// </summary>

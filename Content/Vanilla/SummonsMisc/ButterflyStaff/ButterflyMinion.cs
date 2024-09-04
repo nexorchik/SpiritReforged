@@ -94,20 +94,17 @@ public class ButterflyMinion : BaseMinion
 
 	public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
-	public override bool PreDraw(ref Color lightColor)
-	{
-		Texture2D bloom = AssetLoader.LoadedTextures["Bloom"];
-		Color additivePink = Color.LightPink;
-		additivePink.A = 0;
-		Color additiveWhite = Color.White;
-		additiveWhite.A = 0;
-		Main.EntitySpriteDraw(bloom, Projectile.Center - Main.screenPosition, null, additivePink * Projectile.Opacity * 0.6f, 0, bloom.Size() / 2, 0.2f, SpriteEffects.None, 0);
-
-		float opacity = AiState == Moving ? 0.6f : 0f;
-		Projectile.QuickDrawTrail(Main.spriteBatch, opacity, drawColor: additiveWhite);
-		Projectile.QuickDraw(color: additiveWhite * opacity);
-		return false;
-	}
+	public override bool PreDraw(ref Color lightColor) => false;
 
 	public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) => overPlayers.Add(index);
+
+	public override void PostDraw(Color lightColor)
+	{
+		Texture2D bloom = AssetLoader.LoadedTextures["Bloom"];
+		Main.EntitySpriteDraw(bloom, Projectile.Center - Main.screenPosition, null, Color.Pink.Additive() * Projectile.Opacity * 0.6f, 0, bloom.Size() / 2, 0.2f, SpriteEffects.None, 0);
+
+		float opacity = AiState == Moving ? 0.6f : 0f;
+		Projectile.QuickDrawTrail(Main.spriteBatch, opacity, drawColor: Color.White.Additive(50));
+		Projectile.QuickDraw(drawColor: Color.White.Additive(150) * (opacity + 0.4f));
+	}
 }
