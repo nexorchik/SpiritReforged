@@ -68,10 +68,11 @@ public class Cannonbubble : ModProjectile
 		for (int i = ProjectileID.Sets.TrailCacheLength[Projectile.type] - 1; i > 0; i--)
 		{
 			float progress = 1 - (i / (float)ProjectileID.Sets.TrailCacheLength[Projectile.type]);
+			float trailOpacity = progress * GetSpeedRatio(2);
 
 			var square = new SquarePrimitive()
 			{
-				Color = lightColor * progress * 0.2f,
+				Color = lightColor * trailOpacity,
 				Height = primDimensions.X * progress,
 				Length = primDimensions.Y * progress,
 				Position = Projectile.oldPos[i] + Projectile.Size/2 - Main.screenPosition,
