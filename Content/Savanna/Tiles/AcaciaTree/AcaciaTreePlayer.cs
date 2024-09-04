@@ -4,6 +4,8 @@ namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
 public class AcaciaTreePlayer : ModPlayer
 {
+	private bool wasOnPlatform;
+
 	public override void PreUpdateMovement()
 	{
 		static Rectangle GetPlatform(Point16 tilePosition)
@@ -15,15 +17,24 @@ public class AcaciaTreePlayer : ModPlayer
 			return new Rectangle((int)position.X - (int)(dimensions.X / 2) + 18 + offsetX, (int)position.Y - (int)dimensions.Y - 8, (int)dimensions.X, 8);
 		}
 
+		bool onPlatform = false;
 		var lowerHitbox = Player.getRect() with { Height = Player.height / 2, Y = (int)Player.position.Y + Player.height / 2 }; //The lower half of Player's hitbox
+
 		foreach (var p in AcaciaTreeSystem.Instance.treeTopPoints)
 		{
 			var platform = GetPlatform(p);
 			if (lowerHitbox.Intersects(platform) && Player.velocity.Y >= 0 && !Player.controlDown)
 			{
 				StandOnPlatform(platform, AcaciaTreeSystem.GetAcaciaSway(p.X, p.Y));
+				onPlatform = wasOnPlatform = true;
 				break;
 			}
+		}
+
+		if (!onPlatform && wasOnPlatform)
+		{
+			Player.fullRotation = 0; //Reset rotation when the player just leaves a platform
+			wasOnPlatform = false;
 		}
 	}
 
