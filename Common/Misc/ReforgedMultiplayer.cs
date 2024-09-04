@@ -8,7 +8,7 @@ public static class ReforgedMultiplayer
 	public enum MessageType : byte
 	{
 		SendVentPoint,
-		SendTreeTop
+		SendPlatform
 	}
 
 	public static void HandlePacket(BinaryReader reader, int whoAmI)
@@ -33,19 +33,19 @@ public static class ReforgedMultiplayer
 					Content.Ocean.Tiles.VentSystem.VentPoints.Add(new Point16(i, j));
 					break;
 				}
-			case MessageType.SendTreeTop:
+			case MessageType.SendPlatform:
 				{
 					//Should only be recieved by the server
-					int i = reader.ReadInt32();
-					int j = reader.ReadInt32();
+					Vector2 center = reader.ReadVector2();
+					int width = reader.ReadInt32();
 					bool remove = reader.ReadBoolean();
 
-					var points = Content.Savanna.Tiles.AcaciaTree.AcaciaTreeSystem.Instance.treeTopPoints;
+					var platform = new Content.Savanna.Tiles.AcaciaTree.CustomPlatform(center, width);
 
 					if (remove)
-						points.Remove(new Point16(i, j));
+						Content.Savanna.Tiles.AcaciaTree.AcaciaTreeSystem.Instance.platforms.Remove(platform);
 					else
-						points.Add(new Point16(i, j));
+						Content.Savanna.Tiles.AcaciaTree.AcaciaTreeSystem.AddPlatform(platform);
 
 					break;
 				}

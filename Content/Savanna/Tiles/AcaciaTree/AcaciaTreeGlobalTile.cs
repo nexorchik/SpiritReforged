@@ -3,6 +3,7 @@ using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
+/// <summary> Primarily handles custom drawing for acacia trees. </summary>
 public class AcaciaTreeGlobalTile : GlobalTile
 {
 	public override void Load() => On_TileDrawing.DrawTrees += PreDrawAcaciaTrees;
@@ -11,25 +12,11 @@ public class AcaciaTreeGlobalTile : GlobalTile
 	{
 		orig(self);
 
-		var points = AcaciaTreeSystem.Instance.treeTopPoints;
+		var points = AcaciaTreeSystem.Instance.treeDrawPoints;
 
 		for (int x = points.Count - 1; x >= 0; x--) //Iterate over all acacia tree tops
 		{
 			(int i, int j) = (points[x].X, points[x].Y);
-
-			if (Main.tile[i, j].TileType != TileID.PalmTree)
-			{
-				if (points.Remove(points[x]) && Main.netMode != NetmodeID.SinglePlayer)
-				{
-					ModPacket packet = SpiritReforgedMod.Instance.GetPacket(Common.Misc.ReforgedMultiplayer.MessageType.SendTreeTop, 3);
-					packet.Write(points[x].X);
-					packet.Write(points[x].Y);
-					packet.Write(true);
-					packet.Send(); //Notify the server for platform logic
-				}
-
-				continue;
-			}
 
 			while (Main.tile[i, j].TileType == TileID.PalmTree) //Iterate down the whole height of the tree
 			{
@@ -47,19 +34,27 @@ public class AcaciaTreeGlobalTile : GlobalTile
 
 		var color = Lighting.GetColor(i, j);
 		int wavyOffset = tile.TileFrameY;
+		var position = new Vector2(i, j) * 16 + new Vector2(wavyOffset - 2, 0);
 
 		if (drawingTop)
 		{
-			int originOffsetX = -18;
+			const int originOffsetX = -18;
+
 			float rotation = AcaciaTreeSystem.GetAcaciaSway(i, j);
 			var windOffset = new Vector2(rotation, Math.Abs(rotation)) * 2;
 
-			spriteBatch.Draw(AcaciaTree.TopsTexture.Value, new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(wavyOffset - 2, 0) + windOffset, null, color, rotation * .08f, new Vector2(AcaciaTree.TopsTexture.Width() / 2 + originOffsetX, AcaciaTree.TopsTexture.Height()), 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(AcaciaTree.TopsTexture.Value, position - Main.screenPosition + windOffset, null, color, rotation * .08f, new Vector2(AcaciaTree.TopsTexture.Width() / 2 + originOffsetX, AcaciaTree.TopsTexture.Height()), 1, SpriteEffects.None, 0);
+
+			//Ideally we don't initialize a gameplay element in drawing, but it's convenient here
+			#region init platform
+			var platform = new CustomPlatform(position + new Vector2(16, -AcaciaTree.TopsTexture.Height()), AcaciaTree.TopsTexture.Width(), new Vector2(i, j) * 16);
+			AcaciaTreeSystem.AddPlatform(platform);
+			#endregion
 		}
 		else
 		{
 			var frame = new Rectangle(tile.TileFrameX, 0, 20, 20);
-			spriteBatch.Draw(AcaciaTree.Texture.Value, new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(wavyOffset - 2, 0), frame, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(AcaciaTree.Texture.Value, position - Main.screenPosition, frame, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 		}
 	}
 
@@ -79,7 +74,7 @@ public class AcaciaTreeGlobalTile : GlobalTile
 
 		if (type == TileID.PalmTree && IsAcaciaTree(i, j) && (!Main.tile[i, j - 1].HasTile || Main.tile[i, j - 1].TileType != TileID.PalmTree))
 		{
-			AcaciaTreeSystem.AddTopPoint(new Point16(i, j));
+			AcaciaTreeSystem.AddTreeDrawPoint(new Point16(i, j));
 			return false; //Don't draw the default tree
 		}
 
