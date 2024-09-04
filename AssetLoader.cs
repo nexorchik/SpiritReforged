@@ -29,7 +29,7 @@ internal static class AssetLoader
 		var tmodfile = (TmodFile)typeof(SpiritReforgedMod).GetProperty("File", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(SpiritReforgedMod.Instance);
 		var files = (IDictionary<string, FileEntry>)typeof(TmodFile).GetField("files", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(tmodfile);
 		string assetsDirectory = "Assets/";
-		foreach (KeyValuePair<string, FileEntry> kvp in files.Where(x => x.Key.Contains("Assets/")))
+		foreach (KeyValuePair<string, FileEntry> kvp in files.Where(x => x.Key.Contains(assetsDirectory)))
 		{
 			//Loading textures
 			string textureDirectory = assetsDirectory + "Textures/";
