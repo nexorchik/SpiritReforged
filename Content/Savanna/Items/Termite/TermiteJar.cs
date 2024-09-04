@@ -66,7 +66,7 @@ public class TermiteJar_Tile : ModTile
 		if (closer)
 		{
 			if (Main.rand.NextBool(750))
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Termite/TermiteEscape") with { Volume = .8f, PitchVariance = 0.4f }, new(i * 16, j * 16));
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/BugChitter") with { Volume = .8f, PitchVariance = 0.4f }, new(i * 16, j * 16));
 		}
 	}
 }

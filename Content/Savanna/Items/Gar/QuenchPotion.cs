@@ -1,4 +1,4 @@
-namespace SpiritReforged.Content.Savanna.Items.Gar.QuenchPotion;
+namespace SpiritReforged.Content.Savanna.Items.Gar;
 
 public class QuenchPotion : ModItem
 {
