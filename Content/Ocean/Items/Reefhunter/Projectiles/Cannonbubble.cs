@@ -1,4 +1,6 @@
 ﻿using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.PrimitiveRendering;
+using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 using Terraria.Audio;
@@ -7,24 +9,12 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
 public class Cannonbubble : ModProjectile
 {
-	private static Asset<Texture2D> OutlineTexture, InnerTexture, ShineTexture;
-
 	public const float MAX_SPEED = 15f; //Initial projectile velocity, used in item shootspeed
-
-	private const string TexturePath = "SpiritReforged/Content/Ocean/Items/Reefhunter/Projectiles/Cannonbubble";
-	public override string Texture => TexturePath + "_Outline"; //So it doesn't break when loaded through tmod
 
 	public override void SetStaticDefaults()
 	{
 		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 8;
 		ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
-
-		if (!Main.dedServ)
-		{
-			OutlineTexture = ModContent.Request<Texture2D>(TexturePath + "_Outline", AssetRequestMode.ImmediateLoad);
-			InnerTexture = ModContent.Request<Texture2D>(TexturePath + "_Inner", AssetRequestMode.ImmediateLoad);
-			ShineTexture = ModContent.Request<Texture2D>(TexturePath + "_Shine", AssetRequestMode.ImmediateLoad);
-		}
 	}
 
 	public override void SetDefaults()
@@ -36,7 +26,7 @@ public class Cannonbubble : ModProjectile
 		Projectile.penetrate = 5;
 		Projectile.timeLeft = 360;
 		Projectile.aiStyle = 0;
-		Projectile.scale = Main.rand.NextFloat(0.85f, 1.15f);
+		Projectile.scale = Main.rand.NextFloat(0.9f, 1.1f);
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = 30;
 	}
@@ -70,33 +60,41 @@ public class Cannonbubble : ModProjectile
 
 	public override bool PreDraw(ref Color lightColor)
 	{
-		for (int k = 0; k < Projectile.oldPos.Length; k++)
+		var outline = TextureAssets.Projectile[Projectile.type].Value;
+		Vector2 squishScale = BubbleSquishScale(0.35f, 0.1f);
+		List<SquarePrimitive> bubbleTrail = [];
+		var primDimensions = new Vector2(Projectile.width * squishScale.X, -Projectile.height * squishScale.Y);
+
+		for (int i = ProjectileID.Sets.TrailCacheLength[Projectile.type] - 1; i > 0; i--)
 		{
-			Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + Projectile.Size / 2 + new Vector2(0f, Projectile.gfxOffY);
-			float progress = (Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length;
-			float speedMult = GetSpeedRatio(3); //Trail only appears when at high speed
-			Color color = Projectile.GetAlpha(lightColor) * progress * speedMult * 0.5f;
-			DrawBubble(Main.spriteBatch, drawPos, color);
+			float progress = 1 - (i / (float)ProjectileID.Sets.TrailCacheLength[Projectile.type]);
+
+			var square = new SquarePrimitive()
+			{
+				Color = lightColor * progress * 0.2f,
+				Height = primDimensions.X * progress,
+				Length = primDimensions.Y * progress,
+				Position = Projectile.oldPos[i] + Projectile.Size/2 - Main.screenPosition,
+				Rotation = MathHelper.TwoPi - MathHelper.PiOver2 + Projectile.oldRot[i]
+			};
+			bubbleTrail.Add(square);
 		}
 
-		DrawBubble(Main.spriteBatch, Projectile.Center - Main.screenPosition, Projectile.GetAlpha(lightColor));
+		bubbleTrail.Add(new SquarePrimitive()
+		{
+			Color = lightColor,
+			Height = primDimensions.X,
+			Length = primDimensions.Y,
+			Position = Projectile.Center - Main.screenPosition,
+			Rotation = MathHelper.TwoPi - MathHelper.PiOver2 + Projectile.rotation
+		});
+
+		Effect bubbleEffect = ModContent.Request<Effect>("SpiritReforged/Assets/Shaders/TextureMap", AssetRequestMode.ImmediateLoad).Value;
+		bubbleEffect.Parameters["uTexture"].SetValue(outline);
+		bubbleEffect.Parameters["rotation"].SetValue(MathHelper.TwoPi + Projectile.rotation);
+		PrimitiveRenderer.DrawPrimitiveShapeBatched(bubbleTrail.ToArray(), bubbleEffect);
+
 		return false;
-	}
-
-	//Draw a bubble, with a rotated and squished outline and interior, a semi-transparent interior, and an unchanging shine
-	private void DrawBubble(SpriteBatch spriteBatch, Vector2 position, Color baseColor)
-	{
-		var outline = OutlineTexture.Value;
-		var inner = InnerTexture.Value;
-		var shine = ShineTexture.Value;
-
-		Vector2 squishScale = BubbleSquishScale(0.35f, 0.1f);
-		Color innerColor = baseColor * 0.05f;
-		innerColor.A = 0;
-
-		spriteBatch.Draw(outline, position, null, baseColor, Projectile.rotation, Projectile.DrawFrame().Size() / 2, squishScale, SpriteEffects.None, 0);
-		spriteBatch.Draw(inner, position, null, innerColor, Projectile.rotation, Projectile.DrawFrame().Size() / 2, squishScale, SpriteEffects.None, 0);
-		spriteBatch.Draw(shine, position, null, baseColor, 0, Projectile.DrawFrame().Size() / 2, Projectile.scale, SpriteEffects.None, 0);
 	}
 
 	//Find the scale vector by which to draw the bubble's outline and interior with
