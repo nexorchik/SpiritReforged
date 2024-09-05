@@ -7,15 +7,11 @@ namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 public class AcaciaTreeGlobalTile : GlobalTile
 {
 	private static Asset<Texture2D> LightTexture;
-	private static Asset<Effect> ShadeShader;
 
 	public override void Load()
 	{
 		if (!Main.dedServ)
-		{
 			LightTexture = Mod.Assets.Request<Texture2D>("Content/Savanna/Tiles/AcaciaTree/AcaciaTree_Tops_Light");
-			ShadeShader = Mod.Assets.Request<Effect>("Assets/Shaders/shade");
-		}
 
 		On_TileDrawing.DrawTrees += PreDrawAcaciaTrees;
 	}
@@ -43,7 +39,7 @@ public class AcaciaTreeGlobalTile : GlobalTile
 		float shadowLength = 5 * dayTime + .4f;
 		var points = AcaciaTreeSystem.Instance.treeDrawPoints;
 
-		var shader = ShadeShader.Value;
+		var shader = AssetLoader.LoadedShaders["shade"];
 		shader.Parameters["length"].SetValue(shadowLength % 1 * 2.5f);
 
 		Main.spriteBatch.End();
