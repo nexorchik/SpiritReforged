@@ -13,6 +13,7 @@ global using System.Collections.Generic;
 global using NPCUtils;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Content.Ocean.Boids;
 
 namespace SpiritReforged;
 
@@ -27,6 +28,7 @@ public class SpiritReforgedMod : Mod
 		NPCUtils.NPCUtils.AutoloadModBannersAndCritters(this);
 		NPCUtils.NPCUtils.TryLoadBestiaryHelper();
 		Common.Misc.AutoloadMinionDictionary.AddBuffs(Code);
+		BoidManager.Load();
 		
 		TrailDetours.Initialize();
 
@@ -41,6 +43,7 @@ public class SpiritReforgedMod : Mod
 		NPCUtils.NPCUtils.UnloadMod(this);
 		NPCUtils.NPCUtils.UnloadBestiaryHelper();
 		Common.Misc.AutoloadMinionDictionary.Unload();
+		BoidManager.Unload();
 		AssetLoader.Unload();
 		TrailDetours.Unload();
 
