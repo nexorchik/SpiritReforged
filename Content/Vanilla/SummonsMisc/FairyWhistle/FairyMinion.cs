@@ -89,7 +89,7 @@ public class FairyMinion : BaseMinion
 
 	public override bool PreDraw(ref Color lightColor)
 	{
-		Texture2D bloom = Mod.Assets.Request<Texture2D>("Assets/Textures/Bloom").Value;
+		Texture2D bloom = AssetLoader.LoadedTextures["Bloom"];
 		float bloomOpacity = EaseFunction.EaseQuadOut.Ease(AiTimer / SHOOTTIME); //glow brighter when closer to shot time
 		bloomOpacity = Math.Max(bloomOpacity, 0.2f);
 
@@ -97,14 +97,14 @@ public class FairyMinion : BaseMinion
 
 		var partialBright = Color.Lerp(Color.White, lightColor, 0.75f);
 		Projectile.QuickDrawTrail(null, 0.2f * Projectile.Opacity, drawColor: partialBright);
-		Projectile.QuickDraw(null, color: partialBright);
+		Projectile.QuickDraw(null, drawColor: partialBright);
 
 		for (int i = 0; i < 6; i++)
 		{
 			Vector2 glowmaskRadialOffset = Vector2.UnitX.RotatedBy(MathHelper.TwoPi * i / 6);
 			glowmaskRadialOffset *= 2f;
 			Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value, Projectile.Center + glowmaskRadialOffset - Main.screenPosition, Projectile.DrawFrame(), 
-				new Color(255, 255, 255, 0) * Projectile.Opacity * bloomOpacity * 0.1f, Projectile.rotation, Projectile.DrawFrame().Size() / 2, Projectile.scale, Projectile.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
+				Color.White.Additive() * Projectile.Opacity * bloomOpacity * 0.1f, Projectile.rotation, Projectile.DrawFrame().Size() / 2, Projectile.scale, Projectile.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
 		}
 
 		return false;

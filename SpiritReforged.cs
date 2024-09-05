@@ -27,18 +27,10 @@ public class SpiritReforgedMod : Mod
 		NPCUtils.NPCUtils.AutoloadModBannersAndCritters(this);
 		NPCUtils.NPCUtils.TryLoadBestiaryHelper();
 		Common.Misc.AutoloadMinionDictionary.AddBuffs(Code);
-
-		ShaderHelpers.GetWorldViewProjection(out Matrix view, out Matrix projection); 
 		
-		Main.QueueMainThreadAction(() => SpiritReforgedLoadables.BasicShaderEffect = new BasicEffect(Main.graphics.GraphicsDevice)
-		{
-			VertexColorEnabled = true,
-			View = view,
-			Projection = projection
-		});
-
-		SpiritReforgedLoadables.VertexTrailManager = new TrailManager(this);
 		TrailDetours.Initialize();
+
+		AssetLoader.Load(this);
 
 		ParticleHandler.RegisterParticles();
 		ParticleDetours.Initialize();
@@ -49,8 +41,7 @@ public class SpiritReforgedMod : Mod
 		NPCUtils.NPCUtils.UnloadMod(this);
 		NPCUtils.NPCUtils.UnloadBestiaryHelper();
 		Common.Misc.AutoloadMinionDictionary.Unload();
-		SpiritReforgedLoadables.BasicShaderEffect = null;
-		SpiritReforgedLoadables.VertexTrailManager = null;
+		AssetLoader.Unload();
 		TrailDetours.Unload();
 
 		ParticleHandler.Unload();
