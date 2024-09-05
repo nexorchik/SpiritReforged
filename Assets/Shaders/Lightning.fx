@@ -63,7 +63,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     float strength = pow(tex2D(textureSampler, texCoords).r, 4);
     
     //Quick flash of bloom based on vertical absolute distance and how much the animation has progressed, using cubic in easing
-    float bloomStrength = pow((1 - GetAbsDistance(input.TextureCoordinates.y)), 3) * pow(1 - Progress, 3) * 2;
+    float bloomStrength = pow((1 - GetAbsDistance(input.TextureCoordinates.y)), 3) * pow(1 - Progress, 3);
     strength += bloomStrength;
     
     //Fadeout if the absolute x value from the center is 0.8f or greater, 5 here is 1 / 0.2 (1 - the fadeout value)

@@ -40,11 +40,13 @@ public class JellyfishMinion : BaseMinion
 	private const int AISTATE_SHOOT = 5; //when near target, hover in place and shoot lightning
 
 	//Constants used in drawing methods and for the ai pattern
-	private const int SHOOTTIME = 60; //Time between shots
+	private const int SHOOTTIME = 90; //Time between shots
 	private const int DASHTIME = 30; //Time the dash takes
 	private const int AIMTIME = 60; //Time it takes to aim the dash
 	private const int BOUNCETIME = 90; //General time between bounces
 	private const int RISETIME = 30; //Time it takes to rise upwards after the dash
+
+	public static int SHOOT_RANGE = 500; //Static because it's used by the bolt class
 
 	public override void IdleMovement(Player player)
 	{
@@ -116,11 +118,10 @@ public class JellyfishMinion : BaseMinion
 	{
 		Projectile.tileCollide = true;
 		AiTimer++;
-		int ShootRange = 300;
 
 		if(AiState < AISTATE_AIMTOTARGET)
 		{
-			AiState = Projectile.Distance(target.Center) >= ShootRange ? AISTATE_AIMTOTARGET : AISTATE_PREPARESHOOT;
+			AiState = Projectile.Distance(target.Center) >= SHOOT_RANGE ? AISTATE_AIMTOTARGET : AISTATE_PREPARESHOOT;
 			AiTimer = 0;
 			Projectile.netUpdate = true;
 		}
@@ -171,7 +172,7 @@ public class JellyfishMinion : BaseMinion
 
 				if(AiTimer >= DASHTIME)
 				{
-					AiState = Projectile.Distance(target.Center) >= ShootRange ? AISTATE_AIMTOTARGET : AISTATE_PREPARESHOOT;
+					AiState = Projectile.Distance(target.Center) >= SHOOT_RANGE ? AISTATE_AIMTOTARGET : AISTATE_PREPARESHOOT;
 					AiTimer = 0;
 					Projectile.netUpdate = true;
 				}
@@ -201,18 +202,18 @@ public class JellyfishMinion : BaseMinion
 				Projectile.velocity += new Vector2(xSpeed * aimDirection.X / SHOOTTIME, ySpeed / SHOOTTIME);
 				Projectile.rotation = Utils.AngleLerp(Projectile.rotation, 0, 0.1f);
 
-				if(Projectile.Distance(target.Center) >= ShootRange * 0.5f) //Really slow movement towards target if too far
+				if(Projectile.Distance(target.Center) >= SHOOT_RANGE * 0.33f) //Really slow movement towards target if too far
 					Projectile.position += Projectile.DirectionTo(target.Center) / 4f;
 
 				if (AiTimer % SHOOTTIME == 0)
 				{
-					var bolt = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0);
+					var bolt = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0, 0, 3);
 					bolt.netUpdate = true;
 					Projectile.netUpdate = true;
 					Projectile.velocity = 0.5f * new Vector2(-xSpeed * aimDirection.X, -ySpeed);
 				}
 
-				if(Projectile.Distance(target.Center) >= ShootRange)
+				if(Projectile.Distance(target.Center) >= SHOOT_RANGE)
 				{
 					AiState = AISTATE_AIMTOTARGET;
 					AiTimer = 0;

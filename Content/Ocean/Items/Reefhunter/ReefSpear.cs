@@ -58,7 +58,7 @@ public class ReefSpear : ModItem
 		if (player.altFunctionUse == 2)
 		{
 			position -= new Vector2(20 * player.direction, 0);
-			velocity = ArcVelocityHelper.GetArcVel(position, Main.MouseWorld, 0.4f, Item.shootSpeed) + player.velocity / 3;
+			velocity = ArcVelocityHelper.GetArcVel(position, Main.MouseWorld, 0.3f, Item.shootSpeed) + player.velocity / 3;
 		}
 	}
 

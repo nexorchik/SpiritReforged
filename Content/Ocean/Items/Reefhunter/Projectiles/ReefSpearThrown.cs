@@ -36,7 +36,7 @@ public class ReefSpearThrown : ModProjectile
 	{
 		if (!hasTarget)
 		{
-			Projectile.velocity.Y += 0.4f;
+			Projectile.velocity.Y += 0.3f;
 			Projectile.rotation = Projectile.velocity.ToRotation();
 			Projectile.tileCollide = Projectile.ai[0]++ > 6;
 		}
