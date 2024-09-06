@@ -55,17 +55,14 @@ public class JellyfishBolt : ModProjectile
 	{
 		//If the projectile times out and doesn't hit something
 		if(timeLeft == 0 && Projectile.penetrate > 0 && !Main.dedServ)
-		{
 			ParticleHandler.SpawnParticle(new LightningParticle(BoltStartPos, Projectile.Center, ParticleColor, 30, 30f));
-			SoundEngine.PlaySound(SoundID.Item93, Projectile.Center);
-		}
 	}
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
 		if (!Main.dedServ)
 		{
-			SoundEngine.PlaySound(SoundID.Item93, Projectile.Center);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricSting") with { PitchVariance = 0.3f, Volume = .5f }, Projectile.Center);
 			ParticleHandler.SpawnParticle(new LightningParticle(BoltStartPos, target.Center, ParticleColor, 30, 30f));
 
 			for (int i = 0; i < 15; i++)
@@ -94,7 +91,6 @@ public class JellyfishBolt : ModProjectile
 	{
 		if(!Main.dedServ)
 		{
-			SoundEngine.PlaySound(SoundID.Item93, Projectile.Center);
 			ParticleHandler.SpawnParticle(new LightningParticle(BoltStartPos, Projectile.Center, ParticleColor, 30, 30f));
 
 			for (int i = 0; i < 15; i++)

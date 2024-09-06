@@ -207,6 +207,8 @@ public class JellyfishMinion : BaseMinion
 
 				if (AiTimer % SHOOTTIME == 0)
 				{
+					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricZap") with { PitchVariance = 0.3f, Pitch = 0.3f, Volume = .95f }, Projectile.Center);
+					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricZap2") with { Pitch = -.25f, Volume = .35f }, Projectile.Center);
 					var bolt = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0, 0, 3);
 					bolt.netUpdate = true;
 					Projectile.netUpdate = true;
