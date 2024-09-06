@@ -99,10 +99,10 @@ public class ElephantGrass : ModTile, ISwayInWind
 			DrawBack(i, j, spriteBatch, offset, rotation, origin);
 	}
 
-	public float SetWindSway(Point16 topLeft, ref float swayMult)
-	{
-		swayMult = 1.5f;
+	public void ModifyRotation(int i, int j, ref float rotation) => rotation *= 1.9f;
 
+	public float SetWindSway(Point16 topLeft)
+	{
 		var data = TileObjectData.GetTileData(Framing.GetTileSafely(topLeft));
 		float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, TileSwaySystem.Instance.GrassWindCounter * 2.25f);
 
