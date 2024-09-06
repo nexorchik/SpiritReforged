@@ -35,7 +35,7 @@ public static class BoidManager
 
 				for (int j = 0; j < lookups.Length; ++j)
 				{
-					int toAdd = Main.rand.Next(fishTextureCount - 2); //Exclude the last 2 fish, shrimp and sardine, because they are unique
+					int toAdd = Main.rand.Next(fishTextureCount - 2); //Exclude the last 2 fish because they are unique
 
 					if (!lookups.Contains(toAdd))
 						lookups[j] = toAdd;
@@ -48,9 +48,9 @@ public static class BoidManager
 
 			var boid = new WeightedRandom<Boid>();
 			boid.Add(new Boid(GetFishLookup(), 1f, Main.rand.Next(5, 20)), 1);
-			boid.Add(new Boid(GetFishLookup(), 1f, Main.rand.Next(30, 60)), .22f);
-			boid.Add(new Boid(10, .8f, Main.rand.Next(30, 60)), .08f); //Shrimp
-			boid.Add(new Boid(9, .525f, 60), .09f); //Sardine
+			boid.Add(new Boid(GetFishLookup(), 1f, Main.rand.Next(30, 60)), .2f);
+			boid.Add(new Boid(10, .8f, Main.rand.Next(30, 60)), .14f); //Shrimp
+			boid.Add(new Boid(9, .525f, 60), .19f); //Sardine
 
 			Flocks.Add(boid);
 		}
