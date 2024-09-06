@@ -8,7 +8,8 @@ public class ExtraDrawOnPlayer : ModPlayer
 	public enum DrawType
 	{
 		AlphaBlend,
-		Additive
+		Additive,
+		NonPremultiplied
 	}
 
 	public delegate void DrawAction(SpriteBatch spriteBatch);
@@ -49,6 +50,7 @@ public class ExtraDrawOnPlayer : ModPlayer
 	{
 		var additiveCallPlayers = new List<ExtraDrawOnPlayer>();
 		var alphaBlendCallPlayers = new List<ExtraDrawOnPlayer>();
+		var nonPremultipliedCallPlayers = new List<ExtraDrawOnPlayer>();
 
 		foreach (Player player in Main.player.Where(x => x.active && x != null))
 		{
@@ -57,22 +59,34 @@ public class ExtraDrawOnPlayer : ModPlayer
 
 			if (player.GetModPlayer<ExtraDrawOnPlayer>().AnyOfType(DrawType.AlphaBlend))
 				alphaBlendCallPlayers.Add(player.GetModPlayer<ExtraDrawOnPlayer>());
+
+			if (player.GetModPlayer<ExtraDrawOnPlayer>().AnyOfType(DrawType.NonPremultiplied))
+				nonPremultipliedCallPlayers.Add(player.GetModPlayer<ExtraDrawOnPlayer>());
 		}
 
-		if (alphaBlendCallPlayers.Count != 0)
+		if (nonPremultipliedCallPlayers.Count != 0)
 		{
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);
-			foreach (ExtraDrawOnPlayer player in additiveCallPlayers)
-				player.DrawAllCallsOfType(Main.spriteBatch, DrawType.Additive);
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, AssetLoader.NonPremultipliedAlphaFix, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);
+			foreach (ExtraDrawOnPlayer player in nonPremultipliedCallPlayers)
+				player.DrawAllCallsOfType(Main.spriteBatch, DrawType.NonPremultiplied);
 
 			Main.spriteBatch.End();
 		}
 
 		if (alphaBlendCallPlayers.Count != 0)
 		{
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);
 			foreach (ExtraDrawOnPlayer player in alphaBlendCallPlayers)
 				player.DrawAllCallsOfType(Main.spriteBatch, DrawType.AlphaBlend);
+
+			Main.spriteBatch.End();
+		}
+
+		if (additiveCallPlayers.Count != 0)
+		{
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);
+			foreach (ExtraDrawOnPlayer player in additiveCallPlayers)
+				player.DrawAllCallsOfType(Main.spriteBatch, DrawType.Additive);
 
 			Main.spriteBatch.End();
 		}

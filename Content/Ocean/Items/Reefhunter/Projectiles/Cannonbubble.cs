@@ -1,8 +1,10 @@
 ﻿using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
+using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
@@ -111,20 +113,14 @@ public class Cannonbubble : ModProjectile
 
 	public override void OnKill(int timeLeft)
 	{
+		if (Main.dedServ)
+			return;
+
 		int dustCount = Main.rand.Next(7, 12);
 		SoundEngine.PlaySound(SoundID.Item54, Projectile.Center);
+		SoundEngine.PlaySound(SoundID.Item86, Projectile.Center);
 
-		for (int i = 0; i < dustCount; ++i)
-		{
-			Vector2 speed = Main.rand.NextVec2CircularEven(0.5f, 0.5f);
-			Dust.NewDust(Projectile.Center, 0, 0, DustID.BubbleBurst_Blue, speed.X * .5f, speed.Y * .5f, 0, default, Main.rand.NextFloat(0.5f, 1f));
-
-			if (Main.rand.NextBool(3))
-			{
-				int d = Dust.NewDust(Projectile.Center + new Vector2(Main.rand.Next(-20, 20), 0), 0, 0, ModContent.DustType<Dusts.BubbleDust>(), speed.X * .35f, Main.rand.NextFloat(-3f, -.5f), 0, default, Main.rand.NextFloat(0.75f, 1.5f));
-				Main.dust[d].velocity = Main.rand.NextVec2CircularEven(2.5f, 2.5f);
-			}
-		}
+		ParticleHandler.SpawnParticle(new BubblePop(Projectile.Center, Projectile.scale * 0.35f, 0.8f, 30));
 	}
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

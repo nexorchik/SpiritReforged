@@ -1,4 +1,7 @@
-﻿namespace SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Misc;
+using System.Linq;
+
+namespace SpiritReforged.Common.Particle;
 
 public enum ParticleLayer
 {
@@ -12,7 +15,9 @@ public enum ParticleDrawType
 {
 	DefaultAlphaBlend,
 	DefaultAdditive,
-	Custom
+	Custom,
+	NonPremultiplied,
+	CustomNonPremultiplied
 }
 
 public static class ParticleHandler
@@ -138,8 +143,7 @@ public static class ParticleHandler
 
 			if(particle.DrawLayer == drawLayer)
 			{
-				Color additiveColor = particle.Color;
-				additiveColor.A = 0;
+				var batchedNonpremultiplyParticles = new List<Particle>();
 
 				switch (particle.DrawType)
 				{
@@ -148,12 +152,38 @@ public static class ParticleHandler
 						break;
 
 					case ParticleDrawType.DefaultAdditive:
-						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color, particle.Rotation, particle.Origin, particle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
+						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color.Additive(), particle.Rotation, particle.Origin, particle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
 						break;
 
 					case ParticleDrawType.Custom:
 						particle.CustomDraw(spriteBatch);
 						break;
+
+					case ParticleDrawType.NonPremultiplied:
+						batchedNonpremultiplyParticles.Add(particle);
+						break;
+
+					case ParticleDrawType.CustomNonPremultiplied:
+						batchedNonpremultiplyParticles.Add(particle);
+						break;
+				}
+
+				if(batchedNonpremultiplyParticles.Count != 0)
+				{
+					spriteBatch.End();
+					spriteBatch.Begin(SpriteSortMode.Deferred, AssetLoader.NonPremultipliedAlphaFix, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+
+					foreach (Particle batchedParticle in batchedNonpremultiplyParticles)
+					{
+						if (batchedParticle.DrawType == ParticleDrawType.CustomNonPremultiplied)
+							batchedParticle.CustomDraw(spriteBatch);
+
+						else
+							spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color, particle.Rotation, particle.Origin, particle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
+					}
+
+					spriteBatch.End();
+					spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
 				}
 			}
 		}

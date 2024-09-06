@@ -33,7 +33,7 @@ public class LightningParticle : Particle
 		float length = Vector2.Distance(Position, _endPosition);
 		float rotation = (_endPosition - Position).ToRotation();
 		float progress = TimeActive / (float)_maxTime;
-		var drawColor = Color.Lerp(Color.White, Color, EaseFunction.EaseCubicIn.Ease(progress));
+		var drawColor = Color.Lerp(Color.White, Color, EaseFunction.EaseQuadOut.Ease(progress));
 		drawColor.A = 0;
 
 		//Draw the beam and apply shader parameters
