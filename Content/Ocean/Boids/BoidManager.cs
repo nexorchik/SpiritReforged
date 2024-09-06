@@ -3,14 +3,14 @@ using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Ocean.Boids;
 
-public static class BoidManager
+public class BoidManager : ILoadable
 {
 	public static Asset<Texture2D>[] FishTextures { get; private set; }
 
 	internal static List<Boid> Flocks = [];
 	private const int SPAWNRATE = 40;
 
-	public static void Load()
+	public void Load(Mod mod)
 	{
 		if (Main.dedServ) //Don't load on the server
 			return;
@@ -58,12 +58,14 @@ public static class BoidManager
 		//Add detours
 		On_Main.DrawWoF += (On_Main.orig_DrawWoF orig, Main self) =>
 		{
-			Update(); //We can get away with updating here because boids are essentially only visual
+			if (!Main.gamePaused)
+				Update(); //We can get away with updating here because boids are essentially only visual
+
 			Draw(Main.spriteBatch);
 		};
 	}
 
-	public static void Unload() => Flocks.Clear();
+	public void Unload() => Flocks.Clear();
 
 	public static void Draw(SpriteBatch spriteBatch)
 	{
