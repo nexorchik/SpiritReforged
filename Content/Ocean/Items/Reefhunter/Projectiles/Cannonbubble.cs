@@ -1,10 +1,12 @@
-﻿using SpiritReforged.Common.Misc;
+﻿using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
+using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
@@ -12,6 +14,8 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 public class Cannonbubble : ModProjectile
 {
 	public const float MAX_SPEED = 15f; //Initial projectile velocity, used in item shootspeed
+	private const int MAX_TIMELEFT = 360;
+	public static Color RINGCOLOR = new Color(202, 252, 255) * 0.75f;
 
 	public override void SetStaticDefaults()
 	{
@@ -26,7 +30,7 @@ public class Cannonbubble : ModProjectile
 		Projectile.DamageType = DamageClass.Ranged;
 		Projectile.friendly = true;
 		Projectile.penetrate = 5;
-		Projectile.timeLeft = 360;
+		Projectile.timeLeft = MAX_TIMELEFT;
 		Projectile.aiStyle = 0;
 		Projectile.scale = Main.rand.NextFloat(0.9f, 1.1f);
 		Projectile.usesLocalNPCImmunity = true;
@@ -92,7 +96,7 @@ public class Cannonbubble : ModProjectile
 			Rotation = MathHelper.TwoPi - MathHelper.PiOver2 + Projectile.rotation
 		});
 
-		Effect bubbleEffect = ModContent.Request<Effect>("SpiritReforged/Assets/Shaders/TextureMap", AssetRequestMode.ImmediateLoad).Value;
+		Effect bubbleEffect = AssetLoader.LoadedShaders["TextureMap"];
 		bubbleEffect.Parameters["uTexture"].SetValue(outline);
 		bubbleEffect.Parameters["rotation"].SetValue(MathHelper.TwoPi + Projectile.rotation);
 		PrimitiveRenderer.DrawPrimitiveShapeBatched(bubbleTrail.ToArray(), bubbleEffect);
@@ -106,7 +110,10 @@ public class Cannonbubble : ModProjectile
 		float squishAmount = GetSpeedRatio() * velDelta; //velocity based
 		const float sineSpeed = 5 * MathHelper.Pi;
 		squishAmount += (float)Math.Sin(sineSpeed * JiggleTime / 60) * jiggleDelta * JiggleStrength; //jiggling based
-		return new Vector2(1 + squishAmount, 1 - squishAmount) * Projectile.scale;
+
+		float timeModifier = Projectile.timeLeft / (float)MAX_TIMELEFT;
+		timeModifier = 1f - (float)Math.Pow(1 - timeModifier, 30) / 2;
+		return new Vector2(1 + squishAmount, 1 - squishAmount) * Projectile.scale * timeModifier;
 	}
 
 	private float GetSpeedRatio(float exponent = 1) => (float)Math.Pow(MathHelper.Min(Projectile.velocity.Length() / MAX_SPEED, 1), exponent);
@@ -120,7 +127,17 @@ public class Cannonbubble : ModProjectile
 		SoundEngine.PlaySound(SoundID.Item54, Projectile.Center);
 		SoundEngine.PlaySound(SoundID.Item86, Projectile.Center);
 
-		ParticleHandler.SpawnParticle(new BubblePop(Projectile.Center, Projectile.scale * 0.35f, 0.8f, 30));
+		//ParticleHandler.SpawnParticle(new BubblePop(Projectile.Center, Projectile.scale * 0.35f, 0.8f, 30));
+		ParticleHandler.SpawnParticle(new PulseCircle(Projectile.Center, RINGCOLOR, RINGCOLOR * 0.5f, 0.3f, 150 * Projectile.scale, 50, EaseFunction.EaseCircularOut).WithSkew(0.85f, -MathHelper.PiOver2).UsesLightColor());
+
+		for(int i = -1; i <= 1; i += 2)
+			ParticleHandler.SpawnParticle(new PulseCircle(Projectile.Center, RINGCOLOR, RINGCOLOR * 0.5f, 0.3f, 80 * Projectile.scale, 40, EaseFunction.EaseCircularOut).WithSkew(Main.rand.NextFloat(), Main.rand.NextFloat(MathHelper.TwoPi)).UsesLightColor());
+
+		for (int i = 0; i < 2; i++)
+			ParticleHandler.SpawnParticle(new BubbleParticle(Projectile.Center, Main.rand.NextVec2CircularEven(1, 1), Main.rand.NextFloat(0.3f, 0.4f), 30));
+
+		for (int i = 0; i < 6; i++) 
+			ParticleHandler.SpawnParticle(new BubbleParticle(Projectile.Center, Main.rand.NextVec2CircularEven(2, 2), Main.rand.NextFloat(0.1f, 0.2f), 40));
 	}
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -190,29 +207,23 @@ public class Cannonbubble : ModProjectile
 
 		Projectile.velocity = scalarTangentThis * tangent + scalarNormalOther * normal;
 		otherBubble.velocity = scalarTangentOther * tangent + scalarNormalThis * normal;
-		float speedMultiplier = Math.Max(GetSpeedRatio(2), otherBubbleModProj.GetSpeedRatio(2)); //Less dust at low collision speed
-		if (speedMultiplier <= 0.1f)
-			speedMultiplier = 0f;
+		float speedMultiplier = Math.Max(GetSpeedRatio(0.75f), otherBubbleModProj.GetSpeedRatio(0.75f)); //Less dust at low collision speed
+		if (speedMultiplier >= 0.2f)
+			OnCollideExtra(speedMultiplier);
 
-		OnCollideExtra(0.5f * speedMultiplier, speedMultiplier);
 		(otherBubble.ModProjectile as Cannonbubble).JiggleStrength = 1;
 	}
 
-	private void OnCollideExtra(float dustMult = 1f, float dustScaleMult = 1f)
+	private void OnCollideExtra(float strength = 1f)
 	{
 		JiggleStrength = 1;
 
-		int dustCount = (int)(Main.rand.Next(6, 9) * dustMult);
-		for (int i = 0; i < dustCount; i++)
-		{
-			int direction = Main.rand.NextBool() ? -1 : 1;
-			Vector2 speed = Projectile.velocity.RotatedBy(MathHelper.PiOver2 * direction).RotatedByRandom(MathHelper.Pi / 15);
-			int d = Dust.NewDust(Projectile.Center, 0, 0, DustID.BubbleBurst_Blue, speed.X * .25f, speed.Y * .25f, 0, default, Main.rand.NextFloat(1f, 1.25f) * dustScaleMult);
-			Main.dust[d].noGravity = true;
-		}
-
 		if (!Main.dedServ)
-			SoundEngine.PlaySound(SoundID.Item54 with { PitchVariance = 0.3f, Volume = 0.5f * dustMult }, Projectile.Center);
+		{
+			Color color = RINGCOLOR * EaseFunction.EaseCubicOut.Ease(strength);
+			ParticleHandler.SpawnParticle(new PulseCircle(Projectile.Center, color, color * 0.5f, 0.6f, 100 * Projectile.scale * strength, 50, EaseFunction.EaseCircularOut).WithSkew(0.85f, Projectile.velocity.ToRotation()).UsesLightColor());
+			SoundEngine.PlaySound(SoundID.Item54 with { PitchVariance = 0.3f, Volume = 0.5f * strength }, Projectile.Center);
+		}
 	}
 
 	public override bool OnTileCollide(Vector2 oldVelocity)

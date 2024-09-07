@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.Misc;
 using System.Linq;
+using Terraria.Graphics.Renderers;
 
 namespace SpiritReforged.Common.Particle;
 
@@ -136,6 +137,8 @@ public static class ParticleHandler
 
 	internal static void DrawAllParticles(SpriteBatch spriteBatch, ParticleLayer drawLayer)
 	{
+		var batchedNonpremultiplyParticles = new List<Particle>();
+
 		foreach (Particle particle in particles)
 		{
 			if (particle == null)
@@ -143,8 +146,6 @@ public static class ParticleHandler
 
 			if(particle.DrawLayer == drawLayer)
 			{
-				var batchedNonpremultiplyParticles = new List<Particle>();
-
 				switch (particle.DrawType)
 				{
 					case ParticleDrawType.DefaultAlphaBlend:
@@ -167,25 +168,24 @@ public static class ParticleHandler
 						batchedNonpremultiplyParticles.Add(particle);
 						break;
 				}
-
-				if(batchedNonpremultiplyParticles.Count != 0)
-				{
-					spriteBatch.End();
-					spriteBatch.Begin(SpriteSortMode.Deferred, AssetLoader.NonPremultipliedAlphaFix, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
-
-					foreach (Particle batchedParticle in batchedNonpremultiplyParticles)
-					{
-						if (batchedParticle.DrawType == ParticleDrawType.CustomNonPremultiplied)
-							batchedParticle.CustomDraw(spriteBatch);
-
-						else
-							spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color, particle.Rotation, particle.Origin, particle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
-					}
-
-					spriteBatch.End();
-					spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
-				}
 			}
+		}
+
+		if (batchedNonpremultiplyParticles.Count != 0)
+		{
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, AssetLoader.NonPremultipliedAlphaFix, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+
+			foreach (Particle batchedParticle in batchedNonpremultiplyParticles)
+			{
+				if (batchedParticle.DrawType == ParticleDrawType.CustomNonPremultiplied)
+					batchedParticle.CustomDraw(spriteBatch);
+				else
+					spriteBatch.Draw(particleTextures[batchedParticle.Type], batchedParticle.Position - Main.screenPosition, null, batchedParticle.Color, batchedParticle.Rotation, batchedParticle.Origin, batchedParticle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
+			}
+
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
 		}
 	}
 

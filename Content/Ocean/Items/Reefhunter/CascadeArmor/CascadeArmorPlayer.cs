@@ -135,7 +135,6 @@ public class CascadeArmorPlayer : ModPlayer
 				npc.SimpleStrikeNPC(1, Player.Center.X < npc.Center.X ? 1 : -1, false, 3f * bubbleStrength);
 		}
 
-
 		if(!Main.dedServ)
 		{
 			ParticleHandler.SpawnParticle(new BubblePop(Player.Center, GetBaseBubbleScale, 0.8f * bubbleVisual, 35));
