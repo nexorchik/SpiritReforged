@@ -37,7 +37,7 @@ public class LightningParticle : Particle
 		drawColor.A = 0;
 
 		//Draw the beam and apply shader parameters
-		Effect beamEffect = ModContent.Request<Effect>("SpiritReforged/Assets/Shaders/Lightning", AssetRequestMode.ImmediateLoad).Value;
+		Effect beamEffect = AssetLoader.LoadedShaders["Lightning"];
 		beamEffect.Parameters["uTexture"].SetValue(ModContent.Request<Texture2D>("SpiritReforged/Assets/Textures/Lightning").Value);
 		beamEffect.Parameters["perlinNoise"].SetValue(ModContent.Request<Texture2D>("SpiritReforged/Assets/Textures/noise").Value);
 		beamEffect.Parameters["Progress"].SetValue(progress);
