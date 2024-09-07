@@ -1,17 +1,19 @@
 Tiles: {
 	SunkenTreasureTile.MapEntry: Sunken Treasure
-	Breakable1x2Vent.MapEntry: Hydrothermal Vent
-	Breakable1x3Vent.MapEntry: Hydrothermal Vent
-	Coral1x2.MapEntry: Coral
-	Coral2x2.MapEntry: Coral
-	Coral3x3.MapEntry: Coral
-	HydrothermalVent1x2.MapEntry: Hydrothermal Vent
-	HydrothermalVent1x3.MapEntry: Hydrothermal Vent
-	Kelp1x2.MapEntry: Kelp
-	Kelp2x2.MapEntry: Kelp
-	Kelp2x3.MapEntry: Kelp
+	VentMapEntry: Hydrothermal Vent
+	CoralMapEntry: Coral
+	KelpMapEntry: Kelp
 	OceanPirateChest.MapEntry: Pirate Chest
-	GarInAJar_Tile.MapEntry: Gar In A Jar_ Tile
+	GarInAJar_Tile.MapEntry: Gar in a Jar
+	CloudstalkTile.MapEntry: Cloudstalk
+	SmallDriftwoodTile.MapEntry: Small Driftwood
+	MediumDriftwoodTile.MapEntry: Medium Driftwood
+	LargeDriftwoodTile.MapEntry: Large Driftwood
+	BambooBirdCage.MapEntry: Bamboo Bird Cage
+	BambooPot.MapEntry: Bamboo Pot
+	KoiTotem_Tile.MapEntry: Koi Totem
+	TermiteJar_Tile.MapEntry: Termite Jar_ Tile
+	SpiritKillieFishbowl_Tile.MapEntry: Spirit Killie Fishbowl_ Tile
 }
 
 Projectiles: {
@@ -24,13 +26,21 @@ Projectiles: {
 	SkullSentrySentry.DisplayName: Maneater Skull
 	UrchinBall.DisplayName: Urchin Ball
 	UrchinSpike.DisplayName: Urchin Spike
-	UrchinStaffProjectile.DisplayName: Urchin Staff Projectile
 	BaskingSharkProj.DisplayName: Chum
 	BubbleMineBubble.DisplayName: Bubble
 	CoralCatcherHook.DisplayName: "{$ProjectileName.BobberWooden}"
 	JellyfishBolt.DisplayName: Electric Bolt
 	JellyfishMinion.DisplayName: Little Jellyfish
 	ReefWrathProj.DisplayName: Coral Reef
+	JellyfishPet.DisplayName: Jellyfish Pet
+	FairyMinion.DisplayName: Fairy Minion
+	FairyProj.DisplayName: Fairy Proj
+	StarPowderProj.DisplayName: Star Powder
+	ButterflyMinion.DisplayName: Butterfly Minion
+	PoolNoodleProj.DisplayName: Pool Noodle Proj
+	SandWarriorMinion.DisplayName: Sand Warrior Minion
+	ToucanFeather.DisplayName: Toucan Feather
+	ToucanMinion.DisplayName: Toucan Minion
 }
 
 Configs: {
@@ -39,12 +49,21 @@ Configs: {
 
 		OceanShape: {
 			Label: Ocean Shape
-			Tooltip: ""
+			Tooltip:
+				'''
+				Modifies the Ocean generation in certain ways
+				Defaults to a Piecewise_V generation
+				The Piecewise_V generation is recommended for Spirit playthroughs
+				'''
 		}
 
 		SurfaceWaterTransparency: {
 			Label: Surface Water Transparency
-			Tooltip: ""
+			Tooltip:
+				'''
+				Allows for transparent ocean water when on
+				This does not affect any other biome
+				'''
 		}
 	}
 
@@ -62,7 +81,12 @@ Configs: {
 
 		VentCritters: {
 			Label: Vent Critters
-			Tooltip: ""
+			Tooltip:
+				'''
+				Enables the spawning of numerous critters around Hydrothermal Vents
+				These critters do not interfere with regular enemy spawnrates
+				However, they do contribute to the maximum NPC limit
+				'''
 		}
 	}
 }
@@ -70,12 +94,12 @@ Configs: {
 Buffs: {
 	EmpoweredSwim: {
 		DisplayName: Empowered Swim
-		Description: Mods.SpiritReforged.Buffs.EmpoweredSwim.Description
+		Description: You feel much faster in water
 	}
 
 	SwimmingFatigue: {
 		DisplayName: Swimming Fatigue
-		Description: Mods.SpiritReforged.Buffs.SwimmingFatigue.Description
+		Description: You can't swim very well for a bit
 	}
 
 	MantarayBuff: {
@@ -87,11 +111,85 @@ Buffs: {
 		DisplayName: Jellyfish
 		Description: A cute, bouncy Jellyfish fights for you!
 	}
+
+	JellyfishBuff: {
+		DisplayName: Jellyfish Buff
+		Description: This energetic jellyfish loves following you around!
+	}
+
+	DoubleJumpPotionBuff: {
+		DisplayName: Aether Jump
+		Description: Temporarily grants an additional jump
+	}
+
+	FlightPotionBuff: {
+		DisplayName: Soaring
+		Description: Increases flight duration by 25%
+	}
+
+	BottleMountBuff: {
+		DisplayName: Raft
+		Description: Sending out an SOS
+	}
+
+	FairyMinion_Buff: {
+		DisplayName: Fairies
+		Description: Hey! Watch out!
+	}
+
+	Impaled: {
+		DisplayName: Impaled
+		Description: You've been impaled by a pike. Ouch!
+	}
+
+	KoiTotemBuff: {
+		DisplayName: Koi Totem
+		Description: Increased fishing skill
+	}
+
+	ButterflyMinion_Buff: {
+		DisplayName: Ethereal Butterfly
+		Description: The ethereal butterfly fights for you
+	}
+
+	ToucanMinion_Buff: {
+		DisplayName: Toucane
+		Description: The toucan fights for you
+	}
+
+	SandWarriorMinion_Buff: {
+		DisplayName: Sand Warrior
+		Description: The sand warrior fights for you
+	}
+
+	SummonTag3: {
+		DisplayName: Summon Tag3
+		Description: Mods.SpiritReforged.Buffs.SummonTag3.Description
+	}
+
+	QuenchPotion_Buff: {
+		DisplayName: Quench Potion_ Buff
+		Description: Other potions last 25% longer
+	}
 }
 
-SetBonuses.Cascade:
-	'''
-	Dealing damage to enemies builds up a bubble shield,
-	which at full size grants heavy damage resistance against the next attack,
-	damaging and knocking back nearby enemies.
-	'''
+SetBonuses: {
+	Cascade:
+		'''
+		Dealing damage to enemies builds up a bubble shield,
+		which at full size grants heavy damage resistance against the next attack,
+		damaging and knocking back nearby enemies
+		'''
+	Driftwood:
+		'''
+		Allows the wearer to float on water
+		Increased fishing power
+		'''
+}
+
+Biomes: {
+	SavannaBiome: {
+		DisplayName: Savanna
+		TownNPCDialogueName: the Savanna
+	}
+}

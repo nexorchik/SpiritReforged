@@ -2,37 +2,92 @@
 
 public static class ArcVelocityHelper
 {
-	public static Vector2 GetArcVel(Vector2 startingPos, Vector2 targetPos, float gravity, float? minArcHeight = null, float? maxArcHeight = null, float? maxXvel = null, float? heightAboveTarget = null, float downwardsYVelMult = 1f)
+	public static Vector2 GetArcVel(Vector2 startingPos, Vector2 targetPos, float gravity, float speed)
 	{
+		//Start by getting the desired end point relative to the starting point, and the rotation to that end point
 		Vector2 distToTravel = targetPos - startingPos;
-		float maxHeight = distToTravel.Y - (heightAboveTarget ?? 0);
+		float angle = distToTravel.ToRotation();
 
-		if (minArcHeight != null)
-			maxHeight = Math.Min(maxHeight, -(float)minArcHeight);
-
-		if (maxArcHeight != null)
-			maxHeight = Math.Max(maxHeight, -(float)maxArcHeight);
-
-		float travelTime;
-		float desiredYVel;
-
-		if (maxHeight <= 0)
+		while (true)
 		{
-			desiredYVel = -(float)Math.Sqrt(-2 * gravity * maxHeight);
-			travelTime = (float)Math.Sqrt(-2 * maxHeight / gravity) + (float)Math.Sqrt(2 * Math.Max(distToTravel.Y - maxHeight, 0) / gravity); //time up, then time down
-		}
-		else
-		{
-			desiredYVel = Vector2.Normalize(distToTravel).Y * downwardsYVelMult;
-			travelTime = (-desiredYVel + (float)Math.Sqrt(Math.Pow(desiredYVel, 2) - 4 * -distToTravel.Y * gravity / 2)) / gravity; //time down
-		}
+			float finalX = Math.Abs(distToTravel.X);
+			float finalY = distToTravel.Y;
 
-		if (maxXvel != null)
-			return new Vector2(MathHelper.Clamp(distToTravel.X / travelTime, -(float)maxXvel, (float)maxXvel), desiredYVel);
+			//The function below is written assuming a x distance to travel above 0- If it is zero, just return an angle either directly up or down based on the target point
+			if(finalX == 0)
+			{
+				angle = finalY >= 0 ? MathHelper.PiOver2 : -MathHelper.PiOver2;
+				break;
+			}
 
-		return new Vector2(distToTravel.X / travelTime, desiredYVel);
+			float quadFormulaB = 2 * (float)Math.Pow(speed, 2) / (gravity * finalX);
+			float quadFormulaC = 1 - quadFormulaB / finalX * finalY;
+
+			//Check if the projectile can even reach the target, if not, move the target closer until it can
+			if(QuadFormulaSolvable(1, quadFormulaB, quadFormulaC))
+			{
+				float[] tanTheta = SolveQuadraticFormula(1, quadFormulaB, quadFormulaC);
+				float[] theta = [(float)Math.Atan(tanTheta[0]), (float)Math.Atan(tanTheta[1])];
+
+				//Flip the angle horizontally if the original trajectory was to the left
+				if (distToTravel.X < 0)
+					for (int i = 0; i < theta.Length; i++)
+						theta[i] = FlipAngle(theta[i]);
+
+				//Choose the angle that's closer to the original angle
+				if (Math.Abs(AngleDistance(angle, theta[0])) > Math.Abs(AngleDistance(angle, theta[1])))
+					angle = theta[1];
+				else
+					angle = theta[0];
+
+				break;
+			}
+
+			float distanceDecrease = 10;
+			distToTravel -= distanceDecrease * Vector2.Normalize(distToTravel);
+		}	
+
+		return Vector2.UnitX.RotatedBy(angle) * speed;
 	}
 
-	public static Vector2 GetArcVel(this Entity ent, Vector2 targetPos, float gravity, float? minArcHeight = null, float? maxArcHeight = null, float? maxXvel = null, float? heightabovetarget = null, float downwardsYVelMult = 1f) 
-		=> GetArcVel(ent.Center, targetPos, gravity, minArcHeight, maxArcHeight, maxXvel, heightabovetarget, downwardsYVelMult);
+	public static Vector2 GetArcVel(this Entity ent, Vector2 targetPos, float gravity, float speed) => GetArcVel(ent.Center, targetPos, gravity, speed);
+
+	/// <summary>
+	/// Solves the quadratic formula using the inputted variables as the A, B, and C variables in the equation. Returns two floats, one being the square root being added, and the other being the square root being subtracted.
+	/// </summary>
+	/// <param name="quadFormulaA"></param>
+	/// <param name="quadFormulaB"></param>
+	/// <param name="quadFormulaC"></param>
+	/// <returns></returns>
+	private static float[] SolveQuadraticFormula(float quadFormulaA, float quadFormulaB, float quadFormulaC)
+	{
+		//To make the formula more readable
+		float quadFormulaSqrt = (float)Math.Sqrt(QuadFormulaUnderSquareRoot(quadFormulaA, quadFormulaB, quadFormulaC));
+		float twoA = 2 * quadFormulaA;
+
+		float addSqrt = (-quadFormulaB + quadFormulaSqrt) / twoA;
+		float subtractSqrt = (-quadFormulaB - quadFormulaSqrt) / twoA;
+		return [addSqrt, subtractSqrt];
+	}
+
+	/// <summary>
+	/// Checks if the quadratic formula has any real solutions by seeing if the section underneath the square root would be equal to or above zero.
+	/// </summary>
+	/// <param name="quadFormulaA"></param>
+	/// <param name="quadFormulaB"></param>
+	/// <param name="quadFormulaC"></param>
+	/// <returns></returns>
+	private static bool QuadFormulaSolvable(float quadFormulaA, float quadFormulaB, float quadFormulaC) => QuadFormulaUnderSquareRoot(quadFormulaA, quadFormulaB, quadFormulaC) >= 0;
+
+	private static float QuadFormulaUnderSquareRoot(float quadFormulaA, float quadFormulaB, float quadFormulaC) => (float)Math.Pow(quadFormulaB, 2) - 4 * quadFormulaA * quadFormulaC;
+
+	private static float AngleDistance(float angleA, float angleB) => MathHelper.WrapAngle(angleA - angleB);
+
+	private static float FlipAngle(float curAngle)
+	{
+		curAngle -= AngleDistance(curAngle, MathHelper.PiOver2) * 2;
+		curAngle = MathHelper.WrapAngle(curAngle);
+
+		return curAngle;
+	}
 }

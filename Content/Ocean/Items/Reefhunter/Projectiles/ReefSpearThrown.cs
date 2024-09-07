@@ -14,7 +14,7 @@ public class ReefSpearThrown : ModProjectile
 
 	public override void SetStaticDefaults()
 	{
-		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
 		ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
 	}
 
@@ -37,7 +37,7 @@ public class ReefSpearThrown : ModProjectile
 	{
 		if (!hasTarget)
 		{
-			Projectile.velocity.Y += 0.3f;
+			Projectile.velocity.Y += 0.4f;
 			Projectile.rotation = Projectile.velocity.ToRotation();
 			Projectile.tileCollide = Projectile.ai[0]++ > 6;
 		}
@@ -64,6 +64,9 @@ public class ReefSpearThrown : ModProjectile
 			relativePoint += Projectile.velocity * factor * 0.1f;
 
 			Projectile.Center = npc.Center + relativePoint;
+
+			if (Projectile.timeLeft <= 10)
+				Projectile.alpha += 25;
 		}
 	}
 
@@ -96,17 +99,20 @@ public class ReefSpearThrown : ModProjectile
 
 	public override void OnKill(int timeLeft)
 	{
-		SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
-		Vector2 goreVel = hasTarget ? Vector2.Zero : Projectile.oldVelocity / 3;
-		Vector2 pos = Projectile.Center;
-		for (int i = 1; i <= 6; i++)
+		if(!hasTarget)
 		{
-			if (i >= 4)
-				pos -= Vector2.Normalize(Projectile.oldVelocity) * (15 + (i - 3) * 3);
+			SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+			Vector2 goreVel = Projectile.oldVelocity / 2;
+			Vector2 pos = Projectile.Center;
+			for (int i = 1; i <= 6; i++)
+			{
+				if (i >= 4)
+					pos -= Vector2.Normalize(Projectile.oldVelocity) * (15 + (i - 3) * 3);
 
-			var g = Gore.NewGorePerfect(Projectile.GetSource_Death(), pos, goreVel, Mod.Find<ModGore>("Trident" + i).Type);
-			g.timeLeft = 0;
-			g.rotation = Projectile.rotation;
+				var g = Gore.NewGorePerfect(Projectile.GetSource_Death(), pos, goreVel, Mod.Find<ModGore>("Trident" + i).Type);
+				g.timeLeft = 0;
+				g.rotation = Projectile.rotation;
+			}
 		}
 	}
 }

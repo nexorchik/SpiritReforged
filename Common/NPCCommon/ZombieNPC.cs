@@ -19,7 +19,7 @@ public abstract class ZombieNPC : ModNPC
 	/// <summary> Under what conditions this zombie should replace regular zombie spawns. </summary>
 	public abstract bool SpawnConditions(Player player);
 
-	/// <summary> Whether this zombie should replaced armed variants. </summary>
+	/// <summary> Whether this zombie should replace armed variants. </summary>
 	public virtual bool ArmedZombie() => false;
 }
 

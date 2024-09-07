@@ -9,6 +9,17 @@
   <ItemGroup>
     <None Remove="Content\Dusts\BoneDust.png" />
     <None Remove="Content\Dusts\FireClubDust.png" />
+    <None Remove="Content\Forest\Stargrass\Items\EnchantedApple.png" />
+    <None Remove="Content\Forest\Stargrass\Items\EnchantedStarFruit.png" />
+    <None Remove="Content\Forest\Stargrass\Items\StarPowder.png" />
+    <None Remove="Content\Forest\Stargrass\Stargrass.png" />
+    <None Remove="Content\Forest\Stargrass\StargrassSapling.png" />
+    <None Remove="Content\Forest\Stargrass\StargrassTree.png" />
+    <None Remove="Content\Forest\Stargrass\StargrassTree_Branches.png" />
+    <None Remove="Content\Forest\Stargrass\StargrassTree_Tops.png" />
+    <None Remove="Content\Forest\Stargrass\Stargrass_Glow.png" />
+    <None Remove="Content\Forest\Stargrass\Tiles\StargrassFlowers.png" />
+    <None Remove="Content\Forest\Stargrass\Tiles\StargrassFlowers_Glow.png" />
     <None Remove="Content\Ocean\Items\Kelp.png" />
     <None Remove="Content\Ocean\Items\PirateChest.png" />
     <None Remove="Content\Ocean\Items\PirateKey.png" />
@@ -57,6 +68,7 @@
     <None Remove="Content\Ocean\Tiles\SmallKelpItem.png" />
     <None Remove="Content\Ocean\Tiles\SmallVentItem.png" />
     <None Remove="content\ORGANIZATION.txt" />
+    <None Remove="Localization\en-US_Mods.SpiritReforged.Generation.hjson" />
     <None Remove="Localization\en-US_Mods.SpiritReforged.Items.hjson" />
     <None Remove="Localization\en-US_Mods.SpiritReforged.NPCs.hjson" />
   </ItemGroup>

@@ -1,13 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using SpiritReforged.Content.Ocean.Items;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.Enums;
-using Terraria.ID;
-using Terraria.Localization;
-using Terraria.ModLoader;
-using Terraria.ObjectData;
+﻿using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean.Tiles;
 
@@ -33,7 +24,7 @@ public class LargeKelpItem : ModItem
 	public override void AddRecipes()
 	{
 		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<Kelp>(), 12);
+		recipe.AddIngredient(ModContent.ItemType<Items.Kelp>(), 12);
 		recipe.AddTile(TileID.TinkerersWorkbench);
 		recipe.Register();
 	}
@@ -68,8 +59,7 @@ public class Kelp2x2 : ModTile
 		TileID.Sets.DisableSmartCursor[Type] = true;
 		DustType = DustID.Grass;
 
-		LocalizedText name = CreateMapEntryName();
-		AddMapEntry(new Color(24, 105, 25), name);
+		AddMapEntry(new Color(24, 105, 25), Language.GetText("Mods.SpiritReforged.Tiles.KelpMapEntry"));
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;

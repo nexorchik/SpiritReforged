@@ -34,7 +34,7 @@ public class ReefSpear : ModItem
 		{
 			Item.shoot = ModContent.ProjectileType<ReefSpearThrown>();
 			Item.damage = 24;
-			Item.shootSpeed = 12f;
+			Item.shootSpeed = 16f;
 			Item.channel = false;
 			Item.useStyle = ItemUseStyleID.Swing;
 			Item.useTime = Item.useAnimation = 35;
@@ -58,41 +58,8 @@ public class ReefSpear : ModItem
 		if (player.altFunctionUse == 2)
 		{
 			position -= new Vector2(20 * player.direction, 0);
-			velocity = CalcSpearVel(position);
+			velocity = ArcVelocityHelper.GetArcVel(position, Main.MouseWorld, 0.4f, Item.shootSpeed) + player.velocity / 3;
 		}
-	}
-
-	/// <summary>
-	/// Hardcoded calculation in an attempt to accurately make the spear projectile hit the cursor, only going above the target if necessary to reach it with a capped X velocity
-	/// </summary>
-	/// <param name="position"></param>
-	/// <returns></returns>
-	private Vector2 CalcSpearVel(Vector2 position)
-	{
-		Vector2 target = Main.MouseWorld;
-		const float minDist = 100;
-		if (Vector2.Distance(target, position) < minDist) //If there's an extremely small amount of distance between the firing position and the target, move the target away
-			target = position + Vector2.Normalize(target - position) * minDist;
-
-		Vector2 velocity;
-		int tries = 0;
-		const int maxTries = 10;
-		//Adjust arc height to be higher only if it wouldn't be able to reach target with capped x velocity (probably adjust arc velocity calc later to do something like this rather than have this here)
-		do
-		{
-			float heightAboveTarget = tries * 20f; //Step of 20 pixels per try
-			if (target.Y > position.Y && tries > 0) //If target is below the firing position, and if a repeat has already been necessary, move the top of the arc to be above the firing position
-				heightAboveTarget += target.Y - position.Y;
-
-			float? cappedSpeed = null;
-			if (tries == maxTries - 1) //If on last try, force velocity to be capped
-				cappedSpeed = Item.shootSpeed;
-
-			velocity = ArcVelocityHelper.GetArcVel(position, target, 0.3f, null, 400, cappedSpeed, heightAboveTarget, Item.shootSpeed / 3);
-			tries++;
-		} while (Math.Abs(velocity.X) > Item.shootSpeed && tries < maxTries); //Repeat if velocity is too high 
-
-		return velocity;
 	}
 
 	public override void AddRecipes()

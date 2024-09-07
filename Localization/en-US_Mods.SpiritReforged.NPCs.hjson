@@ -1,53 +1,43 @@
 Crinoid: {
 	DisplayName: Crinoid
-	Entry: ""
+	Entry: These curious critters are closely related to starfish. They feed off of whatever sinks down to the bottom of the sea.
 }
 
-Floater.DisplayName: Floater
-
-Floater1: {
-	DisplayName: Floater1
-	Entry: ""
+Floater: {
+	DisplayName: Luminous Floater
+	Entry: Below the waves of the elusive glowing ocean, lies hundreds of small, glowing jellyfish, dancing among the luminescent tide.
 }
+
+FloaterGroup.DisplayName: Luminous Floater Group
 
 Pelican: {
 	DisplayName: Pelican
-	Entry: ""
-}
-
-ReaverShark: {
-	DisplayName: Reaver Shark
-	Entry: ""
+	Entry: A large sea bird with a special beak to hold its prey. Startling it could cause the bird to drop what it's caught, but that would be mean.
 }
 
 TinyCrab: {
-	DisplayName: Tiny Crab
-	Entry: ""
+	DisplayName: Palecrab
+	Entry: These adorable little critters are not as hostile as their larger relatives. Living in deeper waters has made them lose coloration since they have less exposure to sunlight.
 }
 
 TubeWorm: {
 	DisplayName: Tube Worm
-	Entry: ""
+	Entry: Deep below the glimmering tides, down where the light won't shine, live some fascinating creatures, able to feast off of the smog exuded from hydrothermal vents.
 }
 
 SandPiper: {
 	DisplayName: Sand Piper
-	Entry: ""
+	Entry: A small, brave bird that patrols the shorelines looking for food uncovered by the waves.
 }
 
 Gar: {
 	DisplayName: Gar
-	Entry: ""
-}
-
-GoldenGar: {
-	DisplayName: Golden Gar
-	Entry: ""
+	Entry: Gars are keen hunters that normally inhabit freshwater bodies. One must always be on guard when swimming with a gar - they can attack from the side, front, or even the rear.
 }
 
 GoldGar: {
 	DisplayName: Gold Gar
-	Entry: ""
+	Entry: Only a monster would rip open a rare Gold Gar for their succulent caviar. Only a monster...
 }
 
 OceanSlime: {
@@ -58,3 +48,18 @@ OceanSlime: {
 DiverZombie.Entry: Who knew those oxygen tanks needed to have actual oxygen in them?
 KelpZombie.Entry: Fish fear me, women fear me, men fear me, children fear me, for I am the undead.
 SailorZombie.Entry: Despite their current status, they used to run this really nice luxury cruiser you should check out sometime.
+
+Killifish: {
+	DisplayName: Killifish
+	Entry: True to their name, Killifish are known for their one defining trait, getting killed. Their gorgeous, iridescent scales are there too.
+}
+
+GoldKillifish: {
+	DisplayName: Gold Killifish
+	Entry: Bright gold scales do not help with Killifish's woes.
+}
+
+Termite: {
+	DisplayName: Termite
+	Entry: If a tree falls in a forest and no one is around to hear it, it's probably a termite's fault.
+}

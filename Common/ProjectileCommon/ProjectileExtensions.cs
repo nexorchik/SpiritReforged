@@ -23,19 +23,22 @@ internal static class ProjectileExtensions
 	/// <param name="batch">The batch to draw from. If null, this method will use <see cref="Main"/>'s EntitySpriteDraw instead of <see cref="SpriteBatch"/>'s Draw.</param>
 	/// <param name="rot">The projectile's rotation. If null, uses the projectile's rotation.</param>
 	/// <param name="effect">The sprite effect. If null, will use <see cref="Projectile.spriteDirection"/> to get the appropriate effect.</param>
-	/// <param name="color">The draw color. If null, will use <see cref="Lighting.GetColor(int, int)"/> at the projectile's center.</param>
+	/// <param name="drawColor">The draw color. If null, will use <see cref="Lighting.GetColor(int, int)"/> at the projectile's center.</param>
 	/// <param name="origin">The draw origin. If null, will use the half-size of the projectile's current frame size.</param>
-	public static void QuickDraw(this Projectile proj, SpriteBatch batch = null, float? rot = null, SpriteEffects? effect = null, Color? color = null, Vector2? origin = null)
+	public static void QuickDraw(this Projectile proj, SpriteBatch batch = null, float? rot = null, SpriteEffects? effect = null, Color? drawColor = null, Vector2? origin = null)
 	{
 		Texture2D tex = TextureAssets.Projectile[proj.type].Value;
-		Color col = color ?? Lighting.GetColor((int)proj.Center.X / 16, (int)proj.Center.Y / 16);
+		Color color = proj.GetAlpha(drawColor ?? Lighting.GetColor((int)proj.Center.X / 16, (int)proj.Center.Y / 16));
+		if (drawColor != null)
+			color.A = (byte)(drawColor.Value.A * proj.Opacity);
+
 		effect ??= proj.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
 		if (batch == null)
-			Main.EntitySpriteDraw(tex, proj.Center - Main.screenPosition, proj.DrawFrame(), proj.GetAlpha(col), rot ?? proj.rotation,
+			Main.EntitySpriteDraw(tex, proj.Center - Main.screenPosition, proj.DrawFrame(), color, rot ?? proj.rotation,
 				origin ?? proj.DrawFrame().Size() / 2, proj.scale, effect ?? (proj.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
 		else
-			batch.Draw(tex, proj.Center - Main.screenPosition, proj.DrawFrame(), proj.GetAlpha(col), rot ?? proj.rotation,
+			batch.Draw(tex, proj.Center - Main.screenPosition, proj.DrawFrame(), color, rot ?? proj.rotation,
 				origin ?? proj.DrawFrame().Size() / 2, proj.scale, effect ?? (proj.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
 	}
 
@@ -53,7 +56,10 @@ internal static class ProjectileExtensions
 		SpriteEffects? effect = null, Color? drawColor = null, Vector2? drawOrigin = null)
 	{
 		Texture2D tex = TextureAssets.Projectile[proj.type].Value;
-		Color color = drawColor ?? Lighting.GetColor((int)proj.Center.X / 16, (int)proj.Center.Y / 16);
+		Color color = proj.GetAlpha(drawColor ?? Lighting.GetColor((int)proj.Center.X / 16, (int)proj.Center.Y / 16));
+		if (drawColor != null)
+			color.A = drawColor.Value.A;
+
 		effect ??= proj.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
 		for (int i = 0; i < ProjectileID.Sets.TrailCacheLength[proj.type]; i++)
@@ -63,13 +69,38 @@ internal static class ProjectileExtensions
 			Vector2 drawPosition = proj.oldPos[i] + proj.Size / 2 - Main.screenPosition;
 
 			if (batch == null)
-				Main.EntitySpriteDraw(tex, drawPosition, proj.DrawFrame(), proj.GetAlpha(color) * opacityMod,
+				Main.EntitySpriteDraw(tex, drawPosition, proj.DrawFrame(), color * opacityMod,
 					rotation ?? proj.oldRot[i], drawOrigin ?? proj.DrawFrame().Size() / 2, proj.scale,
 					effect ?? (proj.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
 			else
-				batch.Draw(tex, drawPosition, proj.DrawFrame(), proj.GetAlpha(color) * opacityMod,
+				batch.Draw(tex, drawPosition, proj.DrawFrame(), color * opacityMod,
 					rotation ?? proj.oldRot[i], drawOrigin ?? proj.DrawFrame().Size() / 2, proj.scale,
 					effect ?? (proj.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
+		}
+	}
+
+	/// <summary>
+	/// Adjusts the projectile's frame using a given framerate, and within a given range if specified
+	/// </summary>
+	/// <param name="projectile">The projectile to draw.</param>
+	/// <param name="framespersecond">The amount of frames to cycle through each second.</param>
+	/// <param name="loopFrame">The frame to loop to after reaching the maximum frame count. Defaults to zero.</param>
+	/// <param name="maxFrame">The frame to loop the animation upon reaching. If null, will use <see cref="Main.projFrames[projectile.type]"/> to get the default maximum frame count.</param>
+	public static void UpdateFrame(this Projectile projectile, int framespersecond, int loopFrame = 0, int? maxFrame = null)
+	{
+		if (framespersecond == 0)
+			return;
+
+		projectile.frameCounter++;
+
+		if (projectile.frameCounter > 60 / framespersecond)
+		{
+			projectile.frameCounter = 0;
+			projectile.frame++;
+
+			maxFrame ??= Main.projFrames[projectile.type];
+			if (projectile.frame >= maxFrame)
+				projectile.frame = loopFrame;
 		}
 	}
 }
