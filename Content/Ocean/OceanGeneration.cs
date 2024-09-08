@@ -126,7 +126,10 @@ public class OceanGeneration : ModSystem
 			}
 		}
 
+		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Ocean") + ".";
 		PopulateOcean(_oceanInfos.Item1, 0);
+
+		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Ocean") + "!";
 		PopulateOcean(_oceanInfos.Item2, 1);
 	}
 

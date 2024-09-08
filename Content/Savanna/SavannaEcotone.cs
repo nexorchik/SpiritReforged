@@ -1,14 +1,18 @@
-﻿using SpiritReforged.Common.WorldGeneration.Ecotones;
+﻿using SpiritReforged.Common.WorldGeneration;
+using SpiritReforged.Common.WorldGeneration.Ecotones;
 using SpiritReforged.Content.Savanna.Tiles;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Generation;
+using Terraria.IO;
 using Terraria.WorldBuilding;
 
 namespace SpiritReforged.Content.Savanna;
 
 internal class SavannaEcotone : EcotoneBase
 {
+	private static Rectangle SavannaArea = Rectangle.Empty;
+
 	public override void AddTasks(List<GenPass> tasks, List<EcotoneSurfaceMapping.EcotoneEntry> entries)
 	{
 		int index = tasks.FindIndex(x => x.Name == "Pyramids");
@@ -18,7 +22,34 @@ internal class SavannaEcotone : EcotoneBase
 			return;
 
 		tasks.Insert(index, new PassLegacy("Savanna Base", BaseGeneration(entries)));
-		tasks.Insert(secondIndex, new PassLegacy("Savanna Cleanup", BaseGeneration(entries)));
+		tasks.Insert(index + 1, new PassLegacy("Grow Savanna", PopulateSavanna));
+		//tasks.Insert(secondIndex, new PassLegacy("Savanna Cleanup", BaseGeneration(entries)));
+	}
+
+	private void PopulateSavanna(GenerationProgress progress, GameConfiguration configuration)
+	{
+		Dictionary<Point, OpenFlags> tiles = [];
+
+		for (int i = SavannaArea.Left; i < SavannaArea.Right; ++i)
+		{
+			for (int j = SavannaArea.Top; j < SavannaArea.Bottom; ++j)
+			{
+				OpenFlags flags = OpenTools.GetOpenings(i, j);
+
+				if (flags != OpenFlags.None)
+					tiles.Add(new Point(i, j), flags);
+			}
+		}
+
+		foreach ((Point position, OpenFlags flags) in tiles)
+		{
+			Tile tile = Main.tile[position];
+
+			if (tile.TileType == ModContent.TileType<SavannaDirt>())
+				tile.TileType = (ushort)ModContent.TileType<SavannaGrass>();
+
+			tile.WallType = WallID.None;
+		}
 	}
 
 	private static WorldGenLegacyMethod BaseGeneration(List<EcotoneSurfaceMapping.EcotoneEntry> entries) => (progress, _) =>
@@ -32,11 +63,17 @@ internal class SavannaEcotone : EcotoneBase
 		int endX = entry.End.X + 0;
 		short startY = EcotoneSurfaceMapping.TotalSurfaceY[(short)entry.Start.X];
 		short endY = EcotoneSurfaceMapping.TotalSurfaceY[(short)entry.End.X];
-		int[] validIds = [TileID.Dirt, TileID.Grass, TileID.ClayBlock, TileID.CrimsonGrass, TileID.CorruptGrass];
+		int[] validIds = [TileID.Dirt, TileID.Grass, TileID.ClayBlock, TileID.CrimsonGrass, TileID.CorruptGrass, TileID.Stone];
+
+		SavannaArea = new Rectangle(startX, startY, endX - startX, Math.Max(endY - startY, startY - endY));
+
+		var sandNoise = new FastNoiseLite(WorldGen.genRand.Next());
+		sandNoise.SetFrequency(0.06f);
 
 		for (int x = startX; x < endX; ++x)
 		{
-			float factor = ((float)endX - x) / endX;
+			float factor = ((float)x - startX) / (endX - startX);
+			factor = ModifyLerpFactor(factor);
 			int y = (int)MathHelper.Lerp(startY, endY, factor);
 			int depth = WorldGen.genRand.Next(20);
 
@@ -46,104 +83,34 @@ internal class SavannaEcotone : EcotoneBase
 
 				if (i >= 0)
 				{
-					if (tile.HasTile && !validIds.Contains(tile.TileType) && WorldGen.genRand.NextBool(1))
-					{
+					if (!tile.HasTile || !validIds.Contains(tile.TileType))
 						continue;
-					}
 
-					WorldGen.PlaceTile(x, y + i, ModContent.TileType<SavannaDirt>(), true, true);
+					float noise = (sandNoise.GetNoise(x, 0) + 1) * 5;
+					int type = i <= noise ? ModContent.TileType<SavannaDirt>() : TileID.Sand;
+
+					if (i > 90 + depth - noise)
+						type = TileID.Sandstone;
+
+					if (tile.TileType == TileID.Stone)
+						type = TileID.ClayBlock;
+
+					tile.TileType = (ushort)type;
 				}
 				else
 				{
 					tile.Clear(TileDataType.All);
 				}
-
-				continue;
-				if (!tile.HasTile || tile.TileType is TileID.Cloud or TileID.RainCloud)
-					continue;
-
-				if (tile.TileType is TileID.LeafBlock or TileID.LivingWood || tile.WallType == WallID.LivingWoodUnsafe)
-				{
-					if (i < 0)
-						tile.Clear(Terraria.DataStructures.TileDataType.All);
-					else
-					{
-						WorldGen.PlaceTile(x, y + i, ModContent.TileType<SavannaDirt>(), true, true);
-						tile.WallType = WallID.Dirt;
-					}
-
-					continue;
-				}
-
-				if (tile.TileType == TileID.Dirt)
-					tile.TileType = !WorldGen.SolidTile(x, y + i - 1) ? (ushort)ModContent.TileType<SavannaGrass>() : (ushort)ModContent.TileType<SavannaDirt>();
-				else if (tile.TileType == TileID.Grass)
-					tile.TileType = (ushort)ModContent.TileType<SavannaGrass>();
-				else if (tile.TileType == TileID.Stone)
-					tile.TileType = TileID.ClayBlock;
-
-				WorldGen.TileFrame(x, y + i, true);
 			}
 		}
 
-		return;
-		//HashSet<Point> points = [.. totalSurfacePoints.Where(x => x.X > entry.Start.X - 70 && x.X < entry.End.X + 70)];
-
-		
+		return;		
 	};
 
-	//private static void CleanupGeneration(List<GenPass> tasks, EcotoneSurfaceMapping.EcotoneEntry entry, HashSet<Point> totalSurfacePoints)
-	//{
-	//	int index = tasks.FindIndex(x => x.Name == "Surface Ore and Stone");
-
-	//	if (index == -1)
-	//		return;
-
-	//	tasks.Insert(index, new PassLegacy("Savanna Cleanup", (progress, _) =>
-	//	{
-	//		if (entry is null)
-	//			return;
-
-	//		HashSet<Point> points = [.. totalSurfacePoints.Where(x => x.X > entry.Start.X - 60 && x.X < entry.End.X + 60)];
-
-	//		foreach (Point position in points)
-	//		{
-	//			for (int i = -80; i < 60; ++i)
-	//			{
-	//				if (position.X < entry.Start.X - 50 && WorldGen.genRand.NextBool(((entry.Start.X - 50) - position.X) / 10))
-	//				{
-
-	//				}
-
-	//				Tile tile = Main.tile[position.X, position.Y + i];
-
-	//				if (!tile.HasTile)
-	//					continue;
-
-	//				if (tile.TileType is TileID.Cloud or TileID.RainCloud)
-	//					continue;
-
-	//				if (tile.TileType is TileID.LeafBlock or TileID.LivingWood || tile.WallType == WallID.LivingWoodUnsafe)
-	//				{
-	//					if (i < 0)
-	//						tile.Clear(Terraria.DataStructures.TileDataType.All);
-	//					else
-	//					{
-	//						WorldGen.PlaceTile(position.X, position.Y + i, ModContent.TileType<SavannaDirt>(), true, true);
-	//						tile.WallType = WallID.Dirt;
-	//					}
-
-	//					continue;
-	//				}
-
-	//				if (tile.TileType == TileID.Dirt)
-	//					tile.TileType = !WorldGen.SolidTile(position.X, position.Y + i - 1) ? (ushort)ModContent.TileType<SavannaGrass>() : (ushort)ModContent.TileType<SavannaDirt>();
-	//				else if (tile.TileType == TileID.Grass)
-	//					tile.TileType = (ushort)ModContent.TileType<SavannaGrass>();
-
-	//				WorldGen.TileFrame(position.X, position.Y + i, true);
-	//			}
-	//		}
-	//	}));
-	//}
+	private static float ModifyLerpFactor(float factor)
+	{
+		float adj = 8f;
+		factor = (int)((factor + 0.1f) * adj) / adj;
+		return factor;
+	}
 }
