@@ -1,3 +1,6 @@
+using Terraria.DataStructures;
+using Terraria.GameContent.Bestiary;
+using SpiritReforged.Content.Ocean.Items.JellyCandle;
 using SpiritReforged.Content.Vanilla.Items.Food;
 using Terraria.ModLoader.Utilities;
 
@@ -8,10 +11,9 @@ public class Floater : ModNPC
 {
 	public override void SetStaticDefaults()
 	{
-		Main.npcFrameCount[NPC.type] = 40;
-
-		var drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers() { Hide = true };
-		NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, drawModifiers);
+		Main.npcFrameCount[Type] = 40;
+		Main.npcCatchable[Type] = true;
+		NPCID.Sets.CountsAsCritter[Type] = true;
 	}
 
 	public override void SetDefaults()
@@ -31,47 +33,29 @@ public class Floater : ModNPC
 		AIType = NPCID.PinkJellyfish;
     }
 
-	bool txt = false;
-
-	public override bool PreAI()
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
 	{
-		if (!txt)
-		{
-			for (int i = 0; i < 8; ++i)
-			{
-				var dir = Vector2.Normalize(Main.player[NPC.target].Center - NPC.Center);
-				int newNPC = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X + Main.rand.Next(-20, 20), (int)NPC.Center.Y + Main.rand.Next(-20, 20), ModContent.NPCType<Floater1>(), NPC.whoAmI);
-				Main.npc[newNPC].velocity = dir;
-			}
-
-			txt = true;
-			NPC.netUpdate = true;
-			Lighting.AddLight((int)(NPC.Center.X / 16f), (int)(NPC.Center.Y / 16f), .3f, .2f, .3f);
-		}
-
-		return true;
+		bestiaryEntry.UIInfoProvider = new CritterUICollectionInfoProvider(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds[Type]);
+		bestiaryEntry.AddInfo(this, "NightTime Ocean Moon");
 	}
+
+	public override void AI() => Lighting.AddLight((int)(NPC.Center.X / 16f), (int)(NPC.Center.Y / 16f), .3f, .2f, .3f);
 
 	public override void FindFrame(int frameHeight)
 	{
 		NPC.frameCounter += 0.15f;
-		NPC.frameCounter %= Main.npcFrameCount[NPC.type];
+		NPC.frameCounter %= Main.npcFrameCount[Type];
 		int frame = (int)NPC.frameCounter;
 		NPC.frame.Y = frame * frameHeight;
-	}
-
-	public override float SpawnChance(NPCSpawnInfo spawnInfo)
-	{
-		if (spawnInfo.PlayerSafe || Main.dayTime)
-			return 0f;
-
-		return SpawnCondition.OceanMonster.Chance * 0.173f;
 	}
 
 	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 	{
 		var effects = NPC.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-		spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY), NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, effects, 0);
+		Color color = NPC.GetNPCColorTintedByBuffs(NPC.IsABestiaryIconDummy ? Color.White : NPC.GetAlpha(drawColor * 1.25f));
+
+		spriteBatch.Draw(TextureAssets.Npc[Type].Value, NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY), NPC.frame, color, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, effects, 0);
+		
 		return false;
 	}
 
@@ -84,5 +68,51 @@ public class Floater : ModNPC
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, 2.5f * hit.HitDirection, -2.5f, 0, Color.White, Main.rand.NextFloat(.2f, .8f));
 	}
 
-	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>();
+	public override void ModifyNPCLoot(NPCLoot npcLoot)
+	{
+		npcLoot.AddCommon(ModContent.ItemType<JellyCandle>(), 75);
+		npcLoot.AddCommon<RawFish>();
+	}
+}
+
+//The NPC used to control group spawning logic for floaters and the type actually added to the spawn pool.
+//As far as the player is concerned, this doesn't exist.
+public class FloaterGroup : ModNPC
+{
+	public override string Texture => base.Texture.Replace("Group", string.Empty);
+
+	public override void SetStaticDefaults()
+	{
+		Main.npcFrameCount[Type] = 40;
+
+		var drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers() { Hide = true };
+		NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, drawModifiers);
+	}
+
+	public override void OnSpawn(IEntitySource source) //Spawn a group of floaters
+	{
+		int childType = ModContent.NPCType<Floater>();
+		int amount = Main.rand.Next(6, 8);
+
+		for (int i = 0; i < amount; i++)
+		{
+			NPC.TargetClosest();
+
+			var position = NPC.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(20f);
+
+			var child = NPC.NewNPCDirect(new EntitySource_Parent(NPC), (int)position.X, (int)position.Y, childType, NPC.whoAmI);
+			child.velocity = NPC.DirectionTo(Main.player[NPC.target].Center);
+			child.netUpdate = true;
+		}
+
+		NPC.Transform(childType);
+	}
+
+	public override float SpawnChance(NPCSpawnInfo spawnInfo)
+	{
+		if (spawnInfo.PlayerSafe || Main.dayTime)
+			return 0f;
+
+		return SpawnCondition.OceanMonster.Chance * 0.173f;
+	}
 }

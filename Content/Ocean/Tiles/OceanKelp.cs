@@ -125,7 +125,7 @@ internal class OceanKelp : ModTile
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch) //Drawing woo
 	{
 		Tile t = Framing.GetTileSafely(i, j); //ME!
-		Texture2D tile = ModContent.Request<Texture2D>(Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value; //Associated texture - loaded automatically
+		Texture2D tile = TextureAssets.Tile[Type].Value; //Associated texture - loaded automatically
 
 		int totalOffset = t.TileFrameX / ClumpFrameOffset; //Gets offset
 		int realFrameX = t.TileFrameX - ClumpFrameOffset * totalOffset; //Adjusted so its easy to read

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Terraria.ModLoader;
+﻿using System.Linq;
 
 namespace SpiritReforged.Common.TileCommon;
 
@@ -36,6 +33,9 @@ public partial class TagGlobalTile : GlobalTile
 
 				if (tag.Tags.Contains(TileTags.IndestructibleNoGround))
 					_indestructiblesUngrounded.Add(id);
+
+				if (tag.Tags.Contains(TileTags.HarvestableHerb))
+					_harvestableHerbs.Add(id);
 			}
 		}
 	}
