@@ -588,3 +588,8 @@ LivingBaobabWand: {
 	DisplayName: Living Baobab Wand
 	Tooltip: ""
 }
+
+WrithingSticks: {
+	DisplayName: Writhing Sticks
+	Tooltip: Summons a friendly tumbleweed to follow you around
+}
