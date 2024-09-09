@@ -28,7 +28,8 @@ internal class SavannaEcotone : EcotoneBase
 
 	private void PopulateSavanna(GenerationProgress progress, GameConfiguration configuration)
 	{
-		Dictionary<Point, OpenFlags> tiles = [];
+		Dictionary<Point16, OpenFlags> tiles = [];
+		Dictionary<Point16, int> grassLocations = [];
 
 		for (int i = SavannaArea.Left; i < SavannaArea.Right; ++i)
 		{
@@ -37,19 +38,37 @@ internal class SavannaEcotone : EcotoneBase
 				OpenFlags flags = OpenTools.GetOpenings(i, j);
 
 				if (flags != OpenFlags.None)
-					tiles.Add(new Point(i, j), flags);
+				{
+					tiles.Add(new Point16(i, j), flags);
+
+					if (Main.tile[i, j].TileType == ModContent.TileType<SavannaDirt>() && WorldGen.genRand.NextBool(90))
+						grassLocations.Add(new Point16(i, j), WorldGen.genRand.Next(14, 20));
+				}
 			}
 		}
 
-		foreach ((Point position, OpenFlags flags) in tiles)
+		foreach ((Point16 position, OpenFlags flags) in tiles)
 		{
 			Tile tile = Main.tile[position];
 
 			if (tile.TileType == ModContent.TileType<SavannaDirt>())
+			{
 				tile.TileType = (ushort)ModContent.TileType<SavannaGrass>();
+
+				var nearestGrassLocation = grassLocations.MinBy(x => x.Key.ToVector2().DistanceSQ(position.ToVector2()));
+				GrowStuffOnGrass(position, (nearestGrassLocation.Key, nearestGrassLocation.Value));
+			}
 
 			tile.WallType = WallID.None;
 		}
+	}
+
+	private static void GrowStuffOnGrass(Point16 position, (Point16 location, int size) nearestGrass)
+	{
+		float grassLoc = position.ToVector2().DistanceSQ(nearestGrass.location.ToVector2());
+
+		if (grassLoc < nearestGrass.size * nearestGrass.size)
+			WorldGen.PlaceTile(position.X, position.Y - 1, ModContent.TileType<ElephantGrass>(), true);
 	}
 
 	private static WorldGenLegacyMethod BaseGeneration(List<EcotoneSurfaceMapping.EcotoneEntry> entries) => (progress, _) =>

@@ -8,7 +8,7 @@ public class ElephantGrass : ModTile, ISwayInWind
 {
 	private static bool DrawingFront;
 
-	public override void Load() => On_Main.DrawPlayers_AfterProjectiles += (On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self) =>
+	public override void Load() => On_Main.DrawPlayers_AfterProjectiles += static (On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self) =>
 	{
 		orig(self);
 
@@ -18,7 +18,7 @@ public class ElephantGrass : ModTile, ISwayInWind
 		var points = TileSwaySystem.Instance.specialDrawPoints; //We don't know which position to draw at, so reuse this point
 		for (int i = points.Count - 1; i >= 0; i--)
 		{
-			if (Framing.GetTileSafely(points[i]).TileType == Type)
+			if (Framing.GetTileSafely(points[i]).TileType == ModContent.TileType<ElephantGrass>())
 				TileSwayGlobalTile.PreDrawInWind(points[i], Main.spriteBatch);
 		}
 
