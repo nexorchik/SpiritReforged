@@ -47,7 +47,7 @@ public class ReefSpearProjectile : ModProjectile
 		p.heldProj = Projectile.whoAmI;
 		p.itemTime = 2;
 		p.itemAnimation = 2;
-		//p.reuseDelay = 10; I want this to be here but the arm acts weirdly during the reuse delay period, don't know enough at the moment about the new arm system to fix it
+		p.reuseDelay = 15;
 		CompositeArmStretchAmount stretchAmount = CompositeArmStretchAmount.Full;
 		float factor = 1; //Lerp factor for pushing out and coming back in
 		float length = 1;
