@@ -563,3 +563,28 @@ QuenchPotion: {
 	DisplayName: Quench Potion
 	Tooltip: Other potions last 25% longer
 }
+
+LivingBaobabLeafWallItem: {
+	DisplayName: Living Baobab Leaf Wall
+	Tooltip: ""
+}
+
+LivingBaobabWallItem: {
+	DisplayName: Living Baobab Wall
+	Tooltip: ""
+}
+
+BaobabTool: {
+	DisplayName: Baobab Tool (Debug)
+	Tooltip: ""
+}
+
+LivingBaobabLeafWand: {
+	DisplayName: Living Baobab Leaf Wand
+	Tooltip: ""
+}
+
+LivingBaobabWand: {
+	DisplayName: Living Baobab Wand
+	Tooltip: ""
+}
