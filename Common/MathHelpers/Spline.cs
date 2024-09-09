@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace PathOfTerraria.Common.World.Generation;
+namespace SpiritReforged.Common.MathHelpers;
 
 /// <summary>
 /// Adapted from https://swharden.com/blog/2022-01-22-spline-interpolation/.
@@ -23,9 +23,7 @@ public static class Spline
 		var result = new Vector2[newXs.Length];
 
 		for (int i = 0; i < result.Length; i++)
-		{
 			result[i] = new Vector2((float)newXs[i], (float)newYs[i]);
-		}
 
 		return result;
 	}
@@ -36,9 +34,7 @@ public static class Spline
 	public static (double[] xs, double[] ys) InterpolateXY(double[] xs, double[] ys, int count)
 	{
 		if (xs is null || ys is null || xs.Length != ys.Length)
-		{
 			throw new ArgumentException($"{nameof(xs)} and {nameof(ys)} must have same length");
-		}
 
 		int inputPointCount = xs.Length;
 		double[] inputDistances = new double[inputPointCount];
@@ -67,12 +63,8 @@ public static class Spline
 			int j;
 
 			for (j = 0; j < xOrig.Length - 2; j++)
-			{
 				if (xInterp[i] <= xOrig[j + 1])
-				{
 					break;
-				}
-			}
 
 			double dx = xOrig[j + 1] - xOrig[j];
 			double t = (xInterp[i] - xOrig[j]) / dx;
@@ -123,24 +115,18 @@ public static class Spline
 		cPrime[0] = C[0] / B[0];
 
 		for (int i = 1; i < n; i++)
-		{
 			cPrime[i] = C[i] / (B[i] - cPrime[i - 1] * A[i]);
-		}
 
 		double[] dPrime = new double[n];
 		dPrime[0] = r[0] / B[0];
 		for (int i = 1; i < n; i++)
-		{
 			dPrime[i] = (r[i] - dPrime[i - 1] * A[i]) / (B[i] - cPrime[i - 1] * A[i]);
-		}
 
 		double[] k = new double[n];
 		k[n - 1] = dPrime[n - 1];
 
 		for (int i = n - 2; i >= 0; i--)
-		{
 			k[i] = dPrime[i] - cPrime[i] * k[i + 1];
-		}
 
 		for (int i = 1; i < n; i++)
 		{

@@ -1,4 +1,4 @@
-﻿using PathOfTerraria.Common.World.Generation;
+﻿using SpiritReforged.Common.MathHelpers;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Savanna.Tiles;
 using System.Linq;
