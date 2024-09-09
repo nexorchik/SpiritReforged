@@ -39,6 +39,7 @@ public class ToucanMinion : BaseMinion
 			Projectile.frame = 4;
 			return false;
 		}
+
 		endframe = 3; //only animate through first 3 frames
 		framespersecond = (int)MathHelper.Lerp(6, 14, Math.Min(Projectile.velocity.Length() / 6, 1));
 		return true;
@@ -72,6 +73,7 @@ public class ToucanMinion : BaseMinion
 			Collision.HitTiles(Projectile.Center, Projectile.velocity, Projectile.width, Projectile.height);
 			Projectile.Bounce(oldVelocity, 0.5f);
 		}
+
 		return false;
 	}
 
@@ -206,6 +208,7 @@ public class ToucanMinion : BaseMinion
 						SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown with { PitchVariance = 0.3f, Volume = 0.5f }, Projectile.Center);
 						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/BirdCry_1") with { PitchVariance = 0.3f, Volume = 0.5f }, Projectile.Center);
 					}
+
 					Projectile.velocity = Projectile.DirectionTo(target.Center).RotatedByRandom(MathHelper.PiOver4) * GlideStartVelocity;
 					AiTimer = 0;
 					Projectile.netUpdate = true;
@@ -220,10 +223,11 @@ public class ToucanMinion : BaseMinion
 					Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.DirectionTo(target.Center) * 8, ModContent.ProjectileType<ToucanFeather>(), (int)(Projectile.damage * 0.8), Projectile.knockBack, Projectile.owner);
 					for (int j = 0; j < 6; j++)
 					{
-						Dust dust = Dust.NewDustPerfect(Projectile.Center, 90, Projectile.DirectionTo(target.Center).RotatedByRandom(MathHelper.Pi / 3) * Main.rand.NextFloat(1f, 2f), 100, default, Main.rand.NextFloat(0.15f, 0.3f));
+						var dust = Dust.NewDustPerfect(Projectile.Center, 90, Projectile.DirectionTo(target.Center).RotatedByRandom(MathHelper.Pi / 3) * Main.rand.NextFloat(1f, 2f), 100, default, Main.rand.NextFloat(0.15f, 0.3f));
 						dust.fadeIn = 0.75f;
 						dust.noGravity = true;
 					}
+
 					Projectile.velocity = -Projectile.DirectionTo(target.Center).RotatedByRandom(MathHelper.PiOver4) * 6;
 					_featherShotFrameTime = FeatherShootTime / 2;
 					Projectile.netUpdate = true;

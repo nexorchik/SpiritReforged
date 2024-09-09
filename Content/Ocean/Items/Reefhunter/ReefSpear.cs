@@ -17,10 +17,8 @@ public class ReefSpear : ModItem
 		Item.noMelee = true;
 		Item.DamageType = DamageClass.Melee;
 		Item.channel = false;
-		Item.autoReuse = true;
 		Item.rare = ItemRarityID.Blue;
 		Item.value = Item.sellPrice(gold: 2);
-		Item.UseSound = SoundID.Item1;
 		Item.shoot = ModContent.ProjectileType<ReefSpearProjectile>();
 		Item.useStyle = ItemUseStyleID.Shoot;
 	}
@@ -36,7 +34,9 @@ public class ReefSpear : ModItem
 			Item.damage = 24;
 			Item.shootSpeed = 13f;
 			Item.channel = false;
+			Item.autoReuse = true;
 			Item.useStyle = ItemUseStyleID.Swing;
+			Item.UseSound = SoundID.DD2_JavelinThrowersAttack;
 			Item.useTime = Item.useAnimation = 35;
 
 		}
@@ -46,8 +46,10 @@ public class ReefSpear : ModItem
 			Item.damage = 18;
 			Item.shootSpeed = 0f;
 			Item.channel = true;
+			Item.autoReuse = false;
+			Item.UseSound = null;
 			Item.useTime = Item.useAnimation = 40;
-			Item.useStyle = ItemUseStyleID.Shoot;
+			Item.useStyle = ItemUseStyleID.Thrust;
 		}
 
 		return true;
