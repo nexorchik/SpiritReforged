@@ -598,3 +598,8 @@ BaobabFruit: {
 	DisplayName: Baobab Fruit
 	Tooltip: ""
 }
+
+SavannaGrassSeeds: {
+	DisplayName: Savanna Grass Seeds
+	Tooltip: ""
+}
