@@ -4,14 +4,10 @@ namespace SpiritReforged.Common.ProjectileCommon;
 
 public abstract class BasePetBuff<T> : ModBuff where T : ModProjectile
 {
-	protected abstract (string, string) BuffInfo { get; }
 	protected virtual bool IsLightPet => false;
 
 	public sealed override void SetStaticDefaults()
 	{
-		// DisplayName.SetDefault(BuffInfo.Item1);
-		// Description.SetDefault(BuffInfo.Item2);
-
 		Main.buffNoTimeDisplay[Type] = true;
 
 		if (IsLightPet)
