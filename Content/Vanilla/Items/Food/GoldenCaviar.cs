@@ -24,7 +24,7 @@ public class GoldenCaviar : FoodItem
 		recipe1.Register();
 
 		Recipe recipe2 = CreateRecipe(1);
-		recipe2.AddIngredient(Mod.Find<ModItem>("KillifishItem").Type, 1);
+		recipe2.AddIngredient(Mod.Find<ModItem>("GoldKillifishItem").Type, 1);
 		recipe2.AddTile(TileID.CookingPots);
 		recipe2.Register();
 	}
