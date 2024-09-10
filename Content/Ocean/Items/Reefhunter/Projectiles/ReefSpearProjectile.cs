@@ -1,4 +1,6 @@
 ﻿using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.Particle;
+using SpiritReforged.Content.Particles;
 using System.IO;
 using Terraria.Audio;
 using static Terraria.Player;
@@ -108,6 +110,7 @@ public class ReefSpearProjectile : ModProjectile
 			stabTimes.Add((int)(Math.Pow(i / (float)NUM_STABS, 1 / progressExponent) * _maxTimeleft));
 
 		progress = (float)(Math.Pow(progress, progressExponent));
+		length = Projectile.timeLeft <= stabTimes[2] ? 1f : 0.65f;
 
 		if (stabTimes.Contains(Projectile.timeLeft)) //During the beginning frame of a stab
 		{
@@ -126,10 +129,14 @@ public class ReefSpearProjectile : ModProjectile
 			if (!Main.dedServ)
 			{
 				SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack with { PitchVariance = 0.3f, Volume = 0.75f, MaxInstances = -1 }, Projectile.Center);
+				Color lightColor = new Color(251, 204, 62) * 0.66f;
+				Color darkColor = new Color(224, 60, 99) * 0.66f;
+				Particle noiseCone = new MotionNoiseCone(Projectile.Center - RealDirection * length, darkColor, lightColor,
+					130 * length, 1.5f * MAX_DISTANCE * MathHelper.Lerp(length, 1, 0.5f), _direction.ToRotation() + _rotationOffset * _rotationDirection, 25, 1f).UsesLightColor();
+				noiseCone.Velocity = _direction.RotatedBy(_rotationDirection * _rotationOffset) * -4;
+				ParticleHandler.SpawnParticle(noiseCone);
 			}
 		}
-
-		length = Projectile.timeLeft < stabTimes[2] ? 1f : 0.65f;
 
 		factor = 1 - progress % (1 / (float)NUM_STABS) * NUM_STABS;
 		factor = (float)Math.Pow(factor, 0.75f);
