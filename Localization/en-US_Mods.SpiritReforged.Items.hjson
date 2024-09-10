@@ -593,3 +593,8 @@ WrithingSticks: {
 	DisplayName: Writhing Sticks
 	Tooltip: Summons a friendly tumbleweed to follow you around
 }
+
+BaobabFruit: {
+	DisplayName: Baobab Fruit
+	Tooltip: ""
+}
