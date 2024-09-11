@@ -603,3 +603,23 @@ SavannaGrassSeeds: {
 	DisplayName: Savanna Grass Seeds
 	Tooltip: ""
 }
+
+BeachUmbrellaItem: {
+	DisplayName: Beach Umbrella
+	Tooltip: ""
+}
+
+BigBuoyItem: {
+	DisplayName: Big Buoy
+	Tooltip: ""
+}
+
+BuoyItem: {
+	DisplayName: Buoy
+	Tooltip: ""
+}
+
+LoungeChairItem: {
+	DisplayName: Lounge Chair
+	Tooltip: ""
+}
