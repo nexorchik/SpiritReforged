@@ -11,6 +11,7 @@ internal class GlowmaskAutoloader : ModSystem
 		var npcGetId = typeof(ModContent).GetMethod(nameof(ModContent.NPCType));
 		var tileGetId = typeof(ModContent).GetMethod(nameof(ModContent.TileType));
 		var projGetId = typeof(ModContent).GetMethod(nameof(ModContent.ProjectileType));
+		var itemGetId = typeof(ModContent).GetMethod(nameof(ModContent.ItemType));
 
 		foreach (var type in types)
 		{
@@ -30,6 +31,11 @@ internal class GlowmaskAutoloader : ModSystem
 			{
 				int id = (int)projGetId.MakeGenericMethod(type).Invoke(null, null);
 				GlowmaskProjectile.ProjIdToGlowmask.Add(id, new(ModContent.Request<Texture2D>(ModContent.GetModProjectile(id).Texture + "_Glow"), color, autoDraw));
+			}
+			else if (typeof(ModItem).IsAssignableFrom(type))
+			{
+				int id = (int)itemGetId.MakeGenericMethod(type).Invoke(null, null);
+				GlowmaskItem.ItemIdToGlowmask.Add(id, new(ModContent.Request<Texture2D>(ModContent.GetModItem(id).Texture + "_Glow"), color, autoDraw));
 			}
 		}
 	}
