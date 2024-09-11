@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using System.IO;
@@ -112,29 +113,40 @@ public class ReefSpearProjectile : ModProjectile
 		progress = (float)(Math.Pow(progress, progressExponent));
 		length = Projectile.timeLeft <= stabTimes[2] ? 1f : 0.65f;
 
-		if (stabTimes.Contains(Projectile.timeLeft)) //During the beginning frame of a stab
+		for (int i = 0; i < stabTimes.ToArray().Length; i++)
 		{
-			if (_rotationDirection == 0)
-				_rotationDirection = 1;
-
-			_rotationDirection *= Main.rand.NextFloat(-1.2f, -0.8f);
-			if (Projectile.timeLeft == stabTimes[NUM_STABS - 1])
-				_rotationDirection = 0;
-
-			Projectile.ResetLocalNPCHitImmunity();
-			Projectile.netUpdate = true;
-
-			//do vfx and sfx here
-
-			if (!Main.dedServ)
+			if(Projectile.timeLeft == stabTimes[i])
 			{
-				SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack with { PitchVariance = 0.3f, Volume = 0.75f, MaxInstances = -1 }, Projectile.Center);
-				Color lightColor = new Color(251, 204, 62) * 0.66f;
-				Color darkColor = new Color(224, 60, 99) * 0.66f;
-				Particle noiseCone = new MotionNoiseCone(Projectile.Center - RealDirection * length, darkColor, lightColor,
-					130 * length, 1.5f * MAX_DISTANCE * MathHelper.Lerp(length, 1, 0.5f), _direction.ToRotation() + _rotationOffset * _rotationDirection, 25, 1f).UsesLightColor();
-				noiseCone.Velocity = _direction.RotatedBy(_rotationDirection * _rotationOffset) * -4;
-				ParticleHandler.SpawnParticle(noiseCone);
+
+				if (_rotationDirection == 0)
+					_rotationDirection = 1;
+
+				_rotationDirection *= Main.rand.NextFloat(-1.2f, -0.8f);
+				if (Projectile.timeLeft == stabTimes[NUM_STABS - 1])
+					_rotationDirection = 0;
+
+				Projectile.ResetLocalNPCHitImmunity();
+				Projectile.netUpdate = true;
+
+				//do vfx and sfx hereq
+
+				if (!Main.dedServ)
+				{
+					SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack with { PitchVariance = 0.3f, Volume = 0.75f, MaxInstances = -1 }, Projectile.Center);
+					var lightColor = new Color(251, 204, 62, 160);
+					var darkColor = new Color(230, 27, 112, 160);
+					int particleLifetime = stabTimes[i] + 5;
+					if (i < stabTimes.ToArray().Length - 1)
+						particleLifetime -= stabTimes[i + 1];
+
+					Vector2 particleVelocity = RealDirection / particleLifetime;
+
+					var noiseCone = new MotionNoiseCone(Projectile, Projectile.Center, darkColor, lightColor,
+						150 * length, 3f * MAX_DISTANCE, _direction.ToRotation() + _rotationOffset * _rotationDirection, particleLifetime, 1f, 6);
+					noiseCone.Velocity = -particleVelocity * 1.75f;
+					noiseCone = noiseCone.SetExtraData(true, 2.25f, 7, 1.25f, 1.5f, 0.6f);
+					ParticleHandler.SpawnParticle(noiseCone);
+				}
 			}
 		}
 

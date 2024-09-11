@@ -36,7 +36,7 @@ public class JellyfishBolt : ModProjectile
 		Projectile.height = 4;
 		Projectile.width = 4;
 		Projectile.hide = true;
-		Projectile.extraUpdates = 40;
+		Projectile.extraUpdates = JellyfishMinion.SHOOT_RANGE;
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = Projectile.timeLeft * Projectile.penetrate;
 	}
