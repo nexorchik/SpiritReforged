@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Common.WorldGeneration.Ecotones;
 using SpiritReforged.Content.Savanna.Tiles;
+using System.Diagnostics;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Generation;
@@ -13,6 +14,20 @@ internal class SavannaEcotone : EcotoneBase
 {
 	private static Rectangle SavannaArea = Rectangle.Empty;
 
+	private static int Steps = 0;
+
+	protected override void InternalLoad() => On_WorldGen.SpreadGrass += HijackSpreadGrass;
+
+	private void HijackSpreadGrass(On_WorldGen.orig_SpreadGrass orig, int i, int j, int dirt, int grass, bool repeat, TileColorCache color)
+	{
+		ushort tileType = Main.tile[i, j].TileType;
+
+		if (tileType == ModContent.TileType<SavannaGrass>() || tileType == ModContent.TileType<SavannaDirt>())
+			return;
+
+		orig(i, j, dirt, grass, repeat, color);
+	}
+
 	public override void AddTasks(List<GenPass> tasks, List<EcotoneSurfaceMapping.EcotoneEntry> entries)
 	{
 		int index = tasks.FindIndex(x => x.Name == "Pyramids");
@@ -23,7 +38,6 @@ internal class SavannaEcotone : EcotoneBase
 
 		tasks.Insert(index, new PassLegacy("Savanna Base", BaseGeneration(entries)));
 		tasks.Insert(index + 1, new PassLegacy("Grow Savanna", PopulateSavanna));
-		//tasks.Insert(secondIndex, new PassLegacy("Savanna Cleanup", BaseGeneration(entries)));
 	}
 
 	private void PopulateSavanna(GenerationProgress progress, GameConfiguration configuration)
@@ -41,8 +55,8 @@ internal class SavannaEcotone : EcotoneBase
 				{
 					tiles.Add(new Point16(i, j), flags);
 
-					if (Main.tile[i, j].TileType == ModContent.TileType<SavannaDirt>() && WorldGen.genRand.NextBool(90))
-						grassLocations.Add(new Point16(i, j), WorldGen.genRand.Next(14, 20));
+					if (Main.tile[i, j].TileType == ModContent.TileType<SavannaDirt>() && WorldGen.genRand.NextBool(25))
+						grassLocations.Add(new Point16(i, j), WorldGen.genRand.Next(8, 16));
 				}
 			}
 		}
@@ -84,16 +98,32 @@ internal class SavannaEcotone : EcotoneBase
 		short endY = EcotoneSurfaceMapping.TotalSurfaceY[(short)entry.End.X];
 		int[] validIds = [TileID.Dirt, TileID.Grass, TileID.ClayBlock, TileID.CrimsonGrass, TileID.CorruptGrass, TileID.Stone];
 
-		SavannaArea = new Rectangle(startX, startY, endX - startX, Math.Max(endY - startY, startY - endY));
+		Steps = WorldGen.genRand.Next(7, 11);
+		SavannaArea = new Rectangle(startX, startY, endX - startX, Math.Max(endY - startY, startY - endY) + 40);
+
+		Dictionary<int, int> stepOffset = [];
+		int offset = 0;
+
+		for (int i = 0; i < Steps; ++i)
+		{
+			offset = WorldGen.genRand.Next(6, 18);
+
+			if (i == Steps - 1)
+				offset = 0;
+
+			stepOffset.Add(i, offset);
+		}
 
 		var sandNoise = new FastNoiseLite(WorldGen.genRand.Next());
 		sandNoise.SetFrequency(0.06f);
+		int xOffsetForFactor = 0;
 
 		for (int x = startX; x < endX; ++x)
 		{
-			float factor = ((float)x - startX) / (endX - startX);
+			float factor = (MathF.Min(x + xOffsetForFactor, endX) - startX) / (endX - startX);
 			factor = ModifyLerpFactor(factor);
-			int y = (int)MathHelper.Lerp(startY, endY, factor);
+			int addY = (int)MathHelper.Lerp(startY, endY, factor);
+			int y = addY + stepOffset[(int)(factor * (Steps - 1))] - (int)(sandNoise.GetNoise(x, 600) * 2);
 			int depth = WorldGen.genRand.Next(20);
 
 			for (int i = -80; i < 90 + depth; ++i)
@@ -102,10 +132,12 @@ internal class SavannaEcotone : EcotoneBase
 
 				if (i >= 0)
 				{
+					tile.HasTile = true;
+
 					if (!tile.HasTile || !validIds.Contains(tile.TileType))
 						continue;
 
-					float noise = (sandNoise.GetNoise(x, 0) + 1) * 5;
+					float noise = (sandNoise.GetNoise(x, 0) + 1) * 5 + 6;
 					int type = i <= noise ? ModContent.TileType<SavannaDirt>() : TileID.Sand;
 
 					if (i > 90 + depth - noise)
@@ -121,6 +153,8 @@ internal class SavannaEcotone : EcotoneBase
 					tile.Clear(TileDataType.All);
 				}
 			}
+
+			xOffsetForFactor += (int)Math.Round(sandNoise.GetNoise(x, 0) * 2);
 		}
 
 		return;		
@@ -128,7 +162,7 @@ internal class SavannaEcotone : EcotoneBase
 
 	private static float ModifyLerpFactor(float factor)
 	{
-		float adj = 8f;
+		float adj = Steps;
 		factor = (int)((factor + 0.1f) * adj) / adj;
 		return factor;
 	}
