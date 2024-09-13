@@ -609,14 +609,14 @@ BeachUmbrellaItem: {
 	Tooltip: ""
 }
 
-BigBuoyItem: {
+BigBuoy: {
 	DisplayName: Big Buoy
-	Tooltip: ""
+	Tooltip: "{$ItemTooltip.CoralTorch}"
 }
 
-BuoyItem: {
+Buoy: {
 	DisplayName: Buoy
-	Tooltip: ""
+	Tooltip: "{$ItemTooltip.CoralTorch}"
 }
 
 LoungeChairItem: {
