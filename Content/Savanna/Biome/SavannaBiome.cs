@@ -9,7 +9,7 @@ public class SavannaBiome : ModBiome
 	public override CaptureBiome.TileColorStyle TileColorStyle => CaptureBiome.TileColorStyle.Normal;
 
 	//Todo
-	//public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle => base.SurfaceBackgroundStyle;
+	public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle => ModContent.GetInstance<SavannaBGStyle>();
 	//public override string BestiaryIcon => base.BestiaryIcon;
 	//public override string BackgroundPath => base.BackgroundPath;
 	//public override Color? BackgroundColor => base.BackgroundColor;
