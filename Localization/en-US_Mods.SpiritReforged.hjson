@@ -42,6 +42,7 @@ Projectiles: {
 	ToucanFeather.DisplayName: Toucan Feather
 	ToucanMinion.DisplayName: Toucan Minion
 	TumblerPet.DisplayName: Tumbler Pet
+	BaobabFruitProj.DisplayName: Falling Baobab Fruit
 }
 
 Configs: {
