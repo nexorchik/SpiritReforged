@@ -1,11 +1,13 @@
-﻿using SpiritReforged.Common.ProjectileCommon;
+﻿using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
 public class ReefSpearThrown : ModProjectile
 {
-
+	public const float MAX_SPEED = 13;
 	private bool hasTarget = false;
 	private Vector2 relativePoint = Vector2.Zero;
 
@@ -81,6 +83,8 @@ public class ReefSpearThrown : ModProjectile
 
 		hasTarget = true;
 		relativePoint = Projectile.Center - target.Center;
+
+		MakeParticles(Projectile.velocity);
 	}
 
 	public override bool PreDraw(ref Color lightColor)
@@ -112,6 +116,21 @@ public class ReefSpearThrown : ModProjectile
 				g.timeLeft = 0;
 				g.rotation = Projectile.rotation;
 			}
+
+			MakeParticles(Projectile.oldVelocity);
 		}
+	}
+
+	private void MakeParticles(Vector2 velocity)
+	{
+		var lightColor = new Color(251, 204, 62);
+		var darkColor = new Color(230, 27, 112);
+		int particleLifetime = 30;
+
+		var noiseCone = new MotionNoiseCone(Projectile.Center - Projectile.velocity * 2, darkColor, lightColor,
+			200, 100, velocity.ToRotation() + MathHelper.Pi, particleLifetime, 1f);
+		noiseCone.Velocity = Vector2.Normalize(velocity) * 4;
+		noiseCone = noiseCone.SetExtraData(true, 2.25f, 12, 2f, 1.25f * Projectile.velocity.Length() / MAX_SPEED, 1.2f);
+		ParticleHandler.SpawnParticle(noiseCone);
 	}
 }

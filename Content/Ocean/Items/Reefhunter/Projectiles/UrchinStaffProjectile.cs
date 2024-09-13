@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.MathHelpers;
+﻿using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.MathHelpers;
 using System.IO;
 using Terraria.Audio;
 
@@ -10,8 +11,8 @@ public class UrchinStaffProjectile : ModProjectile
 
 	public override void SetDefaults()
 	{
-		Projectile.width = 50;
-		Projectile.height = 54;
+		Projectile.width = 2;
+		Projectile.height = 2;
 		Projectile.friendly = true;
 		Projectile.penetrate = -1;
 		Projectile.tileCollide = false;
@@ -24,12 +25,8 @@ public class UrchinStaffProjectile : ModProjectile
 
 	public override bool? CanDamage() => false;
 
-	public Vector2 TargetPosition { get; set; }
-	private bool HasShotUrchin
-	{
-		get => Projectile.ai[0] == 1;
-		set => Projectile.ai[0] = value ? 1 : 0;
-	}
+	public Vector2 ShotTrajectory { get; set; }
+	public Vector2 RelativeTargetPosition { get; set; }
 
 	public override void AI()
 	{
@@ -39,14 +36,50 @@ public class UrchinStaffProjectile : ModProjectile
 		if (p.whoAmI != Main.myPlayer) 
 			return; //mp check (hopefully)
 
-		Projectile.Center = p.MountedCenter;
 		Projectile.timeLeft = p.itemAnimation;
-		Projectile.rotation = (1 - p.itemAnimation / (float)p.itemAnimationMax) * MathHelper.Pi - MathHelper.PiOver2;
+		float animationProgress = p.itemAnimation / (float)p.itemAnimationMax;
 
-		if (p.direction == -1)
-			Projectile.rotation = p.itemAnimation / (float)p.itemAnimationMax * MathHelper.Pi - MathHelper.Pi;
+		animationProgress = EaseFunction.EaseQuadIn.Ease(animationProgress);
+		if (p.direction < 0)
+			Projectile.spriteDirection = -1;
 
-		TryShootUrchin(p);
+		static float AngleLerp(Player player, float curAngle, float targetAngle, float amount) //Modified Utils.AngleLerp with more control over direction
+		{
+			float angle;
+			if (targetAngle < curAngle)
+				angle = MathHelper.Lerp(curAngle, targetAngle, amount);
+
+			else
+			{
+				if (!(targetAngle > curAngle))
+					return curAngle;
+
+				float num = targetAngle - (float)Math.PI * 2f;
+				angle = player.direction == -1 ? MathHelper.Lerp(curAngle, num, amount) : MathHelper.Lerp(curAngle, targetAngle, amount);
+			}
+
+			return MathHelper.WrapAngle(angle);
+		}
+
+		float rotation = ShotTrajectory.ToRotation() + MathHelper.WrapAngle(MathHelper.Lerp(MathHelper.PiOver2 * 1.25f * p.direction, -MathHelper.Pi * p.direction, animationProgress));
+
+		Projectile.rotation = rotation - MathHelper.PiOver4;
+		if (p.direction < 0)
+			Projectile.rotation += MathHelper.Pi;
+
+		float armRot = MathHelper.Pi + rotation;
+		if (p.direction < 0)
+			armRot -= MathHelper.Pi;
+
+		p.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armRot);
+		p.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, armRot);
+		Projectile.Center = p.MountedCenter;
+		Projectile.scale = EaseFunction.EaseCircularOut.Ease((float)Math.Sin((p.itemAnimation / (float)p.itemAnimationMax) * MathHelper.Pi));
+
+		float shotTime = 0.7f;
+
+		if (p.itemAnimation == (int)(shotTime * p.itemAnimationMax))
+			TryShootUrchin(p);
 	}
 
 	/// <summary>
@@ -56,57 +89,45 @@ public class UrchinStaffProjectile : ModProjectile
 	/// <param name="player"></param>
 	private void TryShootUrchin(Player player)
 	{
-		if (HasShotUrchin) //Stop early if already shot
-			return;
+		Vector2 adjustedTrajectory = ArcVelocityHelper.GetArcVel(UrchinPos - player.MountedCenter, RelativeTargetPosition, 0.25f, ShotTrajectory.Length());
+		var proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), UrchinPos, adjustedTrajectory + player.velocity / 3, ModContent.ProjectileType<UrchinBall>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+		proj.rotation = Projectile.rotation;
+		proj.Center = UrchinPos;
+		if (Main.netMode != NetmodeID.SinglePlayer) //Sync projectile made only on one client
+			NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, proj.whoAmI);
 
-		Vector2 pos = player.Center + new Vector2(27, -50).RotatedBy(Projectile.rotation);
-		Vector2 vel = ArcVelocityHelper.GetArcVel(pos, TargetPosition + player.MountedCenter, 0.2f, player.HeldItem.shootSpeed);
-
-		if (CanShootUrchin(player, vel))
-		{
-			HasShotUrchin = true;
-
-			var proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), pos, vel, ModContent.ProjectileType<UrchinBall>(), Projectile.damage, 2f, Projectile.owner);
-			proj.rotation = Projectile.rotation;
-			proj.Center = pos;
-			if (Main.netMode != NetmodeID.SinglePlayer) //Sync projectile made only on one client
-				NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, proj.whoAmI);
-
-			SoundEngine.PlaySound(SoundID.Item1, Projectile.Center);
-			Projectile.netUpdate = true;
-		}
+		SoundEngine.PlaySound(SoundID.Item1, Projectile.Center);
+		Projectile.netUpdate = true;
+		Projectile.ai[0]++;
 	}
 
-	/// <summary>
-	/// Returns true when the tangent to the projectile's current rotation is almost equal to the initial angle of the shot projectile
-	/// Or when the initial angle is too high and the current player item animation is at a specified value
-	/// </summary>
-	/// <param name="player"></param>
-	/// <param name="velocity"></param>
-	/// <returns></returns>
-	private bool CanShootUrchin(Player player, Vector2 velocity)
-	{
-		float shotAngle = velocity.ToRotation();
-		float rotationTangent = Projectile.rotation + MathHelper.PiOver4 * player.direction - (player.direction < 0 ? MathHelper.PiOver2 : 0);
-		float maxAngleDif = 0.104f;
-
-		bool shotAngleTooHigh = Math.Abs(shotAngle + MathHelper.PiOver2) < 1.1f; //true if the shot angle is too high for the projectile rotation's tangent angle to ever be close to it
-		const int tooHighShotTime = 25;
-
-		return Math.Abs(MathHelper.WrapAngle(shotAngle - rotationTangent)) <= maxAngleDif //Check if the difference between the angle of the shot and the current tangent of the projectile's rotation is small enough
-			|| shotAngleTooHigh && player.itemAnimation == tooHighShotTime; //or if the difference will never be small enough and the item animation is equal to an arbitrary value(so that it's not instant)
-	}
+	private Vector2 UrchinPos => Projectile.Center + new Vector2(35, -35).RotatedBy(Projectile.rotation) * Projectile.scale;
 
 	public override bool PreDraw(ref Color lightColor)
 	{
 		Texture2D t = TextureAssets.Projectile[Projectile.type].Value;
-		Vector2 textureSize = t.Size() * new Vector2(0, 0.5f);
+		Texture2D urchinTex = TextureAssets.Projectile[ModContent.ProjectileType<UrchinBall>()].Value;
+		Vector2 origin = t.Size() * new Vector2(0, 1);
+		SpriteEffects flip = SpriteEffects.None;
+		float rotationFlip = Projectile.rotation;
+		if(Projectile.spriteDirection < 0)
+		{
+			rotationFlip += MathHelper.PiOver2;
+			flip = SpriteEffects.FlipHorizontally;
+			origin = t.Size();
+		}
 
-		Main.spriteBatch.Draw(t, Projectile.Center - Main.screenPosition, new Rectangle(0, 56 * (int)Projectile.ai[0], 50, 54), lightColor, Projectile.rotation, textureSize, 1f, SpriteEffects.None, 1f);
+		if (Projectile.ai[0] == 0) //Draw the urchin seperately
+		{
+			Main.spriteBatch.Draw(urchinTex, UrchinPos - Main.screenPosition, urchinTex.Bounds, lightColor, rotationFlip, urchinTex.Bounds.Size() / 2, Projectile.scale, flip, 1f);
+		}
+
+		Main.spriteBatch.Draw(t, Projectile.Center - Main.screenPosition, t.Bounds, lightColor, rotationFlip, origin, Projectile.scale, flip, 1f);
+
 		return false;
 	}
 
-	public override void SendExtraAI(BinaryWriter writer) => writer.WriteVector2(TargetPosition);
+	public override void SendExtraAI(BinaryWriter writer) => writer.WriteVector2(ShotTrajectory);
 
-	public override void ReceiveExtraAI(BinaryReader reader) => TargetPosition = reader.ReadVector2();
+	public override void ReceiveExtraAI(BinaryReader reader) => ShotTrajectory = reader.ReadVector2();
 }

@@ -46,7 +46,7 @@ public class JellyfishMinion : BaseMinion
 	private const int BOUNCETIME = 90; //General time between bounces
 	private const int RISETIME = 30; //Time it takes to rise upwards after the dash
 
-	public static int SHOOT_RANGE = 500; //Static because it's used by the bolt class
+	public static int SHOOT_RANGE = 300; //Static because it's used by the bolt class
 
 	public override void IdleMovement(Player player)
 	{
@@ -140,7 +140,7 @@ public class JellyfishMinion : BaseMinion
 				{
 					AiState = AISTATE_DASH;
 					AiTimer = 0;
-					float DashSpeed = 20;
+					float DashSpeed = 26;
 					Projectile.velocity = Projectile.DirectionTo(target.Center) * DashSpeed;
 					Projectile.rotation = AdjustedVelocityAngle;
 					Projectile.netUpdate = true;

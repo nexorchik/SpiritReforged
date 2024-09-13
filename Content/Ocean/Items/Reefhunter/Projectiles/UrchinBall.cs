@@ -26,8 +26,8 @@ public class UrchinBall : ModProjectile
 
 	public override void SetDefaults()
 	{
-		Projectile.width = 20;
-		Projectile.height = 20;
+		Projectile.width = 30;
+		Projectile.height = 28;
 		Projectile.DamageType = DamageClass.Magic;
 		Projectile.friendly = true;
 		Projectile.penetrate = -1;
@@ -53,10 +53,11 @@ public class UrchinBall : ModProjectile
 			}
 			else
 			{
-				Projectile.velocity.Y += 0.2f;
-				Projectile.rotation += 0.06f * Math.Sign(Projectile.velocity.X);
+				Projectile.velocity.Y += 0.25f;
+				Projectile.rotation += 0.1f * Math.Sign(Projectile.velocity.X);
 			}
 		}
+
 		else
 		{
 			NPC npc = Main.npc[(int)Projectile.ai[1]];

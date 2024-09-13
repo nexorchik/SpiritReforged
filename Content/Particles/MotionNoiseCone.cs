@@ -88,7 +88,7 @@ public class MotionNoiseCone : Particle
 
 		float progress = EaseFunction.EaseCubicOut.Ease(GetProgress()) + Main.GlobalTimeWrappedHourly / 4;
 		effect.Parameters["scroll"].SetValue(1 - progress);
-		float dissipation = (float)Math.Pow(Math.Max(1.33f * (GetProgress() - 0.25f), 0), 1.25f);
+		float dissipation = (float)Math.Max(1.33f * (GetProgress() - 0.25f), 0);
 
 		effect.Parameters["dissipation"].SetValue(dissipation);
 

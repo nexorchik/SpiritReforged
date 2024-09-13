@@ -133,8 +133,8 @@ public class ReefSpearProjectile : ModProjectile
 				if (!Main.dedServ)
 				{
 					SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack with { PitchVariance = 0.3f, Volume = 0.75f, MaxInstances = -1 }, Projectile.Center);
-					var lightColor = new Color(251, 204, 62, 160);
-					var darkColor = new Color(230, 27, 112, 160);
+					var lightColor = new Color(251, 204, 62, 220);
+					var darkColor = new Color(230, 27, 112, 220);
 					int particleLifetime = stabTimes[i] + 5;
 					if (i < stabTimes.ToArray().Length - 1)
 						particleLifetime -= stabTimes[i + 1];
@@ -142,9 +142,9 @@ public class ReefSpearProjectile : ModProjectile
 					Vector2 particleVelocity = RealDirection / particleLifetime;
 
 					var noiseCone = new MotionNoiseCone(Projectile, Projectile.Center, darkColor, lightColor,
-						150 * length, 3f * MAX_DISTANCE, _direction.ToRotation() + _rotationOffset * _rotationDirection, particleLifetime, 1f, 6);
+						170 * length, 2.75f * MAX_DISTANCE, _direction.ToRotation() + _rotationOffset * _rotationDirection, particleLifetime, 1f, 6);
 					noiseCone.Velocity = -particleVelocity * 1.75f;
-					noiseCone = noiseCone.SetExtraData(true, 2.25f, 7, 1.25f, 1.5f, 0.6f);
+					noiseCone = noiseCone.SetExtraData(true, 2.25f, 12, 1.25f, 1.5f, 0.7f);
 					ParticleHandler.SpawnParticle(noiseCone);
 				}
 			}
