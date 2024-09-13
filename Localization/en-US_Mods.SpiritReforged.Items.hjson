@@ -603,3 +603,13 @@ SavannaGrassSeeds: {
 	DisplayName: Savanna Grass Seeds
 	Tooltip: ""
 }
+
+Caryocar: {
+	DisplayName: Caryocar
+	Tooltip: ""
+}
+
+CustardApple: {
+	DisplayName: Custard Apple
+	Tooltip: ""
+}
