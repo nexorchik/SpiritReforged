@@ -71,9 +71,8 @@ internal class SavannaEcotone : EcotoneBase
 
 				var nearestGrassLocation = grassLocations.MinBy(x => x.Key.ToVector2().DistanceSQ(position.ToVector2()));
 				GrowStuffOnGrass(position, (nearestGrassLocation.Key, nearestGrassLocation.Value));
+				tile.WallType = WallID.None;
 			}
-
-			tile.WallType = WallID.None;
 		}
 	}
 
@@ -132,13 +131,14 @@ internal class SavannaEcotone : EcotoneBase
 
 				if (i >= 0)
 				{
-					tile.HasTile = true;
+					if (i >= 0 && i < 15)
+						tile.HasTile = true;
 
-					if (!tile.HasTile || !validIds.Contains(tile.TileType))
+					if (tile.HasTile && !validIds.Contains(tile.TileType))
 						continue;
 
 					float noise = (sandNoise.GetNoise(x, 0) + 1) * 5 + 6;
-					int type = i <= noise ? ModContent.TileType<SavannaDirt>() : TileID.Sand;
+					int type = i <= noise ? ModContent.TileType<SavannaDirt>() : GetSandType(x, y + i);
 
 					if (i > 90 + depth - noise)
 						type = TileID.Sandstone;
@@ -147,6 +147,7 @@ internal class SavannaEcotone : EcotoneBase
 						type = TileID.ClayBlock;
 
 					tile.TileType = (ushort)type;
+					tile.WallType = WallID.DirtUnsafe;
 				}
 				else
 				{
@@ -157,7 +158,20 @@ internal class SavannaEcotone : EcotoneBase
 			xOffsetForFactor += (int)Math.Round(sandNoise.GetNoise(x, 0) * 2);
 		}
 
-		return;		
+		return;
+
+		static ushort GetSandType(int x, int y)
+		{
+			int off = 0;
+
+			while (WorldGen.SolidOrSlopedTile(x, y))
+			{
+				y++;
+				off++;
+			}
+
+			return off < 3 ? TileID.Sandstone : TileID.Sand;
+		}
 	};
 
 	private static float ModifyLerpFactor(float factor)
