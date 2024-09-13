@@ -3,6 +3,10 @@ using Terraria.ModLoader.Core;
 
 namespace SpiritReforged.Common.TileCommon;
 
+/// <summary>
+/// Automatically generates an item that places the given <see cref="ModTile"/> down.<br/>
+/// The <see cref="SetItemDefaults(ModItem)"/> and <see cref="AddItemRecipes(ModItem)"/> hooks can be used to modify the generated item.
+/// </summary>
 public interface IAutoloadTileItem
 {
 	// These are already defined on ModTiles and shortens the autoloading code a bit.
