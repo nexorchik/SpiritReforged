@@ -32,11 +32,18 @@ public class Buoy : ModItem
 		Item.useTurn = true;
 		Item.autoReuse = true;
 		Item.consumable = true;
-		Item.value = Item.sellPrice(silver: 2);
+		Item.value = Item.sellPrice(silver: 1);
 		Item.makeNPC = SpawnNPCType;
 	}
 
 	public override bool CanUseItem(Player player) => WaterBelow() && player.IsTargetTileInItemRange(Item);
+
+	public override void AddRecipes() => CreateRecipe()
+			.AddRecipeGroup(RecipeGroupID.IronBar, 3)
+			.AddIngredient(ItemID.Wire, 5)
+			.AddIngredient(ItemID.Glass, 5)
+			.AddTile(TileID.Anvils)
+			.Register();
 }
 
 public class Buoy_World : ModNPC

@@ -10,4 +10,13 @@ internal class OceanGlobalNPC : GlobalNPC
 		if (npc.type == NPCID.PinkJellyfish)
 			npcLoot.AddCommon(ModContent.ItemType<JellyCandle>(), 50);
 	}
+
+	public override void ModifyShop(NPCShop shop)
+	{
+		if (shop.NpcType == NPCID.Merchant)
+		{
+			shop.Add(Mod.Find<ModItem>("BeachUmbrella").Type, Condition.InBeach);
+			shop.Add(Mod.Find<ModItem>("LoungeChair").Type, Condition.InBeach);
+		}
+	}
 }

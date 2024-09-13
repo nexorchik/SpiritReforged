@@ -604,7 +604,7 @@ SavannaGrassSeeds: {
 	Tooltip: ""
 }
 
-BeachUmbrellaItem: {
+BeachUmbrella: {
 	DisplayName: Beach Umbrella
 	Tooltip: ""
 }
@@ -619,7 +619,7 @@ Buoy: {
 	Tooltip: "{$ItemTooltip.CoralTorch}"
 }
 
-LoungeChairItem: {
+LoungeChair: {
 	DisplayName: Lounge Chair
 	Tooltip: ""
 }

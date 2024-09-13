@@ -3,6 +3,13 @@ namespace SpiritReforged.Content.Ocean.Items.Buoys;
 public class BigBuoy : Buoy
 {
 	public override int SpawnNPCType => ModContent.NPCType<BigBuoy_World>();
+
+	public override void AddRecipes() => CreateRecipe()
+			.AddRecipeGroup(RecipeGroupID.IronBar, 8)
+			.AddIngredient(ItemID.Wire, 7)
+			.AddIngredient(ItemID.Glass, 7)
+			.AddTile(TileID.Anvils)
+			.Register();
 }
 
 public class BigBuoy_World : Buoy_World

@@ -1,10 +1,18 @@
-﻿using SpiritReforged.Common.TileCommon;
-using SpiritReforged.Common.TileCommon.DrawPreviewHook;
+﻿using SpiritReforged.Common.TileCommon.DrawPreviewHook;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Ocean.Tiles;
+namespace SpiritReforged.Content.Ocean.Items;
 
-public class BeachUmbrella : ModTile, IAutoloadTileItem, IDrawPreview
+public class BeachUmbrella : ModItem
+{
+	public override void SetDefaults()
+	{
+		Item.DefaultToPlaceableTile(ModContent.TileType<BeachUmbrellaTile>());
+		Item.value = Item.buyPrice(silver: 20);
+	}
+}
+
+public class BeachUmbrellaTile : ModTile, IDrawPreview
 {
 	public override void SetStaticDefaults()
 	{

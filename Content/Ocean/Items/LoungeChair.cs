@@ -1,10 +1,18 @@
-﻿using SpiritReforged.Common.TileCommon;
-using Terraria.DataStructures;
+﻿using Terraria.DataStructures;
 using Terraria.GameContent.ObjectInteractions;
 
-namespace SpiritReforged.Content.Ocean.Tiles;
+namespace SpiritReforged.Content.Ocean.Items;
 
-public class LoungeChair : ModTile, IAutoloadTileItem
+public class LoungeChair : ModItem
+{
+	public override void SetDefaults()
+	{
+		Item.DefaultToPlaceableTile(ModContent.TileType<LoungeChairTile>());
+		Item.value = Item.buyPrice(silver: 20);
+	}
+}
+
+public class LoungeChairTile : ModTile
 {
 	private static bool Flipped(int i, int j) => Framing.GetTileSafely(i, j).TileFrameX > 36;
 
@@ -114,7 +122,7 @@ public class LoungeChair : ModTile, IAutoloadTileItem
 		{
 			player.noThrow = 2;
 			player.cursorItemIconEnabled = true;
-			player.cursorItemIconID = Mod.Find<ModItem>("LoungeChairItem").Type;
+			player.cursorItemIconID = Mod.Find<ModItem>("LoungeChair").Type;
 		}
 	}
 }
