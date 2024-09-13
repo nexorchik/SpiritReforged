@@ -604,6 +604,16 @@ SavannaGrassSeeds: {
 	Tooltip: ""
 }
 
+Caryocar: {
+	DisplayName: Caryocar
+	Tooltip: ""
+}
+
+CustardApple: {
+	DisplayName: Custard Apple
+	Tooltip: ""
+}
+
 BeachUmbrella: {
 	DisplayName: Beach Umbrella
 	Tooltip: ""
