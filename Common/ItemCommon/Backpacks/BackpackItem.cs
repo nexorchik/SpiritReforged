@@ -1,4 +1,4 @@
-﻿using SpiritReforged.Common.UI.BackpackUI;
+﻿using SpiritReforged.Common.UI.BackpackInterface;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Common.ItemCommon.Backpacks;

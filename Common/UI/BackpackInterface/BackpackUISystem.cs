@@ -1,7 +1,7 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
 using Terraria.UI;
 
-namespace SpiritReforged.Common.UI.BackpackUI;
+namespace SpiritReforged.Common.UI.BackpackInterface;
 
 [Autoload(Side = ModSide.Client)]
 public class BackpackUISystem : ModSystem
@@ -26,7 +26,7 @@ public class BackpackUISystem : ModSystem
 		if (backpackUI?.CurrentState != null)
 			backpackUI?.Update(gameTime);
 
-		//backpackUI.SetState(new BackpackUI());
+		//backpackUI.SetState(new BackpackUIState());
 	}
 
 	public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)

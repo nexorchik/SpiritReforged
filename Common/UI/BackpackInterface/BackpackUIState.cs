@@ -3,7 +3,7 @@ using Steamworks;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
-namespace SpiritReforged.Common.UI.BackpackUI;
+namespace SpiritReforged.Common.UI.BackpackInterface;
 
 internal class BackpackUIState : UIState
 {
@@ -17,18 +17,24 @@ internal class BackpackUIState : UIState
 		}
 	}
 
-	BackpackUISlot SlotItem;
+	private BackpackUISlot _slotItem;
+	private BackpackUISlot _vanityItem;
 
-	internal Item HeldBackpack => _backSlot[0];
-	internal BackpackItem HeldModBackpack => _backSlot[0].ModItem as BackpackItem;
+	internal Item HeldBackpack => _backSlots[0];
+	internal BackpackItem HeldModBackpack => _backSlots[0].ModItem as BackpackItem;
+	internal Item VanityBackpack => _backSlots[1];
+	internal BackpackItem VanityModBackpack => _backSlots[1].ModItem as BackpackItem;
 	internal bool HasBackpack => HeldBackpack.ModItem is BackpackItem;
+	internal bool HasVanityBackpack => VanityBackpack.ModItem is BackpackItem;
 
-	private readonly Item[] _backSlot = [AirItem];
+	private readonly Item[] _backSlots = [AirItem, AirItem];
 
 	private bool _lastHasBackpack = false;
 	private bool _setBackpack = false;
+	private bool _lastVanityBackpack = false;
 
-	public void SetBackpack(Item item) => _backSlot[0] = item;
+	public void SetBackpack(Item item) => _backSlots[0] = item;
+	public void SetVanityBackpack(Item item) => _backSlots[1] = item;
 
 	public override void Update(GameTime gameTime)
 	{
@@ -41,6 +47,11 @@ internal class BackpackUIState : UIState
 
 			if (backpack is not null)
 				SetBackpack(backpack);
+
+			Item vanity = Main.LocalPlayer.GetModPlayer<BackpackPlayer>().VanityBackpack;
+
+			if (vanity is not null)
+				SetBackpack(vanity);
 
 			_setBackpack = true;
 		}
@@ -76,7 +87,7 @@ internal class BackpackUIState : UIState
 
 				yOff++;
 
-				if (yOff > 4)
+				if (yOff >= 4)
 				{
 					xOff++;
 					yOff = 0;
@@ -106,15 +117,25 @@ internal class BackpackUIState : UIState
 		Width = StyleDimension.Fill;
 		Height = StyleDimension.Fill;
 
-		SlotItem = new BackpackUISlot(_backSlot, 0, ItemSlot.Context.ChestItem)
+		_slotItem = new BackpackUISlot(_backSlots, 0, false)
 		{
-			Left = new StyleDimension(-230, 1),
-			Top = new StyleDimension(-174, 1),
+			Left = new StyleDimension(-180, 1),
+			Top = new StyleDimension(437, 0),
 			Width = StyleDimension.FromPixels(32),
 			Height = StyleDimension.FromPixels(32)
 		};
 
-		Append(SlotItem);
+		Append(_slotItem);
+
+		_vanityItem = new BackpackUISlot(_backSlots, 1, true)
+		{
+			Left = new StyleDimension(-228, 1),
+			Top = new StyleDimension(437, 0),
+			Width = StyleDimension.FromPixels(32),
+			Height = StyleDimension.FromPixels(32)
+		};
+
+		Append(_vanityItem);
 	}
 
 	protected override void DrawChildren(SpriteBatch spriteBatch)

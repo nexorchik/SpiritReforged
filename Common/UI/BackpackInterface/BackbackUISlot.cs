@@ -1,20 +1,24 @@
-﻿using SpiritReforged.Common.ItemCommon.Backpacks;
+﻿using Microsoft.Xna.Framework.Input;
+using SpiritReforged.Common.ItemCommon.Backpacks;
 using System.Linq;
 using Terraria.UI;
 
-namespace SpiritReforged.Common.UI.BackpackUI;
+namespace SpiritReforged.Common.UI.BackpackInterface;
 
 public class BackpackUISlot : UIElement
 {
 	private Item[] _itemArray;
 	private int _itemIndex;
 	private int _itemSlotContext;
+	private bool _isVanity;
 
-	public BackpackUISlot(Item[] itemArray, int itemIndex, int itemSlotContext)
+	public BackpackUISlot(Item[] itemArray, int itemIndex, bool isVanity)
 	{
 		_itemArray = itemArray;
 		_itemIndex = itemIndex;
-		_itemSlotContext = itemSlotContext;
+		_itemSlotContext = isVanity ? ItemSlot.Context.ModdedVanityAccessorySlot : ItemSlot.Context.ChestItem;
+		_isVanity = isVanity;
+
 		Width = new StyleDimension(48f, 0f);
 		Height = new StyleDimension(48f, 0f);
 	}
@@ -25,13 +29,30 @@ public class BackpackUISlot : UIElement
 
 		if (IsMouseHovering && CanClickItem(inv))
 		{
+			// The vanity slot breaks when favorite is hovered over; this stops that code from running.
+			// A little ugly, but better than an IL edit.
+			var oldKey = Main.FavoriteKey;
+			Main.FavoriteKey = (Keys)(-1);
+
 			Main.LocalPlayer.mouseInterface = true;
 			ItemSlot.OverrideHover(ref inv, _itemSlotContext);
 			ItemSlot.LeftClick(ref inv, _itemSlotContext);
 			ItemSlot.RightClick(ref inv, _itemSlotContext);
 			ItemSlot.MouseHover(ref inv, _itemSlotContext);
 			_itemArray[_itemIndex] = inv;
-			Main.LocalPlayer.GetModPlayer<BackpackPlayer>().Backpack = !inv.IsAir ? inv : null;
+
+			Main.FavoriteKey = oldKey;
+
+			if (_isVanity)
+				Main.LocalPlayer.GetModPlayer<BackpackPlayer>().VanityBackpack = !inv.IsAir ? inv : null;
+			else
+				Main.LocalPlayer.GetModPlayer<BackpackPlayer>().Backpack = !inv.IsAir ? inv : null;
+
+			if (inv.IsAir)
+			{
+				Main.mouseText = true;
+				Main.hoverItemName = Language.GetTextValue("Mods.SpiritReforged.SlotContexts.Backpack");
+			}
 		}
 	}
 

@@ -10,6 +10,7 @@ internal class LeatherBackpack : BackpackItem
 	{
 		Item.Size = new Vector2(38, 30);
 		Item.value = Item.buyPrice(0, 0, 5, 0);
+		Item.rare = ItemRarityID.Blue;
 	}
 
 	public override void AddRecipes() => CreateRecipe()
