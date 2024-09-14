@@ -38,6 +38,20 @@ internal class EcotoneSurfaceMapping : ModSystem
 			ecotone.AddTasks(tasks, Entries);
 
 		tasks.Insert(mapIndex + 1, new PassLegacy("Map Ecotones", MapEcotones));
+
+#if DEBUG
+		tasks.Add(new PassLegacy("Ecotone Debug", (progress, config) =>
+		{
+			foreach (var item in Entries)
+			{
+				for (int x = item.Start.X; x < item.End.X; ++x)
+				{
+					for (int nY = 90; nY < 100; ++nY)
+						WorldGen.PlaceTile(x, nY, item.Definition.DisplayId, true, true);
+				}
+			}
+		}));
+#endif
 	}
 
 	private void MapEcotones(GenerationProgress progress, GameConfiguration configuration)
@@ -95,15 +109,6 @@ internal class EcotoneSurfaceMapping : ModSystem
 		entry.Right = EcotoneEdgeDefinitions.GetEcotone("Ocean");
 		Entries.Add(entry);
 		Entries = new(Entries.OrderBy(x => x.Start.X));
-
-		//foreach (var item in Entries)
-		//{
-		//	for (int x = item.Start.X; x < item.End.X; ++x)
-		//	{
-		//		for (int nY = 90; nY < 100; ++nY)
-		//			WorldGen.PlaceTile(x, nY, item.Definition.DisplayId, true, true);
-		//	}
-		//}
 	}
 
 	private static bool SolidTileOrWall(int x, int y) => WorldGen.SolidOrSlopedTile(x, y) || Main.tile[x, y].WallType != WallID.None;

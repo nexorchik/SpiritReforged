@@ -80,7 +80,10 @@ internal class SavannaEcotone : EcotoneBase
 		float grassLoc = position.ToVector2().DistanceSQ(nearestGrass.location.ToVector2());
 
 		if (grassLoc < nearestGrass.size * nearestGrass.size)
+		{
+			int type = MathF.Sqrt(grassLoc) >= nearestGrass.size - 1 ? ModContent.TileType<ElephantGrassShort>() : ModContent.TileType<ElephantGrass>();
 			WorldGen.PlaceTile(position.X, position.Y - 1, ModContent.TileType<ElephantGrass>(), true);
+		}
 	}
 
 	private static WorldGenLegacyMethod BaseGeneration(List<EcotoneSurfaceMapping.EcotoneEntry> entries) => (progress, _) =>
