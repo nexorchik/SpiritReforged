@@ -22,7 +22,6 @@ public class PulseCircle : Particle
 
 	private float _opacity;
 
-	private readonly int _maxTime;
 	private readonly float _maxRadius;
 	private readonly Entity _entity;
 	private readonly EaseFunction _easeType;
@@ -37,7 +36,7 @@ public class PulseCircle : Particle
 		Color = ringColor;
 		_bloomColor = bloomColor;
 		_maxRadius = maxRadius;
-		_maxTime = maxTime;
+		MaxTime = maxTime;
 		_easeType = MovementStyle ?? EaseFunction.Linear;
 		_inversePulse = inverted;
 		_ringWidth = ringWidth;
@@ -74,22 +73,21 @@ public class PulseCircle : Particle
 
 		Scale = _maxRadius * Progress;
 		_opacity = Math.Min(2 * (1 - Progress), 1f);
-
-		if (TimeActive > _maxTime)
-			Kill();
 	}
 
 	private float GetProgress()
 	{
-		float progress = TimeActive / (float)_maxTime;
+		float newProgress = Progress;
 		if (_inversePulse)
-			progress = 1 - progress;
+			newProgress = 1 - newProgress;
 
-		progress = _easeType.Ease(progress);
-		return progress;
+		newProgress = _easeType.Ease(newProgress);
+		return newProgress;
 	}
 
 	public override ParticleDrawType DrawType => ParticleDrawType.Custom;
+
+	internal virtual string EffectPassName => "GeometricStyle";
 
 	public override void CustomDraw(SpriteBatch spriteBatch)
 	{
@@ -97,6 +95,7 @@ public class PulseCircle : Particle
 		effect.Parameters["RingColor"].SetValue(Color.ToVector4());
 		effect.Parameters["BloomColor"].SetValue(_bloomColor.ToVector4());
 		effect.Parameters["RingWidth"].SetValue(_ringWidth * EaseFunction.EaseCubicIn.Ease(_opacity));
+		EffectExtras(ref effect);
 		Color lightColor = Color.White;
 		if (UseLightColor)
 			lightColor = Lighting.GetColor(Position.ToTileCoordinates().X, Position.ToTileCoordinates().Y);
@@ -110,7 +109,12 @@ public class PulseCircle : Particle
 			Rotation = Angle + MathHelper.Pi,
 			ColorXCoordMod = 1 - ZRotation
 		};
-		PrimitiveRenderer.DrawPrimitiveShape(square, effect);
+		PrimitiveRenderer.DrawPrimitiveShape(square, effect, EffectPassName);
+	}
+
+	internal virtual void EffectExtras(ref Effect curEffect)
+	{
+
 	}
 
 	public PulseCircle WithSkew(float zRotation, float rotation)

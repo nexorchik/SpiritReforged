@@ -132,6 +132,9 @@ public static class ParticleHandler
 			particle.Position += particle.Velocity;
 
 			particle.Update();
+
+			if (particle.TimeActive > particle.MaxTime && particle.MaxTime > 0)
+				particle.Kill();
 		}
 	}
 
@@ -149,11 +152,11 @@ public static class ParticleHandler
 				switch (particle.DrawType)
 				{
 					case ParticleDrawType.DefaultAlphaBlend:
-						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color, particle.Rotation, particle.Origin, particle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
+						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color, particle.Rotation, particle.Origin + particleTextures[particle.Type].Size() / 2, particle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
 						break;
 
 					case ParticleDrawType.DefaultAdditive:
-						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color.Additive(), particle.Rotation, particle.Origin, particle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
+						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color.Additive(), particle.Rotation, particle.Origin + particleTextures[particle.Type].Size()/2, particle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
 						break;
 
 					case ParticleDrawType.Custom:
@@ -174,14 +177,14 @@ public static class ParticleHandler
 		if (batchedNonpremultiplyParticles.Count != 0)
 		{
 			spriteBatch.End();
-			spriteBatch.Begin(SpriteSortMode.Deferred, AssetLoader.NonPremultipliedAlphaFix, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
 
 			foreach (Particle batchedParticle in batchedNonpremultiplyParticles)
 			{
 				if (batchedParticle.DrawType == ParticleDrawType.CustomNonPremultiplied)
 					batchedParticle.CustomDraw(spriteBatch);
 				else
-					spriteBatch.Draw(particleTextures[batchedParticle.Type], batchedParticle.Position - Main.screenPosition, null, batchedParticle.Color, batchedParticle.Rotation, batchedParticle.Origin, batchedParticle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
+					spriteBatch.Draw(particleTextures[batchedParticle.Type], batchedParticle.Position - Main.screenPosition, null, batchedParticle.Color, batchedParticle.Rotation, batchedParticle.Origin + particleTextures[batchedParticle.Type].Size() / 2, batchedParticle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 1f);
 			}
 
 			spriteBatch.End();

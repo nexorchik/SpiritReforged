@@ -137,7 +137,7 @@ public class VertexTrail : BaseTrail
 		Vector2 prevClockwise = _points[0] + startNormal * halfWidth;
 		Vector2 prevCClockwise = _points[0] - startNormal * halfWidth;
 
-		Color previousColor = _trailColor.GetColourAt(0f, trailLength, _points);
+		Color previousColor = _trailColor.GetColourAt(0f, trailLength, _points, _points[0]);
 
 		_trailCap.AddCap(vertices, ref currentIndex, previousColor, _points[0], startNormal, _widthStart);
 		for (int i = 1; i < _points.Count; i++)
@@ -149,7 +149,7 @@ public class VertexTrail : BaseTrail
 			Vector2 normal = CurveNormal(_points, i);
 			Vector2 clockwise = _points[i] + normal * thisPointsWidth;
 			Vector2 cclockwise = _points[i] - normal * thisPointsWidth;
-			Color color = _trailColor.GetColourAt(currentDistance, trailLength, _points);
+			Color color = _trailColor.GetColourAt(currentDistance, trailLength, _points, _points[0]);
 
 			AddVertex(clockwise, color, Vector2.UnitX * i);
 			AddVertex(prevClockwise, previousColor, Vector2.UnitX * (i - 1));

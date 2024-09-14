@@ -33,33 +33,12 @@ public class UrchinStaffProjectile : ModProjectile
 		Player p = Main.player[Projectile.owner];
 		p.heldProj = Projectile.whoAmI;
 
-		if (p.whoAmI != Main.myPlayer) 
-			return; //mp check (hopefully)
-
 		Projectile.timeLeft = p.itemAnimation;
 		float animationProgress = p.itemAnimation / (float)p.itemAnimationMax;
 
 		animationProgress = EaseFunction.EaseQuadIn.Ease(animationProgress);
 		if (p.direction < 0)
 			Projectile.spriteDirection = -1;
-
-		static float AngleLerp(Player player, float curAngle, float targetAngle, float amount) //Modified Utils.AngleLerp with more control over direction
-		{
-			float angle;
-			if (targetAngle < curAngle)
-				angle = MathHelper.Lerp(curAngle, targetAngle, amount);
-
-			else
-			{
-				if (!(targetAngle > curAngle))
-					return curAngle;
-
-				float num = targetAngle - (float)Math.PI * 2f;
-				angle = player.direction == -1 ? MathHelper.Lerp(curAngle, num, amount) : MathHelper.Lerp(curAngle, targetAngle, amount);
-			}
-
-			return MathHelper.WrapAngle(angle);
-		}
 
 		float rotation = ShotTrajectory.ToRotation() + MathHelper.WrapAngle(MathHelper.Lerp(MathHelper.PiOver2 * 1.25f * p.direction, -MathHelper.Pi * p.direction, animationProgress));
 
@@ -79,15 +58,10 @@ public class UrchinStaffProjectile : ModProjectile
 		float shotTime = 0.7f;
 
 		if (p.itemAnimation == (int)(shotTime * p.itemAnimationMax))
-			TryShootUrchin(p);
+			ShootUrchin(p);
 	}
 
-	/// <summary>
-	/// Check if a projectile can be shot every tick
-	/// If so, then fire it and prevent more projectiles from being launched
-	/// </summary>
-	/// <param name="player"></param>
-	private void TryShootUrchin(Player player)
+	private void ShootUrchin(Player player)
 	{
 		Vector2 adjustedTrajectory = ArcVelocityHelper.GetArcVel(UrchinPos - player.MountedCenter, RelativeTargetPosition, 0.25f, ShotTrajectory.Length());
 		var proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), UrchinPos, adjustedTrajectory + player.velocity / 3, ModContent.ProjectileType<UrchinBall>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
@@ -118,9 +92,7 @@ public class UrchinStaffProjectile : ModProjectile
 		}
 
 		if (Projectile.ai[0] == 0) //Draw the urchin seperately
-		{
 			Main.spriteBatch.Draw(urchinTex, UrchinPos - Main.screenPosition, urchinTex.Bounds, lightColor, rotationFlip, urchinTex.Bounds.Size() / 2, Projectile.scale, flip, 1f);
-		}
 
 		Main.spriteBatch.Draw(t, Projectile.Center - Main.screenPosition, t.Bounds, lightColor, rotationFlip, origin, Projectile.scale, flip, 1f);
 

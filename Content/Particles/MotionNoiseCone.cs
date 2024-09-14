@@ -9,9 +9,6 @@ public class MotionNoiseCone : Particle
 {
 	public bool UseLightColor { get; set; } = false;
 
-	private float _opacity;
-
-	private readonly int _maxTime;
 	private readonly float _width;
 	private readonly float _length;
 	private readonly float _taper;
@@ -25,14 +22,13 @@ public class MotionNoiseCone : Particle
 	public MotionNoiseCone(Vector2 position, Color darkColor, Color lightColor, float width, float length, float rotation, int maxTime, float tapering = 1)
 	{
 		Position = position;
-		_maxTime = maxTime;
+		MaxTime = maxTime;
 		Color = darkColor;
 		_lightColor = lightColor;
 		Rotation = rotation;
 		_width = width;
 		_length = length;
 		_taper = tapering;
-		_opacity = 1;
 	}
 
 	public MotionNoiseCone(Vector2 position, Color color, float width, float length, float rotation, int maxTime, float tapering = 1) : this(position, color, color, width, length, rotation, maxTime, tapering)
@@ -65,16 +61,6 @@ public class MotionNoiseCone : Particle
 
 		else
 			Velocity *= 0.97f;
-
-		if (TimeActive > _maxTime)
-			Kill();
-	}
-
-	private float GetProgress()
-	{
-		float progress = TimeActive / (float)_maxTime;
-
-		return progress;
 	}
 
 	public override ParticleDrawType DrawType => ParticleDrawType.Custom;
@@ -86,9 +72,9 @@ public class MotionNoiseCone : Particle
 		effect.Parameters["uTexture"].SetValue(texture);
 		effect.Parameters["Tapering"].SetValue(_taper);
 
-		float progress = EaseFunction.EaseCubicOut.Ease(GetProgress()) + Main.GlobalTimeWrappedHourly / 4;
+		float progress = TimeActive/20f;
 		effect.Parameters["scroll"].SetValue(1 - progress);
-		float dissipation = (float)Math.Max(1.33f * (GetProgress() - 0.25f), 0);
+		float dissipation = (float)Math.Max(1.33f * (Progress - 0.25f), 0);
 
 		effect.Parameters["dissipation"].SetValue(dissipation);
 
@@ -112,8 +98,8 @@ public class MotionNoiseCone : Particle
 
 		var square = new SquarePrimitive
 		{
-			Color = lightColor * _opacity,
-			Height = _width * MathHelper.Lerp(1 - dissipation, 1, 0.5f),
+			Color = lightColor,
+			Height = _width,
 			Length = _length,
 			Position = Position - Main.screenPosition,
 			Rotation = Rotation + MathHelper.Pi,

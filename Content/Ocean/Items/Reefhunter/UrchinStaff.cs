@@ -14,7 +14,7 @@ public class UrchinStaff : ModItem
 		Item.useTime = Item.useAnimation = 24;
 		Item.reuseDelay = 6;
 		Item.knockBack = 2f;
-		Item.shootSpeed = 10f;
+		Item.shootSpeed = UrchinBall.MAX_SPEED;
 		Item.noUseGraphic = true;
 		Item.noMelee = true;
 		Item.autoReuse = true;
