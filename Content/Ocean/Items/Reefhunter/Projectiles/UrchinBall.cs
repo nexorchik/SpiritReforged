@@ -18,12 +18,14 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 
 	private bool stuckInTile = false;
 	private Point stuckTilePos = new(0, 0);
+	private int squishTime = 0;
 
 	private static Asset<Texture2D> GlowmaskTexture;
 
 	private const int MAX_LIFETIME = 180;
 	private const int DETONATION_TIME = 90;
 	public const float MAX_SPEED = 10f; //Used by the staff to shoot the projectile
+	private const int MAX_SQUISHTIME = 20;
 
 	public override void SetStaticDefaults()
 	{
@@ -92,6 +94,11 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		}
 
 		Projectile.scale = 1 - FlashStrength() / MathHelper.Lerp(6, 3, FlashTimer());
+		squishTime = Math.Max(squishTime - 1, 0);
+		float squishScale = EaseFunction.EaseCubicIn.Ease((float)squishTime / MAX_SQUISHTIME);
+		squishScale = 1 - (float)Math.Sin(MathHelper.Pi * squishScale);
+
+		Projectile.scale *= MathHelper.Lerp(squishScale, 1, 0.85f);
 	}
 
 	private float FlashTimer() => Math.Max(DETONATION_TIME - Projectile.timeLeft, 0) / (float)DETONATION_TIME;
@@ -128,6 +135,9 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		relativePoint = Projectile.Center - target.Center;
 	}
 
+	private static Color lightColor = new(145, 67, 111);
+	private static Color darkColor = new(87, 35, 88);
+
 	private void HitEffects(Vector2 velocity)
 	{
 		if (Main.dedServ)
@@ -135,8 +145,6 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 
 		float velocityRatio = Math.Min(velocity.Length() / MAX_SPEED, 1);
 
-		var lightColor = new Color(145, 67, 111);
-		var darkColor = new Color(87, 35, 88);
 		int particleLifetime = 20;
 		float particleLength = 60 * velocityRatio;
 
@@ -147,6 +155,7 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		ParticleHandler.SpawnParticle(noiseCone);
 
 		AssetLoader.VertexTrailManager.TryEndTrail(Projectile, 12);
+		squishTime = MAX_SQUISHTIME;
 	}
 
 	public override void OnKill(int timeLeft)
@@ -163,8 +172,8 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		for(int i = 0; i < 2; i++)
 			ParticleHandler.SpawnParticle(new TexturedPulseCircle(
 				Projectile.Center + Main.rand.NextVec2CircularEven(5, 5),
-				new Color(87, 35, 88) * 0.5f,
-				new Color(87, 35, 88) * 0.1f,
+				darkColor * 0.5f,
+				darkColor * 0.1f,
 				0.35f + Main.rand.NextFloat(-0.1f, 0.1f),
 				350 + Main.rand.NextFloat(-50, 100),
 				25 + Main.rand.Next(11),
@@ -264,7 +273,7 @@ public class UrchinSpike : ModProjectile, ITrailProjectile
 
 	public override void AI()
 	{
-		Projectile.alpha = 255 - (int)(Projectile.timeLeft / 60f * 255);
+		Projectile.alpha = (255 - (int)(Projectile.timeLeft / 60f * 255));
 		Projectile.scale = EaseFunction.EaseCircularOut.Ease(Projectile.Opacity);
 		Projectile.velocity *= 0.96f;
 		if (!hasTarget)
@@ -273,6 +282,8 @@ public class UrchinSpike : ModProjectile, ITrailProjectile
 		else
 		{
 			NPC npc = Main.npc[(int)Projectile.ai[1]];
+			Projectile.velocity *= 0.9f;
+			relativePoint += Projectile.velocity;
 
 			if (!npc.active)
 				Projectile.Kill();
@@ -286,10 +297,9 @@ public class UrchinSpike : ModProjectile, ITrailProjectile
 		Projectile.ai[1] = target.whoAmI;
 		Projectile.tileCollide = false;
 		Projectile.netUpdate = true;
-		Projectile.timeLeft = 60;
 		Projectile.alpha = 0;
-		Projectile.velocity = Vector2.Zero;
 		Projectile.penetrate++;
+		Projectile.velocity *= 0.7f;
 
 		hasTarget = true;
 		relativePoint = Projectile.Center - target.Center;
