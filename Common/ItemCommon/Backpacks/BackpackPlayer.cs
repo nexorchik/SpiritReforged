@@ -25,4 +25,18 @@ internal class BackpackPlayer : ModPlayer
 		if (tag.TryGet("vanity", out TagCompound vanity))
 			Backpack = ItemIO.Load(vanity);
 	}
+
+	public override void UpdateEquips()
+	{
+		if (VanityBackpack is not null && !VanityBackpack.IsAir)
+			ApplyEquip(VanityBackpack);
+		else if (Backpack is not null && !Backpack.IsAir)
+			ApplyEquip(Backpack);
+	}
+
+	private void ApplyEquip(Item backpack)
+	{
+		Player.back = EquipLoader.GetEquipSlot(Mod, backpack.ModItem.Name, EquipType.Back);
+		Player.front = EquipLoader.GetEquipSlot(Mod, backpack.ModItem.Name, EquipType.Front);
+	}
 }

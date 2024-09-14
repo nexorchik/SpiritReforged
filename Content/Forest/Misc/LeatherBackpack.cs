@@ -2,6 +2,7 @@
 
 namespace SpiritReforged.Content.Forest.Misc;
 
+[AutoloadEquip(EquipType.Back, EquipType.Front)]
 internal class LeatherBackpack : BackpackItem
 {
 	protected override int SlotCap => 4;
