@@ -265,8 +265,8 @@ public class KendoBladeLunge : ModProjectile
 			}
 
 			//Spawn dusts
-			var dust = Dust.NewDustDirect(owner.position, owner.width, owner.height, DustID.Smoke, Alpha: 150, Scale: (1f - quote) * 2f);
-			dust.velocity = (owner.velocity * Main.rand.NextFloat(.1f)).RotatedByRandom(.5f);
+			var dust = Dust.NewDustDirect(owner.position, owner.width, owner.height, DustID.Smoke, Alpha: 100, Scale: (1f - quote) * 2f);
+			dust.velocity = (owner.velocity * Main.rand.NextFloat(.2f)).RotatedByRandom(.5f);
 			dust.noGravity = true;
 			dust.noLightEmittence = true;
 		}
@@ -329,10 +329,10 @@ public class KendoBladeLunge : ModProjectile
 
 	public override bool? CanDamage() => Counter == DashDuration + StrikeDelay;
 
-	public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) { }
-
 	public override bool PreDraw(ref Color lightColor)
 	{
+		float Seed(float mult = 0) => (lastPosition.X + lastPosition.Y * mult) * .05f % 1;
+
 		Texture2D texture = TextureAssets.Projectile[Type].Value;
 		SpriteEffects effects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipVertically : SpriteEffects.None;
 		var frame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame, 0, -2);
@@ -347,20 +347,18 @@ public class KendoBladeLunge : ModProjectile
 		float opacity = 1f - Counter / DashDuration;
 		float angle = owner.AngleTo(lastPosition);
 
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 2 + (int)(Seed() * 3f); i++)
 		{
-			Vector2 position = owner.Center + i switch
-			{
-				1 => new Vector2(0, 12).RotatedBy(angle),
-				2 => new Vector2(0, -12).RotatedBy(angle),
-				_ => new Vector2(0)
-			} - Main.screenPosition;
+			var position = owner.Center + new Vector2(10 * Seed(i), 24 * Seed(i) - 12).RotatedBy(angle) - Main.screenPosition + new Vector2(0, Projectile.gfxOffY);
+			var scale = new Vector2(.2f + Seed(i) * .2f, 1f / trail.Height * owner.Distance(lastPosition) * (1f - Seed(i) * .2f));
+			var color = (Color.Lerp(lightColor, lightColor.MultiplyRGB(Color.SlateGray), Seed(i)) with { A = 0 }) * opacity;
 
-			Main.EntitySpriteDraw(trail, position, null, (lightColor with { A = 0 }) * opacity, angle + MathHelper.PiOver2, trail.Frame().Bottom(), new Vector2(.5f, 1f / trail.Height * owner.Distance(lastPosition)), effects, 0);
+			Main.EntitySpriteDraw(trail, position, null, color, angle + MathHelper.PiOver2, trail.Frame().Bottom(), scale, SpriteEffects.None, 0);
 		}
 
 		trail = TextureAssets.Projectile[874].Value;
-		Main.EntitySpriteDraw(trail, owner.Center - Main.screenPosition, null, (lightColor with { A = 0 }) * opacity, angle, trail.Frame().Left(), new Vector2(1f / trail.Width * owner.Distance(lastPosition), .25f), effects, 0);
+		Main.EntitySpriteDraw(trail, owner.Center - Main.screenPosition + new Vector2(0, Projectile.gfxOffY), null, (lightColor with { A = 0 }) * opacity, 
+			angle, trail.Frame().Left(), new Vector2(1f / trail.Width * owner.Distance(lastPosition), .25f), SpriteEffects.None, 0);
 		#endregion
 
 		return false;

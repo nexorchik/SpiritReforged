@@ -41,6 +41,8 @@ Projectiles: {
 	SandWarriorMinion.DisplayName: Sand Warrior Minion
 	ToucanFeather.DisplayName: Toucan Feather
 	ToucanMinion.DisplayName: Toucan Minion
+	TumblerPet.DisplayName: Tumbler Pet
+	BaobabFruitProj.DisplayName: Falling Baobab Fruit
 }
 
 Configs: {
@@ -170,6 +172,11 @@ Buffs: {
 	QuenchPotion_Buff: {
 		DisplayName: Quench Potion_ Buff
 		Description: Other potions last 25% longer
+	}
+
+	TumblerPetBuff: {
+		DisplayName: Ambivalent Tumbler
+		Description: A friendly tumbleweed is following you
 	}
 }
 
