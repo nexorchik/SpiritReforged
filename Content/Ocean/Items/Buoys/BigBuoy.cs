@@ -1,8 +1,33 @@
+using SpiritReforged.Common.SimpleEntity;
+using Terraria.Audio;
+using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
+
 namespace SpiritReforged.Content.Ocean.Items.Buoys;
 
 public class BigBuoy : Buoy
 {
-	public override int SpawnNPCType => ModContent.NPCType<BigBuoy_World>();
+	public override bool? UseItem(Player player)
+	{
+		if (player.whoAmI == Main.myPlayer && player.ItemAnimationJustStarted)
+		{
+			int type = SimpleEntitySystem.types[typeof(BigBuoyEntity)];
+			var position = Main.MouseWorld;
+
+			SimpleEntitySystem.NewEntity(type, position);
+
+			if (Main.netMode != NetmodeID.SinglePlayer)
+			{
+				ModPacket packet = SpiritReforgedMod.Instance.GetPacket(MessageType.SpawnSimpleEntity, 2);
+				packet.Write(type);
+				packet.WriteVector2(position);
+				packet.Send();
+			}
+
+			return true;
+		}
+
+		return null;
+	}
 
 	public override void AddRecipes() => CreateRecipe()
 			.AddRecipeGroup(RecipeGroupID.IronBar, 8)
@@ -12,7 +37,7 @@ public class BigBuoy : Buoy
 			.Register();
 }
 
-public class BigBuoy_World : Buoy_World
+public class BigBuoyEntity : BuoyEntity
 {
 	private static Asset<Texture2D> GlowTexture;
 
@@ -21,10 +46,18 @@ public class BigBuoy_World : Buoy_World
 	public override void Load()
 	{
 		if (!Main.dedServ)
-			GlowTexture = ModContent.Request<Texture2D>(Texture + "_Glow");
+			GlowTexture = ModContent.Request<Texture2D>(TexturePath + "_Glow");
+
+		saveMe = true;
+		width = 28;
+		height = 42;
 	}
 
-	public override void PostDefaults() => NPC.Size = new Vector2(28, 42);
+	public override void OnKill()
+	{
+		if (Main.netMode != NetmodeID.MultiplayerClient)
+			Item.NewItem(GetSource_Death(), Hitbox, ModContent.ItemType<BigBuoy>());
 
-	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<BigBuoy>();
+		SoundEngine.PlaySound(SoundID.Dig, Center);
+	}
 }
