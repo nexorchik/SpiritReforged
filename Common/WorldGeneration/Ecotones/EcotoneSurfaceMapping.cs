@@ -75,6 +75,9 @@ internal class EcotoneSurfaceMapping : ModSystem
 				entry.End = new Point(x, y);
 				entry.Right = def;
 				Entries.Add(entry);
+
+				if (x < 390 || x > Main.maxTilesX - 390)
+					def = EcotoneEdgeDefinitions.GetEcotone("Ocean");
 				
 				entry = new EcotoneEntry(new Point(x, y), def);
 				entry.Left = old;
@@ -97,7 +100,7 @@ internal class EcotoneSurfaceMapping : ModSystem
 		//{
 		//	for (int x = item.Start.X; x < item.End.X; ++x)
 		//	{
-		//		for (int nY = 40; nY < 80; ++nY)
+		//		for (int nY = 90; nY < 100; ++nY)
 		//			WorldGen.PlaceTile(x, nY, item.Definition.DisplayId, true, true);
 		//	}
 		//}

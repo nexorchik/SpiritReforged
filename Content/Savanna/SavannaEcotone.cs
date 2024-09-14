@@ -1,7 +1,6 @@
 ﻿using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Common.WorldGeneration.Ecotones;
 using SpiritReforged.Content.Savanna.Tiles;
-using System.Diagnostics;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Generation;
@@ -150,9 +149,7 @@ internal class SavannaEcotone : EcotoneBase
 					tile.WallType = WallID.DirtUnsafe;
 				}
 				else
-				{
 					tile.Clear(TileDataType.All);
-				}
 			}
 
 			xOffsetForFactor += (int)Math.Round(sandNoise.GetNoise(x, 0) * 2);
