@@ -614,7 +614,7 @@ CustardApple: {
 	Tooltip: ""
 }
 
-BeachUmbrella: {
+BeachUmbrellaItem: {
 	DisplayName: Beach Umbrella
 	Tooltip: ""
 }
@@ -629,7 +629,7 @@ Buoy: {
 	Tooltip: "{$ItemTooltip.CoralTorch}"
 }
 
-LoungeChair: {
+LoungeChairItem: {
 	DisplayName: Lounge Chair
 	Tooltip: ""
 }

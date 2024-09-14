@@ -15,8 +15,8 @@ internal class OceanGlobalNPC : GlobalNPC
 	{
 		if (shop.NpcType == NPCID.Merchant)
 		{
-			shop.Add(Mod.Find<ModItem>("BeachUmbrella").Type, Condition.InBeach);
-			shop.Add(Mod.Find<ModItem>("LoungeChair").Type, Condition.InBeach);
+			shop.Add(Mod.Find<ModItem>("BeachUmbrellaItem").Type, Condition.InBeach);
+			shop.Add(Mod.Find<ModItem>("LoungeChairItem").Type, Condition.InBeach);
 		}
 	}
 }
