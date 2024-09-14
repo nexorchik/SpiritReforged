@@ -19,7 +19,8 @@ public class JellyfishBolt : ModProjectile
 		set => Projectile.ai[1] = value ? 1 : 0;
 	}
 
-	public static int MaxChainDistance => (int)(JellyfishMinion.SHOOT_RANGE * 0.66f);
+	public static int MAX_CHAIN_DISTANCE => (int)(JellyfishMinion.SHOOT_RANGE * 0.66f);
+	public static int HITSCAN_STEP = 5;
 
 	public Vector2 BoltStartPos = new(0, 0);
 
@@ -32,11 +33,11 @@ public class JellyfishBolt : ModProjectile
 		Projectile.friendly = true;
 		Projectile.hostile = false;
 		Projectile.penetrate = 3; //Number of chains between enemies
-		Projectile.timeLeft = JellyfishMinion.SHOOT_RANGE;
+		Projectile.timeLeft = JellyfishMinion.SHOOT_RANGE / HITSCAN_STEP;
 		Projectile.height = 4;
 		Projectile.width = 4;
 		Projectile.hide = true;
-		Projectile.extraUpdates = JellyfishMinion.SHOOT_RANGE;
+		Projectile.extraUpdates = JellyfishMinion.SHOOT_RANGE / HITSCAN_STEP;
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = Projectile.timeLeft * Projectile.penetrate;
 	}
@@ -67,20 +68,21 @@ public class JellyfishBolt : ModProjectile
 
 			for (int i = 0; i < 15; i++)
 			{
-				Vector2 particleVelBase = -Projectile.oldVelocity.RotatedByRandom(MathHelper.Pi / 2);
+				Vector2 particleVelBase = -Projectile.oldVelocity.RotatedByRandom(MathHelper.Pi / 2) / HITSCAN_STEP;
 				ParticleHandler.SpawnParticle(new GlowParticle(target.Center, particleVelBase * Main.rand.NextFloat(2f), ParticleColor, Main.rand.NextFloat(0.5f, 1f), Main.rand.Next(10, 30), 10));
 			}
 		}
 
 		if (Projectile.penetrate > 0)
 		{
-			NPC newTarget = Projectile.FindTargetWithinRange(MaxChainDistance, true);
+			NPC newTarget = Projectile.FindTargetWithinRange(MAX_CHAIN_DISTANCE, true);
 			if (newTarget != null)
 			{
-				Projectile.timeLeft = MaxChainDistance;
-				Projectile.velocity = Projectile.DirectionTo(newTarget.Center);
+				Projectile.timeLeft = MAX_CHAIN_DISTANCE;
+				Projectile.velocity = Projectile.DirectionTo(newTarget.Center) * HITSCAN_STEP;
 				BoltStartPos = target.Center;
 				Projectile.netUpdate = true;
+				Projectile.damage = (int)(Projectile.damage * 0.8f);
 			}
 			else
 				Projectile.penetrate = 0;
@@ -95,7 +97,7 @@ public class JellyfishBolt : ModProjectile
 
 			for (int i = 0; i < 15; i++)
 			{
-				Vector2 particleVelBase = -Projectile.oldVelocity.RotatedByRandom(MathHelper.Pi / 2);
+				Vector2 particleVelBase = -Projectile.oldVelocity.RotatedByRandom(MathHelper.Pi / 2) / HITSCAN_STEP;
 				ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, particleVelBase * Main.rand.NextFloat(2f), ParticleColor, Main.rand.NextFloat(0.5f, 1f), Main.rand.Next(10, 30), 10));
 			}
 		}

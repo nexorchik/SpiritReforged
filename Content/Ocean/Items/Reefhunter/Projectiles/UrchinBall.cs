@@ -8,6 +8,7 @@ using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using SpiritReforged.Content.Particles;
 using System.IO;
 using Terraria.Audio;
+using Terraria.Map;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
@@ -172,14 +173,14 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		for(int i = 0; i < 2; i++)
 			ParticleHandler.SpawnParticle(new TexturedPulseCircle(
 				Projectile.Center + Main.rand.NextVec2CircularEven(5, 5),
-				darkColor * 0.5f,
-				darkColor * 0.1f,
+				new Color(255, 131, 99, 100) * 0.66f,
+				new Color(255, 131, 99, 100) * 0.25f,
 				0.35f + Main.rand.NextFloat(-0.1f, 0.1f),
-				350 + Main.rand.NextFloat(-50, 100),
+				300 + Main.rand.NextFloat(-50, 100),
 				25 + Main.rand.Next(11),
 				"noise",
-				new Vector2(5, 0.5f),
-				(i == 0) ? EaseFunction.EaseQuadOut : EaseFunction.EaseCubicOut).UsesLightColor().WithSkew(Main.rand.NextFloat(0.7f, 0.9f), angle + Main.rand.NextFloat(0.3f, -0.3f)));
+				new Vector2(5, 0.25f),
+				(i == 0) ? EaseFunction.EaseQuadOut : EaseFunction.EaseCubicOut).WithSkew(Main.rand.NextFloat(0.7f, 0.9f), angle + Main.rand.NextFloat(0.3f, -0.3f)));
 
 		for (int i = -1; i < 2; i += 2)
 		{
@@ -192,6 +193,16 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 				int maxTime = Main.rand.Next(20, 30);
 
 				ParticleHandler.SpawnParticle(Main.rand.NextBool() ? new UrchinShard(pos, vel, scale, maxTime) : new UrchinShardAlt(pos, vel, scale, maxTime));
+			}
+
+			for(int j = 0; j < Main.rand.Next(5, 8); j++)
+			{
+				Vector2 pos = Projectile.Center;
+				Vector2 vel = baseDirection.RotatedByRandom(MathHelper.Pi / 4) * Main.rand.NextFloat(4, 16);
+				float scale = Main.rand.NextFloat(0.5f, 0.75f);
+				int maxTime = Main.rand.Next(20, 40);
+
+				ParticleHandler.SpawnParticle(new GlowParticle(pos, vel.RotatedByRandom(0.2f) / 3, new Color(255, 131, 99), scale * 0.75f, maxTime, 1, delegate (Particle p) { p.Velocity *= 0.94f; }));
 			}
 		}
 

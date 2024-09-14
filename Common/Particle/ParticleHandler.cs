@@ -177,7 +177,7 @@ public static class ParticleHandler
 		if (batchedNonpremultiplyParticles.Count != 0)
 		{
 			spriteBatch.End();
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+			spriteBatch.Begin(SpriteSortMode.Deferred, AssetLoader.NonPremultipliedAlphaFix, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
 
 			foreach (Particle batchedParticle in batchedNonpremultiplyParticles)
 			{

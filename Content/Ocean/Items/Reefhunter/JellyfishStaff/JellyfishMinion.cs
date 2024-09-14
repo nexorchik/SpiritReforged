@@ -13,7 +13,7 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter.JellyfishStaff;
 [Common.Misc.AutoloadMinionBuff()]
 public class JellyfishMinion : BaseMinion
 {
-	public JellyfishMinion() : base(400, 800, new Vector2(28, 28)) { }
+	public JellyfishMinion() : base(600, 800, new Vector2(28, 28)) { }
 
 	public bool IsPink = false;
 
@@ -40,13 +40,13 @@ public class JellyfishMinion : BaseMinion
 	private const int AISTATE_SHOOT = 5; //when near target, hover in place and shoot lightning
 
 	//Constants used in drawing methods and for the ai pattern
-	private const int SHOOTTIME = 90; //Time between shots
+	private const int SHOOTTIME = 75; //Time between shots
 	private const int DASHTIME = 30; //Time the dash takes
 	private const int AIMTIME = 60; //Time it takes to aim the dash
 	private const int BOUNCETIME = 90; //General time between bounces
 	private const int RISETIME = 30; //Time it takes to rise upwards after the dash
 
-	public static int SHOOT_RANGE = 300; //Static because it's used by the bolt class
+	public static int SHOOT_RANGE = 400; //Static because it's used by the bolt class
 
 	public override void IdleMovement(Player player)
 	{
@@ -209,7 +209,7 @@ public class JellyfishMinion : BaseMinion
 				{
 					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricZap") with { PitchVariance = 0.3f, Pitch = 0.3f, Volume = .55f, MaxInstances = 3 }, Projectile.Center);
 					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricZap2") with { Pitch = -.45f, Volume = .35f, MaxInstances = 3 }, Projectile.Center);
-					var bolt = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0, 0, 3);
+					var bolt = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection * JellyfishBolt.HITSCAN_STEP, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0, 0, 3);
 					bolt.netUpdate = true;
 					Projectile.netUpdate = true;
 					Projectile.velocity = 0.5f * new Vector2(-xSpeed * aimDirection.X, -ySpeed);
