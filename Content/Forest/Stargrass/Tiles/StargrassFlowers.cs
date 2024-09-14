@@ -61,14 +61,12 @@ public class StargrassFlowers : ModTile
 		const float MinBrightness = 0.4f;
 		const float MaxDist = 140 * 140;
 
-		Color colour = Color.White * MathHelper.Lerp(0.2f, 1f, (float)((Math.Sin(NoiseSystem.Perlin(i * 1.2f, j * 0.2f) * 3f + Main.GlobalTimeWrappedHourly * 1.3f) + 1f) * 0.5f));
-
 		float dist = Main.player[Player.FindClosest(new Vector2(i, j) * 16, 16, 16)].DistanceSQ(new Vector2(i, j) * 16 + new Vector2(8));
 		float strength = MinBrightness;
 
 		if (dist < MaxDist)
 			strength = MathHelper.Lerp(MinBrightness, 1f, 1 - dist / MaxDist);
 
-		TileSwaySystem.DrawGrassSway(spriteBatch, Texture + "_Glow", i, j, colour * strength);
+		TileSwaySystem.DrawGrassSway(spriteBatch, Texture + "_Glow", i, j, StargrassTile.Glow(new Point(i, j)) * strength);
 	}
 }
