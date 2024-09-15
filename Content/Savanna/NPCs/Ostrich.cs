@@ -1,3 +1,4 @@
+using SpiritReforged.Common.TileCommon.TileSway;
 using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Savanna.NPCs;
@@ -48,7 +49,7 @@ public class Ostrich : ModNPC
 			case (int)State.Stopped:
 				frameRate = .1f;
 
-				if (NPC.Distance(target.Center) < 8 * 16)
+				if (NPC.Distance(target.Center) < 16 * 10)
 					ChangeState(State.Running);
 				else if (Main.rand.NextBool(50) && NotClient())
 				{
@@ -75,9 +76,10 @@ public class Ostrich : ModNPC
 				if (NPC.collideX && NPC.velocity == Vector2.Zero && Counter % 5 == 0)
 					NPC.velocity.Y = -6.5f; //Jump
 
-				if (NPC.Distance(target.Center) < 20 * 20) //Prioritize running from the player
-					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .1f);
-				else if (Counter % 80 == 0 && NotClient() && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity.X == 0)
+				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .1f);
+
+				//Prioritize running from the player
+				if (NPC.Distance(target.Center) > 16 * 28 && Counter % 80 == 0 && NotClient() && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity.X == 0)
 				{
 					if (NPC.velocity.X == 0)
 					{
@@ -100,7 +102,7 @@ public class Ostrich : ModNPC
 				break;
 
 			case (int)State.Munching:
-				if (NPC.Distance(target.Center) < 8 * 16)
+				if (NPC.Distance(target.Center) < 16 * 8)
 				{
 					ChangeState(State.MunchEnd);
 					frameRate = .25f; //Stop in a hurry
@@ -112,6 +114,14 @@ public class Ostrich : ModNPC
 					else
 						NPC.frameCounter = 0; //Randomly restart the animation
 				}
+
+				if (!Main.dedServ && !OnTransitionFrame && (int)NPC.frameCounter % (endFrames[AIState] / 2) == 0)
+				{
+					var tilePos = ((NPC.Center + new Vector2(NPC.width * NPC.direction, 8)) / 16).ToPoint();
+					var direction = Vector2.UnitX * (Main.rand.NextBool() ? -1 : 1);
+
+					TileSwayHelper.SetWindTime(tilePos.X, tilePos.Y, direction);
+				} //Cause tiles to sway while munching
 
 				break;
 		}
