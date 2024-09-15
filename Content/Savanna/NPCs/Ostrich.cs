@@ -1,15 +1,19 @@
+using Terraria.Utilities;
+
 namespace SpiritReforged.Content.Savanna.NPCs;
 
 public class Ostrich : ModNPC
 {
-	private static readonly int[] endFrames = [8, 3, 9, 6, 6];
+	private static readonly int[] endFrames = [3, 7, 5, 8, 9, 6, 6];
 	private bool OnTransitionFrame => (int)NPC.frameCounter == endFrames[AIState] - 1;
 	private float frameRate = .2f;
 
 	private enum State : byte
 	{
-		Running,
 		Stopped,
+		Idle1,
+		Idle2,
+		Running,
 		MunchStart,
 		Munching,
 		MunchEnd
@@ -41,13 +45,34 @@ public class Ostrich : ModNPC
 
 		switch (AIState)
 		{
+			case (int)State.Stopped:
+				frameRate = .1f;
+
+				if (NPC.Distance(target.Center) < 8 * 16)
+					ChangeState(State.Running);
+				else if (Main.rand.NextBool(50) && NotClient())
+				{
+					var action = new WeightedRandom<State>();
+					action.Add(State.Running, 1.2f);
+					action.Add(State.MunchStart);
+					action.Add(State.Idle1);
+					action.Add(State.Idle2);
+
+					var selected = (State)action;
+					ChangeState(selected, selected is not State.Idle1 and not State.Idle2);
+				}
+
+				NPC.velocity.X = 0;
+
+				break;
+
 			case (int)State.Running:
 				const float runSpeed = 4f;
 				frameRate = MathHelper.Clamp(Math.Abs(NPC.velocity.X) / runSpeed, .5f, 1f) * .25f;
 
 				Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
 
-				if (NPC.collideX && NPC.velocity.X == 0 && Counter % 5 == 0)
+				if (NPC.collideX && NPC.velocity == Vector2.Zero && Counter % 5 == 0)
 					NPC.velocity.Y = -6.5f; //Jump
 
 				if (NPC.Distance(target.Center) < 20 * 20) //Prioritize running from the player
@@ -68,24 +93,6 @@ public class Ostrich : ModNPC
 
 				break;
 
-			case (int)State.Stopped:
-				frameRate = .1f;
-
-				if (NPC.Distance(target.Center) < 8 * 16)
-					ChangeState(State.Running);
-				else if (Counter % 60 == 0 && NotClient())
-				{
-					if (Main.rand.NextBool(3))
-						ChangeState(State.Running, true);
-					if (Main.rand.NextBool(4))
-						ChangeState(State.MunchStart, true);
-					//Have a chance to start running, munching, or just remain idle
-				}
-
-				NPC.velocity.X = 0;
-
-				break;
-
 			case (int)State.MunchStart:
 				if (OnTransitionFrame)
 					ChangeState(State.Munching);
@@ -100,25 +107,22 @@ public class Ostrich : ModNPC
 				}
 				else if (OnTransitionFrame && Counter % 30 == 0 && Main.rand.NextBool(3))
 				{
-					if (NotClient() && Main.rand.NextBool(4))
-					{
+					if (NotClient() && Main.rand.NextBool(4) || Counter > 600)
 						ChangeState(State.MunchEnd, true);
-						frameRate = .1f;
-					}
 					else
 						NPC.frameCounter = 0; //Randomly restart the animation
 				}
 
 				break;
+		}
 
-			case (int)State.MunchEnd:
-				if (OnTransitionFrame)
-				{
-					ChangeState(State.Stopped);
-					NPC.frameCounter = endFrames[AIState] - 1; //Skip the animation in this context
-				}
-
-				break;
+		if (AIState is ((int)State.Idle1) or ((int)State.Idle2) or ((int)State.MunchEnd))
+		{
+			if (OnTransitionFrame)
+			{
+				ChangeState(State.Stopped);
+				NPC.frameCounter = endFrames[AIState] - 1; //Skip the animation in this context
+			}
 		}
 
 		if (NPC.velocity.X < 0)
@@ -154,8 +158,8 @@ public class Ostrich : ModNPC
 		}
 
 		if (!Main.dedServ && dead)
-			for (int i = 1; i < 5; i++)
-				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity * Main.rand.NextFloat(.3f), Mod.Find<ModGore>("Ostrich" + i).Type);
+			for (int i = 1; i < 6; i++)
+				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity * Main.rand.NextFloat(), Mod.Find<ModGore>("Ostrich" + i).Type);
 
 		ChangeState(State.Running);
 		NPC.velocity.X = Math.Sign(NPC.Center.X - Main.player[NPC.target].Center.X) * 4f;
@@ -176,7 +180,7 @@ public class Ostrich : ModNPC
 		if (!NPC.collideY && NPC.velocity.Y < 0) //Jump frame
 		{
 			NPC.frameCounter = 3; //Set frameCounter so we transition smoothly from the jump frame
-			(NPC.frame.X, NPC.frame.Y) = (0, (int)NPC.frameCounter * frameHeight);
+			(NPC.frame.X, NPC.frame.Y) = (3 * NPC.frame.Width, (int)NPC.frameCounter * frameHeight);
 		}
 		else
 			NPC.frame.Y = (int)NPC.frameCounter * frameHeight;
