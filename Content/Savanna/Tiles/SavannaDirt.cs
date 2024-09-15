@@ -13,7 +13,6 @@ public class SavannaDirt : ModTile, IAutoloadTileItem
 		Main.tileMerge[Type][TileID.Sand] = true;
 		Main.tileMerge[TileID.Sand][Type] = true;
 
-		TileID.Sets.CanBeClearedDuringGeneration[Type] = false;
 		TileID.Sets.ChecksForMerge[Type] = true;
 
 		AddMapEntry(new Color(138, 79, 45));

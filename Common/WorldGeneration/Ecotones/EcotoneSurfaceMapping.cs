@@ -29,7 +29,7 @@ internal class EcotoneSurfaceMapping : ModSystem
 
 	public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
 	{
-		int mapIndex = tasks.FindIndex(x => x.Name == "Full Desert");
+		int mapIndex = tasks.FindIndex(x => x.Name == "Corruption");
 
 		if (mapIndex == -1)
 			return;
@@ -81,7 +81,14 @@ internal class EcotoneSurfaceMapping : ModSystem
 			}
 
 			if (!entry.TileFits(x, y))
+			{
 				transitionCount++;
+
+				if (Main.tile[x, y].TileType == TileID.CorruptGrass)
+				{
+					int iwq = 0;
+				}
+			}
 
 			if (transitionCount > 20 && EcotoneEdgeDefinitions.TryGetEcotoneByTile(Main.tile[x, y].TileType, out var def) && def.Name != entry.Definition.Name)
 			{ 
