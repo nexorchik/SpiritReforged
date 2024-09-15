@@ -66,11 +66,7 @@ public class JellyfishBolt : ModProjectile
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricSting") with { PitchVariance = 0.5f, Pitch = .65f, Volume = 0.8f, MaxInstances = 3 }, Projectile.Center);
 			ParticleHandler.SpawnParticle(new LightningParticle(BoltStartPos, target.Center, ParticleColor, 30, 30f));
 
-			for (int i = 0; i < 15; i++)
-			{
-				Vector2 particleVelBase = -Projectile.oldVelocity.RotatedByRandom(MathHelper.Pi / 2) / HITSCAN_STEP;
-				ParticleHandler.SpawnParticle(new GlowParticle(target.Center, particleVelBase * Main.rand.NextFloat(2f), ParticleColor, Main.rand.NextFloat(0.5f, 1f), Main.rand.Next(10, 30), 10));
-			}
+			HitEffects(target.Center);
 		}
 
 		if (Projectile.penetrate > 0)
@@ -94,15 +90,19 @@ public class JellyfishBolt : ModProjectile
 		if(!Main.dedServ)
 		{
 			ParticleHandler.SpawnParticle(new LightningParticle(BoltStartPos, Projectile.Center, ParticleColor, 30, 30f));
-
-			for (int i = 0; i < 15; i++)
-			{
-				Vector2 particleVelBase = -Projectile.oldVelocity.RotatedByRandom(MathHelper.Pi / 2) / HITSCAN_STEP;
-				ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, particleVelBase * Main.rand.NextFloat(2f), ParticleColor, Main.rand.NextFloat(0.5f, 1f), Main.rand.Next(10, 30), 10));
-			}
+			HitEffects(Projectile.Center);
 		}
 
 		return base.OnTileCollide(oldVelocity);
+	}
+
+	private void HitEffects(Vector2 center)
+	{
+		for (int i = 0; i < 15; i++)
+		{
+			Vector2 particleVelBase = -Projectile.oldVelocity.RotatedByRandom(MathHelper.Pi / 2) / HITSCAN_STEP;
+			ParticleHandler.SpawnParticle(new GlowParticle(center, particleVelBase * Main.rand.NextFloat(2f), ParticleColor, Main.rand.NextFloat(0.5f, 1f), Main.rand.Next(10, 30), 10));
+		}
 	}
 
 	private Color ParticleColor => IsPink ? new Color(255, 161, 225) : new Color(156, 255, 245);

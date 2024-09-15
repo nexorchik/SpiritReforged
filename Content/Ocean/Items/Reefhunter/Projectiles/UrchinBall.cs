@@ -168,18 +168,21 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 			Projectile.NewProjectile(Projectile.GetSource_Death(), spawnPos, vel, ModContent.ProjectileType<UrchinSpike>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner);
 		}
 
+		if (Main.dedServ)
+			return;
+
 		float angle = Main.rand.NextFloat(-0.1f, 0.1f) - MathHelper.PiOver2;
 
 		for(int i = 0; i < 2; i++)
 			ParticleHandler.SpawnParticle(new TexturedPulseCircle(
 				Projectile.Center + Main.rand.NextVec2CircularEven(5, 5),
-				new Color(255, 131, 99, 100) * 0.66f,
-				new Color(255, 131, 99, 100) * 0.25f,
+				new Color(255, 131, 99, 100) * 0.5f,
+				new Color(255, 131, 99, 100) * 0.1f,
 				0.35f + Main.rand.NextFloat(-0.1f, 0.1f),
-				300 + Main.rand.NextFloat(-50, 100),
+				200 + Main.rand.NextFloat(-25, 50),
 				25 + Main.rand.Next(11),
 				"noise",
-				new Vector2(5, 0.25f),
+				new Vector2(3, 0.15f),
 				(i == 0) ? EaseFunction.EaseQuadOut : EaseFunction.EaseCubicOut).WithSkew(Main.rand.NextFloat(0.7f, 0.9f), angle + Main.rand.NextFloat(0.3f, -0.3f)));
 
 		for (int i = -1; i < 2; i += 2)
@@ -205,6 +208,8 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 				ParticleHandler.SpawnParticle(new GlowParticle(pos, vel.RotatedByRandom(0.2f) / 3, new Color(255, 131, 99), scale * 0.75f, maxTime, 1, delegate (Particle p) { p.Velocity *= 0.94f; }));
 			}
 		}
+
+		ParticleHandler.SpawnParticle(new DissipatingImage(Projectile.Center, new Color(255, 131, 99, 70), 0f, 0.125f, Main.rand.NextFloat(0.5f), "Scorch", 30));
 
 		SoundEngine.PlaySound(SoundID.Item14 with { PitchVariance = 0.2f, Volume = 0.4f }, Projectile.Center);
 	}
@@ -254,11 +259,14 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 
 public class UrchinSpike : ModProjectile, ITrailProjectile
 {
+	private static Asset<Texture2D> GlowmaskTexture;
 	public override void SetStaticDefaults()
 	{
 		// DisplayName.SetDefault("Urchin");
 		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 20;
 		ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+		if (!Main.dedServ)
+			GlowmaskTexture = ModContent.Request<Texture2D>(Texture + "Glow");
 	}
 
 	private bool hasTarget = false;
@@ -277,7 +285,7 @@ public class UrchinSpike : ModProjectile, ITrailProjectile
 		Projectile.scale = Main.rand.NextFloat(0.7f, 1.1f);
 	}
 
-	public void DoTrailCreation(TrailManager tm) => tm.CreateTrail(Projectile, new LightColorTrail(new Color(87, 35, 88) * 0.2f, Color.Transparent), new RoundCap(), new DefaultTrailPosition(), 12 * Projectile.scale, 75);
+	public void DoTrailCreation(TrailManager tm) => tm.CreateTrail(Projectile, new LightColorTrail(new Color(87, 35, 88) * 0.2f, Color.Transparent), new RoundCap(), new DefaultTrailPosition(), 8 * Projectile.scale, 75);
 
 	public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => !hasTarget;
 	public override bool? CanCutTiles() => !hasTarget;
@@ -293,7 +301,7 @@ public class UrchinSpike : ModProjectile, ITrailProjectile
 		else
 		{
 			NPC npc = Main.npc[(int)Projectile.ai[1]];
-			Projectile.velocity *= 0.9f;
+			Projectile.velocity *= 0.92f;
 			relativePoint += Projectile.velocity;
 
 			if (!npc.active)
@@ -310,17 +318,27 @@ public class UrchinSpike : ModProjectile, ITrailProjectile
 		Projectile.netUpdate = true;
 		Projectile.alpha = 0;
 		Projectile.penetrate++;
-		Projectile.velocity *= 0.7f;
+		Projectile.velocity *= 0.8f;
 
 		hasTarget = true;
 		relativePoint = Projectile.Center - target.Center;
-		AssetLoader.VertexTrailManager.TryEndTrail(Projectile, 12);
+		
+		if(!Main.dedServ)
+			AssetLoader.VertexTrailManager.TryEndTrail(Projectile, 12);
 	}
 
 	public override bool PreDraw(ref Color lightColor)
 	{
-		Projectile.QuickDraw();
-		Projectile.QuickDrawTrail(baseOpacity: 0.25f);
+		Vector2 texSize = TextureAssets.Projectile[Projectile.type].Value.Size();
+		Projectile.QuickDraw(origin: new Vector2(texSize.X / 2, 0));
+		Projectile.QuickDrawTrail(baseOpacity: 0.25f, drawOrigin: new Vector2(texSize.X / 2, 0));
+
 		return false;
+	}
+	public override void PostDraw(Color lightColor)
+	{
+		Texture2D tex = GlowmaskTexture.Value;
+
+		Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, new Color(255, 131, 99, 50) * Projectile.Opacity * Projectile.Opacity, Projectile.rotation, new Vector2(tex.Size().X / 2f, 0), Projectile.scale, SpriteEffects.None, 0f);
 	}
 }

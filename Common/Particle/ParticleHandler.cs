@@ -152,11 +152,11 @@ public static class ParticleHandler
 				switch (particle.DrawType)
 				{
 					case ParticleDrawType.DefaultAlphaBlend:
-						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color, particle.Rotation, particle.Origin + particleTextures[particle.Type].Size() / 2, particle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
+						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color, particle.Rotation, particle.Origin + particleTextures[particle.Type].Size() / 2, particle.Scale, SpriteEffects.None, 0f);
 						break;
 
 					case ParticleDrawType.DefaultAdditive:
-						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color.Additive(), particle.Rotation, particle.Origin + particleTextures[particle.Type].Size()/2, particle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
+						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color.Additive(), particle.Rotation, particle.Origin + particleTextures[particle.Type].Size()/2, particle.Scale, SpriteEffects.None, 0f);
 						break;
 
 					case ParticleDrawType.Custom:

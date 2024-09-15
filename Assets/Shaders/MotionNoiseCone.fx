@@ -79,7 +79,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     strength *= pow(cos(1.57f * (input.TextureCoordinates.x - 0.15f)), 2); //fadeout based on x coordinate
     if (input.TextureCoordinates.x < dissipation)
     {
-        float dissipationFactor = pow((dissipation - input.TextureCoordinates.x) / dissipation, 0.75f);
+        float dissipationFactor = pow((dissipation - input.TextureCoordinates.x) / dissipation, 1.5f);
         strength = pow(max(strength - dissipationFactor, 0), 1 + dissipationFactor);
     }
     

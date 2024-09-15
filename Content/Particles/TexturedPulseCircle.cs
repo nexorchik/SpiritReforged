@@ -31,7 +31,7 @@ public class TexturedPulseCircle : PulseCircle
 	{
 		if(!AssetLoader.LoadedTextures.TryGetValue(_texture, out Texture2D value))
 		{
-			throw new ArgumentOutOfRangeException(_texture, "Given input does not correspond to a loaded asset.");
+			throw new ArgumentNullException(_texture, "Given input does not correspond to a loaded asset.");
 		}
 
 		else
