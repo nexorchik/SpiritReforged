@@ -2,6 +2,7 @@ namespace SpiritReforged.Content.Vanilla.SummonsMisc.RodofDunes;
 
 public class RodofDunes : ModItem
 {
+	public override bool IsLoadingEnabled(Mod mod) => false;
 	public override void SetDefaults()
 	{
 		Item.width = 26;
@@ -29,7 +30,7 @@ public class RodofDunes : ModItem
 	{
 		Recipe recipe = CreateRecipe();
 		recipe.AddIngredient(ItemID.SandBlock, 50);
-		//recipe.AddRecipeGroup("SpiritMod:GoldBars", 5);
+		recipe.AddRecipeGroup("GoldBars", 5);
 		recipe.AddTile(TileID.Anvils);
 		recipe.Register();
 	}

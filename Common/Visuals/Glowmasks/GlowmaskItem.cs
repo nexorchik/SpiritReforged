@@ -166,12 +166,12 @@ internal class GlowmaskItem : GlobalItem
 
 			if (player.gravDir == -1f)
 			{
-				item = new DrawData(TextureAssets.GlowMask[heldItem.glowMask].Value, position, frame, drawColor, itemRotation, origin, itemScale, drawInfo.itemEffect);
+				item = new DrawData(tex, position, frame, drawColor, itemRotation, origin, itemScale, drawInfo.itemEffect);
 				drawInfo.DrawDataCache.Add(item);
 				return;
 			}
 
-			item = new DrawData(TextureAssets.GlowMask[heldItem.glowMask].Value, position, frame, drawColor, itemRotation, origin, itemScale, drawInfo.itemEffect);
+			item = new DrawData(tex, position, frame, drawColor, itemRotation, origin, itemScale, drawInfo.itemEffect);
 
 			drawInfo.DrawDataCache.Add(item);
 		}
