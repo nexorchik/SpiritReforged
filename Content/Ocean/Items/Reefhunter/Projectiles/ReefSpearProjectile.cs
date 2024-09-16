@@ -196,21 +196,21 @@ public class ReefSpearProjectile : ModProjectile
 		var particle = new TexturedPulseCircle(
 				particleBasePos,
 				new Color(230, 27, 112) * 0.5f,
-				1f,
+				0.75f,
 				200 * scaleMod,
 				35,
 				"noise",
-				new Vector2(7, 0.3f),
-				EaseFunction.EaseCubicOut).WithSkew(0.85f, MathHelper.Pi + _direction.ToRotation() + _rotationOffset * _rotationDirection).UsesLightColor();
+				new Vector2(4, 0.75f),
+				EaseFunction.EaseCubicOut).WithSkew(0.75f, MathHelper.Pi + _direction.ToRotation() + _rotationOffset * _rotationDirection).UsesLightColor();
 		particle.Velocity = Vector2.Normalize(-RealDirection) / 2;
 
 		ParticleHandler.SpawnParticle(particle);
 
 		for(int i = 0; i < (int)(Main.rand.Next(3, 7) * scaleMod); i++)
 		{
-			Vector2 offset = Vector2.UnitY.RotatedBy(_direction.ToRotation() + _rotationOffset * _rotationDirection) * Main.rand.NextFloat(-20, 20) * scaleMod;
+			Vector2 offset = Vector2.UnitY.RotatedBy(_direction.ToRotation() + _rotationOffset * _rotationDirection) * Main.rand.NextFloat(-15, 15) * scaleMod;
 			offset = offset.RotatedByRandom(0.2f);
-			ParticleHandler.SpawnParticle(new BubbleParticle(particleBasePos + offset, Vector2.Normalize(-RealDirection) * Main.rand.NextFloat(1f, 4.5f) * scaleMod, Main.rand.NextFloat(0.1f, 0.3f), Main.rand.Next(30, 61)));
+			ParticleHandler.SpawnParticle(new BubbleParticle(particleBasePos + offset, Vector2.Normalize(-RealDirection) * Main.rand.NextFloat(1f, 4f) * scaleMod, Main.rand.NextFloat(0.1f, 0.2f), Main.rand.Next(30, 61)));
 		}
 
 		_hitEffectCooldown = true;

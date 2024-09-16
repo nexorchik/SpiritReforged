@@ -10,9 +10,10 @@ sampler textureSampler = sampler_state
 {
     Texture = (uTexture);
     AddressU = wrap;
-    AddressV = clamp;
+    AddressV = wrap;
 };
 float2 textureStretch;
+float scroll;
 
 struct VertexShaderInput
 {
@@ -45,7 +46,7 @@ const float ringBase = 0.5f;
 
 float GetDistance(float2 input)
 {
-    return (2 * sqrt(pow(input.x - 0.5, 2) + pow(input.y - 0.5, 2)));
+    return (2 * sqrt(pow(input.x - 0.5f, 2) + pow(input.y - 0.5f, 2)));
 }
 
 float GetDistanceFromBase(float input)
@@ -88,15 +89,19 @@ float4 GeometricRing(VertexShaderOutput input) : COLOR0
 
 float GetAngle(float2 input)
 {
-    return atan2(input.y, input.x) + 3.14f;
+    return atan2(input.y - 0.5f, input.x - 0.5f) + 3.14f;
 }
 
 float4 TexturedRing(VertexShaderOutput input) : COLOR0
 {
     float4 baseRing = GeometricRing(input);
     float xCoord = GetAngle(input.TextureCoordinates) / 6.14f;
-    float yCoord = 0.5f + (GetDistanceFromBase(input.TextureCoordinates) - (RingWidth / 2)) / RingWidth;
-    float4 texColor = tex2D(textureSampler, float2(xCoord * textureStretch.x, yCoord * textureStretch.y)).r;
+    xCoord += scroll;
+    float yCoord = GetDistance(input.TextureCoordinates);
+    yCoord -= 0.5f;
+    yCoord *= textureStretch.y;
+    yCoord += 0.5f;
+    float4 texColor = tex2D(textureSampler, float2(xCoord * textureStretch.x, yCoord)).r;
     
     return baseRing * texColor;
 }

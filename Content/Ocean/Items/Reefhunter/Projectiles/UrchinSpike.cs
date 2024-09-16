@@ -65,7 +65,6 @@ public class UrchinSpike : ModProjectile, ITrailProjectile
 		Projectile.netUpdate = true;
 		Projectile.alpha = 0;
 		Projectile.penetrate++;
-		Projectile.velocity *= 0.8f;
 
 		hasTarget = true;
 		relativePoint = Projectile.Center - target.Center;
@@ -76,9 +75,8 @@ public class UrchinSpike : ModProjectile, ITrailProjectile
 
 	public override bool PreDraw(ref Color lightColor)
 	{
-		Vector2 texSize = TextureAssets.Projectile[Projectile.type].Value.Size();
-		Projectile.QuickDraw(origin: new Vector2(texSize.X / 2, 0));
-		Projectile.QuickDrawTrail(baseOpacity: 0.25f, drawOrigin: new Vector2(texSize.X / 2, 0));
+		Projectile.QuickDraw();
+		Projectile.QuickDrawTrail(baseOpacity: 0.25f);
 
 		return false;
 	}

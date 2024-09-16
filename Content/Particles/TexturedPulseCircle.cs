@@ -37,7 +37,8 @@ public class TexturedPulseCircle : PulseCircle
 		else
 		{
 			curEffect.Parameters["uTexture"].SetValue(value);
-			curEffect.Parameters["textureStretch"].SetValue(_textureStretch);
+			curEffect.Parameters["textureStretch"].SetValue(new Vector2(_textureStretch.X, _textureStretch.Y));
+			curEffect.Parameters["scroll"].SetValue(TimeActive / 20f);
 		}
 	}
 }
