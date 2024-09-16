@@ -229,7 +229,7 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 
 	public static Color GlowColor(object proj)
 	{
-		var urchinball = proj as UrchinBall;
+		var urchinball = (proj as Projectile).ModProjectile as UrchinBall;
 		float alpha = 1 - urchinball.FlashStrength();
 		return OrangeVFXColor(0) * (1 - alpha);
 	}

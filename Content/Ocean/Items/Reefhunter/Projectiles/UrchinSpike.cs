@@ -2,19 +2,18 @@
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.Trail_Components;
 using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Common.Visuals.Glowmasks;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
+[AutoloadGlowmask("Method:Content.Ocean.Items.Reefhunter.Projectiles.UrchinSpike GlowColor")]
 public class UrchinSpike : ModProjectile, ITrailProjectile
 {
-	private static Asset<Texture2D> GlowmaskTexture;
 	public override void SetStaticDefaults()
 	{
 		// DisplayName.SetDefault("Urchin");
 		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 20;
 		ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-		if (!Main.dedServ)
-			GlowmaskTexture = ModContent.Request<Texture2D>(Texture + "Glow");
 	}
 
 	private bool hasTarget = false;
@@ -83,10 +82,10 @@ public class UrchinSpike : ModProjectile, ITrailProjectile
 
 		return false;
 	}
-	public override void PostDraw(Color lightColor)
-	{
-		Texture2D tex = GlowmaskTexture.Value;
 
-		Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, UrchinBall.GlowColor(50) * Projectile.Opacity * Projectile.Opacity, Projectile.rotation, new Vector2(tex.Size().X / 2f, 0), Projectile.scale, SpriteEffects.None, 0f);
+	public static Color GlowColor(object proj)
+	{
+		var spike = proj as Projectile;
+		return UrchinBall.OrangeVFXColor(0) * EaseFunction.EaseQuadIn.Ease(spike.Opacity);
 	}
 }
