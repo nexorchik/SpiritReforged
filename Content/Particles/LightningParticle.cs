@@ -2,13 +2,13 @@
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 using SpiritReforged.Common.PrimitiveRendering;
+using SpiritReforged.Common.Misc;
 
 namespace SpiritReforged.Content.Particles;
 
 public class LightningParticle : Particle
 {
 	private Vector2 _endPosition;
-	private Vector2[] _deviationPoints;
 
 	public override ParticleDrawType DrawType => ParticleDrawType.Custom;
 
@@ -25,13 +25,11 @@ public class LightningParticle : Particle
 	{
 		float length = Vector2.Distance(Position, _endPosition);
 		float rotation = (_endPosition - Position).ToRotation();
-		var drawColor = Color.Lerp(Color.White, Color, EaseFunction.EaseQuadOut.Ease(Progress));
-		drawColor.A = 0;
+		var drawColor = Color.Lerp(Color.White, Color, EaseFunction.EaseQuadOut.Ease(Progress)).Additive();
 
-		//Draw the beam and apply shader parameters
 		Effect beamEffect = AssetLoader.LoadedShaders["Lightning"];
-		beamEffect.Parameters["uTexture"].SetValue(ModContent.Request<Texture2D>("SpiritReforged/Assets/Textures/Lightning").Value);
-		beamEffect.Parameters["perlinNoise"].SetValue(ModContent.Request<Texture2D>("SpiritReforged/Assets/Textures/noise").Value);
+		beamEffect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["Lightning"]);
+		beamEffect.Parameters["perlinNoise"].SetValue(AssetLoader.LoadedTextures["noise"]);
 		beamEffect.Parameters["Progress"].SetValue(Progress);
 		beamEffect.Parameters["uTime"].SetValue(EaseFunction.EaseQuadOut.Ease(Progress) / 3 + (float)Main.time / 90);
 		beamEffect.Parameters["xMod"].SetValue(length / 120f);
