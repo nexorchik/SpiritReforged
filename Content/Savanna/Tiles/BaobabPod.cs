@@ -94,7 +94,7 @@ public class BaobabPod : ModTile, ISwayInWind
 			DropItem(i, j, ModContent.ItemType<LivingBaobabLeafWand>());
 			DropItem(i, j, ModContent.ItemType<LivingBaobabWand>());
 			DropItem(i, j, ItemID.Waterleaf, Main.rand.Next(2) + 1);
-			DropCoins(Main.rand.Next(2000, 12000));
+			DropCoins(Main.rand.Next(1000, 4000));
 		} //Break open
 		else
 			DropCoins(Main.rand.Next(250, 500));
