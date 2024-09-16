@@ -613,3 +613,13 @@ CustardApple: {
 	DisplayName: Custard Apple
 	Tooltip: ""
 }
+
+Omelette: {
+	DisplayName: Omelette
+	Tooltip: "{$BuffDescription.WellFed2}"
+}
+
+OstrichEgg: {
+	DisplayName: Ostrich Egg
+	Tooltip: "{$BuffDescription.WellFed}"
+}
