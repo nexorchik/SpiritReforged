@@ -26,6 +26,9 @@ public abstract class MotionNoiseCone : Particle
 
 	public MotionNoiseCone(Entity entity, Vector2 basePosition, Vector2 velocity, float width, float length, float rotation, int maxTime, int detatchTime = -1) : this(basePosition, velocity, width, length, rotation, maxTime)
 	{
+		if(entity == null)
+			return;
+
 		_attatchedEntity = entity;
 		_offset = basePosition - entity.Center;
 		_detatchTime = detatchTime;

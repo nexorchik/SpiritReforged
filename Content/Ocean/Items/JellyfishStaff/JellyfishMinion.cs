@@ -2,15 +2,17 @@ using System.Linq;
 using Terraria.DataStructures;
 using Microsoft.CodeAnalysis;
 using SpiritReforged.Common.ProjectileCommon;
-using Terraria;
 using Terraria.Audio;
 using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Common.Visuals.Glowmasks;
+using Terraria;
 
-namespace SpiritReforged.Content.Ocean.Items.Reefhunter.JellyfishStaff;
+namespace SpiritReforged.Content.Ocean.Items.JellyfishStaff;
 
 [Common.Misc.AutoloadMinionBuff()]
+[AutoloadGlowmask("255, 255, 255", false)]
 public class JellyfishMinion : BaseMinion
 {
 	public JellyfishMinion() : base(600, 800, new Vector2(28, 28)) { }
@@ -19,15 +21,12 @@ public class JellyfishMinion : BaseMinion
 
 	private ref float AiState => ref Projectile.ai[0];
 	private ref float AiTimer => ref Projectile.ai[1];
-	private static Asset<Texture2D> GlowmaskTexture;
 
 	public override void AbstractSetStaticDefaults()
 	{
 		Main.projFrames[Type] = 3;
 		ProjectileID.Sets.TrailCacheLength[Type] = 10;
 		ProjectileID.Sets.TrailingMode[Type] = 2;
-		if (!Main.dedServ)
-			GlowmaskTexture = Mod.Assets.Request<Texture2D>("Content/Ocean/Items/Reefhunter/JellyfishStaff/JellyfishMinion_glow");
 	}
 
 	public override void OnSpawn(IEntitySource source) => IsPink = Main.rand.NextBool(2);
@@ -51,7 +50,7 @@ public class JellyfishMinion : BaseMinion
 	public override void IdleMovement(Player player)
 	{
 		Projectile.tileCollide = false;
-		if(AiState > AISTATE_FLYTOPLAYER)
+		if (AiState > AISTATE_FLYTOPLAYER)
 		{
 			AiTimer = 0;
 			AiState = AISTATE_PASSIVEFLOAT;
@@ -60,10 +59,10 @@ public class JellyfishMinion : BaseMinion
 
 		int flyToPlayerThreshold = 100; //How far the minion needs to be from the player to start flying to them
 		int floatThreshold = flyToPlayerThreshold / 2; //How close the minion needs to be to the player to stop flying to them
-		switch(AiState)
+		switch (AiState)
 		{
 			case AISTATE_PASSIVEFLOAT:
-				Projectile.rotation -= Utils.AngleLerp(Projectile.rotation, 0, 0.05f);
+				Projectile.rotation -= Projectile.rotation.AngleLerp(0, 0.05f);
 
 				float speed = Projectile.Distance(player.Center) / 50;
 				speed = Math.Min(speed, 5f);
@@ -71,7 +70,7 @@ public class JellyfishMinion : BaseMinion
 				Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(player.Center) * speed, 0.04f);
 
 				//bounce in general direction of player but moved upwards, semi randomized timing
-				if(AiTimer >= BOUNCETIME)
+				if (AiTimer >= BOUNCETIME)
 				{
 					Projectile.velocity += Projectile.DirectionTo(player.Center) * Main.rand.NextFloat(1, 2);
 					Projectile.velocity.Y -= Main.rand.NextFloat(3, 4);
@@ -80,7 +79,7 @@ public class JellyfishMinion : BaseMinion
 					Projectile.netUpdate = true;
 				}
 
-				if(Projectile.Distance(player.Center) > flyToPlayerThreshold)
+				if (Projectile.Distance(player.Center) > flyToPlayerThreshold)
 				{
 					AiState = AISTATE_FLYTOPLAYER;
 					AiTimer = 0;
@@ -92,9 +91,9 @@ public class JellyfishMinion : BaseMinion
 			case AISTATE_FLYTOPLAYER:
 				float flySpeed = 12f;
 				Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(player.Center) * flySpeed, 0.06f);
-				Projectile.rotation = Utils.AngleLerp(Projectile.rotation, AdjustedVelocityAngle, 0.2f);
+				Projectile.rotation = Projectile.rotation.AngleLerp(AdjustedVelocityAngle, 0.2f);
 
-				if(Projectile.Distance(player.Center) <= floatThreshold)
+				if (Projectile.Distance(player.Center) <= floatThreshold)
 				{
 					AiState = AISTATE_PASSIVEFLOAT;
 					AiTimer = 0;
@@ -105,7 +104,7 @@ public class JellyfishMinion : BaseMinion
 		}
 
 		int maxDistFromPlayer = 1200;
-		if(Projectile.Distance(player.Center) > maxDistFromPlayer)
+		if (Projectile.Distance(player.Center) > maxDistFromPlayer)
 		{
 			Projectile.Center = player.Center;
 			Projectile.netUpdate = true;
@@ -119,7 +118,7 @@ public class JellyfishMinion : BaseMinion
 		Projectile.tileCollide = true;
 		AiTimer++;
 
-		if(AiState < AISTATE_AIMTOTARGET)
+		if (AiState < AISTATE_AIMTOTARGET)
 		{
 			AiState = Projectile.Distance(target.Center) >= SHOOT_RANGE ? AISTATE_AIMTOTARGET : AISTATE_PREPARESHOOT;
 			AiTimer = 0;
@@ -134,9 +133,9 @@ public class JellyfishMinion : BaseMinion
 				float interpolationSpeed = MathHelper.Lerp(0.1f, 0.2f, aimProgress);
 
 				Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(target.Center) * aimSpeed, interpolationSpeed);
-				Projectile.rotation = Utils.AngleLerp(Projectile.rotation, AdjustedVelocityAngle, 0.1f);
+				Projectile.rotation = Projectile.rotation.AngleLerp(AdjustedVelocityAngle, 0.1f);
 
-				if(AiTimer >= AIMTIME)
+				if (AiTimer >= AIMTIME)
 				{
 					AiState = AISTATE_DASH;
 					AiTimer = 0;
@@ -145,7 +144,7 @@ public class JellyfishMinion : BaseMinion
 					Projectile.rotation = AdjustedVelocityAngle;
 					Projectile.netUpdate = true;
 
-					if(!Main.dedServ)
+					if (!Main.dedServ)
 					{
 						Color particleColor = IsPink ? new Color(255, 161, 225) : new Color(156, 255, 245);
 						for (int i = 0; i < 8; i++)
@@ -170,7 +169,7 @@ public class JellyfishMinion : BaseMinion
 				Projectile.velocity *= 0.96f;
 				Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(target.Center) * Projectile.velocity.Length(), 0.025f);
 
-				if(AiTimer >= DASHTIME)
+				if (AiTimer >= DASHTIME)
 				{
 					AiState = Projectile.Distance(target.Center) >= SHOOT_RANGE ? AISTATE_AIMTOTARGET : AISTATE_PREPARESHOOT;
 					AiTimer = 0;
@@ -181,7 +180,7 @@ public class JellyfishMinion : BaseMinion
 
 			case AISTATE_PREPARESHOOT:
 				float progress = AiTimer / RISETIME;
-				Projectile.rotation = Utils.AngleLerp(Projectile.rotation, 0, 1f / RISETIME);
+				Projectile.rotation = Projectile.rotation.AngleLerp(0, 1f / RISETIME);
 				float speed = MathHelper.Lerp(2, 0.4f, progress);
 				float slowdownLerpSpeed = MathHelper.Lerp(0.05f, 0.2f, progress);
 				Projectile.velocity = Vector2.Lerp(Projectile.velocity, -Vector2.UnitY * speed, slowdownLerpSpeed);
@@ -200,9 +199,9 @@ public class JellyfishMinion : BaseMinion
 				float ySpeed = 1f;
 				float xSpeed = 0.3f;
 				Projectile.velocity += new Vector2(xSpeed * aimDirection.X / SHOOTTIME, ySpeed / SHOOTTIME);
-				Projectile.rotation = Utils.AngleLerp(Projectile.rotation, 0, 0.1f);
+				Projectile.rotation = Projectile.rotation.AngleLerp(0, 0.1f);
 
-				if(Projectile.Distance(target.Center) >= SHOOT_RANGE * 0.33f) //Really slow movement towards target if too far
+				if (Projectile.Distance(target.Center) >= SHOOT_RANGE * 0.33f) //Really slow movement towards target if too far
 					Projectile.position += Projectile.DirectionTo(target.Center) / 4f;
 
 				if (AiTimer % SHOOTTIME == 0)
@@ -215,7 +214,7 @@ public class JellyfishMinion : BaseMinion
 					Projectile.velocity = 0.5f * new Vector2(-xSpeed * aimDirection.X, -ySpeed);
 				}
 
-				if(Projectile.Distance(target.Center) >= SHOOT_RANGE)
+				if (Projectile.Distance(target.Center) >= SHOOT_RANGE)
 				{
 					AiState = AISTATE_AIMTOTARGET;
 					AiTimer = 0;
@@ -228,7 +227,7 @@ public class JellyfishMinion : BaseMinion
 
 	public override bool DoAutoFrameUpdate(ref int framespersecond, ref int startframe, ref int endframe)
 	{
-		framespersecond = (AiState == AISTATE_AIMTOTARGET) ? 16 : 8;
+		framespersecond = AiState == AISTATE_AIMTOTARGET ? 16 : 8;
 		return true;
 	}
 
@@ -247,12 +246,12 @@ public class JellyfishMinion : BaseMinion
 
 		void DrawGlowmask(float opacity)
 		{
-			var glowMask = GlowmaskTexture.Value;
+			GlowmaskProjectile.ProjIdToGlowmask.TryGetValue(Projectile.type, out var glowMask);
 			Vector2 position = Projectile.Center - Main.screenPosition;
 			for (int j = 0; j < 4; j++)
 			{
 				position += Vector2.UnitX.RotatedBy(MathHelper.PiOver2 * j);
-				Main.spriteBatch.Draw(glowMask, position, Projectile.DrawFrame(), Projectile.GetAlpha(drawColor * opacity), Projectile.rotation, Projectile.DrawFrame().Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+				Main.spriteBatch.Draw(glowMask.Glowmask.Value, position, Projectile.DrawFrame(), Projectile.GetAlpha(drawColor * opacity), Projectile.rotation, Projectile.DrawFrame().Size() / 2, Projectile.scale, SpriteEffects.None, 0);
 			}
 		}
 
@@ -269,7 +268,7 @@ public class JellyfishMinion : BaseMinion
 			DrawGlowmask(flashOpacity);
 		}
 
-		if(AiState == AISTATE_DASH)
+		if (AiState == AISTATE_DASH)
 		{
 			Color trailColor = GetColor;
 			trailColor.A = 0;
@@ -284,14 +283,12 @@ public class JellyfishMinion : BaseMinion
 
 	public override void PostAI()
 	{
-		Lighting.AddLight(Projectile.Center, GetColor.ToVector3() * .25f); 
-		
+		Lighting.AddLight(Projectile.Center, GetColor.ToVector3() * .25f);
+
 		//lifted almost directly from old ai
 		foreach (Projectile p in Main.projectile.Where(x => x.active && x != null && x.type == Projectile.type && x.owner == Projectile.owner && x != Projectile))
-		{
 			if (p.Hitbox.Intersects(Projectile.Hitbox) && AiState != AISTATE_DASH)
 				Projectile.velocity += Projectile.DirectionFrom(p.Center) / 10;
-		}
 	}
 
 	public override bool OnTileCollide(Vector2 oldVelocity)

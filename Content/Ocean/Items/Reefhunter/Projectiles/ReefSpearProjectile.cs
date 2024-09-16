@@ -28,8 +28,8 @@ public class ReefSpearProjectile : ModProjectile
 
 	public override void SetDefaults()
 	{
-		Projectile.width = 30;
-		Projectile.height = 30;
+		Projectile.width = 46;
+		Projectile.height = 46;
 		Projectile.friendly = true;
 		Projectile.penetrate = -1;
 		Projectile.tileCollide = false;
@@ -134,19 +134,19 @@ public class ReefSpearProjectile : ModProjectile
 				if (!Main.dedServ)
 				{
 					SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack with { PitchVariance = 0.3f, Volume = 0.75f, MaxInstances = -1 }, Projectile.Center);
-					int particleLifetime = stabTimes[i] + 5;
+					int particleLifetime = stabTimes[i] + 7;
 					if (i < stabTimes.ToArray().Length - 1)
 						particleLifetime -= stabTimes[i + 1];
 
 					Vector2 particleVelocity = RealDirection / particleLifetime;
-					particleVelocity *= -1.75f;
+					particleVelocity *= -1.5f;
 
 					ParticleHandler.SpawnParticle(new ReefSpearImpact(
 						Projectile,
-						Projectile.Center,
+						Projectile.Center - particleVelocity,
 						particleVelocity,
-						170 * length,
-						2.75f * MAX_DISTANCE,
+						200 * length,
+						3f * MAX_DISTANCE,
 						_direction.ToRotation() + _rotationOffset * _rotationDirection,
 						particleLifetime,
 						0.8f,
@@ -171,7 +171,7 @@ public class ReefSpearProjectile : ModProjectile
 
 	public override void ModifyDamageHitbox(ref Rectangle hitbox)
 	{
-		Vector2 pos = Projectile.Center - RealDirection - new Vector2(16);
+		Vector2 pos = Projectile.Center - RealDirection - Projectile.Size / 2;
 
 		hitbox.X = (int)pos.X;
 		hitbox.Y = (int)pos.Y;

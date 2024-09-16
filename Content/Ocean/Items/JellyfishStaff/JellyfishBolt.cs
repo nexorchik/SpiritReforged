@@ -3,7 +3,7 @@ using SpiritReforged.Content.Particles;
 using System.IO;
 using Terraria.Audio;
 
-namespace SpiritReforged.Content.Ocean.Items.Reefhunter.JellyfishStaff;
+namespace SpiritReforged.Content.Ocean.Items.JellyfishStaff;
 
 public class JellyfishBolt : ModProjectile
 {
@@ -44,7 +44,7 @@ public class JellyfishBolt : ModProjectile
 
 	public override void AI()
 	{
-		if(!SetSpawnPos)
+		if (!SetSpawnPos)
 		{
 			BoltStartPos = Projectile.Center;
 			SetSpawnPos = true;
@@ -55,7 +55,7 @@ public class JellyfishBolt : ModProjectile
 	public override void OnKill(int timeLeft)
 	{
 		//If the projectile times out and doesn't hit something
-		if(timeLeft == 0 && Projectile.penetrate > 0 && !Main.dedServ)
+		if (timeLeft == 0 && Projectile.penetrate > 0 && !Main.dedServ)
 			ParticleHandler.SpawnParticle(new LightningParticle(BoltStartPos, Projectile.Center, ParticleColor, 30, 30f));
 	}
 
@@ -87,7 +87,7 @@ public class JellyfishBolt : ModProjectile
 
 	public override bool OnTileCollide(Vector2 oldVelocity)
 	{
-		if(!Main.dedServ)
+		if (!Main.dedServ)
 		{
 			ParticleHandler.SpawnParticle(new LightningParticle(BoltStartPos, Projectile.Center, ParticleColor, 30, 30f));
 			HitEffects(Projectile.Center);

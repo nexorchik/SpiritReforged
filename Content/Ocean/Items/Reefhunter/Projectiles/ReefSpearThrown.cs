@@ -124,18 +124,17 @@ public class ReefSpearThrown : ModProjectile
 
 	private void MakeParticles(Vector2 velocity)
 	{
-		int particleLifetime = 30;
+		int particleLifetime = 24;
 		float velocityRatio = Math.Min(velocity.Length() / MAX_SPEED, 1);
 
 		ParticleHandler.SpawnParticle(new ReefSpearImpact(
-						Projectile,
-						Projectile.Center,
-						Vector2.Normalize(velocity) * 4 * velocityRatio,
-						200,
+						null,
+						Projectile.Center - Vector2.Normalize(velocity) * 6,
+						Vector2.Normalize(velocity) * 2 * velocityRatio,
+						240,
 						100,
 						velocity.ToRotation() + MathHelper.Pi,
 						particleLifetime,
-						1.2f,
-						6));
+						1.2f));
 	}
 }

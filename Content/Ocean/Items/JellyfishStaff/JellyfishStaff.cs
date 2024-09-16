@@ -1,6 +1,6 @@
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Ocean.Items.Reefhunter.JellyfishStaff;
+namespace SpiritReforged.Content.Ocean.Items.JellyfishStaff;
 
 public class JellyfishStaff : ModItem
 {
