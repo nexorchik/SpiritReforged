@@ -212,7 +212,7 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 			}
 		}
 
-		ParticleHandler.SpawnParticle(new DissipatingImage(Projectile.Center, OrangeVFXColor(70), 0f, 0.125f, Main.rand.NextFloat(0.5f), "Scorch", 30));
+		ParticleHandler.SpawnParticle(new DissipatingImage(Projectile.Center, OrangeVFXColor(70), 0f, 0.125f, Main.rand.NextFloat(0.5f), "Scorch", new(0.5f, 0.5f), new(4, 0.33f), 30));
 
 		SoundEngine.PlaySound(SoundID.Item14 with { PitchVariance = 0.2f, Volume = 0.4f }, Projectile.Center);
 	}

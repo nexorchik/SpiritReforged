@@ -2,8 +2,6 @@
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 using SpiritReforged.Common.PrimitiveRendering;
-using Newtonsoft.Json.Linq;
-using SpiritReforged.Common.Misc;
 
 namespace SpiritReforged.Content.Particles;
 
@@ -13,6 +11,9 @@ public class DissipatingImage : Particle
 	private readonly float _maxDistortion;
 	private float _opacity;
 	public bool UseLightColor;
+	private readonly Vector2 _noiseStretch = new (1);
+	private readonly Vector2 _texExponent = new(2, 1);
+
 	public DissipatingImage(Vector2 position, Color color, float rotation, float scale, float maxDistortion, string texture, int maxTime)
 	{
 		Position = position;
@@ -22,6 +23,11 @@ public class DissipatingImage : Particle
 		_maxDistortion = maxDistortion;
 		Color = color;
 		MaxTime = maxTime;
+	}
+	public DissipatingImage(Vector2 position, Color color, float rotation, float scale, float maxDistortion, string texture, Vector2 noiseScale, Vector2 textureExponentRange, int maxTime) : this(position, color, rotation, scale, maxDistortion, texture, maxTime)
+	{
+		_noiseStretch = noiseScale;
+		_texExponent = textureExponentRange;
 	}
 
 	public DissipatingImage UsesLightColor()
@@ -52,11 +58,11 @@ public class DissipatingImage : Particle
 			effect.Parameters["uTexture"].SetValue(value);
 			effect.Parameters["perlinNoise"].SetValue(AssetLoader.LoadedTextures["noise"]);
 			effect.Parameters["Progress"].SetValue(Progress);
-			effect.Parameters["xMod"].SetValue(0.5f);
-			effect.Parameters["yMod"].SetValue(0.5f);
+			effect.Parameters["xMod"].SetValue(_noiseStretch.X);
+			effect.Parameters["yMod"].SetValue(_noiseStretch.Y);
 			effect.Parameters["distortion"].SetValue(_maxDistortion * EaseFunction.EaseQuadIn.Ease(Progress));
 
-			float texExponent = MathHelper.Lerp(4, 0.33f, _opacity);
+			float texExponent = MathHelper.Lerp(_texExponent.X, _texExponent.Y, _opacity);
 			effect.Parameters["texExponent"].SetValue(texExponent);
 
 			Color lightColor = Color.White;
