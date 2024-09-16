@@ -19,9 +19,6 @@ public interface ISwayInWind
 	}
 
 	/// <summary> Use this to modify rotation before offset is calculated. Called once per tile. </summary>
-	public void ModifyRotation(int i, int j, ref float rotation)
-	{
-	}
-
+	public void ModifyRotation(int i, int j, ref float rotation) { }
 	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin);
 }
