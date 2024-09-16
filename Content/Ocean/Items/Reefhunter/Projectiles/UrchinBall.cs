@@ -6,12 +6,13 @@ using SpiritReforged.Common.PrimitiveRendering.Trail_Components;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Common.Visuals.Glowmasks;
 using System.IO;
 using Terraria.Audio;
-using Terraria.Map;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
+[AutoloadGlowmask("Method:Content.Ocean.Items.Reefhunter.Projectiles.UrchinBall GlowColor")]
 public class UrchinBall : ModProjectile, ITrailProjectile
 {
 	private bool hasTarget = false;
@@ -20,8 +21,6 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 	private bool stuckInTile = false;
 	private Point stuckTilePos = new(0, 0);
 	private int squishTime = 0;
-
-	private static Asset<Texture2D> GlowmaskTexture;
 
 	private const int MAX_LIFETIME = 180;
 	private const int DETONATION_TIME = 90;
@@ -32,9 +31,6 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 	{
 		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
 		ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-
-		if (!Main.dedServ)
-			GlowmaskTexture = ModContent.Request<Texture2D>(Texture + "Glow");
 	}
 
 	public override void SetDefaults()
@@ -136,7 +132,7 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		relativePoint = Projectile.Center - target.Center;
 	}
 
-	public static Color GlowColor(byte alpha = 255)
+	public static Color OrangeVFXColor(byte alpha = 255)
 	{
 		var temp = new Color(255, 131, 99);
 		temp.A = alpha;
@@ -183,8 +179,8 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		for(int i = 0; i < 2; i++)
 			ParticleHandler.SpawnParticle(new TexturedPulseCircle(
 				Projectile.Center + Main.rand.NextVec2CircularEven(5, 5),
-				GlowColor(100) * 0.5f,
-				GlowColor(100) * 0.1f,
+				OrangeVFXColor(100) * 0.5f,
+				OrangeVFXColor(100) * 0.1f,
 				0.35f + Main.rand.NextFloat(-0.1f, 0.1f),
 				200 + Main.rand.NextFloat(-25, 50),
 				25 + Main.rand.Next(11),
@@ -212,11 +208,11 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 				float scale = Main.rand.NextFloat(0.5f, 0.75f);
 				int maxTime = Main.rand.Next(20, 40);
 
-				ParticleHandler.SpawnParticle(new GlowParticle(pos, vel.RotatedByRandom(0.2f) / 3, GlowColor(255), scale * 0.75f, maxTime, 1, delegate (Particle p) { p.Velocity *= 0.94f; }));
+				ParticleHandler.SpawnParticle(new GlowParticle(pos, vel.RotatedByRandom(0.2f) / 3, OrangeVFXColor(255), scale * 0.75f, maxTime, 1, delegate (Particle p) { p.Velocity *= 0.94f; }));
 			}
 		}
 
-		ParticleHandler.SpawnParticle(new DissipatingImage(Projectile.Center, GlowColor(70), 0f, 0.125f, Main.rand.NextFloat(0.5f), "Scorch", 30));
+		ParticleHandler.SpawnParticle(new DissipatingImage(Projectile.Center, OrangeVFXColor(70), 0f, 0.125f, Main.rand.NextFloat(0.5f), "Scorch", 30));
 
 		SoundEngine.PlaySound(SoundID.Item14 with { PitchVariance = 0.2f, Volume = 0.4f }, Projectile.Center);
 	}
@@ -231,13 +227,11 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		return false;
 	}
 
-	public override void PostDraw(Color lightColor)
+	public static Color GlowColor(object proj)
 	{
-		Texture2D tex = GlowmaskTexture.Value;
-
-		float alpha = 1 - FlashStrength();
-
-		Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, GlowColor(0) * (1 - alpha) * 0.5f, Projectile.rotation, tex.Size() / 2f, Projectile.scale, SpriteEffects.None, 0f);
+		var urchinball = proj as UrchinBall;
+		float alpha = 1 - urchinball.FlashStrength();
+		return OrangeVFXColor(0) * (1 - alpha);
 	}
 
 	public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
