@@ -623,3 +623,38 @@ OstrichEgg: {
 	DisplayName: Ostrich Egg
 	Tooltip: "{$BuffDescription.WellFed}"
 }
+
+Drywood: {
+	DisplayName: Drywood
+	Tooltip: ""
+}
+
+DrywoodBow: {
+	DisplayName: Drywood Bow
+	Tooltip: ""
+}
+
+DrywoodBreastplate: {
+	DisplayName: Drywood Breastplate
+	Tooltip: ""
+}
+
+DrywoodGreaves: {
+	DisplayName: Drywood Greaves
+	Tooltip: ""
+}
+
+DrywoodHammer: {
+	DisplayName: Drywood Hammer
+	Tooltip: ""
+}
+
+DrywoodHelmet: {
+	DisplayName: Drywood Helmet
+	Tooltip: ""
+}
+
+DrywoodSword: {
+	DisplayName: Drywood Sword
+	Tooltip: ""
+}
