@@ -136,8 +136,12 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		relativePoint = Projectile.Center - target.Center;
 	}
 
-	private static Color lightColor = new(145, 67, 111);
-	private static Color darkColor = new(87, 35, 88);
+	public static Color GlowColor(byte alpha = 255)
+	{
+		var temp = new Color(255, 131, 99);
+		temp.A = alpha;
+		return temp;
+	}
 
 	private void HitEffects(Vector2 velocity)
 	{
@@ -149,11 +153,14 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		int particleLifetime = 20;
 		float particleLength = 60 * velocityRatio;
 
-		var noiseCone = new MotionNoiseCone(Projectile.Center - Vector2.Normalize(velocity) * (particleLength * 0.2f), darkColor, lightColor,
-			particleLength * 3.5f, particleLength, velocity.ToRotation() + MathHelper.Pi, particleLifetime, 1f);
-		noiseCone = noiseCone.SetExtraData(true, 2.5f, 12, 2f, 1.25f * velocityRatio, 1.2f);
-		noiseCone.Velocity = Vector2.Normalize(velocity) * velocityRatio;
-		ParticleHandler.SpawnParticle(noiseCone);
+		ParticleHandler.SpawnParticle(new UrchinImpact(
+						Projectile.Center - velocity * 0.8f,
+						Vector2.Normalize(velocity) * velocityRatio,
+						particleLength * 3.5f,
+						particleLength,
+						velocity.ToRotation() + MathHelper.Pi,
+						particleLifetime,
+						velocityRatio));
 
 		AssetLoader.VertexTrailManager.TryEndTrail(Projectile, 12);
 		squishTime = MAX_SQUISHTIME;
@@ -176,8 +183,8 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		for(int i = 0; i < 2; i++)
 			ParticleHandler.SpawnParticle(new TexturedPulseCircle(
 				Projectile.Center + Main.rand.NextVec2CircularEven(5, 5),
-				new Color(255, 131, 99, 100) * 0.5f,
-				new Color(255, 131, 99, 100) * 0.1f,
+				GlowColor(100) * 0.5f,
+				GlowColor(100) * 0.1f,
 				0.35f + Main.rand.NextFloat(-0.1f, 0.1f),
 				200 + Main.rand.NextFloat(-25, 50),
 				25 + Main.rand.Next(11),
@@ -205,11 +212,11 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 				float scale = Main.rand.NextFloat(0.5f, 0.75f);
 				int maxTime = Main.rand.Next(20, 40);
 
-				ParticleHandler.SpawnParticle(new GlowParticle(pos, vel.RotatedByRandom(0.2f) / 3, new Color(255, 131, 99), scale * 0.75f, maxTime, 1, delegate (Particle p) { p.Velocity *= 0.94f; }));
+				ParticleHandler.SpawnParticle(new GlowParticle(pos, vel.RotatedByRandom(0.2f) / 3, GlowColor(255), scale * 0.75f, maxTime, 1, delegate (Particle p) { p.Velocity *= 0.94f; }));
 			}
 		}
 
-		ParticleHandler.SpawnParticle(new DissipatingImage(Projectile.Center, new Color(255, 131, 99, 70), 0f, 0.125f, Main.rand.NextFloat(0.5f), "Scorch", 30));
+		ParticleHandler.SpawnParticle(new DissipatingImage(Projectile.Center, GlowColor(70), 0f, 0.125f, Main.rand.NextFloat(0.5f), "Scorch", 30));
 
 		SoundEngine.PlaySound(SoundID.Item14 with { PitchVariance = 0.2f, Volume = 0.4f }, Projectile.Center);
 	}
@@ -230,7 +237,7 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 
 		float alpha = 1 - FlashStrength();
 
-		Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Color.OrangeRed.Additive() * (1 - alpha) * 0.5f, Projectile.rotation, tex.Size() / 2f, Projectile.scale, SpriteEffects.None, 0f);
+		Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, GlowColor(0) * (1 - alpha) * 0.5f, Projectile.rotation, tex.Size() / 2f, Projectile.scale, SpriteEffects.None, 0f);
 	}
 
 	public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
@@ -254,91 +261,5 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		stuckInTile = reader.ReadBoolean();
 		relativePoint = reader.ReadVector2();
 		stuckTilePos = reader.ReadVector2().ToPoint();
-	}
-}
-
-public class UrchinSpike : ModProjectile, ITrailProjectile
-{
-	private static Asset<Texture2D> GlowmaskTexture;
-	public override void SetStaticDefaults()
-	{
-		// DisplayName.SetDefault("Urchin");
-		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 20;
-		ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-		if (!Main.dedServ)
-			GlowmaskTexture = ModContent.Request<Texture2D>(Texture + "Glow");
-	}
-
-	private bool hasTarget = false;
-	private Vector2 relativePoint = Vector2.Zero;
-
-	public override void SetDefaults()
-	{
-		Projectile.width = 6;
-		Projectile.height = 6;
-		Projectile.DamageType = DamageClass.Magic;
-		Projectile.friendly = true;
-		Projectile.penetrate = 1;
-		Projectile.aiStyle = 0;
-		Projectile.extraUpdates = 3;
-		Projectile.timeLeft = 60;
-		Projectile.scale = Main.rand.NextFloat(0.7f, 1.1f);
-	}
-
-	public void DoTrailCreation(TrailManager tm) => tm.CreateTrail(Projectile, new LightColorTrail(new Color(87, 35, 88) * 0.2f, Color.Transparent), new RoundCap(), new DefaultTrailPosition(), 8 * Projectile.scale, 75);
-
-	public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => !hasTarget;
-	public override bool? CanCutTiles() => !hasTarget;
-
-	public override void AI()
-	{
-		Projectile.alpha = (255 - (int)(Projectile.timeLeft / 60f * 255));
-		Projectile.scale = EaseFunction.EaseCircularOut.Ease(Projectile.Opacity);
-		Projectile.velocity *= 0.96f;
-		if (!hasTarget)
-			Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-
-		else
-		{
-			NPC npc = Main.npc[(int)Projectile.ai[1]];
-			Projectile.velocity *= 0.92f;
-			relativePoint += Projectile.velocity;
-
-			if (!npc.active)
-				Projectile.Kill();
-			else
-				Projectile.Center = npc.Center + relativePoint;
-		}
-	}
-
-	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-	{
-		Projectile.ai[1] = target.whoAmI;
-		Projectile.tileCollide = false;
-		Projectile.netUpdate = true;
-		Projectile.alpha = 0;
-		Projectile.penetrate++;
-		Projectile.velocity *= 0.8f;
-
-		hasTarget = true;
-		relativePoint = Projectile.Center - target.Center;
-		
-		if(!Main.dedServ)
-			AssetLoader.VertexTrailManager.TryEndTrail(Projectile, 12);
-	}
-
-	public override bool PreDraw(ref Color lightColor)
-	{
-		Vector2 texSize = TextureAssets.Projectile[Projectile.type].Value.Size();
-		Projectile.QuickDraw(origin: new Vector2(texSize.X / 2, 0));
-		Projectile.QuickDrawTrail(baseOpacity: 0.25f, drawOrigin: new Vector2(texSize.X / 2, 0));
-
-		return false;
-	}
-	public override void PostDraw(Color lightColor)
-	{
-		Texture2D tex = GlowmaskTexture.Value;
-
-		Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, new Color(255, 131, 99, 50) * Projectile.Opacity * Projectile.Opacity, Projectile.rotation, new Vector2(tex.Size().X / 2f, 0), Projectile.scale, SpriteEffects.None, 0f);
 	}
 }

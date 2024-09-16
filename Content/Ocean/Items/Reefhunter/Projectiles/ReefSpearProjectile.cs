@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using SpiritReforged.Content.Particles;
 using System.IO;
 using Terraria.Audio;
@@ -133,19 +134,23 @@ public class ReefSpearProjectile : ModProjectile
 				if (!Main.dedServ)
 				{
 					SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack with { PitchVariance = 0.3f, Volume = 0.75f, MaxInstances = -1 }, Projectile.Center);
-					var lightColor = new Color(251, 204, 62, 220);
-					var darkColor = new Color(230, 27, 112, 220);
 					int particleLifetime = stabTimes[i] + 5;
 					if (i < stabTimes.ToArray().Length - 1)
 						particleLifetime -= stabTimes[i + 1];
 
 					Vector2 particleVelocity = RealDirection / particleLifetime;
+					particleVelocity *= -1.75f;
 
-					var noiseCone = new MotionNoiseCone(Projectile, Projectile.Center, darkColor, lightColor,
-						170 * length, 2.75f * MAX_DISTANCE, _direction.ToRotation() + _rotationOffset * _rotationDirection, particleLifetime, 1f, 6);
-					noiseCone.Velocity = -particleVelocity * 1.75f;
-					noiseCone = noiseCone.SetExtraData(true, 2.25f, 12, 1.25f, 1.5f, 0.7f);
-					ParticleHandler.SpawnParticle(noiseCone);
+					ParticleHandler.SpawnParticle(new ReefSpearImpact(
+						Projectile,
+						Projectile.Center,
+						particleVelocity,
+						170 * length,
+						2.75f * MAX_DISTANCE,
+						_direction.ToRotation() + _rotationOffset * _rotationDirection,
+						particleLifetime,
+						0.8f,
+						6));
 				}
 			}
 		}

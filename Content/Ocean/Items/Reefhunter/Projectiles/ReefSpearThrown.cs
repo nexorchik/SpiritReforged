@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 
@@ -123,15 +124,18 @@ public class ReefSpearThrown : ModProjectile
 
 	private void MakeParticles(Vector2 velocity)
 	{
-		var lightColor = new Color(251, 204, 62);
-		var darkColor = new Color(230, 27, 112);
 		int particleLifetime = 30;
 		float velocityRatio = Math.Min(velocity.Length() / MAX_SPEED, 1);
 
-		var noiseCone = new MotionNoiseCone(Projectile.Center - velocity * 2, darkColor, lightColor,
-			200, 100, velocity.ToRotation() + MathHelper.Pi, particleLifetime, 1f);
-		noiseCone.Velocity = Vector2.Normalize(velocity) * 4 * velocityRatio;
-		noiseCone = noiseCone.SetExtraData(true, 2.25f, 12, 2f, 1.25f * velocityRatio, 1.2f);
-		ParticleHandler.SpawnParticle(noiseCone);
+		ParticleHandler.SpawnParticle(new ReefSpearImpact(
+						Projectile,
+						Projectile.Center,
+						Vector2.Normalize(velocity) * 4 * velocityRatio,
+						200,
+						100,
+						velocity.ToRotation() + MathHelper.Pi,
+						particleLifetime,
+						1.2f,
+						6));
 	}
 }

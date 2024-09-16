@@ -5,38 +5,26 @@ using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 
 namespace SpiritReforged.Content.Particles;
 
-public class MotionNoiseCone : Particle
+public abstract class MotionNoiseCone : Particle
 {
-	public bool UseLightColor { get; set; } = false;
-
 	private readonly float _width;
 	private readonly float _length;
-	private readonly float _taper;
-	private readonly Color _lightColor;
 	private Entity _attatchedEntity = null;
 	private Vector2 _offset = Vector2.Zero;
 
-	private int _detatchTime;
-	private Vector2 _oldPosition;
+	private readonly int _detatchTime;
 
-	public MotionNoiseCone(Vector2 position, Color darkColor, Color lightColor, float width, float length, float rotation, int maxTime, float tapering = 1)
+	public MotionNoiseCone(Vector2 position, Vector2 velocity, float width, float length, float rotation, int maxTime)
 	{
 		Position = position;
+		Velocity = velocity;
 		MaxTime = maxTime;
-		Color = darkColor;
-		_lightColor = lightColor;
 		Rotation = rotation;
 		_width = width;
 		_length = length;
-		_taper = tapering;
 	}
 
-	public MotionNoiseCone(Vector2 position, Color color, float width, float length, float rotation, int maxTime, float tapering = 1) : this(position, color, color, width, length, rotation, maxTime, tapering)
-	{
-
-	}
-
-	public MotionNoiseCone(Entity entity, Vector2 basePosition, Color darkColor, Color lightColor, float width, float length, float rotation, int maxTime, float tapering = 1, int detatchTime = -1) : this(basePosition, darkColor, lightColor, width, length, rotation, maxTime, tapering)
+	public MotionNoiseCone(Entity entity, Vector2 basePosition, Vector2 velocity, float width, float length, float rotation, int maxTime, int detatchTime = -1) : this(basePosition, velocity, width, length, rotation, maxTime)
 	{
 		_attatchedEntity = entity;
 		_offset = basePosition - entity.Center;
@@ -52,7 +40,7 @@ public class MotionNoiseCone : Particle
 		{
 			if (!_attatchedEntity.active)
 			{
-				Kill();
+				_attatchedEntity = null;
 				return;
 			}
 
@@ -65,32 +53,102 @@ public class MotionNoiseCone : Particle
 
 	public override ParticleDrawType DrawType => ParticleDrawType.Custom;
 
+	public override ParticleLayer DrawLayer => ParticleLayer.AbovePlayer;
+
+	internal virtual Color DarkColor { get; set; }
+	internal virtual Color BrightColor { get; set; }
+	internal virtual bool UseLightColor { get; set; }
+
+	/// <summary>
+	/// Controls the scrolling of the noise texture.
+	/// </summary>
+	/// <returns></returns>
+	internal virtual float GetScroll() => Progress;
+
+	/// <summary>
+	/// Controls how the shader dissipates- the current progress, final exponent the shader is raised to, and how much the x coordinate affects it
+	/// </summary>
+	/// <param name="dissipationProgress">The current progress of dissipation. If not altered, defaults to the current progress of the particle.</param>
+	/// <param name="finalExponent">The final exponent the shader is raised to over the course of the dissipation. If not altered, defaults to 1.</param>
+	/// <param name="xCoordExponent">The exponent the distance between the current x coordinate and the dissipation is raised to. Defaults to 1, a lower exponent means the distance factor is more subtle.</param>
+	internal virtual void DissipationStyle(ref float dissipationProgress, ref float finalExponent, ref float xCoordExponent) { }
+
+	/// <summary>
+	/// Controls the exponent the texture is raised to when first sampling it, and how much it increases or decreases based on the current x distance.
+	/// </summary>
+	/// <param name="minExponent">The exponent of the texture when x is 0.</param>
+	/// <param name="maxExponent">The exponent of the texture when x is 1.</param>
+	/// <param name="lerpExponent">The easing exponent of the interpolation between the min and max exponents.</param>
+	internal virtual void TextureExponent(ref float minExponent, ref float maxExponent, ref float lerpExponent) { }
+	/// <summary>
+	/// How much the noise image is stretched. Divides the dimensions of the particle by this factor to get the adjusted noise coordinates.
+	/// </summary>
+	internal virtual Vector2 TextureStretch => new(1000, 200);
+
+	/// <summary>
+	/// Controls how the particle fades across the x coordinate.
+	/// </summary>
+	/// <param name="centeredPosition">The x coordinate where the shader is the brightest- darkens when further away from this point. Defaults to 0, the tip of the particle.</param>
+	/// <param name="exponent">The exponent to which the shader is raised based on how far away it is from the centered position.</param>
+	internal virtual void XDistanceFade(ref float centeredPosition, ref float exponent) { }
+
+	/// <summary>
+	/// Controls how the particle tapers from an x coordinate of 1 to an x coordinate of 0.
+	/// </summary>
+	/// <param name="totalTapering">The amount it's tapered when x is 0. At 1, the particle will be completely pointed, at 0, the particle is rectangular.</param>
+	/// <param name="taperExponent">Exponent that affects the easing of the interpolation, controlling the shape of the particle. Curved outwards below 1, curved inwards above 1.</param>
+	internal virtual void TaperStyle(ref float totalTapering, ref float taperExponent) { }
+
+	/// <summary>
+	/// The final number of colors after posturization. More colors means more of a gradient.
+	/// </summary>
+	internal virtual int NumColors { get; set; }
+
+	/// <summary>
+	/// The rate at which the shader interpolates between the dark color and the light color.
+	/// </summary>
+	internal virtual float ColorLerpExponent { get; set; }
+
+	/// <summary>
+	/// Final modifier to the color after all calculations.
+	/// </summary>
+	internal virtual float FinalIntensity { get; set; }
+
 	public override void CustomDraw(SpriteBatch spriteBatch)
 	{
 		Effect effect = AssetLoader.LoadedShaders["MotionNoiseCone"];
 		Texture2D texture = AssetLoader.LoadedTextures["vnoise"];
 		effect.Parameters["uTexture"].SetValue(texture);
-		effect.Parameters["Tapering"].SetValue(_taper);
 
-		float progress = TimeActive/20f;
-		effect.Parameters["scroll"].SetValue(1 - progress);
-		float dissipation = (float)Math.Max(1.33f * (Progress - 0.25f), 0);
+		Vector2 Tapering = new Vector2(0, 1);
+		TaperStyle(ref Tapering.X, ref Tapering.Y);
+		effect.Parameters["Tapering"].SetValue(Tapering);
 
+		effect.Parameters["scroll"].SetValue(GetScroll());
+		//float dissipation = (float)Math.Max(1.33f * (Progress - 0.25f), 0);
+
+		var dissipation = new Vector3(Progress, 1, 1);
+		DissipationStyle(ref dissipation.X, ref dissipation.Y, ref dissipation.Z);
 		effect.Parameters["dissipation"].SetValue(dissipation);
 
-		var secondaryColorLerp = Color.Lerp(Color, _lightColor, 1 - dissipation);
-		effect.Parameters["uColor"].SetValue(Color.ToVector4());
+		var secondaryColorLerp = Color.Lerp(DarkColor, BrightColor, 1 - dissipation.X);
+		effect.Parameters["uColor"].SetValue(DarkColor.ToVector4());
 		effect.Parameters["uColor2"].SetValue(secondaryColorLerp.ToVector4());
 
-		var noiseStretch = new Vector2(1000f, 200f);
-		effect.Parameters["xMod"].SetValue(_length / noiseStretch.X);
-		effect.Parameters["yMod"].SetValue(_width / noiseStretch.Y);
+		var noiseStretch = new Vector2(_length / TextureStretch.X, _width / TextureStretch.Y);
+		effect.Parameters["textureStretch"].SetValue(noiseStretch);
 
-		effect.Parameters["texExponentLerp"].SetValue(_textureExponent);
-		effect.Parameters["numColors"].SetValue(_numColors);
-		effect.Parameters["colorLerpExponent"].SetValue(_colorLerpExponent);
-		effect.Parameters["finalIntensityMod"].SetValue(_intensityMod);
-		effect.Parameters["TaperExponent"].SetValue(_taperingExponent);
+		var texExponent = new Vector3(0.01f, 30f, 1);
+		TextureExponent(ref texExponent.X, ref texExponent.Y, ref texExponent.Z);
+		effect.Parameters["texExponentLerp"].SetValue(texExponent);
+
+		var xDistExponent = new Vector2(0f, 2f);
+		XDistanceFade(ref xDistExponent.X, ref xDistExponent.Y);
+		effect.Parameters["xDistExponent"].SetValue(xDistExponent);
+
+		effect.Parameters["numColors"].SetValue(NumColors);
+		effect.Parameters["colorLerpExponent"].SetValue(ColorLerpExponent);
+		effect.Parameters["finalIntensityMod"].SetValue(FinalIntensity);
 
 		Color lightColor = Color.White;
 		if (UseLightColor)
@@ -98,7 +156,7 @@ public class MotionNoiseCone : Particle
 
 		var square = new SquarePrimitive
 		{
-			Color = lightColor,
+			Color = lightColor * (1 - dissipation.X),
 			Height = _width,
 			Length = _length,
 			Position = Position - Main.screenPosition,
@@ -106,34 +164,4 @@ public class MotionNoiseCone : Particle
 		};
 		PrimitiveRenderer.DrawPrimitiveShape(square, effect);
 	}
-
-	private float _textureExponent = 1f;
-	private int _numColors = 10;
-	private float _colorLerpExponent = 1f;
-	private float _intensityMod = 1f;
-	private float _taperingExponent = 1f;
-
-	/// <summary>
-	/// Sets additional data regarding the shader applied to this particle.
-	/// </summary>
-	/// <param name="usesLightColor">Whether or not the particle uses the light color at its position.</param>
-	/// <param name="textureExponent">Exponentiates the exponent applied to the texture sample as the coordinates go from 0 to 1. A higher exponent here means the exponent on the texture is weaker.</param>
-	/// <param name="numColors">The number of colors allowed for posterization</param>
-	/// <param name="colorInterpolationExponent">The exponent at which it interpolates from the dark color to the light color.</param>
-	/// <param name="finalColorModifier">A modifier applied after all other calculations in the shader</param>
-	/// <param name="taperingExponent">The exponent applied to the tapering of the shader. Below 1 makes it curve outwards, above 1 makes it curve inwards.</param>
-	/// <returns></returns>
-	public MotionNoiseCone SetExtraData(bool usesLightColor = false, float textureExponent = 1, int numColors = 10, float colorInterpolationExponent = 1, float finalColorModifier = 1, float taperingExponent = 1)
-	{
-		UseLightColor = usesLightColor;
-		_textureExponent = textureExponent;
-		_numColors = numColors;
-		_colorLerpExponent = colorInterpolationExponent;
-		_intensityMod = finalColorModifier;
-		_taperingExponent = taperingExponent;
-
-		return this;
-	}
-
-	public override ParticleLayer DrawLayer => ParticleLayer.AbovePlayer;
 }

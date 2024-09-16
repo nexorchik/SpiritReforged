@@ -10,16 +10,15 @@ sampler textureSampler = sampler_state
 };
 float4 uColor;
 float4 uColor2;
-float Tapering;
-float TaperExponent;
+float2 Tapering;
 float scroll;
-float dissipation;
-float xMod;
-float yMod;
-float texExponentLerp;
+float3 dissipation;
+float2 textureStretch;
+float3 texExponentLerp;
 float colorLerpExponent;
 float finalIntensityMod;
 int numColors;
+float2 xDistExponent;
 
 
 struct VertexShaderInput
@@ -49,25 +48,36 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
     return output;
 };
 
-const float xFadeDist = 0.2f;
-const float colorLerpThreshold = 0.5f;
+float dissipateStrength(float strength, float xCoord)
+{
+    if (xCoord < dissipation.x)
+    {
+        float dissipationFactor = pow((dissipation.x - xCoord) / dissipation.x, max(dissipation.z, 0));
+        strength = max(strength - dissipationFactor, 0);
+    }
+    
+    strength *= pow((1 - dissipation.x), 0.5f);
+    strength = pow(strength, lerp(1, dissipation.y, dissipation.x));
+    return strength;
+}
+
 float4 MainPS(VertexShaderOutput input) : COLOR0
 {
     float yCoord = input.TextureCoordinates.y;
     float4 finalColor = uColor;
-    float taperMod = max(lerp(1, pow(input.TextureCoordinates.x, TaperExponent), Tapering), 0.01f);
+    float taperMod = max(lerp(1, pow(input.TextureCoordinates.x, Tapering.y), Tapering.x), 0.01f);
     
     //Center the y coordinate around 0.5, then divide it based on the x coordinate to "compress" it
     yCoord -= 0.5f;
     yCoord /= taperMod;
     yCoord += 0.5f;
     
-    float2 textureCoords = float2((input.TextureCoordinates.x + scroll) * xMod, yCoord * yMod);
+    float2 textureCoords = float2((input.TextureCoordinates.x + scroll) * textureStretch.x, yCoord * textureStretch.y);
     
     float strength = tex2D(textureSampler, textureCoords).r; //sample texture for base value
     float absYDist = 1 - (abs(yCoord - 0.5f) * 2);
     
-    float sampleTexExponent = lerp(0.01f, 30, pow(input.TextureCoordinates.x, texExponentLerp)); //start at a low number, increase exponent based on x coordinate to make the dots appear smaller
+    float sampleTexExponent = lerp(texExponentLerp.x, texExponentLerp.y, pow(input.TextureCoordinates.x, texExponentLerp.z)); //start at a low number, increase exponent based on x coordinate to make the dots appear smaller
     strength = pow(strength, sampleTexExponent);
     
     if (absYDist < 0) //Return 0 no matter what if absolute y distance is too far- prevents the colors from breaking if tapering is active
@@ -76,14 +86,8 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     strength *= pow(1 - cos(1.57f * absYDist), 0.33f); //slow fadeout based on absolute distance vertically
     strength *= pow(absYDist, 0.33f);
     
-    strength *= pow(cos(1.57f * (input.TextureCoordinates.x - 0.15f)), 2); //fadeout based on x coordinate
-    if (input.TextureCoordinates.x < dissipation)
-    {
-        float dissipationFactor = pow((dissipation - input.TextureCoordinates.x) / dissipation, 1.5f);
-        strength = pow(max(strength - dissipationFactor, 0), 1 + dissipationFactor);
-    }
-    
-    strength *= pow((1 - dissipation), 0.5f);
+    strength *= pow(cos(1.57f * (input.TextureCoordinates.x - xDistExponent.x)), xDistExponent.y); //fadeout based on x coordinate
+    strength = dissipateStrength(strength, input.TextureCoordinates.x);
     
     strength = round(strength * numColors) / numColors;
     
