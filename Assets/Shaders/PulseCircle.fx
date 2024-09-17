@@ -99,7 +99,7 @@ float4 TexturedRing(VertexShaderOutput input) : COLOR0
     xCoord += scroll;
     float yCoord = GetDistance(input.TextureCoordinates);
     yCoord -= 0.5f;
-    yCoord *= textureStretch.y;
+    yCoord *= textureStretch.y / RingWidth;
     yCoord += 0.5f;
     float4 texColor = tex2D(textureSampler, float2(xCoord * textureStretch.x, yCoord)).r;
     

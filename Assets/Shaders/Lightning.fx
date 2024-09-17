@@ -16,8 +16,10 @@ sampler noiseSampler = sampler_state
 
 float Progress;
 float uTime;
-float xMod;
-float yMod;
+float2 textureStretch;
+float2 noiseStretch;
+float2 exponentRange;
+float2 distortRange;
 
 struct VertexShaderInput
 {
@@ -54,13 +56,20 @@ float GetAbsDistance(float inputCoordinate)
 float4 MainPS(VertexShaderOutput input) : COLOR0
 {
     float4 color = input.Color;
-    float dissipateProgress = pow(Progress, 4); //quartic easing
+    float dissipateProgress = pow(Progress, 3); //quartic easing    
     
-    float2 texCoords = float2((input.TextureCoordinates.x * xMod) + uTime, (input.TextureCoordinates.y / yMod) + (0.5f - 0.5f / yMod)); //y coordinate math here is to center it on 0.5f
-    float2 noiseCoords = float2((input.TextureCoordinates.x + (Progress / 8)) * 50 * xMod, (input.TextureCoordinates.y) * yMod) / 15; //x coordinate is multiplied to "compress" it, then coordinates as a whole are divided to "expand" the image
+    float2 noiseCoords = float2((input.TextureCoordinates.x + (Progress / 8)) * noiseStretch.x, (input.TextureCoordinates.y) * noiseStretch.y);
+    float noiseStrength = pow(tex2D(noiseSampler, noiseCoords).r, 3);
+    float yDistortion = lerp(distortRange.x, distortRange.y, Progress) * (noiseStrength - 0.5f);
+    yDistortion *= pow(1 - GetAbsDistance(input.TextureCoordinates.x), 2);
     
-    float noiseStrength = pow(tex2D(noiseSampler, noiseCoords).r, 2);
-    float strength = pow(tex2D(textureSampler, texCoords).r, 4);
+    float yCoord = input.TextureCoordinates.y + yDistortion - 0.5f;
+    yCoord *= textureStretch.y;
+    yCoord += 0.5f;
+    float2 texCoords = float2((input.TextureCoordinates.x * textureStretch.x) + uTime, yCoord); //y coordinate math here is to center it on 0.5f
+    
+    float texExponent = lerp(exponentRange.x, exponentRange.y, dissipateProgress);
+    float strength = pow(tex2D(textureSampler, texCoords).r, texExponent);
     
     //Quick flash of bloom based on vertical absolute distance and how much the animation has progressed, using cubic in easing
     float bloomStrength = pow((1 - GetAbsDistance(input.TextureCoordinates.y)), 3) * pow(1 - Progress, 3);
@@ -70,14 +79,6 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     float xFadeOut = max(((GetAbsDistance(input.TextureCoordinates.x) - 0.8f) * 5), 0);
     strength *= pow(1 - xFadeOut, 1.5f);
     strength = pow(strength, 1 + xFadeOut);
-    
-    if (dissipateProgress > noiseStrength)
-    {
-        //dissipate strength is based on how far the progress has exceeded the noise texture strength at the coordinates, multiplied and raised to a power to make it appear "sharper"
-        float dissipateStrength = min((dissipateProgress - noiseStrength) * 4, 1);
-        dissipateStrength = pow(dissipateStrength, 0.33f);
-        return lerp(color * strength, float4(0, 0, 0, 0), dissipateStrength);
-    }
     
     return color * strength;
 }

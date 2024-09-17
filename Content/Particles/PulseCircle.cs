@@ -29,8 +29,9 @@ public class PulseCircle : Particle
 	private readonly Color _bloomColor;
 	private Vector2 _offset = Vector2.Zero;
 	private readonly float _ringWidth;
+	private readonly float _endRingWidth;
 
-	public PulseCircle(Vector2 position, Color ringColor, Color bloomColor, float ringWidth, float maxRadius, int maxTime, EaseFunction MovementStyle = null, bool inverted = false)
+	public PulseCircle(Vector2 position, Color ringColor, Color bloomColor, float ringWidth, float maxRadius, int maxTime, EaseFunction MovementStyle = null, bool inverted = false, float endRingWidth = 0)
 	{
 		Position = position;
 		Color = ringColor;
@@ -40,18 +41,19 @@ public class PulseCircle : Particle
 		_easeType = MovementStyle ?? EaseFunction.Linear;
 		_inversePulse = inverted;
 		_ringWidth = ringWidth;
+		_endRingWidth = endRingWidth;
 	}
 
-	public PulseCircle(Entity attatchedEntity, Color ringColor, Color bloomColor, float ringWidth, float maxRadius, int maxTime, EaseFunction MovementStyle = null, Vector2? startingPosition = null, bool inverted = false) : this(attatchedEntity.Center, ringColor, bloomColor, ringWidth, maxRadius, maxTime, MovementStyle, inverted)
+	public PulseCircle(Entity attatchedEntity, Color ringColor, Color bloomColor, float ringWidth, float maxRadius, int maxTime, EaseFunction MovementStyle = null, Vector2? startingPosition = null, bool inverted = false, float endRingWidth = 0) : this(attatchedEntity.Center, ringColor, bloomColor, ringWidth, maxRadius, maxTime, MovementStyle, inverted, endRingWidth)
 	{
 		_entity = attatchedEntity;
 		Position = _entity.Center;
 		_offset = startingPosition != null ? startingPosition.Value - _entity.Center : Vector2.Zero;
 	}
 
-	public PulseCircle(Vector2 position, Color color, float ringWidth, float maxRadius, int maxTime, EaseFunction MovementStyle = null, bool inverted = false) : this(position, color, color * 0.25f, ringWidth, maxRadius, maxTime, MovementStyle, inverted) { }
+	public PulseCircle(Vector2 position, Color color, float ringWidth, float maxRadius, int maxTime, EaseFunction MovementStyle = null, bool inverted = false, float endRingWidth = 0) : this(position, color, color * 0.25f, ringWidth, maxRadius, maxTime, MovementStyle, inverted, endRingWidth) { }
 
-	public PulseCircle(Entity attatchedEntity, Color color, float ringWidth, float maxRadius, int maxTime, EaseFunction MovementStyle = null, Vector2? startingPosition = null, bool inverted = false) : this(attatchedEntity, color, color * 0.25f, ringWidth, maxRadius, maxTime, MovementStyle, startingPosition, inverted) { }
+	public PulseCircle(Entity attatchedEntity, Color color, float ringWidth, float maxRadius, int maxTime, EaseFunction MovementStyle = null, Vector2? startingPosition = null, bool inverted = false, float endRingWidth = 0) : this(attatchedEntity, color, color * 0.25f, ringWidth, maxRadius, maxTime, MovementStyle, startingPosition, inverted, endRingWidth) { }
 
 	public override void Update()
 	{
@@ -72,7 +74,7 @@ public class PulseCircle : Particle
 		float Progress = GetProgress();
 
 		Scale = _maxRadius * Progress;
-		_opacity = Math.Min(2 * (1 - Progress), 1f);
+		_opacity = Math.Min(3 * (1 - Progress), 1f);
 	}
 
 	private float GetProgress()
@@ -94,7 +96,7 @@ public class PulseCircle : Particle
 		Effect effect = AssetLoader.LoadedShaders["PulseCircle"];
 		effect.Parameters["RingColor"].SetValue(Color.ToVector4());
 		effect.Parameters["BloomColor"].SetValue(_bloomColor.ToVector4());
-		effect.Parameters["RingWidth"].SetValue(_ringWidth * EaseFunction.EaseCubicIn.Ease(_opacity));
+		effect.Parameters["RingWidth"].SetValue(_ringWidth * MathHelper.Lerp(1, _endRingWidth, 1 - EaseFunction.EaseCubicIn.Ease(_opacity)));
 		EffectExtras(ref effect);
 		Color lightColor = Color.White;
 		if (UseLightColor)
@@ -102,7 +104,7 @@ public class PulseCircle : Particle
 
 		var square = new SquarePrimitive
 		{
-			Color = lightColor * _opacity,
+			Color = lightColor * EaseFunction.EaseCubicOut.Ease(_opacity),
 			Height = Scale,
 			Length = Scale * (1 - ZRotation),
 			Position = Position - Main.screenPosition,

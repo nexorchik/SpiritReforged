@@ -198,7 +198,7 @@ public class ReefSpearProjectile : ModProjectile
 				new Color(230, 27, 112) * 0.5f,
 				0.75f,
 				200 * scaleMod,
-				35,
+				(int)(35 * scaleMod),
 				"noise",
 				new Vector2(4, 0.75f),
 				EaseFunction.EaseCubicOut).WithSkew(0.75f, MathHelper.Pi + _direction.ToRotation() + _rotationOffset * _rotationDirection).UsesLightColor();
@@ -206,7 +206,7 @@ public class ReefSpearProjectile : ModProjectile
 
 		ParticleHandler.SpawnParticle(particle);
 
-		for(int i = 0; i < (int)(Main.rand.Next(3, 7) * scaleMod); i++)
+		for(int i = 0; i < (int)(Main.rand.Next(5, 7) * scaleMod); i++)
 		{
 			Vector2 offset = Vector2.UnitY.RotatedBy(_direction.ToRotation() + _rotationOffset * _rotationDirection) * Main.rand.NextFloat(-15, 15) * scaleMod;
 			offset = offset.RotatedByRandom(0.2f);

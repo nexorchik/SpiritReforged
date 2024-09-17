@@ -66,6 +66,7 @@ public class ExtraDrawOnPlayer : ModPlayer
 
 		if (nonPremultipliedCallPlayers.Count != 0)
 		{
+
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, AssetLoader.NonPremultipliedAlphaFix, null, null, null, null, Main.GameViewMatrix.ZoomMatrix);
 			foreach (ExtraDrawOnPlayer player in nonPremultipliedCallPlayers)
 				player.DrawAllCallsOfType(Main.spriteBatch, DrawType.NonPremultiplied);

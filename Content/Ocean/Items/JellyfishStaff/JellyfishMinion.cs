@@ -8,6 +8,7 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria;
+using SpiritReforged.Common.Misc;
 
 namespace SpiritReforged.Content.Ocean.Items.JellyfishStaff;
 
@@ -206,8 +207,22 @@ public class JellyfishMinion : BaseMinion
 
 				if (AiTimer % SHOOTTIME == 0)
 				{
+					Color particleColor = IsPink ? new Color(255, 161, 225) : new Color(156, 255, 245);
 					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricZap") with { PitchVariance = 0.3f, Pitch = 0.3f, Volume = .55f, MaxInstances = 3 }, Projectile.Center);
 					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricZap2") with { Pitch = -.45f, Volume = .35f, MaxInstances = 3 }, Projectile.Center);
+					ParticleHandler.SpawnParticle(new TexturedPulseCircle(
+						Projectile.Center + aimDirection * 10,
+						Color.White.Additive(),
+						particleColor.Additive() * 0.75f,
+						1f,
+						50,
+						20,
+						"Lightning",
+						new Vector2(1f, 0.2f),
+						EaseFunction.EaseCircularOut,
+						false,
+						0.3f).WithSkew(0.6f, aimDirection.ToRotation() + MathHelper.Pi));
+
 					var bolt = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection * JellyfishBolt.HITSCAN_STEP, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0, 0, 3);
 					bolt.netUpdate = true;
 					Projectile.netUpdate = true;

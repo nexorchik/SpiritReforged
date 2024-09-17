@@ -19,7 +19,7 @@ public class BubbleParticle : Particle
 		Color = Lighting.GetColor(Position.ToTileCoordinates().X, Position.ToTileCoordinates().Y) * 0.8f;
 	}
 
-	public override ParticleDrawType DrawType => ParticleDrawType.NonPremultiplied;
+	public override ParticleDrawType DrawType => ParticleDrawType.BatchedAdditiveBlend;
 
 	public override void Update()
 	{

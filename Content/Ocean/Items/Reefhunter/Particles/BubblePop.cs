@@ -15,7 +15,7 @@ public class BubblePop : Particle
 		MaxTime = animationTime;
 	}
 
-	public override ParticleDrawType DrawType => ParticleDrawType.CustomNonPremultiplied;
+	public override ParticleDrawType DrawType => ParticleDrawType.CustomBatchedAdditiveBlend;
 
 	public override void CustomDraw(SpriteBatch spriteBatch)
 	{

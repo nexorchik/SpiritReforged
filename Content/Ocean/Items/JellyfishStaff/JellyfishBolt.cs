@@ -1,4 +1,6 @@
-﻿using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using System.IO;
 using Terraria.Audio;
@@ -98,11 +100,24 @@ public class JellyfishBolt : ModProjectile
 
 	private void HitEffects(Vector2 center)
 	{
-		for (int i = 0; i < 15; i++)
-		{
-			Vector2 particleVelBase = -Projectile.oldVelocity.RotatedByRandom(MathHelper.Pi / 2) / HITSCAN_STEP;
-			ParticleHandler.SpawnParticle(new GlowParticle(center, particleVelBase * Main.rand.NextFloat(2f), ParticleColor, Main.rand.NextFloat(0.5f, 1f), Main.rand.Next(10, 30), 10));
-		}
+		for (int i = 0; i < 8; i++)
+			ParticleHandler.SpawnParticle(new GlowParticle(center, Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(1f, 3f), ParticleColor, Main.rand.NextFloat(0.3f, 0.5f), Main.rand.Next(30, 50), 5, delegate(Particle p) { p.Velocity *= 0.92f; }));
+
+		for (int i = 0; i < 2; i++)
+			ParticleHandler.SpawnParticle(new TexturedPulseCircle(
+				center,
+				Color.White.Additive(),
+				ParticleColor.Additive() * 0.75f,
+				0.7f,
+				80 + Main.rand.NextFloat(20),
+				20 + Main.rand.Next(10),
+				"Lightning",
+				new Vector2(1f, 0.2f),
+				EaseFunction.EaseCircularOut,
+				false,
+				0.3f).WithSkew(Main.rand.NextFloat(0.2f, 0.7f), Main.rand.NextFloat(MathHelper.PiOver2) + i * MathHelper.PiOver2));
+
+		ParticleHandler.SpawnParticle(new DissipatingImage(center, Color.White.Additive(), 0f, 0.075f, Main.rand.NextFloat(0.5f), "Scorch", new(0.5f, 0.5f), new(4, 0.2f), 40));
 	}
 
 	private Color ParticleColor => IsPink ? new Color(255, 161, 225) : new Color(156, 255, 245);

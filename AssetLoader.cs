@@ -30,8 +30,8 @@ internal static class AssetLoader
 		NonPremultipliedAlphaFix = new BlendState
 		{
 			ColorSourceBlend = Blend.SourceAlpha,
-			ColorDestinationBlend = Blend.DestinationAlpha,
 			AlphaSourceBlend = Blend.SourceAlpha,
+			ColorDestinationBlend = Blend.One,
 			AlphaDestinationBlend = Blend.InverseSourceAlpha,
 		};
 
