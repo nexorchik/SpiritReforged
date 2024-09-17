@@ -658,3 +658,8 @@ DrywoodSword: {
 	DisplayName: Drywood Sword
 	Tooltip: ""
 }
+
+HuntingRifle: {
+	DisplayName: Hunting Rifle
+	Tooltip: Deals more damage to distant targets and when standing still
+}
