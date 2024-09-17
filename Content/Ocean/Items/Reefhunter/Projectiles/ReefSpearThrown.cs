@@ -1,12 +1,14 @@
-﻿using SpiritReforged.Common.ProjectileCommon;
+﻿using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
+using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
 public class ReefSpearThrown : ModProjectile
 {
-	public override string Texture => Mod.Name + "/Content/Ocean/Items/Reefhunter/Projectiles/ReefSpearProjectile";
-
+	public const float MAX_SPEED = 13;
 	private bool hasTarget = false;
 	private Vector2 relativePoint = Vector2.Zero;
 
@@ -37,7 +39,7 @@ public class ReefSpearThrown : ModProjectile
 	{
 		if (!hasTarget)
 		{
-			Projectile.velocity.Y += 0.4f;
+			Projectile.velocity.Y += 0.3f;
 			Projectile.rotation = Projectile.velocity.ToRotation();
 			Projectile.tileCollide = Projectile.ai[0]++ > 6;
 		}
@@ -82,6 +84,8 @@ public class ReefSpearThrown : ModProjectile
 
 		hasTarget = true;
 		relativePoint = Projectile.Center - target.Center;
+
+		MakeParticles(Projectile.velocity);
 	}
 
 	public override bool PreDraw(ref Color lightColor)
@@ -113,6 +117,24 @@ public class ReefSpearThrown : ModProjectile
 				g.timeLeft = 0;
 				g.rotation = Projectile.rotation;
 			}
+
+			MakeParticles(Projectile.oldVelocity);
 		}
+	}
+
+	private void MakeParticles(Vector2 velocity)
+	{
+		int particleLifetime = 24;
+		float velocityRatio = Math.Min(velocity.Length() / MAX_SPEED, 1);
+
+		ParticleHandler.SpawnParticle(new ReefSpearImpact(
+						null,
+						Projectile.Center - Vector2.Normalize(velocity) * 6,
+						Vector2.Normalize(velocity) * 2 * velocityRatio,
+						240,
+						100,
+						velocity.ToRotation() + MathHelper.Pi,
+						particleLifetime,
+						1.2f));
 	}
 }
