@@ -235,9 +235,9 @@ public class ReefSpearProjectile : ModProjectile
 	public override void ReceiveExtraAI(BinaryReader reader)
 	{
 		_direction = reader.ReadVector2();
-		_maxTimeleft = reader.Read();
-		_realMaxTimeleft = reader.Read();
-		_rotationOffset = reader.Read();
-		_rotationDirection = reader.Read();
+		_maxTimeleft = reader.ReadInt32();
+		_realMaxTimeleft = reader.ReadInt32();
+		_rotationOffset = reader.ReadSingle();
+		_rotationDirection = reader.ReadSingle();
 	}
 }

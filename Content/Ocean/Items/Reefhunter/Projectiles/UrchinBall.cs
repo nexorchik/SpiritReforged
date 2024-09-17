@@ -177,16 +177,25 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		float angle = Main.rand.NextFloat(-0.1f, 0.1f) - MathHelper.PiOver2;
 
 		for(int i = 0; i < 2; i++)
+		{
+			var easeFunction = (i == 0) ? EaseFunction.EaseQuadOut : EaseFunction.EaseCubicOut;
+			float ringWidth = 0.35f + Main.rand.NextFloat(-0.1f, 0.1f);
+			float size = 200 + Main.rand.NextFloat(-25, 50);
+			int lifetime = 25 + Main.rand.Next(11);
+			float zRotation = Main.rand.NextFloat(0.7f, 0.9f);
+			float xyRotation = angle + Main.rand.NextFloat(0.3f, -0.3f);
+
 			ParticleHandler.SpawnParticle(new TexturedPulseCircle(
 				Projectile.Center + Main.rand.NextVec2CircularEven(5, 5),
 				OrangeVFXColor(100) * 0.5f,
 				OrangeVFXColor(100) * 0.1f,
-				0.35f + Main.rand.NextFloat(-0.1f, 0.1f),
-				200 + Main.rand.NextFloat(-25, 50),
-				25 + Main.rand.Next(11),
+				ringWidth,
+				size,
+				lifetime,
 				"noise",
 				new Vector2(3, 0.15f),
-				(i == 0) ? EaseFunction.EaseQuadOut : EaseFunction.EaseCubicOut).WithSkew(Main.rand.NextFloat(0.7f, 0.9f), angle + Main.rand.NextFloat(0.3f, -0.3f)));
+				easeFunction).WithSkew(zRotation, xyRotation));
+		}
 
 		for (int i = -1; i < 2; i += 2)
 		{
