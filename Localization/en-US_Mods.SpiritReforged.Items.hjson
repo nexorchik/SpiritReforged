@@ -434,7 +434,7 @@ FloatingDriftwood: {
 
 FishCrate: {
 	DisplayName: Packing Crate
-	Tooltip: "Right-click to open"
+	Tooltip: Right-click to open
 }
 
 Ambergris: {
@@ -631,13 +631,16 @@ Buoy: {
 
 LoungeChairItem: {
 	DisplayName: Lounge Chair
+	Tooltip: ""
+}
 
 Omelette: {
 	DisplayName: Omelette
-	Tooltip: '''
-			{$BuffDescription.WellFed2}
-			'Perfectly cooked'
-			'''
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed2}
+		'Perfectly cooked'
+		'''
 }
 
 OstrichEgg: {

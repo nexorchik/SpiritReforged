@@ -1,6 +1,8 @@
+using SpiritReforged.Common.ItemCommon.FloatingItem;
+
 namespace SpiritReforged.Content.Ocean.Items;
 
-public class Ambergris : Common.ItemCommon.FloatingItem
+public class Ambergris : FloatingItem
 {
 	public override float SpawnWeight => 0.01f;
 	public override float Weight => base.Weight * 0.9f;

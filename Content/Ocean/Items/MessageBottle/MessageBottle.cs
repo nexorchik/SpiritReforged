@@ -1,6 +1,8 @@
+using SpiritReforged.Common.ItemCommon.FloatingItem;
+
 namespace SpiritReforged.Content.Ocean.Items.MessageBottle;
 
-public class MessageBottle : Common.ItemCommon.FloatingItem
+public class MessageBottle : FloatingItem
 {
 	private static Asset<Texture2D> WorldTexture;
 
