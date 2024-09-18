@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -7,7 +8,66 @@ namespace SpiritReforged.Content.Savanna.Items.HuntingRifle;
 
 public class HuntingRifle : ModItem
 {
-    public override void SetDefaults()
+	private static Asset<Texture2D> CursorTexture;
+	private static float cursorOpacity;
+
+	public override void Load()
+	{
+		if (!Main.dedServ)
+			CursorTexture = ModContent.Request<Texture2D>(Texture.Remove(Texture.Length - Name.Length) + "Cursor_Reticle");
+
+		CustomCursor.DrawCustomCursor += DrawCustomCursor;
+	}
+
+	public override void Unload() => CustomCursor.DrawCustomCursor -= DrawCustomCursor;
+
+	private void DrawCustomCursor(bool thick)
+	{
+		if (Main.gameMenu || Main.LocalPlayer.mouseInterface || Main.LocalPlayer.HeldItem.type != Type)
+		{
+			cursorOpacity = 0;
+			return;
+		}
+
+		float scale = Main.cursorScale * .6f * (thick ? 1.1f : 1f);
+		float distance = MathHelper.Clamp(Main.LocalPlayer.Distance(Main.MouseWorld) / HunterGlobalProjectile.maxRange, 0, 1);
+		float offsetLength = 5f + (1f - distance) * 5f
+			+ (float)Main.LocalPlayer.itemAnimation / Main.LocalPlayer.itemAnimationMax * 3f
+			+ MathHelper.Min(Main.LocalPlayer.velocity.Length(), 2);
+		//Distance, item animation, and player velocity adjustments
+
+		cursorOpacity = MathHelper.Min(cursorOpacity + .05f, 1f);
+		Color color = Main.cursorColor;
+
+		if (thick) //Border cursor color
+			color = Main.MouseBorderColor;
+		else if (!Main.gameMenu && Main.LocalPlayer.hasRainbowCursor) //Rainbow cursor color
+			color = Main.hslToRgb(Main.GlobalTimeWrappedHourly * 0.25f % 1f, 1f, 0.5f);
+
+		for (int c = 0; c < 8; c++)
+		{
+			var frame = CursorTexture.Frame(2, 2, 0, thick ? 1 : 0, -2, -2);
+			var origin = frame.Size() / 2;
+			float rotation = MathHelper.PiOver2 * c;
+			var position = Main.MouseScreen + new Vector2(1, -1).RotatedBy(rotation) * offsetLength;
+
+			if (c > 3)
+			{
+				frame = CursorTexture.Frame(2, 2, 1, thick ? 1 : 0, -2, -2);
+				position = Main.MouseScreen + new Vector2(1, 0).RotatedBy(rotation) * (offsetLength + 4);
+			}
+
+			if (!thick)
+			{
+				var shadowColor = color.MultiplyRGB(new Color(100, 100, 100)) * .25f;
+				Main.spriteBatch.Draw(CursorTexture.Value, position + new Vector2(2), frame, shadowColor, rotation, origin, scale, SpriteEffects.None, 0f);
+			}
+
+			Main.spriteBatch.Draw(CursorTexture.Value, position, frame, color * cursorOpacity, rotation, origin, scale, SpriteEffects.None, 0f);
+		}
+	}
+
+	public override void SetDefaults()
     {
         Item.width = Item.height = 12;
         Item.damage = 10;
@@ -40,7 +100,7 @@ public class HuntingRifle : ModItem
             Dust.NewDustPerfect(position + unit * fxDistance + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), 
 				DustID.Smoke, unit * Main.rand.NextFloat(), 200, default, Main.rand.NextFloat(3f));
 
-		//Grant a damage multiplier (+25%) when standing still. Additional multipliers are applied in HunterGlobalProjectile
+		//Grant a damage bonus (+25%) when standing still. Additional bonuses are applied in HunterGlobalProjectile
 		float mult = (player.velocity == Vector2.Zero) ? 1.25f : 1f;
 
 		//Spawn a harmless animated projectile
