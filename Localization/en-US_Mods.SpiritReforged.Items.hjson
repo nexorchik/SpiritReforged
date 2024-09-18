@@ -614,6 +614,24 @@ CustardApple: {
 	Tooltip: ""
 }
 
+BeachUmbrellaItem: {
+	DisplayName: Beach Umbrella
+	Tooltip: ""
+}
+
+BigBuoy: {
+	DisplayName: Big Buoy
+	Tooltip: "{$ItemTooltip.CoralTorch}"
+}
+
+Buoy: {
+	DisplayName: Buoy
+	Tooltip: "{$ItemTooltip.CoralTorch}"
+}
+
+LoungeChairItem: {
+	DisplayName: Lounge Chair
+
 Omelette: {
 	DisplayName: Omelette
 	Tooltip: '''
