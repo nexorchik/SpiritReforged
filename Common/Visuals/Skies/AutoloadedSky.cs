@@ -47,11 +47,25 @@ public abstract class AutoloadedSky : CustomSky, ILoadable
 
 	public override void Activate(Vector2 position, params object[] args) => _isActive = true;
 
-	public override void Deactivate(params object[] args) => _isActive = false;
+	public override void Deactivate(params object[] args)
+	{
+		_isActive = false;
+		OnDeactivate(args);
+	}
 
-	public override void Reset() => _isActive = false;
+	public override void Reset()
+	{
+		_isActive = false;
+		OnReset();
+	}
 
 	public override bool IsActive() => _isActive || _fadeOpacity > 0;
+
+	/// <summary>
+	/// Optional hooks to run when the sky deactivates or resets.
+	/// </summary>
+	internal virtual void OnDeactivate(params object[] args) { }
+	internal virtual void OnReset() { }
 
 	/// <summary>
 	/// Determines when the sky should be activated. If this returns true, then the sky will automatically fade in, and it will automatically fade out if it returns false.
