@@ -35,6 +35,7 @@ public class ReefSpearProjectile : ModProjectile
 		Projectile.penetrate = -1;
 		Projectile.tileCollide = false;
 		Projectile.ignoreWater = true;
+		Projectile.ownerHitCheck = true;
 		Projectile.DamageType = DamageClass.Melee;
 		Projectile.aiStyle = -1;
 		Projectile.timeLeft = 70;
@@ -179,7 +180,7 @@ public class ReefSpearProjectile : ModProjectile
 		hitbox.Y = (int)pos.Y;
 	}
 
-	public override bool? CanHitNPC(NPC target) => _canHitEnemy;
+	public override bool? CanHitNPC(NPC target) => _canHitEnemy ? null : false;
 
 	public override bool CanHitPlayer(Player target) => _canHitEnemy;
 

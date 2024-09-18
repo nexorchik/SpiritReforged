@@ -39,6 +39,7 @@ public class JellyfishBolt : ModProjectile
 		Projectile.height = 4;
 		Projectile.width = 4;
 		Projectile.hide = true;
+		Projectile.ignoreWater = true;
 		Projectile.extraUpdates = JellyfishMinion.SHOOT_RANGE / HITSCAN_STEP;
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = Projectile.timeLeft * Projectile.penetrate;

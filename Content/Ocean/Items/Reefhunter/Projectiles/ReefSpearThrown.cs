@@ -86,6 +86,12 @@ public class ReefSpearThrown : ModProjectile
 		relativePoint = Projectile.Center - target.Center;
 
 		MakeParticles(Projectile.velocity);
+
+		for (int i = 0; i < Main.rand.Next(5, 7); i++)
+		{
+			Vector2 offset = (Vector2.UnitY.RotatedBy(Projectile.velocity.ToRotation()) * Main.rand.NextFloat(-15, 15)).RotatedByRandom(0.2f);
+			ParticleHandler.SpawnParticle(new BubbleParticle(Projectile.Center + offset, Vector2.Normalize(Projectile.velocity) * Main.rand.NextFloat(1f, 4f), Main.rand.NextFloat(0.1f, 0.2f), Main.rand.Next(30, 61)));
+		}
 	}
 
 	public override bool PreDraw(ref Color lightColor)
