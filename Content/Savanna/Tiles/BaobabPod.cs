@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Common.TileCommon.TileSway;
-using SpiritReforged.Content.Savanna.Items.Tools;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
@@ -7,18 +6,7 @@ namespace SpiritReforged.Content.Savanna.Tiles;
 
 public class BaobabPod : ModTile, ISwayInWind
 {
-	private static readonly Dictionary<Point16, float> hitData = [];
-
-	private static float GetRotation(int i, int j)
-	{
-		GetTopLeft(ref i, ref j);
-
-		var key = new Point16(i, j);
-		if (hitData.TryGetValue(key, out float rotation))
-			return rotation;
-
-		return 0;
-	}
+	private static readonly Dictionary<Point16, float> hitData = []; //Stores the modified rotation of the tile at these coordinates
 
 	private const int numStages = 3;
 	private static void GetTopLeft(ref int i, ref int j) //Gets the top left tile in this multitile
@@ -50,20 +38,41 @@ public class BaobabPod : ModTile, ISwayInWind
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
+		void DropCoins(int amount)
+		{
+			int[] split = Utils.CoinsSplit(amount);
+
+			for (int c = 0; c < split.Length; c++)
+			{
+				if (split[c] == 0)
+					continue;
+
+				int type = c switch
+				{
+					3 => ItemID.PlatinumCoin,
+					2 => ItemID.GoldCoin,
+					1 => ItemID.SilverCoin,
+					_ => ItemID.CopperCoin,
+				};
+
+				int numStacks = Math.Min(Main.rand.Next(3) + 1, split[c]);
+				for (int r = 0; r < numStacks; r++)
+					DropItem(i, j, type, split[c] / numStacks);
+				//Split the stack across a number of items randomly
+			}
+		}
+
 		if (!ProgressStage(i, j, out int stage))
 			return;
 
+		fail = true;
 		GetTopLeft(ref i, ref j);
 
-		#region add hitdata
-		var key = new Point16(i, j);
+		//Add hitData
 		float random = Main.rand.NextFloat(-1f, 1f) * .5f;
-
+		var key = new Point16(i, j);
 		if (!hitData.TryAdd(key, random))
 			hitData[key] = random;
-		#endregion
-
-		fail = true;
 
 		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit") with { Pitch = stage - 1 }, new Vector2(i + 1, j + 1) * 16);
 		for (int d = 0; d < 10; d++)
@@ -91,58 +100,19 @@ public class BaobabPod : ModTile, ISwayInWind
 				gore.position -= new Vector2(gore.Width, gore.Height) / 2;
 			}
 
-			DropItem(i, j, ModContent.ItemType<LivingBaobabLeafWand>());
-			DropItem(i, j, ModContent.ItemType<LivingBaobabWand>());
+			DropItem(i, j, ModContent.ItemType<Items.Tools.LivingBaobabLeafWand>());
+			DropItem(i, j, ModContent.ItemType<Items.Tools.LivingBaobabWand>());
 			DropItem(i, j, ItemID.Waterleaf, Main.rand.Next(2) + 1);
-			DropCoins(Main.rand.Next(1000, 4000));
+			DropItem(i, j, ModContent.ItemType<Items.SavannaGrassSeeds>(), Main.rand.Next(3) + 1);
+			DropItem(i, j, ModContent.ItemType<Items.BaobabFruit.BaobabFruit>());
+
+			if (Main.rand.NextBool(3))
+				DropItem(i, j, ItemID.Vine);
+
+			DropCoins(Main.rand.Next(500, 800));
 		} //Break open
 		else
-			DropCoins(Main.rand.Next(250, 500));
-
-		void DropCoins(int amount)
-		{
-			int[] split = Utils.CoinsSplit(amount);
-
-			for (int c = 0; c < split.Length; c++)
-			{
-				if (split[c] == 0)
-					continue;
-
-				int type = c switch
-				{
-					3 => ItemID.PlatinumCoin,
-					2 => ItemID.GoldCoin,
-					1 => ItemID.SilverCoin,
-					_ => ItemID.CopperCoin,
-				};
-
-				int numStacks = Math.Min(Main.rand.Next(3) + 1, split[c]);
-				for (int r = 0; r < numStacks; r++)
-					DropItem(i, j, type, split[c] / numStacks);
-				//Split the stack across a number of items randomly
-			}
-		}
-	}
-
-	public override void KillMultiTile(int i, int j, int frameX, int frameY)
-	{
-		var key = new Point16(i, j);
-		hitData.Remove(key);
-	} //Remove our hitdata
-
-	private static void DropItem(int i, int j, int type, int stack = 1)
-	{
-		var source = new EntitySource_TileBreak(i, j);
-
-		if (Main.netMode != NetmodeID.MultiplayerClient)
-		{
-			int id = Item.NewItem(source, new Rectangle(i * 16, j * 16, 32, 16), type, stack, true);
-			Main.item[id].velocity = (Vector2.UnitY * -Main.rand.NextFloat(1f, 4f)).RotatedByRandom(1.5f);
-			Main.item[id].noGrabDelay = 100;
-
-			if (Main.netMode != NetmodeID.SinglePlayer)
-				NetMessage.SendData(MessageID.SyncItem, number: id);
-		}
+			DropCoins(Main.rand.Next(150, 200));
 	}
 
 	private static bool ProgressStage(int i, int j, out int stage)
@@ -166,8 +136,40 @@ public class BaobabPod : ModTile, ISwayInWind
 		return true;
 	}
 
+	private static void DropItem(int i, int j, int type, int stack = 1)
+	{
+		var source = new EntitySource_TileBreak(i, j);
+
+		if (Main.netMode != NetmodeID.MultiplayerClient)
+		{
+			int id = Item.NewItem(source, new Rectangle(i * 16, j * 16, 32, 16), type, stack, true);
+			Main.item[id].velocity = (Vector2.UnitY * -Main.rand.NextFloat(1f, 4f)).RotatedByRandom(1.5f);
+			Main.item[id].noGrabDelay = 100;
+
+			if (Main.netMode != NetmodeID.SinglePlayer)
+				NetMessage.SendData(MessageID.SyncItem, number: id);
+		}
+	}
+
+	public override void KillMultiTile(int i, int j, int frameX, int frameY)
+	{
+		var key = new Point16(i, j);
+		hitData.Remove(key);
+	} //Remove our hitdata
+
 	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
+		static float GetRotation(int i, int j)
+		{
+			GetTopLeft(ref i, ref j);
+
+			var key = new Point16(i, j);
+			if (hitData.TryGetValue(key, out float rotation))
+				return rotation;
+
+			return 0;
+		}
+
 		var tile = Framing.GetTileSafely(i, j);
 		var data = TileObjectData.GetTileData(tile);
 
