@@ -45,7 +45,11 @@ public abstract class AutoloadedSky : CustomSky, ILoadable
 		OnUpdate(gameTime);
 	}
 
-	public override void Activate(Vector2 position, params object[] args) => _isActive = true;
+	public override void Activate(Vector2 position, params object[] args)
+	{
+		_isActive = true;
+		OnActivate(args);
+	}
 
 	public override void Deactivate(params object[] args)
 	{
@@ -64,6 +68,8 @@ public abstract class AutoloadedSky : CustomSky, ILoadable
 	/// <summary>
 	/// Optional hooks to run when the sky deactivates or resets.
 	/// </summary>
+
+	internal virtual void OnActivate(params object[] args) { }
 	internal virtual void OnDeactivate(params object[] args) { }
 	internal virtual void OnReset() { }
 

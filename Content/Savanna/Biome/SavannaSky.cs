@@ -5,10 +5,6 @@ namespace SpiritReforged.Content.Savanna.Biome;
 
 public class SavannaSky : AutoloadedSky
 {
-	private Texture2D _bgTexture;
-
-	public override void OnLoad() => _bgTexture = TextureAssets.MagicPixel.Value;
-
 	private static float TimeProgress()
 	{
 		if (Main.dayTime)
@@ -44,14 +40,13 @@ public class SavannaSky : AutoloadedSky
 
 	public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
 	{
-		if (maxDepth >= float.MaxValue && minDepth < float.MaxValue)
-		{
-			spriteBatch.Draw(_bgTexture, 
-				new Rectangle(0, Math.Max(0, (int)((Main.worldSurface * 16 - Main.screenPosition.Y - 900) * 0.1f) - Main.screenHeight / 3), Main.screenWidth, Main.screenHeight), 
-				null,
-				SavannaColor() * Math.Min(1f, (Main.screenPosition.Y - 800) / 1000 * GetFadeOpacity()),
-				0, Vector2.Zero, SpriteEffects.FlipVertically, 1f);
-		}
+		if (maxDepth < float.MaxValue || minDepth > float.MaxValue)
+			return;
+
+		spriteBatch.Draw(TextureAssets.MagicPixel.Value,
+			new Rectangle(0, 0, Main.screenWidth, Main.screenHeight),
+			null,
+			SavannaColor() * Math.Min(1f, (Main.screenPosition.Y - 800) / 1000 * GetFadeOpacity()));
 	}
 
 	public override Color OnTileColor(Color inColor) => Color.Lerp(inColor, SavannaColor(), 0.2f * GetFadeOpacity());
