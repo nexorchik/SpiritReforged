@@ -1,11 +1,11 @@
+using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Ocean.Items.Reefhunter.JellyfishStaff;
+namespace SpiritReforged.Content.Ocean.Items.JellyfishStaff;
 
+[AutoloadGlowmask("255, 255, 255")]
 public class JellyfishStaff : ModItem
 {
-	//public override void SetStaticDefaults() => SpiritGlowmask.AddGlowMask(Item.type, Texture + "_Glow"); //TODO
-
 	public override void SetDefaults()
 	{
 		Item.width = 34;
@@ -13,7 +13,7 @@ public class JellyfishStaff : ModItem
 		Item.value = Item.sellPrice(0, 0, 25, 0);
 		Item.rare = ItemRarityID.Blue;
 		Item.mana = 10;
-		Item.damage = 11;
+		Item.damage = 16;
 		Item.knockBack = 2.5f;
 		Item.useStyle = ItemUseStyleID.Swing;
 		Item.useTime = 30;
@@ -28,11 +28,7 @@ public class JellyfishStaff : ModItem
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) => player.altFunctionUse != 2;
 
-	public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
-	{
-		Lighting.AddLight(Item.position, .224f, .133f, .255f);
-		//GlowmaskUtils.DrawItemGlowMaskWorld(spriteBatch, Item, ModContent.Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
-	}
+	public override void Update(ref float gravity, ref float maxFallSpeed) => Lighting.AddLight(Item.position, .224f, .133f, .255f);
 
 	public override void AddRecipes()
 	{

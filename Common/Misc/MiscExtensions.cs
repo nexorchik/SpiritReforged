@@ -84,4 +84,5 @@ internal static class MiscExtensions
 	}
 
 	public static void AccelFlyingMovement(this Entity ent, Vector2 desiredPosition, float accelSpeed, float deccelSpeed, float maxSpeed = -1) => AccelFlyingMovement(ent, desiredPosition, new Vector2(accelSpeed), new Vector2(deccelSpeed), (maxSpeed >= 0) ? new Vector2(maxSpeed) : null);
+
 }
