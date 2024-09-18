@@ -1,5 +1,4 @@
 using Terraria.Graphics.Effects;
-using Terraria.ModLoader;
 
 namespace SpiritReforged.Common.Visuals.Skies;
 
@@ -10,13 +9,10 @@ public abstract class AutoloadedSky : CustomSky, ILoadable
 
 	public void Load(Mod mod)
 	{
-		//Check if it's not the abstract class, then automatically create an instance and register it into the skymanager
-		if (!GetType().IsAbstract && GetType().IsSubclassOf(typeof(AutoloadedSky)))
-		{
-			string key = mod.Name + ":" + GetType().Name;
-			SkyManager.Instance[mod.Name + ":" + GetType().Name] = (CustomSky)Activator.CreateInstance(GetType());
-			AutoloadSkyDict.LoadedSkies.Add(key, new Func<Player, bool>(ActivationCondition));
-		}
+		//Load doesn't run on abstract classes, so there's no need to check if this is the abstract class beforehand
+		string key = mod.Name + ":" + GetType().Name;
+		SkyManager.Instance[mod.Name + ":" + GetType().Name] = (CustomSky)Activator.CreateInstance(GetType());
+		AutoloadSkyDict.LoadedSkies.Add(key, new Func<Player, bool>(ActivationCondition));
 	}
 
 	public void Unload()
@@ -39,7 +35,6 @@ public abstract class AutoloadedSky : CustomSky, ILoadable
 	{
 		if (_isActive)
 			_fadeOpacity = Math.Min(1f, FadeSpeed + _fadeOpacity);
-
 		else
 			_fadeOpacity = Math.Max(0f, _fadeOpacity - FadeSpeed);
 

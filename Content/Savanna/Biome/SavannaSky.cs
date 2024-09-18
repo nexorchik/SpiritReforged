@@ -9,7 +9,6 @@ public class SavannaSky : AutoloadedSky
 	{
 		if (Main.dayTime)
 			return (float)Math.Sin(Math.PI * Main.time / Main.dayLength);
-
 		else
 			return (float)Math.Sin(Math.PI * Main.time / Main.nightLength);
 	}
