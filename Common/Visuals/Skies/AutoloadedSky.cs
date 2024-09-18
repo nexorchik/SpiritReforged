@@ -1,4 +1,5 @@
 using Terraria.Graphics.Effects;
+using Terraria.ModLoader;
 
 namespace SpiritReforged.Common.Visuals.Skies;
 
@@ -20,7 +21,7 @@ public abstract class AutoloadedSky : CustomSky, ILoadable
 
 	public void Unload()
 	{
-		
+
 	}
 
 	/// <summary>
