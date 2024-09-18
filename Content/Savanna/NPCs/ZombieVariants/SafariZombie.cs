@@ -1,5 +1,7 @@
 using Terraria.GameContent.Bestiary;
 using SpiritReforged.Content.Ocean.Items;
+using SpiritReforged.Content.Savanna.Items.Vanity;
+using SpiritReforged.Content.Ocean.Items.Vanity.DiverSet;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
@@ -56,10 +58,7 @@ public class SafariZombie : Common.NPCCommon.ZombieNPC
 	{
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
-		//npcLoot.AddCommon(ModContent.ItemType<SafariHat>(), 150);
-		//npcLoot.AddCommon(ModContent.ItemType<SafariVest>(), 150);
-		//npcLoot.AddCommon(ModContent.ItemType<SafariBoots>(), 150);
-
+		npcLoot.AddOneFromOptions(75, ModContent.ItemType<SafariHat>(), ModContent.ItemType<SafariVest>(), ModContent.ItemType<SafariShorts>());
 	}
 
 	public override bool SpawnConditions(Player player) => player.ZoneBeach;
