@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Common.Easing;
-using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using SpiritReforged.Content.Particles;
@@ -41,7 +40,7 @@ public class ReefSpearProjectile : ModProjectile
 		Projectile.timeLeft = 70;
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = -1;
-
+		Projectile.ownerHitCheck = true;
 		DrawHeldProjInFrontOfHeldItemAndArms = false;
 	}
 
@@ -170,7 +169,28 @@ public class ReefSpearProjectile : ModProjectile
 			stretchAmount = CompositeArmStretchAmount.ThreeQuarters;
 	}
 
-	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) => modifiers.HitDirectionOverride = Math.Sign(-_direction.X);
+	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+	{
+		modifiers.HitDirectionOverride = Math.Sign(-_direction.X);
+		if (CheckStuckSpears(target))
+			modifiers.SourceDamage *= 1.33f;
+	}
+
+	public override void ModifyHitPlayer(Player target, ref HurtModifiers modifiers) => modifiers.HitDirectionOverride = Math.Sign(-_direction.X);
+
+	private bool CheckStuckSpears(NPC target)
+	{
+		foreach(Projectile proj in Main.ActiveProjectiles)
+		{
+			if (proj.ModProjectile == null)
+				continue;
+
+			if (proj.ModProjectile is ReefSpearThrown reefSpear && proj.owner == Projectile.owner)
+				return reefSpear.GetStuckNPC() == target;
+		}
+
+		return false;
+	}
 
 	public override void ModifyDamageHitbox(ref Rectangle hitbox)
 	{

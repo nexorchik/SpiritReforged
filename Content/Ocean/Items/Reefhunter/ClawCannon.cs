@@ -44,12 +44,11 @@ public class ClawCannon : ModItem
 			for(int i = 0; i < pulseCircles.Length; i++)
 			{
 				pulseCircles[i].Velocity = 0.5f * Vector2.Normalize(velocity) / (1 + 2*i);
-				pulseCircles[i].Velocity += player.velocity / 8;
 				ParticleHandler.SpawnParticle(pulseCircles[i].WithSkew(0.85f, velocity.ToRotation()).UsesLightColor());
 			}
 
 			for (int i = 0; i < 4; ++i)
-				ParticleHandler.SpawnParticle(new BubbleParticle(position + velocity + player.velocity / 3, Vector2.Normalize(velocity).RotatedByRandom(MathHelper.Pi / 6) * Main.rand.NextFloat(2f, 4), Main.rand.NextFloat(0.2f, 0.4f), 40));
+				ParticleHandler.SpawnParticle(new BubbleParticle(position + velocity + player.velocity / 2, Vector2.Normalize(velocity).RotatedByRandom(MathHelper.Pi / 6) * Main.rand.NextFloat(2f, 4), Main.rand.NextFloat(0.2f, 0.4f), 40));
 		}
 
 		return true;

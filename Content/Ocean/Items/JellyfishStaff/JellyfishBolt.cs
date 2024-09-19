@@ -22,7 +22,7 @@ public class JellyfishBolt : ModProjectile
 	}
 
 	public static int MAX_CHAIN_DISTANCE => (int)(JellyfishMinion.SHOOT_RANGE * 0.66f);
-	public static int HITSCAN_STEP = 5;
+	public static int HITSCAN_STEP { get; set; } = 5;
 
 	public Vector2 BoltStartPos = new(0, 0);
 
@@ -43,6 +43,7 @@ public class JellyfishBolt : ModProjectile
 		Projectile.extraUpdates = JellyfishMinion.SHOOT_RANGE / HITSCAN_STEP;
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = Projectile.timeLeft * Projectile.penetrate;
+		Projectile.ignoreWater = true;
 	}
 
 	public override void AI()

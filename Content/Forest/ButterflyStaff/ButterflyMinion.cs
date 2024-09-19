@@ -4,7 +4,7 @@ using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Particles;
 using System.Linq;
 
-namespace SpiritReforged.Content.Vanilla.SummonsMisc.ButterflyStaff;
+namespace SpiritReforged.Content.Forest.ButterflyStaff;
 
 [AutoloadMinionBuff()]
 public class ButterflyMinion : BaseMinion

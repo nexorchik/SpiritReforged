@@ -1,11 +1,7 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Buffs.SummonTag;
-using Terraria;
-using Terraria.GameContent;
 
-namespace SpiritReforged.Content.Vanilla.SummonsMisc.PoolNoodle;
+namespace SpiritReforged.Content.Ocean.Items.PoolNoodle;
 
 public class PoolNoodleProj : BaseWhipProj
 {

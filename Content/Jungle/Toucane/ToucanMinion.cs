@@ -3,7 +3,7 @@ using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.ProjectileCommon;
 using Terraria.Audio;
 
-namespace SpiritReforged.Content.Vanilla.SummonsMisc.Toucane;
+namespace SpiritReforged.Content.Jungle.Toucane;
 
 [AutoloadMinionBuff()]
 public class ToucanMinion : BaseMinion

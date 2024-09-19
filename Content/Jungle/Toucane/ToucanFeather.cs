@@ -1,7 +1,7 @@
 using SpiritReforged.Common.ProjectileCommon;
 using Terraria.Audio;
 
-namespace SpiritReforged.Content.Vanilla.SummonsMisc.Toucane;
+namespace SpiritReforged.Content.Jungle.Toucane;
 
 public class ToucanFeather : ModProjectile
 {

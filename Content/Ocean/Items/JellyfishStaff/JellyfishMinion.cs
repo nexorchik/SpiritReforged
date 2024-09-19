@@ -7,12 +7,11 @@ using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Common.Visuals.Glowmasks;
-using Terraria;
 using SpiritReforged.Common.Misc;
 
 namespace SpiritReforged.Content.Ocean.Items.JellyfishStaff;
 
-[Common.Misc.AutoloadMinionBuff()]
+[AutoloadMinionBuff()]
 [AutoloadGlowmask("255, 255, 255", false)]
 public class JellyfishMinion : BaseMinion
 {
@@ -40,13 +39,13 @@ public class JellyfishMinion : BaseMinion
 	private const int AISTATE_SHOOT = 5; //when near target, hover in place and shoot lightning
 
 	//Constants used in drawing methods and for the ai pattern
-	private const int SHOOTTIME = 75; //Time between shots
+	private const int SHOOTTIME = 60; //Time between shots
 	private const int DASHTIME = 30; //Time the dash takes
 	private const int AIMTIME = 60; //Time it takes to aim the dash
 	private const int BOUNCETIME = 90; //General time between bounces
-	private const int RISETIME = 30; //Time it takes to rise upwards after the dash
+	private const int RISETIME = 20; //Time it takes to rise upwards after the dash
 
-	public static int SHOOT_RANGE = 400; //Static because it's used by the bolt class
+	public static int SHOOT_RANGE { get; set; } = 400; //Static because it's used by the bolt class
 
 	public override void IdleMovement(Player player)
 	{
@@ -279,7 +278,7 @@ public class JellyfishMinion : BaseMinion
 			if (AiTimer < SHOOTTIME) //Dont flash before shooting for the first time
 				flashOpacity = 0;
 
-			flashOpacity = EaseFunction.EaseCubicIn.Ease(flashOpacity);
+			flashOpacity = EaseFunction.EaseCircularIn.Ease(flashOpacity);
 			DrawGlowmask(flashOpacity);
 		}
 
