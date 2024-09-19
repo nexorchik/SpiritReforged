@@ -6,7 +6,10 @@ public static class TileExtensions
 	public static Vector2 DrawPosition(this ModTile _, int i, int j, Vector2 off = default) => DrawPosition(i, j, off);
 	public static Vector2 DrawPosition(int i, int j, Vector2 off = default) => new Vector2(i, j) * 16 - Main.screenPosition - off + TileOffset;
 
-	public static void DrawSlopedGlowMask(this ModTile _, int i, int j, Texture2D texture, Color color, Vector2 positionOffset, bool overrideFrame = false)
+	public static void DrawSloped(this ModTile _, int i, int j, Texture2D texture, Color color, Vector2 positionOffset, bool overrideFrame = false)
+		=> DrawSloped(i, j, texture, color, positionOffset, overrideFrame);
+
+	public static void DrawSloped(int i, int j, Texture2D texture, Color color, Vector2 positionOffset, bool overrideFrame = false)
 	{
 		Tile tile = Main.tile[i, j];
 		int frameX = tile.TileFrameX;

@@ -1,10 +1,12 @@
 ﻿using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Common.Visuals.Glowmasks;
 using System.IO;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
+[AutoloadGlowmask("Method:Content.Ocean.Items.Reefhunter.Projectiles.UrchinBall GlowColor")]
 public class UrchinBall : ModProjectile
 {
 	private bool hasTarget = false;
@@ -13,15 +15,10 @@ public class UrchinBall : ModProjectile
 	private bool stuckInTile = false;
 	private Point stuckTilePos = new(0, 0);
 
-	private static Asset<Texture2D> GlowmaskTexture;
-
 	public override void SetStaticDefaults()
 	{
 		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
 		ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-
-		if (!Main.dedServ)
-			GlowmaskTexture = ModContent.Request<Texture2D>(Texture + "Glow");
 	}
 
 	public override void SetDefaults()
@@ -122,17 +119,13 @@ public class UrchinBall : ModProjectile
 		return false;
 	}
 
-	public override void PostDraw(Color lightColor)
+	public static Color GlowColor(object proj)
 	{
 		const float Cutoff = 120;
 
-		Texture2D tex = GlowmaskTexture.Value;
-
-		float flashTimer = Math.Max(Cutoff - Projectile.timeLeft, 0) / Cutoff;
-		int numFlashes = 6;
-		float alpha = 1 - (float)Math.Pow(Math.Sin(EaseFunction.EaseQuadIn.Ease(flashTimer) * numFlashes * MathHelper.Pi), 4);
-
-		Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Color.White * (1 - alpha), Projectile.rotation, tex.Size() / 2f, Projectile.scale, SpriteEffects.None, 0f);
+		float flashTimer = Math.Max(Cutoff - (proj as Projectile).timeLeft, 0) / Cutoff;
+		float alpha = 1 - (float)Math.Pow(Math.Sin(EaseFunction.EaseQuadIn.Ease(flashTimer) * 6 * MathHelper.Pi), 4);
+		return Color.White * (1 - alpha);
 	}
 
 	public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
@@ -163,7 +156,6 @@ public class UrchinSpike : ModProjectile
 {
 	public override void SetStaticDefaults()
 	{
-		// DisplayName.SetDefault("Urchin");
 		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 10;
 		ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
 	}
@@ -184,16 +176,16 @@ public class UrchinSpike : ModProjectile
 		Projectile.scale = Main.rand.NextFloat(0.9f, 1.1f);
 	}
 
-	public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => !hasTarget;
+	public override bool? CanDamage() => !hasTarget;
 	public override bool? CanCutTiles() => !hasTarget;
 
 	public override void AI()
 	{
 		Projectile.alpha = 255 - (int)(Projectile.timeLeft / 50f * 255);
 		Projectile.velocity *= 0.96f;
+
 		if (!hasTarget)
 			Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-
 		else
 		{
 			NPC npc = Main.npc[(int)Projectile.ai[1]];
