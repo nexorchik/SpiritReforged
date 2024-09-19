@@ -11,12 +11,14 @@ public class HoneySalmon : FoodItem
 		player.AddBuff(BuffID.Honey, 1800);
 		return true;
 	}
+
 	public override void Defaults()
 	{
 		Item.rare = ItemRarityID.Green;
 		Item.buffType = BuffID.WellFed2;
 		Item.buffTime = 9 * 60 * 60;
 	}
+
 	public override void AddRecipes()
 	{
 		Recipe recipe1 = CreateRecipe(1);
