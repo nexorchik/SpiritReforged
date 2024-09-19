@@ -32,6 +32,9 @@ internal class BackpackPlayer : ModPlayer
 			ApplyEquip(VanityBackpack);
 		else if (Backpack is not null && !Backpack.IsAir)
 			ApplyEquip(Backpack);
+
+		if (Player.HeldItem.ModItem is BackpackItem)
+			Main.EquipPageSelected = 2;
 	}
 
 	private void ApplyEquip(Item backpack)

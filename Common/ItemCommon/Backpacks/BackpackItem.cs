@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.UI.BackpackInterface;
+using System.Linq;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Common.ItemCommon.Backpacks;
@@ -54,6 +55,8 @@ internal abstract class BackpackItem : ModItem
 		{
 			if (Items[i] is not null && tag.TryGet("item" + i, out TagCompound itemTag))
 				Items[i] = ItemIO.Load(itemTag);
+			else
+				Items[i] = BackpackUIState.AirItem;
 		}
 	}
 }

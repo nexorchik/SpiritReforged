@@ -39,7 +39,10 @@ internal class BackpackUIState : UIState
 	public override void Update(GameTime gameTime)
 	{
 		if (!Main.playerInventory)
+		{
+			_setBackpack = false;
 			return;
+		}
 
 		if (!_setBackpack && Main.LocalPlayer is not null)
 		{
