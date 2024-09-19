@@ -9,7 +9,6 @@ public class SafariVest : ModItem
 		Item.height = 30;
 		Item.value = Item.sellPrice(0, 0, 7, 0);
 		Item.rare = ItemRarityID.White;
-
 		Item.vanity = true;
 	}
 }

@@ -9,7 +9,6 @@ public class SafariShorts : ModItem
 		Item.height = 20;
 		Item.value = Item.sellPrice(0, 0, 6, 0);
 		Item.rare = ItemRarityID.White;
-
 		Item.vanity = true;
 	}
 }

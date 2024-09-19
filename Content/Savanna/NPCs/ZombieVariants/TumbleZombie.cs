@@ -70,5 +70,5 @@ public class TumbleZombie : Common.NPCCommon.ZombieNPC
 
 	}
 
-	public override bool SpawnConditions(Player player) => player.ZoneBeach;
+	public override bool SpawnConditions(Player player) => player.InModBiome<Savanna.Biome.SavannaBiome>();
 }

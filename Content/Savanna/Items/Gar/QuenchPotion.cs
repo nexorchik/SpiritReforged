@@ -32,8 +32,5 @@ public class QuenchPotion : ModItem
 }
 public class QuenchPotion_Buff : ModBuff
 {
-	public override void Update(Player player, ref int buffIndex)
-	{
-		player.GetModPlayer<SavannaPlayer>().quenchPotion = true;
-	}
+	public override void Update(Player player, ref int buffIndex) => player.GetModPlayer<SavannaPlayer>().quenchPotion = true;
 }
