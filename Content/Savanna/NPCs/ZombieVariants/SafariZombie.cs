@@ -1,7 +1,6 @@
 using Terraria.GameContent.Bestiary;
 using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Content.Savanna.Items.Vanity;
-using SpiritReforged.Content.Ocean.Items.Vanity.DiverSet;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
@@ -49,7 +48,6 @@ public class SafariZombie : Common.NPCCommon.ZombieNPC
 		{
 			frameCounter += .1f;
 			frameCounter %= Main.npcFrameCount[Type];
-
 			NPC.frame.Y = frameHeight * (int)frameCounter;
 		}
 	}

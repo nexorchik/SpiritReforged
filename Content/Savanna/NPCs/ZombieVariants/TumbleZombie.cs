@@ -58,7 +58,6 @@ public class TumbleZombie : Common.NPCCommon.ZombieNPC
 		{
 			frameCounter += .1f;
 			frameCounter %= Main.npcFrameCount[Type];
-
 			NPC.frame.Y = frameHeight * (int)frameCounter;
 		}
 	}

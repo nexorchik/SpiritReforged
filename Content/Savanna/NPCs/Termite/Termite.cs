@@ -8,6 +8,10 @@ namespace SpiritReforged.Content.Savanna.NPCs.Termite;
 [AutoloadCritter]
 public class Termite : ModNPC
 {
+	public bool hasGivenStats = false;
+
+	public int termiteLifespan;
+	public int termiteTimeLeft;
 	public override void SetStaticDefaults()
 	{
 		Main.npcFrameCount[NPC.type] = 3;
@@ -31,9 +35,6 @@ public class Termite : ModNPC
 		AIType = NPCID.Grubby;
 		NPC.dontTakeDamageFromHostiles = false;
 	}
-	public bool hasGivenStats = false;
-	int termiteLifespan;
-	int termiteTimeLeft;
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
@@ -95,16 +96,19 @@ public class Termite : ModNPC
 
 		NPC.spriteDirection = NPC.direction;
 	}
+	
 	public override void SendExtraAI(BinaryWriter writer)
 	{
 		writer.Write(hasGivenStats);
 		writer.Write(termiteLifespan);
 	}
+	
 	public override void ReceiveExtraAI(BinaryReader reader)
 	{
 		termiteLifespan = reader.ReadInt32();
 		hasGivenStats = reader.ReadBoolean();
 	}
+	
 	public override void FindFrame(int frameHeight)
 	{
 		if (NPC.velocity != Vector2.Zero || NPC.IsABestiaryIconDummy)
