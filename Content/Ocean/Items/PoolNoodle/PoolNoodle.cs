@@ -2,7 +2,7 @@ using System.IO;
 using Terraria.DataStructures;
 using Terraria.ModLoader.IO;
 
-namespace SpiritReforged.Content.Vanilla.SummonsMisc.PoolNoodle;
+namespace SpiritReforged.Content.Ocean.Items.PoolNoodle;
 
 public class PoolNoodle : ModItem
 {

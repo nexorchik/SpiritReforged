@@ -1,4 +1,5 @@
 using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ItemCommon.FloatingItem;
 using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Ocean.Items;

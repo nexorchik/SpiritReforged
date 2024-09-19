@@ -1,4 +1,4 @@
-using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ItemCommon.FloatingItem;
 using SpiritReforged.Content.Ocean.Tiles;
 
 namespace SpiritReforged.Content.Ocean.Items;

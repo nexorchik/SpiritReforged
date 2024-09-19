@@ -1,7 +1,7 @@
 using Terraria.Audio;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Vanilla.SummonsMisc.FairyWhistle;
+namespace SpiritReforged.Content.Forest.FairyWhistle;
 
 public class FairyWhistle : ModItem
 {

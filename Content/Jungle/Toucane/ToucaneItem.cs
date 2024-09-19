@@ -1,6 +1,6 @@
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Vanilla.SummonsMisc.Toucane;
+namespace SpiritReforged.Content.Jungle.Toucane;
 
 public class ToucaneItem : ModItem
 {

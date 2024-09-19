@@ -6,7 +6,7 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Common.Easing;
 
-namespace SpiritReforged.Content.Vanilla.SummonsMisc.FairyWhistle;
+namespace SpiritReforged.Content.Forest.FairyWhistle;
 
 [AutoloadMinionBuff()]
 public class FairyMinion : BaseMinion
@@ -103,7 +103,7 @@ public class FairyMinion : BaseMinion
 		{
 			Vector2 glowmaskRadialOffset = Vector2.UnitX.RotatedBy(MathHelper.TwoPi * i / 6);
 			glowmaskRadialOffset *= 2f;
-			Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value, Projectile.Center + glowmaskRadialOffset - Main.screenPosition, Projectile.DrawFrame(), 
+			Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value, Projectile.Center + glowmaskRadialOffset - Main.screenPosition, Projectile.DrawFrame(),
 				Color.White.Additive() * Projectile.Opacity * bloomOpacity * 0.1f, Projectile.rotation, Projectile.DrawFrame().Size() / 2, Projectile.scale, Projectile.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
 		}
 

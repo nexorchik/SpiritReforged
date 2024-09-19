@@ -1,6 +1,6 @@
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Vanilla.SummonsMisc.ButterflyStaff;
+namespace SpiritReforged.Content.Forest.ButterflyStaff;
 
 public class ButterflyStaff : ModItem
 {
@@ -25,7 +25,7 @@ public class ButterflyStaff : ModItem
 	}
 
 	//public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) =>
-		//GlowmaskUtils.DrawItemGlowMaskWorld(spriteBatch, Item, ModContent.Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
+	//GlowmaskUtils.DrawItemGlowMaskWorld(spriteBatch, Item, ModContent.Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{

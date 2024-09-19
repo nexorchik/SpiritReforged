@@ -1,4 +1,4 @@
-﻿namespace SpiritReforged.Common.ItemCommon;
+﻿namespace SpiritReforged.Common.ItemCommon.FloatingItem;
 
 public abstract class FloatingItem : ModItem
 {

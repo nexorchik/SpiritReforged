@@ -55,7 +55,7 @@ public class SandPiper : ModNPC
 			{
 				NPC.velocity.Y *= 0.7f;
 
-				if (Collision.WetCollision(NPC.position, NPC.width, 18))
+				if (Collision.WetCollision(NPC.position, NPC.width, (int)(NPC.height / 1.25f)))
 					NPC.velocity.Y -= 0.2f;
 			}
 
@@ -74,7 +74,7 @@ public class SandPiper : ModNPC
 
 				if (WalkState == 0)
 				{
-					if (Main.rand.NextBool(3))
+					if (!NPC.wet && Main.rand.NextBool(3))
 					{
 						State = STATE_PECK;
 						Timer = Main.rand.Next(10, 30);
@@ -244,22 +244,31 @@ public class SandPiper : ModNPC
 			}
 		}
 
-		int frameCount; //Determine which column to use and the amount of frames inside
-		if (State == STATE_FLY)
+		int frameCount = Main.npcFrameCount[Type];
+		switch (State)
 		{
-			NPC.frame.X = 44;
-			frameCount = 3;
-		}
-		else if (State == STATE_PECK)
-		{
-			NPC.frame.X = 22;
-			frameCount = 2;
-		}
-		else
-		{
-			NPC.frame.X = 0;
-			frameCount = Main.npcFrameCount[Type];
-		}
+			case STATE_FLY:
+				NPC.frame.X = 44;
+				frameCount = 3;
+				break;
+			case STATE_PECK:
+				NPC.frame.X = 22;
+				frameCount = 2;
+				break;
+			case STATE_WALK:
+				if (NPC.wet)
+				{
+					NPC.frame.X = 66;
+					frameCount = 1;
+				}
+				else
+				{
+					NPC.frame.X = 0;
+					frameCount = Main.npcFrameCount[Type];
+				}
+
+				break;
+		} //Determine which column to use and the amount of frames inside
 
 		NPC.frame.Width = 22;
 

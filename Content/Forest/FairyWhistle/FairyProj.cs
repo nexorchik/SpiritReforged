@@ -3,7 +3,7 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Particles;
 
-namespace SpiritReforged.Content.Vanilla.SummonsMisc.FairyWhistle;
+namespace SpiritReforged.Content.Forest.FairyWhistle;
 
 public class FairyProj : ModProjectile
 {
