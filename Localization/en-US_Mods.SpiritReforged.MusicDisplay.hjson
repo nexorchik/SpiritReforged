@@ -1,0 +1,14 @@
+ModName: Spirit Reforged
+Salvati: Salvati
+Sbubby: Sbubby
+BySalvati: "{$By} {$Salvati}"
+
+Duststorm: {
+	DisplayName: Duststorm
+	Author: "{$By} {$Sbubby}"
+}
+
+Savanna: {
+	DisplayName: Savanna
+	Author: "{$BySalvati}, {$Sbubby}"
+}
