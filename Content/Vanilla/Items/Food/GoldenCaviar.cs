@@ -12,10 +12,7 @@ public class GoldenCaviar : FoodItem
 		Item.value = Item.sellPrice(0, 2, 0, 0);
 	}
 
-	public override bool CanUseItem(Player player)
-	{
-		return true;
-	}
+	public override bool CanUseItem(Player player) => true;
 	public override void AddRecipes()
 	{
 		Recipe recipe1 = CreateRecipe(1);
@@ -24,7 +21,7 @@ public class GoldenCaviar : FoodItem
 		recipe1.Register();
 
 		Recipe recipe2 = CreateRecipe(1);
-		recipe2.AddIngredient(Mod.Find<ModItem>("KillifishItem").Type, 1);
+		recipe2.AddIngredient(Mod.Find<ModItem>("GoldKillifishItem").Type, 1);
 		recipe2.AddTile(TileID.CookingPots);
 		recipe2.Register();
 	}

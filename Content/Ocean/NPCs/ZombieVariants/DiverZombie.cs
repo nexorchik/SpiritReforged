@@ -1,5 +1,6 @@
 using SpiritReforged.Content.Ocean.Items.Vanity.DiverSet;
 using Terraria.GameContent.Bestiary;
+using static Terraria.GameContent.Bestiary.IL_BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions;
 
 namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
 
@@ -101,5 +102,5 @@ public class DiverZombie : Common.NPCCommon.ZombieNPC
 		npcLoot.AddOneFromOptions(65, ModContent.ItemType<DiverLegs>(), ModContent.ItemType<DiverHead>(), ModContent.ItemType<DiverBody>());
 	}
 
-	public override bool SpawnConditions(Player player) => player.ZoneBeach;
+	public override bool SpawnConditions(Player player) => player.InModBiome<Savanna.Biome.SavannaBiome>();
 }

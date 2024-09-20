@@ -8,6 +8,7 @@ using SpiritReforged;
 internal static class AssetLoader
 {
 	public static TrailManager VertexTrailManager;
+	public static BlendState NonPremultipliedAlphaFix;
 
 	public static BasicEffect BasicShaderEffect;
 	public static IDictionary<string, Texture2D> LoadedTextures = new Dictionary<string, Texture2D>();
@@ -25,6 +26,14 @@ internal static class AssetLoader
 			View = view,
 			Projection = projection
 		});
+
+		NonPremultipliedAlphaFix = new BlendState
+		{
+			ColorSourceBlend = Blend.SourceAlpha,
+			AlphaSourceBlend = Blend.SourceAlpha,
+			ColorDestinationBlend = Blend.One,
+			AlphaDestinationBlend = Blend.InverseSourceAlpha,
+		};
 
 		var tmodfile = (TmodFile)typeof(SpiritReforgedMod).GetProperty("File", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(SpiritReforgedMod.Instance);
 		var files = (IDictionary<string, FileEntry>)typeof(TmodFile).GetField("files", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(tmodfile);

@@ -8,9 +8,12 @@ namespace SpiritReforged.Content.Savanna.NPCs.Termite;
 [AutoloadCritter]
 public class Termite : ModNPC
 {
+	public bool hasGivenStats = false;
+
+	public int termiteLifespan;
+	public int termiteTimeLeft;
 	public override void SetStaticDefaults()
 	{
-		// DisplayName.SetDefault("Rotslug");
 		Main.npcFrameCount[NPC.type] = 3;
 		Main.npcCatchable[NPC.type] = true;
 		NPCID.Sets.CountsAsCritter[Type] = true;
@@ -32,9 +35,6 @@ public class Termite : ModNPC
 		AIType = NPCID.Grubby;
 		NPC.dontTakeDamageFromHostiles = false;
 	}
-	public bool hasGivenStats = false;
-	int termiteLifespan;
-	int termiteTimeLeft;
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
@@ -81,7 +81,7 @@ public class Termite : ModNPC
 			SoundEngine.PlaySound(SoundID.Dig with { Volume = .05f }, NPC.Center);
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/BugChitter") with { Volume = 1.14f, PitchVariance = 0.4f }, NPC.Center);
 
-			for (int num257 = 0; num257 < 3; num257++)
+			for (int i = 0; i < 3; i++)
 			{
 				Vector2 dustPosition = NPC.Center + new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-2f, 2f));
 				int newDust = Dust.NewDust(dustPosition, NPC.width / 2, NPC.height / 2, DustID.Dirt, NPC.velocity.X, NPC.velocity.Y, 0, default, 1f);
@@ -96,16 +96,19 @@ public class Termite : ModNPC
 
 		NPC.spriteDirection = NPC.direction;
 	}
+	
 	public override void SendExtraAI(BinaryWriter writer)
 	{
 		writer.Write(hasGivenStats);
 		writer.Write(termiteLifespan);
 	}
+	
 	public override void ReceiveExtraAI(BinaryReader reader)
 	{
 		termiteLifespan = reader.ReadInt32();
 		hasGivenStats = reader.ReadBoolean();
 	}
+	
 	public override void FindFrame(int frameHeight)
 	{
 		if (NPC.velocity != Vector2.Zero || NPC.IsABestiaryIconDummy)

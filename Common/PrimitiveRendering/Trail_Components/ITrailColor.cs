@@ -2,7 +2,7 @@
 
 public interface ITrailColor
 {
-	Color GetColourAt(float distanceFromStart, float trailLength, List<Vector2> points);
+	Color GetColourAt(float distanceFromStart, float trailLength, List<Vector2> points, Vector2 curPoint);
 }
 
 #region Different Trail Color Types
@@ -11,7 +11,7 @@ public class GradientTrail(Color start, Color end) : ITrailColor
 	private Color _startColour = start;
 	private Color _endColour = end;
 
-	public Color GetColourAt(float distanceFromStart, float trailLength, List<Vector2> points)
+	public Color GetColourAt(float distanceFromStart, float trailLength, List<Vector2> points, Vector2 curPoint)
 	{
 		float progress = distanceFromStart / trailLength;
 		return Color.Lerp(_startColour, _endColour, progress) * (1f - progress);
@@ -25,7 +25,7 @@ public class RainbowTrail(float animationSpeed = 5f, float distanceMultiplier = 
 	private readonly float _speed = animationSpeed;
 	private readonly float _distanceMultiplier = distanceMultiplier;
 
-	public Color GetColourAt(float distanceFromStart, float trailLength, List<Vector2> points)
+	public Color GetColourAt(float distanceFromStart, float trailLength, List<Vector2> points, Vector2 curPoint)
 	{
 		float progress = distanceFromStart / trailLength;
 		float hue = (Main.GlobalTimeWrappedHourly * _speed + distanceFromStart * _distanceMultiplier) % MathHelper.TwoPi;
@@ -55,6 +55,7 @@ public class RainbowTrail(float animationSpeed = 5f, float distanceMultiplier = 
 				g = GetColorComponent(temp1, temp2, h);
 				b = GetColorComponent(temp1, temp2, h - 0.33333333f);
 			}
+
 		return new Color(r, g, b);
 	}
 	private float GetColorComponent(float temp1, float temp2, float temp3)
@@ -81,7 +82,7 @@ public class StandardColorTrail : ITrailColor
 
 	public StandardColorTrail(Color colour) => _colour = colour;
 
-	public Color GetColourAt(float distanceFromStart, float trailLength, List<Vector2> points)
+	public Color GetColourAt(float distanceFromStart, float trailLength, List<Vector2> points, Vector2 curPoint)
 	{
 		float progress = distanceFromStart / trailLength;
 		return _colour * (1f - progress);
@@ -110,13 +111,38 @@ public class OpacityUpdatingTrail : ITrailColor
 		_proj = proj;
 	}
 
-	public Color GetColourAt(float distanceFromStart, float trailLength, List<Vector2> points)
+	public Color GetColourAt(float distanceFromStart, float trailLength, List<Vector2> points, Vector2 curPoint)
 	{
 		float progress = distanceFromStart / trailLength;
 		if (_proj.active && _proj != null)
 			_opacity = _proj.Opacity;
 
 		return Color.Lerp(_startcolor, _endcolor, progress) * (1f - progress) * _opacity;
+	}
+}
+
+public class LightColorTrail : ITrailColor
+{
+	private Color _startColor;
+	private Color _endColor;
+	
+	public LightColorTrail (Color startColor, Color endColor)
+	{
+		_startColor = startColor;
+		_endColor = endColor;
+	}
+	public LightColorTrail(Color color)
+	{
+		_startColor = color;
+		_endColor = color;
+	}
+
+	public Color GetColourAt(float distanceFromStart, float trailLength, List<Vector2> points, Vector2 curPoint)
+	{
+		Color baseColor = Color.Lerp(_startColor, _endColor, distanceFromStart / trailLength);
+		Color lightColor = Lighting.GetColor(curPoint.ToTileCoordinates());
+
+		return lightColor.MultiplyRGBA(baseColor);
 	}
 }
 #endregion

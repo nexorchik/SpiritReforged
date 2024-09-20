@@ -28,9 +28,7 @@ public class SquarePrimitive : IPrimitiveShape
 		{
 			indexList.Add((short)vertexList.Count);
 			Color color = Color;
-			color.R *= (byte)MathHelper.Lerp(1, ColorXCoordMod, TextureCoords.X);
-			color.G *= (byte)MathHelper.Lerp(1, ColorXCoordMod, TextureCoords.X);
-			color.B *= (byte)MathHelper.Lerp(1, ColorXCoordMod, TextureCoords.X);
+			color *= (byte)MathHelper.Lerp(1, ColorXCoordMod, TextureCoords.X);
 			vertexList.Add(new VertexPositionColorTexture(new Vector3(position, 0), color, TextureCoords));
 		}
 

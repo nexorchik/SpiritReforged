@@ -6,10 +6,8 @@ public class FishChips : FoodItem
 {
 	internal override Point Size => new(42, 30);
 
-	public override bool CanUseItem(Player player)
-	{
-		return true;
-	}
+	public override bool CanUseItem(Player player) => true;
+
 	public override void Defaults()
 	{
 		Item.buffTime = 7 * 60 * 60;

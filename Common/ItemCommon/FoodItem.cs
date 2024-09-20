@@ -4,6 +4,7 @@ namespace SpiritReforged.Common.ItemCommon;
 
 public abstract class FoodItem : ModItem
 {
+	internal static HashSet<int> FruitItemsSet = [];
 	internal abstract Point Size { get; }
 	internal virtual int Rarity => ItemRarityID.Blue;
 	internal virtual bool Consumeable => true;

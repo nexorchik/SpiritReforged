@@ -65,7 +65,14 @@ public class HangingCloudstalkTile : ModTile, ISwayInWind
 		spriteBatch.Draw(texture, drawPos + offset - new Vector2(0, 2), source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0f);
 	}
 
-	public float SetWindSway(Point16 topLeft, ref float swayMult)
+	public void ModifyRotation(int i, int j, ref float rotation)
+	{
+		var tile = Framing.GetTileSafely(i, j);
+		if (tile.TileFrameY == 0)
+			rotation *= .5f;
+	}
+
+	public float SetWindSway(Point16 topLeft)
 	{
 		var data = TileObjectData.GetTileData(Framing.GetTileSafely(topLeft));
 		float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, TileSwaySystem.Instance.SunflowerWindCounter);

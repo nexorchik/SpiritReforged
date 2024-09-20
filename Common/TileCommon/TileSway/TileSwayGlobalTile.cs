@@ -9,17 +9,8 @@ public class TileSwayGlobalTile : GlobalTile
 		orig(self);
 
 		var points = TileSwaySystem.Instance.specialDrawPoints;
-		for (int i = points.Count - 1; i >= 0; i--)
-		{
-			var tile = Framing.GetTileSafely(points[i]);
-			if (!tile.HasTile || TileLoader.GetTile(tile.TileType) is not ISwayInWind)
-			{
-				points.Remove(points[i]); //If the tile is invalid, don't draw
-				continue;
-			}
-
-			PreDrawInWind(points[i], Main.spriteBatch);
-		}
+		foreach (var p in points)
+			PreDrawInWind(p, Main.spriteBatch);
 	};
 
 	public override bool PreDraw(int i, int j, int type, SpriteBatch spriteBatch)
@@ -45,11 +36,11 @@ public class TileSwayGlobalTile : GlobalTile
 		var tile = Framing.GetTileSafely(topLeft);
 		var data = TileObjectData.GetTileData(tile);
 
-		if (!tile.HasTile || TileLoader.GetTile(tile.TileType) is not ISwayInWind wind)
+		if (data is null)
 			return;
 
-		float swingMult = 1f;
-		float windCycle = wind.SetWindSway(topLeft, ref swingMult);
+		float windCycle = 0;
+		int tileOriginY = (data.Origin.Y == 0 && data.Height > 1) ? data.Origin.Y : data.Origin.Y + 1;
 
 		for (int y = 0; y < data.Height; y++)
 		{
@@ -58,23 +49,33 @@ public class TileSwayGlobalTile : GlobalTile
 				(int i, int j) = (topLeft.X + x, topLeft.Y + y);
 				tile = Framing.GetTileSafely(i, j);
 
-				if (!tile.HasTile || TileLoader.GetTile(tile.TileType) is not ISwayInWind)
+				if (!tile.HasTile || TileLoader.GetTile(tile.TileType) is not ISwayInWind wind)
 					continue;
 
-				var origin = new Vector2(-(x * 16) + (data.Origin.X + 1) * 16, -(y * 16) + (data.Origin.Y + 1) * 16);
+				if (i == topLeft.X && j == topLeft.Y)
+					windCycle = wind.SetWindSway(topLeft); //Set wind cycle using our interface
 
-				float swing = swingMult * (data.Origin.Y - y + 1) / (float)data.Height;
-				float rotation = windCycle * MathHelper.Max(swing, .1f) * .07f * swing;
-				var offset = origin + new Vector2(windCycle, Math.Abs(windCycle) * 4f * swing);
+				float rotation;
 
-				if (data.Origin.Y == 0 && data.Height > 1) //The origin is at the top of the multitile - reversed
+				if (tileOriginY == 0)
 				{
-					swing = swingMult * (1f - (data.Origin.Y - y + 1) / (float)data.Height);
-					rotation = windCycle * MathHelper.Max(swing, .1f) * -.07f * swing;
-					offset = origin + new Vector2(windCycle, Math.Abs(windCycle) * swing * -4f);
+					float swing = 1f - (1f - (float)(y + 1) / data.Height) + .5f;
+					rotation = windCycle * swing * -.1f;
+				}
+				else
+				{
+					float swing = 1f - (float)(y + 1) / tileOriginY + .5f;
+					rotation = windCycle * swing * .1f;
 				}
 
-				wind.DrawInWind(i, j, spriteBatch, offset, rotation, origin);
+				wind.ModifyRotation(i, j, ref rotation);
+				var rotationOffset = new Vector2(0, Math.Abs(rotation) * 20f) * ((tileOriginY == 0) ? -1 : 1);
+
+				var drawOrigin = new Vector2(-(x * 16) + (data.Origin.X + 1) * 16, -(y * 16) + tileOriginY * 16);
+				if (data.Width % 2 != 0)
+					drawOrigin.X -= 8; //Center origin for multitiles with odd width
+
+				wind.DrawInWind(i, j, spriteBatch, drawOrigin + rotationOffset, rotation, drawOrigin);
 			}
 		}
 	}
