@@ -6,6 +6,7 @@ namespace SpiritReforged.Common.TileCommon.TileSway;
 public class TileSwaySystem : ModSystem
 {
 	public static TileSwaySystem Instance => ModContent.GetInstance<TileSwaySystem>();
+	public static event Action PreUpdateWind;
 
 	public readonly List<Point16> specialDrawPoints = [];
 
@@ -32,6 +33,8 @@ public class TileSwaySystem : ModSystem
 	{
 		if (!Main.dedServ)
 		{
+			PreUpdateWind?.Invoke();
+
 			double num = Math.Abs(Main.WindForVisuals);
 			num = Utils.GetLerpValue(0.08f, 1.2f, (float)num, clamped: true);
 

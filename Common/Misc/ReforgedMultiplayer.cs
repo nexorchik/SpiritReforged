@@ -12,8 +12,7 @@ public static class ReforgedMultiplayer
 		SendVentPoint,
 		SpawnTrail,
 		SpawnSimpleEntity,
-		KillSimpleEntity,
-        SendPlatform
+		KillSimpleEntity
     }
 
 	public static void HandlePacket(BinaryReader reader, int whoAmI)
@@ -79,20 +78,6 @@ public static class ReforgedMultiplayer
 				}
 
 				SimpleEntitySystem.entities[entityWhoAmI].Kill();
-				break;
-
-			case MessageType.SendPlatform:
-				//Should only be received by the server
-				Vector2 center = reader.ReadVector2();
-				int width = reader.ReadInt32();
-				bool remove = reader.ReadBoolean();
-
-				var platform = new Content.Savanna.Tiles.AcaciaTree.CustomPlatform(center, width);
-
-				if (remove)
-					Content.Savanna.Tiles.AcaciaTree.AcaciaTreeSystem.Instance.platforms.Remove(platform);
-				else
-					Content.Savanna.Tiles.AcaciaTree.AcaciaTreeSystem.AddPlatform(platform);
 				break;
 		}
 	}

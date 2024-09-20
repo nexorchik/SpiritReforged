@@ -1,4 +1,5 @@
-﻿using Terraria.DataStructures;
+﻿using SpiritReforged.Common.TileCommon.CustomTree;
+using Terraria.DataStructures;
 using Terraria.GameContent.Metadata;
 
 namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
@@ -46,7 +47,7 @@ public class AcaciaSapling : ModTile
 		if (WorldGen.genRand.NextBool(20))
 		{
 			bool isPlayerNear = WorldGen.PlayerLOS(i, j);
-			bool success = WorldGen.GrowPalmTree(i, j);
+			bool success = CustomTree.GrowTree<AcaciaTree>(i, j);
 			if (success && isPlayerNear)
 				WorldGen.TreeGrowFXCheck(i, j);
 		}

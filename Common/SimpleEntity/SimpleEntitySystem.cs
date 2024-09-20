@@ -18,7 +18,7 @@ public class SimpleEntitySystem : ModSystem
 	internal const int maxEntities = 100;
 	private static int nextIndex;
 
-	public static Entity NewEntity(int type, Vector2 position)
+	public static SimpleEntity NewEntity(int type, Vector2 position)
 	{
 		var entity = templates[type].Clone();
 		entity.active = true;
