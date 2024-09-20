@@ -1,10 +1,12 @@
 using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Visuals.Skies;
 
 namespace SpiritReforged.Content.Savanna.Biome;
 
 public class SavannaSky : AutoloadedSky
 {
+	internal override bool DrawUnderSun => true;
 	private static float TimeProgress()
 	{
 		if (Main.dayTime)
@@ -37,27 +39,21 @@ public class SavannaSky : AutoloadedSky
 		return finalColor * Math.Min(midDayFactor + sunRiseSetFactor, 1) * sunRiseFactor;
 	}
 
-	public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
+	public override void DoDraw(SpriteBatch spriteBatch)
 	{
-		if (maxDepth < float.MaxValue || minDepth > float.MaxValue)
-			return;
-
 		float dayProgress = Main.dayTime ? TimeProgress() : 0;
 		dayProgress = EaseFunction.EaseQuadOut.Ease(dayProgress);
 		Color skyColor = SavannaColor() * GetFadeOpacity();
 		spriteBatch.Draw(TextureAssets.MagicPixel.Value,
 			new Rectangle(0, 0, Main.screenWidth, Main.screenHeight),
 			null,
-			skyColor * dayProgress * 0.25f);
+			skyColor * dayProgress * GetFadeOpacity() * 0.4f);
 
-		int verticalOffset = (int)MathHelper.Lerp(-100, -240, dayProgress);
+		int verticalOffset = (int)MathHelper.Lerp(0, -100, Math.Min(dayProgress, 0.5f));
 		spriteBatch.Draw(AssetLoader.LoadedTextures["SkyGradient"],
-			new Rectangle(0, verticalOffset, Main.screenWidth, Main.screenHeight),
+			new Rectangle(0, verticalOffset, Main.screenWidth, Main.screenHeight - verticalOffset),
 			null,
-			Color.Lerp(skyColor, Color.White * GetFadeOpacity() * dayProgress, 0.3f), 0, Vector2.Zero, SpriteEffects.FlipVertically, 1f);
-
-		if(Main.dayTime)
-			SunMoonDraw.DrawSunFromSky();
+			Color.Lerp(skyColor.Additive(150), Color.White * GetFadeOpacity() * dayProgress, 0.1f), 0, Vector2.Zero, SpriteEffects.FlipVertically, 1f);
 	}
 
 	public override Color OnTileColor(Color inColor) => Color.Lerp(inColor, SavannaColor(), 0.2f * GetFadeOpacity());

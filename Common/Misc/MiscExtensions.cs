@@ -55,7 +55,7 @@ internal static class MiscExtensions
 	public static Color Additive(this Color color, byte newAlpha = 0)
 	{
 		var temp = color;
-		temp.A = newAlpha;
+		temp.A = (byte)(temp.A * newAlpha / byte.MaxValue);
 		return temp;
 	}
 

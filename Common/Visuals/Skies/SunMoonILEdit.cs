@@ -1,6 +1,6 @@
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using SpiritReforged.Content.Savanna.Biome;
+using Terraria.Graphics.Effects;
 using static Terraria.Main;
 
 namespace SpiritReforged.Common.Visuals.Skies;
@@ -40,7 +40,22 @@ public class SunMoonDraw : ModSystem
 
 	public static SunMoonData MoonDrawData => _moonData;
 
-	public override void Load() => IL_Main.DrawSunAndMoon += StoreSunMoonData; //Store the position of the sun/moon with an il edit
+	public override void Load()
+	{
+		IL_Main.DrawSunAndMoon += StoreSunMoonData; //Store the position of the sun/moon with an il edit
+		On_Main.DrawSunAndMoon += DrawSkyUnderSunMoon;
+	}
+
+	private void DrawSkyUnderSunMoon(On_Main.orig_DrawSunAndMoon orig, Main self, SceneArea sceneArea, Color moonColor, Color sunColor, float tempMushroomInfluence)
+	{
+		foreach (string key in AutoloadSkyDict.LoadedSkies.Keys)
+		{
+			if (SkyManager.Instance[key].IsActive() && SkyManager.Instance[key] is AutoloadedSky { DrawUnderSun: true } autosky)
+				autosky.DoDraw(spriteBatch);
+		}
+
+		orig(self, sceneArea, moonColor, sunColor, tempMushroomInfluence);
+	}
 
 	/// <summary>
 	/// Heavily referencing Dominic Karma's edit here to learn how il even works: https://github.com/DominicKarma/Realistic-Sky/blob/main/Content/Sun/SunPositionSaver.cs
