@@ -9,6 +9,7 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 public class ReefSpearThrown : ModProjectile
 {
 	public const float MAX_SPEED = 13;
+
 	private bool hasTarget = false;
 	private Vector2 relativePoint = Vector2.Zero;
 

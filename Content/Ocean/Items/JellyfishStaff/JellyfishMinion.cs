@@ -23,15 +23,6 @@ public class JellyfishMinion : BaseMinion
 	private ref float AiState => ref Projectile.ai[0];
 	private ref float AiTimer => ref Projectile.ai[1];
 
-	public override void AbstractSetStaticDefaults()
-	{
-		Main.projFrames[Type] = 3;
-		ProjectileID.Sets.TrailCacheLength[Type] = 10;
-		ProjectileID.Sets.TrailingMode[Type] = 2;
-	}
-
-	public override void OnSpawn(IEntitySource source) => IsPink = Main.rand.NextBool(2);
-
 	private const int AISTATE_PASSIVEFLOAT = 0; //jellyfish bouncing around player
 	private const int AISTATE_FLYTOPLAYER = 1; //ignore tiles and fly to player if too far
 	private const int AISTATE_AIMTOTARGET = 2; //slowly aim to target, then charge at them
@@ -47,6 +38,18 @@ public class JellyfishMinion : BaseMinion
 	private const int RISETIME = 30; //Time it takes to rise upwards after the dash
 
 	public static int SHOOT_RANGE = 400; //Static because it's used by the bolt class
+
+	private Color GetColor => IsPink ? new Color(248, 148, 255) : new Color(133, 177, 255);
+	private float AdjustedVelocityAngle => Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+
+	public override void AbstractSetStaticDefaults()
+	{
+		Main.projFrames[Type] = 3;
+		ProjectileID.Sets.TrailCacheLength[Type] = 10;
+		ProjectileID.Sets.TrailingMode[Type] = 2;
+	}
+
+	public override void OnSpawn(IEntitySource source) => IsPink = Main.rand.NextBool(2);
 
 	public override void IdleMovement(Player player)
 	{
@@ -246,8 +249,6 @@ public class JellyfishMinion : BaseMinion
 		return true;
 	}
 
-	private Color GetColor => IsPink ? new Color(248, 148, 255) : new Color(133, 177, 255);
-	private float AdjustedVelocityAngle => Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 	public override bool PreDraw(ref Color lightColor)
 	{
 		Color drawColor = GetColor;

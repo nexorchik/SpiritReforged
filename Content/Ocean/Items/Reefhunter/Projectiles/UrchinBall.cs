@@ -17,7 +17,6 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 {
 	private bool hasTarget = false;
 	private Vector2 relativePoint = Vector2.Zero;
-
 	private bool stuckInTile = false;
 	private Point stuckTilePos = new(0, 0);
 	private int squishTime = 0;

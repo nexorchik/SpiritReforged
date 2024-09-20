@@ -23,7 +23,7 @@ public class SavannaSky : AutoloadedSky
 			: EaseFunction.EaseCircularIn.Ease(sunRiseSetFactor);
 
 		var sunRiseSetColor = new Color(242, 89, 58);
-		var midDayColor = new Color(227, 191, 130);
+		var midDayColor = new Color(254, 194, 130);
 
 		var finalColor = Color.Lerp(sunRiseSetColor, midDayColor, midDayFactor);
 
@@ -34,7 +34,7 @@ public class SavannaSky : AutoloadedSky
 
 		sunRiseFactor = MathHelper.Lerp(sunRiseFactor, 1, 0.7f);
 
-		return finalColor * (midDayFactor * 0.66f + sunRiseSetFactor * 0.33f) * sunRiseFactor;
+		return finalColor * Math.Min(midDayFactor + sunRiseSetFactor, 1) * sunRiseFactor;
 	}
 
 	public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
@@ -42,10 +42,22 @@ public class SavannaSky : AutoloadedSky
 		if (maxDepth < float.MaxValue || minDepth > float.MaxValue)
 			return;
 
+		float dayProgress = Main.dayTime ? TimeProgress() : 0;
+		dayProgress = EaseFunction.EaseQuadOut.Ease(dayProgress);
+		Color skyColor = SavannaColor() * GetFadeOpacity();
 		spriteBatch.Draw(TextureAssets.MagicPixel.Value,
 			new Rectangle(0, 0, Main.screenWidth, Main.screenHeight),
 			null,
-			SavannaColor() * Math.Min(1f, (Main.screenPosition.Y - 800) / 1000 * GetFadeOpacity()));
+			skyColor * dayProgress * 0.25f);
+
+		int verticalOffset = (int)MathHelper.Lerp(-100, -240, dayProgress);
+		spriteBatch.Draw(AssetLoader.LoadedTextures["SkyGradient"],
+			new Rectangle(0, verticalOffset, Main.screenWidth, Main.screenHeight),
+			null,
+			Color.Lerp(skyColor, Color.White * GetFadeOpacity() * dayProgress, 0.3f), 0, Vector2.Zero, SpriteEffects.FlipVertically, 1f);
+
+		if(Main.dayTime)
+			SunMoonDraw.DrawSunFromSky();
 	}
 
 	public override Color OnTileColor(Color inColor) => Color.Lerp(inColor, SavannaColor(), 0.2f * GetFadeOpacity());
