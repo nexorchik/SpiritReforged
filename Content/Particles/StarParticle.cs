@@ -8,8 +8,7 @@ public class StarParticle : Particle
 	private Color starColor;
 	private Color bloomColor;
 	private float opacity;
-	public int MaxTime;
-	private float rotSpeed;
+	private readonly float rotSpeed;
 
 	public override ParticleDrawType DrawType => ParticleDrawType.Custom;
 
@@ -29,14 +28,11 @@ public class StarParticle : Particle
 
 	public override void Update()
 	{
-		opacity = (float)Math.Sin((float)TimeActive / MaxTime * MathHelper.Pi);
+		opacity = (float)Math.Sin(Progress * MathHelper.Pi);
 		Color = bloomColor * opacity;
 		Lighting.AddLight(Position, Color.R / 255f, Color.G / 255f, Color.B / 255f);
 		Velocity *= 0.98f;
 		Rotation += rotSpeed * (Velocity.X > 0 ? 0.07f : -0.07f);
-
-		if (TimeActive >= MaxTime)
-			Kill();
 	}
 
 	public override void CustomDraw(SpriteBatch spriteBatch)

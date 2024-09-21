@@ -1,4 +1,4 @@
-using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ItemCommon.FloatingItem;
 
 namespace SpiritReforged.Content.Ocean.Items.KoiTotem;
 
@@ -7,11 +7,6 @@ public class KoiTotem : FloatingItem
 	public override float SpawnWeight => 0.005f;
 	public override float Weight => base.Weight * 0.9f;
 	public override float Bouyancy => base.Bouyancy * 1.07f;
-	public override void SetStaticDefaults()
-	{
-		// DisplayName.SetDefault("Koi Totem");
-		// Tooltip.SetDefault("Increases fishing skill when worn or when placed nearby\nTotem occasionally spits out the bait that was used for reusability\n");
-	}
 
 	public override void SetDefaults()
 	{
@@ -33,6 +28,7 @@ public class KoiTotem : FloatingItem
 		player.GetModPlayer<OceanPlayer>().KoiTotem = true;
 		player.AddBuff(ModContent.BuffType<KoiTotemBuff>(), 2);
 	}
+
 	public override bool AllowPrefix(int pre) => false;
 }
 
@@ -65,11 +61,12 @@ public class KoiTotem_Tile : ModTile
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
-		Player player = Main.LocalPlayer;
 		if (closer)
 		{
+			Player player = Main.LocalPlayer;
+
 			player.GetModPlayer<OceanPlayer>().KoiTotem = true;
-			Main.LocalPlayer.AddBuff(ModContent.BuffType<KoiTotemBuff>(), 12);
+			player.AddBuff(ModContent.BuffType<KoiTotemBuff>(), 12);
 		}
 	}
 

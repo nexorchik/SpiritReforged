@@ -58,7 +58,6 @@ public class TumbleZombie : Common.NPCCommon.ZombieNPC
 		{
 			frameCounter += .1f;
 			frameCounter %= Main.npcFrameCount[Type];
-
 			NPC.frame.Y = frameHeight * (int)frameCounter;
 		}
 	}
@@ -71,5 +70,5 @@ public class TumbleZombie : Common.NPCCommon.ZombieNPC
 
 	}
 
-	public override bool SpawnConditions(Player player) => player.ZoneBeach;
+	public override bool SpawnConditions(Player player) => player.InModBiome<Savanna.Biome.SavannaBiome>();
 }
