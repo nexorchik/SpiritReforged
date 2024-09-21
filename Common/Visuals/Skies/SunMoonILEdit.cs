@@ -40,7 +40,10 @@ public class SunMoonILEdit : ModSystem
 			//Ldsfld refers to a static field being pushed onto the stack
 			//Stloc means a value being taken from the stack and stored in a local variable
 			//Ldloc means to load a variable at a specific index onto the stack
-			//Starg means to store a value to a variable at a specific index
+			//Starg means to store a value to an argument at a specific index
+			//Ldarg means to load a value from an argument at a specific index
+			//Ldc loads a constant value- Ldc_I4_1 loads 1, Ldc_I4_0 loads 0. In the context of a bool, 1 is true, and 0 is false
+			//Brfalse jumps to a specified point in the code if the condition on the stack is false- used for conditionals
 
 			//Grab the scales
 			cursor.GotoNext(i => i.MatchLdsfld<Main>("ForcedMinimumZoom"));
