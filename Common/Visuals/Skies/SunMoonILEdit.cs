@@ -135,10 +135,6 @@ public class SunMoonILEdit : ModSystem
 
 	public struct SunMoonData
 	{
-		public SunMoonData()
-		{
-
-		}
 		public Vector2 Position;
 		public float Scale;
 		public Color Color;
