@@ -41,7 +41,7 @@ public class AcaciaTree : CustomTree
 		}
 	}
 
-	public override void OnShakeTree(int i, int j)
+	protected override void OnShakeTree(int i, int j)
 	{
 		var drop = new WeightedRandom<int>();
 
@@ -57,8 +57,7 @@ public class AcaciaTree : CustomTree
 		if (dropType > ItemID.None)
 			Item.NewItem(null, new Rectangle((int)position.X, (int)position.Y, 16, 16), dropType);
 
-		for (int d = 0; d < 20; d++)
-			Gore.NewGorePerfect(null, position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(80f), Main.rand.NextVector2Unit(), GoreID.TreeLeaf_Palm);
+		GrowEffects(i, j, true);
 	}
 
 	public override void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
@@ -93,6 +92,27 @@ public class AcaciaTree : CustomTree
 			treeDrawPoints.Add(new Point16(i, j));
 		else if (TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) / numStyles > 0)
 			treeDrawPoints.Add(new Point16(i, j));
+	}
+
+	protected override void OnGrowEffects(int i, int j, int height)
+	{
+		for (int h = 0; h < height; h++)
+		{
+			var center = new Vector2(i, j + h) * 16f + new Vector2(8);
+			int range = 20;
+			int loops = 3;
+
+			if (h == 0)
+			{
+				center.Y -= 16 * 3;
+				range = 80;
+				loops = 20;
+			}
+
+			for (int g = 0; g < loops; g++)
+				Gore.NewGorePerfect(new EntitySource_TileBreak(i, j), center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(range), 
+					Main.rand.NextVector2Unit(), GoreID.TreeLeaf_Palm, .7f + Main.rand.NextFloat() * .6f);
+		}
 	}
 
 	protected override void GenerateTree(int i, int j, int height)

@@ -106,7 +106,22 @@ public abstract class CustomTree : ModTile
 		treeShakes.Add(pt); //Prevent this tree from being shook again
 	}
 
-	public virtual void OnShakeTree(int i, int j) { }
+	protected virtual void OnShakeTree(int i, int j) => GrowEffects(i, j, true);
+
+	public void GrowEffects(int i, int j, bool shake = false)
+	{
+		int height = 1;
+		while (Framing.GetTileSafely(i, j - height).TileType == Type)
+			height++; //Move to the top of the tree
+
+		if (shake)
+			height = 1;
+
+		OnGrowEffects(i, j - (height - 1), height);
+	}
+
+	/// <summary> Used to create effects when the tree is grown, such as leaves. Doubles for shake effects by default. </summary>
+	protected virtual void OnGrowEffects(int i, int j, int height) { }
 
 	public override IEnumerable<Item> GetItemDrops(int i, int j)
 	{
@@ -188,6 +203,9 @@ public abstract class CustomTree : ModTile
 				WorldGen.KillTile(i, j); //Kill the sapling
 
 			instance.GenerateTree(i, j, height);
+
+			if (WorldGen.PlayerLOS(i, j))
+				instance.GrowEffects(i, j);
 			return true;
 		}
 		

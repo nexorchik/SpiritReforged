@@ -45,19 +45,12 @@ public class AcaciaSapling : ModTile
 	public override void RandomUpdate(int i, int j)
 	{
 		if (WorldGen.genRand.NextBool(20))
-		{
-			bool isPlayerNear = WorldGen.PlayerLOS(i, j);
-			bool success = CustomTree.GrowTree<AcaciaTree>(i, j);
-			if (success && isPlayerNear)
-				WorldGen.TreeGrowFXCheck(i, j);
-		}
+			CustomTree.GrowTree<AcaciaTree>(i, j);
 	}
 
 	public override void SetSpriteEffects(int i, int j, ref SpriteEffects effects)
 	{
 		if (i % 2 == 1)
 			effects = SpriteEffects.FlipHorizontally;
-
-		CustomTree.GrowTree<AcaciaTree>(i, j); //Temp
 	}
 }
