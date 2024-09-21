@@ -1,3 +1,5 @@
+using static SpiritReforged.Common.Visuals.Skies.AutoloadSkyDict;
+
 namespace SpiritReforged.Common.Visuals.Skies;
 
 public static class AutoloadSkyDict
@@ -9,5 +11,5 @@ internal class UnloadDict : ILoadable
 {
 	public void Load(Mod mod) { }
 
-	public void Unload() => AutoloadSkyDict.LoadedSkies = new Dictionary<string, Func<Player, bool>>();
+	public void Unload() => LoadedSkies = new Dictionary<string, Func<Player, bool>>();
 }
