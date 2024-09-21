@@ -683,6 +683,11 @@ DrywoodSword: {
 	Tooltip: ""
 }
 
+HuntingRifle: {
+	DisplayName: Hunting Rifle
+	Tooltip: Deals more damage to distant targets and when standing still
+}
+
 SafariHat: {
 	DisplayName: Safari Hat
 	Tooltip: ""
