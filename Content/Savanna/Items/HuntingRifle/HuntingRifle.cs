@@ -100,8 +100,13 @@ public class HuntingRifle : ModItem
             Dust.NewDustPerfect(position + unit * fxDistance + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), 
 				DustID.Smoke, unit * Main.rand.NextFloat(), 200, default, Main.rand.NextFloat(3f));
 
-		//Grant a damage bonus (+25%) when standing still. Additional bonuses are applied in HunterGlobalProjectile
-		float mult = (player.velocity == Vector2.Zero) ? 1.25f : 1f;
+		float mult = 1f;
+		if (player.velocity == Vector2.Zero)
+		{
+			ParticleHandler.SpawnParticle(new SmokeParticle(position + unit * fxDistance, unit * -.2f, Color.LightSlateGray, .5f, unit.ToRotation(), 30));
+			//Grant a damage bonus (+25%) when standing still. Additional bonuses are applied in HunterGlobalProjectile
+			mult = 1.25f;
+		}
 
 		//Spawn a harmless animated projectile
 		Projectile.NewProjectile(source, position, unit, ModContent.ProjectileType<HuntingRifleProj>(), 0, 0, player.whoAmI);
@@ -144,8 +149,7 @@ public class HuntingRifleProj : ModProjectile
 		float holdDistance = -14 - GetFeedback() * 10; //How far the projectile is held from the player center
 		int halfTime = owner.itemTimeMax / 2;
 
-		Projectile.timeLeft = Math.Min(Projectile.timeLeft, owner.itemTimeMax);
-
+		Projectile.timeLeft = Math.Min(Projectile.timeLeft, owner.itemTimeMax); //Set our max time here because we can't do it in defaults
 		Player.CompositeArmStretchAmount armStretch = (GetFeedback() * 4) switch
 		{
 			0 => Player.CompositeArmStretchAmount.Full,
@@ -155,7 +159,7 @@ public class HuntingRifleProj : ModProjectile
 		};
 
 		if (Projectile.timeLeft == halfTime + 15)
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/Eject") with { PitchVariance = .25f }, Projectile.Center);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/Eject") with { PitchVariance = .2f }, Projectile.Center);
 		else if (Projectile.timeLeft == halfTime)
 		{
 			var velocity = (new Vector2(-owner.direction, -owner.gravDir) * Main.rand.NextFloat(8f, 12f)).RotateRandom(.2f);
@@ -201,7 +205,7 @@ public class HuntingRifleProj : ModProjectile
         Vector2 scale = new Vector2(1 + unit, 1 - unit) * Projectile.scale;
 
         Main.EntitySpriteDraw(texture, pos, null, Projectile.GetAlpha(Color.White with { A = 150 }), Projectile.velocity.ToRotation(), texture.Frame().Left(), scale, SpriteEffects.None);
-    }
+	}
 
     public override bool? CanDamage() => false;
 
