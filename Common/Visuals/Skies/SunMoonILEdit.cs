@@ -81,15 +81,12 @@ public class SunMoonILEdit : ModSystem
 			cursor.EmitLdsfld(GetType().GetField("SunMoonDrawingEnabled"));
 			cursor.Emit(OpCodes.Brfalse, afterDraw);
 
-			//Set the moon color from the parameter, and divide it
-			//Ideally I wouldn't need to get the divisor and manually divide it, and could just get the parameter's value after division directly
-			//but unfortunately idk how to do that
+			//Set the moon color from the modified argument
 			cursor.GotoNext(i => i.MatchLdsfld<Main>("atmo"));
-			cursor.GotoNext(MoveType.After, i => i.MatchStloc(out curIndex));
+			cursor.GotoNext(MoveType.After, i => i.MatchStarg(out curIndex));
 
-			cursor.Emit(OpCodes.Ldarg_1); //Argument corresponding to moon color
-			cursor.Emit(OpCodes.Ldloc, curIndex);
-			cursor.EmitDelegate<Action<Color, float>>((moonColor, num13) => _moonData.Color = moonColor * num13);
+			cursor.EmitLdarg(curIndex); //Argument corresponding to moon color
+			cursor.EmitDelegate<Action<Color>>(moonColor => _moonData.Color = moonColor);
 
 			//Grab moon position
 			cursor.GotoNext(i => i.MatchLdsfld<Main>("moonModY")); //Go to when the static field Main.sunModY or Main.moonModY is being pushed onto the stack
