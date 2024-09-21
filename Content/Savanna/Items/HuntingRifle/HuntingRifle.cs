@@ -19,8 +19,6 @@ public class HuntingRifle : ModItem
 		CustomCursor.DrawCustomCursor += DrawCustomCursor;
 	}
 
-	public override void Unload() => CustomCursor.DrawCustomCursor -= DrawCustomCursor;
-
 	private void DrawCustomCursor(bool thick)
 	{
 		if (Main.gameMenu || Main.LocalPlayer.mouseInterface || Main.LocalPlayer.HeldItem.type != Type)

@@ -13,7 +13,7 @@ public class CustomCursor : ILoadable
 		On_Main.DrawThickCursor += DrawThickCursor;
 	}
 
-	public void Unload() { }
+	public void Unload() => DrawCustomCursor = null;
 
 	private Vector2 DrawThickCursor(On_Main.orig_DrawThickCursor orig, bool smart)
 	{
