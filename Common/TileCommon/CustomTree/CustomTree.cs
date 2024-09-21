@@ -1,5 +1,6 @@
 ﻿using MonoMod.Cil;
 using SpiritReforged.Common.TileCommon.TileSway;
+using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.Metadata;
@@ -15,11 +16,13 @@ public abstract class CustomTree : ModTile
 	protected readonly HashSet<Point16> treeDrawPoints = [];
 	private readonly HashSet<Point16> treeShakes = [];
 
-	/// <summary> Controls growth height without the need to override <see cref="GenerateTree"/>. </summary>
-	public virtual int TreeHeight => WorldGen.genRand.Next(10, 21);
-
 	/// <summary> Calculates the horizontal offset of a palm tree using the vanilla method. </summary>
 	public static Vector2 GetPalmTreeOffset(int i, int j) => new(Framing.GetTileSafely(i, j).TileFrameY - 2, 0);
+	public bool IsTreeTop(int i, int j, bool checkBroken = false)
+	{
+		bool clear = Framing.GetTileSafely(i, j - 1).TileType != Type;
+		return checkBroken ? clear && treeDrawPoints.Contains(new Point16(i, j)) : clear;
+	}
 
 	public override void Load()
 	{
@@ -93,17 +96,27 @@ public abstract class CustomTree : ModTile
 
 	public void ShakeTree(int i, int j)
 	{
-		while (Framing.GetTileSafely(i, j).TileType == Type)
+		while (Framing.GetTileSafely(i, j - 1).TileType == Type)
 			j--; //Move to the top of the tree
 
-		var pt = new Point16(i, j + 1);
-		if (!treeShakes.Contains(pt) && TileObjectData.GetTileStyle(Framing.GetTileSafely(pt.X, pt.Y)) < 2)
-			OnShakeTree(pt.X, pt.Y);
+		var pt = new Point16(i, j);
+		if (!treeShakes.Contains(pt) && IsTreeTop(i, j, true))
+			OnShakeTree(i, j);
 
 		treeShakes.Add(pt); //Prevent this tree from being shook again
 	}
 
 	public virtual void OnShakeTree(int i, int j) { }
+
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		var drops = base.GetItemDrops(i, j);
+
+		if (IsTreeTop(i, j, true))
+			drops = drops.Concat([new Item(ItemID.Acorn)]);
+
+		return drops;
+	}
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
@@ -119,7 +132,7 @@ public abstract class CustomTree : ModTile
 		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + GetPalmTreeOffset(i, j);
 		float rotation = Main.instance.TilesRenderer.GetWindCycle(i, j, TileSwaySystem.Instance.TreeWindCounter) * .1f;
 
-		if (Framing.GetTileSafely(i, j).TileType == Type && Framing.GetTileSafely(i, j - 1).TileType != Type) //Draw a treetop
+		if (IsTreeTop(i, j))
 		{
 			var source = topsTexture.Frame(3, sizeOffsetX: -2, sizeOffsetY: -2);
 			var origin = source.Bottom();
@@ -140,7 +153,7 @@ public abstract class CustomTree : ModTile
 		var tile = Framing.GetTileSafely(i, j);
 		var texture = TextureAssets.Tile[Type].Value;
 
-		var source = new Rectangle(tile.TileFrameX, 0, frameSize - 2, frameSize - 2);
+		var source = new Rectangle(tile.TileFrameX % (frameSize * 12), 0, frameSize - 2, frameSize - 2);
 		var offset = Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1 ? Vector2.Zero : Vector2.One * 12;
 		var position = (new Vector2(i, j) + offset) * 16 - Main.screenPosition + GetPalmTreeOffset(i, j);
 
@@ -154,9 +167,12 @@ public abstract class CustomTree : ModTile
 		if (!TileDrawing.IsVisible(Framing.GetTileSafely(i, j)))
 			return;
 
-		if (Framing.GetTileSafely(i, j - 1).TileType != Type && TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) < 2)
+		if (IsTreeTop(i, j) && TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) < 2)
 			treeDrawPoints.Add(new Point16(i, j));
 	}
+
+	/// <summary> Controls growth height without the need to override <see cref="GenerateTree"/>. </summary>
+	public virtual int TreeHeight => WorldGen.genRand.Next(10, 21);
 
 	/// <returns> Whether the tree was successfully grown. </returns>
 	public static bool GrowTree<T>(int i, int j) where T : CustomTree

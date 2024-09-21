@@ -5,7 +5,7 @@ using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
-public class AcaciaPlatform : SimpleEntity
+public class TreetopPlatform : SimpleEntity
 {
 	public Point16? TreePosition { get; private set; }
 

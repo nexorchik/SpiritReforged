@@ -57,5 +57,7 @@ public class AcaciaSapling : ModTile
 	{
 		if (i % 2 == 1)
 			effects = SpriteEffects.FlipHorizontally;
+
+		CustomTree.GrowTree<AcaciaTree>(i, j); //Temp
 	}
 }
