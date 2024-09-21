@@ -624,8 +624,8 @@ BigBuoy: {
 	Tooltip: "{$ItemTooltip.CoralTorch}"
 }
 
-Buoy: {
-	DisplayName: Buoy
+SmallBuoy: {
+	DisplayName: Small Buoy
 	Tooltip: "{$ItemTooltip.CoralTorch}"
 }
 

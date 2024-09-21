@@ -5,7 +5,7 @@ using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Content.Ocean.Items.Buoys;
 
-public class Buoy : ModItem
+public class SmallBuoy : ModItem
 {
 	private static bool WaterBelow()
 	{
@@ -50,7 +50,7 @@ public class Buoy : ModItem
 	{
 		if (player.whoAmI == Main.myPlayer && player.ItemAnimationJustStarted)
 		{
-			int type = SimpleEntitySystem.types[typeof(BuoyEntity)];
+			int type = SimpleEntitySystem.types[typeof(SmallBuoyEntity)];
 			var position = Main.MouseWorld;
 
 			SimpleEntitySystem.NewEntity(type, position);
@@ -77,7 +77,7 @@ public class Buoy : ModItem
 			.Register();
 }
 
-public class BuoyEntity : SimpleEntity
+public class SmallBuoyEntity : SimpleEntity
 {
 	private static Asset<Texture2D> GlowTexture;
 
@@ -89,8 +89,8 @@ public class BuoyEntity : SimpleEntity
 			GlowTexture = ModContent.Request<Texture2D>(TexturePath + "_Glow");
 
 		saveMe = true;
-		width = 16;
-		height = 18;
+		width = 18;
+		height = 42;
 	}
 
 	public override void Update()
@@ -106,7 +106,7 @@ public class BuoyEntity : SimpleEntity
 
 		Lighting.AddLight(Top, .3f, .1f, .1f);
 
-		#region pickaxe check
+		//Pickaxe check
 		var player = Main.LocalPlayer;
 		var heldItem = player.HeldItem;
 
@@ -121,13 +121,12 @@ public class BuoyEntity : SimpleEntity
 				packet.Send();
 			}
 		}
-		#endregion
 	}
 
 	public override void OnKill()
 	{
 		if (Main.netMode != NetmodeID.MultiplayerClient)
-			Item.NewItem(GetSource_Death(), Hitbox, ModContent.ItemType<Buoy>());
+			Item.NewItem(GetSource_Death(), Hitbox, ModContent.ItemType<SmallBuoy>());
 
 		SoundEngine.PlaySound(SoundID.Dig, Center);
 	}
