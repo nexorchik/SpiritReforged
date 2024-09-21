@@ -6,17 +6,15 @@ public class CoconutMilk : FoodItem
 {
 	internal override Point Size => new(24, 30);
 
-	public override bool CanUseItem(Player player)
-	{
-		return true;
-	}
+	public override bool CanUseItem(Player player) => true;
+
 	public override void Defaults()
 	{
 		Item.buffTime = 10 * 60 * 60;
 		Item.useStyle = ItemUseStyleID.DrinkLiquid;
 		Item.UseSound = SoundID.Item3;
-
 	}
+
 	public override void AddRecipes()
 	{
 		Recipe recipe1 = CreateRecipe(1);

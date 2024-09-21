@@ -11,6 +11,7 @@ public class CrystalFish : FoodItem
 		player.AddBuff(BuffID.MagicPower, 9860);
 		return true;
 	}
+
 	public override void Defaults()
 	{
 		Item.rare = ItemRarityID.Orange;
@@ -18,6 +19,7 @@ public class CrystalFish : FoodItem
 		Item.buffTime = 17 * 60 * 60;
 		Item.value = Item.sellPrice(0, 0, 2, 0);
 	}
+
 	public override void AddRecipes()
 	{
 		Recipe recipe1 = CreateRecipe(1);

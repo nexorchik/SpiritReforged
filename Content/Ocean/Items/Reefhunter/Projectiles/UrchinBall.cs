@@ -167,7 +167,9 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		{
 			Vector2 vel = new Vector2(Main.rand.NextFloat(3f, 4f), 0).RotatedBy(i * MathHelper.TwoPi / 8f).RotatedByRandom(0.33f);
 			Vector2 spawnPos = Projectile.Center + (hasTarget ? Vector2.Normalize(relativePoint) * 6 : vel);
-			Projectile.NewProjectile(Projectile.GetSource_Death(), spawnPos, vel, ModContent.ProjectileType<UrchinSpike>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner);
+
+			float spikeDamage = 0.75f;
+			Projectile.NewProjectile(Projectile.GetSource_Death(), spawnPos, vel, ModContent.ProjectileType<UrchinSpike>(), (int)(Projectile.damage * spikeDamage), Projectile.knockBack, Projectile.owner);
 		}
 
 		if (Main.dedServ)

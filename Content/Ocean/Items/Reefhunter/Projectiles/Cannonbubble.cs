@@ -15,7 +15,7 @@ public class Cannonbubble : ModProjectile
 {
 	public const float MAX_SPEED = 15f; //Initial projectile velocity, used in item shootspeed
 	private const int MAX_TIMELEFT = 360;
-	public static Color RINGCOLOR = new Color(202, 252, 255) * 0.75f;
+	public static Color RINGCOLOR { get; set; } = new Color(202, 252, 255, 150) * 0.5f;
 
 	public override void SetStaticDefaults()
 	{
@@ -35,6 +35,7 @@ public class Cannonbubble : ModProjectile
 		Projectile.scale = Main.rand.NextFloat(0.9f, 1.1f);
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = 30;
+		RINGCOLOR = new Color(202, 252, 255, 200) * 0.5f;
 	}
 
 	private ref float JiggleStrength => ref Projectile.ai[0];

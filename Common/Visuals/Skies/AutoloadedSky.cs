@@ -21,7 +21,6 @@ public abstract class AutoloadedSky : CustomSky, ILoadable
 
 	public void Load(Mod mod)
 	{
-		//Load doesn't run on abstract classes, so there's no need to check if this is the abstract class beforehand
 		string key = mod.Name + ":" + GetType().Name;
 		SkyManager.Instance[mod.Name + ":" + GetType().Name] = (CustomSky)Activator.CreateInstance(GetType());
 		LoadedSkies.Add(key, new Func<Player, bool>(ActivationCondition));

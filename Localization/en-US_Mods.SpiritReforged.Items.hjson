@@ -163,7 +163,7 @@ PendantOfTheOcean: {
 
 ReefSpear: {
 	DisplayName: Reef Trident
-	Tooltip: Right click to throw the trident, poisoning enemies for a short time
+	Tooltip: Right click to throw the trident, increasing damage taken by the main attack
 }
 
 SkullSentry: {
@@ -404,7 +404,7 @@ DriftwoodWorkbenchItem: {
 
 Cloudstalk: {
 	DisplayName: Cloudstalk
-	Tooltip: ""
+	Tooltip: "'Usually found high up'"
 }
 
 CloudstalkSeed: {
@@ -434,7 +434,7 @@ FloatingDriftwood: {
 
 FishCrate: {
 	DisplayName: Packing Crate
-	Tooltip: ""
+	Tooltip: Right-click to open
 }
 
 Ambergris: {
@@ -614,9 +614,33 @@ CustardApple: {
 	Tooltip: ""
 }
 
+BeachUmbrellaItem: {
+	DisplayName: Beach Umbrella
+	Tooltip: ""
+}
+
+BigBuoy: {
+	DisplayName: Big Buoy
+	Tooltip: "{$ItemTooltip.CoralTorch}"
+}
+
+Buoy: {
+	DisplayName: Buoy
+	Tooltip: "{$ItemTooltip.CoralTorch}"
+}
+
+LoungeChairItem: {
+	DisplayName: Lounge Chair
+	Tooltip: ""
+}
+
 Omelette: {
 	DisplayName: Omelette
-	Tooltip: "{$BuffDescription.WellFed2}"
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed2}
+		'Perfectly cooked'
+		'''
 }
 
 OstrichEgg: {
@@ -656,5 +680,20 @@ DrywoodHelmet: {
 
 DrywoodSword: {
 	DisplayName: Drywood Sword
+	Tooltip: ""
+}
+
+SafariHat: {
+	DisplayName: Safari Hat
+	Tooltip: ""
+}
+
+SafariShorts: {
+	DisplayName: Safari Shorts
+	Tooltip: ""
+}
+
+SafariVest: {
+	DisplayName: Safari Vest
 	Tooltip: ""
 }
