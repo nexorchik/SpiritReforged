@@ -92,6 +92,7 @@ public class MantarayMount : ModMount
 			MountData.usesHover = true;
 
 			player.gravity = 0f;
+			player.velocity.Y *= 0.99f;
 		}
 
 		player.gills = true;
