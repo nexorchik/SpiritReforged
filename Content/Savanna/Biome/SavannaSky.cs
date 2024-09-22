@@ -52,7 +52,7 @@ public class SavannaSky : AutoloadedSky
 		spriteBatch.Draw(AssetLoader.LoadedTextures["SkyGradient"],
 			new Rectangle(0, verticalOffset, Main.screenWidth, Main.screenHeight - verticalOffset),
 			null,
-			Color.Lerp(skyColor.Additive(150), Color.White * FadeOpacity * dayProgress, 0.1f), 0, Vector2.Zero, SpriteEffects.FlipVertically, 1f);
+			Color.Lerp(skyColor.Additive(150), Color.White * FadeOpacity * dayProgress, 0.1f));
 	}
 
 	public override Color OnTileColor(Color inColor) => Color.Lerp(inColor, SavannaColor(), 0.2f * FadeOpacity);
