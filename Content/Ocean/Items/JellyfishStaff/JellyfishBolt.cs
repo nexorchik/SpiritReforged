@@ -112,14 +112,14 @@ public class JellyfishBolt : ModProjectile
 				ParticleColor.Additive() * 0.75f,
 				0.7f,
 				80 + Main.rand.NextFloat(20),
-				20 + Main.rand.Next(10),
+				25 + Main.rand.Next(10),
 				"Lightning",
 				new Vector2(1f, 0.2f),
 				EaseFunction.EaseCircularOut,
 				false,
 				0.3f).WithSkew(Main.rand.NextFloat(0.2f, 0.7f), Main.rand.NextFloat(MathHelper.PiOver2) + i * MathHelper.PiOver2));
 
-		ParticleHandler.SpawnParticle(new DissipatingImage(center, Color.White.Additive(), 0f, 0.075f, Main.rand.NextFloat(0.5f), "Scorch", new(0.5f, 0.5f), new(4, 0.2f), 40));
+		ParticleHandler.SpawnParticle(new DissipatingImage(center, Color.White.Additive(), Main.rand.NextFloat(MathHelper.TwoPi), 0.075f, Main.rand.NextFloat(-0.5f, 0.5f), "ElectricScorch", new(0.4f, 0.4f), new(4, 1), 25));
 	}
 
 	private Color ParticleColor => IsPink ? new Color(255, 161, 225) : new Color(156, 255, 245);
