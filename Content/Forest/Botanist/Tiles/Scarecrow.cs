@@ -1,8 +1,10 @@
-﻿using SpiritReforged.Common.TileCommon;
+﻿using MonoMod.Cil;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.TileSway;
 using System.IO;
 using System.Linq;
 using Terraria.DataStructures;
+using Terraria.GameContent.Drawing;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Forest.Botanist.Tiles;
@@ -85,10 +87,10 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
 		if (tile.TileFrameY == 0 && tile.TileFrameX == 0)
 		{
 			var entity = ScarecrowTileEntity.GetMe(i, j);
-			if (entity is not null && entity.Hat is not null)
+			if (entity != null)
 			{
-				var hatPos = new Vector2(i + rotation * .75f, j) * 16 + dataOffset + offset + new Vector2(2, -12);
-				entity.DrawHat(hatPos, origin, spriteBatch, rotation);
+				entity.rotation = rotation;
+				entity.visualPosition = new Vector2(i, j) * 16 + dataOffset + offset;
 			}
 		}
 	}
@@ -110,6 +112,9 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
 public class ScarecrowTileEntity : ModTileEntity
 {
 	public Item Hat { get; private set; } = null;
+	private readonly Player dummy;
+	public float rotation;
+	public Vector2 visualPosition;
 
 	public static ScarecrowTileEntity GetMe(int i, int j)
 	{
@@ -118,6 +123,56 @@ public class ScarecrowTileEntity : ModTileEntity
 			return sgaregrow;
 
 		return null;
+	}
+
+	public ScarecrowTileEntity()
+	{
+		dummy = new Player();
+		dummy.hair = 15;
+		dummy.skinColor = Color.White;
+		dummy.skinVariant = 10;
+	}
+
+	public override void Load() => IL_TileDrawing.DrawEntities_HatRacks += (ILContext il) =>
+	{
+		var c = new ILCursor(il);
+		if (!c.TryGotoNext(x => x.MatchCallvirt<SpriteBatch>("End")))
+			return;
+
+		//Emit a delegate before the SpriteBatch ends so we don't have to start it again
+		c.EmitDelegate(() =>
+		{
+			foreach (var entity in ByPosition.Values)
+				if (entity is not null and ScarecrowTileEntity scarecrow)
+					scarecrow.DrawHat();
+		});
+	};
+
+	public void DrawHat()
+	{
+		if (Hat is null || Hat.headSlot < 0)
+			return;
+
+		//The base of the scarecrow
+		var origin = new Vector2(8, 16 * 3);
+
+		dummy.direction = 1;
+		dummy.Male = true;
+		dummy.isDisplayDollOrInanimate = true;
+		dummy.isHatRackDoll = true;
+		dummy.armor[0] = Hat;
+		dummy.ResetEffects();
+		dummy.ResetVisibleAccessories();
+		dummy.invis = true;
+		dummy.UpdateDyes();
+		dummy.DisplayDollUpdate();
+		dummy.PlayerFrame();
+		dummy.position = visualPosition + new Vector2(4, -50 + rotation * 20);
+		dummy.fullRotation = rotation;
+		dummy.fullRotationOrigin = origin;
+
+		//Draw our hat
+		Main.PlayerRenderer.DrawPlayer(Main.Camera, dummy, dummy.position, dummy.fullRotation, dummy.fullRotationOrigin);
 	}
 
 	public void OnInteract(Player player)
@@ -152,28 +207,12 @@ public class ScarecrowTileEntity : ModTileEntity
 
 			NetMessage.SendData(MessageID.TileEntitySharing, number: ID, number2: Position.X, number3: Position.Y);
 
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < 10; i++) //Create smoke
 			{
 				var dust = Dust.NewDustDirect(Position.ToVector2() * 16 - new Vector2(0, 8), 16, 16, DustID.Smoke, Alpha: 150, Scale: Main.rand.NextFloat(.5f, 1.5f));
 				dust.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(.25f);
 			}
 		}
-	}
-
-	public void DrawHat(Vector2 worldPos, Vector2 origin, SpriteBatch spriteBatch, float rotation = 0)
-	{
-		if (Hat.headSlot < 0)
-			return;
-
-		var texture = TextureAssets.ArmorHead[Hat.headSlot].Value;
-		var source = texture.Frame(1, 20);
-		var shadowColor = Lighting.GetColor((worldPos / 16).ToPoint()).MultiplyRGB(Color.Black) * .3f;
-
-		//Draw a dropshadow
-		spriteBatch.Draw(texture, worldPos - Main.screenPosition + new Vector2(0, 2), source, shadowColor, rotation, origin, 1, SpriteEffects.None, 0);
-		//Draw the hat
-		spriteBatch.Draw(texture, worldPos - Main.screenPosition, source, Lighting.GetColor((worldPos / 16).ToPoint()),
-			rotation, origin, 1, SpriteEffects.None, 0);
 	}
 
 	public override bool IsTileValidForEntity(int x, int y)
