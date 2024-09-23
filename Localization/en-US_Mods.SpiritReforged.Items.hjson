@@ -702,3 +702,23 @@ SafariVest: {
 	DisplayName: Safari Vest
 	Tooltip: ""
 }
+
+ScarecrowItem: {
+	DisplayName: Scarecrow
+	Tooltip: ""
+}
+
+BotanistBody: {
+	DisplayName: Botanist Apron
+	Tooltip: ""
+}
+
+BotanistHat: {
+	DisplayName: Sunflower Strawhat
+	Tooltip: Keeps you happy
+}
+
+BotanistLegs: {
+	DisplayName: Botanist Joggers
+	Tooltip: 10% increased move speed
+}
