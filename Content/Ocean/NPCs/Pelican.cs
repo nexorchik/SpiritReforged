@@ -1,31 +1,38 @@
-using Terraria.GameContent.Bestiary;
-using Terraria.DataStructures;
-using Terraria.Utilities;
-using Terraria.UI;
-using System.IO;
-using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Content.Ocean.Items.Driftwood;
+using SpiritReforged.Content.Ocean.Items;
+using System.IO;
+using Terraria.DataStructures;
+using Terraria.UI;
+using Terraria.Utilities;
+using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.UI;
+using System.Linq;
+using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.NPCs;
 
 [AutoloadCritter]
 public class Pelican : ModNPC
 {
-	/// <summary>
-	/// The item choices for this pelican. Set once on load, and unloaded.
-	/// </summary>
-	static WeightedRandom<int> choice;
+	private static readonly int[] endFrames = [2, 6, 8, 5];
 
-	private int _heldItemType = ItemID.None;
+	private enum State : byte
+	{
+		Idle,
+		Swim,
+		Walk,
+		Fly,
+		Startle //Shares the same column as Idle, which similarly has no animation
+	}
 
-	private ref float State => ref NPC.ai[0];
-	private ref float Timer => ref NPC.ai[1];
-	private ref float WalkState => ref NPC.ai[2];
-	private ref float WalkTimer => ref NPC.ai[3];
+	public int AIState { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
+	public ref float Counter => ref NPC.ai[1];
+	private static WeightedRandom<int> choice;
+	private int heldItemType;
 
-	private Vector2 HeldItemPosition => NPC.position + new Vector2(NPC.spriteDirection == 1 ? 25 : 0, -4);
+	public override void Unload() => choice = null;
 
-	public override void Load()
+	public override void SetStaticDefaults()
 	{
 		choice = new(Main.rand);
 		choice.Add(ItemID.None, 6);
@@ -36,29 +43,9 @@ public class Pelican : ModNPC
 		choice.Add(ItemID.Trout, 1.5f);
 		choice.Add(ItemID.Tuna, 1f);
 		choice.Add(ItemID.GoldenCarp, 0.01f);
-	}
 
-	public override void Unload() => choice = null;
-
-	public override void SetStaticDefaults()
-	{
-		Main.npcFrameCount[Type] = 1;
+		Main.npcFrameCount[Type] = 8; //Rows
 		NPCID.Sets.CountsAsCritter[Type] = true;
-	}
-
-	public override void SetDefaults()
-	{
-		NPC.dontCountMe = true;
-		NPC.width = 22;
-		NPC.height = 22;
-		NPC.damage = 0;
-		NPC.defense = 0;
-		NPC.lifeMax = 5;
-		NPC.HitSound = SoundID.NPCHit1;
-		NPC.DeathSound = SoundID.NPCDeath1;
-		NPC.knockBackResist = 1f;
-		NPC.aiStyle = -1;
-		NPC.npcSlots = 0;
 	}
 
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
@@ -67,10 +54,24 @@ public class Pelican : ModNPC
 		bestiaryEntry.AddInfo(this, "Ocean");
 	}
 
+	public override void SetDefaults()
+	{
+		NPC.Size = new Vector2(22);
+		NPC.damage = 0;
+		NPC.defense = 0;
+		NPC.lifeMax = 5;
+		NPC.HitSound = SoundID.NPCHit1;
+		NPC.DeathSound = SoundID.NPCDeath1;
+		NPC.knockBackResist = 1f;
+		NPC.dontCountMe = true;
+		NPC.npcSlots = 0;
+		NPC.aiStyle = -1;
+	}
+
 	public override void OnSpawn(IEntitySource source)
 	{
 		if (source is not EntitySource_Parent { Entity: Player })
-			_heldItemType = choice;
+			heldItemType = choice;
 
 		NPC.direction = -1;
 		NPC.netUpdate = true;
@@ -78,125 +79,50 @@ public class Pelican : ModNPC
 
 	public override void AI()
 	{
-		NPC.noGravity = true;
+		NPC.TargetClosest(false);
+		var target = Main.player[NPC.target];
 
-		if (Math.Abs(NPC.velocity.X) > 0.001f)
-			NPC.spriteDirection = NPC.direction = Math.Sign(NPC.velocity.X);
-
-		if (State == 0)
+		if (AIState == (int)State.Startle)
 		{
-			NPC.noGravity = NPC.wet;
-
-			if (NPC.wet)
+			NPC.velocity *= .9f;
+			if (++Counter >= 30)
 			{
-				NPC.velocity.Y *= 0.7f;
-
-				if (Collision.WetCollision(NPC.position, NPC.width, 18))
-					NPC.velocity.Y -= 0.2f;
+				NPC.direction = Math.Sign(NPC.Center.X - target.Center.X);
+				ChangeState(State.Fly);
 			}
 
-			if (NPC.collideX)
-				NPC.direction *= -1;
-
-			if (WalkState != 0)
-				NPC.velocity.X = WalkState * 1.2f;
-			else
-				NPC.velocity.X *= 0.95f;
-
-			if (WalkTimer == 0 || ++Timer % WalkTimer == 0)
-			{
-				WalkState = NPC.direction = WalkState == 0 ? (Main.rand.NextBool(2) ? -1 : 1) : 0;
-				WalkTimer = Main.rand.Next(120, 240);
-				NPC.netUpdate = true;
-			}
-
-			for (int i = 0; i < Main.maxPlayers; ++i) //Scare check
-			{
-				Player player = Main.player[i];
-
-				if (player.active && !player.dead && player.DistanceSQ(NPC.Center) < 200 * 200 && player.velocity.LengthSquared() > 5 * 5)
-				{
-					State = 1;
-					Timer = 0;
-
-					NPC.direction = Math.Sign(NPC.Center.X - player.Center.X);
-					NPC.netUpdate = true;
-
-					if (_heldItemType != ItemID.None)
-					{
-						Item.NewItem(new EntitySource_Loot(NPC), NPC.Center, _heldItemType);
-						_heldItemType = ItemID.None;
-					}
-
-					return;
-				}
-			}
+			return;
 		}
-		else if (State == 1) //Almost entirely cleaned up vanilla AI
+
+		if (AIState == (int)State.Fly)
 		{
-			if (Main.player[NPC.target].dead)
+			if (target.dead)
 				return;
 
-			if (++Timer >= 300f) //Fall down and switch states when landing
+			if (Counter >= 300f) //Fall down and switch states when landing
 			{
-				if ((NPC.velocity.Y == 0f || NPC.collideY) && Collision.SolidCollision(NPC.BottomLeft, NPC.width, 6) || NPC.wet)
+				if (NPC.velocity.Y == 0f || NPC.collideY || NPC.wet)
 				{
-					NPC.velocity.X = 0f;
-					NPC.velocity.Y = 0f;
-					State = 0f;
-					Timer = 0f;
+					ChangeState(State.Idle);
+					NPC.velocity = Vector2.Zero;
 				}
 				else
 				{
 					NPC.velocity.X *= 0.98f;
-					NPC.velocity.Y += 0.15f;
-					if (NPC.velocity.Y > 2.5f)
-						NPC.velocity.Y = 2.5f;
+					NPC.velocity.Y = MathHelper.Min(NPC.velocity.Y + .15f, 2.5f);
 				}
 
 				return;
 			}
 
 			if (NPC.collideX)
-			{
-				NPC.direction *= -1;
-				NPC.velocity.X = NPC.oldVelocity.X * -0.5f;
-				NPC.velocity.X = MathHelper.Clamp(NPC.velocity.X, -2, 2);
-			}
-
+				NPC.velocity.X = MathHelper.Clamp(NPC.oldVelocity.X * -0.5f, -2, 2);
 			if (NPC.collideY)
-			{
-				NPC.velocity.Y = NPC.oldVelocity.Y * -0.5f;
-				NPC.velocity.Y = MathHelper.Clamp(NPC.velocity.Y, -1, 1);
-			}
+				NPC.velocity.Y = MathHelper.Clamp(NPC.oldVelocity.Y * -0.5f, -1, 1);
 
-			if (NPC.direction == -1 && NPC.velocity.X > -3f)
-			{
-				NPC.velocity.X -= 0.1f;
-
-				if (NPC.velocity.X > 3f)
-					NPC.velocity.X -= 0.1f;
-				else if (NPC.velocity.X > 0f)
-					NPC.velocity.X -= 0.05f;
-
-				if (NPC.velocity.X < -3f)
-					NPC.velocity.X = -3f;
-			}
-			else if (NPC.direction == 1 && NPC.velocity.X < 3f)
-			{
-				NPC.velocity.X += 0.1f;
-
-				if (NPC.velocity.X < -3f)
-					NPC.velocity.X += 0.1f;
-				else if (NPC.velocity.X < 0f)
-					NPC.velocity.X += 0.05f;
-
-				if (NPC.velocity.X > 3f)
-					NPC.velocity.X = 3f;
-			}
+			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, 5 * NPC.direction, .04f);
 
 			const int ScanCheck = 15;
-
 			int tileX = (int)(NPC.Center.X / 16f) + NPC.direction;
 			int tileY = (int)(NPC.Bottom.Y / 16f);
 			bool closeGround = true;
@@ -214,60 +140,172 @@ public class Pelican : ModNPC
 				}
 			}
 
-			if (closeGround)
-				NPC.velocity.Y += 0.15f;
-			else
-				NPC.velocity.Y -= 0.15f;
-
+			NPC.velocity.Y += closeGround ? .15f : -.15f;
 			if (veryCloseGround)
 				NPC.velocity.Y -= 0.25f;
 
 			NPC.velocity.Y = MathHelper.Clamp(NPC.velocity.Y, -4.5f, 4);
 		}
+		else
+		{
+			if (NPC.wet)
+			{
+				//Level with the liquid
+				if (Collision.WetCollision(NPC.position, NPC.width, NPC.height - 4))
+					NPC.velocity.Y = MathHelper.Max(NPC.velocity.Y - .75f, -5f);
+				else if (!Collision.WetCollision(NPC.position, NPC.width, NPC.height + 4))
+					NPC.velocity.Y += .1f;
+				else
+					NPC.velocity.Y *= .75f;
+
+				if (Counter >= 200)
+				{
+					NPC.velocity.X *= .98f;
+					if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(80))
+					{
+						NPC.netUpdate = true;
+						Counter = 0;
+						NPC.velocity.X = Main.rand.NextFloat(.5f, 1.5f) * (Main.rand.NextBool() ? -1 : 1);
+					}
+				}
+			}
+			else if (Counter >= 300 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(50)) //Periodically switch directions or idle
+			{
+				NPC.netUpdate = true;
+
+				if (NPC.velocity.X == 0)
+					NPC.velocity.X = Main.rand.NextFloat(.8f, 1.5f) * (Main.rand.NextBool() ? -1 : 1);
+				else
+					NPC.velocity.X = 0;
+			}
+
+			Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
+			if (NPC.collideX)
+				NPC.velocity.X *= -1;
+
+			if (NPC.wet)
+				ChangeState(State.Swim);
+			else if (NPC.velocity.X != 0)
+				ChangeState(State.Walk);
+			else
+				ChangeState(State.Idle);
+
+			//Scare check
+			if (target.active && !target.dead && target.DistanceSQ(NPC.Center) < 200 * 200 && target.velocity.LengthSquared() > 5 * 5)
+			{
+				NPC.netUpdate = true;
+				NPC.velocity = new Vector2(-Math.Sign(target.Center.X - NPC.Center.X) * 8, -8);
+				NPC.noGravity = true;
+
+				ChangeState(State.Startle);
+				NPC.frameCounter = 1; //Use the startle frame in Idle's column
+
+				if (heldItemType != ItemID.None) //Startled - drop the held item
+				{
+					Item.NewItem(new EntitySource_Loot(NPC), NPC.Center, heldItemType);
+					heldItemType = ItemID.None;
+				}
+
+				EmoteBubble.NewBubble(EmoteID.EmotionAlert, new WorldUIAnchor(NPC), 30);
+				SoundEngine.PlaySound(SoundID.Item169 with { Pitch = .5f }, NPC.Center);
+			}
+		}
+
+		Counter++;
+		NPC.noGravity = AIState is (int)State.Swim or(int)State.Fly or (int)State.Startle;
+
+		if (NPC.velocity.X != 0)
+			NPC.spriteDirection = NPC.direction = ((NPC.velocity.X > 0) ? 1 : -1) * ((AIState == (int)State.Startle) ? -1 : 1);
 	}
 
-	public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+	private void ChangeState(State toState)
 	{
-		if (_heldItemType != ItemID.None)
-		{
-			Main.instance.LoadItem(_heldItemType);
+		if (AIState == (int)toState) //We switched to a new state
+			return;
 
-			Item theItem = ContentSamples.ItemsByType[_heldItemType];
-			Texture2D value = TextureAssets.Item[theItem.type].Value;
-			Rectangle frame = (Main.itemAnimations[theItem.type] == null) ? value.Frame() : Main.itemAnimations[theItem.type].GetFrame(value);
-			frame.Height /= 2;
-			float scale = theItem.scale;
-
-			const float SizeLimit = 20;
-
-			if (frame.Width > SizeLimit || frame.Height > SizeLimit)
-				scale = ((frame.Width <= frame.Height) ? (SizeLimit / frame.Height) : (SizeLimit / frame.Width));
-
-			SpriteEffects effects = SpriteEffects.None;
-			Color currentColor = Lighting.GetColor(NPC.Center.ToTileCoordinates());
-			var pos = HeldItemPosition - screenPos;
-
-			float modScale = 1f;
-			ItemSlot.GetItemLight(ref currentColor, ref modScale, theItem);
-			scale *= modScale;
-
-			spriteBatch.Draw(value, pos, frame, currentColor, 0f, frame.Size() / 2f, scale, effects, 0f);
-
-			if (theItem.color != default)
-				spriteBatch.Draw(value, pos, frame, theItem.GetColor(currentColor), 0f, frame.Size() / 2f, scale, effects, 0f);
-		}
+		NPC.frameCounter = 0;
+		Counter = 0;
+		AIState = (int)toState;
 	}
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
 		{
-			
+			for (int i = 0; i < 20; i++)
+			{
+				var dust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Blood);
+				dust.velocity = dust.position.DirectionFrom(NPC.Center);
+			}
+
+			for (int i = 1; i < 4; i++)
+				Gore.NewGore(Entity.GetSource_Death(), NPC.Center, NPC.velocity, Mod.Find<ModGore>("Pelican" + i).Type);
 		}
 	}
 
-	public override void SendExtraAI(BinaryWriter writer) => writer.Write(_heldItemType);
-	public override void ReceiveExtraAI(BinaryReader reader) => _heldItemType = reader.ReadInt32();
+	public override void FindFrame(int frameHeight)
+	{
+		NPC.frame.Width = 62; //frameHeight = 60
+		NPC.frame.X = NPC.frame.Width * (AIState % endFrames.Length);
+
+		if (AIState is not ((int)State.Idle) and not ((int)State.Startle))
+		{
+			NPC.frameCounter += .2f;
+			NPC.frameCounter %= endFrames[AIState];
+		}
+
+		NPC.frame.Y = (int)NPC.frameCounter * frameHeight;
+	}
+
+	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+	{
+		var texture = TextureAssets.Npc[Type].Value;
+		var source = NPC.frame with { Width = NPC.frame.Width - 2, Height = NPC.frame.Height - 2 }; //Remove padding
+		var position = NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY);
+		var effects = (NPC.spriteDirection == 1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+		var color = NPC.GetAlpha(NPC.GetNPCColorTintedByBuffs(drawColor));
+
+		Main.EntitySpriteDraw(texture, position, source, color, NPC.rotation, source.Size() / 2, NPC.scale, effects);
+		return false;
+	}
+
+	public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) //Draws heldItemType
+	{
+		if (heldItemType == ItemID.None)
+			return;
+
+		Main.instance.LoadItem(heldItemType);
+
+		var item = ContentSamples.ItemsByType[heldItemType];
+		var value = TextureAssets.Item[item.type].Value;
+		var frame = (Main.itemAnimations[item.type] == null) ? value.Frame() : Main.itemAnimations[item.type].GetFrame(value);
+		frame.Height /= 2;
+
+		const float SizeLimit = 20;
+		float scale = item.scale;
+
+		if (frame.Width > SizeLimit || frame.Height > SizeLimit)
+			scale = (frame.Width <= frame.Height) ? (SizeLimit / frame.Height) : (SizeLimit / frame.Width);
+
+		int[] bobFrames = [1, 2, 5, 6]; //Extra vertical displacement on these frames
+		float offY = (AIState == (int)State.Swim) ? -4 : (bobFrames.Contains((int)NPC.frameCounter) ? -10 : -8);
+		var pos = NPC.Center + new Vector2(14 * NPC.spriteDirection, offY + NPC.gfxOffY) - screenPos;
+
+		var color = Lighting.GetColor(NPC.Center.ToTileCoordinates());
+		float modScale = 1f;
+		ItemSlot.GetItemLight(ref color, ref modScale, item);
+		scale *= modScale;
+
+		var effects = (NPC.spriteDirection == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+		spriteBatch.Draw(value, pos, frame, color, MathHelper.Pi, frame.Size() / 2f, scale, effects, 0f);
+
+		if (item.color != default)
+			spriteBatch.Draw(value, pos, frame, item.GetColor(color), 0f, frame.Size() / 2, scale, SpriteEffects.FlipVertically, 0f);
+	}
+
+	public override void SendExtraAI(BinaryWriter writer) => writer.Write(heldItemType);
+
+	public override void ReceiveExtraAI(BinaryReader reader) => heldItemType = reader.ReadInt32();
 
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
