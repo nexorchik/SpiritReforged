@@ -8,6 +8,14 @@ public class DrywoodLantern : ModTile, IAutoloadTileItem
 {
 	private static Asset<Texture2D> GlowTexture;
 
+	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 30);
+
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+		.AddIngredient<Items.Drywood.Drywood>(6)
+		.AddIngredient(ItemID.Torch)
+		.AddTile(TileID.WorkBenches)
+		.Register();
+
 	public override void Load()
 	{
 		if (!Main.dedServ)

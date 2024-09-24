@@ -773,8 +773,8 @@ DrywoodToiletItem: {
 	Tooltip: ""
 }
 
-DrywoodWorkbenchItem: {
-	DisplayName: Drywood Workbench
+DrywoodWorkBenchItem: {
+	DisplayName: Drywood Work Bench
 	Tooltip: ""
 }
 

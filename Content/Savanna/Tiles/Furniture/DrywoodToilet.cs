@@ -8,6 +8,13 @@ public class DrywoodToilet : ModTile, IAutoloadTileItem
 {
 	private static bool WithinRange(int i, int j, Player player) => player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance);
 
+	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 30);
+
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+		.AddIngredient<Items.Drywood.Drywood>(6)
+		.AddTile(TileID.Sawmill)
+		.Register();
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;

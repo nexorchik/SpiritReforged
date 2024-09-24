@@ -7,8 +7,15 @@ namespace SpiritReforged.Content.Savanna.Tiles.Furniture;
 public class DrywoodCandelabra : ModTile, IAutoloadTileItem
 {
 	private const int fullWidth = 18 * 2;
-
 	private static Asset<Texture2D> GlowTexture;
+
+	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(silver: 3);
+
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+		.AddIngredient<Items.Drywood.Drywood>(5)
+		.AddIngredient(ItemID.Torch, 5)
+		.AddTile(TileID.WorkBenches)
+		.Register();
 
 	public override void Load()
 	{

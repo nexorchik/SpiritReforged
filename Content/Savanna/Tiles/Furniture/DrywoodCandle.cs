@@ -7,6 +7,12 @@ public class DrywoodCandle : ModTile, IAutoloadTileItem
 {
 	private static Asset<Texture2D> GlowTexture;
 
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+		.AddIngredient<Items.Drywood.Drywood>(4)
+		.AddIngredient(ItemID.Torch)
+		.AddTile(TileID.WorkBenches)
+		.Register();
+
 	public override void Load()
 	{
 		if (!Main.dedServ)

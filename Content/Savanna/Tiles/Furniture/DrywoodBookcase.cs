@@ -5,6 +5,14 @@ namespace SpiritReforged.Content.Savanna.Tiles.Furniture;
 
 public class DrywoodBookcase : ModTile, IAutoloadTileItem
 {
+	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 60);
+
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+		.AddIngredient<Items.Drywood.Drywood>(20)
+		.AddIngredient(ItemID.Book, 10)
+		.AddTile(TileID.Sawmill)
+		.Register();
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;

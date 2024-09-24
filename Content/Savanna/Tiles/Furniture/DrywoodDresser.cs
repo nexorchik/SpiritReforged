@@ -15,6 +15,13 @@ public class DrywoodDresser : ModTile, IAutoloadTileItem
 		(i, j) = (i - tile.TileFrameX % (18 * 3) / 18, j - tile.TileFrameY / 18);
 	}
 
+	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(silver: 1);
+
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+		.AddIngredient<Items.Drywood.Drywood>(16)
+		.AddTile(TileID.Sawmill)
+		.Register();
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;

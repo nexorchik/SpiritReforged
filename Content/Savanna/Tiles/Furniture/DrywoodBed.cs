@@ -14,6 +14,14 @@ public class DrywoodBed : ModTile, IAutoloadTileItem
 		return (frameX < wrapX) ? frameX > 18 : frameX <= 18;
 	}
 
+	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(silver: 4);
+
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+		.AddIngredient<Items.Drywood.Drywood>(15)
+		.AddIngredient(ItemID.Silk, 5)
+		.AddTile(TileID.Sawmill)
+		.Register();
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = false;

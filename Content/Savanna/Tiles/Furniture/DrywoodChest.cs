@@ -15,7 +15,15 @@ public class DrywoodChest : ModTile, IAutoloadTileItem
 		(i, j) = (i - tile.TileFrameX % (18 * 2) / 18, j - tile.TileFrameY / 18);
 	}
 
-	public sealed override void SetStaticDefaults()
+	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(silver: 1);
+
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+		.AddIngredient<Items.Drywood.Drywood>(8)
+		.AddRecipeGroup(RecipeGroupID.IronBar, 2)
+		.AddTile(TileID.WorkBenches)
+		.Register();
+
+	public override void SetStaticDefaults()
 	{
 		Main.tileSpelunker[Type] = true;
 		Main.tileContainer[Type] = true;

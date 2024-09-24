@@ -8,6 +8,14 @@ public class DrywoodSofa : ModTile, IAutoloadTileItem
 {
 	private static bool WithinRange(int i, int j, Player player) => player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance);
 
+	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 60);
+
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+		.AddIngredient<Items.Drywood.Drywood>(5)
+		.AddIngredient(ItemID.Silk, 2)
+		.AddTile(TileID.Sawmill)
+		.Register();
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;

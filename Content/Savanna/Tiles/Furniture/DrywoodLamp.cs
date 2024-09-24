@@ -8,6 +8,14 @@ public class DrywoodLamp : ModTile, IAutoloadTileItem
 {
 	private static Asset<Texture2D> GlowTexture;
 
+	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(silver: 1);
+
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+		.AddIngredient<Items.Drywood.Drywood>(3)
+		.AddIngredient(ItemID.Torch)
+		.AddTile(TileID.WorkBenches)
+		.Register();
+
 	public override void Load()
 	{
 		if (!Main.dedServ)
