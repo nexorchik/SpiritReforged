@@ -230,7 +230,13 @@ public class Pelican : ModNPC
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
-		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
+		if (NPC.life > 0)
+			return;
+
+		if (Main.netMode != NetmodeID.MultiplayerClient && heldItemType != ItemID.None)
+			Item.NewItem(NPC.GetSource_Death(), NPC.getRect(), heldItemType); //Drop the held item
+
+		if (Main.netMode != NetmodeID.Server)
 		{
 			for (int i = 0; i < 20; i++)
 			{
