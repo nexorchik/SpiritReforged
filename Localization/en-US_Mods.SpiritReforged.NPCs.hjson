@@ -70,3 +70,8 @@ SavannaSandSlime: {
 	DisplayName: Sand Slime
 	Entry: Slightly more leafy, a little less sandy, all the same danger.
 }
+
+PeevedTumbler: {
+	DisplayName: Peeved Tumbler
+	Entry: ""
+}
