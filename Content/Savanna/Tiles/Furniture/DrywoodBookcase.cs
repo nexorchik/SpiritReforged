@@ -1,9 +1,9 @@
 using SpiritReforged.Common.TileCommon;
-using Terraria.DataStructures;
+using SpiritReforged.Common.TileCommon.FurnitureTiles;
 
 namespace SpiritReforged.Content.Savanna.Tiles.Furniture;
 
-public class DrywoodBookcase : ModTile, IAutoloadTileItem
+public class DrywoodBookcase : BookcaseTile, IAutoloadTileItem
 {
 	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 60);
 
@@ -12,20 +12,4 @@ public class DrywoodBookcase : ModTile, IAutoloadTileItem
 		.AddIngredient(ItemID.Book, 10)
 		.AddTile(TileID.Sawmill)
 		.Register();
-
-	public override void SetStaticDefaults()
-	{
-		Main.tileFrameImportant[Type] = true;
-		Main.tileNoAttach[Type] = true;
-		Main.tileLavaDeath[Type] = true;
-
-		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x4);
-		TileObjectData.newTile.Origin = new Point16(2, 3);
-		TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 18];
-		TileObjectData.addTile(Type);
-
-		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Bookcase"));
-		AdjTiles = [TileID.Bookcases];
-		DustType = -1;
-	}
 }

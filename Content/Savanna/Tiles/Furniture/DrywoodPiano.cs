@@ -1,9 +1,9 @@
 using SpiritReforged.Common.TileCommon;
-using Terraria.DataStructures;
+using SpiritReforged.Common.TileCommon.FurnitureTiles;
 
 namespace SpiritReforged.Content.Savanna.Tiles.Furniture;
 
-public class DrywoodPiano : ModTile, IAutoloadTileItem
+public class DrywoodPiano : PianoTile, IAutoloadTileItem
 {
 	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 60);
 
@@ -13,20 +13,4 @@ public class DrywoodPiano : ModTile, IAutoloadTileItem
 		.AddIngredient(ItemID.Book)
 		.AddTile(TileID.Sawmill)
 		.Register();
-
-	public override void SetStaticDefaults()
-	{
-		Main.tileFrameImportant[Type] = true;
-		Main.tileNoAttach[Type] = true;
-		Main.tileLavaDeath[Type] = true;
-
-		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
-		TileObjectData.newTile.Origin = new Point16(2, 1);
-		TileObjectData.newTile.CoordinateHeights = [16, 16];
-		TileObjectData.addTile(Type);
-
-		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Piano"));
-		AdjTiles = [TileID.Pianos];
-		DustType = -1;
-	}
 }
