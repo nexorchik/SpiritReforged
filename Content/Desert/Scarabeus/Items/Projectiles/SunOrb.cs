@@ -145,8 +145,8 @@ public class SunOrb : ModProjectile
 		Projectile.TryGetOwner(out Player owner);
 
 		rayHeight = 100;
-		rayWidth = 100;
-		rayDist = 130 * owner.direction;
+		rayWidth = 60;
+		rayDist = 100 * owner.direction;
 	}
 
 	public override bool PreDraw(ref Color lightColor)
@@ -173,19 +173,21 @@ public class SunOrb : ModProjectile
 
 		effect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"]);
 		float scrollAmount = Main.GlobalTimeWrappedHourly / 4;
-		effect.Parameters["scroll"].SetValue(new Vector2(scrollAmount * Math.Sign(rayDist) * 0.75f, scrollAmount));
-		effect.Parameters["textureStretch"].SetValue(new Vector2(1f, 0.125f) * 0.66f);
-		effect.Parameters["texExponentRange"].SetValue(new Vector2(0.8f, 0.5f));
-		effect.Parameters["finalIntensityMod"].SetValue(1.5f);
+		effect.Parameters["scroll"].SetValue(new Vector2(scrollAmount * Math.Sign(rayDist), scrollAmount));
+		effect.Parameters["textureStretch"].SetValue(new Vector2(1f, 0.125f) * 0.5f);
+		effect.Parameters["texExponentRange"].SetValue(new Vector2(1));
+		effect.Parameters["finalIntensityMod"].SetValue(2f);
 
 		effect.Parameters["uColor"].SetValue(glowColor.ToVector4());
 		effect.Parameters["uColor2"].SetValue(new Color(250, 167, 32, 0).ToVector4());
 
+		var rayVisualStretch = new Vector2(5, 1.2f);
+
 		var square = new SquarePrimitive
 		{
 			Color = Color.White * EaseFunction.EaseCircularIn.Ease(Projectile.scale),
-			Height = rayHeight * 1.5f * Projectile.scale,
-			Length = rayWidth * 5 * EaseFunction.EaseQuadIn.Ease(Projectile.scale),
+			Height = rayHeight * rayVisualStretch.Y * Projectile.scale,
+			Length = rayWidth * rayVisualStretch.X * EaseFunction.EaseQuadIn.Ease(Projectile.scale),
 			BottomPosOffset = rayDist * Projectile.scale
 		};
 		square.SetTopPosition(Projectile.Center - Main.screenPosition);

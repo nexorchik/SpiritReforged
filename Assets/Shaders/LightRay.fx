@@ -66,7 +66,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     strength = max(strength + (absXDist * 0.75f), 1);
     strength = lerp(strength, pow(absXDist, 0.5f), 0.5f);
     strength *= sqrt(1 - pow(absXDist - 1, 2));
-    strength *= input.TextureCoordinates.y;
+    strength *= sqrt(input.TextureCoordinates.y);
     
     float4 finalColor = lerp(uColor, uColor2, min(max(1 - strength, 0), 1));
     strength = pow(strength, 3);
