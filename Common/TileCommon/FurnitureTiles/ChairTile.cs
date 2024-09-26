@@ -3,11 +3,11 @@ using Terraria.GameContent.ObjectInteractions;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class ChairTile : ModTile
+public abstract class ChairTile : FurnitureTile
 {
 	private static bool WithinRange(int i, int j, Player player) => player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance);
 
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
@@ -30,7 +30,6 @@ public abstract class ChairTile : ModTile
 		TileObjectData.addAlternate(1);
 		TileObjectData.addTile(Type);
 
-		RegisterItemDrop(Mod.Find<ModItem>(Name + "Item").Type);
 		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsChair);
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Chair"));
 		AdjTiles = [TileID.Chairs];
@@ -58,7 +57,7 @@ public abstract class ChairTile : ModTile
 		if (WithinRange(i, j, player))
 		{
 			player.noThrow = 2;
-			player.cursorItemIconID = Mod.Find<ModItem>(Name + "Item").Type;
+			player.cursorItemIconID = MyItemDrop;
 			player.cursorItemIconEnabled = true;
 
 			if (Framing.GetTileSafely(i, j).TileFrameX / TileObjectData.GetTileData(Type, 0).CoordinateFullWidth < 1)

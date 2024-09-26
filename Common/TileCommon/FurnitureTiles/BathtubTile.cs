@@ -2,9 +2,9 @@
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class BathtubTile : ModTile
+public abstract class BathtubTile : FurnitureTile
 {
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
 		Main.tileSolid[Type] = false;
 		Main.tileNoAttach[Type] = true;
@@ -23,7 +23,6 @@ public abstract class BathtubTile : ModTile
 		TileObjectData.addAlternate(1);
 		TileObjectData.addTile(Type);
 
-		RegisterItemDrop(Mod.Find<ModItem>(Name + "Item").Type);
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Bathtub"));
 		AdjTiles = [TileID.Bathtubs];
 		DustType = -1;

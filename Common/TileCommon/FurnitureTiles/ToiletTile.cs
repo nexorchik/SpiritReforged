@@ -3,11 +3,11 @@ using Terraria.GameContent.ObjectInteractions;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class ToiletTile : ModTile
+public abstract class ToiletTile : FurnitureTile
 {
 	private static bool WithinRange(int i, int j, Player player) => player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance);
 
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
@@ -28,7 +28,6 @@ public abstract class ToiletTile : ModTile
 		TileObjectData.addAlternate(1);
 		TileObjectData.addTile(Type);
 
-		RegisterItemDrop(Mod.Find<ModItem>(Name + "Item").Type);
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("MapObject.Toilet"));
 		AdjTiles = [TileID.Toilets];
 		DustType = -1;
@@ -55,7 +54,7 @@ public abstract class ToiletTile : ModTile
 		if (WithinRange(i, j, player))
 		{
 			player.noThrow = 2;
-			player.cursorItemIconID = Mod.Find<ModItem>(Name + "Item").Type;
+			player.cursorItemIconID = MyItemDrop;
 			player.cursorItemIconEnabled = true;
 
 			if (Framing.GetTileSafely(i, j).TileFrameX / 18 < 1)

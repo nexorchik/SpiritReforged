@@ -2,9 +2,9 @@
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class BookcaseTile : ModTile
+public abstract class BookcaseTile : FurnitureTile
 {
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;

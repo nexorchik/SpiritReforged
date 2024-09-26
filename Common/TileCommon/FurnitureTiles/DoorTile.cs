@@ -4,18 +4,15 @@ using Terraria.GameContent.ObjectInteractions;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class DoorTile : ModTile, IDrawPreview
+public abstract class DoorTile : FurnitureTile, IDrawPreview
 {
-	public sealed override void Load()
-	{
-		Mod.AddContent(new AutoloadedDoorOpen(Name + "Open", Texture));
-		SafeLoad();
-	}
+	/// <summary> Functions like <see cref="ModType.Load"/> and handles open door autoloading. </summary>
+	public override void Load() => Mod.AddContent(new AutoloadedDoorOpen(Name + "Open", Texture, MyItemDrop));
 
-	/// <summary> Functions like <see cref="ModType.Load"/>. </summary>
-	public virtual void SafeLoad() { }
+	/// <summary> Expects the item name (tile internal name)"Item". This should be overridden otherwise. </summary>
+	public override int MyItemDrop => Mod.TryFind(Name + "Item", out ModItem item) ? item.Type : base.MyItemDrop;
 
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileBlockLight[Type] = true;
@@ -50,9 +47,8 @@ public abstract class DoorTile : ModTile, IDrawPreview
 
 		TileObjectData.addTile(Type);
 
-		RegisterItemDrop(Mod.Find<ModItem>(Name + "Item").Type);
+		RegisterItemDrop(MyItemDrop); //Prevents inconsistent item drops based on style
 		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsDoor);
-
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("MapObject.Door"));
 		AdjTiles = [TileID.ClosedDoor];
 		DustType = -1;
@@ -65,7 +61,7 @@ public abstract class DoorTile : ModTile, IDrawPreview
 		Player player = Main.LocalPlayer;
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
-		player.cursorItemIconID = Mod.Find<ModItem>(Name + "Item").Type;
+		player.cursorItemIconID = MyItemDrop;
 	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
@@ -76,14 +72,16 @@ public abstract class DoorTile : ModTile, IDrawPreview
 		var lightOffset = Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1 ? Vector2.Zero : Vector2.One * 12;
 		var position = (new Vector2(i, j) + lightOffset) * 16 - Main.screenPosition;
 
-		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
+		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
 		if (Main.InSmartCursorHighlightArea(i, j, out bool actuallySelected))
-			spriteBatch.Draw(TextureAssets.HighlightMask[Type].Value, position, source, actuallySelected ? Color.Yellow : Color.Gray, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
+			spriteBatch.Draw(TextureAssets.HighlightMask[Type].Value, position, source, 
+				actuallySelected ? Color.Yellow : Color.Gray, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+
 		return false;
 	}
 
-	public void DrawPreview(SpriteBatch spriteBatch, TileObjectPreviewData op, Vector2 position)
+	public virtual void DrawPreview(SpriteBatch spriteBatch, TileObjectPreviewData op, Vector2 position)
 	{
 		(int i, int j) = (op.Coordinates.X, op.Coordinates.Y);
 		var texture = TextureAssets.Tile[Type].Value;
@@ -102,7 +100,7 @@ public abstract class DoorTile : ModTile, IDrawPreview
 	}
 }
 
-public sealed class AutoloadedDoorOpen(string name, string texture) : ModTile
+public sealed class AutoloadedDoorOpen(string name, string texture, int itemDrop) : ModTile
 {
 	public override string Name => name;
 
@@ -166,12 +164,11 @@ public sealed class AutoloadedDoorOpen(string name, string texture) : ModTile
 
 		TileObjectData.addTile(Type);
 
+		RegisterItemDrop(itemDrop); //Prevents inconsistent item drops based on style
+		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsDoor);
+		AddMapEntry(new Color(100, 100, 60), Language.GetText("MapObject.Door"));
 		AdjTiles = [TileID.OpenDoor];
 		DustType = -1;
-
-		AddMapEntry(new Color(100, 100, 60), Language.GetText("MapObject.Door"));
-		RegisterItemDrop(Mod.Find<ModItem>(Name.Replace("Open", "Item")).Type);
-		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsDoor);
 	}
 
 	public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => true;
@@ -181,6 +178,6 @@ public sealed class AutoloadedDoorOpen(string name, string texture) : ModTile
 		Player player = Main.LocalPlayer;
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
-		player.cursorItemIconID = Mod.Find<ModItem>(Name.Replace("Open", "Item")).Type;
+		player.cursorItemIconID = itemDrop;
 	}
 }

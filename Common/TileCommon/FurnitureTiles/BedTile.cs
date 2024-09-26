@@ -3,17 +3,18 @@ using Terraria.GameContent.ObjectInteractions;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class BedTile : ModTile
+public abstract class BedTile : FurnitureTile
 {
 	private static bool HoveringOverBottomSide(int i, int j)
 	{
-		int wrapX = 18 * 4;
-		short frameX = (short)(Framing.GetTileSafely(i, j).TileFrameX % wrapX);
+		var tile = Framing.GetTileSafely(i, j);
+		int wrapX = TileObjectData.GetTileData(tile).CoordinateFullWidth;
+		short frameX = tile.TileFrameX;
 
-		return (frameX < wrapX) ? frameX > 18 : frameX <= 18;
+		return (frameX < wrapX) ? frameX <= wrapX / 3 : frameX % wrapX > wrapX / 3;
 	}
 
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
 		Main.tileSolid[Type] = false;
 		Main.tileNoAttach[Type] = true;
@@ -37,7 +38,6 @@ public abstract class BedTile : ModTile
 		TileObjectData.addAlternate(1);
 		TileObjectData.addTile(Type);
 
-		RegisterItemDrop(Mod.Find<ModItem>(Name + "Item").Type);
 		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsChair);
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Bed"));
 		AdjTiles = [TileID.Beds];
@@ -99,7 +99,7 @@ public abstract class BedTile : ModTile
 		{
 			player.noThrow = 2;
 			player.cursorItemIconEnabled = true;
-			player.cursorItemIconID = Mod.Find<ModItem>(Name + "Item").Type;
+			player.cursorItemIconID = MyItemDrop;
 		}
 		else if (player.IsWithinSnappngRangeToTile(i, j, PlayerSleepingHelper.BedSleepingMaxDistance))
 		{

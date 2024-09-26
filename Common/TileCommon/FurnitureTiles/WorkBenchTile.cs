@@ -2,9 +2,9 @@ using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class WorkBenchTile : ModTile
+public abstract class WorkBenchTile : FurnitureTile
 {
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileLavaDeath[Type] = true;
@@ -20,7 +20,6 @@ public abstract class WorkBenchTile : ModTile
 		TileObjectData.newTile.CoordinateHeights = [16];
 		TileObjectData.addTile(Type);
 
-		RegisterItemDrop(Mod.Find<ModItem>(Name + "Item").Type);
 		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.WorkBench"));
 		AdjTiles = [TileID.WorkBenches];

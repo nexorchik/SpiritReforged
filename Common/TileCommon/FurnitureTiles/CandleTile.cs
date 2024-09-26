@@ -1,18 +1,12 @@
-﻿using Terraria.GameContent.Drawing;
+﻿using SpiritReforged.Common.Visuals.Glowmasks;
+using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class CandleTile : ModTile
+[AutoloadGlowmask("191,124,0", false)]
+public abstract class CandleTile : FurnitureTile
 {
-	protected Asset<Texture2D> glowTexture;
-
-	public override void Load()
-	{
-		if (!Main.dedServ && ModContent.RequestIfExists<Texture2D>(Texture + "_Glow", out var texture))
-			glowTexture = texture;
-	}
-
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
@@ -22,7 +16,6 @@ public abstract class CandleTile : ModTile
 		TileObjectData.newTile.CopyFrom(TileObjectData.StyleOnTable1x1);
 		TileObjectData.addTile(Type);
 
-		RegisterItemDrop(Mod.Find<ModItem>(Name + "Item").Type);
 		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Candle"));
 		AdjTiles = [TileID.Candles];
@@ -52,17 +45,14 @@ public abstract class CandleTile : ModTile
 		if (!TileDrawing.IsVisible(tile))
 			return;
 
-		if (glowTexture is not null)
-		{
-			var data = TileObjectData.GetTileData(tile);
-			int height = data.CoordinateHeights[tile.TileFrameY / data.CoordinateFullHeight];
-			var texture = glowTexture.Value;
-			var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, height);
-			var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
-			var position = new Vector2(i, j) * 16 - Main.screenPosition + zero;
+		var data = TileObjectData.GetTileData(tile);
+		int height = data.CoordinateHeights[tile.TileFrameY / data.CoordinateFullHeight];
+		var texture = GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value;
+		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, height);
+		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + zero;
 
-			spriteBatch.Draw(texture, position, source, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-		}
+		spriteBatch.Draw(texture, position, source, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
 		if (tile.TileFrameY == 0 && tile.TileFrameX == 0)
 			DrawFlames(i, j, spriteBatch);

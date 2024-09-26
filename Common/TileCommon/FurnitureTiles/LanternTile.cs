@@ -1,19 +1,13 @@
+using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class LanternTile : ModTile
+[AutoloadGlowmask("255,165,0", false)]
+public abstract class LanternTile : FurnitureTile
 {
-	protected Asset<Texture2D> glowTexture;
-
-	public override void Load()
-	{
-		if (!Main.dedServ && ModContent.RequestIfExists<Texture2D>(Texture + "_Glow", out var texture))
-			glowTexture = texture;
-	}
-
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
@@ -27,7 +21,6 @@ public abstract class LanternTile : ModTile
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
 		TileObjectData.addTile(Type);
 
-		RegisterItemDrop(Mod.Find<ModItem>(Name + "Item").Type);
 		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("MapObject.Lantern"));
 		AdjTiles = [TileID.HangingLanterns];
@@ -64,12 +57,12 @@ public abstract class LanternTile : ModTile
 	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		var tile = Framing.GetTileSafely(i, j);
-		if (!TileDrawing.IsVisible(tile) || glowTexture is null)
+		if (!TileDrawing.IsVisible(tile))
 			return;
 
 		var data = TileObjectData.GetTileData(tile);
 		int height = data.CoordinateHeights[tile.TileFrameY / data.CoordinateFullHeight];
-		var texture = glowTexture.Value;
+		var texture = GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value;
 		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, height);
 		var lightOffset = Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1 ? Vector2.Zero : Vector2.One * 12;
 		var position = (new Vector2(i, j) + lightOffset) * 16 - Main.screenPosition;

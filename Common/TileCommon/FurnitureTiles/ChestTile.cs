@@ -4,17 +4,19 @@ using Terraria.GameContent.ObjectInteractions;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class ChestTile : ModTile
+public abstract class ChestTile : FurnitureTile
 {
-	private LocalizedText MapEntry => Language.GetText($"Mods.SpiritReforged.Items.{Name}Item.DisplayName");
-
 	private static void GetTopLeft(ref int i, ref int j)
 	{
-		Tile tile = Framing.GetTileSafely(i, j);
-		(i, j) = (i - tile.TileFrameX % (18 * 2) / 18, j - tile.TileFrameY / 18);
+		var tile = Framing.GetTileSafely(i, j);
+		int fullWidth = TileObjectData.GetTileData(tile).CoordinateFullWidth;
+
+		(i, j) = (i - tile.TileFrameX % fullWidth / 18, j - tile.TileFrameY / 18);
 	}
 
-	public override void SetStaticDefaults()
+	public virtual LocalizedText MapEntry => Language.GetText($"Mods.SpiritReforged.Items.{Name}Item.DisplayName");
+
+	public override void StaticDefaults()
 	{
 		Main.tileSpelunker[Type] = true;
 		Main.tileContainer[Type] = true;
@@ -38,7 +40,6 @@ public abstract class ChestTile : ModTile
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
 		TileObjectData.addTile(Type);
 
-		RegisterItemDrop(Mod.Find<ModItem>(Name + "Item").Type);
 		AddMapEntry(new Color(100, 100, 60), MapEntry);
 		AdjTiles = [TileID.Containers];
 		DustType = -1;
@@ -147,7 +148,7 @@ public abstract class ChestTile : ModTile
 			player.cursorItemIconText = Main.chest[chest].name.Length > 0 ? Main.chest[chest].name : defaultName;
 			if (player.cursorItemIconText == defaultName)
 			{
-				player.cursorItemIconID = Mod.Find<ModItem>(Name + "Item").Type;
+				player.cursorItemIconID = MyItemDrop;
 				player.cursorItemIconText = string.Empty;
 			}
 		}

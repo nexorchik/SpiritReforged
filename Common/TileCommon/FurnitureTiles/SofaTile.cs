@@ -3,11 +3,11 @@ using Terraria.GameContent.ObjectInteractions;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class SofaTile : ModTile
+public abstract class SofaTile : FurnitureTile
 {
 	private static bool WithinRange(int i, int j, Player player) => player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance);
 
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
@@ -49,7 +49,7 @@ public abstract class SofaTile : ModTile
 		if (WithinRange(i, j, player))
 		{
 			player.noThrow = 2;
-			player.cursorItemIconID = Mod.Find<ModItem>(Name + "Item").Type;
+			player.cursorItemIconID = MyItemDrop;
 			player.cursorItemIconEnabled = true;
 		}
 	}

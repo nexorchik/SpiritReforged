@@ -4,17 +4,19 @@ using Terraria.GameContent.ObjectInteractions;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class DresserTile : ModTile
+public abstract class DresserTile : FurnitureTile
 {
-	private LocalizedText MapEntry => Language.GetText($"Mods.SpiritReforged.Items.{Name}Item.DisplayName");
-
 	private static void GetTopLeft(ref int i, ref int j)
 	{
-		Tile tile = Framing.GetTileSafely(i, j);
-		(i, j) = (i - tile.TileFrameX % (18 * 3) / 18, j - tile.TileFrameY / 18);
+		var tile = Framing.GetTileSafely(i, j);
+		int fullWidth = TileObjectData.GetTileData(tile).CoordinateFullWidth;
+
+		(i, j) = (i - tile.TileFrameX % fullWidth / 18, j - tile.TileFrameY / 18);
 	}
 
-	public override void SetStaticDefaults()
+	public virtual LocalizedText MapEntry => Language.GetText($"Mods.SpiritReforged.Items.{Name}Item.DisplayName");
+
+	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileSolidTop[Type] = true;
@@ -169,7 +171,7 @@ public abstract class DresserTile : ModTile
 			player.cursorItemIconText = Main.chest[chest].name.Length > 0 ? Main.chest[chest].name : defaultName;
 			if (player.cursorItemIconText == defaultName)
 			{
-				player.cursorItemIconID = Mod.Find<ModItem>(Name + "Item").Type;
+				player.cursorItemIconID = MyItemDrop;
 				player.cursorItemIconText = string.Empty;
 			}
 		}

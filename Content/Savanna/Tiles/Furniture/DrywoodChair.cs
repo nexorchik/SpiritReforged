@@ -13,7 +13,7 @@ public class DrywoodChair : ChairTile, IAutoloadTileItem
 		.AddTile(TileID.WorkBenches)
 		.Register();
 
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;

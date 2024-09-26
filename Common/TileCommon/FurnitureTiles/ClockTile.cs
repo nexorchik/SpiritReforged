@@ -3,9 +3,9 @@ using Terraria.GameContent.ObjectInteractions;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class ClockTile : ModTile
+public abstract class ClockTile : FurnitureTile
 {
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
@@ -29,12 +29,7 @@ public abstract class ClockTile : ModTile
 
 	public override bool RightClick(int x, int y)
 	{
-		PostTime();
-		return true;
-	}
-
-	public virtual void PostTime()
-	{
+		//Post the time
 		string text = "AM";
 		double time = Main.time;
 
@@ -66,6 +61,8 @@ public abstract class ClockTile : ModTile
 
 		string newText = string.Concat("Time: ", intTime, ":", text2, " ", text);
 		Main.NewText(newText, 255, 240, 20);
+
+		return true;
 	}
 
 	public override void MouseOver(int i, int j)
@@ -73,6 +70,6 @@ public abstract class ClockTile : ModTile
 		Player Player = Main.LocalPlayer;
 		Player.noThrow = 2;
 		Player.cursorItemIconEnabled = true;
-		Player.cursorItemIconID = Mod.Find<ModItem>(Name + "Item").Type;
+		Player.cursorItemIconID = MyItemDrop;
 	}
 }

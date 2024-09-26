@@ -2,9 +2,9 @@ using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class SinkTile : ModTile
+public abstract class SinkTile : FurnitureTile
 {
-	public override void SetStaticDefaults()
+	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
