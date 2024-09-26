@@ -102,5 +102,5 @@ public class DiverZombie : Common.NPCCommon.ZombieNPC
 		npcLoot.AddOneFromOptions(65, ModContent.ItemType<DiverLegs>(), ModContent.ItemType<DiverHead>(), ModContent.ItemType<DiverBody>());
 	}
 
-	public override bool SpawnConditions(Player player) => player.InModBiome<Savanna.Biome.SavannaBiome>();
+	public override bool SpawnConditions(Player player) => player.ZoneBeach;
 }

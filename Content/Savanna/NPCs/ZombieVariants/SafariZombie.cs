@@ -59,5 +59,5 @@ public class SafariZombie : Common.NPCCommon.ZombieNPC
 		npcLoot.AddOneFromOptions(75, ModContent.ItemType<SafariHat>(), ModContent.ItemType<SafariVest>(), ModContent.ItemType<SafariShorts>());
 	}
 
-	public override bool SpawnConditions(Player player) => player.ZoneBeach;
+	public override bool SpawnConditions(Player player) => player.InModBiome<Biome.SavannaBiome>();
 }

@@ -101,9 +101,7 @@ public class Killifish : ModNPC
 				NPC.velocity.X += NPC.direction * .12f;
 
 				if (NPC.velocity.X < -0.35f || NPC.velocity.X > 0.35f)
-				{
 					NPC.velocity.X *= 0.9f;
-				}
 			}
 			else
 			{
@@ -303,14 +301,11 @@ public class Killifish : ModNPC
 	}
 	public override void HitEffect(NPC.HitInfo hit)
 	{
-		for (int num621 = 0; num621 < 13; num621++)
-		{
+		for (int i = 0; i < 13; i++)
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, 2f * hit.HitDirection, -2f, 0, default, Main.rand.NextFloat(0.75f, 0.95f));
-		}
 
 		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
 		{
-
 			if (pickedType == 0)
 			{
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("KillifishGore1").Type, 1f);
