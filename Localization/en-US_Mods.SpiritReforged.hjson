@@ -43,6 +43,8 @@ Projectiles: {
 	ToucanMinion.DisplayName: Toucan Minion
 	TumblerPet.DisplayName: Tumbler Pet
 	BaobabFruitProj.DisplayName: Falling Baobab Fruit
+	SunOrb.DisplayName: Sun Orb
+	SunOrbStrike.DisplayName: Sun Orb Strike
 }
 
 Configs: {

@@ -702,3 +702,8 @@ SafariVest: {
 	DisplayName: Safari Vest
 	Tooltip: ""
 }
+
+SunStaff: {
+	DisplayName: Sun Staff
+	Tooltip: ""
+}
