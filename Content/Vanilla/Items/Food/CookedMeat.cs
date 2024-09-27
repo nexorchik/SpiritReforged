@@ -6,14 +6,10 @@ public class CookedMeat : FoodItem
 {
 	internal override Point Size => new(30, 24);
 
-	public override bool CanUseItem(Player player)
-	{
-		return true;
-	}
-	public override void Defaults()
-	{
-		Item.buffTime = 6 * 60 * 60;
-	}
+	public override bool CanUseItem(Player player) => true;
+
+	public override void Defaults() => Item.buffTime = 6 * 60 * 60;
+
 	public override void AddRecipes()
 	{
 		Recipe recipe1 = CreateRecipe(1);

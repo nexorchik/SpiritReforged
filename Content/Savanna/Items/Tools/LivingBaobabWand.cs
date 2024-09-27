@@ -11,8 +11,8 @@ internal class LivingBaobabWand : ModItem
 		Item.CloneDefaults(ItemID.LivingWoodWand);
 
 		Item.Size = new Vector2(36, 28);
+		Item.tileWand = ModContent.ItemType<Drywood.Drywood>();
 		Item.createTile = ModContent.TileType<LivingBaobab>();
-		Item.tileWand = ItemID.Wood;
 		Item.useStyle = ItemUseStyleID.Swing;
 		Item.useTurn = true;
 		Item.autoReuse = true;

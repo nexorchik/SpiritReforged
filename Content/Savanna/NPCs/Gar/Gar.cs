@@ -1,3 +1,4 @@
+using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Vanilla.Items.Food;
 using System.IO;
 using Terraria.GameContent.Bestiary;
@@ -12,6 +13,11 @@ public class Gar : ModNPC
 	private ref float Proximity => ref NPC.ai[1]; // Player proximity 
 	private ref float Resting => ref NPC.ai[2]; // Resting check;
 	private ref float RestTimer => ref NPC.ai[3]; // Loop through resting phase
+
+	public bool hasPicked = false;
+
+	float frameTimer;
+	int pickedType;
 
 	public override void SetStaticDefaults()
 	{
@@ -42,12 +48,11 @@ public class Gar : ModNPC
 		bestiaryEntry.AddInfo(this, "Ocean");
 	}
 
-	public bool hasPicked = false;
-	int pickedType;
 	public override void AI()
 	{
 		Player target = Main.player[NPC.target];
 		RestTimer++;
+
 		if (NPC.wet) //swimming AI (adapted from vanilla)
 		{
 			if (NPC.rotation != 0f)
@@ -99,6 +104,7 @@ public class Gar : ModNPC
 						NPC.rotation = MathHelper.WrapAngle((float)Math.Atan2(NPC.velocity.Y, NPC.velocity.X) + (NPC.velocity.X < 0 ? MathHelper.Pi : 0));
 						NPC.friendly = false;
 						NPC.damage = 1;
+
 						if (NPC.velocity.X <= 0)
 						{
 							NPC.spriteDirection = -1;
@@ -293,6 +299,7 @@ public class Gar : ModNPC
 		spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY), NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, effects, 0);
 		return false;
 	}
+
 	public override void SendExtraAI(BinaryWriter writer)
 	{
 		writer.Write(pickedType);
@@ -304,17 +311,13 @@ public class Gar : ModNPC
 		pickedType = reader.ReadInt32();
 		hasPicked = reader.ReadBoolean();
 	}
-	float frameTimer;
+
 	public override void FindFrame(int frameHeight)
 	{
 		if (Resting == 1)
-		{
 			frameTimer = .1f;
-		}
 		else
-		{
 			frameTimer = Math.Abs(.18f * NPC.velocity.X);
-		}
 
 		NPC.frameCounter += frameTimer;
 		NPC.frameCounter %= Main.npcFrameCount[NPC.type];
@@ -323,16 +326,14 @@ public class Gar : ModNPC
 		NPC.frame.X = 80 * pickedType;
 		NPC.frame.Width = 80;
 	}
+
 	public override void HitEffect(NPC.HitInfo hit)
 	{
-		for (int num621 = 0; num621 < 13; num621++)
-		{
+		for (int i = 0; i < 13; i++)
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, 2f * hit.HitDirection, -2f, 0, default, Main.rand.NextFloat(0.75f, 0.95f));
-		}
 
 		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
 		{
-
 			if (pickedType == 0)
 			{
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore1").Type, 1f);
@@ -345,5 +346,7 @@ public class Gar : ModNPC
 			}
 		}
 	}
+	
 	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>(3);
+	public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<SavannaBiome>() && spawnInfo.Water ? (spawnInfo.PlayerInTown ? 0.8f : 0.2f) : 0f;
 }

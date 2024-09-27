@@ -20,23 +20,41 @@ internal class GlowmaskAutoloader : ModSystem
 			if (typeof(ModNPC).IsAssignableFrom(type))
 			{
 				int id = (int)npcGetId.MakeGenericMethod(type).Invoke(null, null);
-				GlowmaskNPC.NpcIdToGlowmask.Add(id, new(ModContent.Request<Texture2D>(ModContent.GetModNPC(id).Texture + "_Glow"), color, autoDraw));
+				if(TryGetGlowmask(ModContent.GetModNPC(id).Texture, out var glowMask))
+					GlowmaskNPC.NpcIdToGlowmask.Add(id, new(glowMask, color, autoDraw));
 			}
+
 			else if (typeof(ModTile).IsAssignableFrom(type))
 			{
 				int id = (int)tileGetId.MakeGenericMethod(type).Invoke(null, null);
-				GlowmaskTile.TileIdToGlowmask.Add(id, new(ModContent.Request<Texture2D>(ModContent.GetModTile(id).Texture + "_Glow"), color, autoDraw));
+				if(TryGetGlowmask(ModContent.GetModTile(id).Texture, out var glowMask))
+					GlowmaskTile.TileIdToGlowmask.Add(id, new(glowMask, color, autoDraw));
 			}
+
 			else if (typeof(ModProjectile).IsAssignableFrom(type))
 			{
 				int id = (int)projGetId.MakeGenericMethod(type).Invoke(null, null);
-				GlowmaskProjectile.ProjIdToGlowmask.Add(id, new(ModContent.Request<Texture2D>(ModContent.GetModProjectile(id).Texture + "_Glow"), color, autoDraw));
+				if (TryGetGlowmask(ModContent.GetModProjectile(id).Texture, out var glowMask))
+					GlowmaskProjectile.ProjIdToGlowmask.Add(id, new(glowMask, color, autoDraw));
 			}
+
 			else if (typeof(ModItem).IsAssignableFrom(type))
 			{
 				int id = (int)itemGetId.MakeGenericMethod(type).Invoke(null, null);
-				GlowmaskItem.ItemIdToGlowmask.Add(id, new(ModContent.Request<Texture2D>(ModContent.GetModItem(id).Texture + "_Glow"), color, autoDraw));
+				if (TryGetGlowmask(ModContent.GetModItem(id).Texture, out var glowMask))
+					GlowmaskItem.ItemIdToGlowmask.Add(id, new(glowMask, color, autoDraw));
 			}
 		}
+	}
+
+	private static bool TryGetGlowmask(string texture, out Asset<Texture2D> asset)
+	{
+		if (ModContent.RequestIfExists(texture + "_Glow", out asset))
+			return true;
+
+		if (ModContent.RequestIfExists(texture + "_glow", out asset))
+			return true;
+
+		return false;
 	}
 }

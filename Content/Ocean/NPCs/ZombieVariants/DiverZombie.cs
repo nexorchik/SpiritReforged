@@ -1,5 +1,6 @@
 using SpiritReforged.Content.Ocean.Items.Vanity.DiverSet;
 using Terraria.GameContent.Bestiary;
+using static Terraria.GameContent.Bestiary.IL_BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions;
 
 namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
 

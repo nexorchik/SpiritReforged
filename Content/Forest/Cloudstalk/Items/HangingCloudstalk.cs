@@ -17,7 +17,7 @@ public class HangingCloudstalk : ModItem
 	{
 		Recipe recipe = CreateRecipe();
 		recipe.AddIngredient(ItemID.PotSuspended);
-		recipe.AddIngredient(ModContent.ItemType<HangingCloudstalk>());
+		recipe.AddIngredient(ModContent.ItemType<Cloudstalk>());
 		recipe.Register();
 	}
 }

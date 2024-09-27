@@ -55,7 +55,7 @@ internal static class MiscExtensions
 	public static Color Additive(this Color color, byte newAlpha = 0)
 	{
 		var temp = color;
-		temp.A = newAlpha;
+		temp.A = (byte)(temp.A * newAlpha / byte.MaxValue);
 		return temp;
 	}
 
@@ -84,4 +84,5 @@ internal static class MiscExtensions
 	}
 
 	public static void AccelFlyingMovement(this Entity ent, Vector2 desiredPosition, float accelSpeed, float deccelSpeed, float maxSpeed = -1) => AccelFlyingMovement(ent, desiredPosition, new Vector2(accelSpeed), new Vector2(deccelSpeed), (maxSpeed >= 0) ? new Vector2(maxSpeed) : null);
+
 }

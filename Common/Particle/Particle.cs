@@ -15,8 +15,10 @@ public class Particle
 	public float Rotation;
 	public float Scale;
 	public uint TimeActive;
+	public int MaxTime;
 
 	public Texture2D Texture => ParticleHandler.GetTexture(Type);
+	public float Progress => TimeActive / (float)MaxTime;
 
 	/// <summary>
 	/// Determines whether the particle is drawn using its default drawing method, the default drawing method with additive color blending, or a custom drawing type.

@@ -4,22 +4,12 @@ namespace SpiritReforged.Content.Ocean;
 
 public class OceanPlayer : ModPlayer
 {
-	public bool KoiTotem = false;
-	public override void ResetEffects()
-	{
-		KoiTotem = false;
-	}
 	public override void CatchFish(FishingAttempt attempt, ref int itemDrop, ref int npcSpawn, ref AdvancedPopupRequest sonar, ref Vector2 sonarPosition)
 	{
 		if (Player.ZoneBeach && attempt.veryrare && Main.rand.NextBool(15))
 			itemDrop = ModContent.ItemType<Items.SunkenTreasure>();
-
-		if (KoiTotem && Main.rand.NextBool(10))
-		{
-			if (attempt.playerFishingConditions.Bait.stack < attempt.playerFishingConditions.Bait.maxStack)
-				attempt.playerFishingConditions.Bait.stack++;
-		}
 	}
+
 	/// <summary>
 	/// Helper method that checks how far underwater the player is, continuously. If a tile above the player is not watered enough but is solid, it will still count as submerged.
 	/// </summary>

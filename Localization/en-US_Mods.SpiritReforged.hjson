@@ -193,6 +193,7 @@ SetBonuses: {
 		Allows the wearer to float on water
 		Increased fishing power
 		'''
+	Drywood: Increased movement speed on the surface
 }
 
 Biomes: {

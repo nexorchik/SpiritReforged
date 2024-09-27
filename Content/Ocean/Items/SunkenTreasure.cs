@@ -1,5 +1,6 @@
 using Terraria.GameContent.ItemDropRules;
 using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ItemCommon.FloatingItem;
 
 namespace SpiritReforged.Content.Ocean.Items;
 
@@ -8,8 +9,6 @@ public class SunkenTreasure : FloatingItem
 	public override float SpawnWeight => 0.001f;
 	public override float Weight => base.Weight * 0.9f;
 	public override float Bouyancy => base.Bouyancy * 1.08f;
-
-	public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
 
 	public override void SetDefaults()
 	{

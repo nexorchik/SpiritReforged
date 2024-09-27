@@ -4,7 +4,7 @@ namespace SpiritReforged.Common.ItemCommon;
 
 public abstract class FoodItem : ModItem
 {
-	public static HashSet<int> FruitItemsSet = new HashSet<int>();
+	internal static HashSet<int> FruitItemsSet = [];
 	internal abstract Point Size { get; }
 	internal virtual int Rarity => ItemRarityID.Blue;
 	internal virtual bool Consumeable => true;
@@ -35,7 +35,6 @@ public abstract class FoodItem : ModItem
 		Item.UseSound = SoundID.Item2;
 		Item.buffTime = 5 * 60 * 60;
 		Item.buffType = BuffID.WellFed;
-		FruitItemsSet.Add(Type);
 
 		Defaults();
 	}
