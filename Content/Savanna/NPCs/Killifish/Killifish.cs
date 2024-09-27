@@ -1,5 +1,6 @@
 using SpiritReforged.Content.Vanilla.Items.Food;
 using System.IO;
+using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Killifish;
@@ -13,10 +14,12 @@ public class Killifish : ModNPC
 	private ref float Turning => ref NPC.ai[2]; // Random turning
 	private ref float TurningTime => ref NPC.ai[3]; // slowdown before turning
 
+	private int pickedType;
+
 	public override void SetStaticDefaults()
 	{
-		Main.npcFrameCount[NPC.type] = 9;
-		Main.npcCatchable[NPC.type] = true;
+		Main.npcFrameCount[Type] = 9;
+		Main.npcCatchable[Type] = true;
 		NPCID.Sets.CountsAsCritter[Type] = true;
 	}
 
@@ -37,26 +40,27 @@ public class Killifish : ModNPC
 		NPC.friendly = true;
 		NPC.dontTakeDamage = false;
 	}
-	public override bool? CanBeHitByItem(Player player, Item item) => true;
-	public override bool? CanBeHitByProjectile(Projectile projectile) => true;
+
 	public override void SetBestiary(BestiaryDatabase dataNPC, BestiaryEntry bestiaryEntry)
 	{
 		bestiaryEntry.UIInfoProvider = new CritterUICollectionInfoProvider(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds[Type]);
 		bestiaryEntry.AddInfo(this, "Ocean");
 	}
 
-	public bool hasPicked = false;
-	int pickedType;
+	public override bool? CanBeHitByItem(Player player, Item item) => true;
+	public override bool? CanBeHitByProjectile(Projectile projectile) => true;
+
+	public override void OnSpawn(IEntitySource source) //Set non-deterministic features on server then sync
+	{
+		NPC.scale = Main.rand.NextFloat(.7f, 1f);
+		pickedType = Main.rand.Next(0, 2);
+		NPC.netUpdate = true;
+	}
+
 	public override void AI()
 	{
-		if (!hasPicked)
-		{
-			NPC.scale = Main.rand.NextFloat(.7f, 1f);
-			pickedType = Main.rand.Next(0, 2);
-			hasPicked = true;
-		}
+		var target = Main.player[NPC.target];
 
-		Player target = Main.player[NPC.target];
 		if (NPC.wet) //swimming AI (adapted from vanilla)
 		{
 			if (NPC.rotation != 0f)
@@ -100,7 +104,7 @@ public class Killifish : ModNPC
 			{
 				NPC.velocity.X += NPC.direction * .12f;
 
-				if (NPC.velocity.X < -0.35f || NPC.velocity.X > 0.35f)
+				if (NPC.velocity.X is < (-0.35f) or > 0.35f)
 					NPC.velocity.X *= 0.9f;
 			}
 			else
@@ -185,40 +189,37 @@ public class Killifish : ModNPC
 			}
 
 			// limits on y velocity
-			if (NPC.velocity.Y > 0.4f || NPC.velocity.Y < -0.4f)
+			if (NPC.velocity.Y is > 0.4f or < (-0.4f))
 				NPC.velocity.Y *= 0.95f;
 
 			// Run away from any non killifish npc
 			foreach (var otherNPC in Main.ActiveNPCs)
 			{
-				if (otherNPC.type != ModContent.NPCType<Killifish>())
+				if ((otherNPC.ModNPC is null || otherNPC.ModNPC is not Killifish) && otherNPC.wet && NPC.DistanceSQ(otherNPC.Center) < 60 * 65)
 				{
-					if (NPC.DistanceSQ(otherNPC.Center) < 60 * 65 && otherNPC.wet)
-					{
-						Vector2 vel = NPC.DirectionFrom(otherNPC.Center) * 6.2f;
-						NPC.velocity = vel;
-						NPC.rotation = MathHelper.WrapAngle((float)Math.Atan2(NPC.velocity.Y, NPC.velocity.X) + (NPC.velocity.X < 0 ? MathHelper.Pi : 0));
-						if (otherNPC.position.X > NPC.position.X)
-						{
-							NPC.spriteDirection = -1;
-							NPC.direction = -1;
-							NPC.netUpdate = true;
-						}
-						else if (otherNPC.position.X <= NPC.position.X)
-						{
-							NPC.spriteDirection = 1;
-							NPC.direction = 1;
-							NPC.netUpdate = true;
-						}
+					Vector2 vel = NPC.DirectionFrom(otherNPC.Center) * 6.2f;
+					NPC.velocity = vel;
+					NPC.rotation = MathHelper.WrapAngle((float)Math.Atan2(NPC.velocity.Y, NPC.velocity.X) + (NPC.velocity.X < 0 ? MathHelper.Pi : 0));
 
-						Turning = 0;
+					if (otherNPC.position.X > NPC.position.X)
+					{
+						NPC.spriteDirection = -1;
+						NPC.direction = -1;
+						NPC.netUpdate = true;
 					}
+					else if (otherNPC.position.X <= NPC.position.X)
+					{
+						NPC.spriteDirection = 1;
+						NPC.direction = 1;
+						NPC.netUpdate = true;
+					}
+
+					Turning = 0;
 				}
 			}
 			// check for proximity
 			if (NPC.DistanceSQ(target.Center) < 40 * 65 && target.wet)
 				Proximity = 1;
-			
 			else
 				Proximity = 0;
 
@@ -276,29 +277,26 @@ public class Killifish : ModNPC
 	{
 		drawColor = NPC.GetNPCColorTintedByBuffs(drawColor);
 		var effects = NPC.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+		
 		spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY), NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, effects, 0);
 		return false;
 	}
-	public override void SendExtraAI(BinaryWriter writer)
-	{
-		writer.Write(pickedType);
-		writer.Write(hasPicked);
-	}
-	public override void ReceiveExtraAI(BinaryReader reader)
-	{
-		pickedType = reader.ReadInt32();
-		hasPicked = reader.ReadBoolean();
-	}
-	float frameTimer;
+
+	public override void SendExtraAI(BinaryWriter writer) => writer.Write(pickedType);
+
+	public override void ReceiveExtraAI(BinaryReader reader) => pickedType = reader.ReadInt32();
+
 	public override void FindFrame(int frameHeight)
 	{
+		NPC.frame.Width = 46;
+		NPC.frame.X = NPC.frame.Width * pickedType;
+
 		NPC.frameCounter += .25f;
-		NPC.frameCounter %= Main.npcFrameCount[NPC.type];
+		NPC.frameCounter %= Main.npcFrameCount[Type];
 		int frame = (int)NPC.frameCounter;
 		NPC.frame.Y = frame * frameHeight;
-		NPC.frame.X = 46 * pickedType;
-		NPC.frame.Width = 46;
 	}
+
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		for (int i = 0; i < 13; i++)
@@ -318,5 +316,6 @@ public class Killifish : ModNPC
 			}
 		}
 	}
+
 	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>(3);
 }
