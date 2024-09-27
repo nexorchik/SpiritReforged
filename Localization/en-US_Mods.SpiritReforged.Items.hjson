@@ -812,3 +812,8 @@ DrywoodDoorItem: {
 	DisplayName: Drywood Door
 	Tooltip: ""
 }
+
+HerosMemorialStatueItem: {
+	DisplayName: A Hero's Memorial
+	Tooltip: Live on forever
+}
