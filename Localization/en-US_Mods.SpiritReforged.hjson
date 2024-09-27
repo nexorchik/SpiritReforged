@@ -14,6 +14,7 @@ Tiles: {
 	KoiTotem_Tile.MapEntry: Koi Totem
 	TermiteJar_Tile.MapEntry: Termite Jar_ Tile
 	SpiritKillieFishbowl_Tile.MapEntry: Spirit Killie Fishbowl_ Tile
+	HerosMemorialStatue.MapEntry: Heros Memorial Statue
 }
 
 Projectiles: {

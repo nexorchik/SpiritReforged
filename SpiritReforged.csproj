@@ -9,6 +9,8 @@
   <ItemGroup>
     <None Remove="Content\Dusts\BoneDust.png" />
     <None Remove="Content\Dusts\FireClubDust.png" />
+    <None Remove="Content\Forest\Misc\HerosMemorialStatue.png" />
+    <None Remove="Content\Forest\Misc\HerosMemorialStatueItem.png" />
     <None Remove="Content\Forest\Stargrass\Items\EnchantedApple.png" />
     <None Remove="Content\Forest\Stargrass\Items\EnchantedStarFruit.png" />
     <None Remove="Content\Forest\Stargrass\Items\StarPowder.png" />

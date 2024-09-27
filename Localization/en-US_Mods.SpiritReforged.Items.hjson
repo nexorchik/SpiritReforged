@@ -623,3 +623,8 @@ CustardApple: {
 	DisplayName: Custard Apple
 	Tooltip: ""
 }
+
+HerosMemorialStatueItem: {
+	DisplayName: A Hero's Memorial
+	Tooltip: Live on forever
+}
