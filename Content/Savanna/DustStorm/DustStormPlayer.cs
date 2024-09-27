@@ -35,7 +35,7 @@ public class DustStormPlayer : ModPlayer
 				Sandstorm.Severity = MathHelper.Max(Sandstorm.Severity - .01f, intensity); //Transition into a calmer severity if necessary
 		}
 
-		if (!ZoneDustStorm && !wasDustStorm && Filters.Scene[sandstorm].IsActive())
+		if (!ZoneDustStorm && wasDustStorm && Filters.Scene[sandstorm].IsActive() && !Player.ZoneSandstorm)
 		{
 			SkyManager.Instance.Deactivate(sandstorm);
 			Filters.Scene.Deactivate(sandstorm);

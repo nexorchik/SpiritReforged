@@ -703,6 +703,11 @@ SafariVest: {
 	Tooltip: ""
 }
 
+SavannaMusicBoxItem: {
+	DisplayName: Music Box (Savanna)
+	Tooltip: ""
+}
+
 DrywoodBathtubItem: {
 	DisplayName: Drywood Bathtub
 	Tooltip: ""

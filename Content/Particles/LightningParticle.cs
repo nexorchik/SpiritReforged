@@ -35,7 +35,7 @@ public class LightningParticle : Particle
 		beamEffect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["Lightning"]);
 		beamEffect.Parameters["perlinNoise"].SetValue(AssetLoader.LoadedTextures["noise"]);
 		beamEffect.Parameters["Progress"].SetValue(Progress);
-		beamEffect.Parameters["uTime"].SetValue(EaseFunction.EaseQuadOut.Ease(Progress) / 2);
+		beamEffect.Parameters["uTime"].SetValue(EaseFunction.EaseQuadOut.Ease(Progress) / 1.5f);
 
 		beamEffect.Parameters["textureStretch"].SetValue(new Vector2(length / 150f, 0.25f));
 		beamEffect.Parameters["noiseStretch"].SetValue(new Vector2(length * 0.3f, Scale * 0.15f) / 50);
