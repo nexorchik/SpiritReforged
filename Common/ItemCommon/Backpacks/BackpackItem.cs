@@ -8,6 +8,9 @@ internal abstract class BackpackItem : ModItem
 {
 	protected override bool CloneNewInstances => true;
 
+	/// <summary>
+	/// How many slots this backpack has.
+	/// </summary>
 	protected abstract int SlotCap { get; }
 
 	public Item[] Items = [];

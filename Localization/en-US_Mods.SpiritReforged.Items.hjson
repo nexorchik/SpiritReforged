@@ -612,6 +612,7 @@ LeatherBackpack: {
 		You must empty this before taking it off
 		'Comfortable, practical, and still dashing'
 		'''
+}
 
 Caryocar: {
 	DisplayName: Caryocar

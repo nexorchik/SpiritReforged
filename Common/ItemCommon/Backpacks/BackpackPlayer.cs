@@ -8,6 +8,9 @@ internal class BackpackPlayer : ModPlayer
 	public Item Backpack = BackpackUIState.AirItem;
 	public Item VanityBackpack = BackpackUIState.AirItem;
 
+	private int _lastSelectedEquipPage = 0;
+	private bool _hadBackpack = false;
+
 	public override void SaveData(TagCompound tag)
 	{
 		if (Backpack is not null)
@@ -34,7 +37,19 @@ internal class BackpackPlayer : ModPlayer
 			ApplyEquip(Backpack);
 
 		if (Player.HeldItem.ModItem is BackpackItem)
+		{
+			if (!_hadBackpack)
+				_lastSelectedEquipPage = Main.EquipPageSelected;
+
 			Main.EquipPageSelected = 2;
+		}
+		else
+		{
+			if (_hadBackpack)
+				Main.EquipPageSelected = _lastSelectedEquipPage;
+		}
+
+		_hadBackpack = Player.HeldItem.ModItem is BackpackItem;
 	}
 
 	private void ApplyEquip(Item backpack)
