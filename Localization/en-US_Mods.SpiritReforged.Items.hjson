@@ -707,3 +707,98 @@ SavannaMusicBoxItem: {
 	DisplayName: Music Box (Savanna)
 	Tooltip: ""
 }
+
+DrywoodBathtubItem: {
+	DisplayName: Drywood Bathtub
+	Tooltip: ""
+}
+
+DrywoodBedItem: {
+	DisplayName: Drywood Bed
+	Tooltip: ""
+}
+
+DrywoodBookcaseItem: {
+	DisplayName: Drywood Bookcase
+	Tooltip: ""
+}
+
+DrywoodCandelabraItem: {
+	DisplayName: Drywood Candelabra
+	Tooltip: ""
+}
+
+DrywoodCandleItem: {
+	DisplayName: Drywood Candle
+	Tooltip: ""
+}
+
+DrywoodChairItem: {
+	DisplayName: Drywood Chair
+	Tooltip: ""
+}
+
+DrywoodClockItem: {
+	DisplayName: Drywood Clock
+	Tooltip: ""
+}
+
+DrywoodCouchItem: {
+	DisplayName: Drywood Couch
+	Tooltip: ""
+}
+
+DrywoodDresserItem: {
+	DisplayName: Drywood Dresser
+	Tooltip: ""
+}
+
+DrywoodLampItem: {
+	DisplayName: Drywood Lamp
+	Tooltip: ""
+}
+
+DrywoodPianoItem: {
+	DisplayName: Drywood Piano
+	Tooltip: ""
+}
+
+DrywoodSinkItem: {
+	DisplayName: Drywood Sink
+	Tooltip: ""
+}
+
+DrywoodTableItem: {
+	DisplayName: Drywood Table
+	Tooltip: ""
+}
+
+DrywoodToiletItem: {
+	DisplayName: Drywood Toilet
+	Tooltip: ""
+}
+
+DrywoodWorkBenchItem: {
+	DisplayName: Drywood Work Bench
+	Tooltip: ""
+}
+
+DrywoodLanternItem: {
+	DisplayName: Drywood Lantern
+	Tooltip: ""
+}
+
+DrywoodSofaItem: {
+	DisplayName: Drywood Sofa
+	Tooltip: ""
+}
+
+DrywoodChestItem: {
+	DisplayName: Drywood Chest
+	Tooltip: ""
+}
+
+DrywoodDoorItem: {
+	DisplayName: Drywood Door
+	Tooltip: ""
+}
