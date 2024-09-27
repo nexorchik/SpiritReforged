@@ -201,3 +201,5 @@ Biomes: {
 		TownNPCDialogueName: the Savanna
 	}
 }
+
+SlotContexts.Backpack: Pack

@@ -604,6 +604,16 @@ SavannaGrassSeeds: {
 	Tooltip: ""
 }
 
+LeatherBackpack: {
+	DisplayName: Leather Backpack
+	Tooltip:
+		'''
+		Holds 4 items
+		You must empty this before taking it off
+		'Comfortable, practical, and still dashing'
+		'''
+}
+
 Caryocar: {
 	DisplayName: Caryocar
 	Tooltip: ""
