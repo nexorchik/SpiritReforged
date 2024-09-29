@@ -16,7 +16,8 @@ internal static class StructureTools
 	/// <param name="origin">Placement origin of the structure.</param>
 	/// <param name="mod">Mod to associate the structure with. Defaults to the Spirit Reforged instance.</param>
 	/// <param name="cullAbove">Whether to cull tiles directly above the spawned structure. This can be useful when spawning over trees or lare multitiles.</param>
-	public static void PlaceByOrigin(string structure, Point16 position, Vector2 origin, Mod mod = null, bool cullAbove = false)
+	/// <returns>The adjusted position after accounting for the origin.</returns>
+	public static Point16 PlaceByOrigin(string structure, Point16 position, Vector2 origin, Mod mod = null, bool cullAbove = false)
 	{
 		mod ??= ModContent.GetInstance<SpiritReforgedMod>();
 		var dims = new Point16();
@@ -27,6 +28,12 @@ internal static class StructureTools
 			CullLine(position, dims);
 
 		StructureHelper.Generator.GenerateStructure(structure, position, mod);
+		return position;
+	}
+
+	public static void AdjustPositionByOrigin(ref Point16 position, Point16 dimensions, Vector2 origin)
+	{
+		position = (position.ToVector2() - dimensions.ToVector2() * origin).ToPoint16();
 	}
 
 	private static void CullLine(Point16 position, Point16 dims)
