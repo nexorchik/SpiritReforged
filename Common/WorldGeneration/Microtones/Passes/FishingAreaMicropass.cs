@@ -5,21 +5,36 @@ namespace SpiritReforged.Common.WorldGeneration.Microtones.Passes;
 
 internal class FishingAreaMicropass : Micropass
 {
-	public static Dictionary<int, Func<Point16[]>> OffsetFuncsBySubId = new Dictionary<int, Func<Point16[]>>()
+	public static Dictionary<int, Point16[]> OffsetFuncsBySubId = new Dictionary<int, Point16[]>()
 	{
-		{ 0, Offsets0 }
+		{ 0, Offsets0() }, { 1, Offsets1() }, { 2, Offsets2() }
 	};
 
-	/// <summary>
-	/// Offsets for the 0th cove.
-	/// </summary>
-	/// <returns></returns>
+	private static Point16[] Offsets2()
+	{
+		List<Point16> points = [];
+		points.Add(new Point16(28, 3));
+		points.Add(new Point16(2, 18));
+		points.Add(new Point16(42, 20));
+
+		return [.. points];
+	}
+
+	private static Point16[] Offsets1()
+	{
+		List<Point16> points = [];
+		points.Add(new Point16(30, 7));
+		points.Add(new Point16(1, 12));
+
+		return [.. points];
+	}
+	
 	private static Point16[] Offsets0()
 	{
 		List<Point16> points = [];
-
-		points.Add(Vector2.Lerp(new Vector2(25, 4), new Vector2(36, 11), WorldGen.genRand.NextFloat()).ToPoint16());
-		points.Add(new Point16(1, 12));
+		points.Add(new Point16(9, 5));
+		points.Add(new Point16(54, 19));
+		points.Add(new Point16(6, 15));
 
 		return [.. points];
 	}
@@ -30,11 +45,11 @@ internal class FishingAreaMicropass : Micropass
 
 	public override void Run(GenerationProgress progress, Terraria.IO.GameConfiguration config)
 	{
-		int repeats = (int)(Main.maxTilesX / 4200f * 16);
+		int repeats = (int)(Main.maxTilesX / 4200f * 10);
 
 		for (int i = 0; i < repeats; ++i)
 		{
-			int subId = WorldGen.genRand.Next(1);
+			int subId = WorldGen.genRand.Next(2);
 			string subChar = WorldGen.genRand.NextBool() ? "a" : "b";
 			string structureName = "Assets/Structures/Coves/FishCove" + subId + subChar;
 			Point16 size = new();
@@ -46,14 +61,21 @@ internal class FishingAreaMicropass : Micropass
 				position = new Point16(WorldGen.genRand.Next(60, Main.maxTilesX - 60), WorldGen.genRand.Next((int)Main.rockLayer, Main.maxTilesY - 400));
 			} while (!Collision.SolidCollision(position.ToWorldCoordinates(), 32, 32));
 
-			position -= WorldGen.genRand.Next(OffsetFuncsBySubId[subId]());
+			position -= WorldGen.genRand.Next(OffsetFuncsBySubId[subId]);
 
 			if (GenVars.structures.CanPlace(new Rectangle(position.X, position.Y, size.X, size.Y), 10))
 			{
-				var conditions = TileCondition.GetArea(position.X, position.Y, size.X, size.Y);
 				var biome = QuickConversion.FindConversionBiome(position, size);
+
+				if (biome == QuickConversion.BiomeType.Desert) // Don't spawn in deserts
+				{
+					i--;
+					continue;
+				}
+
+				var conditions = TileCondition.GetArea(position.X, position.Y, size.X, size.Y);
 				StructureTools.PlaceByOrigin(structureName, position, new(0));
-				QuickConversion.SimpleConvert(conditions, biome);
+				QuickConversion.SimpleConvert(conditions, biome, biome != QuickConversion.BiomeType.Purity);
 				GenVars.structures.AddProtectedStructure(new Rectangle(position.X, position.Y, size.X, size.Y), 6);
 			}
 		}
