@@ -1,4 +1,5 @@
-﻿using Terraria.DataStructures;
+﻿using System.Linq;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.WorldGeneration;
 
@@ -40,5 +41,26 @@ internal static class StructureTools
 	{
 		for (int i = position.X; i < position.X + dims.X; ++i)
 			WorldGen.KillTile(i, position.Y - 1);
+	}
+
+	/// <summary>
+	/// Spawns a structure at position and size, excluding all biomes in <paramref name="invalidBiomes"/>.
+	/// </summary>
+	/// <param name="position">Position of the spawned structure.</param>
+	/// <param name="size">Size of the structure to be placed.</param>
+	/// <param name="structureName">Path to the structure to spawn.</param>
+	/// <param name="invalidBiomes">Invalid places to place the structure.</param>
+	/// <returns>Whether the structure was placed or not.</returns>
+	public static bool SpawnConvertedStructure(Point16 position, Point16 size, string structureName, params QuickConversion.BiomeType[] invalidBiomes)
+	{
+		var biome = QuickConversion.FindConversionBiome(position, size);
+
+		if (invalidBiomes.Contains(biome))
+			return false;
+
+		var conditions = TileCondition.GetArea(position.X, position.Y, size.X, size.Y);
+		PlaceByOrigin(structureName, position, new(0));
+		QuickConversion.SimpleConvert(conditions, biome, biome != QuickConversion.BiomeType.Purity);
+		return true;
 	}
 }

@@ -95,28 +95,29 @@ internal class QuickConversion
 					if (conv != -1)
 						turnId = conv;
 				}
-				else
-				{
-					if (ConvertWood(condition.Position, convertTo, out int newId, out int newWallId))
-					{
-						if (newId != -1)
-							turnId = newId;
 
-						if (newWallId != -1)
-							wallId = newWallId;
-					}
+				if (ConvertWood(condition.Position, convertTo, out int newId, out int newWallId))
+				{
+					if (newId != -1)
+						turnId = newId;
 				}
+
+				if (newWallId != -1)
+					wallId = newWallId;
 
 				if (turnId != -1)
 				{
 					tile.TileType = (ushort)turnId;
 
-					if (OpenExtensions.GetOpenings(condition.Position.X, condition.Position.Y, false, false) != OpenFlags.None && growGrassIfApplicable)
+					if (grassType != -1 && (tile.TileType is TileID.Dirt or TileID.Mud) 
+						&& OpenExtensions.GetOpenings(condition.Position.X, condition.Position.Y, false, false) != OpenFlags.None && growGrassIfApplicable)
 						grasses.Add(condition.Position);
 				}
 
 				if (wallId != -1)
 					tile.WallType = (ushort)wallId;
+
+				tile.HasActuator = true;
 			}
 		}
 
@@ -146,6 +147,17 @@ internal class QuickConversion
 				BiomeType.Purity or _ => WallID.Wood,
 			};
 		}
+		else if (tile.WallType == WallID.WoodenFence)
+		{
+			newWallId = convertTo switch
+			{
+				BiomeType.Desert => WallID.PalmWoodFence,
+				BiomeType.Ice => WallID.BorealWoodFence,
+				BiomeType.Jungle => WallID.RichMahoganyFence,
+				BiomeType.Mushroom => WallID.WroughtIronFence,
+				BiomeType.Purity or _ => WallID.WoodenFence,
+			};
+		}
 
 		if (tile.TileType == TileID.WoodBlock)
 		{
@@ -157,6 +169,50 @@ internal class QuickConversion
 				BiomeType.Mushroom => TileID.MushroomBlock,
 				BiomeType.Purity or _ => TileID.WoodBlock,
 			};
+		}
+		else if (tile.TileType == TileID.Platforms && tile.TileFrameY is 0 or 36 or 306 or 324 or 342)
+		{
+			int frameY = convertTo switch
+			{
+				BiomeType.Jungle => 36,
+				BiomeType.Desert => 306,
+				BiomeType.Mushroom => 324,
+				BiomeType.Ice => 342,
+				BiomeType.Purity => 0,
+				_ => -1,
+			};
+
+			if (frameY != -1)
+				tile.TileFrameY = (short)frameY;
+		}
+		else if (tile.TileType == TileID.WoodenBeam)
+		{
+			newId = convertTo switch
+			{
+				BiomeType.Ice => TileID.BorealBeam,
+				BiomeType.Jungle => TileID.RichMahoganyBeam,
+				BiomeType.Mushroom => TileID.MushroomBeam,
+				BiomeType.Desert or BiomeType.Purity or _ => TileID.WoodenBeam,
+			};
+		}
+		else if (tile.TileType == TileID.Chairs && tile.TileFrameY is 0 or 120 or 360 or 1120 or 1160)
+		{
+			int frameY = convertTo switch
+			{
+				BiomeType.Jungle => 120,
+				BiomeType.Mushroom => 360,
+				BiomeType.Ice => 1120,
+				BiomeType.Desert => 1160,
+				BiomeType.Purity => 0,
+				_ => -1,
+			};
+
+			if (frameY != -1)
+				tile.TileFrameY = (short)frameY;
+		}
+		else if (tile.TileType == TileID.FishingCrate)
+		{
+
 		}
 
 		return newId != -1;

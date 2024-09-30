@@ -2,10 +2,11 @@
 
 namespace SpiritReforged.Common.WorldGeneration;
 
-public struct TileCondition(bool active, ushort tileID, short frameX, short frameY, Point16 pos)
+public struct TileCondition(bool active, ushort tileID, ushort wallId, short frameX, short frameY, Point16 pos)
 {
 	internal bool Active = active;
 	internal ushort TileId = tileID;
+	internal ushort WallId = wallId;
 	internal short FrameX = frameX;
 	internal short FrameY = frameY;
 	internal Point16 Position = pos;
@@ -13,7 +14,7 @@ public struct TileCondition(bool active, ushort tileID, short frameX, short fram
 	public readonly bool HasChanged()
 	{
 		Tile tile = Main.tile[Position.ToPoint()];
-		bool isDifferent = tile.HasTile != Active || tile.TileType != TileId || tile.TileFrameX != FrameX || tile.TileFrameY != FrameY;
+		bool isDifferent = tile.HasTile != Active || tile.TileType != TileId || tile.WallType != WallId || tile.TileFrameX != FrameX || tile.TileFrameY != FrameY;
 		return isDifferent;
 	}
 
@@ -42,7 +43,7 @@ public struct TileCondition(bool active, ushort tileID, short frameX, short fram
 	public static TileCondition FromTile(int i, int j)
 	{
 		Tile tile = Main.tile[i, j];
-		TileCondition condition = new(tile.HasTile, tile.TileType, tile.TileFrameX, tile.TileFrameY, new Point16(i, j));
+		TileCondition condition = new(tile.HasTile, tile.TileType, tile.WallType, tile.TileFrameX, tile.TileFrameY, new Point16(i, j));
 		return condition;
 	}
 }

@@ -1,55 +1,31 @@
-﻿using Terraria.DataStructures;
+﻿using System.Linq;
+using Terraria.DataStructures;
 using Terraria.WorldBuilding;
 
 namespace SpiritReforged.Common.WorldGeneration.Microtones.Passes;
 
 internal class FishingAreaMicropass : Micropass
 {
-	public static Dictionary<int, Point16[]> OffsetFuncsBySubId = new Dictionary<int, Point16[]>()
+	public static Dictionary<int, Point16[]> OffsetsBySubId = new Dictionary<int, Point16[]>()
 	{
-		{ 0, Offsets0() }, { 1, Offsets1() }, { 2, Offsets2() }
+		{ 0, [new Point16(9, 5), new Point16(54, 19), new Point16(6, 15)] }, 
+		{ 1, [new Point16(30, 7), new Point16(1, 12)] }, 
+		{ 2, [new Point16(28, 3), new Point16(2, 18), new Point16(42, 20)] },
+		{ 3, [new Point16(18, 3), new Point16(6, 11), new Point16(2, 17), new Point16(34, 6), new Point16(46, 22)] },
+		{ 4, [new Point16(23, 3), new Point16(4, 15), new Point16(51, 2), new Point16(49, 20)] }
 	};
-
-	private static Point16[] Offsets2()
-	{
-		List<Point16> points = [];
-		points.Add(new Point16(28, 3));
-		points.Add(new Point16(2, 18));
-		points.Add(new Point16(42, 20));
-
-		return [.. points];
-	}
-
-	private static Point16[] Offsets1()
-	{
-		List<Point16> points = [];
-		points.Add(new Point16(30, 7));
-		points.Add(new Point16(1, 12));
-
-		return [.. points];
-	}
 	
-	private static Point16[] Offsets0()
-	{
-		List<Point16> points = [];
-		points.Add(new Point16(9, 5));
-		points.Add(new Point16(54, 19));
-		points.Add(new Point16(6, 15));
-
-		return [.. points];
-	}
-
 	public override string WorldGenName => "Adding fishing spots";
 
 	public override int GetWorldGenIndexInsert(List<GenPass> passes, ref bool afterIndex) => passes.FindIndex(genpass => genpass.Name.Equals("Sunflowers"));
 
 	public override void Run(GenerationProgress progress, Terraria.IO.GameConfiguration config)
 	{
-		int repeats = (int)(Main.maxTilesX / 4200f * 10);
+		int repeats = (int)(Main.maxTilesX / 4200f * 8);
 
 		for (int i = 0; i < repeats; ++i)
 		{
-			int subId = WorldGen.genRand.Next(2);
+			int subId = WorldGen.genRand.Next(5);
 			string subChar = WorldGen.genRand.NextBool() ? "a" : "b";
 			string structureName = "Assets/Structures/Coves/FishCove" + subId + subChar;
 			Point16 size = new();
@@ -58,26 +34,23 @@ internal class FishingAreaMicropass : Micropass
 
 			do
 			{
-				position = new Point16(WorldGen.genRand.Next(60, Main.maxTilesX - 60), WorldGen.genRand.Next((int)Main.rockLayer, Main.maxTilesY - 400));
+				position = new Point16(WorldGen.genRand.Next(200, Main.maxTilesX - 200), WorldGen.genRand.Next((int)Main.rockLayer, (int)(Main.rockLayer + Main.maxTilesY) / 2));
 			} while (!Collision.SolidCollision(position.ToWorldCoordinates(), 32, 32));
 
-			position -= WorldGen.genRand.Next(OffsetFuncsBySubId[subId]);
+			position -= WorldGen.genRand.Next(OffsetsBySubId[subId]);
 
 			if (GenVars.structures.CanPlace(new Rectangle(position.X, position.Y, size.X, size.Y), 10))
 			{
-				var biome = QuickConversion.FindConversionBiome(position, size);
-
-				if (biome == QuickConversion.BiomeType.Desert) // Don't spawn in deserts
+				if (!StructureTools.SpawnConvertedStructure(position, size, structureName, QuickConversion.BiomeType.Desert))
 				{
 					i--;
 					continue;
 				}
 
-				var conditions = TileCondition.GetArea(position.X, position.Y, size.X, size.Y);
-				StructureTools.PlaceByOrigin(structureName, position, new(0));
-				QuickConversion.SimpleConvert(conditions, biome, biome != QuickConversion.BiomeType.Purity);
 				GenVars.structures.AddProtectedStructure(new Rectangle(position.X, position.Y, size.X, size.Y), 6);
 			}
+			else
+				i--;
 		}
 	}
 }
