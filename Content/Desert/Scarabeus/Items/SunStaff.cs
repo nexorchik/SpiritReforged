@@ -14,6 +14,7 @@ public class SunStaff : ModItem
 		Item.damage = 18;
 		Item.width = Item.height = 46;
 		Item.useTime = Item.useAnimation = 20;
+		Item.reuseDelay = 20;
 		Item.knockBack = 2f;
 		Item.shootSpeed = 6;
 		Item.noMelee = true;
@@ -25,12 +26,14 @@ public class SunStaff : ModItem
 		Item.useStyle = ItemUseStyleID.Shoot;
 		Item.shoot = ModContent.ProjectileType<SunOrb>();
 		Item.channel = true;
+		Item.noUseGraphic = true;
 	}
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
-		velocity = -Vector2.UnitY * velocity.Length();
-		Projectile.NewProjectile(source, player.Center, velocity, type, damage, knockback, player.whoAmI);
+		position -= Vector2.UnitY * 110;
+		velocity = Vector2.Zero;
+		Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
 
 		return false;
 	}

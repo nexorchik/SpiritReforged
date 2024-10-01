@@ -14,6 +14,7 @@ float2 texExponentRange;
 float finalIntensityMod;
 float4 uColor;
 float4 uColor2;
+float finalExponent;
 
 
 struct VertexShaderInput
@@ -63,13 +64,13 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     float noiseExponent = lerp(texExponentRange.x, texExponentRange.y, input.TextureCoordinates.y);
     float strength = pow(tex2D(textureSampler, noiseCoords).r, noiseExponent);
     float absXDist = 1 - (abs(xCoord - 0.5f) * 2);
-    strength = max(strength + (absXDist * 0.75f), 1);
-    strength = lerp(strength, pow(absXDist, 0.5f), 0.5f);
+    strength = (strength + pow(absXDist, 0.5f)) / 2;
+    strength = lerp(strength, pow(absXDist, 0.5f), 0.25f);
     strength *= sqrt(1 - pow(absXDist - 1, 2));
     strength *= sqrt(input.TextureCoordinates.y);
     
     float4 finalColor = lerp(uColor, uColor2, min(max(1 - strength, 0), 1));
-    strength = pow(strength, 3);
+    strength = pow(strength, finalExponent);
     
     return input.Color * finalIntensityMod * strength * finalColor;
 }

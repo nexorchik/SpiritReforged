@@ -27,6 +27,32 @@ public abstract class EaseFunction
 	public static readonly EaseFunction EaseCircularOut = new PolynomialEase((float x) => (float)Math.Sqrt(1.0 - Math.Pow(x - 1.0, 2)));
 	public static readonly EaseFunction EaseCircularInOut = new PolynomialEase((float x) => (x < 0.5f) ? (1f - (float)Math.Sqrt(1.0 - Math.Pow(x * 2, 2))) * 0.5f : (float)((Math.Sqrt(1.0 - Math.Pow(-2 * x + 2, 2)) + 1) * 0.5));
 
+	public static readonly EaseFunction EaseOutBack = new PolynomialEase((float x) =>
+	{
+		double c1 = 1.70158;
+		double c3 = c1 + 1;
+
+		return (float)(1 + c3 * Math.Pow(x - 1, 3) + c1 * Math.Pow(x - 1, 2));
+	});
+
+	public static float CompoundEase(EaseFunction easeStart, EaseFunction easeEnd, float curTime, float cutOff = 0.5f)
+	{
+		float inverseCutoff = 1 - cutOff;
+		float easeStartRate = 1 / cutOff;
+		float easeEndRate = 1 / inverseCutoff;
+		if (curTime < cutOff)
+			return easeStart.Ease(easeStartRate * curTime) * cutOff;
+		else
+			return cutOff + easeEnd.Ease(easeEndRate * (curTime - cutOff)) * inverseCutoff;
+	}
+
+	public static float CompoundEaseLerp(EaseFunction easeStart, EaseFunction easeEnd, float curTime, EaseFunction interpolationEase = null)
+	{
+		interpolationEase ??= Linear;
+
+		return MathHelper.Lerp(easeStart.Ease(curTime), easeEnd.Ease(curTime), interpolationEase.Ease(curTime));
+	}
+
 	public abstract float Ease(float time);
 }
 
