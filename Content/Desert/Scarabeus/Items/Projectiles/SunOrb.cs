@@ -83,14 +83,14 @@ public class SunOrb : ModProjectile
 			float progress = 1 - (float)(Projectile.timeLeft - (LIFETIME - GROWSHRINKTIME)) / GROWSHRINKTIME;
 			_staffRise = EaseFunction.EaseOutBack.Ease(progress);
 			SunScale = EaseFunction.CompoundEase(EaseFunction.EaseCircularIn, EaseFunction.EaseOutBack, progress, 0.3f);
-			_rayScale = EaseFunction.EaseCubicIn.Ease(progress);
+			_rayScale = EaseFunction.EaseQuadOut.Ease(progress) * SunScale;
 		}
 		else if (Projectile.timeLeft < GROWSHRINKTIME)
 		{
 			float progress = (float)Projectile.timeLeft / GROWSHRINKTIME;
 			_staffRise = EaseFunction.EaseOutBack.Ease(progress);
 			SunScale = EaseFunction.CompoundEase(EaseFunction.EaseCircularIn, EaseFunction.EaseOutBack, progress, 0.3f);
-			_rayScale = EaseFunction.EaseCubicIn.Ease(progress);
+			_rayScale = EaseFunction.EaseQuadOut.Ease(progress) * SunScale;
 		}
 		else
 			_staffRise = SunScale = _rayScale = 1;
@@ -159,13 +159,13 @@ public class SunOrb : ModProjectile
 
 	private void GetRayDimensions(out float rayHeight, out float rayWidth, out float rayDist)
 	{
-		rayHeight = _rayScale * 130;
+		rayHeight = _rayScale * 110;
 
 		float mouseDist = _mousePos.X;
-		float maxDist = 250f;
+		float maxDist = 200f;
 		mouseDist = MathHelper.Clamp(mouseDist, -maxDist, maxDist);
 
-		var widthRange = new Vector2(40, 120);
+		var widthRange = new Vector2(50, 70);
 		rayWidth = _rayScale * MathHelper.Lerp(widthRange.X, widthRange.Y, Math.Abs(mouseDist) / maxDist);
 		rayDist = _rayScale * mouseDist;
 	}
@@ -214,7 +214,7 @@ public class SunOrb : ModProjectile
 		float numGlow = 6;
 		for(int i = 0; i < numGlow; i++)
 		{
-			Vector2 offset = Vector2.UnitX.RotatedBy(MathHelper.TwoPi * i / numGlow) * 5;
+			Vector2 offset = Vector2.UnitX.RotatedBy(MathHelper.TwoPi * i / numGlow) * 3;
 			float opacity = 2 / numGlow;
 			Main.spriteBatch.Draw(staffGlow, staffPos + offset, null, glowColor * opacity, rotationFlip, origin, stafScale, flip, 1f);
 		}
@@ -226,17 +226,17 @@ public class SunOrb : ModProjectile
 		GetRayDimensions(out float rayHeight, out float rayWidth, out float rayDist);
 
 		effect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"]);
-		float scrollAmount = (EaseFunction.EaseQuadOut.Ease(Projectile.ai[0] / LIFETIME) / 2f);
+		float scrollAmount = (EaseFunction.EaseQuadOut.Ease(Projectile.ai[0] / LIFETIME) / 2.5f);
 		effect.Parameters["scroll"].SetValue(new Vector2(scrollAmount * Math.Sign(rayDist), scrollAmount * 2));
 		effect.Parameters["textureStretch"].SetValue(new Vector2(1f, 0.125f) * 0.6f);
 		effect.Parameters["texExponentRange"].SetValue(new Vector2(0.6f));
-		effect.Parameters["finalIntensityMod"].SetValue(3 * _rayScale);
+		effect.Parameters["finalIntensityMod"].SetValue(3 * EaseFunction.EaseQuadIn.Ease(_rayScale));
 		effect.Parameters["finalExponent"].SetValue(4);
 
 		effect.Parameters["uColor"].SetValue(glowColor.ToVector4());
 		effect.Parameters["uColor2"].SetValue(new Color(250, 167, 32, 0).ToVector4());
 
-		var rayVisualStretch = new Vector2(5, 1.2f);
+		var rayVisualStretch = new Vector2(8, 1.4f);
 
 		var squares = new List<SquarePrimitive>();
 
@@ -263,7 +263,7 @@ public class SunOrb : ModProjectile
 	private void DrawBloom(Color glowColor)
 	{
 		Texture2D bloomtex = AssetLoader.LoadedTextures["Bloom"];
-		float numBloom = 4;
+		float numBloom = 3;
 		for (int i = 0; i < numBloom; i++)
 		{
 			float progress = 1 / numBloom;
