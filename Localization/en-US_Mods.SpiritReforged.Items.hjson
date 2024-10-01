@@ -367,16 +367,6 @@ DriftwoodLeggings: {
 	Tooltip: ""
 }
 
-DriftwoodChairItem: {
-	DisplayName: Driftwood Chair
-	Tooltip: ""
-}
-
-DriftwoodDoorItem: {
-	DisplayName: Driftwood Door
-	Tooltip: ""
-}
-
 DriftwoodPlatformItem: {
 	DisplayName: Driftwood Platform
 	Tooltip: ""
@@ -387,18 +377,8 @@ DriftwoodSword: {
 	Tooltip: ""
 }
 
-DriftwoodTableItem: {
-	DisplayName: Driftwood Table
-	Tooltip: ""
-}
-
 DriftwoodWallItem: {
 	DisplayName: Driftwood Wall
-	Tooltip: ""
-}
-
-DriftwoodWorkbenchItem: {
-	DisplayName: Driftwood Workbench
 	Tooltip: ""
 }
 
@@ -810,5 +790,95 @@ DrywoodChestItem: {
 
 DrywoodDoorItem: {
 	DisplayName: Drywood Door
+	Tooltip: ""
+}
+
+DriftwoodBarrelItem: {
+	DisplayName: Driftwood Barrel
+	Tooltip: ""
+}
+
+DriftwoodBathtubItem: {
+	DisplayName: Driftwood Bathtub
+	Tooltip: ""
+}
+
+DriftwoodBedItem: {
+	DisplayName: Driftwood Bed
+	Tooltip: ""
+}
+
+DriftwoodBenchItem: {
+	DisplayName: Driftwood Bench
+	Tooltip: ""
+}
+
+DriftwoodBookcaseItem: {
+	DisplayName: Driftwood Bookcase
+	Tooltip: ""
+}
+
+DriftwoodCandelabraItem: {
+	DisplayName: Driftwood Candelabra
+	Tooltip: ""
+}
+
+DriftwoodCandleItem: {
+	DisplayName: Driftwood Candle
+	Tooltip: ""
+}
+
+DriftwoodChairItem: {
+	DisplayName: Driftwood Chair
+	Tooltip: ""
+}
+
+DriftwoodChandelierItem: {
+	DisplayName: Driftwood Chandelier
+	Tooltip: ""
+}
+
+DriftwoodClockItem: {
+	DisplayName: Driftwood Clock
+	Tooltip: ""
+}
+
+DriftwoodDoorItem: {
+	DisplayName: Driftwood Door
+	Tooltip: ""
+}
+
+DriftwoodDresserItem: {
+	DisplayName: Driftwood Dresser
+	Tooltip: ""
+}
+
+DriftwoodLampItem: {
+	DisplayName: Driftwood Lamp
+	Tooltip: ""
+}
+
+DriftwoodPianoItem: {
+	DisplayName: Driftwood Piano
+	Tooltip: ""
+}
+
+DriftwoodSinkItem: {
+	DisplayName: Driftwood Sink
+	Tooltip: ""
+}
+
+DriftwoodTableItem: {
+	DisplayName: Driftwood Table
+	Tooltip: ""
+}
+
+DriftwoodToiletItem: {
+	DisplayName: Driftwood Toilet
+	Tooltip: ""
+}
+
+DriftwoodWorkBenchItem: {
+	DisplayName: Driftwood Work Bench
 	Tooltip: ""
 }

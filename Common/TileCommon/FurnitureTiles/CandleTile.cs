@@ -39,44 +39,37 @@ public abstract class CandleTile : FurnitureTile
 			(r, g, b) = (color.R / 255f, color.G / 255f, color.B / 255f);
 	}
 
+	public virtual bool BlurGlowmask => true;
+
 	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		var tile = Framing.GetTileSafely(i, j);
 		if (!TileDrawing.IsVisible(tile))
 			return;
 
+		var texture = GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value;
 		var data = TileObjectData.GetTileData(tile);
 		int height = data.CoordinateHeights[tile.TileFrameY / data.CoordinateFullHeight];
-		var texture = GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value;
-		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, height);
+		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, height);
 		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
-		var position = new Vector2(i, j) * 16 - Main.screenPosition + zero;
 
-		spriteBatch.Draw(texture, position, source, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-
-		if (tile.TileFrameY == 0 && tile.TileFrameX == 0)
-			DrawFlames(i, j, spriteBatch);
-	}
-
-	/// <summary> Called by <see cref="PostDraw"/>. </summary>
-	public virtual void DrawFlames(int i, int j, SpriteBatch spriteBatch)
-	{
-		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
-		var texture = TextureAssets.Flames[0].Value;
-		var origin = new Rectangle(0, 0, 22, 20);
-		ulong randSeed = Main.TileFrameSeed ^ (ulong)((long)j << 32 | (uint)i);
-
-		for (int c = 0; c < 7; c++)
+		if (BlurGlowmask)
 		{
-			float shakeX = Utils.RandomInt(ref randSeed, -10, 11) * 0.15f;
-			float shakeY = Utils.RandomInt(ref randSeed, -10, 1) * 0.35f;
-			var offset = new Vector2(shakeX + 8, shakeY + 22);
+			ulong randSeed = Main.TileFrameSeed ^ (ulong)((long)j << 32 | (uint)i);
+			for (int c = 0; c < 7; c++) //Draw our glowmask with a randomized position
+			{
+				float shakeX = Utils.RandomInt(ref randSeed, -10, 11) * 0.15f;
+				float shakeY = Utils.RandomInt(ref randSeed, -10, 1) * 0.35f;
+				var offset = new Vector2(shakeX, shakeY);
 
-			var position = new Vector2(i, j) * 16 - Main.screenPosition + offset + zero;
-			spriteBatch.Draw(texture, position, origin, new Color(100, 100, 100, 0), 0, origin.Bottom(), 1, SpriteEffects.None, 0f);
+				var position = new Vector2(i, j) * 16 - Main.screenPosition + offset + zero;
+				spriteBatch.Draw(texture, position, source, new Color(100, 100, 100, 0), 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+			}
 		}
-
-		if (Main.rand.NextBool(100))
-			Dust.NewDustPerfect(new Vector2(i, j) * 16 + new Vector2(8), DustID.Torch, (Vector2.UnitY * -Main.rand.NextFloat(2f)).RotatedByRandom(.5f));
+		else
+		{
+			var position = new Vector2(i, j) * 16 - Main.screenPosition + zero;
+			spriteBatch.Draw(texture, position, source, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+		}
 	}
 }

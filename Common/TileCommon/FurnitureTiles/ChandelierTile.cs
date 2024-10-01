@@ -1,11 +1,11 @@
+using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
-using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
 [AutoloadGlowmask("255,165,0", false)]
-public abstract class LampTile : FurnitureTile
+public abstract class ChandelierTile : FurnitureTile, ISwayInWind
 {
 	public override void StaticDefaults()
 	{
@@ -14,15 +14,15 @@ public abstract class LampTile : FurnitureTile
 		Main.tileLighted[Type] = true;
 		Main.tileLavaDeath[Type] = true;
 
-		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
-		TileObjectData.newTile.Origin = new Point16(0, 2);
-		TileObjectData.newTile.Height = 3;
-		TileObjectData.newTile.CoordinateHeights = [16, 16, 18];
+		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3);
+		TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile, 3, 0);
+		TileObjectData.newTile.AnchorBottom = AnchorData.Empty;
+		TileObjectData.newTile.Origin = new Point16(1, 0);
 		TileObjectData.addTile(Type);
 
 		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
-		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.LampPost"));
-		AdjTiles = [TileID.Lamps];
+		AddMapEntry(new Color(100, 100, 60), Language.GetText("MapObject.Chandelier"));
+		AdjTiles = [TileID.Chandeliers];
 		DustType = -1;
 	}
 
@@ -33,7 +33,7 @@ public abstract class LampTile : FurnitureTile
 
 		j -= Framing.GetTileSafely(i, j).TileFrameY / 18; //Move to the multitile's top
 
-		for (int h = 0; h < 3; h++)
+		for (int h = 0; h < 2; h++)
 		{
 			var tile = Framing.GetTileSafely(i, j + h);
 			tile.TileFrameX += (short)((tile.TileFrameX < width) ? width : -width);
@@ -49,24 +49,26 @@ public abstract class LampTile : FurnitureTile
 		var tile = Framing.GetTileSafely(i, j);
 		var color = Color.Orange;
 
-		if (tile.TileFrameX < 18 && tile.TileFrameY == 0)
+		if (tile.TileFrameX == 18 && tile.TileFrameY == 18)
 			(r, g, b) = (color.R / 255f, color.G / 255f, color.B / 255f);
 	}
 
 	public virtual bool BlurGlowmask => true;
 
-	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
+	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
-		if (!TileDrawing.IsVisible(tile))
-			return;
-
-		var texture = GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value;
 		var data = TileObjectData.GetTileData(tile);
+
 		int height = data.CoordinateHeights[tile.TileFrameY / data.CoordinateFullHeight];
 		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, height);
-		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
+		var position = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + offset;
 
+		//Draw normally
+		spriteBatch.Draw(TextureAssets.Tile[Type].Value, position, source, 
+			Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+
+		var glowTexture = GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value;
 		if (BlurGlowmask)
 		{
 			ulong randSeed = Main.TileFrameSeed ^ (ulong)((long)j << 32 | (uint)i);
@@ -74,16 +76,16 @@ public abstract class LampTile : FurnitureTile
 			{
 				float shakeX = Utils.RandomInt(ref randSeed, -10, 11) * 0.15f;
 				float shakeY = Utils.RandomInt(ref randSeed, -10, 1) * 0.35f;
-				var offset = new Vector2(shakeX, shakeY);
+				var shakeOffset = new Vector2(shakeX, shakeY);
 
-				var position = new Vector2(i, j) * 16 - Main.screenPosition + offset + zero;
-				spriteBatch.Draw(texture, position, source, new Color(100, 100, 100, 0), 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+				spriteBatch.Draw(glowTexture, position + shakeOffset, source, 
+					new Color(100, 100, 100, 0), rotation, origin, 1, SpriteEffects.None, 0f);
 			}
 		}
 		else
 		{
-			var position = new Vector2(i, j) * 16 - Main.screenPosition + zero;
-			spriteBatch.Draw(texture, position, source, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(glowTexture, position, source, Color.White, 
+				rotation, origin, 1, SpriteEffects.None, 0);
 		}
 	}
 }
