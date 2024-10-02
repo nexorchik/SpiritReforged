@@ -6,8 +6,11 @@ namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 public abstract class PaintingTile : FurnitureTile, IAutoloadTileItem
 {
 	public virtual int TileHeight => 2;
+
 	public virtual int TileWidth => 2;
+
 	public virtual void SetItemDefaults(ModItem item) => item.Item.value = Item.buyPrice(gold: 2);
+
 	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
