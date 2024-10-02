@@ -203,3 +203,4 @@ Biomes: {
 }
 
 SlotContexts.Backpack: Pack
+Conditions.InSavanna: Mods.SpiritReforged.Conditions.InSavanna
