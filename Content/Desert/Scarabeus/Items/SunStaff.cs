@@ -1,7 +1,5 @@
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Desert.Scarabeus.Items.Projectiles;
-using SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
-using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Desert.Scarabeus.Items;
 
@@ -13,30 +11,23 @@ public class SunStaff : ModItem
 	{
 		Item.damage = 18;
 		Item.width = Item.height = 46;
-		Item.useTime = Item.useAnimation = 20;
-		Item.reuseDelay = 20;
-		Item.knockBack = 2f;
-		Item.shootSpeed = 6;
+		Item.useTime = Item.useAnimation = 40;
+		Item.knockBack = 1f;
+		Item.shootSpeed = 0;
 		Item.noMelee = true;
-		Item.autoReuse = true;
+		Item.channel = true;
+		Item.noUseGraphic = true;
 		Item.DamageType = DamageClass.Magic;
 		Item.mana = 40;
 		Item.rare = ItemRarityID.Green;
 		Item.value = Item.sellPrice(gold: 2);
 		Item.useStyle = ItemUseStyleID.Shoot;
-		Item.shoot = ModContent.ProjectileType<SunOrb>();
-		Item.channel = true;
-		Item.noUseGraphic = true;
+		Item.shoot = ModContent.ProjectileType<SunStaffHeld>();
 	}
 
-	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+	public override bool CanUseItem(Player player)
 	{
-		position -= Vector2.UnitY * 110;
-		velocity = Vector2.Zero;
-		Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
-
-		return false;
+		int sunOrb = ModContent.ProjectileType<SunOrb>();
+		return player.ownedProjectileCounts[Item.shoot] == 0 && player.ownedProjectileCounts[sunOrb] == 0;
 	}
-
-	public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] < 1;
 }

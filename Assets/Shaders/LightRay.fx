@@ -15,6 +15,7 @@ float finalIntensityMod;
 float4 uColor;
 float4 uColor2;
 float finalExponent;
+float taperRatio;
 
 
 struct VertexShaderInput
@@ -52,8 +53,8 @@ float GetAngle(float2 input, float2 centeredPos, float baseAngle)
 const float piOver4 = 0.785f;
 float4 MainPS(VertexShaderOutput input) : COLOR0
 {
-    float xCoord = GetAngle(input.TextureCoordinates, float2(0.5f, 1), 1.57f);
-    xCoord /= piOver4;
+    float xCoord = input.TextureCoordinates.x - 0.5f;
+    xCoord /= lerp(max(1 - input.TextureCoordinates.y, 0.01f), 1, taperRatio);
     xCoord += 0.5f;
     if (xCoord > 1 || xCoord < 0)
         return float4(0, 0, 0, 0);
@@ -64,9 +65,8 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     float noiseExponent = lerp(texExponentRange.x, texExponentRange.y, input.TextureCoordinates.y);
     float strength = pow(tex2D(textureSampler, noiseCoords).r, noiseExponent);
     float absXDist = 1 - (abs(xCoord - 0.5f) * 2);
-    strength = (strength + pow(absXDist, 0.5f)) / 2;
-    strength = lerp(strength, pow(absXDist, 0.5f), 0.25f);
-    strength *= sqrt(1 - pow(absXDist - 1, 2));
+    strength = lerp(strength, sqrt(1 - pow(absXDist - 1, 2)), 0.7f);
+    strength *= pow(absXDist, 0.5f);
     strength *= sqrt(input.TextureCoordinates.y);
     
     float4 finalColor = lerp(uColor, uColor2, min(max(1 - strength, 0), 1));

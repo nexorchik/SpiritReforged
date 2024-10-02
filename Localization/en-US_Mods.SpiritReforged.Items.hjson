@@ -704,6 +704,6 @@ SafariVest: {
 }
 
 SunStaff: {
-	DisplayName: Sun Staff
-	Tooltip: ""
+	DisplayName: Sunrise Scepter
+	Tooltip: Casts the light of the sun down in front of you
 }

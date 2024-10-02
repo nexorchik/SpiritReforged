@@ -7,6 +7,9 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
 public class UrchinStaffProjectile : ModProjectile
 {
+	public Vector2 ShotTrajectory { get; set; }
+	public Vector2 RelativeTargetPosition { get; set; }
+
 	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.UrchinStaff.DisplayName");
 
 	public override void SetDefaults()
@@ -24,9 +27,6 @@ public class UrchinStaffProjectile : ModProjectile
 	}
 
 	public override bool? CanDamage() => false;
-
-	public Vector2 ShotTrajectory { get; set; }
-	public Vector2 RelativeTargetPosition { get; set; }
 
 	public override void AI()
 	{
