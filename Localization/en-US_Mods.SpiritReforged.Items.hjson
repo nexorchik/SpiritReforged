@@ -812,3 +812,23 @@ DrywoodDoorItem: {
 	DisplayName: Drywood Door
 	Tooltip: ""
 }
+
+DustyFieldsItem: {
+	DisplayName: Dusty Fields
+	Tooltip: "'S. Yaki'"
+}
+
+OrangeSkiesItem: {
+	DisplayName: Orange Skies
+	Tooltip: "'S. Yaki'"
+}
+
+StrongWindsItem: {
+	DisplayName: Strong Winds
+	Tooltip: "'S. Yaki'"
+}
+
+WaningSunItem: {
+	DisplayName: Waning Sun Item
+	Tooltip: "'E. Sibellius'"
+}
