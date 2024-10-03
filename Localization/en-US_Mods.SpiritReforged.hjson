@@ -12,8 +12,8 @@ Tiles: {
 	BambooBirdCage.MapEntry: Bamboo Bird Cage
 	BambooPot.MapEntry: Bamboo Pot
 	KoiTotem_Tile.MapEntry: Koi Totem
-	TermiteJar_Tile.MapEntry: Termite Jar_ Tile
-	SpiritKillieFishbowl_Tile.MapEntry: Spirit Killie Fishbowl_ Tile
+	TermiteJar_Tile.MapEntry: Termite Jar
+	SpiritKillieFishbowl_Tile.MapEntry: Spirit Killie Fishbowl
 }
 
 Projectiles: {
@@ -203,4 +203,4 @@ Biomes: {
 }
 
 SlotContexts.Backpack: Pack
-Conditions.InSavanna: Mods.SpiritReforged.Conditions.InSavanna
+Conditions.InSavanna: In Savanna
