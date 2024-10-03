@@ -338,17 +338,17 @@ JellyCandle: {
 }
 
 SmallDriftwoodItem: {
-	DisplayName: Small Driftwood Item
+	DisplayName: Small Driftwood
 	Tooltip: "'Aesthetically pleasing'"
 }
 
 MediumDriftwoodItem: {
-	DisplayName: Medium Driftwood Item
+	DisplayName: Medium Driftwood
 	Tooltip: "'Aesthetically pleasing'"
 }
 
 LargeDriftwoodItem: {
-	DisplayName: Large Driftwood Item
+	DisplayName: Large Driftwood
 	Tooltip: "'Aesthetically pleasing'"
 }
 
@@ -829,6 +829,6 @@ StrongWindsItem: {
 }
 
 WaningSunItem: {
-	DisplayName: Waning Sun Item
+	DisplayName: Waning Sun
 	Tooltip: "'E. Sibellius'"
 }
