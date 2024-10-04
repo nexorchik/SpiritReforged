@@ -11,6 +11,7 @@ internal class LivingBaobabLeaf : ModTile
 
 		AddMapEntry(new Color(140, 156, 55));
 		HitSound = SoundID.Dig;
+		DustType = -1;
 	}
 
 	public override void RandomUpdate(int i, int j)

@@ -338,17 +338,17 @@ JellyCandle: {
 }
 
 SmallDriftwoodItem: {
-	DisplayName: Small Driftwood Item
+	DisplayName: Small Driftwood
 	Tooltip: "'Aesthetically pleasing'"
 }
 
 MediumDriftwoodItem: {
-	DisplayName: Medium Driftwood Item
+	DisplayName: Medium Driftwood
 	Tooltip: "'Aesthetically pleasing'"
 }
 
 LargeDriftwoodItem: {
-	DisplayName: Large Driftwood Item
+	DisplayName: Large Driftwood
 	Tooltip: "'Aesthetically pleasing'"
 }
 
@@ -604,6 +604,16 @@ SavannaGrassSeeds: {
 	Tooltip: ""
 }
 
+LeatherBackpack: {
+	DisplayName: Leather Backpack
+	Tooltip:
+		'''
+		Holds 4 items
+		You must empty this before taking it off
+		'Comfortable, practical, and still dashing'
+		'''
+}
+
 Caryocar: {
 	DisplayName: Caryocar
 	Tooltip: ""
@@ -701,6 +711,126 @@ SafariShorts: {
 SafariVest: {
 	DisplayName: Safari Vest
 	Tooltip: ""
+}
+
+SavannaMusicBoxItem: {
+	DisplayName: Music Box (Savanna)
+	Tooltip: ""
+}
+
+DrywoodBathtubItem: {
+	DisplayName: Drywood Bathtub
+	Tooltip: ""
+}
+
+DrywoodBedItem: {
+	DisplayName: Drywood Bed
+	Tooltip: ""
+}
+
+DrywoodBookcaseItem: {
+	DisplayName: Drywood Bookcase
+	Tooltip: ""
+}
+
+DrywoodCandelabraItem: {
+	DisplayName: Drywood Candelabra
+	Tooltip: ""
+}
+
+DrywoodCandleItem: {
+	DisplayName: Drywood Candle
+	Tooltip: ""
+}
+
+DrywoodChairItem: {
+	DisplayName: Drywood Chair
+	Tooltip: ""
+}
+
+DrywoodClockItem: {
+	DisplayName: Drywood Clock
+	Tooltip: ""
+}
+
+DrywoodCouchItem: {
+	DisplayName: Drywood Couch
+	Tooltip: ""
+}
+
+DrywoodDresserItem: {
+	DisplayName: Drywood Dresser
+	Tooltip: ""
+}
+
+DrywoodLampItem: {
+	DisplayName: Drywood Lamp
+	Tooltip: ""
+}
+
+DrywoodPianoItem: {
+	DisplayName: Drywood Piano
+	Tooltip: ""
+}
+
+DrywoodSinkItem: {
+	DisplayName: Drywood Sink
+	Tooltip: ""
+}
+
+DrywoodTableItem: {
+	DisplayName: Drywood Table
+	Tooltip: ""
+}
+
+DrywoodToiletItem: {
+	DisplayName: Drywood Toilet
+	Tooltip: ""
+}
+
+DrywoodWorkBenchItem: {
+	DisplayName: Drywood Work Bench
+	Tooltip: ""
+}
+
+DrywoodLanternItem: {
+	DisplayName: Drywood Lantern
+	Tooltip: ""
+}
+
+DrywoodSofaItem: {
+	DisplayName: Drywood Sofa
+	Tooltip: ""
+}
+
+DrywoodChestItem: {
+	DisplayName: Drywood Chest
+	Tooltip: ""
+}
+
+DrywoodDoorItem: {
+	DisplayName: Drywood Door
+	Tooltip: ""
+}
+
+DustyFieldsItem: {
+	DisplayName: Dusty Fields
+	Tooltip: "'S. Yaki'"
+}
+
+OrangeSkiesItem: {
+	DisplayName: Orange Skies
+	Tooltip: "'S. Yaki'"
+}
+
+StrongWindsItem: {
+	DisplayName: Strong Winds
+	Tooltip: "'S. Yaki'"
+}
+
+WaningSunItem: {
+	DisplayName: Waning Sun
+	Tooltip: "'E. Sibellius'"
 }
 
 ScarecrowItem: {
