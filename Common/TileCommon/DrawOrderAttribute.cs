@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using MonoMod.Cil;
+using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 using static SpiritReforged.Common.TileCommon.DrawOrderAttribute;
@@ -27,35 +28,39 @@ public class DrawOrderHandler : ILoadable
 
 	public void Load(Mod mod)
 	{
-		static void Draw(Point16 p)
-			=> TileLoader.PreDraw(p.X, p.Y, Framing.GetTileSafely(p.X, p.Y).TileType, Main.spriteBatch);
-
-		On_TileDrawing.PreDrawTiles += ClearDrawPoints;
-		On_Main.DoDraw_Tiles_Solid += (On_Main.orig_DoDraw_Tiles_Solid orig, Main self) =>
+		static void Draw(Layer layer)
 		{
-			orig(self);
-
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
-
-			order = Layer.Solid;
+			order = layer;
 			var above = specialDrawPoints.Where(x => x.Value.Contains(order));
 			foreach (var set in above)
-				Draw(set.Key);
+			{
+				var p = set.Key;
+				TileLoader.PreDraw(p.X, p.Y, Framing.GetTileSafely(p.X, p.Y).TileType, Main.spriteBatch);
+			}
 
 			order = Layer.Default;
-			Main.spriteBatch.End();
+		}
+
+		On_TileDrawing.PreDrawTiles += ClearDrawPoints;
+		IL_Main.DoDraw_Tiles_Solid += (ILContext il) =>
+		{
+			var c = new ILCursor(il);
+			for (int i = 0; i < 2; i++)
+			{
+				if (!c.TryGotoNext(x => x.MatchCallvirt<SpriteBatch>("End")))
+				{
+					SpiritReforgedMod.Instance.Logger.Debug("Failed goto SpriteBatch.End; Index: " + i);
+					return;
+				}
+			}
+
+			c.EmitDelegate(() => Draw(Layer.Solid)); //Emit a delegate so we can draw just before the spritebatch ends
 		};
 
 		On_Main.DoDraw_Tiles_NonSolid += (On_Main.orig_DoDraw_Tiles_NonSolid orig, Main self) =>
 		{
 			orig(self);
-
-			order = Layer.NonSolid;
-			var above = specialDrawPoints.Where(x => x.Value.Contains(order));
-			foreach (var set in above)
-				Draw(set.Key);
-
-			order = Layer.Default;
+			Draw(Layer.NonSolid);
 		};
 
 		On_Main.DrawPlayers_AfterProjectiles += (On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self) =>
@@ -63,13 +68,7 @@ public class DrawOrderHandler : ILoadable
 			orig(self);
 
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-
-			order = Layer.OverPlayers;
-			var above = specialDrawPoints.Where(x => x.Value.Contains(order));
-			foreach (var set in above)
-				Draw(set.Key);
-
-			order = Layer.Default;
+			Draw(Layer.OverPlayers);
 			Main.spriteBatch.End();
 		};
 	}
