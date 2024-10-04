@@ -1,14 +1,14 @@
 ﻿using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
+using static SpiritReforged.Common.TileCommon.DrawOrderAttribute;
 
 namespace SpiritReforged.Common.TileCommon;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class DrawOrderAttribute(DrawOrderAttribute.Layer layer, bool drawDefault = false) : Attribute
+public class DrawOrderAttribute(params Layer[] layers) : Attribute
 {
-	public Layer layer = layer;
-	public bool drawDefault = drawDefault;
+	public Layer[] Layers { get; private set; }  = layers;
 
 	public enum Layer : byte //Draws above the given layer
 	{
@@ -21,11 +21,9 @@ public class DrawOrderAttribute(DrawOrderAttribute.Layer layer, bool drawDefault
 
 public class DrawOrderHandler : ILoadable
 {
-	public static readonly Dictionary<Point16, DrawOrderAttribute.Layer> specialDrawPoints = [];
-
-	/// <summary> Used in conjunction with <see cref="DrawOrderAttribute"/> to tell whether a tile is drawing as a result of the attribute. <br/>
-	/// Especially useful if <see cref="DrawOrderAttribute.drawDefault"/> is true. </summary>
-	internal static bool drawingInOrder = false;
+	public static readonly Dictionary<Point16, Layer[]> specialDrawPoints = [];
+	/// <summary> Used in conjunction with <see cref="DrawOrderAttribute"/> to tell whether a tile is drawing as a result of the attribute and on what layer. </summary>
+	internal static Layer order = Layer.Default;
 
 	public void Load(Mod mod)
 	{
@@ -39,12 +37,12 @@ public class DrawOrderHandler : ILoadable
 
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
 
-			drawingInOrder = true;
-			var above = specialDrawPoints.Where(x => x.Value is DrawOrderAttribute.Layer.Solid);
+			order = Layer.Solid;
+			var above = specialDrawPoints.Where(x => x.Value.Contains(order));
 			foreach (var set in above)
 				Draw(set.Key);
 
-			drawingInOrder = false;
+			order = Layer.Default;
 			Main.spriteBatch.End();
 		};
 
@@ -52,12 +50,12 @@ public class DrawOrderHandler : ILoadable
 		{
 			orig(self);
 
-			drawingInOrder = true;
-			var above = specialDrawPoints.Where(x => x.Value is DrawOrderAttribute.Layer.NonSolid);
+			order = Layer.NonSolid;
+			var above = specialDrawPoints.Where(x => x.Value.Contains(order));
 			foreach (var set in above)
 				Draw(set.Key);
 
-			drawingInOrder = false;
+			order = Layer.Default;
 		};
 
 		On_Main.DrawPlayers_AfterProjectiles += (On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self) =>
@@ -65,13 +63,13 @@ public class DrawOrderHandler : ILoadable
 			orig(self);
 
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-			
-			drawingInOrder = true;
-			var above = specialDrawPoints.Where(x => x.Value is DrawOrderAttribute.Layer.OverPlayers);
+
+			order = Layer.OverPlayers;
+			var above = specialDrawPoints.Where(x => x.Value.Contains(order));
 			foreach (var set in above)
 				Draw(set.Key);
 
-			drawingInOrder = false;
+			order = Layer.Default;
 			Main.spriteBatch.End();
 		};
 	}
@@ -103,10 +101,10 @@ public class DrawOrderGlobalTile : GlobalTile
 		if (Tag(type) is not DrawOrderAttribute tag)
 			return true;
 
-		if (!DrawOrderHandler.drawingInOrder)
+		if (DrawOrderHandler.order == Layer.Default)
 		{
-			DrawOrderHandler.specialDrawPoints.Add(new Point16(i, j), tag.layer);
-			return tag.drawDefault;
+			DrawOrderHandler.specialDrawPoints.Add(new Point16(i, j), tag.Layers);
+			return tag.Layers.Contains(Layer.Default);
 		}
 
 		return true;

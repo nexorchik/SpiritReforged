@@ -1,8 +1,10 @@
-﻿using SpiritReforged.Common.TileCommon.TileSway;
+﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.TileSway;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Items.BaobabFruit;
 
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid)]
 public class BaobabFruitTile : ModTile, ISwayInWind
 {
 	public override void SetStaticDefaults()

@@ -3,7 +3,7 @@ using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
-[DrawOrder(DrawOrderAttribute.Layer.Solid, true)]
+[DrawOrder(DrawOrderAttribute.Layer.Solid, DrawOrderAttribute.Layer.Default)]
 public class TermiteMoundLarge : ModTile
 {
 	public override string Texture => base.Texture.Replace("Large", string.Empty);
@@ -46,7 +46,7 @@ public class TermiteMoundLarge : ModTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		if (!DrawOrderHandler.drawingInOrder)
+		if (DrawOrderHandler.order == DrawOrderAttribute.Layer.Default)
 			return true;
 
 		var tile = Framing.GetTileSafely(i, j);
@@ -64,7 +64,7 @@ public class TermiteMoundLarge : ModTile
 	}
 }
 
-[DrawOrder(DrawOrderAttribute.Layer.Solid, true)]
+[DrawOrder(DrawOrderAttribute.Layer.Solid, DrawOrderAttribute.Layer.Default)]
 public class TermiteMoundSmall : ModTile
 {
 	public override string Texture => base.Texture.Replace("Small", string.Empty);
@@ -111,7 +111,7 @@ public class TermiteMoundSmall : ModTile
 		var tile = Framing.GetTileSafely(i, j);
 		var texture = TextureAssets.Tile[Type].Value;
 
-		if (!DrawOrderHandler.drawingInOrder)
+		if (DrawOrderHandler.order == DrawOrderAttribute.Layer.Default)
 		{
 			var frame = new Point(tile.TileFrameX + 18 * 3, tile.TileFrameY + 18);
 			var source = new Rectangle(frame.X, frame.Y, 16, tile.TileFrameY == 18 * 3 ? 18 : 16);
