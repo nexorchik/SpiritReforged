@@ -1,4 +1,8 @@
-﻿namespace SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Misc;
+using System.Linq;
+using Terraria.Graphics.Renderers;
+
+namespace SpiritReforged.Common.Particle;
 
 public enum ParticleLayer
 {
@@ -12,7 +16,9 @@ public enum ParticleDrawType
 {
 	DefaultAlphaBlend,
 	DefaultAdditive,
-	Custom
+	Custom,
+	BatchedAdditiveBlend,
+	CustomBatchedAdditiveBlend
 }
 
 public static class ParticleHandler
@@ -42,7 +48,7 @@ public static class ParticleHandler
 
 				string texturePath = type.Namespace.Replace('.', '/') + "/" + type.Name;
 				var particleTexture = ModContent.RequestIfExists(texturePath, out Asset<Texture2D> tex, AssetRequestMode.ImmediateLoad) ? tex.Value 
-					: ModContent.Request<Texture2D>("SpiritReforged/Assets/Textures/ParticleDefault", AssetRequestMode.ImmediateLoad).Value;
+					: ModContent.Request<Texture2D>("SpiritReforged/Assets/Textures/Bloom", AssetRequestMode.ImmediateLoad).Value;
 
 				particleTextures[assignedType] = particleTexture;
 			}
@@ -126,11 +132,16 @@ public static class ParticleHandler
 			particle.Position += particle.Velocity;
 
 			particle.Update();
+
+			if (particle.TimeActive > particle.MaxTime && particle.MaxTime > 0)
+				particle.Kill();
 		}
 	}
 
 	internal static void DrawAllParticles(SpriteBatch spriteBatch, ParticleLayer drawLayer)
 	{
+		var batchedNonpremultiplyParticles = new List<Particle>();
+
 		foreach (Particle particle in particles)
 		{
 			if (particle == null)
@@ -138,24 +149,46 @@ public static class ParticleHandler
 
 			if(particle.DrawLayer == drawLayer)
 			{
-				Color additiveColor = particle.Color;
-				additiveColor.A = 0;
-
 				switch (particle.DrawType)
 				{
 					case ParticleDrawType.DefaultAlphaBlend:
-						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color, particle.Rotation, particle.Origin, particle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
+						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color, particle.Rotation, particle.Origin + particleTextures[particle.Type].Size() / 2, particle.Scale, SpriteEffects.None, 0f);
 						break;
 
 					case ParticleDrawType.DefaultAdditive:
-						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color, particle.Rotation, particle.Origin, particle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 0f);
+						spriteBatch.Draw(particleTextures[particle.Type], particle.Position - Main.screenPosition, null, particle.Color.Additive(), particle.Rotation, particle.Origin + particleTextures[particle.Type].Size()/2, particle.Scale, SpriteEffects.None, 0f);
 						break;
 
 					case ParticleDrawType.Custom:
 						particle.CustomDraw(spriteBatch);
 						break;
+
+					case ParticleDrawType.BatchedAdditiveBlend:
+						batchedNonpremultiplyParticles.Add(particle);
+						break;
+
+					case ParticleDrawType.CustomBatchedAdditiveBlend:
+						batchedNonpremultiplyParticles.Add(particle);
+						break;
 				}
 			}
+		}
+
+		if (batchedNonpremultiplyParticles.Count != 0)
+		{
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+
+			foreach (Particle batchedParticle in batchedNonpremultiplyParticles)
+			{
+				if (batchedParticle.DrawType == ParticleDrawType.CustomBatchedAdditiveBlend)
+					batchedParticle.CustomDraw(spriteBatch);
+				else
+					spriteBatch.Draw(particleTextures[batchedParticle.Type], batchedParticle.Position - Main.screenPosition, null, batchedParticle.Color, batchedParticle.Rotation, batchedParticle.Origin + particleTextures[batchedParticle.Type].Size() / 2, batchedParticle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 1f);
+			}
+
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
 		}
 	}
 

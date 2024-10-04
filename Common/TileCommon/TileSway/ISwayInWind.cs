@@ -19,9 +19,16 @@ public interface ISwayInWind
 	}
 
 	/// <summary> Use this to modify rotation before offset is calculated. Called once per tile. </summary>
-	public void ModifyRotation(int i, int j, ref float rotation)
+	public void ModifyRotation(int i, int j, ref float rotation) { }
+	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
-	}
+		var tile = Framing.GetTileSafely(i, j);
+		var data = TileObjectData.GetTileData(tile);
 
-	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin);
+		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
+		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, data.CoordinateHeights[tile.TileFrameY / 18]);
+
+		spriteBatch.Draw(TextureAssets.Tile[tile.TileType].Value, drawPos + offset - new Vector2(0, 2), 
+			source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+	}
 }

@@ -1,12 +1,21 @@
 ﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Particles;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
 
+[AutoloadGlowmask("Method:Content.Forest.Stargrass.Tiles.StargrassTile Glow")]
 internal class StargrassTile : ModTile
 {
+	public static Color Glow(object obj) 
+	{
+		var pos = (Point)obj;
+		float sine = (float)((Math.Sin(NoiseSystem.Perlin(pos.X * 1.2f, pos.Y * 0.2f) * 3f + Main.GlobalTimeWrappedHourly * 1.3f) + 1f) * 0.5f);
+		return Color.White * MathHelper.Lerp(0.2f, 1f, sine);
+	}
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = true;
@@ -77,13 +86,6 @@ internal class StargrassTile : ModTile
 
 		if (SpreadHelper.Spread(i, j, Type, 4, TileID.Dirt) && Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None);
-	}
-
-	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
-	{
-		var tex = ModContent.Request<Texture2D>(Texture + "_Glow", AssetRequestMode.AsyncLoad).Value;
-		Color colour = Color.White * MathHelper.Lerp(0.2f, 1f, (float)((Math.Sin(NoiseSystem.Perlin(i * 1.2f, j * 0.2f) * 3f + Main.GlobalTimeWrappedHourly * 1.3f) + 1f) * 0.5f));
-		this.DrawSlopedGlowMask(i, j, tex, colour, Vector2.Zero, false);
 	}
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.05f, 0.2f, 0.5f);

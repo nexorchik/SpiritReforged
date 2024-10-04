@@ -12,8 +12,9 @@ Tiles: {
 	BambooBirdCage.MapEntry: Bamboo Bird Cage
 	BambooPot.MapEntry: Bamboo Pot
 	KoiTotem_Tile.MapEntry: Koi Totem
-	TermiteJar_Tile.MapEntry: Termite Jar_ Tile
-	SpiritKillieFishbowl_Tile.MapEntry: Spirit Killie Fishbowl_ Tile
+	HerosMemorialStatue.MapEntry: A Hero's Memorial
+	TermiteJar_Tile.MapEntry: Termite Jar
+	SpiritKillieFishbowl_Tile.MapEntry: Spirit Killie Fishbowl
 }
 
 Projectiles: {
@@ -170,7 +171,7 @@ Buffs: {
 	}
 
 	QuenchPotion_Buff: {
-		DisplayName: Quench Potion_ Buff
+		DisplayName: Quenched
 		Description: Other potions last 25% longer
 	}
 
@@ -192,6 +193,7 @@ SetBonuses: {
 		Allows the wearer to float on water
 		Increased fishing power
 		'''
+	Drywood: Increased movement speed on the surface
 }
 
 Biomes: {
@@ -200,3 +202,6 @@ Biomes: {
 		TownNPCDialogueName: the Savanna
 	}
 }
+
+SlotContexts.Backpack: Pack
+Conditions.InSavanna: In Savanna

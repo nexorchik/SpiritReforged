@@ -80,7 +80,6 @@ public class TrailManager
 			{
 				t.DissolveSpeed = dissolveSpeed;
 				t.StartDissolve();
-				return;
 			}
 		}
 	}

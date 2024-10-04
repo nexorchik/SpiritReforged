@@ -1,4 +1,6 @@
-﻿using Terraria.Audio;
+﻿using SpiritReforged.Common.Particle;
+using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
+using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 
@@ -55,8 +57,8 @@ public class CascadeArmorPlayer : ModPlayer
 		{
 			var drawOn = Player.GetModPlayer<Common.PlayerCommon.ExtraDrawOnPlayer>();
 
-			drawOn.DrawDict.Add(delegate (SpriteBatch sB) { DrawBubble(sB); }, Common.PlayerCommon.ExtraDrawOnPlayer.DrawType.Additive);
-			drawOn.DrawDict.Add(delegate (SpriteBatch sB) { DrawBubble(sB, true); }, Common.PlayerCommon.ExtraDrawOnPlayer.DrawType.AlphaBlend);
+			drawOn.DrawDict.Add(delegate (SpriteBatch sB) { DrawBubble(sB); }, Common.PlayerCommon.ExtraDrawOnPlayer.DrawType.NonPremultiplied);
+			//drawOn.DrawDict.Add(delegate (SpriteBatch sB) { DrawBubble(sB, true); }, Common.PlayerCommon.ExtraDrawOnPlayer.DrawType.AlphaBlend);
 
 			HandleBubbleJiggle();
 
@@ -68,7 +70,7 @@ public class CascadeArmorPlayer : ModPlayer
 			if (bubbleStrength > 0) //Kill bubble if armor piece unequipped
 				PopBubble();
 
-			bubbleCooldown = 120;
+			bubbleCooldown = 60;
 			bubbleSquish = Vector2.One;
 			squishVelocity = Vector2.Zero;
 		}
@@ -124,17 +126,7 @@ public class CascadeArmorPlayer : ModPlayer
 
 	private void PopBubble()
 	{
-		int radius = (int)(300 * bubbleStrength);
-
-		//TODO : Make this look and sound cleaner
-		for (int i = 0; i < 16; i++)
-		{
-			Vector2 vel = new Vector2(0, Main.rand.NextFloat(7f, 10f)).RotatedByRandom(MathHelper.Pi);
-			Dust.NewDustPerfect(Player.Center, ModContent.DustType<Dusts.DarkWaterDust>(), vel, 0, default, Main.rand.NextFloat(.6f, 1.25f));
-
-			var dust = Dust.NewDustPerfect(Player.Center + new Vector2(Main.rand.Next(-50, 50), Main.rand.Next(0, 30)), ModContent.DustType<Dusts.BubbleDust>(), vel, 0, Color.White, Main.rand.NextFloat(1f, 2.5f));
-			dust.velocity = new Vector2(0, Main.rand.NextFloat(-2f, -.5f));
-		}
+		int radius = (int)(120 * bubbleStrength);
 
 		for (int i = 0; i < Main.maxNPCs; ++i)
 		{
@@ -143,10 +135,13 @@ public class CascadeArmorPlayer : ModPlayer
 				npc.SimpleStrikeNPC(1, Player.Center.X < npc.Center.X ? 1 : -1, false, 3f * bubbleStrength);
 		}
 
-		SoundEngine.PlaySound(SoundID.Item54 with { PitchVariance = 0.2f }, Player.Center);
-		SoundEngine.PlaySound(SoundID.NPCHit3 with { PitchVariance = 0.2f }, Player.Center);
-		SoundEngine.PlaySound(SoundID.Item122 with { PitchVariance = 0.2f, Volume = .6f }, Player.Center);
-		SoundEngine.PlaySound(SoundID.Item86, Player.Center);
+		if(!Main.dedServ)
+		{
+			ParticleHandler.SpawnParticle(new BubblePop(Player.Center, GetBaseBubbleScale, 0.8f * bubbleVisual, 35));
+			SoundEngine.PlaySound(SoundID.Item54 with { PitchVariance = 0.2f }, Player.Center);
+			SoundEngine.PlaySound(SoundID.NPCHit3 with { PitchVariance = 0.2f }, Player.Center);
+			SoundEngine.PlaySound(SoundID.Item86, Player.Center);
+		}
 
 		bubbleStrength = 0f;
 		bubbleVisual = 0f;
@@ -161,13 +156,12 @@ public class CascadeArmorPlayer : ModPlayer
 
 			Vector2 drawPos = Player.Center - Main.screenPosition + new Vector2(0, Player.gfxOffY);
 
-			float baseScale = Common.Easing.EaseFunction.EaseCubicOut.Ease(bubbleVisual);
-			baseScale *= 1 + (float)Math.Sin(Main.time * MathHelper.TwoPi / 120) / 30; //really slight oscillation of overall scale over time
-
-			float opacity = outline ? .25f : 1f;
+			float opacity = outline ? .25f : 0.8f;
 			Color lightColor = Lighting.GetColor((int)(Player.Center.X / 16), (int)(Player.Center.Y / 16));
 
-			sB.Draw(texture, drawPos, null, lightColor * bubbleVisual * opacity, 0f, texture.Size() / 2f, bubbleSquish * baseScale, SpriteEffects.None, 0);
+			sB.Draw(texture, drawPos, null, lightColor * bubbleVisual * opacity, 0f, texture.Size() / 2f, bubbleSquish * GetBaseBubbleScale, SpriteEffects.None, 0);
 		}
 	}
+
+	private float GetBaseBubbleScale => Common.Easing.EaseFunction.EaseCubicOut.Ease(bubbleVisual) * (1 + (float) Math.Sin(Main.time* MathHelper.TwoPi / 120) / 30);
 }

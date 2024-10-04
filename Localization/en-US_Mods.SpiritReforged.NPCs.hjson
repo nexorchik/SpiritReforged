@@ -45,9 +45,20 @@ OceanSlime: {
 	Entry: Look out from above! These tricky slimes reside on the shore, inconspicuously camouflaged as this familiar fruit.
 }
 
-DiverZombie.Entry: Who knew those oxygen tanks needed to have actual oxygen in them?
-KelpZombie.Entry: Fish fear me, women fear me, men fear me, children fear me, for I am the undead.
-SailorZombie.Entry: Despite their current status, they used to run this really nice luxury cruiser you should check out sometime.
+DiverZombie: {
+	Entry: Who knew those oxygen tanks needed to have actual oxygen in them?
+	DisplayName: Diver Zombie
+}
+
+KelpZombie: {
+	Entry: Fish fear me, women fear me, men fear me, children fear me, for I am the undead.
+	DisplayName: Kelp Zombie
+}
+
+SailorZombie: {
+	Entry: Despite their current status, they used to run this really nice luxury cruiser you should check out sometime.
+	DisplayName: Sailor Zombie
+}
 
 Killifish: {
 	DisplayName: Killifish
@@ -65,3 +76,17 @@ Termite: {
 }
 
 DevourerOfSoil.DisplayName: Devourer of Soil
+
+SavannaSandSlime: {
+	DisplayName: Sand Slime
+	Entry: Slightly more leafy, a little less sandy, all the same danger.
+}
+
+PeevedTumbler: {
+	DisplayName: Peeved Tumbler
+	Entry: ""
+}
+
+TridentZombie.DisplayName: "{$NPCName.Zombie}"
+SafariZombie.DisplayName: Safari Zombie
+TumbleZombie.DisplayName: Tumble Zombie

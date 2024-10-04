@@ -1,4 +1,4 @@
-using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ItemCommon.FloatingItem;
 
 namespace SpiritReforged.Content.Ocean.Items.Driftwood;
 

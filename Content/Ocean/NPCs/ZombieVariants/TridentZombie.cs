@@ -1,10 +1,12 @@
-using SpiritReforged.Content.Ocean.Items;
+using SpiritReforged.Common.NPCCommon;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
 
-public class TridentZombie : Common.NPCCommon.ZombieNPC
+public class TridentZombie : ReplaceNPC
 {
+	public override int[] TypesToReplace => [NPCID.ArmedZombie, NPCID.ArmedZombieCenx];
+
 	public override void StaticDefaults()
 	{
 		Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.ArmedZombie];
@@ -53,11 +55,9 @@ public class TridentZombie : Common.NPCCommon.ZombieNPC
 	{
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
-		npcLoot.AddCommon(ModContent.ItemType<Kelp>(), 10, 1, 2);
+		npcLoot.AddCommon(ModContent.ItemType<Items.Kelp>(), 10, 1, 2);
 		npcLoot.AddCommon(ItemID.Trident, 120);
 	}
 
-	public override bool SpawnConditions(Player player) => player.ZoneBeach;
-
-	public override bool ArmedZombie() => true;
+	public override bool CanSpawn(Player player) => player.ZoneBeach;
 }

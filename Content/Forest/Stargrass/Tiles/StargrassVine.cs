@@ -60,9 +60,7 @@ internal class StargrassVine : ModTile
 		var source = new Rectangle(t.TileFrameX, t.TileFrameY, 16, 16);
 		Vector2 position = this.DrawPosition(i, j, new Vector2(sine, 0));
 		spriteBatch.Draw(TextureAssets.Tile[Type].Value, position, source, Lighting.GetColor(i, j), 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-
-		Color color = Color.White * MathHelper.Lerp(0.2f, 1f, (float)((Math.Sin(NoiseSystem.Perlin(i * 1.2f, j * 0.2f) * 3f + Main.GlobalTimeWrappedHourly * 1.3f) + 1f) * 0.5f));
-		spriteBatch.Draw(_glow.Value, position, source, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+		spriteBatch.Draw(_glow.Value, position, source, StargrassTile.Glow(new Point(i, j)), 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 		return false;
 	}
 }

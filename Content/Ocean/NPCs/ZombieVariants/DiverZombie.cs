@@ -1,11 +1,14 @@
-using SpiritReforged.Content.Ocean.Items.Vanity.DiverSet;
+using SpiritReforged.Common.NPCCommon;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
 
-public class DiverZombie : Common.NPCCommon.ZombieNPC
+public class DiverZombie : ReplaceNPC
 {
-	public override void StaticDefaults() => Main.npcFrameCount[NPC.type] = 4;
+	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie,
+		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
+
+	public override void StaticDefaults() => Main.npcFrameCount[Type] = 4;
 
 	public override void SetDefaults()
 	{
@@ -59,7 +62,7 @@ public class DiverZombie : Common.NPCCommon.ZombieNPC
 				frameTimer = 0;
 			}
 
-			if (frame > 3 || frame < 2)
+			if (frame is > 3 or < 2)
 				frame = 2;
 		}
 		else
@@ -98,8 +101,9 @@ public class DiverZombie : Common.NPCCommon.ZombieNPC
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
 		npcLoot.AddCommon(ItemID.Flipper, 100);
-		npcLoot.AddOneFromOptions(65, ModContent.ItemType<DiverLegs>(), ModContent.ItemType<DiverHead>(), ModContent.ItemType<DiverBody>());
+		npcLoot.AddOneFromOptions(65, ModContent.ItemType<Items.Vanity.DiverSet.DiverLegs>(), 
+			ModContent.ItemType<Items.Vanity.DiverSet.DiverHead>(), ModContent.ItemType<Items.Vanity.DiverSet.DiverBody>());
 	}
 
-	public override bool SpawnConditions(Player player) => player.ZoneBeach;
+	public override bool CanSpawn(Player player) => player.ZoneBeach;
 }

@@ -1,18 +1,18 @@
-using Mono.Cecil;
-using System.IO;
-using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Termite;
 
 [AutoloadCritter]
 public class Termite : ModNPC
 {
+	public ref float TermiteTimeLeft => ref NPC.ai[2];
+	public bool OnTree { get => NPC.ai[3] == 1; set => NPC.ai[3] = value ? 1 : 0; }
+
 	public override void SetStaticDefaults()
 	{
-		// DisplayName.SetDefault("Rotslug");
-		Main.npcFrameCount[NPC.type] = 3;
-		Main.npcCatchable[NPC.type] = true;
+		Main.npcFrameCount[Type] = 3;
+		Main.npcCatchable[Type] = true;
 		NPCID.Sets.CountsAsCritter[Type] = true;
 	}
 
@@ -32,16 +32,12 @@ public class Termite : ModNPC
 		AIType = NPCID.Grubby;
 		NPC.dontTakeDamageFromHostiles = false;
 	}
-	public bool hasGivenStats = false;
-	int termiteLifespan;
-	int termiteTimeLeft;
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
 		{
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("TermiteGore").Type, NPC.scale);
-
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/BugDeath"), NPC.Center);
 
 			for (int k = 0; k < 5; k++)
@@ -49,69 +45,84 @@ public class Termite : ModNPC
 		}
 	}
 
+	public override void OnSpawn(IEntitySource source) //Set non-deterministic features on the server/singleplayer then sync
+	{
+		NPC.scale = Main.rand.NextFloat(.6f, 1f);
+		TermiteTimeLeft = Main.rand.Next(255, 510);
+		NPC.netUpdate = true;
+	}
+
 	public override void AI()
 	{
-		if (!hasGivenStats)
+		bool allowedOnTree = TermiteTimeLeft > 30;
+		if (OnTree)
 		{
-			NPC.scale = Main.rand.NextFloat(.6f, 1f);
-			termiteLifespan = Main.rand.Next(340, 680);
-			termiteTimeLeft = termiteLifespan;
-			hasGivenStats = true;
-		}
-
-		Point pos = NPC.Center.ToTileCoordinates();
-		Tile tile = Main.tile[pos.X, pos.Y];
-
-		if (tile.TileType is TileID.Trees || tile.TileType is TileID.PalmTree)
-		{
-			if (Main.rand.NextBool(300))
-				WorldGen.KillTile(pos.X, pos.Y, true);
-		}
-
-		termiteTimeLeft--;
-
-		if (termiteTimeLeft == termiteLifespan / 4)
-			NPC.velocity.Y -= 2f * (NPC.scale * 2f);
-
-		if(termiteTimeLeft <= termiteLifespan / 4)
-			NPC.rotation = MathHelper.WrapAngle((float)Math.Atan2(NPC.velocity.Y, NPC.velocity.X) + (NPC.velocity.X < 0 ? MathHelper.Pi : 0));
-
-		if (termiteTimeLeft < termiteLifespan / 4 && (NPC.collideY || NPC.collideX))
-		{
-			SoundEngine.PlaySound(SoundID.Dig with { Volume = .05f }, NPC.Center);
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/BugChitter") with { Volume = 1.14f, PitchVariance = 0.4f }, NPC.Center);
-
-			for (int num257 = 0; num257 < 3; num257++)
+			if (FoundTree(0) && allowedOnTree)
 			{
-				Vector2 dustPosition = NPC.Center + new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-2f, 2f));
-				int newDust = Dust.NewDust(dustPosition, NPC.width / 2, NPC.height / 2, DustID.Dirt, NPC.velocity.X, NPC.velocity.Y, 0, default, 1f);
-				Main.dust[newDust].noGravity = true;
-				Main.dust[newDust].velocity *= 0.8f;
-				Main.dust[newDust].velocity += NPC.velocity * 0.2f;
+				NPC.noGravity = true;
+				NPC.velocity = Vector2.Zero;
+
+				var tilePos = (NPC.Center / 16).ToPoint();
+				if (Main.rand.NextBool(80))
+					WorldGen.KillTile_MakeTileDust(tilePos.X, tilePos.Y, Framing.GetTileSafely(tilePos));
+
+				TermiteTimeLeft = Math.Max(TermiteTimeLeft - 1, 0);
+				return;
 			}
 
-			NPC.active = false;
-			NPC.netUpdate = true;
+			if (NPC.velocity.Y == 0)
+			{
+				OnTree = false;
+				NPC.noGravity = false;
+			}
+		}
+		else if (allowedOnTree && NPC.velocity.Y == 0 && FoundTree(2)) //Jump toward the tree
+		{
+			OnTree = true;
+			NPC.velocity = new Vector2(NPC.direction * 2, -Main.rand.NextFloat(2f, 4f));
+		}
+
+		if (TermiteTimeLeft - 1 == 0)
+			NPC.velocity.Y -= 2f * (NPC.scale * 2f); //Jump into the air before despawning on collision
+		else if (TermiteTimeLeft == 0)
+		{
+			if (NPC.collideY || NPC.collideX)
+			{
+				SoundEngine.PlaySound(SoundID.Dig with { Volume = .05f }, NPC.Center);
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/BugChitter") with { Volume = 1.14f, PitchVariance = 0.4f }, NPC.Center);
+
+				for (int i = 0; i < 3; i++)
+				{
+					var dust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Dirt);
+					dust.velocity = NPC.velocity;
+					dust.noGravity = true;
+				}
+
+				NPC.active = false;
+				NPC.netUpdate = true;
+			}
 		}
 
 		NPC.spriteDirection = NPC.direction;
+		NPC.rotation = (NPC.velocity.Y != 0) ? NPC.velocity.ToRotation() : 0; //Only rotate when airborne
+
+		TermiteTimeLeft = Math.Max(TermiteTimeLeft - 1, 0);
 	}
-	public override void SendExtraAI(BinaryWriter writer)
+
+	private bool FoundTree(int offsetX = 0)
 	{
-		writer.Write(hasGivenStats);
-		writer.Write(termiteLifespan);
+		var tilePos = NPC.Center + new Vector2(offsetX * 16, -16);
+		var tile = Framing.GetTileSafely(tilePos);
+
+		return tile.TileType is TileID.Trees || tile.TileType is TileID.PalmTree;
 	}
-	public override void ReceiveExtraAI(BinaryReader reader)
-	{
-		termiteLifespan = reader.ReadInt32();
-		hasGivenStats = reader.ReadBoolean();
-	}
+
 	public override void FindFrame(int frameHeight)
 	{
 		if (NPC.velocity != Vector2.Zero || NPC.IsABestiaryIconDummy)
 		{
 			NPC.frameCounter += 0.12f;
-			NPC.frameCounter %= Main.npcFrameCount[NPC.type];
+			NPC.frameCounter %= Main.npcFrameCount[Type];
 			int frame = (int)NPC.frameCounter;
 			NPC.frame.Y = frame * frameHeight;
 		}

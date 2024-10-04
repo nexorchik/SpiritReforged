@@ -37,7 +37,10 @@ public class OceanGlobalTile : GlobalTile
 			}
 			else if (Main.rand.NextBool(6))
 				SpawnSeagrass(i, j, 5);
+		}
 
+		if (inOcean && inWorldBounds && woods.Contains(Framing.GetTileSafely(i, j).TileType))
+		{
 			for (int k = i - 1; k < i + 2; ++k)
 			{
 				for (int l = j - 1; l < j + 2; ++l)
@@ -46,8 +49,13 @@ public class OceanGlobalTile : GlobalTile
 						continue; //Dont check myself
 
 					Tile cur = Framing.GetTileSafely(k, l);
-					if (!cur.HasTile && woods.Contains(cur.TileType) && cur.LiquidAmount > 155 && cur.LiquidType == LiquidID.Water && Main.rand.NextBool(6))
-						WorldGen.PlaceTile(k, l, ModContent.TileType<Mussel>());
+					if (!cur.HasTile && cur.LiquidAmount > 155 && cur.LiquidType == LiquidID.Water && Main.rand.NextBool(6))
+					{
+						int musselType = ModContent.TileType<Mussel>();
+						WorldGen.PlaceTile(k, l, musselType, style: Main.rand.Next(TileObjectData.GetTileData(musselType, 0).RandomStyleRange));
+						
+						return;
+					}
 				}
 			}
 		}

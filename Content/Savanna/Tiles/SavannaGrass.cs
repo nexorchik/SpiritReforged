@@ -4,22 +4,26 @@ namespace SpiritReforged.Content.Savanna.Tiles;
 
 public class SavannaGrass : ModTile
 {
+	private static int DirtType => ModContent.TileType<SavannaDirt>();
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = true;
 		Main.tileMerge[Type][Type] = true;
 		Main.tileBlockLight[Type] = true;
+		Main.tileNoFail[Type] = true;
 
-		Main.tileMerge[ModContent.TileType<SavannaDirt>()][Type] = true;
-		Main.tileMerge[Type][ModContent.TileType<SavannaDirt>()] = true;
+		Main.tileMerge[DirtType][Type] = true;
+		Main.tileMerge[Type][DirtType] = true;
 
 		TileID.Sets.Grass[Type] = true;
-		TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<SavannaDirt>();
+		TileID.Sets.NeedsGrassFramingDirt[Type] = DirtType;
 		TileID.Sets.Conversion.Grass[Type] = true;
 		TileID.Sets.CanBeDugByShovel[Type] = true;
 		TileID.Sets.CanBeClearedDuringGeneration[Type] = false;
 
 		AddMapEntry(new Color(104, 156, 70));
+		
 	}
 
 	public override bool CanExplode(int i, int j)
@@ -30,37 +34,8 @@ public class SavannaGrass : ModTile
 
 	public override void RandomUpdate(int i, int j)
 	{
-		//Tile tile = Framing.GetTileSafely(i, j);
-		//Tile tileBelow = Framing.GetTileSafely(i, j + 1);
-		//Tile tileAbove = Framing.GetTileSafely(i, j - 1);
-
-		//Try place vine
-		//if (WorldGen.genRand.NextBool(15) && !tileBelow.HasTile && !(tileBelow.LiquidType == LiquidID.Lava))
-		//	if (!tile.BottomSlope)
-		//	{
-		//		tileBelow.TileType = (ushort)ModContent.TileType<BriarVines>();
-		//		tileBelow.HasTile = true;
-		//		WorldGen.SquareTileFrame(i, j + 1, true);
-		//		if (Main.netMode == NetmodeID.Server)
-		//			NetMessage.SendTileSquare(-1, i, j + 1, 3, TileChangeType.None);
-		//	}
-
-		////try place foliage
-		//if (WorldGen.genRand.NextBool(25) && !tileAbove.HasTile && !(tileBelow.LiquidType == LiquidID.Lava))
-		//	if (!tile.BottomSlope && !tile.TopSlope && !tile.IsHalfBlock && !tile.TopSlope)
-		//	{
-		//		tileAbove.TileType = (ushort)ModContent.TileType<BriarFoliage>();
-		//		tileAbove.HasTile = true;
-		//		tileAbove.TileFrameY = 0;
-		//		tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(8) * 18);
-		//		WorldGen.SquareTileFrame(i, j + 1, true);
-		//		if (Main.netMode == NetmodeID.Server)
-		//			NetMessage.SendTileSquare(-1, i, j - 1, 3, TileChangeType.None);
-		//	}
-
-		//Try spread grass
-		if (SpreadHelper.Spread(i, j, Type, 4, ModContent.TileType<SavannaDirt>()) && Main.netMode != NetmodeID.SinglePlayer)
-			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None);
+		if (SpreadHelper.Spread(i, j, Type, 4, DirtType) && Main.netMode != NetmodeID.SinglePlayer)
+			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None); //Try spread grass
 	}
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
@@ -68,7 +43,7 @@ public class SavannaGrass : ModTile
 		if (!fail) //Change self into dirt
 		{
 			fail = true;
-			Framing.GetTileSafely(i, j).TileType = TileID.Dirt;
+			Framing.GetTileSafely(i, j).TileType = (ushort)DirtType;
 		}
 	}
 }
