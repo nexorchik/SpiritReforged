@@ -1,37 +1,19 @@
-﻿using SpiritReforged.Common.TileCommon.TileSway;
+﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.TileSway;
 using System.Linq;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
 public class ElephantGrass : ModTile, ISwayInWind
 {
-	private static bool DrawingFront;
-
 	public static bool IsElephantGrass(int i, int j)
 	{
 		int type = Framing.GetTileSafely(i, j).TileType;
 		return TileLoader.GetTile(type) is ElephantGrass;
 	}
-
-	public override void Load() => On_Main.DrawPlayers_AfterProjectiles += (On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self) =>
-	{
-		orig(self);
-
-		Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-		DrawingFront = true;
-
-		var points = TileSwaySystem.Instance.specialDrawPoints; //We don't know which position to draw at, so reuse this point
-		for (int i = points.Count - 1; i >= 0; i--)
-		{
-			if (IsElephantGrass(points[i].X, points[i].Y))
-				TileSwayGlobalTile.PreDrawInWind(points[i], Main.spriteBatch);
-		}
-
-		DrawingFront = false;
-		Main.spriteBatch.End();
-	}; //Front layer drawing
 
 	public override void SetStaticDefaults()
 	{
@@ -100,7 +82,7 @@ public class ElephantGrass : ModTile, ISwayInWind
 
 	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
-		if (DrawingFront)
+		if (DrawOrderHandler.order == DrawOrderAttribute.Layer.OverPlayers)
 			DrawFront(i, j, spriteBatch, offset, rotation, origin);
 		else
 			DrawBack(i, j, spriteBatch, offset, rotation, origin);
@@ -122,8 +104,6 @@ public class ElephantGrass : ModTile, ISwayInWind
 
 public class ElephantGrassShort : ElephantGrass
 {
-	public override void Load() { } //Override so we don't detour twice
-
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = false;
