@@ -338,17 +338,17 @@ JellyCandle: {
 }
 
 SmallDriftwoodItem: {
-	DisplayName: Small Driftwood Item
+	DisplayName: Small Driftwood
 	Tooltip: "'Aesthetically pleasing'"
 }
 
 MediumDriftwoodItem: {
-	DisplayName: Medium Driftwood Item
+	DisplayName: Medium Driftwood
 	Tooltip: "'Aesthetically pleasing'"
 }
 
 LargeDriftwoodItem: {
-	DisplayName: Large Driftwood Item
+	DisplayName: Large Driftwood
 	Tooltip: "'Aesthetically pleasing'"
 }
 
@@ -816,4 +816,24 @@ DrywoodDoorItem: {
 HerosMemorialStatueItem: {
 	DisplayName: A Hero's Memorial
 	Tooltip: Live on forever
+}
+
+DustyFieldsItem: {
+	DisplayName: Dusty Fields
+	Tooltip: "'S. Yaki'"
+}
+
+OrangeSkiesItem: {
+	DisplayName: Orange Skies
+	Tooltip: "'S. Yaki'"
+}
+
+StrongWindsItem: {
+	DisplayName: Strong Winds
+	Tooltip: "'S. Yaki'"
+}
+
+WaningSunItem: {
+	DisplayName: Waning Sun
+	Tooltip: "'E. Sibellius'"
 }

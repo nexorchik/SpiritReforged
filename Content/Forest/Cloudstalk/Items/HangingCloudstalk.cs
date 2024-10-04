@@ -1,3 +1,4 @@
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.TileSway;
 using Terraria.DataStructures;
 
@@ -22,6 +23,7 @@ public class HangingCloudstalk : ModItem
 	}
 }
 
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid)]
 public class HangingCloudstalkTile : ModTile, ISwayInWind
 {
 	public override void SetStaticDefaults()
@@ -53,17 +55,6 @@ public class HangingCloudstalkTile : ModTile, ISwayInWind
 	}
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.2f, 0.2f, 0.4f);
-
-	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
-	{
-		var tile = Framing.GetTileSafely(i, j);
-		var texture = TextureAssets.Tile[Type].Value;
-
-		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
-		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 16);
-
-		spriteBatch.Draw(texture, drawPos + offset - new Vector2(0, 2), source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0f);
-	}
 
 	public void ModifyRotation(int i, int j, ref float rotation)
 	{
