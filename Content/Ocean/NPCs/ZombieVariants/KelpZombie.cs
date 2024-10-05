@@ -1,11 +1,14 @@
+using SpiritReforged.Common.NPCCommon;
 using Terraria.GameContent.Bestiary;
-using SpiritReforged.Content.Ocean.Items;
 
 namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
 
-public class KelpZombie : Common.NPCCommon.ZombieNPC
+public class KelpZombie : ReplaceNPC
 {
-	public override void StaticDefaults() => Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Zombie];
+	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie,
+		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
+
+	public override void StaticDefaults() => Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
 
 	public override void SetDefaults()
 	{
@@ -60,8 +63,8 @@ public class KelpZombie : Common.NPCCommon.ZombieNPC
 	{
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
-		npcLoot.AddCommon(ModContent.ItemType<Kelp>(), 7, 1, 3);
+		npcLoot.AddCommon(ModContent.ItemType<Items.Kelp>(), 7, 1, 3);
 	}
 
-	public override bool SpawnConditions(Player player) => player.ZoneBeach;
+	public override bool CanSpawn(Player player) => player.ZoneBeach;
 }

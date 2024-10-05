@@ -1,12 +1,13 @@
-using Terraria.GameContent.Bestiary;
-using SpiritReforged.Content.Ocean.Items;
-using SpiritReforged.Content.Savanna.Items.Vanity;
+using SpiritReforged.Common.NPCCommon;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
-public class SafariZombie : Common.NPCCommon.ZombieNPC
+public class SafariZombie : ReplaceNPC
 {
-	public override void StaticDefaults() => Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Zombie];
+	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie,
+		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
+
+	public override void StaticDefaults() => Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
 
 	public override void SetDefaults()
 	{
@@ -26,14 +27,10 @@ public class SafariZombie : Common.NPCCommon.ZombieNPC
 		BannerItem = Item.BannerToItem(Banner);
 	}
 
-	//public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "NightTime Savanna");
-
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		for (int k = 0; k < 20; k++)
-		{
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, 2.5f * hit.HitDirection, -2.5f, 0, Color.White, 0.78f);
-		}
 
 		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
 			for (int i = 1; i < 4; ++i)
@@ -56,8 +53,9 @@ public class SafariZombie : Common.NPCCommon.ZombieNPC
 	{
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
-		npcLoot.AddOneFromOptions(75, ModContent.ItemType<SafariHat>(), ModContent.ItemType<SafariVest>(), ModContent.ItemType<SafariShorts>());
+		npcLoot.AddOneFromOptions(75, ModContent.ItemType<Items.Vanity.SafariHat>(), 
+			ModContent.ItemType<Items.Vanity.SafariVest>(), ModContent.ItemType<Items.Vanity.SafariShorts>());
 	}
 
-	public override bool SpawnConditions(Player player) => player.InModBiome<Biome.SavannaBiome>();
+	public override bool CanSpawn(Player player) => player.InModBiome<Biome.SavannaBiome>();
 }
