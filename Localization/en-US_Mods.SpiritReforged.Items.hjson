@@ -813,6 +813,11 @@ DrywoodDoorItem: {
 	Tooltip: ""
 }
 
+HerosMemorialStatueItem: {
+	DisplayName: A Hero's Memorial
+	Tooltip: Live on forever
+}
+
 DustyFieldsItem: {
 	DisplayName: Dusty Fields
 	Tooltip: "'S. Yaki'"
