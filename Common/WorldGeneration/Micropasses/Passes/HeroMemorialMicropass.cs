@@ -4,7 +4,7 @@ using Terraria.DataStructures;
 using Terraria.IO;
 using Terraria.WorldBuilding;
 
-namespace SpiritMod.World.Micropasses;
+namespace SpiritReforged.Common.WorldGeneration.Micropasses;
 
 internal class HeroMemorialMicropass : Micropass
 {
@@ -12,7 +12,7 @@ internal class HeroMemorialMicropass : Micropass
 
 	public override int GetWorldGenIndexInsert(List<GenPass> passes, ref bool afterIndex)
 	{
-		if (!WorldGen.genRand.NextBool(1))
+		if (!WorldGen.genRand.NextBool(10))
 			return -1;
 
 		afterIndex = false;

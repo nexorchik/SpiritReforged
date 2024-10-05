@@ -17,12 +17,12 @@ public class Wheatgrass : ModTile, ISwayInWind
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
 		TileObjectData.newTile.Origin = new(0, 1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 1, 0);
-		TileObjectData.newTile.AnchorValidTiles = [TileID.Grass];
+		TileObjectData.newTile.AnchorValidTiles = [TileID.Grass, TileID.Dirt];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 6;
 		TileObjectData.addTile(Type);
 
-		AddMapEntry(new Color(70, 92, 19));
+		AddMapEntry(Color.Yellow);
 		DustType = DustID.Hay;
 		HitSound = SoundID.Grass;
 	}

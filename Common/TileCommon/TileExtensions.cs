@@ -101,6 +101,9 @@ public static class TileExtensions
 	{
 		var tile = Framing.GetTileSafely(i, j);
 		var data = TileObjectData.GetTileData(tile);
+		if (data is null)
+			return;
+
 		(i, j) = (i - tile.TileFrameX % data.CoordinateFullWidth / 18, j - tile.TileFrameY % data.CoordinateFullHeight / 18);
 	}
 }

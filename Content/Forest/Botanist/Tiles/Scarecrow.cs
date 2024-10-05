@@ -113,6 +113,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
 public class ScarecrowTileEntity : ModTileEntity
 {
 	public Item Hat { get; private set; } = null;
+
 	private readonly Player dummy;
 	public float rotation;
 	public Vector2 visualPosition;
@@ -124,6 +125,15 @@ public class ScarecrowTileEntity : ModTileEntity
 			return sgaregrow;
 
 		return null;
+	}
+
+	public static void Generate(int i, int j)
+	{
+		WorldGen.PlaceObject(i, j, ModContent.TileType<Scarecrow>(), true);
+		PlaceEntityNet(i, j - 2, ModContent.TileEntityType<ScarecrowTileEntity>());
+
+		if (GetMe(i, j) is ScarecrowTileEntity sgaregrow)
+			sgaregrow.Hat = new Item(ModContent.ItemType<Items.BotanistHat>());
 	}
 
 	public ScarecrowTileEntity()
