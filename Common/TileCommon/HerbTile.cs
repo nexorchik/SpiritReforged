@@ -1,4 +1,5 @@
-﻿using Terraria.GameContent.Metadata;
+﻿using SpiritReforged.Content.Forest.Botanist.Items;
+using Terraria.GameContent.Metadata;
 
 namespace SpiritReforged.Common.TileCommon;
 
@@ -100,11 +101,11 @@ public abstract class HerbTile : ModTile
 			else if (stage == PlantStage.Growing)
 				herbItemStack = 1;
 
-			/*if (nearestPlayer.GetModPlayer<BotanistPlayer>().active && stage != PlantStage.Planted)
+			if (nearestPlayer.GetModPlayer<BotanistPlayer>().active && stage != PlantStage.Planted)
 			{
 				seedItemStack += 2;
 				herbItemStack++;
-			}*/
+			}
 		}
 
 		return ItemDrops(i, j, herbItemStack, seedItemStack);
