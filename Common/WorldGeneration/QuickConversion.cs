@@ -48,6 +48,7 @@ internal class QuickConversion
 	public static void SimpleConvert(List<TileCondition> conditions, BiomeType convertTo, bool growGrassIfApplicable)
 	{
 		HashSet<Point16> grasses = [];
+		HashSet<Point16> checkedWood = [];
 
 		int grassType = -1;
 		int dirtType = -1;
@@ -96,7 +97,7 @@ internal class QuickConversion
 						turnId = conv;
 				}
 
-				if (ConvertWood(condition.Position, convertTo, out int newId, out int newWallId))
+				if (ConvertWood(condition.Position, convertTo, out int newId, out int newWallId, checkedWood))
 				{
 					if (newId != -1)
 						turnId = newId;
@@ -130,7 +131,7 @@ internal class QuickConversion
 		}
 	}
 
-	private static bool ConvertWood(Point16 position, BiomeType convertTo, out int newId, out int newWallId)
+	private static bool ConvertWood(Point16 position, BiomeType convertTo, out int newId, out int newWallId, HashSet<Point16> checkedWood)
 	{
 		Tile tile = Main.tile[position];
 		newWallId = -1;
@@ -195,24 +196,77 @@ internal class QuickConversion
 				BiomeType.Desert or BiomeType.Purity or _ => TileID.WoodenBeam,
 			};
 		}
-		else if (tile.TileType == TileID.Chairs && tile.TileFrameY is 0 or 120 or 360 or 1120 or 1160)
+		else if (tile.TileType == TileID.Chairs)
 		{
+			int frameOff = tile.TileFrameY % 36;
 			int frameY = convertTo switch
 			{
 				BiomeType.Jungle => 120,
 				BiomeType.Mushroom => 360,
-				BiomeType.Ice => 1120,
+				BiomeType.Ice => 1200,
 				BiomeType.Desert => 1160,
 				BiomeType.Purity => 0,
 				_ => -1,
 			};
 
 			if (frameY != -1)
-				tile.TileFrameY = (short)frameY;
+				tile.TileFrameY = (short)(frameY + frameOff);
 		}
-		else if (tile.TileType == TileID.FishingCrate)
+		else if (tile.TileType == TileID.Tables)
 		{
+			int frameOff = tile.TileFrameX % 54;
+			int frameX = convertTo switch
+			{
+				BiomeType.Jungle => 108,
+				BiomeType.Mushroom => 1458,
+				BiomeType.Ice => 1512,
+				BiomeType.Desert => 1404,
+				BiomeType.Purity => 0,
+				_ => -1,
+			};
 
+			if (frameX != -1)
+				tile.TileFrameX = (short)(frameX + frameOff);
+		}
+		else if (tile.TileType == TileID.WorkBenches)
+		{
+			int frameOff = tile.TileFrameX % 36;
+			int frameX = convertTo switch
+			{
+				BiomeType.Jungle => 72,
+				BiomeType.Mushroom => 252,
+				BiomeType.Ice => 828,
+				BiomeType.Desert => 792,
+				BiomeType.Purity => 0,
+				_ => -1,
+			};
+
+			if (frameX != -1)
+				tile.TileFrameX = (short)(frameX + frameOff);
+		}
+		else if (tile.TileType == TileID.FishingCrate && convertTo != BiomeType.Purity && convertTo != BiomeType.Mushroom)
+		{
+			int adjustedFrameX = tile.TileFrameX % 36;
+
+			if (!checkedWood.Contains(position) && adjustedFrameX == 0 && tile.TileFrameY == 0 && WorldGen.genRand.NextBool(4))
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					for (int j = 0; j < 2; ++j)
+					{
+						Tile crate = Main.tile[position.X + i, position.Y + j];
+						crate.TileFrameX = (short)(convertTo switch
+						{
+							BiomeType.Jungle => 288,
+							BiomeType.Ice => 648,
+							BiomeType.Desert => 720,
+							_ => 0
+						} + adjustedFrameX);
+
+						checkedWood.Add(new Point16(position.X + i, position.Y + j));
+					}
+				}
+			}
 		}
 
 		return newId != -1;

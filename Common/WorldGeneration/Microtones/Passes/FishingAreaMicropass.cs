@@ -1,12 +1,11 @@
-﻿using System.Linq;
-using Terraria.DataStructures;
+﻿using Terraria.DataStructures;
 using Terraria.WorldBuilding;
 
 namespace SpiritReforged.Common.WorldGeneration.Microtones.Passes;
 
 internal class FishingAreaMicropass : Micropass
 {
-	public static Dictionary<int, Point16[]> OffsetsBySubId = new Dictionary<int, Point16[]>()
+	public static Dictionary<int, Point16[]> OffsetsBySubId = new()
 	{
 		{ 0, [new Point16(9, 5), new Point16(54, 19), new Point16(6, 15)] }, 
 		{ 1, [new Point16(30, 7), new Point16(1, 12)] }, 
