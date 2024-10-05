@@ -1,7 +1,7 @@
 ﻿using Terraria.DataStructures;
 using Terraria.WorldBuilding;
 
-namespace SpiritReforged.Common.WorldGeneration.Microtones.Passes;
+namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
 
 internal class FishingAreaMicropass : Micropass
 {

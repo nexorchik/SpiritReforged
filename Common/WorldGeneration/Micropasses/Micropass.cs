@@ -1,7 +1,7 @@
 ﻿using Terraria.IO;
 using Terraria.WorldBuilding;
 
-namespace SpiritReforged.Common.WorldGeneration.Microtones;
+namespace SpiritReforged.Common.WorldGeneration.Micropasses;
 
 public abstract class Micropass : ILoadable
 {
