@@ -14,12 +14,13 @@ internal class FishingAreaMicropass : Micropass
 		{ 4, [new Point16(23, 3), new Point16(4, 15), new Point16(51, 2), new Point16(49, 20)] }
 	};
 	
-	public override string WorldGenName => "Adding fishing spots";
+	public override string WorldGenName => "Fishing Coves";
 
 	public override int GetWorldGenIndexInsert(List<GenPass> passes, ref bool afterIndex) => passes.FindIndex(genpass => genpass.Name.Equals("Sunflowers"));
 
 	public override void Run(GenerationProgress progress, Terraria.IO.GameConfiguration config)
 	{
+		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.FishingCoves");
 		int repeats = (int)(Main.maxTilesX / 4200f * 8);
 
 		for (int i = 0; i < repeats; ++i)
