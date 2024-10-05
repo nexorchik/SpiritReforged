@@ -194,6 +194,11 @@ SetBonuses: {
 		Increased fishing power
 		'''
 	Drywood: Increased movement speed on the surface
+	Botanist:
+		'''
+		You gain increased rewards from herbs of all kinds
+		You have a powerful eye for spotting herbs
+		'''
 }
 
 Biomes: {
