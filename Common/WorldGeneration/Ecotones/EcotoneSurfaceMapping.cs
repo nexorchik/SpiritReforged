@@ -69,10 +69,18 @@ internal class EcotoneSurfaceMapping : ModSystem
 
 		for (int x = StartX; x < Main.maxTilesX - StartX; ++x)
 		{
-			int y = 60;
+			int y = 80;
 
 			while (!WorldGen.SolidOrSlopedTile(x, y))
 				y++;
+
+			if (CloudsNearby(x, y, out int newY))
+			{
+				y = newY;
+
+				while (!WorldGen.SolidOrSlopedTile(x, y))
+					y++;
+			}
 
 			if (entry is null)
 			{
@@ -81,14 +89,7 @@ internal class EcotoneSurfaceMapping : ModSystem
 			}
 
 			if (!entry.TileFits(x, y))
-			{
 				transitionCount++;
-
-				if (Main.tile[x, y].TileType == TileID.CorruptGrass)
-				{
-					int iwq = 0;
-				}
-			}
 
 			if (transitionCount > 20 && EcotoneEdgeDefinitions.TryGetEcotoneByTile(Main.tile[x, y].TileType, out var def) && def.Name != entry.Definition.Name)
 			{ 
@@ -116,6 +117,20 @@ internal class EcotoneSurfaceMapping : ModSystem
 		entry.Right = EcotoneEdgeDefinitions.GetEcotone("Ocean");
 		Entries.Add(entry);
 		Entries = new(Entries.OrderBy(x => x.Start.X));
+	}
+
+	private static bool CloudsNearby(int x, int y, out int newY)
+	{
+		bool foundCloud = false;
+
+		for (int i = 0; i < 30; ++i)
+		{
+			if (!foundCloud && Main.tile[x, y + i].TileType == TileID.Cloud && Main.tile[x, y + i].HasTile)
+				foundCloud = true;
+		}
+
+		newY = y + 30;
+		return foundCloud;
 	}
 
 	private static bool SolidTileOrWall(int x, int y) => WorldGen.SolidOrSlopedTile(x, y) || Main.tile[x, y].WallType != WallID.None;

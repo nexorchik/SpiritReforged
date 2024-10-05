@@ -64,8 +64,8 @@ internal class SavannaEcotone : EcotoneBase
 				{
 					tiles.Add(new Point16(i, j), flags);
 
-					if (tile.TileType == ModContent.TileType<SavannaDirt>() && WorldGen.genRand.NextBool(35))
-						grassLocations.Add(new Point16(i, j), WorldGen.genRand.Next(5, 12));
+					if (tile.TileType == ModContent.TileType<SavannaDirt>() && WorldGen.genRand.NextBool(120))
+						grassLocations.Add(new Point16(i, j), WorldGen.genRand.Next(5, 9));
 				}
 			}
 		}
@@ -97,6 +97,11 @@ internal class SavannaEcotone : EcotoneBase
 			int type = MathF.Sqrt(grassLoc) >= nearestGrass.size - 1 ? ModContent.TileType<ElephantGrassShort>() : ModContent.TileType<ElephantGrass>();
 			WorldGen.PlaceTile(position.X, position.Y - 1, type, true);
 		}
+
+		if (WorldGen.genRand.NextBool(12))
+		{
+			WorldGen.PlaceTile(position.X, position.Y - 1, ModContent.TileType<SavannaShrubs>(), style: WorldGen.genRand.Next(11));
+		}
 	}
 
 	private static WorldGenLegacyMethod BaseGeneration(List<EcotoneSurfaceMapping.EcotoneEntry> entries) => (progress, _) =>
@@ -115,14 +120,14 @@ internal class SavannaEcotone : EcotoneBase
 
 		var topBottomY = new Point(Math.Min(startY, endY), Math.Max(startY, endY));
 
-		Steps = WorldGen.genRand.Next(5, 9);
+		Steps = WorldGen.genRand.Next(14, 18);
 
 		Dictionary<int, int> stepOffset = [];
 		int offset = 0;
 
 		for (int i = 0; i < Steps; ++i)
 		{
-			offset = WorldGen.genRand.Next(6, 18);
+			offset = WorldGen.genRand.Next(3, 10);
 
 			if (i == Steps - 1)
 				offset = 0;
