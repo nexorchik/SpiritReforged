@@ -194,8 +194,11 @@ public class ScarecrowTileEntity : ModTileEntity
 		{
 			if (item.headSlot > -1)
 			{
-				Hat = item.Clone();
-				item.TurnToAir();
+				Hat = ItemLoader.TransferWithLimit(item, 1);
+				Main.mouseItem.TurnToAir();
+
+				player.releaseUseItem = false;
+				player.mouseInterface = true;
 				return true;
 			}
 
