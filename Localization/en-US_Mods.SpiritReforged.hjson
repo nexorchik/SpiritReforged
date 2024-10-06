@@ -205,3 +205,10 @@ Biomes: {
 
 SlotContexts.Backpack: Pack
 Conditions.InSavanna: In Savanna
+
+Misc: {
+	Pins: {
+		Pinned: Pinned
+		Unpinned: Pin Removed
+	}
+}

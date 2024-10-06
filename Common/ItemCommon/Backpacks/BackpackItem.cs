@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Common.UI.BackpackInterface;
-using System.Linq;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Common.ItemCommon.Backpacks;
@@ -36,9 +35,15 @@ internal abstract class BackpackItem : ModItem
 
 	public override bool OnPickup(Player player)
 	{
-		player.GetModPlayer<BackpackPlayer>().Backpack = Item;
+		BackpackPlayer backpackPlayer = player.GetModPlayer<BackpackPlayer>();
+
+		if (backpackPlayer.Backpack is null)
+			backpackPlayer.Backpack = Item;
+		else
+			return true;
+
 		BackpackUISystem.SetBackpack();
-		return true;
+		return false;
 	}
 
 	public override void SaveData(TagCompound tag)
