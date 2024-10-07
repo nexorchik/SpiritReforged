@@ -7,6 +7,18 @@ namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 [AutoloadGlowmask("255,165,0", false)]
 public abstract class LanternTile : FurnitureTile
 {
+	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 30);
+
+	public override void AddItemRecipes(ModItem item)
+	{
+		if (CoreMaterial != ItemID.None)
+			item.CreateRecipe()
+			.AddIngredient(CoreMaterial, 6)
+			.AddIngredient(ItemID.Torch)
+			.AddTile(TileID.WorkBenches)
+			.Register();
+	}
+
 	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;

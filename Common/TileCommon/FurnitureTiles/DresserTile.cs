@@ -6,15 +6,18 @@ namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
 public abstract class DresserTile : FurnitureTile
 {
-	private static void GetTopLeft(ref int i, ref int j)
+	public virtual LocalizedText MapEntry => ModItem.DisplayName;
+
+	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(silver: 1);
+
+	public override void AddItemRecipes(ModItem item)
 	{
-		var tile = Framing.GetTileSafely(i, j);
-		int fullWidth = TileObjectData.GetTileData(tile).CoordinateFullWidth;
-
-		(i, j) = (i - tile.TileFrameX % fullWidth / 18, j - tile.TileFrameY / 18);
+		if (CoreMaterial != ItemID.None)
+			item.CreateRecipe()
+			.AddIngredient(CoreMaterial, 16)
+			.AddTile(TileID.Sawmill)
+			.Register();
 	}
-
-	public virtual LocalizedText MapEntry => Language.GetText($"Mods.SpiritReforged.Items.{Name}Item.DisplayName");
 
 	public override void StaticDefaults()
 	{
@@ -48,7 +51,7 @@ public abstract class DresserTile : FurnitureTile
 
 	public static string MapChestName(string name, int i, int j)
 	{
-		GetTopLeft(ref i, ref j);
+		TileExtensions.GetTopLeft(ref i, ref j);
 
 		int chest = Chest.FindChest(i, j);
 		if (chest < 0)
@@ -75,7 +78,7 @@ public abstract class DresserTile : FurnitureTile
 
 	public override bool RightClick(int i, int j)
 	{
-		GetTopLeft(ref i, ref j);
+		TileExtensions.GetTopLeft(ref i, ref j);
 		Player player = Main.LocalPlayer;
 
 		if (Main.tile[Player.tileTargetX, Player.tileTargetY].TileFrameY == 0)
@@ -153,7 +156,7 @@ public abstract class DresserTile : FurnitureTile
 
 	public override void MouseOver(int i, int j)
 	{
-		GetTopLeft(ref i, ref j);
+		TileExtensions.GetTopLeft(ref i, ref j);
 
 		Player player = Main.LocalPlayer;
 		int chest = Chest.FindChest(i, j);
@@ -171,7 +174,7 @@ public abstract class DresserTile : FurnitureTile
 			player.cursorItemIconText = Main.chest[chest].name.Length > 0 ? Main.chest[chest].name : defaultName;
 			if (player.cursorItemIconText == defaultName)
 			{
-				player.cursorItemIconID = MyItemDrop;
+				player.cursorItemIconID = ModItem.Type;
 				player.cursorItemIconText = string.Empty;
 			}
 		}

@@ -4,6 +4,17 @@ namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
 public abstract class TableTile : FurnitureTile
 {
+	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 60);
+
+	public override void AddItemRecipes(ModItem item)
+	{
+		if (CoreMaterial != ItemID.None)
+			item.CreateRecipe()
+			.AddIngredient(CoreMaterial, 8)
+			.AddTile(TileID.WorkBenches)
+			.Register();
+	}
+
 	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;

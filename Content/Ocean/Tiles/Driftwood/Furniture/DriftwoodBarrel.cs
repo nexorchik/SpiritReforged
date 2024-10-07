@@ -1,13 +1,10 @@
-﻿using SpiritReforged.Common.TileCommon;
-using SpiritReforged.Common.TileCommon.FurnitureTiles;
+﻿using SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-namespace SpiritReforged.Content.Ocean.Tiles.Driftwood;
+namespace SpiritReforged.Content.Ocean.Tiles.Driftwood.Furniture;
 
-public class DriftwoodBarrel : ChestTile, IAutoloadTileItem
+public class DriftwoodBarrel : ChestTile
 {
-	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(silver: 1);
-
-	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+	public override void AddItemRecipes(ModItem item) => item.CreateRecipe()
 		.AddIngredient<Items.Driftwood.DriftwoodTileItem>(9)
 		.AddRecipeGroup(RecipeGroupID.IronBar)
 		.AddTile(TileID.Sawmill)
