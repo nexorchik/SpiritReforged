@@ -1,17 +1,15 @@
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-namespace SpiritReforged.Content.Savanna.Tiles.Furniture;
+namespace SpiritReforged.Content.Ocean.Tiles.Driftwood;
 
-public class DrywoodLantern : LanternTile, IAutoloadTileItem
+public class DriftwoodCandle : CandleTile, IAutoloadTileItem
 {
 	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 30);
 
 	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
-		.AddIngredient<Items.Drywood.Drywood>(6)
+		.AddIngredient<Items.Driftwood.DriftwoodTileItem>(4)
 		.AddIngredient(ItemID.Torch)
 		.AddTile(TileID.WorkBenches)
 		.Register();
-
-	public override bool BlurGlowmask => false;
 }

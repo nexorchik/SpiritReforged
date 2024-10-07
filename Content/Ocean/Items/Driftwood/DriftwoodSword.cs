@@ -2,11 +2,6 @@ namespace SpiritReforged.Content.Ocean.Items.Driftwood;
 
 public class DriftwoodSword : ModItem
 {
-	public override void SetStaticDefaults()
-	{
-		// DisplayName.SetDefault("Driftwood Sword");
-	}
-
 	public override void SetDefaults()
 	{
 		Item.width = 30;
