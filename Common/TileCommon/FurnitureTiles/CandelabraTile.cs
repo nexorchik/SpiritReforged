@@ -7,6 +7,18 @@ namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 [AutoloadGlowmask("255,165,0", false)]
 public abstract class CandelabraTile : FurnitureTile
 {
+	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(silver: 3);
+
+	public override void AddItemRecipes(ModItem item)
+	{
+		if (CoreMaterial != ItemID.None)
+			item.CreateRecipe()
+			.AddIngredient(CoreMaterial, 5)
+			.AddIngredient(ItemID.Torch, 5)
+			.AddTile(TileID.WorkBenches)
+			.Register();
+	}
+
 	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;

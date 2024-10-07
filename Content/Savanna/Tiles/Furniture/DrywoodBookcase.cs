@@ -1,15 +1,8 @@
-using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.FurnitureTiles;
 
 namespace SpiritReforged.Content.Savanna.Tiles.Furniture;
 
-public class DrywoodBookcase : BookcaseTile, IAutoloadTileItem
+public class DrywoodBookcase : BookcaseTile
 {
-	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 60);
-
-	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
-		.AddIngredient<Items.Drywood.Drywood>(20)
-		.AddIngredient(ItemID.Book, 10)
-		.AddTile(TileID.Sawmill)
-		.Register();
+	public override int CoreMaterial => ModContent.ItemType<Items.Drywood.Drywood>();
 }

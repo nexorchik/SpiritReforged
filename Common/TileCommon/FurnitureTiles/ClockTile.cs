@@ -5,6 +5,19 @@ namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
 public abstract class ClockTile : FurnitureTile
 {
+	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 60);
+
+	public override void AddItemRecipes(ModItem item)
+	{
+		if (CoreMaterial != ItemID.None)
+			item.CreateRecipe()
+			.AddRecipeGroup(RecipeGroupID.IronBar, 3)
+			.AddIngredient(ItemID.Glass, 6)
+			.AddIngredient(CoreMaterial, 10)
+			.AddTile(TileID.Sawmill)
+			.Register();
+	}
+
 	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
@@ -70,6 +83,6 @@ public abstract class ClockTile : FurnitureTile
 		Player Player = Main.LocalPlayer;
 		Player.noThrow = 2;
 		Player.cursorItemIconEnabled = true;
-		Player.cursorItemIconID = MyItemDrop;
+		Player.cursorItemIconID = ModItem.Type;
 	}
 }

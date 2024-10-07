@@ -7,6 +7,18 @@ public abstract class SofaTile : FurnitureTile
 {
 	private static bool WithinRange(int i, int j, Player player) => player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance);
 
+	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 60);
+
+	public override void AddItemRecipes(ModItem item)
+	{
+		if (CoreMaterial != ItemID.None)
+			item.CreateRecipe()
+			.AddIngredient(CoreMaterial, 5)
+			.AddIngredient(ItemID.Silk, 2)
+			.AddTile(TileID.Sawmill)
+			.Register();
+	}
+
 	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
@@ -49,7 +61,7 @@ public abstract class SofaTile : FurnitureTile
 		if (WithinRange(i, j, player))
 		{
 			player.noThrow = 2;
-			player.cursorItemIconID = MyItemDrop;
+			player.cursorItemIconID = ModItem.Type;
 			player.cursorItemIconEnabled = true;
 		}
 	}

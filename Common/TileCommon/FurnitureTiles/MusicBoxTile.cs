@@ -4,20 +4,15 @@ using Terraria.Utilities;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class MusicBoxTile : FurnitureTile
+//Though this is technically a furniture helper, don't use FurnitureTile because it autoloads an item
+public abstract class MusicBoxTile : ModTile
 {
 	public abstract string MusicPath { get; }
 
-	/// <summary> The desired internal name of the music box item. Defaults to (tile internal name)"Item".</summary>
-	public virtual string ItemName => Name + "Item";
-
 	/// <summary> Functions like <see cref="ModType.Load"/> and handles item autoloading. </summary>
-	public override void Load() => Mod.AddContent(new AutoloadedMusicBoxItem(MusicPath, ItemName, 
-		Texture.Remove(Texture.Length - Name.Length, Name.Length) + ItemName, Name));
+	public override void Load() => Mod.AddContent(new AutoloadedMusicBoxItem(MusicPath, Name + "Item", Texture + "Item", Name));
 
-	public override int MyItemDrop => Mod.TryFind(ItemName, out ModItem item) ? item.Type : base.MyItemDrop;
-
-	public override void StaticDefaults()
+	public override void SetStaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileObsidianKill[Type] = true;
@@ -30,7 +25,6 @@ public abstract class MusicBoxTile : FurnitureTile
 		TileObjectData.newTile.LavaDeath = false;
 		TileObjectData.addTile(Type);
 
-		RegisterItemDrop(MyItemDrop); //Confirm an item drop for all styles
 		AddMapEntry(new Color(200, 200, 200), Language.GetText("ItemName.MusicBox"));
 		DustType = -1;
 	}
@@ -60,7 +54,7 @@ public abstract class MusicBoxTile : FurnitureTile
 		Player player = Main.LocalPlayer;
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
-		player.cursorItemIconID = MyItemDrop;
+		player.cursorItemIconID = Mod.Find<ModItem>(Name + "Item").Type;
 	}
 }
 
@@ -82,7 +76,6 @@ public sealed class AutoloadedMusicBoxItem(string musicPath, string name, string
 		var item = base.Clone(newEntity) as AutoloadedMusicBoxItem;
 		item._musicPath = _musicPath;
 		item._name = _name;
-		item._texture = _texture;
 		item._tileName = _tileName;
 		return item;
 	}
