@@ -60,17 +60,18 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
         return float4(0, 0, 0, 0);
     
     float noiseXCoord = ((xCoord - 0.5f) * textureStretch.x) + 0.5f;
-    float2 noiseCoords = float2(noiseXCoord + scroll.x, (input.TextureCoordinates.y * textureStretch.y) + scroll.y);
+    float2 noiseCoords = float2((input.TextureCoordinates.y * textureStretch.y) + scroll.y, noiseXCoord);
     
     float noiseExponent = lerp(texExponentRange.x, texExponentRange.y, input.TextureCoordinates.y);
     float strength = pow(tex2D(textureSampler, noiseCoords).r, noiseExponent);
     float absXDist = 1 - (abs(xCoord - 0.5f) * 2);
-    strength = lerp(strength, sqrt(1 - pow(absXDist - 1, 2)), 0.7f);
-    strength *= pow(absXDist, 0.5f);
-    strength *= sqrt(input.TextureCoordinates.y);
+    float circularXDist = sqrt(1 - pow(absXDist - 1, 2));
+    strength = strength/2 + circularXDist * 0.9f;
+    strength *= pow(circularXDist, 2);
+    strength *= input.TextureCoordinates.y;
     
     float4 finalColor = lerp(uColor, uColor2, min(max(1 - strength, 0), 1));
-    strength = pow(strength, finalExponent);
+    strength = pow(min(strength, 1), finalExponent);
     
     return input.Color * finalIntensityMod * strength * finalColor;
 }

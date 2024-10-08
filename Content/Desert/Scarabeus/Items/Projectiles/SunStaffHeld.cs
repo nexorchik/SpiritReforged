@@ -59,7 +59,7 @@ public class SunStaffHeld : ModProjectile
 		StaffMovement();
 
 		if (AiTimer == RISE_TIME/4 && owner.channel)
-			Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), owner.Center - Vector2.UnitY * 110, Vector2.Zero, ModContent.ProjectileType<SunOrb>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+			Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), owner.Center - Vector2.UnitY * 140, Vector2.Zero, ModContent.ProjectileType<SunOrb>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
 
 		Projectile.rotation = MathHelper.Lerp(-MathHelper.PiOver4, -3 * MathHelper.PiOver4, RiseProgress);
 		if (owner.direction < 0)

@@ -13,8 +13,7 @@ namespace SpiritReforged.Content.Desert.Scarabeus.Items.Projectiles;
 public class SunOrb : ModProjectile
 {
 	private const int GROWSHRINKTIME = 30;
-	private const int RAYTIME = 22;
-	private const int RAY_COOLDOWNTIME = 18;
+	private const int FLASHTIME = 40;
 
 	private float AiTimer { get => Projectile.ai[0]; set => Projectile.ai[0] = value; }
 	private float FlashTimer { get => Projectile.ai[1]; set => Projectile.ai[1] = value; }
@@ -40,7 +39,7 @@ public class SunOrb : ModProjectile
 		Projectile.ignoreWater = true;
 		Projectile.tileCollide = false;
 		Projectile.usesLocalNPCImmunity = true;
-		Projectile.localNPCHitCooldown = 20;
+		Projectile.localNPCHitCooldown = -1;
 	}
 
 	public override bool? CanCutTiles() => false;
@@ -57,22 +56,27 @@ public class SunOrb : ModProjectile
 			_initialized = true;
 		}
 
-		if(Main.myPlayer == owner.whoAmI)
+		//Only change the stored mouse position on the owner's client- and only do it if the player is still channeling
+		if(Main.myPlayer == owner.whoAmI && !_stoppedChannel)
 		{
 			_mousePos = Vector2.Lerp(_mousePos, Main.MouseWorld - owner.Center, 0.07f);
 			Projectile.netUpdate = true;
 		}
 
-		Projectile.Center = Vector2.Lerp(Projectile.Center, owner.MountedCenter + _offset + owner.velocity + _mousePos/6, 0.2f);
+		//Move the orb slightly towards the mouse so you can control it a little
+		Vector2 mouseOffset = Vector2.Normalize(_mousePos) * Math.Min(_mousePos.Length() / 5, 40) * new Vector2(0.5f, 1f);
+
+		Projectile.Center = Vector2.Lerp(Projectile.Center, owner.MountedCenter + _offset + owner.velocity + mouseOffset, 0.2f);
 
 		GrowShrink();
-		if (AiTimer > GROWSHRINKTIME)
-			TryFlashRay(); 
 		
 		if (!owner.channel && !_stoppedChannel)
 		{
 			_stoppedChannel = true;
 			Projectile.netUpdate = true;
+
+			if(AiTimer >= GROWSHRINKTIME) //Do the ray flash if it's fully grown
+				FlashTimer = FLASHTIME;
 		}
 
 		Lighting.AddLight(Projectile.Center, Color.Goldenrod.ToVector3() * Projectile.scale);
@@ -89,13 +93,13 @@ public class SunOrb : ModProjectile
 
 	private void GrowShrink()
 	{
-		float progress;
-		if (!_stoppedChannel)
+		float progress = 1;
+		if (!_stoppedChannel) //Grow if still channeling
 		{
 			progress = AiTimer / GROWSHRINKTIME;
 			progress = Math.Min(progress, 1);
 		}
-		else
+		else if(FlashTimer == 0) //Only shrink if it's done with the ray
 		{
 			ShrinkTimer++;
 			progress = 1 - (float)ShrinkTimer / GROWSHRINKTIME;
@@ -106,16 +110,6 @@ public class SunOrb : ModProjectile
 
 		Projectile.scale = EaseFunction.CompoundEase(EaseFunction.EaseCircularIn, EaseFunction.EaseOutBack, progress, 0.3f);
 		_rayScale = EaseFunction.EaseQuadOut.Ease(progress) * Projectile.scale;
-	}
-
-	private void TryFlashRay()
-	{
-		Projectile.TryGetOwner(out Player owner);
-		if ((AiTimer - GROWSHRINKTIME) % (RAYTIME + RAY_COOLDOWNTIME) == 0)
-		{
-			FlashTimer = RAYTIME;
-			Projectile.ResetLocalNPCHitImmunity();
-		}
 	}
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -156,13 +150,14 @@ public class SunOrb : ModProjectile
 
 	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 	{
-		if (_rayScale != 1)
+		if (FlashTimer == 0)
 			return false;
 
 		GetRayDimensions(out float rayHeight, out float rayWidth, out float rayDist);
 		var tip = Projectile.Center.ToPoint();
 		int numCalcs = 20;
 
+		//This def can be done more efficiently but for now this just uses a summation to estimate the hitbox
 		for(int i = 0; i < numCalcs; i++)
 		{
 			float progress = i / (float)numCalcs;
@@ -181,36 +176,52 @@ public class SunOrb : ModProjectile
 
 	private void GetRayDimensions(out float rayHeight, out float rayWidth, out float rayDist)
 	{
-		rayHeight = _rayScale * (-_offset.Y + Projectile.height/2);
+		Projectile.TryGetOwner(out Player owner);
+		Vector2 projCenter = Projectile.Center - owner.Center;
+		float mouseAngle = projCenter.AngleTo(_mousePos) + MathHelper.Pi;
 
-		float mouseDist = _mousePos.X;
-		float maxDist = 170f;
-		mouseDist = MathHelper.Clamp(mouseDist, -maxDist, maxDist);
+		//Constrain the angle to be downwards from the sun- can't ever be exactly horizontal, because the below while loop would be infinite
+		float minAngle = -0.01f;
+		if (mouseAngle < MathHelper.PiOver2)
+			mouseAngle = minAngle;
+		else if (mouseAngle < MathHelper.Pi)
+			mouseAngle = MathHelper.Pi + minAngle;
+		mouseAngle += MathHelper.Pi;
 
-		var widthRange = new Vector2(80, 120);
-		rayWidth = _rayScale * MathHelper.Lerp(widthRange.X, widthRange.Y, Math.Abs(mouseDist) / maxDist);
+		float maxDist = 200f;
+		//Set the ray's height to be at least reach the player from the base offset- then extend it based on mouse position, up to the set max distance
+		rayHeight = _rayScale * -Math.Min(_offset.Y, Math.Max(-_mousePos.Y, -maxDist));
+
+		//Get a distance unit used for calculating how far the beam goes- then extend it until that distance unit matches the beam's height
+		Vector2 mouseDirection = mouseAngle.ToRotationVector2() * maxDist;
+		while (mouseDirection.Y < -rayHeight)
+			mouseDirection += mouseAngle.ToRotationVector2();
+
+		//Constrain the ray's distance
+		float mouseDist = MathHelper.Clamp(mouseDirection.X, -maxDist, maxDist);
 		rayDist = _rayScale * mouseDist;
+
+		//Scale the width based on how far the ray is from the player
+		var widthRange = new Vector2(100, 180);
+		rayWidth = _rayScale * MathHelper.Lerp(widthRange.X, widthRange.Y, Math.Abs(mouseDist) / maxDist);
 	}
 
-	private float GetFlashProgress => FlashTimer / RAYTIME;
+	private float GetFlashProgress => FlashTimer / FLASHTIME;
 
 	public override bool PreDraw(ref Color lightColor)
 	{
-		var glowColor = new Color(250, 167, 32, 0);
-		var rayColor = Color.LightGoldenrodYellow.Additive(100);
-		var darkRayColor = new Color(250, 167, 32, 200);
-		GetRayDimensions(out float rayHeight, out float rayWidth, out float rayDist);
-
-		DrawBigRay(rayColor * 0.5f, darkRayColor, rayHeight, rayWidth, rayDist);
 		float strength = MathHelper.Lerp(GetFlashProgress, 1, 0.25f);
-		glowColor *= strength;
-		rayColor *= strength;
-		darkRayColor *= strength;
+		var glowColor = new Color(250, 167, 32, 0) * strength;
+		var rayColor = Color.LightGoldenrodYellow.Additive(100) * strength;
+		var darkRayColor = new Color(250, 167, 32, 200) * strength;
+
+		GetRayDimensions(out float rayHeight, out float rayWidth, out float rayDist);
+		DrawBigRay(rayColor * 0.5f, darkRayColor, rayHeight, rayWidth, rayDist);
 
 		DrawBloom(glowColor);
 
 		float bigRayRotation = new Vector2(rayDist, rayHeight).ToRotation() - MathHelper.PiOver2;
-		//DrawGodrays(rayColor, darkRayColor, bigRayRotation);
+		DrawGodrays(rayColor, darkRayColor, bigRayRotation);
 
 		Projectile.QuickDraw(rot: 0, drawColor: Color.White.Additive((byte)(230 * Projectile.Opacity)));
 
@@ -223,18 +234,21 @@ public class SunOrb : ModProjectile
 	{
 		Effect effect = AssetLoader.LoadedShaders["LightRay"];
 
-		effect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"]);
-		float scrollAmount = Main.GlobalTimeWrappedHourly / 3f;
-		effect.Parameters["scroll"].SetValue(new Vector2(scrollAmount * Math.Sign(rayDist), scrollAmount / 4));
-		effect.Parameters["textureStretch"].SetValue(new Vector2(1f, 0.05f) * 0.5f);
-		effect.Parameters["texExponentRange"].SetValue(new Vector2(2f, 0.25f));
-		effect.Parameters["finalIntensityMod"].SetValue(4 * EaseFunction.EaseCircularIn.Ease(MathHelper.Clamp(_rayScale, 0, 1)));
-		effect.Parameters["finalExponent"].SetValue(3);
+		effect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["FlameTrail"]);
+		float scrollAmount = EaseFunction.EaseQuadIn.Ease(GetFlashProgress) / 3;
+		effect.Parameters["scroll"].SetValue(new Vector2(scrollAmount * Math.Sign(rayDist), scrollAmount));
+		effect.Parameters["textureStretch"].SetValue(new Vector2(0.5f, 0.05f) * 0.5f);
+		effect.Parameters["texExponentRange"].SetValue(new Vector2(1f, 0.25f));
+
+		float easedScale = EaseFunction.EaseCircularIn.Ease(MathHelper.Clamp(_rayScale, 0, 1));
+		float easedFlashProgress = EaseFunction.EaseQuadOut.Ease(GetFlashProgress);
+		effect.Parameters["finalIntensityMod"].SetValue(3 * easedScale * easedFlashProgress);
+		effect.Parameters["finalExponent"].SetValue(2);
 
 		effect.Parameters["uColor"].SetValue(rayColor.ToVector4());
 		effect.Parameters["uColor2"].SetValue(darkRayColor.ToVector4());
 
-		var rayVisualStretch = new Vector3(2.5f, 1.4f, 1.15f); //Stretch the primitive to better fit the actual hitbox, since shader makes it innaccurate
+		var rayVisualStretch = new Vector3(2.5f, 1.3f, 1.15f); //Stretch the primitive to better fit the actual hitbox, since shader makes it innaccurate
 		var rayFinalDimensions = new Vector3(rayWidth * rayVisualStretch.X, rayHeight * rayVisualStretch.Y, rayDist * rayVisualStretch.Z);
 
 		float sunWidth = 40;
@@ -261,7 +275,7 @@ public class SunOrb : ModProjectile
 		{
 			float progress = 1 / numBloom;
 			var center = Projectile.Center - Main.screenPosition - new Vector2(Projectile.scale);
-			float scale = Projectile.scale * MathHelper.Lerp(0.3f, 0.4f, progress);
+			float scale = Projectile.scale * MathHelper.Lerp(0.3f, 0.5f, progress);
 			var origin = bloomtex.Size() / 2;
 			Color color = Projectile.GetAlpha(glowColor);
 			Main.spriteBatch.Draw(bloomtex, center, null, color, 0, origin, scale, SpriteEffects.None, 0);
