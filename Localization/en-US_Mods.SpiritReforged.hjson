@@ -1,6 +1,6 @@
 Tiles: {
 	SunkenTreasureTile.MapEntry: Sunken Treasure
-	VentMapEntry: Hydrothermal Vent
+	HydrothermalVent: Hydrothermal Vent
 	CoralMapEntry: Coral
 	KelpMapEntry: Kelp
 	OceanPirateChest.MapEntry: Pirate Chest

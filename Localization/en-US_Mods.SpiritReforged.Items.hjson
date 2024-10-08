@@ -927,3 +927,8 @@ BotanistLegs: {
 	DisplayName: Botanist Joggers
 	Tooltip: 10% increased move speed
 }
+
+GravelItem: {
+	DisplayName: Gravel
+	Tooltip: ""
+}

@@ -33,7 +33,7 @@ public static class ReforgedMultiplayer
 					packet.Send(ignoreClient: whoAmI); //Relay to other clients
 				}
 
-				Content.Ocean.Tiles.VentSystem.VentPoints.Add(new Point16(i, j));
+				Content.Ocean.Tiles.VentSystem.ventPoints.Add(new Point16(i, j));
 				break;
 
 			case MessageType.SpawnTrail:

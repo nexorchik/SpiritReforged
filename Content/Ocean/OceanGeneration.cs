@@ -490,13 +490,13 @@ public class OceanGeneration : ModSystem
 				}
 
 				//Hydrothermal vents
-				if (on.LiquidAmount > 0 && on.LiquidType == LiquidID.Water && below.TileType == TileID.Sand && !below.TopSlope && WorldGen.genRand.NextBool(25))
+				/*if (on.LiquidAmount > 0 && on.LiquidType == LiquidID.Water && below.TileType == TileID.Sand && !below.TopSlope && WorldGen.genRand.NextBool(25))
 				{
 					int type = WorldGen.genRand.NextBool(3) ? ModContent.TileType<HydrothermalVent1x3>() : ModContent.TileType<HydrothermalVent1x2>();
 
 					WorldGen.PlaceObject(i, j, type, true, WorldGen.genRand.Next(2));
 					NetMessage.SendObjectPlacement(-1, i, j, type, 0, 0, -1, -1);
-				}
+				}*/
 
 				i -= GenVars.dungeonSide; //Position horizontally
 			}
