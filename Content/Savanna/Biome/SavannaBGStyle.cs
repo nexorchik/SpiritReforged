@@ -1,5 +1,3 @@
-using Terraria.ModLoader;
-
 namespace SpiritReforged.Content.Savanna.Biome;
 
 public class SavannaBGStyle : ModSurfaceBackgroundStyle

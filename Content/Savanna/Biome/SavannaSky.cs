@@ -68,6 +68,5 @@ public class SavannaSky : AutoloadedSky
 
 	public override float GetCloudAlpha() => 0f;
 
-	internal override bool ActivationCondition(Player p) => p.InModBiome<SavannaBiome>();
-
+	internal override bool ActivationCondition(Player p) => !p.ZoneSkyHeight && p.InModBiome<SavannaBiome>();
 }

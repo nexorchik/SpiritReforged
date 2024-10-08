@@ -1,12 +1,13 @@
-using Terraria.GameContent.Bestiary;
-using SpiritReforged.Content.Ocean.Items;
-using SpiritReforged.Content.Savanna.Items.WrithingSticks;
+using SpiritReforged.Common.NPCCommon;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
-public class TumbleZombie : Common.NPCCommon.ZombieNPC
+public class TumbleZombie : ReplaceNPC
 {
-	public override void StaticDefaults() => Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Zombie];
+	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie,
+		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
+
+	public override void StaticDefaults() => Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
 
 	public override void SetDefaults()
 	{
@@ -25,8 +26,6 @@ public class TumbleZombie : Common.NPCCommon.ZombieNPC
 		Banner = Item.NPCtoBanner(NPCID.Zombie);
 		BannerItem = Item.BannerToItem(Banner);
 	}
-
-	//public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "NightTime Savanna");
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
@@ -66,9 +65,9 @@ public class TumbleZombie : Common.NPCCommon.ZombieNPC
 	{
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
-		npcLoot.AddCommon(ModContent.ItemType<WrithingSticks>(), 800);
+		npcLoot.AddCommon(ModContent.ItemType<Items.WrithingSticks.WrithingSticks>(), 800);
 
 	}
 
-	public override bool SpawnConditions(Player player) => player.InModBiome<Savanna.Biome.SavannaBiome>();
+	public override bool CanSpawn(Player player) => player.InModBiome<Biome.SavannaBiome>();
 }

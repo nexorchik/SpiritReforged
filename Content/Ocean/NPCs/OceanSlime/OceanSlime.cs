@@ -37,7 +37,7 @@ public class OceanSlime : ModNPC
 	public override void ReceiveExtraAI(BinaryReader reader) => damageLevel = reader.ReadInt32();
 	public override void HitEffect(NPC.HitInfo hit)
 	{
-		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit") with { PitchVariance = 0.4f, Pitch = 0.1f, Volume = 1.1f }, NPC.Center);
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit") with { PitchVariance = 0.4f, Pitch = 0.1f, Volume = 1.1f, MaxInstances = 2 }, NPC.Center);
 
 		for (int k = 0; k < 6; k++)
 		{
