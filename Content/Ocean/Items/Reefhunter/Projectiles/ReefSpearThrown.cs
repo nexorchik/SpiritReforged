@@ -76,6 +76,9 @@ public class ReefSpearThrown : ModProjectile
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_Hard") with { PitchVariance = 0.2f, Pitch = -1.6f, Volume = 2.75f, MaxInstances = 2 }, Projectile.Center);
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_Slimy") with { PitchVariance = 0.25f, Pitch = 1f, Volume = 1.6f, MaxInstances = 2 }, Projectile.Center);
+
 		MakeParticles(Projectile.velocity);
 		if (!target.active)
 			return;
@@ -116,6 +119,7 @@ public class ReefSpearThrown : ModProjectile
 		if (!hasTarget)
 		{
 			SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_Hard") with { PitchVariance = 0.2f, Pitch = -2f, Volume = 2.5f }, Projectile.Center);
 			Vector2 goreVel = Projectile.oldVelocity / 2;
 			Vector2 pos = Projectile.Center;
 			for (int i = 1; i <= 6; i++)
