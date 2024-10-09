@@ -1,8 +1,11 @@
+using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.TileCommon.TileSway;
+using System.Linq;
 using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Savanna.NPCs;
 
+[SpawnPack(2, 4)]
 public class Ostrich : ModNPC
 {
 	private static readonly int[] endFrames = [3, 7, 5, 8, 9, 6, 6];
@@ -23,6 +26,8 @@ public class Ostrich : ModNPC
 	public int AIState { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
 	public ref float Counter => ref NPC.ai[1];
 
+	private static bool NotClient => Main.netMode != NetmodeID.MultiplayerClient; //Needs checked often
+
 	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 9; //Rows
 
 	public override void SetDefaults()
@@ -39,8 +44,6 @@ public class Ostrich : ModNPC
 
 	public override void AI()
 	{
-		static bool NotClient() => Main.netMode != NetmodeID.MultiplayerClient; //Needs checked often
-
 		NPC.TargetClosest(false);
 		var target = Main.player[NPC.target];
 
@@ -51,7 +54,7 @@ public class Ostrich : ModNPC
 
 				if (NPC.Distance(target.Center) < 16 * 10)
 					ChangeState(State.Running);
-				else if (Main.rand.NextBool(50) && NotClient())
+				else if (Main.rand.NextBool(50) && NotClient)
 				{
 					var action = new WeightedRandom<State>();
 					action.Add(State.Running, 1.2f);
@@ -72,25 +75,28 @@ public class Ostrich : ModNPC
 				frameRate = MathHelper.Clamp(Math.Abs(NPC.velocity.X) / runSpeed, .5f, 1f) * .25f;
 
 				Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
-
 				if (NPC.collideX && NPC.velocity == Vector2.Zero && Counter % 5 == 0)
 					NPC.velocity.Y = -6.5f; //Jump
 
-				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .1f);
-
-				//Prioritize running from the player
-				if (NPC.Distance(target.Center) > 16 * 28 && Counter % 80 == 0 && NotClient() && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity.X == 0)
+				bool inRange = NPC.Distance(target.Center) <= 16 * 28;
+				if (!inRange && Counter % 80 == 0 && NotClient && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity.X == 0)
 				{
 					if (NPC.velocity.X == 0)
 					{
-						if (NotClient())
+						if (NotClient)
 						{
-							NPC.velocity.X = Main.rand.NextFloat(1.25f, 1.5f) * (Main.rand.NextBool() ? -1 : 1);
+							NPC.velocity.X = Main.rand.NextFloat(1.25f, 1.5f) * (Main.rand.NextBool() ? -1 : 1); //Wander
 							NPC.netUpdate = true;
 						}
 					}
 					else
 						ChangeState(State.Stopped);
+				}
+
+				if (inRange)
+				{
+					//Prioritize running from the player
+					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .1f);
 				}
 
 				break;
@@ -109,7 +115,7 @@ public class Ostrich : ModNPC
 				}
 				else if (OnTransitionFrame && Counter % 30 == 0 && Main.rand.NextBool(3))
 				{
-					if (NotClient() && Main.rand.NextBool(4) || Counter > 600)
+					if (NotClient && Main.rand.NextBool(4) || Counter > 600)
 						ChangeState(State.MunchEnd, true);
 					else
 						NPC.frameCounter = 0; //Randomly restart the animation

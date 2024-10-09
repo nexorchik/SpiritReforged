@@ -1,5 +1,8 @@
+using SpiritReforged.Common.NPCCommon;
+
 namespace SpiritReforged.Content.Savanna.NPCs;
 
+[SpawnPack(2, 3)]
 public class Hyena : ModNPC
 {
 	private static readonly int[] endFrames = [2, 5, 5, 5, 4, 13];
@@ -128,6 +131,8 @@ public class Hyena : ModNPC
 			else if (Main.rand.NextBool(100))
 				ChangeState(State.BarkingAngry, false);
 		}
+		else if (target.statLife < target.statLifeMax2 * .2f)
+			ChangeState(State.TrottingAngry); //Begin to chase the player if they are low on health
 
 		if (NPC.velocity.X < 0)
 			NPC.direction = NPC.spriteDirection = -1;
