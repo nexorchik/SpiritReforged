@@ -16,6 +16,8 @@ float4 uColor;
 float4 uColor2;
 float finalExponent;
 float taperRatio;
+bool flipCoords;
+float textureStrength;
 
 
 struct VertexShaderInput
@@ -60,10 +62,15 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
         return float4(0, 0, 0, 0);
     
     float noiseXCoord = ((xCoord - 0.5f) * textureStretch.x) + 0.5f;
-    float2 noiseCoords = float2((input.TextureCoordinates.y * textureStretch.y) + scroll.y, noiseXCoord);
+    float2 noiseCoords = float2(noiseXCoord, (input.TextureCoordinates.y * textureStretch.y) + scroll.y);
+    if (flipCoords)
+    {
+        noiseCoords.x = noiseCoords.y;
+        noiseCoords.y = noiseXCoord;
+    }
     
     float noiseExponent = lerp(texExponentRange.x, texExponentRange.y, input.TextureCoordinates.y);
-    float strength = pow(tex2D(textureSampler, noiseCoords).r, noiseExponent);
+    float strength = pow(tex2D(textureSampler, noiseCoords).r, noiseExponent) * textureStrength;
     float absXDist = 1 - (abs(xCoord - 0.5f) * 2);
     float circularXDist = sqrt(1 - pow(absXDist - 1, 2));
     strength = strength/2 + circularXDist * 0.9f;

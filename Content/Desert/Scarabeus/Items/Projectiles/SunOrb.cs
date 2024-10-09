@@ -39,7 +39,7 @@ public class SunOrb : ModProjectile
 		Projectile.ignoreWater = true;
 		Projectile.tileCollide = false;
 		Projectile.usesLocalNPCImmunity = true;
-		Projectile.localNPCHitCooldown = -1;
+		Projectile.localNPCHitCooldown = FLASHTIME / 4; //4 hits
 	}
 
 	public override bool? CanCutTiles() => false;
@@ -190,7 +190,7 @@ public class SunOrb : ModProjectile
 
 		float maxDist = 200f;
 		//Set the ray's height to be at least reach the player from the base offset- then extend it based on mouse position, up to the set max distance
-		rayHeight = _rayScale * -Math.Min(_offset.Y, Math.Max(-_mousePos.Y, -maxDist));
+		rayHeight = _rayScale * -Math.Min(_offset.Y, Math.Max(-_mousePos.Y + _offset.Y, -maxDist));
 
 		//Get a distance unit used for calculating how far the beam goes- then extend it until that distance unit matches the beam's height
 		Vector2 mouseDirection = mouseAngle.ToRotationVector2() * maxDist;
@@ -239,10 +239,12 @@ public class SunOrb : ModProjectile
 		effect.Parameters["scroll"].SetValue(new Vector2(scrollAmount * Math.Sign(rayDist), scrollAmount));
 		effect.Parameters["textureStretch"].SetValue(new Vector2(0.5f, 0.05f) * 0.5f);
 		effect.Parameters["texExponentRange"].SetValue(new Vector2(1f, 0.25f));
+		effect.Parameters["flipCoords"].SetValue(true);
 
 		float easedScale = EaseFunction.EaseCircularIn.Ease(MathHelper.Clamp(_rayScale, 0, 1));
-		float easedFlashProgress = EaseFunction.EaseQuadOut.Ease(GetFlashProgress);
-		effect.Parameters["finalIntensityMod"].SetValue(3 * easedScale * easedFlashProgress);
+		float easedFlashProgress = EaseFunction.EaseCircularOut.Ease(GetFlashProgress);
+		effect.Parameters["finalIntensityMod"].SetValue(3 * easedScale);
+		effect.Parameters["textureStrength"].SetValue(easedFlashProgress); //Don't display texture while not flashing
 		effect.Parameters["finalExponent"].SetValue(2);
 
 		effect.Parameters["uColor"].SetValue(rayColor.ToVector4());
