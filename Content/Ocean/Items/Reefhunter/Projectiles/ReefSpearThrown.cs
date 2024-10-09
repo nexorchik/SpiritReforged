@@ -1,11 +1,15 @@
-﻿using SpiritReforged.Common.ProjectileCommon;
+﻿using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
+using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
 public class ReefSpearThrown : ModProjectile
 {
-	public override string Texture => Mod.Name + "/Content/Ocean/Items/Reefhunter/Projectiles/ReefSpearProjectile";
+	public const float MAX_SPEED = 13;
 
 	private bool hasTarget = false;
 	private Vector2 relativePoint = Vector2.Zero;
@@ -37,7 +41,7 @@ public class ReefSpearThrown : ModProjectile
 	{
 		if (!hasTarget)
 		{
-			Projectile.velocity.Y += 0.4f;
+			Projectile.velocity.Y += 0.3f;
 			Projectile.rotation = Projectile.velocity.ToRotation();
 			Projectile.tileCollide = Projectile.ai[0]++ > 6;
 		}
@@ -72,16 +76,29 @@ public class ReefSpearThrown : ModProjectile
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_Hard") with { PitchVariance = 0.2f, Pitch = -1.6f, Volume = 2.75f, MaxInstances = 2 }, Projectile.Center);
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_Slimy") with { PitchVariance = 0.25f, Pitch = 1f, Volume = 1.6f, MaxInstances = 2 }, Projectile.Center);
+
+		MakeParticles(Projectile.velocity);
+		if (!target.active)
+			return;
+
 		Projectile.ai[0] = 0;
 		Projectile.ai[1] = target.whoAmI;
 		Projectile.tileCollide = false;
 		Projectile.netUpdate = true;
-		Projectile.timeLeft = 240;
-
-		target.AddBuff(BuffID.Poisoned, 300);
+		Projectile.timeLeft = 300;
 
 		hasTarget = true;
 		relativePoint = Projectile.Center - target.Center;
+
+		MakeParticles(Projectile.velocity);
+
+		for (int i = 0; i < Main.rand.Next(5, 7); i++)
+		{
+			Vector2 offset = (Vector2.UnitY.RotatedBy(Projectile.velocity.ToRotation()) * Main.rand.NextFloat(-15, 15)).RotatedByRandom(0.2f);
+			ParticleHandler.SpawnParticle(new BubbleParticle(Projectile.Center + offset, Vector2.Normalize(Projectile.velocity) * Main.rand.NextFloat(1f, 4f), Main.rand.NextFloat(0.1f, 0.2f), Main.rand.Next(30, 61)));
+		}
 	}
 
 	public override bool PreDraw(ref Color lightColor)
@@ -99,9 +116,10 @@ public class ReefSpearThrown : ModProjectile
 
 	public override void OnKill(int timeLeft)
 	{
-		if(!hasTarget)
+		if (!hasTarget)
 		{
 			SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_Hard") with { PitchVariance = 0.2f, Pitch = -2f, Volume = 2.5f }, Projectile.Center);
 			Vector2 goreVel = Projectile.oldVelocity / 2;
 			Vector2 pos = Projectile.Center;
 			for (int i = 1; i <= 6; i++)
@@ -113,6 +131,39 @@ public class ReefSpearThrown : ModProjectile
 				g.timeLeft = 0;
 				g.rotation = Projectile.rotation;
 			}
+
+			MakeParticles(Projectile.oldVelocity);
 		}
 	}
+
+	private void MakeParticles(Vector2 velocity)
+	{
+		float velocityRatio = Math.Min(velocity.Length() / MAX_SPEED, 1);
+
+		ParticleHandler.SpawnParticle(new ReefSpearImpact(null,
+			Projectile.Center - Vector2.Normalize(velocity) * 6,
+			Vector2.Normalize(velocity) * 2 * velocityRatio,
+			240,
+			100,
+			velocity.ToRotation() + MathHelper.Pi,
+			25,
+			1.2f));
+
+		var particle = new TexturedPulseCircle(
+				Projectile.Center + velocity * 3f,
+				new Color(230, 27, 112) * 0.75f,
+				0.75f,
+				100 * velocityRatio,
+				20,
+				"noise",
+				new Vector2(4, 0.75f),
+				EaseFunction.EaseCircularOut,
+				false,
+				0.3f).WithSkew(0.8f, MathHelper.Pi + Projectile.velocity.ToRotation()).UsesLightColor();
+
+		particle.Velocity = Vector2.Normalize(velocity) * -velocityRatio / 2;
+		ParticleHandler.SpawnParticle(particle);
+	}
+
+	public NPC GetStuckNPC() => Main.npc[(int)Projectile.ai[1]];
 }

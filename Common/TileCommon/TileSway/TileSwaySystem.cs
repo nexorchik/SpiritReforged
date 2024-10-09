@@ -1,28 +1,8 @@
-﻿using Terraria.DataStructures;
-using Terraria.GameContent.Drawing;
-
-namespace SpiritReforged.Common.TileCommon.TileSway;
+﻿namespace SpiritReforged.Common.TileCommon.TileSway;
 
 public class TileSwaySystem : ModSystem
 {
 	public static TileSwaySystem Instance => ModContent.GetInstance<TileSwaySystem>();
-
-	public readonly List<Point16> specialDrawPoints = [];
-
-	public override void Load() => On_TileDrawing.PreDrawTiles += (On_TileDrawing.orig_PreDrawTiles orig, TileDrawing self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets) =>
-	{
-		orig(self, solidLayer, forRenderTargets, intoRenderTargets);
-
-		bool flag = intoRenderTargets || Lighting.UpdateEveryFrame;
-		if (!solidLayer && flag)
-			Instance.specialDrawPoints.Clear();
-	};
-
-	public static void AddDrawPoint(Point16 point)
-	{
-		if (!Instance.specialDrawPoints.Contains(point))
-			Instance.specialDrawPoints.Add(point);
-	}
 
 	public double TreeWindCounter { get; private set; }
 	public double GrassWindCounter { get; private set; }

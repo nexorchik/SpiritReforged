@@ -1,5 +1,7 @@
+using SpiritReforged.Common.MathHelpers;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 using Terraria.DataStructures;
+using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter;
 
@@ -10,10 +12,10 @@ public class UrchinStaff : ModItem
 		Item.damage = 18;
 		Item.width = 28;
 		Item.height = 14;
-		Item.useTime = Item.useAnimation = 30;
-		Item.reuseDelay = 2; //Prevent item from being reused while projectile is still active, making projectile bug out
+		Item.useTime = Item.useAnimation = 24;
+		Item.reuseDelay = 6;
 		Item.knockBack = 2f;
-		Item.shootSpeed = 8f;
+		Item.shootSpeed = UrchinBall.MAX_SPEED;
 		Item.noUseGraphic = true;
 		Item.noMelee = true;
 		Item.autoReuse = true;
@@ -21,7 +23,7 @@ public class UrchinStaff : ModItem
 		Item.mana = 10;
 		Item.rare = ItemRarityID.Blue;
 		Item.value = Item.sellPrice(gold: 2);
-		Item.useStyle = ItemUseStyleID.Shoot;
+		Item.useStyle = ItemUseStyleID.Swing;
 		Item.shoot = ModContent.ProjectileType<UrchinStaffProjectile>();
 	}
 
@@ -36,17 +38,16 @@ public class UrchinStaff : ModItem
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_LightPop") with { PitchVariance = 0.4f, Pitch = -2f, Volume = .75f, MaxInstances = 3 }, player.Center);
+
 		Vector2 targetPos = Main.MouseWorld;
-		float minTargetRadius = 150f;
-
-		if (player.Distance(targetPos) <= minTargetRadius) //Doesn't instantly drop or move backwards
-			targetPos = player.Center + player.DirectionTo(targetPos) * minTargetRadius;
-
-		var proj = Projectile.NewProjectileDirect(source, player.MountedCenter, velocity, type, damage, knockback, player.whoAmI);
+		Vector2 shotTrajectory = player.GetArcVel(targetPos, 0.25f, velocity.Length());
+		var proj = Projectile.NewProjectileDirect(source, player.MountedCenter, Vector2.Zero, type, damage, knockback, player.whoAmI);
 
 		if (proj.ModProjectile is UrchinStaffProjectile staffProj)
 		{
-			staffProj.TargetPosition = targetPos - player.MountedCenter;
+			staffProj.ShotTrajectory = shotTrajectory;
+			staffProj.RelativeTargetPosition = Main.MouseWorld - player.MountedCenter;
 			if (Main.netMode != NetmodeID.SinglePlayer) //sync extra ai as projectile is made
 				NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, proj.whoAmI);
 		}

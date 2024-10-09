@@ -53,6 +53,8 @@ internal class StarPowderProj : ModProjectile
 
 	public override void AI() => ConvertTiles();
 
+	private static bool IsVine(Tile tile) => tile.TileType is TileID.Vines or TileID.VineFlowers;
+
 	private void ConvertTiles()
 	{
 		Point pos = Projectile.position.ToTileCoordinates();
@@ -69,7 +71,7 @@ internal class StarPowderProj : ModProjectile
 
 				if (tile.TileType == TileID.Grass)
 					tile.TileType = (ushort)ModContent.TileType<StargrassTile>();
-				else if (tile.TileType == TileID.Vines)
+				else if (IsVine(tile))
 					SpreadVine(i, j);
 			}
 		}
@@ -77,17 +79,14 @@ internal class StarPowderProj : ModProjectile
 
 	private static void SpreadVine(int i, int j)
 	{
-		while (Main.tile[i, j].TileType == TileID.Vines)
-		{
+		while (IsVine(Main.tile[i, j]))
 			j--;
-		}
 
 		j++;
 
-		while (Main.tile[i, j].TileType == TileID.Vines)
+		while (IsVine(Main.tile[i, j]))
 		{
-			Tile tile = Main.tile[i, j];
-			tile.TileType = (ushort)ModContent.TileType<StargrassVine>();
+			Main.tile[i, j].TileType = (ushort)ModContent.TileType<StargrassVine>();
 			j++;
 		}
 	}

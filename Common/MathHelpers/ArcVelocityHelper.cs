@@ -2,7 +2,7 @@
 
 public static class ArcVelocityHelper
 {
-	public static Vector2 GetArcVel(Vector2 startingPos, Vector2 targetPos, float gravity, float speed)
+	public static Vector2 GetArcVel(Vector2 startingPos, Vector2 targetPos, float gravity, float speed, bool useHigherAngle = false)
 	{
 		//Start by getting the desired end point relative to the starting point, and the rotation to that end point
 		Vector2 distToTravel = targetPos - startingPos;
@@ -36,9 +36,9 @@ public static class ArcVelocityHelper
 
 				//Choose the angle that's closer to the original angle
 				if (Math.Abs(AngleDistance(angle, theta[0])) > Math.Abs(AngleDistance(angle, theta[1])))
-					angle = theta[1];
+					angle = useHigherAngle ? theta[0] : theta[1];
 				else
-					angle = theta[0];
+					angle = useHigherAngle ? theta[1] : theta[0];
 
 				break;
 			}
@@ -50,7 +50,7 @@ public static class ArcVelocityHelper
 		return Vector2.UnitX.RotatedBy(angle) * speed;
 	}
 
-	public static Vector2 GetArcVel(this Entity ent, Vector2 targetPos, float gravity, float speed) => GetArcVel(ent.Center, targetPos, gravity, speed);
+	public static Vector2 GetArcVel(this Entity ent, Vector2 targetPos, float gravity, float speed, bool useHigherAngle = false) => GetArcVel(ent.Center, targetPos, gravity, speed, useHigherAngle);
 
 	/// <summary>
 	/// Solves the quadratic formula using the inputted variables as the A, B, and C variables in the equation. Returns two floats, one being the square root being added, and the other being the square root being subtracted.

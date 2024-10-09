@@ -2,7 +2,8 @@
 
 public class MantarayMount : ModMount
 {
-	protected int circularGlide = 0;
+	private float _frameProgress;
+	private const float MaxSpeed = 16.5f;
 
 	public override void SetStaticDefaults()
 	{
@@ -61,9 +62,13 @@ public class MantarayMount : ModMount
 
 	public override void UpdateEffects(Player player)
 	{
-		const float MaxSpeed = 16.5f;
 		if (player.velocity.Y <= -MaxSpeed)
 			player.velocity.Y = -MaxSpeed;
+
+		player.fullRotationOrigin = (player.Hitbox.Size() + new Vector2(0, 42)) / 2;
+		int direction = (Math.Abs(player.velocity.X) == 0) ? 0 :
+			(player.direction == Math.Sign(player.velocity.X)) ? 1 : -1;
+		player.fullRotation = player.velocity.Y * 0.05f * player.direction * direction * MountData.jumpHeight / 14f;
 
 		if (!player.wet)
 		{
@@ -71,15 +76,11 @@ public class MantarayMount : ModMount
 			MountData.usesHover = false;
 			MountData.acceleration = 0.05f;
 			MountData.dashSpeed = 0f;
-			MountData.runSpeed = 0.05f;
+			MountData.runSpeed = 1.3f;
+			player.autoJump = true;
 
-			if (player.velocity.Y != 0 || player.oldVelocity.Y != 0)
-			{
-				int direction = (Math.Abs(player.velocity.X) == 0) ? 0 :
-					(player.direction == Math.Sign(player.velocity.X)) ? 1 : -1;
-				player.fullRotation = player.velocity.Y * 0.05f * player.direction * direction * MountData.jumpHeight / 14f;
-				player.fullRotationOrigin = (player.Hitbox.Size() + new Vector2(0, 42)) / 2;
-			}
+			if (player.velocity.Y == 0 && player.oldVelocity.Y == 0) //Grounded check
+				MountData.runSpeed = 0.1f;
 		}
 		else
 		{
@@ -91,10 +92,22 @@ public class MantarayMount : ModMount
 			MountData.usesHover = true;
 
 			player.gravity = 0f;
-			player.fullRotation = 0f;
 			player.velocity.Y *= 0.99f;
 		}
 
 		player.gills = true;
+	}
+
+	public override bool UpdateFrame(Player mountedPlayer, int state, Vector2 velocity)
+	{
+		//2% of the total frames per tick, up to 6% based on how fast you're moving
+		_frameProgress += 0.02f + Math.Min(velocity.Length() / MaxSpeed, 1) * 0.04f;
+		_frameProgress %= 1;
+		mountedPlayer.mount._frame = (int)(MountData.totalFrames * _frameProgress);
+
+		//Fun fact! If you return false here for god knows what reason the mount isn't able to hover/swim
+		//So the default framecounter is constantly set to 0 amd we return true instead as a bandaid fix
+		mountedPlayer.mount._frameCounter = 0;
+		return true;
 	}
 }

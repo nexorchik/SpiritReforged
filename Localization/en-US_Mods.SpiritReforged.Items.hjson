@@ -163,7 +163,7 @@ PendantOfTheOcean: {
 
 ReefSpear: {
 	DisplayName: Reef Trident
-	Tooltip: Right click to throw the trident, poisoning enemies for a short time
+	Tooltip: Right click to throw the trident, increasing damage taken by the main attack
 }
 
 SkullSentry: {
@@ -338,17 +338,17 @@ JellyCandle: {
 }
 
 SmallDriftwoodItem: {
-	DisplayName: Small Driftwood Item
+	DisplayName: Small Driftwood
 	Tooltip: "'Aesthetically pleasing'"
 }
 
 MediumDriftwoodItem: {
-	DisplayName: Medium Driftwood Item
+	DisplayName: Medium Driftwood
 	Tooltip: "'Aesthetically pleasing'"
 }
 
 LargeDriftwoodItem: {
-	DisplayName: Large Driftwood Item
+	DisplayName: Large Driftwood
 	Tooltip: "'Aesthetically pleasing'"
 }
 
@@ -367,16 +367,6 @@ DriftwoodLeggings: {
 	Tooltip: ""
 }
 
-DriftwoodChairItem: {
-	DisplayName: Driftwood Chair
-	Tooltip: ""
-}
-
-DriftwoodDoorItem: {
-	DisplayName: Driftwood Door
-	Tooltip: ""
-}
-
 DriftwoodPlatformItem: {
 	DisplayName: Driftwood Platform
 	Tooltip: ""
@@ -387,24 +377,14 @@ DriftwoodSword: {
 	Tooltip: ""
 }
 
-DriftwoodTableItem: {
-	DisplayName: Driftwood Table
-	Tooltip: ""
-}
-
 DriftwoodWallItem: {
 	DisplayName: Driftwood Wall
 	Tooltip: ""
 }
 
-DriftwoodWorkbenchItem: {
-	DisplayName: Driftwood Workbench
-	Tooltip: ""
-}
-
 Cloudstalk: {
 	DisplayName: Cloudstalk
-	Tooltip: ""
+	Tooltip: "'Usually found high up'"
 }
 
 CloudstalkSeed: {
@@ -434,7 +414,7 @@ FloatingDriftwood: {
 
 FishCrate: {
 	DisplayName: Packing Crate
-	Tooltip: ""
+	Tooltip: Right-click to open
 }
 
 Ambergris: {
@@ -604,6 +584,16 @@ SavannaGrassSeeds: {
 	Tooltip: ""
 }
 
+LeatherBackpack: {
+	DisplayName: Leather Backpack
+	Tooltip:
+		'''
+		Holds 4 items
+		You must empty this before taking it off
+		'Comfortable, practical, and still dashing'
+		'''
+}
+
 Caryocar: {
 	DisplayName: Caryocar
 	Tooltip: ""
@@ -612,4 +602,328 @@ Caryocar: {
 CustardApple: {
 	DisplayName: Custard Apple
 	Tooltip: ""
+}
+
+BeachUmbrellaItem: {
+	DisplayName: Beach Umbrella
+	Tooltip: ""
+}
+
+BigBuoy: {
+	DisplayName: Big Buoy
+	Tooltip: "{$ItemTooltip.CoralTorch}"
+}
+
+SmallBuoy: {
+	DisplayName: Small Buoy
+	Tooltip: "{$ItemTooltip.CoralTorch}"
+}
+
+LoungeChairItem: {
+	DisplayName: Lounge Chair
+	Tooltip: ""
+}
+
+Omelette: {
+	DisplayName: Omelette
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed2}
+		'Perfectly cooked'
+		'''
+}
+
+OstrichEgg: {
+	DisplayName: Ostrich Egg
+	Tooltip: "{$BuffDescription.WellFed}"
+}
+
+Drywood: {
+	DisplayName: Drywood
+	Tooltip: ""
+}
+
+DrywoodBow: {
+	DisplayName: Drywood Bow
+	Tooltip: ""
+}
+
+DrywoodBreastplate: {
+	DisplayName: Drywood Breastplate
+	Tooltip: ""
+}
+
+DrywoodGreaves: {
+	DisplayName: Drywood Greaves
+	Tooltip: ""
+}
+
+DrywoodHammer: {
+	DisplayName: Drywood Hammer
+	Tooltip: ""
+}
+
+DrywoodHelmet: {
+	DisplayName: Drywood Helmet
+	Tooltip: ""
+}
+
+DrywoodSword: {
+	DisplayName: Drywood Sword
+	Tooltip: ""
+}
+
+HuntingRifle: {
+	DisplayName: Hunting Rifle
+	Tooltip: Deals more damage to distant targets and when standing still
+}
+
+SafariHat: {
+	DisplayName: Safari Hat
+	Tooltip: ""
+}
+
+SafariShorts: {
+	DisplayName: Safari Shorts
+	Tooltip: ""
+}
+
+SafariVest: {
+	DisplayName: Safari Vest
+	Tooltip: ""
+}
+
+SavannaMusicBoxItem: {
+	DisplayName: Music Box (Savanna)
+	Tooltip: ""
+}
+
+DrywoodBathtubItem: {
+	DisplayName: Drywood Bathtub
+	Tooltip: ""
+}
+
+DrywoodBedItem: {
+	DisplayName: Drywood Bed
+	Tooltip: ""
+}
+
+DrywoodBookcaseItem: {
+	DisplayName: Drywood Bookcase
+	Tooltip: ""
+}
+
+DrywoodCandelabraItem: {
+	DisplayName: Drywood Candelabra
+	Tooltip: ""
+}
+
+DrywoodCandleItem: {
+	DisplayName: Drywood Candle
+	Tooltip: ""
+}
+
+DrywoodChairItem: {
+	DisplayName: Drywood Chair
+	Tooltip: ""
+}
+
+DrywoodClockItem: {
+	DisplayName: Drywood Clock
+	Tooltip: ""
+}
+
+DrywoodCouchItem: {
+	DisplayName: Drywood Couch
+	Tooltip: ""
+}
+
+DrywoodDresserItem: {
+	DisplayName: Drywood Dresser
+	Tooltip: ""
+}
+
+DrywoodLampItem: {
+	DisplayName: Drywood Lamp
+	Tooltip: ""
+}
+
+DrywoodPianoItem: {
+	DisplayName: Drywood Piano
+	Tooltip: ""
+}
+
+DrywoodSinkItem: {
+	DisplayName: Drywood Sink
+	Tooltip: ""
+}
+
+DrywoodTableItem: {
+	DisplayName: Drywood Table
+	Tooltip: ""
+}
+
+DrywoodToiletItem: {
+	DisplayName: Drywood Toilet
+	Tooltip: ""
+}
+
+DrywoodWorkBenchItem: {
+	DisplayName: Drywood Work Bench
+	Tooltip: ""
+}
+
+DrywoodLanternItem: {
+	DisplayName: Drywood Lantern
+	Tooltip: ""
+}
+
+DrywoodSofaItem: {
+	DisplayName: Drywood Sofa
+	Tooltip: ""
+}
+
+DrywoodChestItem: {
+	DisplayName: Drywood Chest
+	Tooltip: ""
+}
+
+DrywoodDoorItem: {
+	DisplayName: Drywood Door
+	Tooltip: ""
+}
+
+DriftwoodBarrelItem: {
+	DisplayName: Driftwood Barrel
+	Tooltip: ""
+}
+
+DriftwoodBathtubItem: {
+	DisplayName: Driftwood Bathtub
+	Tooltip: ""
+}
+
+DriftwoodBedItem: {
+	DisplayName: Driftwood Bed
+	Tooltip: ""
+}
+
+DriftwoodBenchItem: {
+	DisplayName: Driftwood Bench
+	Tooltip: ""
+}
+
+DriftwoodBookcaseItem: {
+	DisplayName: Driftwood Bookcase
+	Tooltip: ""
+}
+
+DriftwoodCandelabraItem: {
+	DisplayName: Driftwood Candelabra
+	Tooltip: ""
+}
+
+DriftwoodCandleItem: {
+	DisplayName: Driftwood Candle
+	Tooltip: ""
+}
+
+DriftwoodChairItem: {
+	DisplayName: Driftwood Chair
+	Tooltip: ""
+}
+
+DriftwoodChandelierItem: {
+	DisplayName: Driftwood Chandelier
+	Tooltip: ""
+}
+
+DriftwoodClockItem: {
+	DisplayName: Driftwood Clock
+	Tooltip: ""
+}
+
+DriftwoodDoorItem: {
+	DisplayName: Driftwood Door
+	Tooltip: ""
+}
+
+DriftwoodDresserItem: {
+	DisplayName: Driftwood Dresser
+	Tooltip: ""
+}
+
+DriftwoodLampItem: {
+	DisplayName: Driftwood Lamp
+	Tooltip: ""
+}
+
+DriftwoodPianoItem: {
+	DisplayName: Driftwood Piano
+	Tooltip: ""
+}
+
+DriftwoodSinkItem: {
+	DisplayName: Driftwood Sink
+	Tooltip: ""
+}
+
+DriftwoodTableItem: {
+	DisplayName: Driftwood Table
+	Tooltip: ""
+}
+
+DriftwoodToiletItem: {
+	DisplayName: Driftwood Toilet
+	Tooltip: ""
+}
+
+DriftwoodWorkBenchItem: {
+	DisplayName: Driftwood Work Bench
+	Tooltip: ""
+}
+
+HerosMemorialStatueItem: {
+	DisplayName: A Hero's Memorial
+	Tooltip: Live on forever
+}
+
+DustyFieldsItem: {
+	DisplayName: Dusty Fields
+	Tooltip: "'S. Yaki'"
+}
+
+OrangeSkiesItem: {
+	DisplayName: Orange Skies
+	Tooltip: "'S. Yaki'"
+}
+
+StrongWindsItem: {
+	DisplayName: Strong Winds
+	Tooltip: "'S. Yaki'"
+}
+
+WaningSunItem: {
+	DisplayName: Waning Sun
+	Tooltip: "'E. Sibellius'"
+}
+
+ScarecrowItem: {
+	DisplayName: Scarecrow
+	Tooltip: ""
+}
+
+BotanistBody: {
+	DisplayName: Botanist Apron
+	Tooltip: ""
+}
+
+BotanistHat: {
+	DisplayName: Sunflower Strawhat
+	Tooltip: Keeps you happy
+}
+
+BotanistLegs: {
+	DisplayName: Botanist Joggers
+	Tooltip: 10% increased move speed
 }

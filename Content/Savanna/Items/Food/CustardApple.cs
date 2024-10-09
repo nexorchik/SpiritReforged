@@ -5,7 +5,6 @@ namespace SpiritReforged.Content.Savanna.Items.Food;
 public class CustardApple : FoodItem
 {
 	internal override Point Size => new(26, 30);
-	public override bool CanUseItem(Player player) => true;
-	public override void Defaults() => FruitItemsSet.Add(Type);
+	public override void StaticDefaults() => FruitItemsSet.Add(Type);
 }
 
