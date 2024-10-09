@@ -930,25 +930,25 @@ BotanistLegs: {
 
 BeachTowel: {
 	DisplayName: Beach Towel
-	Tooltip: ""
+	Tooltip: "'It keeps you dry, but make sure you don't jump in the water with it on!'"
 }
 
 BikiniBottom: {
 	DisplayName: Bikini Bottom
-	Tooltip: ""
+	Tooltip: "'Who needs armor anyways when you can run free in the sun!'"
 }
 
 BikiniTop: {
 	DisplayName: Bikini Top
-	Tooltip: ""
+	Tooltip: "'Despite what one may expect, it really doesn't provide any sort of defense.'"
 }
 
 SwimmingTrunks: {
 	DisplayName: Swimming Trunks
-	Tooltip: ""
+	Tooltip: "'They don't provide much in the way of defense, but they're undeniably stylish.'"
 }
 
 TintedGlasses: {
 	DisplayName: Tinted Glasses
-	Tooltip: ""
+	Tooltip: "'They help sell the look, so it's best to keep them on even when it's dark.'"
 }
