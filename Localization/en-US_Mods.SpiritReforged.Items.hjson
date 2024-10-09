@@ -927,3 +927,28 @@ BotanistLegs: {
 	DisplayName: Botanist Joggers
 	Tooltip: 10% increased move speed
 }
+
+BeachTowel: {
+	DisplayName: Beach Towel
+	Tooltip: ""
+}
+
+BikiniBottom: {
+	DisplayName: Bikini Bottom
+	Tooltip: ""
+}
+
+BikiniTop: {
+	DisplayName: Bikini Top
+	Tooltip: ""
+}
+
+SwimmingTrunks: {
+	DisplayName: Swimming Trunks
+	Tooltip: ""
+}
+
+TintedGlasses: {
+	DisplayName: Tinted Glasses
+	Tooltip: ""
+}
