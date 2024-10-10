@@ -215,17 +215,6 @@ public class OceanGeneration : ModSystem
 					continue;
 				}
 
-				//Hydrothermal vents
-				/*if (WorldGen.genRand.Next(7) < 3 && tilesFromInnerEdge > 135 && ValidGround(i, j, 1, TileID.Sand) && OpenArea(i, j - 3, 1, 3))
-				{
-					int type = WorldGen.genRand.NextBool(3) ? ModContent.TileType<HydrothermalVent1x3>() : ModContent.TileType<HydrothermalVent1x2>();
-					int offset = type == ModContent.TileType<HydrothermalVent1x2>() ? 1 : 2;
-
-					WorldGen.PlaceObject(i, j - offset, type, true, WorldGen.genRand.Next(2));
-					NetMessage.SendObjectPlacement(-1, i, j, type, 0, 0, -1, -1);
-					continue;
-				}*/
-
 				//Growing kelp
 				if (WorldGen.genRand.Next(5) < 2 && tilesFromInnerEdge < 133 && ValidGround(i, j, 1, TileID.Sand))
 				{

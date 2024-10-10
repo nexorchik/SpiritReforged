@@ -11,6 +11,7 @@ public class Gravel : ModTile, IAutoloadTileItem
 		Main.tileBlockLight[Type] = true;
 
 		Main.tileMerge[TileID.Sand][Type] = true; //Ensure sand tries to merge back with gravel
+		Main.tileMerge[TileID.HardenedSand][Type] = true;
 		TileID.Sets.ChecksForMerge[Type] = true;
 		TileID.Sets.CanBeDugByShovel[Type] = true;
 
@@ -28,6 +29,7 @@ public class Gravel : ModTile, IAutoloadTileItem
 		}
 
 		WorldGen.TileMergeAttempt(-2, TileID.Sand, ref up, ref down, ref left, ref right, ref upLeft, ref upRight, ref downLeft, ref downRight);
+		WorldGen.TileMergeAttempt(-2, TileID.HardenedSand, ref up, ref down, ref left, ref right, ref upLeft, ref upRight, ref downLeft, ref downRight);
 
 		//Only immediately merge with vents on the top
 		Disallow(ref down);
