@@ -1,6 +1,6 @@
 using SpiritReforged.Common.TileCommon;
 
-namespace SpiritReforged.Content.Ocean.Tiles;
+namespace SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 
 public class Gravel : ModTile, IAutoloadTileItem
 {

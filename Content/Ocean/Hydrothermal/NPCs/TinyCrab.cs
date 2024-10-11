@@ -1,9 +1,8 @@
+using SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 using System.Linq;
-using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 
-namespace SpiritReforged.Content.Ocean.NPCs;
+namespace SpiritReforged.Content.Ocean.Hydrothermal.NPCs;
 
 [AutoloadCritter]
 public class TinyCrab : ModNPC
@@ -54,17 +53,6 @@ public class TinyCrab : ModNPC
 		if (!config.VentCritters)
 			return 0;
 
-		return spawnInfo.Water && NPC.CountNPCS(Type) < 10 && Tiles.VentSystem.GetValidPoints(spawnInfo.Player).Count > 0 ? .25f : 0;
-	}
-
-	public override int SpawnNPC(int tileX, int tileY)
-	{
-		int index = NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), tileX, tileY, Type);
-		var points = Tiles.VentSystem.GetValidPoints(Main.player[Main.npc[index].FindClosestPlayer()]);
-
-		//Select a random vent position relative to the player
-		Main.npc[index].position = points[Main.rand.Next(points.Count)].ToVector2() * 16;
-
-		return index;
+		return spawnInfo.Water && NPC.CountNPCS(Type) < 10 && spawnInfo.SpawnTileType == ModContent.TileType<Gravel>() ? .25f : 0;
 	}
 }

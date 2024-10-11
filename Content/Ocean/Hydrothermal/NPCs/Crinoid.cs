@@ -1,11 +1,12 @@
+using SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 using System.IO;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 
-namespace SpiritReforged.Content.Ocean.NPCs;
+namespace SpiritReforged.Content.Ocean.Hydrothermal.NPCs;
 
 [AutoloadCritter]
-public class TubeWorm : ModNPC
+public class Crinoid : ModNPC
 {
 	private int pickedType;
 
@@ -14,12 +15,12 @@ public class TubeWorm : ModNPC
 	public override void SetDefaults()
 	{
 		NPC.dontCountMe = true;
-		NPC.width = 10;
-		NPC.height = 14;
+		NPC.width = 22;
+		NPC.height = 22;
 		NPC.damage = 0;
 		NPC.defense = 0;
 		NPC.lifeMax = 5;
-		NPC.HitSound = SoundID.NPCHit2;
+		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = 0f;
 		NPC.aiStyle = -1;
@@ -28,12 +29,16 @@ public class TubeWorm : ModNPC
 		AIType = NPCID.WebbedStylist;
 	}
 
-	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Ocean");
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+	{
+		bestiaryEntry.UIInfoProvider = new CritterUICollectionInfoProvider(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds[Type]);
+		bestiaryEntry.AddInfo(this, "Ocean");
+	}
 
 	public override void OnSpawn(IEntitySource source)
 	{
-		NPC.scale = Main.rand.NextFloat(.6f, 1.15f);
-		pickedType = Main.rand.Next(4);
+		NPC.scale = Main.rand.NextFloat(.6f, 1f);
+		pickedType = Main.rand.Next(3);
 		NPC.netUpdate = true;
 	}
 
@@ -41,13 +46,21 @@ public class TubeWorm : ModNPC
 
 	public override void FindFrame(int frameHeight)
 	{
-		NPC.frame.Width = 18;
+		NPC.frame.Width = 46;
 		NPC.frame.X = NPC.frame.Width * pickedType;
 
-		NPC.frameCounter += 0.18f;
+		NPC.frameCounter += 0.22f;
 		NPC.frameCounter %= Main.npcFrameCount[Type];
 		int frame = (int)NPC.frameCounter;
 		NPC.frame.Y = frame * frameHeight;
+
+		//if (NPC.IsABestiaryIconDummy && frame == 5)
+		//{
+		//	pickedType++;
+
+		//	if (pickedType > 2)
+		//		pickedType = 0;
+		//}
 	}
 
 	public override void SendExtraAI(BinaryWriter writer) => writer.Write(pickedType);
@@ -61,14 +74,27 @@ public class TubeWorm : ModNPC
 		var effects = NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
 		spriteBatch.Draw(TextureAssets.Npc[Type].Value, drawPos, NPC.frame, color, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, effects, 0f);
-
+		
 		return false;
 	}
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
-		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("TubewormGore").Type, 1f);
+		if (NPC.life > 0 || Main.netMode == NetmodeID.Server)
+			return;
+
+		string goreType = pickedType switch
+		{
+			1 => "RedCrinoid",
+			2 => "YellowCrinoid",
+			_ => "PinkCrinoid"
+		};
+
+		for (int i = 0; i < 6; i++) //Spawn a pair of gores 6 times
+		{
+			for (int t = 1; t < 3; t++)
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>(goreType + t).Type, Main.rand.NextFloat(.5f, 1.2f));
+		}
 	}
 
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -77,17 +103,6 @@ public class TubeWorm : ModNPC
 		if (!config.VentCritters)
 			return 0;
 
-		return spawnInfo.Water && NPC.CountNPCS(Type) < 10 && Tiles.VentSystem.GetValidPoints(spawnInfo.Player).Count > 0 ? .27f : 0;
-	}
-
-	public override int SpawnNPC(int tileX, int tileY)
-	{
-		int index = NPC.NewNPC(Terraria.Entity.GetSource_NaturalSpawn(), tileX, tileY, Type);
-		var points = Tiles.VentSystem.GetValidPoints(Main.player[Main.npc[index].FindClosestPlayer()]);
-
-		//Select a random vent position relative to the player
-		Main.npc[index].position = points[Main.rand.Next(points.Count)].ToVector2() * 16;
-
-		return index;
+		return spawnInfo.Water && NPC.CountNPCS(Type) < 10 && spawnInfo.SpawnTileType == ModContent.TileType<Gravel>() ? .21f : 0;
 	}
 }
