@@ -52,7 +52,7 @@ float GetAngle(float2 input, float2 centeredPos, float baseAngle)
     return atan2(input.y - centeredPos.y, input.x - centeredPos.x) + baseAngle;
 }
 
-const float piOver4 = 0.785f;
+const float fadeThreshold = 0.2f;
 float4 MainPS(VertexShaderOutput input) : COLOR0
 {
     float xCoord = input.TextureCoordinates.x - 0.5f;
@@ -75,10 +75,15 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     float circularXDist = sqrt(1 - pow(absXDist - 1, 2));
     strength = strength/2 + circularXDist * 0.9f;
     strength *= pow(circularXDist, 2);
-    strength *= input.TextureCoordinates.y;
+    strength *= pow(input.TextureCoordinates.y, 0.5f);
     
     float4 finalColor = lerp(uColor, uColor2, min(max(1 - strength, 0), 1));
     strength = pow(min(strength, 1), finalExponent);
+    if (input.TextureCoordinates.y < fadeThreshold)
+    {
+        float progress = input.TextureCoordinates.y * (1 / fadeThreshold);
+        strength *= pow(progress, 0.5f);
+    }
     
     return input.Color * finalIntensityMod * strength * finalColor;
 }

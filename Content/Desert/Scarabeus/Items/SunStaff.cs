@@ -9,7 +9,7 @@ public class SunStaff : ModItem
 	public override void SetStaticDefaults() => Item.staff[Type] = true;
 	public override void SetDefaults()
 	{
-		Item.damage = 18;
+		Item.damage = 20;
 		Item.width = Item.height = 46;
 		Item.useTime = Item.useAnimation = 40;
 		Item.knockBack = 1f;
@@ -18,7 +18,7 @@ public class SunStaff : ModItem
 		Item.channel = true;
 		Item.noUseGraphic = true;
 		Item.DamageType = DamageClass.Magic;
-		Item.mana = 40;
+		Item.mana = 30;
 		Item.rare = ItemRarityID.Green;
 		Item.value = Item.sellPrice(gold: 2);
 		Item.useStyle = ItemUseStyleID.Shoot;
