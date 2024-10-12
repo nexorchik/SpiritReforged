@@ -16,13 +16,18 @@ public class HydrothermalVentPlume : ModProjectile
 	{
 		Projectile.ignoreWater = true;
 		Projectile.penetrate = -1;
-		Projectile.timeLeft = timeLeftMax;
+		Projectile.timeLeft = 60 * 10;
 	}
 
 	public override void AI()
 	{
 		if (Projectile.timeLeft == timeLeftMax) //On-spawn effects
 		{
+			for (int k = 0; k <= 20; k++)
+				Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<Dusts.BoneDust>(), new Vector2(0, 6).RotatedByRandom(1) * Main.rand.NextFloat(-1, 1));
+			for (int k = 0; k <= 20; k++)
+				Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<Dusts.FireClubDust>(), new Vector2(0, 6).RotatedByRandom(1) * Main.rand.NextFloat(-1, 1));
+
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/StoneCrack" + Main.rand.Next(1, 3)) { PitchVariance = .6f }, Projectile.Center);
 			SoundEngine.PlaySound(SoundID.Drown with { Pitch = -.5f, PitchVariance = .25f, Volume = 1.5f }, Projectile.Center);
 

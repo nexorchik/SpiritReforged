@@ -33,15 +33,24 @@ internal class GravelMicropass : Micropass
 
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Gravel");
 		int count = 0;
+		int maxCount = 15 * (WorldGen.GetWorldSize() + 1);
 		int distance = WorldGen.oceanDistance;
 
-		while (count < 15 * (WorldGen.GetWorldSize() + 1))
+		int waterTopLeft = 0, waterTopRight = 0;
+		GetWaterTop(ref waterTopLeft, ref waterTopRight);
+
+		while (count < maxCount)
 		{
+			int minY = waterTopLeft;
+
 			int x = WorldGen.genRand.Next(40, distance);
 			if (WorldGen.genRand.NextBool())
+			{
 				x = WorldGen.genRand.Next(Main.maxTilesX - distance, Main.maxTilesX - 40);
+				minY = waterTopRight;
+			}
 
-			int y = WorldGen.genRand.Next((int)WorldGen.oceanLevel);
+			int y = WorldGen.genRand.Next(minY + 20, (int)WorldGen.oceanLevel);
 
 			if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.Sand && !Main.tile[x, y - 1].HasTile 
 				&& Main.tile[x, y - 1].LiquidType == LiquidID.Water && Main.tile[x, y - 1].LiquidAmount > 0)
@@ -70,8 +79,9 @@ internal class GravelMicropass : Micropass
 				WorldGen.PlaceObject(x, y - 1, ModContent.TileType<HydrothermalVent>(), true,
 					Main.rand.Next(TileObjectData.GetTileData(ModContent.TileType<HydrothermalVent>(), 0).RandomStyleRange));
 
-				MoveDown(x, ref y, ModContent.TileType<Gravel>());
-				WorldGen.OreRunner(x, y, WorldGen.genRand.Next(5, 10), WorldGen.genRand.Next(10, 15), (ushort)ModContent.TileType<Gravel>()); //Initial gravel patch
+				MoveDown(x, ref y, ModContent.TileType<Gravel>()); //This is the lowest we move y directly
+				WorldGen.OreRunner(x, y, WorldGen.genRand.Next(5, 10), 
+					WorldGen.genRand.Next(10, 15), (ushort)ModContent.TileType<Gravel>()); //Initial gravel patch
 
 				if (WorldGen.genRand.NextBool()) //Generate small protrusions (rocks)
 				{
@@ -85,13 +95,49 @@ internal class GravelMicropass : Micropass
 
 				if (WorldGen.genRand.NextBool(4)) //Extension gravel patch
 				{
-					MoveDown(x, ref y, ModContent.TileType<Gravel>());
-					WorldGen.OreRunner(x + WorldGen.genRand.Next(-3, 3), y, WorldGen.genRand.Next(3, 8), 
+					int offX = x + WorldGen.genRand.Next(-3, 3);
+					int offY = y;
+
+					MoveDown(offX, ref offY, ModContent.TileType<Gravel>());
+					WorldGen.OreRunner(offX, offY, WorldGen.genRand.Next(3, 8), 
 						WorldGen.genRand.Next(6, 13), (ushort)ModContent.TileType<Gravel>());
+				}
+
+				int magmaCount = WorldGen.genRand.Next(4);
+				for (int i = 0; i < magmaCount; i++) //Bottom magma patches
+				{
+					int offX = x + WorldGen.genRand.Next(-10, 10);
+					int offY = y;
+
+					MoveDown(offX, ref offY, ModContent.TileType<Gravel>());
+					if (WorldGen.SolidTile(offX, offY - 1)) //Only move back up (to the gravel tile, presumably) if it's buried
+						offY--;
+
+					if (Main.tile[offX, offY].HasTile && Main.tile[offX, offY].TileType == ModContent.TileType<Gravel>())
+						WorldGen.OreRunner(offX, offY, 4, 1, (ushort)ModContent.TileType<Magmastone>());
+					else
+						i--; //Try again
 				}
 
 				count++;
 			}
+		}
+	}
+
+	private static void GetWaterTop(ref int left, ref int right)
+	{
+		for (int x = 0; x < 2; x++)
+		{
+			int i = (x > 0) ? Main.maxTilesX - 40 : 40;
+			int j = 0;
+
+			while (j < (int)WorldGen.oceanLevel && Main.tile[i, j].LiquidType != LiquidID.Water || Main.tile[i, j].LiquidAmount == 0)
+				j++;
+
+			if (i != 0)
+				right = j;
+			else
+				left = j;
 		}
 	}
 
@@ -114,7 +160,9 @@ internal class GravelMicropass : Micropass
 			WorldGen.PlaceTile(p.X, p.Y, ModContent.TileType<Gravel>());
 			if (i >= size * (size - 1)) //Top layer slope logic
 			{
-				if (i % size == 0)
+				if (size == 2)
+					Framing.GetTileSafely(p).IsHalfBlock = true;
+				else if (i % size == 0)
 					Framing.GetTileSafely(p).Slope = SlopeType.SlopeDownLeft;
 				else if (i % size == size - 1)
 					Framing.GetTileSafely(p).Slope = SlopeType.SlopeDownRight;

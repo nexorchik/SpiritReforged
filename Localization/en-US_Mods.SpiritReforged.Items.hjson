@@ -932,3 +932,8 @@ GravelItem: {
 	DisplayName: Gravel
 	Tooltip: ""
 }
+
+MagmastoneItem: {
+	DisplayName: Magmastone
+	Tooltip: ""
+}

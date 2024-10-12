@@ -1,6 +1,4 @@
 ﻿using SpiritReforged.Common.Particle;
-using SpiritReforged.Common.TileCommon;
-using SpiritReforged.Content.Ocean.Items.Reefhunter;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
@@ -22,7 +20,7 @@ public class HydrothermalVent : ModTile
 		TileObjectData.newTile.Height = 4;
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 16];
 		TileObjectData.newTile.Origin = new(1, 3);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<Gravel>(), TileID.Sand];
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<Gravel>(), ModContent.TileType<Magmastone>(), TileID.Sand];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 8;
 		TileObjectData.addTile(Type);
@@ -45,19 +43,14 @@ public class HydrothermalVent : ModTile
 		var player = Main.LocalPlayer;
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
-		player.cursorItemIconID = ModContent.ItemType<SulfurDeposit>();
+		player.cursorItemIconID = ModContent.ItemType<Items.Reefhunter.SulfurDeposit>();
 	}
 
 	public override void HitWire(int i, int j)
 	{
-		TileExtensions.GetTopLeft(ref i, ref j);
+		Common.TileCommon.TileExtensions.GetTopLeft(ref i, ref j);
 		//if (Wiring.CheckMech(i, j, 7200))
 		//{
-			for (int k = 0; k <= 20; k++)
-				Dust.NewDustPerfect(new Vector2(i * 16 + 8, j * 16), ModContent.DustType<Dusts.BoneDust>(), new Vector2(0, 6).RotatedByRandom(1) * Main.rand.NextFloat(-1, 1));
-			for (int k = 0; k <= 20; k++)
-				Dust.NewDustPerfect(new Vector2(i * 16 + 8, j * 16), ModContent.DustType<Dusts.FireClubDust>(), new Vector2(0, 6).RotatedByRandom(1) * Main.rand.NextFloat(-1, 1));
-
 		var t = Framing.GetTileSafely(i, j);
 		int fullWidth = TileObjectData.GetTileData(t).CoordinateFullWidth;
 		var position = new Vector2(i, j) * 16 + tops[t.TileFrameX / fullWidth].ToVector2();
@@ -94,12 +87,13 @@ public class HydrothermalVent : ModTile
 				dust.noGravity = true;
 			}
 
-			SoundEngine.PlaySound(sound, new Vector2(i, j) * 16);
-
 			//Move the sound to the closest vent
+			SoundEngine.PlaySound(sound, new Vector2(i, j) * 16);
 			var activeSound = SoundEngine.FindActiveSound(in sound);
-			activeSound.Position = (activeSound.Position.HasValue && Main.LocalPlayer.Distance(activeSound.Position.Value) > Main.LocalPlayer.Distance(new Vector2(i, j) * 16)) 
-				? new Vector2(i, j) * 16 : activeSound.Position;
+
+			if (activeSound != null)
+				activeSound.Position = (activeSound.Position.HasValue && Main.LocalPlayer.Distance(activeSound.Position.Value) > Main.LocalPlayer.Distance(new Vector2(i, j) * 16)) 
+					? new Vector2(i, j) * 16 : activeSound.Position;
 		}
 	}
 
