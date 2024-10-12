@@ -125,6 +125,62 @@ Hiker: {
 			3: Sometimes I pass by a faerie, and they guide me to gold or platinum. I always act excited, but I don't have a pickaxe.
 			4: You always carry a little extra supplies if you're smart. I've got just a little too much...for a small fee, I won't!
 		}
+
+		Map: {
+			FloatingIsland: {
+				0: Happy to share! Here's a little pin on this floating island I found. How'd I get there? Well, let's just say harpies can carry you WAY farther than you'd expect.
+				1: Oh, of course! Got up to some mischief a while back, got way up there. Found a chest. Couldn't take anything, I was preoccupied thinking of how to get down.
+				2: Happy to. Checked out an island in the sky a few weeks ago, it was cool but the neighbours were annoying! Hope you find something there that I couldn't.
+			}
+
+			EnchantedSword: {
+				0: Anytime. So I was traipsing down a few narrow tunnels a while ago, and I found this glowy sword hilt in a stone. Can't imagine there was a functional blade, so I just left it.
+				1: Right on! Here's this spot. Looks unassuming, but I'm assuming the blue sword down there was cool. Pack was full of mushrooms and 3 different mining helmets, so I kept on moving.
+				2: Here you are! Don't remember when, but this sword was embedded into the stone. Like that one legend...King Arthur? I don't know. I don't mess with strange weapons; maybe you do?
+			}
+
+			Shimmer: {
+				0:
+					'''
+					Where was it...there it is. Walking, relaxing, the usual hike down a dangerous, completely dark cave. On the horizon? A brilliant, beautiful glow. Truly gorgeous.
+					You know what that means in nature? Stay away. So I did.
+					'''
+				1:
+					'''
+					Um...there we go. Tripped a while back, hit my head. Woke up, and it looks like some weird little fairy things took me to this crazy place. 
+					I don't remember much after that but abject panic.
+					'''
+				2:
+					'''
+					Here it is. You ever seen water? Imagine that but it glows like the night sky, an out-of-this world purple. 
+					Don't recommend drinking it, it makes your body feel fake. I don't know how to explain it. Trust me on this one.
+					'''
+			}
+
+			Savanna: {
+				0:
+					'''
+					Pin's on the house, per usual. I was walking up top, smelling the flowers and visiously punching trees to get apples. After punching a couple of trees, 
+					I look up. Somehow, a whole prairie snuck up on me. I went back to punching trees after a few moments.
+					'''
+				1:
+					'''
+					There it is. You ever walk and stare at the ground? You shouldn't. But a bit ago when I did, I saw the grass slowly go from a nice vibrant green to a sickly green. 
+					I look up; the largest grass I've ever seen. Thick as hell, too. So what'd I do? Well...I walked away. WAY too much work to walk in.
+					'''
+				2:
+					'''
+					Of course! So a bit ago I was seeing how quickly I could run from jungle bats, right, and boom. The humidity DROPS. A savanna sprawls out in front of me. What a sight!
+					And, if you care, I can run real quick if needed.
+					'''
+			}
+
+			Hive: {
+				0: Pin goes...here. On the low, I don't recommend that jungle place. It's ROUGH. But when you see one of those big hives, there's honey nearby. And that's a treat worth many stings.
+				1: There you go! Um...I'll be real. Sometimes, you get the idea of getting a bunch of honey and selling it. I found some...did I ever GET any? No. Keep it hike, not business.
+				2: Ah...nope...there it is. I'll keep it short this time. Stingers hurt. Be prepared.
+			}
+		}
 	}
 
 	Name: {

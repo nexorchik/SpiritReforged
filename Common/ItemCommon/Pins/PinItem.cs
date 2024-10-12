@@ -25,9 +25,15 @@ public abstract class PinItem : ModItem
 	/// </summary>
 	public virtual string DescName => PinName.ToLower();
 
-	public override string Texture => $"SpiritMod/Items/Pins/Textures/Pin{PinName}Item";
+	public override string Texture => base.Texture + "Item";
 
-	public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
+	public override void SetStaticDefaults()
+	{
+		Item.ResearchUnlockCount = 1;
+
+		PinMapLayer.Textures ??= [];
+		PinMapLayer.Textures.Add(PinName, ModContent.Request<Texture2D>(base.Texture + "Map"));
+	}
 
 	public override void SetDefaults()
 	{
@@ -54,12 +60,12 @@ public abstract class PinItem : ModItem
 		if (player.altFunctionUse != 2)
 		{
 			text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Pinned");
-			ModContent.GetInstance<PinWorld>().SetPin(PinName, player.Center / 16);
+			ModContent.GetInstance<PinSystem>().SetPin(PinName, player.Center / 16);
 		}
 		else
 		{
 			text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Unpinned");
-			ModContent.GetInstance<PinWorld>().RemovePin(PinName);
+			ModContent.GetInstance<PinSystem>().RemovePin(PinName);
 		}
 
 		CombatText.NewText(

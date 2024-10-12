@@ -7,6 +7,30 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Content\Forest\Misc\Pins\PinBlueItem.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinBlueMap.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinCopperItem.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinCopperMap.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinGoldItem.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinGoldMap.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinGreenItem.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinGreenMap.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinMoonjellyItem.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinMoonjellyMap.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinRedItem.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinRedMap.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinScarabItem.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinScarabMap.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinSilverItem.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinSilverMap.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinStarItem.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinStarMap.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinTreeItem.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinTreeMap.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinYellowItem.png" />
+    <None Remove="Content\Forest\Misc\Pins\PinYellowMap.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="NPCUtils">
       <HintPath>lib\NPCUtils.dll</HintPath>
     </Reference>

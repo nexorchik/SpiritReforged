@@ -837,3 +837,23 @@ WaningSunItem: {
 	DisplayName: Waning Sun
 	Tooltip: "'E. Sibellius'"
 }
+
+PinBlue: {
+	DisplayName: Pin Blue
+	Tooltip: ""
+}
+
+PinGreen: {
+	DisplayName: Pin Green
+	Tooltip: ""
+}
+
+PinRed: {
+	DisplayName: Pin Red
+	Tooltip: ""
+}
+
+PinYellow: {
+	DisplayName: Pin Yellow
+	Tooltip: ""
+}

@@ -5,7 +5,7 @@ namespace SpiritReforged.Common.ItemCommon.Pins;
 
 // This just exists to store the pin locations on the world
 // There's no data management here - please don't flood with unnecessary bloat
-public class PinWorld : ModSystem
+public class PinSystem : ModSystem
 {
 	public TagCompound pins = [];
 

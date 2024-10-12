@@ -210,5 +210,6 @@ Misc: {
 	Pins: {
 		Pinned: Pinned
 		Unpinned: Pin Removed
+		Move: Move Pin
 	}
 }

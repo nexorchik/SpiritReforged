@@ -14,22 +14,7 @@ internal class PinMapLayer : ModMapLayer
 
 	public override void Draw(ref MapOverlayDrawContext context, ref string text)
 	{
-		Textures ??= new Dictionary<string, Asset<Texture2D>>
-		{
-			{ "Blue", ModContent.Request<Texture2D>($"SpiritMod/Items/Pins/Textures/PinBlueMap") },
-			{ "Red", ModContent.Request<Texture2D>($"SpiritMod/Items/Pins/Textures/PinRedMap") },
-			{ "Green", ModContent.Request<Texture2D>($"SpiritMod/Items/Pins/Textures/PinGreenMap") },
-			{ "Yellow", ModContent.Request<Texture2D>($"SpiritMod/Items/Pins/Textures/PinYellowMap") },
-			{ "Tree", ModContent.Request<Texture2D>($"SpiritMod/Items/Pins/Textures/PinTreeMap") },
-			{ "Star", ModContent.Request<Texture2D>($"SpiritMod/Items/Pins/Textures/PinStarMap") },
-			{ "Copper", ModContent.Request<Texture2D>($"SpiritMod/Items/Pins/Textures/PinCopperMap") },
-			{ "Silver", ModContent.Request<Texture2D>($"SpiritMod/Items/Pins/Textures/PinSilverMap") },
-			{ "Gold", ModContent.Request<Texture2D>($"SpiritMod/Items/Pins/Textures/PinGoldMap") },
-			{ "Scarab", ModContent.Request<Texture2D>($"SpiritMod/Items/Pins/Textures/PinScarabMap") },
-			{ "Moonjelly", ModContent.Request<Texture2D>($"SpiritMod/Items/Pins/Textures/PinMoonjellyMap") },
-		};
-
-		var pins = ModContent.GetInstance<PinWorld>().pins;
+		var pins = ModContent.GetInstance<PinSystem>().pins;
 		bool placedPin = false;
 
 		if (heldPin != null)
@@ -49,10 +34,10 @@ internal class PinMapLayer : ModMapLayer
 					heldPin = pair.Key;
 
 				if (Main.mouseRight && Main.mouseRightRelease)
-					ModContent.GetInstance<PinWorld>().RemovePin(pair.Key);
+					ModContent.GetInstance<PinSystem>().RemovePin(pair.Key);
 
 				if (heldPin == null)
-					text = Language.GetTextValue("Mods.SpiritMod.Misc.PinMove");
+					text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Move");
 			}
 		}
 	}
@@ -71,7 +56,7 @@ internal class PinMapLayer : ModMapLayer
 			placedPin = true;
 
 			if (Main.netMode != NetmodeID.Server)
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Items/MapPin") with { PitchVariance = 0.3f });
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/MapPin") with { PitchVariance = 0.3f });
 		}
 
 		var drawOffset = new Vector2(0, heldOffset); //Hover above the cursor slightly when held
@@ -88,6 +73,6 @@ internal class PinMapLayer : ModMapLayer
 		//	packet.Send();
 		//}
 
-		ModContent.GetInstance<PinWorld>().SetPin(heldPinValue, cursorPos);
+		ModContent.GetInstance<PinSystem>().SetPin(heldPinValue, cursorPos);
 	}
 }

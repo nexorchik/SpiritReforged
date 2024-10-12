@@ -1,6 +1,9 @@
-﻿using SpiritReforged.Common.ItemCommon.Backpacks;
+﻿using Microsoft.CodeAnalysis.Operations;
+using SpiritReforged.Common.ItemCommon.Backpacks;
 using SpiritReforged.Common.ItemCommon.Pins;
+using SpiritReforged.Common.MapCommon;
 using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Savanna.Items.Gar;
 using Terraria;
 using Terraria.DataStructures;
@@ -14,6 +17,7 @@ internal class Hiker : PlayerContainerNPC, INPCButtons
 	{
 		public bool hasBundle = true;
 		public bool priceOff = false;
+		public bool hasPin = true;
 	}
 
 	public static WeightedRandom<(int, Range)> ItemPool
@@ -60,6 +64,8 @@ internal class Hiker : PlayerContainerNPC, INPCButtons
 		NPC.CloneDefaults(NPCID.SkeletonMerchant);
 		NPC.townNPC = true;
 		NPC.Size = new Vector2(30, 40);
+
+		_info = new();
 	}
 
 	protected override void PreDrawPlayer()
@@ -96,7 +102,7 @@ internal class Hiker : PlayerContainerNPC, INPCButtons
 		else
 			button = "";
 
-		button2 = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Buttons.Map");
+		button2 = !PointOfInterestSystem.HasAnyInterests() || !_info.hasPin ? "" : Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Buttons.Map");
 	}
 
 	public override void OnChatButtonClicked(bool firstButton, ref string shopName)
@@ -109,9 +115,39 @@ internal class Hiker : PlayerContainerNPC, INPCButtons
 				SpawnBundle();
 		}
 		else
+			MapFunctionality();
+	}
+
+	private void MapFunctionality()
+	{
+		var item = new Item();
+		PinItem pin = Main.rand.Next([.. ModContent.GetContent<PinItem>()]);
+		item.SetDefaults(pin.Type);
+
+		Main.LocalPlayer.QuickSpawnItem(new EntitySource_Gift(NPC), item);
+		Main.NewText("111");
+
+		InterestType type;
+
+		do 
 		{
-			//ModContent.GetInstance<PinWorld>().SetPin(PinName, player.Center / 16);
-		}
+			type = (InterestType)Main.rand.Next((int)InterestType.Count);
+		} while (!PointOfInterestSystem.HasInterestType(type));
+
+		Point16 point = PointOfInterestSystem.GetPoint(type);
+		ModContent.GetInstance<PinSystem>().SetPin(pin.PinName, point.ToVector2());
+		PointOfInterestSystem.RemovePoint(point, type);
+
+		Main.NewText("222");
+
+		Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Dialogue.Map." + type + "." + Main.rand.Next(3));
+		Main.npcChatCornerItem = pin.Type;
+
+		RevealMap.DrawMap(point.X, point.Y, 60);
+
+		Main.NewText("333");
+
+		_info.hasPin = false;
 	}
 
 	private void SpawnBundle()
