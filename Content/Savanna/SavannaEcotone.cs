@@ -14,6 +14,7 @@ internal class SavannaEcotone : EcotoneBase
 	private static Rectangle SavannaArea = Rectangle.Empty;
 
 	private static int Steps = 0;
+	private static bool HasSavanna = false;
 
 	protected override void InternalLoad() => On_WorldGen.SpreadGrass += HijackSpreadGrass;
 
@@ -39,13 +40,11 @@ internal class SavannaEcotone : EcotoneBase
 		tasks.Insert(secondIndex + 2, new PassLegacy("Grow Savanna", PopulateSavanna));
 	}
 
-	private void ReplacePurityInSavanna(GenerationProgress progress, GameConfiguration configuration)
-	{
-
-	}
-
 	private void PopulateSavanna(GenerationProgress progress, GameConfiguration configuration)
 	{
+		if (!HasSavanna)
+			return;
+
 		Dictionary<Point16, OpenFlags> tiles = [];
 		Dictionary<Point16, int> grassLocations = [];
 		HashSet<int> types = [TileID.Dirt, TileID.Grass];
@@ -106,11 +105,13 @@ internal class SavannaEcotone : EcotoneBase
 
 	private static WorldGenLegacyMethod BaseGeneration(List<EcotoneSurfaceMapping.EcotoneEntry> entries) => (progress, _) =>
 	{
-		IEnumerable<EcotoneSurfaceMapping.EcotoneEntry> validEntries = entries.Where(x => x.SurroundedBy("Desert", "Jungle"));
+		IEnumerable<EcotoneSurfaceMapping.EcotoneEntry> validEntries = entries.Where(x => x.SurroundedBy("Desert", "Jungle") && Math.Abs(x.Start.Y - x.End.Y) < 60);
 		var entry = validEntries.ElementAt(WorldGen.genRand.Next(validEntries.Count()));
 
 		if (entry is null)
 			return;
+
+		HasSavanna = true;
 
 		int startX = entry.Start.X - 0;
 		int endX = entry.End.X + 0;
