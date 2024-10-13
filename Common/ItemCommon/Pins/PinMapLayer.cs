@@ -34,7 +34,10 @@ internal class PinMapLayer : ModMapLayer
 					heldPin = pair.Key;
 
 				if (Main.mouseRight && Main.mouseRightRelease)
-					ModContent.GetInstance<PinSystem>().RemovePin(pair.Key);
+				{
+					PinSystem.Remove(pair.Key);
+					continue;
+				}
 
 				if (heldPin == null)
 					text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Move");
@@ -63,16 +66,7 @@ internal class PinMapLayer : ModMapLayer
 		Vector2 cursorPos = Main.MouseScreen - Main.ScreenSize.ToVector2() / 2;
 		cursorPos = (cursorPos - drawOffset) * (1 / Main.mapFullscreenScale) + Main.mapFullscreenPos;
 
-		// TODO
-		//if (placedPin && Main.netMode == NetmodeID.MultiplayerClient)
-		//{
-		//	ModPacket packet = SpiritMod.Instance.GetPacket(MessageType.PlaceMapPin, 3);
-		//	packet.Write(cursorPos.X);
-		//	packet.Write(cursorPos.Y);
-		//	packet.Write(heldPinValue);
-		//	packet.Send();
-		//}
-
-		ModContent.GetInstance<PinSystem>().SetPin(heldPinValue, cursorPos);
+		if (placedPin)
+			PinSystem.Place(heldPinValue, cursorPos);
 	}
 }

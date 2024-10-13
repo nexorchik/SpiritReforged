@@ -2,7 +2,7 @@
 
 internal abstract class PlayerContainerNPC : ModNPC
 {
-	public override string Texture => "Terraria/Images/NPC_0";
+	public override string Texture => "Terraria/Images/NPC_" + NPCID.Guide;
 
 	protected Player _drawDummy = null;
 
@@ -31,6 +31,7 @@ internal abstract class PlayerContainerNPC : ModNPC
 		Main.PlayerRenderer.DrawPlayers(Main.Camera, [_drawDummy]);
 		Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
 			DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
 		return false;
 	}
 }

@@ -60,12 +60,12 @@ public abstract class PinItem : ModItem
 		if (player.altFunctionUse != 2)
 		{
 			text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Pinned");
-			ModContent.GetInstance<PinSystem>().SetPin(PinName, player.Center / 16);
+			PinSystem.Place(PinName, player.Center / 16);
 		}
 		else
 		{
 			text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Unpinned");
-			ModContent.GetInstance<PinSystem>().RemovePin(PinName);
+			PinSystem.Remove(PinName);
 		}
 
 		CombatText.NewText(

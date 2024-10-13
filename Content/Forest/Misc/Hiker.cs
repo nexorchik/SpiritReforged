@@ -1,11 +1,10 @@
-﻿using Microsoft.CodeAnalysis.Operations;
-using SpiritReforged.Common.ItemCommon.Backpacks;
+﻿using SpiritReforged.Common.ItemCommon.Backpacks;
 using SpiritReforged.Common.ItemCommon.Pins;
 using SpiritReforged.Common.MapCommon;
+using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Savanna.Items.Gar;
-using Terraria;
 using Terraria.DataStructures;
 using Terraria.Utilities;
 
@@ -13,10 +12,24 @@ namespace SpiritReforged.Content.Forest.Misc;
 
 internal class Hiker : PlayerContainerNPC, INPCButtons
 {
+	/// <summary>
+	/// Stores all information for the hiker to pass properly between clones.
+	/// </summary>
 	private class HikerInfo
 	{
+		/// <summary>
+		/// If the hiker has a bundle to sell.
+		/// </summary>
 		public bool hasBundle = true;
+
+		/// <summary>
+		/// If the hiker has been fed, and now gives away the bundle for free.
+		/// </summary>
 		public bool priceOff = false;
+
+		/// <summary>
+		/// If the hiker has a pin to put on your map.
+		/// </summary>
 		public bool hasPin = true;
 	}
 
@@ -125,7 +138,6 @@ internal class Hiker : PlayerContainerNPC, INPCButtons
 		item.SetDefaults(pin.Type);
 
 		Main.LocalPlayer.QuickSpawnItem(new EntitySource_Gift(NPC), item);
-		Main.NewText("111");
 
 		InterestType type;
 
@@ -135,17 +147,27 @@ internal class Hiker : PlayerContainerNPC, INPCButtons
 		} while (!PointOfInterestSystem.HasInterestType(type));
 
 		Point16 point = PointOfInterestSystem.GetPoint(type);
-		ModContent.GetInstance<PinSystem>().SetPin(pin.PinName, point.ToVector2());
+		PinSystem.Place(pin.PinName, point.ToVector2());
 		PointOfInterestSystem.RemovePoint(point, type);
-
-		Main.NewText("222");
 
 		Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Dialogue.Map." + type + "." + Main.rand.Next(3));
 		Main.npcChatCornerItem = pin.Type;
 
-		RevealMap.DrawMap(point.X, point.Y, 60);
+		const int Radius = 60;
 
-		Main.NewText("333");
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+		{
+			NetMessage.SendData(MessageID.TileSection, -1, -1, null, point.X - Radius, point.Y - Radius, Radius * 2, Radius * 2);
+
+			ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.RevealMap, 4);
+			packet.Write((byte)RevealMap.MapSyncId.DrawMap);
+			packet.Write(point.X);
+			packet.Write(point.Y);
+			packet.Write((short)60);
+			packet.Send();
+		}
+		else	
+			RevealMap.DrawMap(point.X, point.Y, Radius);
 
 		_info.hasPin = false;
 	}
