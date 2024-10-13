@@ -53,6 +53,9 @@ internal class RevealMap
 
 				if (Main.netMode == NetmodeID.Server)
 				{
+					foreach (var plr in Main.ActivePlayers) // This is a little hacky lol
+						RemoteClient.CheckSection(plr.whoAmI, new Vector2(x, y).ToWorldCoordinates(), 2);
+
 					ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.RevealMap, 4);
 					packet.Write((byte)id);
 					packet.Write(x);
