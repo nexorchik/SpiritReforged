@@ -927,3 +927,12 @@ BotanistLegs: {
 	DisplayName: Botanist Joggers
 	Tooltip: 10% increased move speed
 }
+
+WheatgrassSeedPouch: {
+	DisplayName: Wheatgrass Seed Pouch
+	Tooltip:
+		'''
+		Throws a spread of seeds which grow wheatgrass on grass
+		'Shakes and swishes in your hand'
+		'''
+}
