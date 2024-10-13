@@ -62,7 +62,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
         return float4(0, 0, 0, 0);
     
     float noiseXCoord = ((xCoord - 0.5f) * textureStretch.x) + 0.5f;
-    float2 noiseCoords = float2(noiseXCoord, (input.TextureCoordinates.y * textureStretch.y) + scroll.y);
+    float2 noiseCoords = float2(noiseXCoord + scroll.x, (input.TextureCoordinates.y * textureStretch.y) + scroll.y);
     if (flipCoords)
     {
         noiseCoords.x = noiseCoords.y;

@@ -7,6 +7,7 @@ using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Particles;
 using static SpiritReforged.Common.Easing.EaseFunction;
 using static Microsoft.Xna.Framework.MathHelper;
+using System.IO;
 
 namespace SpiritReforged.Content.Desert.Scarabeus.Items.Projectiles;
 
@@ -245,14 +246,14 @@ public class SunOrb : ModProjectile
 		var rayColor = Color.LightGoldenrodYellow.Additive(100) * strength;
 		var darkRayColor = new Color(250, 167, 32, 200);
 
-		DrawBloom(rayColor, darkRayColor * strength);
-		DrawGodrays(rayColor, darkRayColor * strength, 0);
-
+		DrawBloom(darkRayColor, darkRayColor * strength);
+		DrawGodrays(rayColor, darkRayColor * strength);
 		GetRayDimensions(out float rayHeight, out float rayWidth, out float rayDist);
 		DrawBigRay(rayColor * 0.5f, darkRayColor * strength, rayHeight, rayWidth, rayDist);
 
-		DrawGlowmask(Color.Lerp(darkRayColor, rayColor, EaseCircularIn.Ease(GetFlashProgress)));
-		Projectile.QuickDraw(rot: 0, drawColor: Color.White.Additive(240) * Projectile.Opacity);
+		Projectile.QuickDraw(rot: 0, drawColor: Color.White.Additive(220) * Projectile.Opacity);
+		DrawGlowmask(rayColor);
+		DrawBloom(darkRayColor, darkRayColor * strength);
 
 		return false;
 	}
@@ -262,9 +263,9 @@ public class SunOrb : ModProjectile
 		Effect effect = AssetLoader.LoadedShaders["LightRay"];
 
 		effect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["FlameTrail"]);
-		float scrollAmount = (EaseCircularIn.Ease(GetFlashProgress) * 0.4f);
-		effect.Parameters["scroll"].SetValue(new Vector2(scrollAmount * Math.Sign(rayDist), scrollAmount));
-		effect.Parameters["textureStretch"].SetValue(new Vector2(0.4f, 0.05f) * 0.5f);
+		float scrollAmount = EaseCircularIn.Ease(GetFlashProgress) * 0.4f;
+		effect.Parameters["scroll"].SetValue(new Vector2(0, scrollAmount));
+		effect.Parameters["textureStretch"].SetValue(new Vector2(0.4f, 0.1f) * 0.5f);
 		effect.Parameters["texExponentRange"].SetValue(new Vector2(1f, 0.25f));
 		effect.Parameters["flipCoords"].SetValue(true);
 
@@ -301,23 +302,19 @@ public class SunOrb : ModProjectile
 	private void DrawBloom(Color lightColor, Color darkColor)
 	{
 		Texture2D bloomtex = AssetLoader.LoadedTextures["Bloom"];
-		float numBloom = 2;
 		var center = Projectile.Center - Main.screenPosition - new Vector2(Projectile.scale);
 		Vector2 projSize = Projectile.scale * Projectile.Size;
-		float smallSize = 4.65f * Projectile.scale;
-		float bigSize = 6.5f * Projectile.scale;
-		float easedFlashProgress = EaseCircularIn.Ease(GetFlashProgress);
+		float smallSize = 4.5f * Projectile.scale;
+		float bigSize = 7f * Projectile.scale;
+		float easedFlashProgress = EaseQuadIn.Ease(EaseCircularIn.Ease(GetFlashProgress));
 
-		for (int i = 0; i < numBloom; i++)
-		{
-			float progress = i / numBloom;
-			Vector2 scale = 10 * (projSize + new Vector2(Lerp(smallSize, bigSize, progress * easedFlashProgress))) / bloomtex.Size();
-			var origin = bloomtex.Size() / 2;
-			Color color = Projectile.GetAlpha(Color.Lerp(lightColor, darkColor, easedFlashProgress).Additive());
-			Main.spriteBatch.Draw(bloomtex, center, null, color, 0, origin, scale.X, SpriteEffects.None, 0);
-		}
+		Vector2 scale = 10 * (projSize + new Vector2(Lerp(smallSize, bigSize, easedFlashProgress))) / bloomtex.Size();
+		var origin = bloomtex.Size() / 2;
+		Color color = Projectile.GetAlpha(Color.Lerp(lightColor, darkColor, easedFlashProgress).Additive());
+		Main.spriteBatch.Draw(bloomtex, center, null, color, 0, origin, scale.X, SpriteEffects.None, 0);
 	}
-	private void DrawGodrays(Color rayColor, Color darkRayColor, float bigRayAngle)
+
+	private void DrawGodrays(Color rayColor, Color darkRayColor)
 	{
 		Texture2D raytex = AssetLoader.LoadedTextures["Ray"];
 		int numRays = 12;
@@ -348,13 +345,15 @@ public class SunOrb : ModProjectile
 	{
 		GlowmaskProjectile.ProjIdToGlowmask.TryGetValue(Projectile.type, out var glowMask);
 		Texture2D glowTex = glowMask.Glowmask.Value;
-		int numGlow = 8;
+		int numGlow = 16;
+
 		for (int i = 0; i < numGlow; i++)
 		{
 			var position = Projectile.Center - Main.screenPosition;
-			float distance = Lerp(1.5f, 3, EaseCircularIn.Ease(GetFlashProgress)) * Projectile.scale;
+			float distance = Lerp(2, 4, EaseCircularIn.Ease(GetFlashProgress)) * Projectile.scale;
 			position += Vector2.UnitX.RotatedBy(TwoPi * i / numGlow) * distance;
-			float opacity = 2f / numGlow;
+			float opacity = (2f - GetFlashProgress) / numGlow;
+			opacity *= Min(Projectile.scale, 1);
 			Main.spriteBatch.Draw(glowTex, position, Projectile.DrawFrame(), Projectile.GetAlpha(glowColor) * opacity, 0, Projectile.DrawFrame().Size() / 2, Projectile.scale, SpriteEffects.None, 0);
 		}
 	}
@@ -365,5 +364,21 @@ public class SunOrb : ModProjectile
 	{
 		if (target.type is NPCID.Vampire or NPCID.VampireBat)
 			modifiers.SourceDamage *= 100f; //silly
+	}
+
+	public override void SendExtraAI(BinaryWriter writer)
+	{
+		writer.WriteVector2(_offset);
+		writer.WriteVector2(_mousePos);
+		writer.Write(_stoppedChannel);
+		writer.Write(_initialized);
+	}
+
+	public override void ReceiveExtraAI(BinaryReader reader)
+	{
+		_offset = reader.ReadVector2();
+		_mousePos = reader.ReadVector2();
+		_stoppedChannel = reader.ReadBoolean();
+		_initialized = reader.ReadBoolean();
 	}
 }

@@ -57,13 +57,18 @@ public class SunStaffHeld : ModProjectile
 		StaffMovement();
 
 		int sunSpawnTime = RISE_TIME / 4;
+		int sunOrbID = ModContent.ProjectileType<SunOrb>();
 		if (AiTimer == sunSpawnTime && !_stoppedChannel)
 		{
 			Vector2 origin = owner.Center - Vector2.UnitY * 140;
-			Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), origin, Vector2.Zero, ModContent.ProjectileType<SunOrb>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0, 0, Projectile.whoAmI);
+			Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), origin, Vector2.Zero, sunOrbID, Projectile.damage, Projectile.knockBack, Projectile.owner, 0, 0, Projectile.whoAmI);
 			FlashTimer = FLASH_TIME;
 			Projectile.netUpdate = true;
 		}
+
+		//Failsafe if the sun orb despawns, somehow
+		if (AiTimer > sunSpawnTime && !_stoppedChannel && owner.ownedProjectileCounts[sunOrbID] == 0)
+			StartStaffLowering();
 
 		Projectile.rotation = MathHelper.Lerp(-MathHelper.PiOver4, -3 * MathHelper.PiOver4, RiseProgress);
 		if (owner.direction < 0)
@@ -112,8 +117,7 @@ public class SunStaffHeld : ModProjectile
 			particleCenter += Main.rand.NextVector2Circular(5, 8);
 
 			Vector2 particleVel = Main.rand.NextVector2Circular(1, 1) - Vector2.UnitY / 2;
-			Color lightColor = Color.LightGoldenrodYellow.Additive();
-			Color darkColor = new Color(250, 167, 32, 0);
+			var particleColor = new Color(250, 167, 32, 0);
 			float scale = Main.rand.NextFloat(0.6f, 0.8f);
 			int lifeTime = Main.rand.Next(30, 40);
 			static void delegateAction(Particle p)
@@ -122,15 +126,12 @@ public class SunStaffHeld : ModProjectile
 				p.Velocity.X *= 0.95f;
 			}
 
-			ParticleHandler.SpawnParticle(new GlowParticle(particleCenter, particleVel, darkColor, scale, lifeTime, 3, delegateAction).OverrideDrawLayer(ParticleLayer.AbovePlayer));
+			ParticleHandler.SpawnParticle(new GlowParticle(particleCenter, particleVel, particleColor, scale, lifeTime, 3, delegateAction).OverrideDrawLayer(ParticleLayer.AbovePlayer));
 		}
 	}
 
 	public override bool PreDraw(ref Color lightColor)
 	{
-		float strength = 0.5f;
-		Color glowColor = new Color(250, 167, 32, 0) * strength;
-
 		Projectile.TryGetOwner(out Player owner);
 		Texture2D staffTex = TextureAssets.Projectile[Type].Value;
 		GlowmaskProjectile.ProjIdToGlowmask.TryGetValue(Type, out GlowmaskInfo staffGlowAsset);
@@ -138,7 +139,9 @@ public class SunStaffHeld : ModProjectile
 		Texture2D starTex = AssetLoader.LoadedTextures["Star"];
 		Texture2D bloomTex = AssetLoader.LoadedTextures["Bloom"];
 
-		//Calculations (math scary ahh!)
+		//Calculations
+		float strength = 0.5f;
+		Color glowColor = new Color(250, 167, 32, 0) * strength;
 		float flashProgress = FlashTimer / FLASH_TIME;
 		float diagonalOrigin = 0.2f;
 		Vector2 origin = staffTex.Size() * new Vector2(diagonalOrigin, 1 - diagonalOrigin);
@@ -154,7 +157,7 @@ public class SunStaffHeld : ModProjectile
 		}
 
 		Vector2 staffPos = owner.GetFrontHandPosition(CompositeArmStretchAmount.Full, Projectile.rotation) - Main.screenPosition + Vector2.UnitY * owner.gfxOffY;
-		float stafScale = MathHelper.Lerp(RiseProgress, 1, 0.33f);
+		float staffScale = MathHelper.Lerp(RiseProgress, 1, 0.33f);
 
 		//Draw a star underneath the staff when it flashes after releasing m1, that rapidly decreases in scale
 		if(_stoppedChannel)
@@ -169,8 +172,8 @@ public class SunStaffHeld : ModProjectile
 		}
 
 		//Staff texture and glowmask
-		Main.spriteBatch.Draw(staffTex, staffPos, null, lightColor, rotationFlip, origin, stafScale, flip, 1f);
-		Main.spriteBatch.Draw(staffGlow, staffPos, null, glowColor * flashProgress, rotationFlip, origin, stafScale, flip, 1f);
+		Main.spriteBatch.Draw(staffTex, staffPos, null, lightColor, rotationFlip, origin, staffScale, flip, 1f);
+		Main.spriteBatch.Draw(staffGlow, staffPos, null, glowColor * flashProgress, rotationFlip, origin, staffScale, flip, 1f);
 
 		//Bloom-like glowmask drawing
 		float numGlow = 6;
@@ -179,9 +182,10 @@ public class SunStaffHeld : ModProjectile
 		for (int i = 0; i < numGlow; i++)
 		{
 			Vector2 offset = Vector2.UnitX.RotatedBy(MathHelper.TwoPi * i / numGlow) * distance;
-			Main.spriteBatch.Draw(staffGlow, staffPos + offset, null, glowColor * opacity, rotationFlip, origin, stafScale, flip, 1f);
+			Main.spriteBatch.Draw(staffGlow, staffPos + offset, null, glowColor * opacity, rotationFlip, origin, staffScale, flip, 1f);
 		}
 
+		//Actual bloom above everything else while flashing
 		if(_stoppedChannel)
 			Main.spriteBatch.Draw(bloomTex, staffPos + staffTipPos, null, glowColor * EaseFunction.EaseQuadOut.Ease(flashProgress) * 2, 0, bloomTex.Size() / 2, 0.25f, SpriteEffects.None, 0);
 
