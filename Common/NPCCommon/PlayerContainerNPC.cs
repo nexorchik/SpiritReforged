@@ -2,6 +2,7 @@
 
 internal abstract class PlayerContainerNPC : ModNPC
 {
+	// This has to be set to something near the size of the NPC because otherwise it'll give you a tiny clickbox. Who knows why!
 	public override string Texture => "Terraria/Images/NPC_" + NPCID.Guide;
 
 	protected Player _drawDummy = null;
