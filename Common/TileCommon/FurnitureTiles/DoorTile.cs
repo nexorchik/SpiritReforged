@@ -6,11 +6,19 @@ namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
 public abstract class DoorTile : FurnitureTile, IDrawPreview
 {
-	/// <summary> Functions like <see cref="ModType.Load"/> and handles open door autoloading. </summary>
-	public override void Load() => Mod.AddContent(new AutoloadedDoorOpen(Name + "Open", Texture, MyItemDrop));
+	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 40);
 
-	/// <summary> Expects the item name (tile internal name)"Item". This should be overridden otherwise. </summary>
-	public override int MyItemDrop => Mod.TryFind(Name + "Item", out ModItem item) ? item.Type : base.MyItemDrop;
+	public override void AddItemRecipes(ModItem item)
+	{
+		if (CoreMaterial != ItemID.None)
+			item.CreateRecipe()
+			.AddIngredient(CoreMaterial, 6)
+			.AddTile(TileID.WorkBenches)
+			.Register();
+	}
+
+	/// <summary> Functions like <see cref="ModType.Load"/> and handles open door autoloading. </summary>
+	public override void Load() => Mod.AddContent(new AutoloadedDoorOpen(Name + "Open", Texture, ModItem.Type));
 
 	public override void StaticDefaults()
 	{
@@ -47,7 +55,6 @@ public abstract class DoorTile : FurnitureTile, IDrawPreview
 
 		TileObjectData.addTile(Type);
 
-		RegisterItemDrop(MyItemDrop); //Prevents inconsistent item drops based on style
 		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsDoor);
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("MapObject.Door"));
 		AdjTiles = [TileID.ClosedDoor];
@@ -61,7 +68,7 @@ public abstract class DoorTile : FurnitureTile, IDrawPreview
 		Player player = Main.LocalPlayer;
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
-		player.cursorItemIconID = MyItemDrop;
+		player.cursorItemIconID = ModItem.Type;
 	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)

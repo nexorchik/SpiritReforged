@@ -14,6 +14,18 @@ public abstract class BedTile : FurnitureTile
 		return (frameX < wrapX) ? frameX <= wrapX / 3 : frameX % wrapX > wrapX / 3;
 	}
 
+	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(silver: 4);
+
+	public override void AddItemRecipes(ModItem item)
+	{
+		if (CoreMaterial != ItemID.None)
+			item.CreateRecipe()
+			.AddIngredient(CoreMaterial, 15)
+			.AddIngredient(ItemID.Silk, 5)
+			.AddTile(TileID.Sawmill)
+			.Register();
+	}
+
 	public override void StaticDefaults()
 	{
 		Main.tileSolid[Type] = false;
@@ -99,7 +111,7 @@ public abstract class BedTile : FurnitureTile
 		{
 			player.noThrow = 2;
 			player.cursorItemIconEnabled = true;
-			player.cursorItemIconID = MyItemDrop;
+			player.cursorItemIconID = ModItem.Type;
 		}
 		else if (player.IsWithinSnappngRangeToTile(i, j, PlayerSleepingHelper.BedSleepingMaxDistance))
 		{

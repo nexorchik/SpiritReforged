@@ -1,22 +1,22 @@
 ﻿namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class FurnitureTile : ModTile
+public abstract class FurnitureTile : ModTile, IAutoloadTileItem
 {
-	/// <summary> Defaults to <see cref="TileLoader.GetItemDropFromTypeAndStyle"/>. </summary>
-	public virtual int MyItemDrop => TileLoader.GetItemDropFromTypeAndStyle(Type);
+	public ModItem ModItem => Mod.Find<ModItem>(Name + "Item");
+
+	public virtual void SetItemDefaults(ModItem item) { }
+	public virtual void AddItemRecipes(ModItem item) { }
+	/// <summary> The defining material in most furniture recipes. </summary>
+	public virtual int CoreMaterial => ItemID.None;
 
 	public sealed override void SetStaticDefaults()
 	{
-		if (MyItemDrop > 0)
-			RegisterItemDrop(MyItemDrop);
+		if (ModItem.Type > 0)
+			RegisterItemDrop(ModItem.Type);
 
 		StaticDefaults();
-		PostStaticDefaults();
 	}
 
 	/// <summary> Functions like <see cref="SetStaticDefaults"/>. </summary>
 	public virtual void StaticDefaults() { }
-
-	/// <summary> Called directly after <see cref="StaticDefaults"/> to conveniently modify tile properties. </summary>
-	public virtual void PostStaticDefaults() { }
 }
