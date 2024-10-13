@@ -44,6 +44,7 @@ Projectiles: {
 	ToucanMinion.DisplayName: Toucan Minion
 	TumblerPet.DisplayName: Tumbler Pet
 	BaobabFruitProj.DisplayName: Falling Baobab Fruit
+	MineralPickup.DisplayName: Mineral Pickup
 }
 
 Configs: {

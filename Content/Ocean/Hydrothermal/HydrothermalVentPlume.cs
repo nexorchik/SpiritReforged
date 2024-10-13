@@ -22,14 +22,13 @@ public class HydrothermalVentPlume : ModProjectile
 		{
 			SoundEngine.PlaySound(SoundID.Drown with { Pitch = -.5f, PitchVariance = .25f, Volume = 1.5f }, Projectile.Center);
 
-			if (Main.rand.NextBool(4))
+			if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(4))
 			{
-				int item = Item.NewItem(Projectile.GetSource_FromAI(), Projectile.Center, 0, 0, ModContent.ItemType<SulfurDeposit>(), 1, false, 0, false);
-				Main.item[item].velocity = (Projectile.velocity * Main.rand.NextFloat()).RotatedByRandom(1f);
-				Main.item[item].noGrabDelay = 100;
+				var vel = (Projectile.velocity * 2 * Main.rand.NextFloat(.5f, 1f)).RotatedByRandom(1.75f);
+				var proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), 
+					Projectile.Center, vel, ModContent.ProjectileType<MineralPickup>(), 0, 0);
 
-				if (Main.netMode != NetmodeID.SinglePlayer)
-					NetMessage.SendData(MessageID.SyncItem, -1, -1, null, item, 1f);
+				MineralPickup.SpawnItemPickup(ModContent.ItemType<SulfurDeposit>(), proj);
 			}
 		}
 
