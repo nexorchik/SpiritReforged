@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Common.Particle;
-using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Content.Ocean.Items.Reefhunter;
 using SpiritReforged.Content.Ocean.Tiles.Hydrothermal;
 using Terraria.Audio;
@@ -8,55 +7,40 @@ namespace SpiritReforged.Content.Ocean.Hydrothermal;
 
 public class HydrothermalVentPlume : ModProjectile
 {
-	private const int timeLeftMax = 120;
-
 	public override string Texture => "Terraria/Images/NPC_0";
 
 	public override void SetDefaults()
 	{
 		Projectile.ignoreWater = true;
 		Projectile.penetrate = -1;
-		Projectile.timeLeft = 60 * 10;
+		Projectile.timeLeft = Tiles.HydrothermalVent.eruptDuration;
 	}
 
 	public override void AI()
 	{
-		if (Projectile.timeLeft == timeLeftMax) //On-spawn effects
+		if (Projectile.timeLeft % 20 == 0)
 		{
-			for (int k = 0; k <= 20; k++)
-				Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<Dusts.BoneDust>(), new Vector2(0, 6).RotatedByRandom(1) * Main.rand.NextFloat(-1, 1));
-			for (int k = 0; k <= 20; k++)
-				Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<Dusts.FireClubDust>(), new Vector2(0, 6).RotatedByRandom(1) * Main.rand.NextFloat(-1, 1));
-
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/StoneCrack" + Main.rand.Next(1, 3)) { PitchVariance = .6f }, Projectile.Center);
 			SoundEngine.PlaySound(SoundID.Drown with { Pitch = -.5f, PitchVariance = .25f, Volume = 1.5f }, Projectile.Center);
 
-			for (int i = 0; i < 5; i++) //Large initial smoke plume
+			if (Main.rand.NextBool(4))
 			{
-				ParticleHandler.SpawnParticle(new DissipatingSmoke(Projectile.Center + Main.rand.NextVector2Unit() * 25f, -Vector2.UnitY,
-					new Color(40, 40, 50), Color.Black, Main.rand.NextFloat(.05f, .3f), 150));
+				int item = Item.NewItem(Projectile.GetSource_FromAI(), Projectile.Center, 0, 0, ModContent.ItemType<SulfurDeposit>(), 1, false, 0, false);
+				Main.item[item].velocity = (Projectile.velocity * Main.rand.NextFloat()).RotatedByRandom(1f);
+				Main.item[item].noGrabDelay = 100;
+
+				if (Main.netMode != NetmodeID.SinglePlayer)
+					NetMessage.SendData(MessageID.SyncItem, -1, -1, null, item, 1f);
 			}
-
-			Main.LocalPlayer.SimpleShakeScreen(2, 3, 90, 16 * 10);
 		}
 
-		if (Projectile.timeLeft % 7 == 0 && Main.rand.NextBool(4))
-		{
-			SoundEngine.PlaySound(SoundID.Drown with { Pitch = -.5f, PitchVariance = .25f, Volume = 1.5f }, Projectile.Center);
+		if (Main.dedServ || !new Rectangle((int)Main.screenPosition.X, (int)Main.screenPosition.Y, Main.screenWidth, Main.screenHeight).Contains(Projectile.Center.ToPoint()))
+			return; //Don't create vfx for the local player if the projectile isn't on screen
 
-			int item = Item.NewItem(Projectile.GetSource_FromAI(), Projectile.Center, 0, 0, ModContent.ItemType<SulfurDeposit>(), 1, false, 0, false);
-			Main.item[item].velocity = (Projectile.velocity * Main.rand.NextFloat()).RotatedByRandom(1f);
-			Main.item[item].noGrabDelay = 100;
-
-			if (Main.netMode != NetmodeID.SinglePlayer)
-				NetMessage.SendData(MessageID.SyncItem, -1, -1, null, item, 1f);
-		}
-
-		if (Main.rand.NextBool()) //Foreground embers
+		if (Main.rand.NextBool(10)) //Foreground embers
 			FireParticleScreen.Spawn();
 
-		if (Main.rand.NextBool(4)) //Small embers
-			ParticleHandler.SpawnParticle(new Particles.GlowParticle(Projectile.Center + new Vector2(Main.rand.NextFloat(-1f, 1f) * 4, 16),
+		if (Main.rand.NextBool(12)) //Small embers
+			ParticleHandler.SpawnParticle(new Particles.GlowParticle(Projectile.Center + new Vector2(Main.rand.NextFloat(-1f, 1f) * 4, 0),
 				(Projectile.velocity * Main.rand.NextFloat(.25f)).RotatedByRandom(.4f), Color.OrangeRed, Main.rand.NextFloat(.1f, .4f), 190, 8, delegate (Particle p)
 				{
 					p.Velocity = p.Velocity.RotatedByRandom(.05f);
@@ -76,6 +60,8 @@ public class HydrothermalVentPlume : ModProjectile
 		dust2.velocity *= new Vector2(0.3f, 2f);
 		dust2.velocity.Y -= 2;
 		dust2.position = new Vector2(Projectile.Center.X, Projectile.Center.Y + Projectile.height * -0.5f);
+		dust2.noGravity = true;
+		dust2.fadeIn = 1.5f;
 	}
 
 	public override bool ShouldUpdatePosition() => false;

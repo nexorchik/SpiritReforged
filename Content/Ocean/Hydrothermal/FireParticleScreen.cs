@@ -15,7 +15,7 @@ public class FireParticleScreen : ScreenParticle
 		Velocity.X += Main.windSpeedCurrent / 15;
 		Velocity.X *= 0.99f;
 		Velocity.Y *= 1.0035f;
-		Velocity = Velocity.RotatedByRandom(0.01f);
+		Velocity = Velocity.RotatedByRandom(0.1f);
 
 		Color = Color.Lerp(new Color(246, 255, 0), new Color(232, 37, 2), 
 			(float)TimeActive / MaxTime) * (float)Math.Sin(MathHelper.Pi * (TimeActive / (float)MaxTime)) * 0.85f * ActiveOpacity;
@@ -39,7 +39,7 @@ public class FireParticleScreen : ScreenParticle
 		p.OriginalScreenPosition = Main.screenPosition;
 		p.Velocity = new Vector2(0, Main.rand.NextFloat(1.5f, 4));
 		p.Rotation = Main.rand.NextFloat(MathHelper.PiOver4);
-		p.Scale = Main.rand.NextFloat(0.05f, 0.08f);
+		p.Scale = Main.rand.NextFloat(0.05f, 0.065f);
 		p.ParallaxStrength = (float)Math.Pow(p.Scale, 3);
 		p.MaxTime = 360;
 

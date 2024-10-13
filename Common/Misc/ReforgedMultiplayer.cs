@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.SimpleEntity;
+using SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 using System.IO;
 
 namespace SpiritReforged.Common.Misc;
@@ -8,6 +9,7 @@ public static class ReforgedMultiplayer
 {
 	public enum MessageType : byte
 	{
+		SendVentEruption,
 		SpawnTrail,
 		SpawnSimpleEntity,
 		KillSimpleEntity
@@ -19,6 +21,13 @@ public static class ReforgedMultiplayer
 
 		switch (id)
 		{
+			case MessageType.SendVentEruption: //Normally should only be recieved by clients
+				short i = reader.ReadInt16();
+				short j = reader.ReadInt16();
+
+				HydrothermalVent.Erupt(i, j);
+				break;
+
 			case MessageType.SpawnTrail:
 				int proj = reader.ReadInt32();
 
