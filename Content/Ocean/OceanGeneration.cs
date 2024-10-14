@@ -29,12 +29,10 @@ public class OceanGeneration : ModSystem
 
             tasks.RemoveAt(tasks.FindIndex(genpass => genpass.Name.Equals("Shell Piles")));
 
-			#region ocean caves
 			int cavesIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Create Ocean Caves")); //Replace ocean cave gen
 
 			if (cavesIndex != -1)
 				tasks[cavesIndex] = new PassLegacy("Create Ocean Caves", GenerateOceanCaves);
-			#endregion
 		}
 	}
 
@@ -458,39 +456,6 @@ public class OceanGeneration : ModSystem
 	/// <summary>Generates ocean caves like vanilla does but with a guaranteed chance.</summary>
 	public static void GenerateOceanCaves(GenerationProgress progress, GameConfiguration config)
 	{
-		static void Decorate(int i, int j)
-		{
-			for (int x = 0; x < 300; x++)
-			{
-				var on = Framing.GetTileSafely(i, j);
-				var below = Framing.GetTileSafely(i, j + 1);
-
-				for (int a = 0; a < 50; a++) //Position vertically
-				{
-					on = Framing.GetTileSafely(i, j);
-					below = Framing.GetTileSafely(i, j + 1);
-
-					if (on.HasTile && Main.tileSolid[on.TileType])
-						j--;
-					else if (!below.HasTile || !Main.tileSolid[below.TileType])
-						j++;
-					else
-						break;
-				}
-
-				//Hydrothermal vents
-				/*if (on.LiquidAmount > 0 && on.LiquidType == LiquidID.Water && below.TileType == TileID.Sand && !below.TopSlope && WorldGen.genRand.NextBool(25))
-				{
-					int type = WorldGen.genRand.NextBool(3) ? ModContent.TileType<HydrothermalVent1x3>() : ModContent.TileType<HydrothermalVent1x2>();
-
-					WorldGen.PlaceObject(i, j, type, true, WorldGen.genRand.Next(2));
-					NetMessage.SendObjectPlacement(-1, i, j, type, 0, 0, -1, -1);
-				}*/
-
-				i -= GenVars.dungeonSide; //Position horizontally
-			}
-		}
-
 		for (int attempt = 0; attempt < 2; attempt++)
 		{
 			if ((attempt != 0 || GenVars.dungeonSide <= 0) && (attempt != 1 || GenVars.dungeonSide >= 0))
@@ -506,7 +471,6 @@ public class OceanGeneration : ModSystem
 				}
 
 				WorldGen.oceanCave(i, j);
-				Decorate(i, j);
 			}
 		}
 	}

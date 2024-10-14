@@ -33,7 +33,7 @@ internal class GravelMicropass : Micropass
 
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Gravel");
 		int count = 0;
-		int maxCount = 15 * (WorldGen.GetWorldSize() + 1);
+		int maxCount = 8 + 2 * WorldGen.GetWorldSize(); //The maximum number of gravel patches which can generate in a world
 		int distance = WorldGen.oceanDistance;
 
 		int waterTopLeft = 0, waterTopRight = 0;
