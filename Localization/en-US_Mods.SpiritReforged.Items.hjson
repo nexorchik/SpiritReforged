@@ -952,3 +952,12 @@ TintedGlasses: {
 	DisplayName: Tinted Glasses
 	Tooltip: "'They help sell the look, so it's best to keep them on even when it's dark.'"
 }
+
+WheatgrassSeedPouch: {
+	DisplayName: Wheatgrass Seed Pouch
+	Tooltip:
+		'''
+		Throws a spread of seeds which grow wheatgrass on grass
+		'Shakes and swishes in your hand'
+		'''
+}
