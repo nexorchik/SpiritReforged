@@ -1,5 +1,5 @@
 ﻿using Terraria.WorldBuilding;
-using SpiritReforged.Common.WorldGeneration.Microtones;
+using SpiritReforged.Common.WorldGeneration.Micropasses;
 using SpiritReforged.Content.Forest.Stargrass.Tiles;
 
 namespace SpiritMod.World.Micropasses;
