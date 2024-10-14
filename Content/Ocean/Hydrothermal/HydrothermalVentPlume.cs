@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Ocean.Items.Reefhunter;
 using SpiritReforged.Content.Ocean.Tiles.Hydrothermal;
+using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Hydrothermal;
@@ -39,13 +40,13 @@ public class HydrothermalVentPlume : ModProjectile
 			FireParticleScreen.Spawn();
 
 		if (Main.rand.NextBool(12)) //Small embers
-			ParticleHandler.SpawnParticle(new Particles.GlowParticle(Projectile.Center + new Vector2(Main.rand.NextFloat(-1f, 1f) * 4, 0),
+			ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center + new Vector2(Main.rand.NextFloat(-1f, 1f) * 4, 0),
 				(Projectile.velocity * Main.rand.NextFloat(.25f)).RotatedByRandom(.4f), Color.OrangeRed, Main.rand.NextFloat(.1f, .4f), 190, 8, delegate (Particle p)
 				{
 					p.Velocity = p.Velocity.RotatedByRandom(.05f);
 				}));
 
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 2; i++)
 		{
 			var dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, 0f, 0f, 100, default, .1f + Main.rand.Next(5) * .1f);
 			dust.fadeIn = 1.5f + Main.rand.Next(5) * 0.1f;

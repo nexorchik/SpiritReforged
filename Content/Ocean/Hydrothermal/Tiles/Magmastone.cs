@@ -46,7 +46,7 @@ public class Magmastone : ModTile, IAutoloadTileItem
 		{
 			if (cooldown.Value > desVal && cooldown.Key.ToVector2().Distance(new Vector2(i, j)) <= range)
 				return Color.Lerp(defaultColor, Color.White, (cooldown.Value - desVal) / (float)HydrothermalVent.eruptDuration);
-		} //Glow brightly when a nearby vent is erupting
+		} //Glow brightly when a nearby vent is erupting //Too expensive?
 
 		return defaultColor;
 	}

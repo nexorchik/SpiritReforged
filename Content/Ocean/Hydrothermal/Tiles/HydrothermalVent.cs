@@ -1,5 +1,7 @@
-﻿using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
+using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
@@ -13,7 +15,6 @@ public class HydrothermalVent : ModTile
 	internal const int eruptDuration = 60 * 10;
 
 	private static readonly Point[] tops = [new Point(16, 16), new Point(16, 16), new Point(16, 24), new Point(12, 4), new Point(20, 4), new Point(16, 16), new Point(16, 16), new Point(16, 16)];
-	private SoundStyle sound = new("SpiritReforged/Assets/SFX/Ambient/Bubbling") { SoundLimitBehavior = SoundLimitBehavior.IgnoreNew };
 
 	public override void Load() => On_Wiring.UpdateMech += UpdateCooldowns;
 
@@ -41,7 +42,7 @@ public class HydrothermalVent : ModTile
 		var position = new Vector2(i, j) * 16 + tops[t.TileFrameX / fullWidth].ToVector2();
 
 		if (Main.netMode != NetmodeID.MultiplayerClient)
-			Projectile.NewProjectileDirect(new EntitySource_Wiring(i, j), position, Vector2.UnitY * -4f, ModContent.ProjectileType<HydrothermalVentPlume>(), 5, 0f);
+			Projectile.NewProjectile(new EntitySource_Wiring(i, j), position, Vector2.UnitY * -4f, ModContent.ProjectileType<HydrothermalVentPlume>(), 5, 0f);
 		if (!Main.dedServ)
 		{
 			for (int k = 0; k <= 20; k++)
@@ -49,8 +50,14 @@ public class HydrothermalVent : ModTile
 			for (int k = 0; k <= 20; k++)
 				Dust.NewDustPerfect(position, ModContent.DustType<Dusts.FireClubDust>(), new Vector2(0, 6).RotatedByRandom(1) * Main.rand.NextFloat(-1, 1));
 
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/StoneCrack" + Main.rand.Next(1, 3)) { PitchVariance = .6f }, position);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/StoneCrack" + Main.rand.Next(1, 3)) { PitchVariance = .6f }, position);
 			SoundEngine.PlaySound(SoundID.Drown with { Pitch = -.5f, PitchVariance = .25f, Volume = 1.5f }, position);
+
+			ParticleHandler.SpawnParticle(new TexturedPulseCircle(position, Color.Orange, 0.75f, 200, 20, "supPerlin",
+				new Vector2(4, 0.75f), EaseFunction.EaseCubicOut).WithSkew(0.75f, MathHelper.Pi - MathHelper.PiOver2));
+
+			ParticleHandler.SpawnParticle(new TexturedPulseCircle(position, Color.White, 0.5f, 200, 20, "supPerlin",
+				new Vector2(4, 0.75f), EaseFunction.EaseCubicOut).WithSkew(0.75f, MathHelper.Pi - MathHelper.PiOver2));
 
 			for (int x = 0; x < 5; x++) //Large initial smoke plume
 			{
@@ -122,20 +129,7 @@ public class HydrothermalVent : ModTile
 				dust.noGravity = true;
 			}
 
-			if (Collision.WetCollision(Main.LocalPlayer.position, Main.LocalPlayer.width, Main.LocalPlayer.height)) //Ambient sound logic
-			{
-				SoundEngine.PlaySound(sound, new Vector2(i, j) * 16);
-				var activeSound = SoundEngine.FindActiveSound(in sound);
-
-				if (activeSound != null) //Move the sound to the closest vent
-					activeSound.Position = (activeSound.Position.HasValue && Main.LocalPlayer.Distance(activeSound.Position.Value) > Main.LocalPlayer.Distance(new Vector2(i, j) * 16))
-						? new Vector2(i, j) * 16 : activeSound.Position;
-			}
-			else
-			{
-				var activeSound = SoundEngine.FindActiveSound(in sound);
-				activeSound?.Stop(); //Stop the sound if the local player isn't submerged
-			}
+			BubbleSoundPlayer.StartSound(new Vector2(i, j) * 16);
 		}
 	}
 

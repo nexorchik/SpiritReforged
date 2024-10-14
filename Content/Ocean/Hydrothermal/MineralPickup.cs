@@ -97,7 +97,7 @@ internal class MineralPickup : ModProjectile, ITrailProjectile
 
 		var color = Color.Yellow * (1f - Main.MouseWorld.Distance(Projectile.Center) / 50f); //Draw outline
 		Main.EntitySpriteDraw(AssetLoader.LoadedTextures["Bloom"], Projectile.Center - Main.screenPosition + new Vector2(0, Projectile.gfxOffY), null,
-			(color with { A = 0 }) * .5f, Projectile.rotation, AssetLoader.LoadedTextures["Bloom"].Size() / 2, Projectile.scale * .25f, SpriteEffects.None);
+			(color with { A = 0 }) * .35f, Projectile.rotation, AssetLoader.LoadedTextures["Bloom"].Size() / 2, Projectile.scale * .25f, SpriteEffects.None);
 
 		Main.EntitySpriteDraw(outlineTexture.Value, Projectile.Center - Main.screenPosition, Source(outlineTexture.Value),
 			color, Projectile.rotation, Source(outlineTexture.Value).Size() / 2, Projectile.scale, SpriteEffects.None);
