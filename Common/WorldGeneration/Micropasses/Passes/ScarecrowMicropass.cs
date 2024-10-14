@@ -1,5 +1,4 @@
-﻿using SpiritReforged.Common.WorldGeneration.Microtones;
-using SpiritReforged.Content.Forest.Botanist.Tiles;
+﻿using SpiritReforged.Content.Forest.Botanist.Tiles;
 using System.Linq;
 using Terraria.IO;
 using Terraria.WorldBuilding;
