@@ -39,19 +39,19 @@ internal class EcotoneSurfaceMapping : ModSystem
 
 		tasks.Insert(mapIndex + 1, new PassLegacy("Map Ecotones", MapEcotones));
 
-#if DEBUG
-		tasks.Add(new PassLegacy("Ecotone Debug", (progress, config) =>
-		{
-			foreach (var item in Entries)
-			{
-				for (int x = item.Start.X; x < item.End.X; ++x)
-				{
-					for (int nY = 90; nY < 100; ++nY)
-						WorldGen.PlaceTile(x, nY, item.Definition.DisplayId, true, true);
-				}
-			}
-		}));
-#endif
+//#if DEBUG
+//		tasks.Add(new PassLegacy("Ecotone Debug", (progress, config) =>
+//		{
+//			foreach (var item in Entries)
+//			{
+//				for (int x = item.Start.X; x < item.End.X; ++x)
+//				{
+//					for (int nY = 90; nY < 100; ++nY)
+//						WorldGen.PlaceTile(x, nY, item.Definition.DisplayId, true, true);
+//				}
+//			}
+//		}));
+//#endif
 	}
 
 	private void MapEcotones(GenerationProgress progress, GameConfiguration configuration)

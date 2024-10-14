@@ -15,6 +15,8 @@ internal class SavannaEcotone : EcotoneBase
 
 	private static int Steps = 0;
 	private static bool HasSavanna = false;
+	private EcotoneSurfaceMapping.EcotoneEntry Entry = null;
+	private HashSet<int> CliffFaces = [];
 
 	protected override void InternalLoad() => On_WorldGen.SpreadGrass += HijackSpreadGrass;
 
@@ -105,7 +107,11 @@ internal class SavannaEcotone : EcotoneBase
 
 	private static WorldGenLegacyMethod BaseGeneration(List<EcotoneSurfaceMapping.EcotoneEntry> entries) => (progress, _) =>
 	{
-		IEnumerable<EcotoneSurfaceMapping.EcotoneEntry> validEntries = entries.Where(x => x.SurroundedBy("Desert", "Jungle") && Math.Abs(x.Start.Y - x.End.Y) < 60);
+		IEnumerable<EcotoneSurfaceMapping.EcotoneEntry> validEntries = entries.Where(x => x.SurroundedBy("Desert", "Jungle") && Math.Abs(x.Start.Y - x.End.Y) < 120);
+
+		if (!validEntries.Any())
+			return;
+
 		var entry = validEntries.ElementAt(WorldGen.genRand.Next(validEntries.Count()));
 
 		if (entry is null)
@@ -121,7 +127,7 @@ internal class SavannaEcotone : EcotoneBase
 
 		var topBottomY = new Point(Math.Min(startY, endY), Math.Max(startY, endY));
 
-		Steps = WorldGen.genRand.Next(14, 18);
+		Steps = 3;// WorldGen.genRand.Next(14, 18);
 
 		Dictionary<int, int> stepOffset = [];
 		int offset = 0;
@@ -142,13 +148,14 @@ internal class SavannaEcotone : EcotoneBase
 
 		for (int x = startX; x < endX; ++x)
 		{
-			float factor = (MathF.Min(x + xOffsetForFactor, endX) - startX) / (endX - startX);
-			factor = ModifyLerpFactor(factor);
+			float factor = GetBaseLerpFactorForX(startX, endX, xOffsetForFactor, x);
 			int addY = (int)MathHelper.Lerp(startY, endY, factor);
-			int y = addY + stepOffset[(int)(factor * (Steps - 1))] - (int)(sandNoise.GetNoise(x, 600) * 2);
+			int ySlant = 0;// (int)MathHelper.Lerp(0, endY - startY, (x - startX) / (float)(endX - startX));
+			int y = addY + stepOffset[(int)(factor * (Steps - 1))] - (int)(sandNoise.GetNoise(x, 600) * 2) + ySlant;
 			int depth = WorldGen.genRand.Next(20);
+			int minDepth = (int)Main.worldSurface - y;
 
-			for (int i = -80; i < 90 + depth; ++i)
+			for (int i = -80; i < 30 + depth + minDepth; ++i)
 			{
 				int realY = y + i;
 				Tile tile = Main.tile[x, realY];
@@ -183,6 +190,7 @@ internal class SavannaEcotone : EcotoneBase
 					tile.Clear(TileDataType.All);
 			}
 
+			int oldOffset = xOffsetForFactor;
 			xOffsetForFactor += (int)Math.Round(sandNoise.GetNoise(x, 0) * 2);
 		}
 
@@ -202,6 +210,13 @@ internal class SavannaEcotone : EcotoneBase
 			return off < 3 ? TileID.Sandstone : TileID.Sand;
 		}
 	};
+
+	private static float GetBaseLerpFactorForX(int startX, int endX, int xOffsetForFactor, int x)
+	{
+		float factor = (MathF.Min(x + xOffsetForFactor, endX) - startX) / (endX - startX);
+		factor = ModifyLerpFactor(factor);
+		return factor;
+	}
 
 	private static float ModifyLerpFactor(float factor)
 	{
