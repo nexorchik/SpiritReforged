@@ -1,8 +1,10 @@
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Buffs;
 using SpiritReforged.Common.ItemCommon;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.OceanPendant;
 
+[AutoloadEquip(EquipType.Neck)]
 public class OceanPendant : AccessoryItem
 {
 	public override void SetDefaults()
@@ -14,5 +16,45 @@ public class OceanPendant : AccessoryItem
 		Item.accessory = true;
 	}
 
-	public override void UpdateEquip(Player player) => player.AddBuff(ModContent.BuffType<EmpoweredSwim>(), 2);
+	public override void UpdateEquip(Player player)
+	{
+		if (Collision.WetCollision(player.position, player.width, player.height))
+			player.AddBuff(ModContent.BuffType<EmpoweredSwim>(), 10);
+	}
+}
+
+public class OceanPendantLayer : PlayerDrawLayer
+{
+	private static Asset<Texture2D> glowTexture;
+
+	public override void Load() => glowTexture = ModContent.Request<Texture2D>(GetType().Namespace.Replace(".", "/") + "/OceanPendant_Neck_Glow");
+	public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.NeckAcc);
+	public override bool IsHeadLayer => false;
+
+	public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
+	{
+		var player = drawInfo.drawPlayer;
+		return player.HasBuff<EmpoweredSwim>() && player.active && !player.dead;
+	}
+
+	protected override void Draw(ref PlayerDrawSet drawInfo)
+	{
+		if (drawInfo.shadow != 0f)
+			return;
+
+		var texture = glowTexture.Value;
+		Color color = Color.White;
+
+		drawInfo.DrawDataCache.Add(new DrawData(
+			texture,
+			drawInfo.drawPlayer.position - Main.screenPosition,
+			drawInfo.drawPlayer.bodyFrame,
+			color,
+			0f,
+			new Vector2(10),
+			1f,
+			drawInfo.playerEffect,
+			0
+		));
+	}
 }

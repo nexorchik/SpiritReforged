@@ -56,16 +56,23 @@ public class OceanPendantTile : ModTile
 	{
 		var worldPos = new Vector2(i, j) * 16;
 		circleBoid.Populate(worldPos, 15, 120, worldPos); //Populate our custom boid
+	}
 
+	public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref TileDrawInfo drawData)
+	{
+		Main.instance.TilesRenderer.AddSpecialLegacyPoint(i, j);
+
+		var worldPos = new Vector2(i, j) * 16;
 		if (!Main.gamePaused && Main.rand.NextBool(9) && Main.LocalPlayer.Distance(worldPos) < 16 * 20)
 			ParticleHandler.SpawnParticle(new GlowParticle(worldPos + new Vector2(8), -Vector2.UnitY * Main.rand.NextFloat(), Color.Goldenrod, Main.rand.NextFloat(.1f, .2f), 100, 1, delegate (Particle p)
 			{
 				p.Velocity = p.Velocity.RotatedByRandom(.1f);
 				p.Velocity *= .98f;
 			}));
-	}
 
-	public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref TileDrawInfo drawData) => Main.instance.TilesRenderer.AddSpecialLegacyPoint(i, j);
+		var color = Color.Goldenrod.ToVector3() / 255f * 50;
+		Lighting.AddLight(worldPos, color);
+	}
 
 	public override void SpecialDraw(int i, int j, SpriteBatch spriteBatch)
 	{
