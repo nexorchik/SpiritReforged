@@ -517,8 +517,30 @@ public class OceanGeneration : ModSystem
 				}
 
 				WorldGen.oceanCave(i, j);
+				PlaceOceanPendant();
 				Decorate(i, j);
 			}
+		}
+	}
+
+	private static void PlaceOceanPendant()
+	{
+		while (true)
+		{
+			int x = WorldGen.genRand.Next(40, WorldGen.oceanDistance);
+			if (WorldGen.genRand.NextBool())
+				x = WorldGen.genRand.Next(Main.maxTilesX - WorldGen.oceanDistance, Main.maxTilesX - 40);
+
+			var pos = new Point(x, (int)(Main.maxTilesY * 0.35f / 16f));
+			while (!WorldGen.SolidTile(pos.X, pos.Y))
+				pos.Y++;
+
+			pos.Y--;
+			int type = ModContent.TileType<Items.Reefhunter.OceanPendant.OceanPendantTile>();
+
+			WorldGen.PlaceObject(pos.X, pos.Y, type);
+			if (Framing.GetTileSafely(pos).TileType == type)
+				break;
 		}
 	}
 
