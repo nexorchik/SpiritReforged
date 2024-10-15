@@ -156,9 +156,9 @@ IridescentScale: {
 	Tooltip: "'Glints beautifully under the water'"
 }
 
-PendantOfTheOcean: {
-	DisplayName: Pendant of the Ocean
-	Tooltip: Double tap {0} to gain unhindered movement underwater for a short time
+OceanPendant: {
+	DisplayName: Seafarer's Pendant
+	Tooltip: Grants unhindered movement underwater
 }
 
 ReefSpear: {
