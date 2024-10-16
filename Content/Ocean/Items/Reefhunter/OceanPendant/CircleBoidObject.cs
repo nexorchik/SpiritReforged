@@ -5,20 +5,20 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter.OceanPendant;
 internal class CircleBoidObject(Boid flock) : BoidObject(flock)
 {
 	private float phase;
+	private CircleBoid Parent => (CircleBoid)parent;
 
 	public Vector2 Anchor(int range)
 	{
-		var parent = this.parent as CircleBoid;
-		if (parent.anchor is null)
+		if (Parent.anchor is null)
 			return Vector2.Zero;
 
-		if (Framing.GetTileSafely(parent.anchor.Value).TileType != ModContent.TileType<OceanPendantTile>())
+		if (Framing.GetTileSafely(Parent.anchor.Value).TileType != ModContent.TileType<OceanPendantTile>())
 		{
-			parent.anchor = null;
+			Parent.anchor = null;
 			return Vector2.Zero;
 		}
 
-		return position.DirectionTo(parent.anchor.Value) * (position.Distance(parent.anchor.Value) / (16 * range));
+		return position.DirectionTo(Parent.anchor.Value) * (position.Distance(Parent.anchor.Value) / (16 * range));
 	}
 
 	public override void Draw(SpriteBatch spritebatch)
@@ -31,7 +31,7 @@ internal class CircleBoidObject(Boid flock) : BoidObject(flock)
 		var source = texture.Frame(1, 2, 0, frame % 2);
 		var effects = velocity.X > 0 ? SpriteEffects.FlipVertically : SpriteEffects.None;
 
-		if (velocity.X > 0)
+		if (velocity.X > 0 && Parent.anchor != null)
 			phase = MathHelper.Min(phase + .05f, 1);
 		else
 			phase = MathHelper.Max(phase - .05f, 0);

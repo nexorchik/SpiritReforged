@@ -45,7 +45,6 @@ public class OceanPendantTile : ModTile
 	public override bool RightClick(int i, int j)
 	{
 		WorldGen.KillTile(i, j);
-
 		if (Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j);
 

@@ -531,16 +531,19 @@ public class OceanGeneration : ModSystem
 			if (WorldGen.genRand.NextBool())
 				x = WorldGen.genRand.Next(Main.maxTilesX - WorldGen.oceanDistance, Main.maxTilesX - 40);
 
-			var pos = new Point(x, (int)(Main.maxTilesY * 0.35f / 16f));
-			while (!WorldGen.SolidTile(pos.X, pos.Y))
-				pos.Y++;
+			int y = WorldGen.genRand.Next((int)(Main.maxTilesY * 0.35f / 16f), (int)WorldGen.oceanLevel);
+			while (!WorldGen.SolidTile(x, y))
+				y++;
 
-			pos.Y--;
-			int type = ModContent.TileType<Items.Reefhunter.OceanPendant.OceanPendantTile>();
+			y--;
+			if (Framing.GetTileSafely(x, y).LiquidType == LiquidID.Water && Framing.GetTileSafely(x, y).LiquidAmount >= 255)
+			{
+				int type = ModContent.TileType<Items.Reefhunter.OceanPendant.OceanPendantTile>();
 
-			WorldGen.PlaceObject(pos.X, pos.Y, type);
-			if (Framing.GetTileSafely(pos).TileType == type)
-				break;
+				WorldGen.PlaceObject(x, y, type);
+				if (Framing.GetTileSafely(x, y).TileType == type)
+					break;
+			}
 		}
 	}
 
