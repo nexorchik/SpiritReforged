@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.TileSway;
+using SpiritReforged.Content.Forest.Stargrass.Tiles;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Botanist.Tiles;
@@ -17,7 +18,7 @@ public class Wheatgrass : ModTile, ISwayInWind
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
 		TileObjectData.newTile.Origin = new(0, 1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 1, 0);
-		TileObjectData.newTile.AnchorValidTiles = [TileID.Grass, TileID.Dirt];
+		TileObjectData.newTile.AnchorValidTiles = [TileID.Grass, TileID.Dirt, ModContent.TileType<StargrassTile>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 6;
 		TileObjectData.addTile(Type);
@@ -25,6 +26,12 @@ public class Wheatgrass : ModTile, ISwayInWind
 		AddMapEntry(Color.Yellow);
 		DustType = DustID.Hay;
 		HitSound = SoundID.Grass;
+	}
+
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HeldItem.type == ItemID.Sickle)
+			yield return new Item(ItemID.Hay);
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;

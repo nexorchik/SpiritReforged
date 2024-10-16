@@ -124,8 +124,9 @@ public class Cannonbubble : ModProjectile
 			return;
 
 		int dustCount = Main.rand.Next(7, 12);
+
 		SoundEngine.PlaySound(SoundID.Item54, Projectile.Center);
-		SoundEngine.PlaySound(SoundID.Item86, Projectile.Center);
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_LightPop") with { PitchVariance = 0.4f, Pitch = 1.3f, Volume = .6f, MaxInstances = 10 }, Projectile.Center);
 
 		//ParticleHandler.SpawnParticle(new BubblePop(Projectile.Center, Projectile.scale * 0.35f, 0.8f, 30));
 		ParticleHandler.SpawnParticle(new PulseCircle(Projectile.Center, RINGCOLOR, RINGCOLOR * 0.5f, 0.3f, 150 * Projectile.scale, 50, EaseFunction.EaseCircularOut).WithSkew(0.85f, -MathHelper.PiOver2).UsesLightColor());
@@ -217,6 +218,8 @@ public class Cannonbubble : ModProjectile
 	private void OnCollideExtra(float strength = 1f)
 	{
 		JiggleStrength = 1;
+
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_LightPop") with { PitchVariance = 0.8f, Pitch = -1.2f, Volume = .5f, MaxInstances = 10 }, Projectile.Center);
 
 		if (!Main.dedServ)
 		{

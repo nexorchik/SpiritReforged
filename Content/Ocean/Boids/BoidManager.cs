@@ -16,8 +16,8 @@ public class BoidManager : ILoadable
 			return;
 
 		const string path = "SpiritReforged/Content/Ocean/Boids/Textures/";
-		const int fishTextureCount = 11;
-		int flockCount = Main.rand.Next(5) + 6;
+		const int fishTextureCount = 14;
+		int flockCount = Main.rand.Next(5) + 8;
 
 		#region load textures
 		FishTextures = new Asset<Texture2D>[fishTextureCount];
@@ -49,8 +49,8 @@ public class BoidManager : ILoadable
 			var boid = new WeightedRandom<Boid>();
 			boid.Add(new Boid(GetFishLookup(), 1f, Main.rand.Next(5, 20)), 1);
 			boid.Add(new Boid(GetFishLookup(), 1f, Main.rand.Next(30, 60)), .2f);
-			boid.Add(new Boid(10, .8f, Main.rand.Next(30, 60)), .14f); //Shrimp
-			boid.Add(new Boid(9, .525f, 60), .19f); //Sardine
+			boid.Add(new Boid(12, .8f, Main.rand.Next(30, 60)), .14f); //Shrimp
+			boid.Add(new Boid(13, .525f, 60), .19f); //Sardine
 
 			Flocks.Add(boid);
 		}
