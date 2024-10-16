@@ -8,6 +8,7 @@ using SpiritReforged.Content.Particles;
 using static SpiritReforged.Common.Easing.EaseFunction;
 using static Microsoft.Xna.Framework.MathHelper;
 using System.IO;
+using static Terraria.GameContent.Animations.Actions.Sprites;
 
 namespace SpiritReforged.Content.Desert.Scarabeus.Items.Projectiles;
 
@@ -139,7 +140,7 @@ public class SunOrb : ModProjectile
 			if (progress == 0)
 				Projectile.Kill();
 
-			Projectile.scale = CompoundEase(EaseQuadIn, EaseCubicOut, progress, 0.4f) * Lerp(1, 1.3f, progress);
+			Projectile.scale = CompoundEase(EaseCubicIn, EaseCubicOut, progress, 0.2f) * Lerp(1, 1.3f, progress);
 			_rayScale = new Vector3(EaseQuadOut.Ease(Min(Projectile.scale, 1)));
 			_rayScale.X *= Lerp(0.5f, 1.2f, EaseCircularIn.Ease(progress)) * Projectile.scale;
 		}
@@ -240,42 +241,40 @@ public class SunOrb : ModProjectile
 
 	private float GetFlashProgress => FlashTimer / FLASHTIME;
 
-	public override bool PreDraw(ref Color lightColor)
+	public override bool PreDraw(ref Color _)
 	{
-		float strength = Lerp(GetFlashProgress, 1, 0.25f);
-		var rayColor = Color.LightGoldenrodYellow.Additive(100) * strength;
-		var darkRayColor = new Color(250, 167, 32, 200);
+		float strength(float lerpAmount) => Lerp(GetFlashProgress, 1, lerpAmount);
+		Color lightColor(byte alpha = 100, float lerpAmount = 0.25f) => Color.LightGoldenrodYellow.Additive(alpha) * strength(lerpAmount);
+		Color darkColor(float lerpAmount = 0.25f) => new Color(250, 167, 32, 200) * strength(lerpAmount);
 
-		DrawBloom(darkRayColor, darkRayColor * strength);
-		DrawGodrays(rayColor, darkRayColor * strength);
-		GetRayDimensions(out float rayHeight, out float rayWidth, out float rayDist);
-		DrawBigRay(rayColor * 0.5f, darkRayColor * strength, rayHeight, rayWidth, rayDist);
-
-		Projectile.QuickDraw(rot: 0, drawColor: Color.White.Additive(220) * Projectile.Opacity);
-		DrawGlowmask(rayColor);
-		DrawBloom(darkRayColor, darkRayColor * strength);
+		DrawStar(lightColor(), darkColor());
+		DrawBigRay(Color.Lerp(lightColor(), darkColor(1), GetFlashProgress / 5), darkColor());
+		DrawSun(lightColor(200, 1), darkColor(0.5f));
 
 		return false;
 	}
 
-	private void DrawBigRay(Color rayColor, Color darkRayColor, float rayHeight, float rayWidth, float rayDist)
+	//Beware: Hyper specific shader parameter setting with 1 billion different easings below!
+	private void DrawBigRay(Color rayColor, Color darkRayColor)
 	{
 		Effect effect = AssetLoader.LoadedShaders["LightRay"];
+		GetRayDimensions(out float rayHeight, out float rayWidth, out float rayDist);
 
 		effect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["FlameTrail"]);
 		float scrollAmount = EaseCircularIn.Ease(GetFlashProgress) * 0.4f;
 		effect.Parameters["scroll"].SetValue(new Vector2(0, scrollAmount));
-		effect.Parameters["textureStretch"].SetValue(new Vector2(0.4f, 0.1f) * 0.5f);
-		effect.Parameters["texExponentRange"].SetValue(new Vector2(1f, 0.25f));
+		effect.Parameters["textureStretch"].SetValue(new Vector2(4, 1) * 0.05f);
+		effect.Parameters["texExponentRange"].SetValue(new Vector2(1, 0.25f));
 		effect.Parameters["flipCoords"].SetValue(true);
 
 		float easedScale = EaseCircularIn.Ease(Clamp(Projectile.scale, 0, 1));
 		float easedFlashProgress = EaseCubicIn.Ease(GetFlashProgress);
-		effect.Parameters["finalIntensityMod"].SetValue((2 + 2 * easedFlashProgress) * easedScale * Projectile.scale);
+		effect.Parameters["finalIntensityMod"].SetValue(1 * (1 + easedFlashProgress/2) * easedScale * Projectile.scale);
 		effect.Parameters["textureStrength"].SetValue(easedFlashProgress); //Don't display texture while not flashing
-		effect.Parameters["finalExponent"].SetValue(2.5f);
+		effect.Parameters["finalExponent"].SetValue(2f);
 
 		effect.Parameters["uColor"].SetValue(rayColor.ToVector4());
+
 		effect.Parameters["uColor2"].SetValue(darkRayColor.ToVector4());
 
 		var rayVisualStretch = new Vector3(2.5f, 1.3f, 1.15f); //Stretch the primitive to better fit the actual hitbox, since shader makes it innaccurate
@@ -283,7 +282,7 @@ public class SunOrb : ModProjectile
 
 		var rayFinalDimensions = new Vector3(rayWidth * rayVisualStretch.X, rayHeight * rayVisualStretch.Y, rayDist * rayVisualStretch.Z);
 
-		float sunWidth = 40 * Projectile.scale * Lerp(_rayScale.X, 1, 0.5f);
+		float sunWidth = 30 * Projectile.scale * Lerp(_rayScale.X, 1, 0.5f);
 		effect.Parameters["taperRatio"].SetValue(sunWidth / rayFinalDimensions.X);
 
 		var square = new SquarePrimitive
@@ -299,63 +298,49 @@ public class SunOrb : ModProjectile
 		PrimitiveRenderer.DrawPrimitiveShape(square, effect);
 	}
 
-	private void DrawBloom(Color lightColor, Color darkColor)
+	private void DrawSun(Color lightColor, Color darkRayColor)
+	{ 
+		Effect effect = AssetLoader.LoadedShaders["SunOrb"];
+		effect.Parameters["lightColor"].SetValue(lightColor.ToVector4());
+		effect.Parameters["darkColor"].SetValue(darkRayColor.ToVector4());
+		effect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["Extra_49"]);
+		effect.Parameters["intensity"].SetValue((1.5f + EaseCircularIn.Ease(GetFlashProgress)) * EaseQuadOut.Ease(Projectile.scale));
+
+		//Subtle swirly noise around the main orb- unneccessary flourish but I like it
+		float time = AiTimer / 60f;
+		effect.Parameters["noiseTexture"].SetValue(AssetLoader.LoadedTextures["swirlNoise"]);
+		effect.Parameters["scroll"].SetValue(new Vector2(-time / 6, -time / 2));
+		effect.Parameters["textureStretch"].SetValue(new Vector2(1, 0.5f));
+
+		//Godrays around the orb, intensity dramatically increases when the orb flashes
+		effect.Parameters["rayTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"]);
+		effect.Parameters["rayScroll"].SetValue(new Vector2(time / 6, -3f * time + EaseCircularIn.Ease(GetFlashProgress) * 2.5f));
+		effect.Parameters["rayStretch"].SetValue(new Vector2(1, 0.03f));
+		float rayIntensity = Max(3 * EaseCircularIn.Ease(EaseQuadIn.Ease(GetFlashProgress)), 0.15f) * EaseCircularIn.Ease(Min(Projectile.scale, 1));
+		effect.Parameters["rayIntensity"].SetValue(rayIntensity);
+
+		var square = new SquarePrimitive
+		{
+			Color = Color.White,
+			Height = 60 * Projectile.scale,
+			Length = 60 * Projectile.scale,
+			Position = Projectile.Center - Main.screenPosition
+		};
+
+		PrimitiveRenderer.DrawPrimitiveShape(square, effect);
+	}
+
+	private void DrawStar(Color lightColor, Color darkColor)
 	{
-		Texture2D bloomtex = AssetLoader.LoadedTextures["Bloom"];
+		Texture2D starTex = AssetLoader.LoadedTextures["Star"];
 		var center = Projectile.Center - Main.screenPosition - new Vector2(Projectile.scale);
-		Vector2 projSize = Projectile.scale * Projectile.Size;
-		float smallSize = 4.5f * Projectile.scale;
-		float bigSize = 7f * Projectile.scale;
-		float easedFlashProgress = EaseQuadIn.Ease(EaseCircularIn.Ease(GetFlashProgress));
+		float maxSize = 0.6f * Projectile.scale;
+		float easedFlashProgress = EaseCircularIn.Ease(GetFlashProgress);
 
-		Vector2 scale = 10 * (projSize + new Vector2(Lerp(smallSize, bigSize, easedFlashProgress))) / bloomtex.Size();
-		var origin = bloomtex.Size() / 2;
+		Vector2 scale = new Vector2(1f, 0.5f) * Lerp(0, maxSize, easedFlashProgress);
+		var origin = starTex.Size() / 2;
 		Color color = Projectile.GetAlpha(Color.Lerp(lightColor, darkColor, easedFlashProgress).Additive());
-		Main.spriteBatch.Draw(bloomtex, center, null, color, 0, origin, scale.X, SpriteEffects.None, 0);
-	}
-
-	private void DrawGodrays(Color rayColor, Color darkRayColor)
-	{
-		Texture2D raytex = AssetLoader.LoadedTextures["Ray"];
-		int numRays = 12;
-		for (int i = 0; i < numRays; i++)
-		{
-			float timeSpeed = EaseCircularIn.Ease(GetFlashProgress) * 4f;
-			var center = Projectile.Center - Main.screenPosition;
-			var rayScale = new Vector2(1.5f, 0.6f) * Lerp(GetFlashProgress, 0.5f, 0.8f);
-			Color color = Projectile.GetAlpha(rayColor);
-			var origin = new Vector2(raytex.Width / 2, 0);
-			float rotation = timeSpeed + (TwoPi * i / numRays);
-			if (i % 3 == 0) //Smaller inverse rotation rays
-			{
-				rayScale.Y *= 0.9f;
-				rotation = -rotation + timeSpeed / 2;
-			}
-
-			rayScale.Y *= EaseQuadOut.Ease(GetFlashProgress);
-			color *= EaseQuadIn.Ease(GetFlashProgress);
-			darkRayColor *= EaseQuadIn.Ease(GetFlashProgress);
-
-			Main.spriteBatch.Draw(raytex, center, null, darkRayColor, rotation, origin, rayScale * Projectile.scale * 1.2f, SpriteEffects.None, 0);
-			Main.spriteBatch.Draw(raytex, center, null, color, rotation, origin, rayScale * Projectile.scale, SpriteEffects.None, 0);
-		}
-	}
-
-	private void DrawGlowmask(Color glowColor)
-	{
-		GlowmaskProjectile.ProjIdToGlowmask.TryGetValue(Projectile.type, out var glowMask);
-		Texture2D glowTex = glowMask.Glowmask.Value;
-		int numGlow = 16;
-
-		for (int i = 0; i < numGlow; i++)
-		{
-			var position = Projectile.Center - Main.screenPosition;
-			float distance = Lerp(2, 4, EaseCircularIn.Ease(GetFlashProgress)) * Projectile.scale;
-			position += Vector2.UnitX.RotatedBy(TwoPi * i / numGlow) * distance;
-			float opacity = (2f - GetFlashProgress) / numGlow;
-			opacity *= Min(Projectile.scale, 1);
-			Main.spriteBatch.Draw(glowTex, position, Projectile.DrawFrame(), Projectile.GetAlpha(glowColor) * opacity, 0, Projectile.DrawFrame().Size() / 2, Projectile.scale, SpriteEffects.None, 0);
-		}
+		Main.spriteBatch.Draw(starTex, center, null, color, 0, origin, scale, SpriteEffects.None, 0);
 	}
 
 	public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) => overPlayers.Add(index);

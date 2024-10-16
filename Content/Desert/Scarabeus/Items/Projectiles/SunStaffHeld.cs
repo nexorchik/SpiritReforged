@@ -60,7 +60,7 @@ public class SunStaffHeld : ModProjectile
 		int sunOrbID = ModContent.ProjectileType<SunOrb>();
 		if (AiTimer == sunSpawnTime && !_stoppedChannel)
 		{
-			Vector2 origin = owner.Center - Vector2.UnitY * 140;
+			Vector2 origin = owner.Center - Vector2.UnitY * 100;
 			Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), origin, Vector2.Zero, sunOrbID, Projectile.damage, Projectile.knockBack, Projectile.owner, 0, 0, Projectile.whoAmI);
 			FlashTimer = FLASH_TIME;
 			Projectile.netUpdate = true;
