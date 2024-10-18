@@ -16,11 +16,12 @@ internal class OceanKelp : ModTile
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.WaterPlacement = LiquidPlacement.OnlyInLiquid;
 		TileObjectData.newTile.AnchorBottom = new Terraria.DataStructures.AnchorData(AnchorType.SolidTile | AnchorType.AlternateTile, 1, 0);
-		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, Type];
-		TileObjectData.newTile.AnchorAlternateTiles = [TileID.Sand, Type];
+		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand];
+		TileObjectData.newTile.AnchorAlternateTiles = [Type];
 		TileObjectData.addTile(Type);
 
 		AddMapEntry(new Color(21, 92, 19));
+		RegisterItemDrop(ModContent.ItemType<Items.Kelp>()); //Reiterate
 		DustType = DustID.Grass;
 		HitSound = SoundID.Grass;
 	}
@@ -95,7 +96,7 @@ internal class OceanKelp : ModTile
 				t.TileFrameX += ClumpFrameOffset;
 			else if (validBelow) //grows clump 1
 				t.TileFrameX += ClumpFrameOffset;
-			else if ((Framing.GetTileSafely(i, j + 1).TileFrameX >= ClumpFrameOffset * 2 && t.TileFrameX < ClumpFrameOffset * 2)) //grows clump 2
+			else if (Framing.GetTileSafely(i, j + 1).TileFrameX >= ClumpFrameOffset * 2 && t.TileFrameX < ClumpFrameOffset * 2) //grows clump 2
 				t.TileFrameX += ClumpFrameOffset;
 		}
 	}
@@ -113,14 +114,7 @@ internal class OceanKelp : ModTile
 			WorldGen.KillTile(i, j);
 	}
 
-	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) //Kills whole stack when...killed
-	{
-		if (Framing.GetTileSafely(i, j - 1).HasTile && Framing.GetTileSafely(i, j - 1).TileType == Type && Framing.GetTileSafely(i, j).TileFrameY < 108) //If ungrounded, kill me
-			WorldGen.KillTile(i, j - 1, false, false, false);
-
-		Tile t = Framing.GetTileSafely(i, j);
-		t.TileFrameX = t.TileFrameY = 0;
-	}
+	public override bool CanDrop(int i, int j) => Framing.GetTileSafely(i, j).LiquidAmount >= 155; //Only drop items in water. Prevents cluttering the ocean due to potential worldgen quirks
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch) //Drawing woo
 	{
