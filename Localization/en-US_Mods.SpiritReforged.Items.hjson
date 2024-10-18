@@ -961,3 +961,8 @@ WheatgrassSeedPouch: {
 		'Shakes and swishes in your hand'
 		'''
 }
+
+SavannaSandstormMusicBoxItem: {
+	Tooltip: ""
+	DisplayName: Music Box (Duststorm)
+}
