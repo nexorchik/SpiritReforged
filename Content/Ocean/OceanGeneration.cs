@@ -26,14 +26,13 @@ public class OceanGeneration : ModSystem
             if (beachIndex != -1)
                 tasks[beachIndex] = new PassLegacy("Beaches", GenerateOcean);
 
-			tasks.RemoveAt(tasks.FindIndex(genpass => genpass.Name.Equals("Shell Piles"))); //Remove shell piles
-
-			int cavesIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Create Ocean Caves"));
+			int cavesIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Create Ocean Caves")); //Replace ocean cave gen
 			if (cavesIndex != -1)
-			{
-				tasks[cavesIndex] = new PassLegacy("Create Ocean Caves", GenerateOceanCaves); //Replace ocean cave gen
-				tasks.Insert(cavesIndex + 1, new PassLegacy("Populate Ocean", GenerateOceanObjects)); //Populate Ocean
-			}
+				tasks[cavesIndex] = new PassLegacy("Create Ocean Caves", GenerateOceanCaves);
+
+			int sandIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Remove Water From Sand")); //Populate the ocean
+			if (sandIndex != -1)
+				tasks.Insert(sandIndex + 1, new PassLegacy("Populate Ocean", GenerateOceanObjects));
 		}
 	}
 
@@ -98,6 +97,8 @@ public class OceanGeneration : ModSystem
 				for (oceanTop = 0; !Main.tile[initialWidth - 1, oceanTop].HasTile; oceanTop++)
 				{ } //Get top of ocean
 
+				GenVars.shellStartXLeft = GenVars.leftBeachEnd - 30 - WorldGen.genRand.Next(15, 30);
+				GenVars.shellStartYLeft = oceanTop;
 				CheckOceanHeight(ref oceanTop);
 
 				oceanTop += WorldGen.genRand.Next(1, 5);
@@ -115,6 +116,8 @@ public class OceanGeneration : ModSystem
 				for (oceanTop = 0; !Main.tile[worldEdge - 1, oceanTop].HasTile; oceanTop++)
 				{ } //Get top of ocean
 
+				GenVars.shellStartXRight = GenVars.rightBeachStart + 30 + WorldGen.genRand.Next(15, 30);
+				GenVars.shellStartYRight = oceanTop;
 				CheckOceanHeight(ref oceanTop);
 
 				oceanTop += WorldGen.genRand.Next(1, 5);
@@ -128,7 +131,7 @@ public class OceanGeneration : ModSystem
 
 	public static void GenerateOceanObjects(GenerationProgress progress, GameConfiguration config)
 	{
-		progress.Message = Language.GetText("LegacyWorldGen.27").Value;
+		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.PopulateOcean");
 
 		PopulateOcean(_oceanInfos.Item1, 0);
 		PopulateOcean(_oceanInfos.Item2, 1);
@@ -136,28 +139,13 @@ public class OceanGeneration : ModSystem
 
 	private static void PopulateOcean(Rectangle bounds, int side)
 	{
-		bool ValidGround(int i, int j, int width, int type = TileID.Sand)
+		static bool ValidGround(int i, int j, int width, int type = TileID.Sand)
 		{
 			for (int k = i; k < i + width; ++k)
 			{
 				Tile t = Framing.GetTileSafely(k, j);
 				if (!t.HasTile || t.TileType != type || t.IsHalfBlock || t.TopSlope || !Main.tileSolid[t.TileType])
 					return false;
-			}
-
-			return true;
-		}
-
-		bool OpenArea(int i, int j, int width, int height)
-		{
-			for (int k = i; k < i + width; ++k)
-			{
-				for (int l = j; l < j + height; ++l)
-				{
-					Tile t = Framing.GetTileSafely(k, l);
-					if (t.HasTile || t.LiquidAmount < 200)
-						return false;
-				}
 			}
 
 			return true;
@@ -170,6 +158,9 @@ public class OceanGeneration : ModSystem
 		{
 			for (int j = bounds.Top; j < bounds.Bottom; ++j)
 			{
+				if (Framing.GetTileSafely(i, j - 1).LiquidAmount < 155 || Framing.GetTileSafely(i, j).LiquidAmount > 0)
+					continue; //Quick validity check
+
 				int tilesFromInnerEdge = bounds.Right - i;
 				if (side == 1)
 					tilesFromInnerEdge = i - bounds.Left;
@@ -181,19 +172,19 @@ public class OceanGeneration : ModSystem
 					coralChance = 22;
 
 				//Coral multitiles
-				if (coralChance > 0 && WorldGen.genRand.NextBool((int)(coralChance * 1.25f)) && ValidGround(i, j, 3, TileID.Sand) && OpenArea(i, j - 3, 3, 3))
+				if (coralChance > 0 && WorldGen.genRand.NextBool((int)(coralChance * 1.25f)))
 				{
 					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Coral3x3>(), true);
 					continue;
 				}
 
-				if (coralChance > 0 && WorldGen.genRand.NextBool(coralChance) && ValidGround(i, j, 2, TileID.Sand) && OpenArea(i, j - 2, 2, 2))
+				if (coralChance > 0 && WorldGen.genRand.NextBool(coralChance))
 				{
 					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Coral2x2>(), true, WorldGen.genRand.Next(3));
 					continue;
 				}
 
-				if (coralChance > 0 && WorldGen.genRand.NextBool((int)(coralChance * 1.5f)) && ValidGround(i, j, 1, TileID.Sand) && OpenArea(i, j - 2, 1, 2))
+				if (coralChance > 0 && WorldGen.genRand.NextBool((int)(coralChance * 1.75f)))
 				{
 					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Coral1x2>(), true);
 					continue;
@@ -201,19 +192,19 @@ public class OceanGeneration : ModSystem
 
 				//Kelp multitiles
 				int kelpChance = tilesFromInnerEdge < 100 ? 40 : 20; //Higher on first slope, then less common
-				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance) && ValidGround(i, j, 2, TileID.Sand) && OpenArea(i, j - 3, 2, 3))
+				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance))
 				{
 					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Kelp2x3>(), true);
 					continue;
 				}
 
-				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance) && ValidGround(i, j, 2, TileID.Sand) && OpenArea(i, j - 2, 2, 2))
+				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance))
 				{
 					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Kelp2x2>(), true);
 					continue;
 				}
 
-				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance) && ValidGround(i, j, 1, TileID.Sand) && OpenArea(i, j - 2, 1, 2))
+				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance))
 				{
 					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Kelp1x2>(), true);
 					continue;
@@ -226,7 +217,7 @@ public class OceanGeneration : ModSystem
 					int offset = 1;
 					while (!Framing.GetTileSafely(i, j - offset).HasTile && Framing.GetTileSafely(i, j - offset).LiquidAmount == 255 && height > 0)
 					{
-						WorldGen.PlaceTile(i, j - offset++, ModContent.TileType<OceanKelp>());
+						WorldGen.PlaceTile(i, j - offset++, ModContent.TileType<OceanKelp>(), true);
 						height--;
 					}
 				}
