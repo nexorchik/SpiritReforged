@@ -4,7 +4,7 @@ namespace SpiritReforged.Content.Ocean.Tiles;
 
 internal class OceanKelp : ModTile
 {
-	private const int ClumpFrameOffset = 76; //so I don't have to magic number 76 constantly
+	public const int ClumpFrameOffset = 76; //so I don't have to magic number 76 constantly
 
 	public override void SetStaticDefaults()
 	{
@@ -30,7 +30,7 @@ internal class OceanKelp : ModTile
 
 	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak) //Sets and randomizes tile frame
 	{
-		Tile t = Framing.GetTileSafely(i, j); //this tile :)
+		var t = Framing.GetTileSafely(i, j); //this tile :)
 
 		int totalOffset = t.TileFrameX / ClumpFrameOffset;
 		int realFrameX = t.TileFrameX - ClumpFrameOffset * totalOffset; //Adjusted so its easy to read
@@ -58,12 +58,17 @@ internal class OceanKelp : ModTile
 
 		if (t.TileFrameY is 152 and >= 108)
 			t.TileFrameY = (short)(Main.rand.Next(6) * 18);
+
+		var below = Framing.GetTileSafely(i, j + 1);
+		if (!below.HasTile || below.IsHalfBlock || below.TopSlope) //KILL ME if there's no ground below me
+			WorldGen.KillTile(i, j);
+
 		return false;
 	}
 
 	public override void RandomUpdate(int i, int j) //Used for growing and "growing"
 	{
-		Tile t = Framing.GetTileSafely(i, j);
+		var t = Framing.GetTileSafely(i, j);
 
 		int totalOffset = t.TileFrameX / ClumpFrameOffset;
 		int realFrameX = t.TileFrameX - ClumpFrameOffset * totalOffset; //Adjusted so its easy to read
@@ -75,8 +80,16 @@ internal class OceanKelp : ModTile
 			while (Framing.GetTileSafely(i, j + height).HasTile && Framing.GetTileSafely(i, j + height).TileType == Type)
 				height++;
 
-			if (height < Main.rand.Next(17, 23) && !Main.tile[i, j - 1].HasTile)
+			int maxHeight = Main.rand.Next(17, 23);
+			if (height < maxHeight && !Main.tile[i, j - 1].HasTile)
+			{
 				WorldGen.PlaceTile(i, j - 1, Type, true, false);
+				if (Main.rand.NextBool(12) && height == maxHeight - 1) //Flower top
+				{
+					Framing.GetTileSafely(i, j - 1).TileFrameX = 18;
+					Framing.GetTileSafely(i, j - 1).TileFrameY = 108;
+				}
+			}
 		}
 
 		if (realFrameX == 18 && t.TileFrameY < 54 && t.LiquidAmount < 155) //Sprouts top
@@ -108,13 +121,14 @@ internal class OceanKelp : ModTile
 		if (Main.rand.Next(1000) <= 3 * totalOffset) //Spawns little bubbles
 			Dust.NewDustPerfect(new Vector2(i * 16, j * 16) + new Vector2(2 + Main.rand.Next(12), Main.rand.Next(16)), 34, new Vector2(Main.rand.NextFloat(-0.08f, 0.08f), Main.rand.NextFloat(-0.2f, -0.02f)));
 
-		if (!Framing.GetTileSafely(i, j + 1).HasTile) //KILL ME if there's no ground below me
-			WorldGen.KillTile(i, j);
 		if (Framing.GetTileSafely(i, j + 1).LiquidAmount < 155 && Framing.GetTileSafely(i, j).LiquidAmount < 155) //Kill me if I'm thirsty (aka kill if there's no water)
+		{
 			WorldGen.KillTile(i, j);
-	}
 
-	public override bool CanDrop(int i, int j) => Framing.GetTileSafely(i, j).LiquidAmount >= 155; //Only drop items in water. Prevents cluttering the ocean due to potential worldgen quirks
+			if (Main.netMode != NetmodeID.SinglePlayer)
+				NetMessage.SendTileSquare(-1, i, j); //This method is run locally, so sync tile changes
+		}
+	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch) //Drawing woo
 	{
