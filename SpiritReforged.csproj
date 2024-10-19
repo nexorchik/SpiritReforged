@@ -7,6 +7,11 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Assets\Textures\Backgrounds\OceanUnderwaterBG1.png" />
+    <None Remove="Assets\Textures\Backgrounds\OceanUnderwaterBG2.png" />
+    <None Remove="Assets\Textures\Backgrounds\OceanUnderwaterBG3.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="NPCUtils">
       <HintPath>lib\NPCUtils.dll</HintPath>
     </Reference>
