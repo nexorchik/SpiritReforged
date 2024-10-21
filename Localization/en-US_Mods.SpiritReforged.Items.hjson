@@ -962,17 +962,7 @@ WheatgrassSeedPouch: {
 		'''
 }
 
-Kelp1x2Item: {
-	DisplayName: Kelp1x2 Item
+SavannaSandstormMusicBoxItem: {
 	Tooltip: ""
-}
-
-Kelp2x2Item: {
-	DisplayName: Kelp2x2 Item
-	Tooltip: ""
-}
-
-Kelp2x3Item: {
-	DisplayName: Kelp2x3 Item
-	Tooltip: ""
+	DisplayName: Music Box (Duststorm)
 }
