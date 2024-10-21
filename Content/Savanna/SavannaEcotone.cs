@@ -15,8 +15,6 @@ internal class SavannaEcotone : EcotoneBase
 
 	private static int Steps = 0;
 	private static bool HasSavanna = false;
-	private EcotoneSurfaceMapping.EcotoneEntry Entry = null;
-	private HashSet<int> CliffFaces = [];
 
 	protected override void InternalLoad() => On_WorldGen.SpreadGrass += HijackSpreadGrass;
 
@@ -71,6 +69,12 @@ internal class SavannaEcotone : EcotoneBase
 			}
 		}
 
+		if (grassLocations.Count == 0)
+		{
+			SpiritReforgedMod.Instance.Logger.Info("No Savanna grass locations found.");
+			return;
+		}
+
 		foreach ((Point16 position, OpenFlags flags) in tiles)
 		{
 			Tile tile = Main.tile[position];
@@ -107,7 +111,11 @@ internal class SavannaEcotone : EcotoneBase
 
 	private static WorldGenLegacyMethod BaseGeneration(List<EcotoneSurfaceMapping.EcotoneEntry> entries) => (progress, _) =>
 	{
-		IEnumerable<EcotoneSurfaceMapping.EcotoneEntry> validEntries = entries.Where(x => x.SurroundedBy("Desert", "Jungle") && Math.Abs(x.Start.Y - x.End.Y) < 120);
+		//Don't generate next to the ocean
+		static bool NotOcean(EcotoneSurfaceMapping.EcotoneEntry e) => e.Start.X > GenVars.leftBeachEnd 
+			&& e.End.X > GenVars.leftBeachEnd && e.Start.X < GenVars.rightBeachStart && e.End.X < GenVars.rightBeachStart;
+
+		IEnumerable<EcotoneSurfaceMapping.EcotoneEntry> validEntries = entries.Where(x => x.SurroundedBy("Desert", "Jungle") && Math.Abs(x.Start.Y - x.End.Y) < 120 && NotOcean(x));
 
 		if (!validEntries.Any())
 			return;
@@ -127,42 +135,41 @@ internal class SavannaEcotone : EcotoneBase
 
 		var topBottomY = new Point(Math.Min(startY, endY), Math.Max(startY, endY));
 
-		Steps = 3;// WorldGen.genRand.Next(14, 18);
-
-		Dictionary<int, int> stepOffset = [];
-		int offset = 0;
-
-		for (int i = 0; i < Steps; ++i)
-		{
-			offset = WorldGen.genRand.Next(3, 10);
-
-			if (i == Steps - 1)
-				offset = 0;
-
-			stepOffset.Add(i, offset);
-		}
+		Steps = WorldGen.genRand.Next(2, 5);
 
 		var sandNoise = new FastNoiseLite(WorldGen.genRand.Next());
-		sandNoise.SetFrequency(0.06f);
-		int xOffsetForFactor = 0;
+		sandNoise.SetFrequency(0.04f);
+		int xOffsetForFactor = -1;
+		float curve = 0;
 
 		for (int x = startX; x < endX; ++x)
 		{
-			float factor = GetBaseLerpFactorForX(startX, endX, xOffsetForFactor, x);
-			int addY = (int)MathHelper.Lerp(startY, endY, factor);
-			int ySlant = 0;// (int)MathHelper.Lerp(0, endY - startY, (x - startX) / (float)(endX - startX));
-			int y = addY + stepOffset[(int)(factor * (Steps - 1))] - (int)(sandNoise.GetNoise(x, 600) * 2) + ySlant;
+			float factor = GetBaseLerpFactorForX(startX, endX, xOffsetForFactor, x); //Step height
+
+			int addY = (int)MathHelper.Lerp(startY, endY, curve);
+			int y = addY - (int)(sandNoise.GetNoise(x, 600) * 2);
 			int depth = WorldGen.genRand.Next(20);
 			int minDepth = (int)Main.worldSurface - y;
 
-			for (int i = -80; i < 30 + depth + minDepth; ++i)
+			if (curve < factor) //easing (hills)
+			{
+				int fullHeight = (startY - endY) / Steps; //The average height of each step
+				const float steepness = .05f;
+
+				//Control hill shape using a lazy sine that remains similar between steps
+				float amount = (float)Math.Sin(1 + y % fullHeight / (float)fullHeight * 2) * steepness;
+				curve += Math.Max(amount, .008f);
+			}
+
+			float taper = Math.Clamp((float)Math.Sin((float)(x - startX) / (endX - startX) * Math.PI) * 1.75f, 0, 1);
+			for (int i = -80; i < (30 + depth + minDepth) * taper; ++i)
 			{
 				int realY = y + i;
 				Tile tile = Main.tile[x, realY];
 
 				if (i >= 0)
 				{
-					if (i >= 0 && i < 15)
+					if (i is >= 0 and < 15)
 						tile.HasTile = true;
 
 					if (tile.HasTile && !validIds.Contains(tile.TileType))
@@ -190,8 +197,7 @@ internal class SavannaEcotone : EcotoneBase
 					tile.Clear(TileDataType.All);
 			}
 
-			int oldOffset = xOffsetForFactor;
-			xOffsetForFactor += (int)Math.Round(sandNoise.GetNoise(x, 0) * 2);
+			xOffsetForFactor += (int)Math.Round(Math.Max(sandNoise.GetNoise(x, 0), 0) * 5);
 		}
 
 		SavannaArea = new Rectangle(startX, topBottomY.X, endX - startX, topBottomY.Y - topBottomY.X);
