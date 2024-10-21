@@ -47,7 +47,7 @@ internal class CircleBoidObject(Boid flock) : BoidObject(flock)
 	{
 		acceleration += Anchor(50) * .14f;
 		acceleration += AvoidHooman(50) * 4f;
-		acceleration += AvoidTiles(100) * 5f;
+		acceleration += AvoidTiles(100) * .5f;
 		ApplyForces();
 
 		if (Main.rand.NextBool(7))
