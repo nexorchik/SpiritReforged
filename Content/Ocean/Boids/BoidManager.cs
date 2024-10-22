@@ -80,7 +80,7 @@ public class BoidManager : ILoadable
 
 		//Spawn boid fish
 		Player player = Main.LocalPlayer;
-		if (player.ZoneBeach && Main.GameUpdateCount % SPAWNRATE == SPAWNRATE - 1)
+		if (player.ZoneBeach && Main.GameUpdateCount % SPAWNRATE == SPAWNRATE - 1 || Main.GameUpdateCount % SPAWNRATE > SPAWNRATE - 3 && player.GetModPlayer<OceanPlayer>().nearLure)
 		{
 			int flock = Main.rand.Next(0, Flocks.Count);
 			const int fluff = 1000;

@@ -966,3 +966,12 @@ SavannaSandstormMusicBoxItem: {
 	Tooltip: ""
 	DisplayName: Music Box (Duststorm)
 }
+
+FishLure: {
+	DisplayName: Fish Lure
+	Tooltip:
+		'''
+		"{$ItemTooltip.CoralTorch}"
+		Attracts schools of fish to nearby waters
+		'''
+}
