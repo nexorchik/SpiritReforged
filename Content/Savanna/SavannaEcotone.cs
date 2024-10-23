@@ -12,6 +12,7 @@ namespace SpiritReforged.Content.Savanna;
 internal class SavannaEcotone : EcotoneBase
 {
 	private static Rectangle SavannaArea = Rectangle.Empty;
+	private static Rectangle WaterHoleArea = Rectangle.Empty;
 
 	private static int Steps = 0;
 	private static bool HasSavanna = false;
@@ -34,6 +35,7 @@ internal class SavannaEcotone : EcotoneBase
 			return;
 
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.SavannaObjects");
+
 		for (int i = SavannaArea.Left; i < SavannaArea.Right; ++i)
 		{
 			for (int j = SavannaArea.Top - 2; j < SavannaArea.Bottom; ++j)
@@ -41,7 +43,7 @@ internal class SavannaEcotone : EcotoneBase
 				OpenFlags flags = OpenTools.GetOpenings(i, j);
 				var tile = Main.tile[i, j];
 
-				if (tile.TileType == TileID.SmallPiles)
+				if (tile.TileType == TileID.SmallPiles) //Replace vanilla piles with our own
 				{
 					WorldGen.KillTile(i, j);
 					WorldGen.PlaceTile(i, j, ModContent.TileType<SavannaRockSmall>(), true, style: WorldGen.genRand.Next(3));
@@ -63,6 +65,8 @@ internal class SavannaEcotone : EcotoneBase
 				}
 			}
 		}
+
+		WateringHole(WaterHoleArea.X, WaterHoleArea.Y, true);
 	}
 
 	private static void GrowStuffOnGrass(int i, int j)
@@ -70,9 +74,10 @@ internal class SavannaEcotone : EcotoneBase
 		if (WorldGen.genRand.NextBool(20))
 			CreateTallgrassPatch(WorldGen.genRand.Next(3, 10));
 
-		if (WorldGen.genRand.NextBool(10))
+		if (WorldGen.genRand.NextBool(50))
 		{
-			int type = WorldGen.genRand.NextFromList(ModContent.TileType<TermiteMoundSmall>(), ModContent.TileType<TermiteMoundMedium>(), ModContent.TileType<TermiteMoundLarge>());
+			int type = WorldGen.genRand.NextFromList(ModContent.TileType<TermiteMoundSmall>(), 
+				ModContent.TileType<TermiteMoundMedium>(), ModContent.TileType<TermiteMoundLarge>());
 			int style = WorldGen.genRand.Next(TileObjectData.GetTileData(type, 0).RandomStyleRange);
 
 			WorldGen.PlaceTile(i, j - 1, type, true, style: style);
@@ -94,6 +99,116 @@ internal class SavannaEcotone : EcotoneBase
 					else if (ElephantGrass.IsElephantGrass(x - 1, j - 1) && ElephantGrass.IsElephantGrass(x + 1, j - 1)) //Grow short grass
 						WorldGen.PlaceTile(x, j - 1, ModContent.TileType<ElephantGrass>(), true, style: WorldGen.genRand.Next(5));
 				}
+		}
+	}
+
+	private static int FindGround(int i, ref int j)
+	{
+		while (WorldGen.SolidOrSlopedTile(i, j - 1))
+			j--; //Up
+
+		while (!WorldGen.SolidOrSlopedTile(i, j))
+			j++; //Down
+
+		return j;
+	}
+
+	private static void WateringHole(int i, int j, bool addWater = false)
+	{
+		if (addWater)
+		{
+			int waterY = j + 1;
+			for (int y = j; y < j + WaterHoleArea.Height; y++)
+			{
+				if (!WorldGen.SolidOrSlopedTile(i - 1, y) || !WorldGen.SolidOrSlopedTile(i + WaterHoleArea.Width + 1, y))
+					waterY++; //Determine water height based on adjacent solid tiles
+			}
+
+			for (int x = 0; x < WaterHoleArea.Width; x++) //Water fill
+			{
+				int y = waterY;
+				while (!WorldGen.SolidTile(i + x, y + 1))
+				{
+					var t = Framing.GetTileSafely(i + x, y);
+					t.LiquidType = LiquidID.Water;
+					t.LiquidAmount = (byte)((y == waterY) ? 50 : 255);
+
+					y++; //Down
+				}
+			}
+
+			return;
+		}
+
+		int width = WorldGen.genRand.Next(20, 26);
+		int depth = WorldGen.genRand.Next(20, 28);
+		CreateHole(i, j, width, depth);
+
+		const int halfDistance = 35;
+		for (int a = 0; a < 5; a++)
+		{
+			int x = i + WorldGen.genRand.Next(-halfDistance, halfDistance);
+			FindGround(x, ref j);
+
+			WorldGen.TileRunner(x, j, 10, 1, TileID.Sand);
+		}
+
+		for (int x = i - halfDistance; x < i + halfDistance; x++)
+		{
+			FindGround(x, ref j);
+
+			var t = Main.tile[x, j];
+			if (t.TileType == TileID.Sand)
+				t.HasTile = false; //Cave in surface sand spots
+
+			if (WorldGen.genRand.NextBool(3))
+				WorldGen.PlaceTile(x, j, ModContent.TileType<SavannaShrubs>(), true, style: WorldGen.genRand.NextFromList(0, 3, 4));
+		}
+
+		return;
+		static int DigDown(int i, int j, int distance)
+		{
+			FindGround(i, ref j);
+			for (int y = 0; y < distance; y++)
+			{
+				var t = Framing.GetTileSafely(i, j);
+				t.ClearEverything();
+
+				if (y > MathHelper.Max(10, distance - 3)) //Begin to place walls when deep enough
+					t.WallType = WallID.HardenedSandEcho; //Non-Echo version forces lava to generate in the "Final Cleanup" pass
+
+				j++;
+			}
+
+			return j;
+		}
+
+		static void SandstoneSplotch(int i, int j)
+		{
+			i -= 1;
+			for (int x = i; x < i + 3; x++)
+			{
+				for (int y = j; y < j + 4; y++)
+				{
+					if (Main.tile[x, y].TileType == ModContent.TileType<SavannaDirt>())
+						Main.tile[x, y].TileType = TileID.Sandstone;
+				}
+			}
+		}
+
+		static void CreateHole(int i, int j, int width, int depth)
+		{
+			i -= width / 2; //Automatically center
+			WaterHoleArea = new Rectangle(i, j, width, depth);
+
+			for (int x = 0; x < width; x++)
+			{
+				int minDepth = (int)(Math.Abs(Math.Sin(x / (float)width * Math.PI)) * depth);
+				int bottom = DigDown(i + x, j, minDepth);
+
+				if (bottom > j + 1)
+					SandstoneSplotch(i + x, bottom);
+			}
 		}
 	}
 
@@ -121,7 +236,8 @@ internal class SavannaEcotone : EcotoneBase
 		int endX = entry.End.X + 0;
 		short startY = EcotoneSurfaceMapping.TotalSurfaceY[(short)entry.Start.X];
 		short endY = EcotoneSurfaceMapping.TotalSurfaceY[(short)entry.End.X];
-		int[] validIds = [TileID.Dirt, TileID.Grass, TileID.ClayBlock, TileID.CrimsonGrass, TileID.CorruptGrass, TileID.Stone];
+		HashSet<int> validIds = [TileID.Dirt, TileID.Grass, TileID.ClayBlock, TileID.CrimsonGrass, TileID.CorruptGrass, TileID.Stone];
+		HashSet<int> noKillIds = [TileID.Cloud, TileID.RainCloud]; //Ignore these types when clearing tiles above the biome
 
 		var topBottomY = new Point(Math.Min(startY, endY), Math.Max(startY, endY));
 
@@ -147,7 +263,7 @@ internal class SavannaEcotone : EcotoneBase
 				const float steepness = .05f;
 
 				//Control hill shape using a lazy sine that remains similar between steps
-				float amount = (float)Math.Sin(1f + y % fullHeight / (float)fullHeight * 2) * steepness;
+				float amount = (fullHeight == 0) ? 0 : (float)Math.Sin(1f + y % fullHeight / (float)fullHeight * 2) * steepness;
 				curve += Math.Max(amount, .008f);
 			}
 
@@ -194,7 +310,7 @@ internal class SavannaEcotone : EcotoneBase
 					else
 						tile.Clear(TileDataType.Wall); //Clear walls above the Savanna surface
 				}
-				else
+				else if (!noKillIds.Contains(tile.TileType))
 					tile.Clear(TileDataType.All);
 			}
 
@@ -202,8 +318,27 @@ internal class SavannaEcotone : EcotoneBase
 		}
 
 		SavannaArea = new Rectangle(startX, topBottomY.X, endX - startX, topBottomY.Y - topBottomY.X);
-		return;
 
+		HashSet<int> soft = [TileID.Dirt, TileID.CorruptGrass, TileID.CrimsonGrass, TileID.Sand,
+			ModContent.TileType<SavannaDirt>(), ModContent.TileType<SavannaGrass>()];
+		for (int a = 0; a < 200; a++) //Watering hole base
+		{
+			int i = WorldGen.genRand.Next(SavannaArea.Left, SavannaArea.Right);
+			int j = SavannaArea.Top;
+
+			FindGround(i, ref j);
+
+			if (soft.Contains(Main.tile[i, j].TileType))
+			{
+				WateringHole(i, j);
+				break;
+			}
+
+			if (a == 199)
+				SpiritReforgedMod.Instance.Logger.Info("Generator exceeded maximum tries for structure: Savanna Watering Hole");
+		}
+
+		return;
 		static ushort GetSandType(int x, int y)
 		{
 			int off = 0;
