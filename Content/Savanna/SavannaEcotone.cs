@@ -17,6 +17,15 @@ internal class SavannaEcotone : EcotoneBase
 	private static int Steps = 0;
 	private static bool HasSavanna = false;
 
+	protected override void InternalLoad() => On_WorldGen.GrowPalmTree += PreventPalmTreeGrowth;
+	private bool PreventPalmTreeGrowth(On_WorldGen.orig_GrowPalmTree orig, int i, int y)
+	{
+		if (SavannaArea.Contains(new Point(i, y)))
+			return false; //Skips orig
+
+		return orig(i, y);
+	}
+
 	public override void AddTasks(List<GenPass> tasks, List<EcotoneSurfaceMapping.EcotoneEntry> entries)
 	{
 		int index = tasks.FindIndex(x => x.Name == "Pyramids");
@@ -124,17 +133,19 @@ internal class SavannaEcotone : EcotoneBase
 					waterY++; //Determine water height based on adjacent solid tiles
 			}
 
-			for (int x = 0; x < WaterHoleArea.Width; x++) //Water fill
+			for (int x = i; x < i + WaterHoleArea.Width; x++) //Water fill
 			{
 				int y = waterY;
-				while (!WorldGen.SolidTile(i + x, y + 1))
+				while (!WorldGen.SolidTile(x, y + 1))
 				{
-					var t = Framing.GetTileSafely(i + x, y);
+					var t = Framing.GetTileSafely(x, y);
 					t.LiquidType = LiquidID.Water;
 					t.LiquidAmount = (byte)((y == waterY) ? 50 : 255);
 
 					y++; //Down
 				}
+
+				ClaySplotch(x, y + 1);
 			}
 
 			return;
@@ -144,8 +155,17 @@ internal class SavannaEcotone : EcotoneBase
 		int depth = WorldGen.genRand.Next(20, 28);
 		CreateHole(i, j, width, depth);
 
+		for (int x = WaterHoleArea.Left - 1; x < WaterHoleArea.Right + 1; x++) //Clear walls
+		{
+			for (int y = WaterHoleArea.Top - 1; y < WaterHoleArea.Bottom + 1; y++)
+			{
+				var tile = Main.tile[x, y];
+				tile.Clear(TileDataType.Wall);
+			}
+		}
+
 		const int halfDistance = 35;
-		for (int a = 0; a < 5; a++)
+		for (int a = 0; a < 5; a++) //Generate surrounding sand patches
 		{
 			int x = i + WorldGen.genRand.Next(-halfDistance, halfDistance);
 			FindGround(x, ref j);
@@ -161,7 +181,7 @@ internal class SavannaEcotone : EcotoneBase
 			if (t.TileType == TileID.Sand)
 				t.HasTile = false; //Cave in surface sand spots
 
-			if (WorldGen.genRand.NextBool(3))
+			if (WorldGen.genRand.NextBool(3)) //Generate shrubs
 				WorldGen.PlaceTile(x, j, ModContent.TileType<SavannaShrubs>(), true, style: WorldGen.genRand.NextFromList(0, 3, 4));
 		}
 
@@ -171,7 +191,7 @@ internal class SavannaEcotone : EcotoneBase
 			FindGround(i, ref j);
 			for (int y = 0; y < distance; y++)
 			{
-				var t = Framing.GetTileSafely(i, j);
+				var t = Main.tile[i, j];
 				t.ClearEverything();
 
 				if (y > MathHelper.Max(10, distance - 3)) //Begin to place walls when deep enough
@@ -183,15 +203,18 @@ internal class SavannaEcotone : EcotoneBase
 			return j;
 		}
 
-		static void SandstoneSplotch(int i, int j)
+		static void ClaySplotch(int i, int j)
 		{
 			i -= 1;
+			HashSet<int> replaceTypes = [ModContent.TileType<SavannaDirt>(), ModContent.TileType<SavannaGrass>()];
+
 			for (int x = i; x < i + 3; x++)
 			{
 				for (int y = j; y < j + 4; y++)
 				{
-					if (Main.tile[x, y].TileType == ModContent.TileType<SavannaDirt>())
-						Main.tile[x, y].TileType = TileID.Sandstone;
+					var t = Main.tile[x, y];
+					if (t.HasTile && replaceTypes.Contains(t.TileType))
+						t.TileType = TileID.ClayBlock;
 				}
 			}
 		}
@@ -204,10 +227,7 @@ internal class SavannaEcotone : EcotoneBase
 			for (int x = 0; x < width; x++)
 			{
 				int minDepth = (int)(Math.Abs(Math.Sin(x / (float)width * Math.PI)) * depth);
-				int bottom = DigDown(i + x, j, minDepth);
-
-				if (bottom > j + 1)
-					SandstoneSplotch(i + x, bottom);
+				DigDown(i + x, j, minDepth);
 			}
 		}
 	}

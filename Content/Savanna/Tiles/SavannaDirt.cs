@@ -9,6 +9,8 @@ public class SavannaDirt : ModTile, IAutoloadTileItem
 		Main.tileSolid[Type] = true;
 		Main.tileBlockLight[Type] = true;
 		Main.tileMerge[TileID.Sand][Type] = true;
+		Main.tileMerge[TileID.ClayBlock][Type] = true;
+		Main.tileMerge[Type][TileID.ClayBlock] = true;
 
 		TileID.Sets.ChecksForMerge[Type] = true;
 
