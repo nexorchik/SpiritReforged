@@ -1,6 +1,7 @@
 using SpiritReforged.Common.MathHelpers;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 using Terraria.DataStructures;
+using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter;
 
@@ -37,6 +38,8 @@ public class UrchinStaff : ModItem
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_LightPop") with { PitchVariance = 0.4f, Pitch = -2f, Volume = .75f, MaxInstances = 3 }, player.Center);
+
 		Vector2 targetPos = Main.MouseWorld;
 		Vector2 shotTrajectory = player.GetArcVel(targetPos, 0.25f, velocity.Length());
 		var proj = Projectile.NewProjectileDirect(source, player.MountedCenter, Vector2.Zero, type, damage, knockback, player.whoAmI);

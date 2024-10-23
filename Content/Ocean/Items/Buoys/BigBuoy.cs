@@ -4,7 +4,7 @@ using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Content.Ocean.Items.Buoys;
 
-public class BigBuoy : Buoy
+public class BigBuoy : SmallBuoy
 {
 	public override bool? UseItem(Player player)
 	{
@@ -37,7 +37,7 @@ public class BigBuoy : Buoy
 			.Register();
 }
 
-public class BigBuoyEntity : BuoyEntity
+public class BigBuoyEntity : SmallBuoyEntity
 {
 	private static Asset<Texture2D> GlowTexture;
 
@@ -49,8 +49,8 @@ public class BigBuoyEntity : BuoyEntity
 			GlowTexture = ModContent.Request<Texture2D>(TexturePath + "_Glow");
 
 		saveMe = true;
-		width = 28;
-		height = 42;
+		width = 46;
+		height = 120;
 	}
 
 	public override void OnKill()

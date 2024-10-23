@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using SpiritReforged.Common.Misc;
+using SpiritReforged.Content.Savanna.Tiles.Paintings;
+using System.Linq;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna;
@@ -9,9 +11,28 @@ public class SavannaGlobalNPC : GlobalNPC
 	{
 		if (npc.type == NPCID.Dryad && Main.LocalPlayer.InModBiome<Biome.SavannaBiome>())
 		{
-			var grassSeeds = items.Where(x => x != null && x.type == ItemID.GrassSeeds).FirstOrDefault();
+			var grassSeeds = items.FirstOrDefault(x => x != null && x.type == ItemID.GrassSeeds);
+
 			if (grassSeeds != default)
 				grassSeeds.SetDefaults(ModContent.ItemType<Items.SavannaGrassSeeds>());
+		}
+	}
+	public override void ModifyShop(NPCShop shop)
+	{
+		if (shop.NpcType == NPCID.Painter)
+		{
+			shop.Add(Mod.Find<ModItem>(nameof(DustyFields) + "Item").Type, Condition.MoonPhaseFull, SpiritConditions.InSavanna);
+			shop.Add(Mod.Find<ModItem>(nameof(DustyFields) + "Item").Type, Condition.MoonPhaseWaningGibbous, SpiritConditions.InSavanna);
+
+			shop.Add(Mod.Find<ModItem>(nameof(OrangeSkies) + "Item").Type, Condition.MoonPhaseThirdQuarter, SpiritConditions.InSavanna);
+			shop.Add(Mod.Find<ModItem>(nameof(OrangeSkies) + "Item").Type, Condition.MoonPhaseWaningCrescent, SpiritConditions.InSavanna);
+
+			shop.Add(Mod.Find<ModItem>(nameof(StrongWinds) + "Item").Type, Condition.MoonPhaseNew, SpiritConditions.InSavanna);
+			shop.Add(Mod.Find<ModItem>(nameof(StrongWinds) + "Item").Type, Condition.MoonPhaseWaxingCrescent, SpiritConditions.InSavanna);
+
+			shop.Add(Mod.Find<ModItem>(nameof(WaningSun) + "Item").Type, Condition.MoonPhaseFirstQuarter, SpiritConditions.InSavanna);
+			shop.Add(Mod.Find<ModItem>(nameof(WaningSun) + "Item").Type, Condition.MoonPhaseWaxingGibbous, SpiritConditions.InSavanna);
+
 		}
 	}
 
@@ -19,8 +40,13 @@ public class SavannaGlobalNPC : GlobalNPC
 	{
 		if (spawnInfo.Player.InModBiome<Biome.SavannaBiome>())
 		{
-			float odds = spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm ? .22f : .09f;
-			pool[NPCID.Vulture] = odds;
+			pool[NPCID.DoctorBones] = 0.005f;
+
+			if (!Main.dayTime)
+			{
+				float odds = spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm ? .22f : .09f;
+				pool[NPCID.Vulture] = odds;
+			}
 		}
 	}
 

@@ -12,8 +12,9 @@ Tiles: {
 	BambooBirdCage.MapEntry: Bamboo Bird Cage
 	BambooPot.MapEntry: Bamboo Pot
 	KoiTotem_Tile.MapEntry: Koi Totem
-	TermiteJar_Tile.MapEntry: Termite Jar_ Tile
-	SpiritKillieFishbowl_Tile.MapEntry: Spirit Killie Fishbowl_ Tile
+	HerosMemorialStatue.MapEntry: A Hero's Memorial
+	TermiteJar_Tile.MapEntry: Termite Jar
+	SpiritKillieFishbowl_Tile.MapEntry: Spirit Killie Fishbowl
 }
 
 Projectiles: {
@@ -43,6 +44,7 @@ Projectiles: {
 	ToucanMinion.DisplayName: Toucan Minion
 	TumblerPet.DisplayName: Tumbler Pet
 	BaobabFruitProj.DisplayName: Falling Baobab Fruit
+	WheatgrassSeedProjectile.DisplayName: Wheatgrass Seed Projectile
 }
 
 Configs: {
@@ -170,7 +172,7 @@ Buffs: {
 	}
 
 	QuenchPotion_Buff: {
-		DisplayName: Quench Potion_ Buff
+		DisplayName: Quenched
 		Description: Other potions last 25% longer
 	}
 
@@ -193,6 +195,11 @@ SetBonuses: {
 		Increased fishing power
 		'''
 	Drywood: Increased movement speed on the surface
+	Botanist:
+		'''
+		You gain increased rewards from herbs of all kinds
+		You have a powerful eye for spotting herbs
+		'''
 }
 
 Biomes: {
@@ -201,3 +208,6 @@ Biomes: {
 		TownNPCDialogueName: the Savanna
 	}
 }
+
+SlotContexts.Backpack: Pack
+Conditions.InSavanna: In Savanna

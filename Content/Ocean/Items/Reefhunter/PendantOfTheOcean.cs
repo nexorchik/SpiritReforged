@@ -19,8 +19,8 @@ public class PendantOfTheOcean : AccessoryItem, ITimerItem
 
 	public override void SetDefaults()
 	{
-		Item.width = 26;
-		Item.height = 48;
+		Item.width = 32;
+		Item.height = 36;
 		Item.rare = ItemRarityID.Green;
 		Item.value = Item.buyPrice(0, 0, 80, 0);
 		Item.DamageType = DamageClass.Melee;

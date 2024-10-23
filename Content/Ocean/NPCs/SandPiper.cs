@@ -306,6 +306,8 @@ public class SandPiper : ModNPC
 				var dust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Blood);
 				dust.velocity = dust.position.DirectionFrom(NPC.Center);
 			}
+
+			Gore.NewGore(Entity.GetSource_Death(), NPC.Center, NPC.velocity, Mod.Find<ModGore>("SandPiper1").Type);
 		}
 	}
 

@@ -1,23 +1,11 @@
 using Terraria.Graphics.Effects;
+using static SpiritReforged.Common.Visuals.Skies.AutoloadSkyDict;
 
 namespace SpiritReforged.Common.Visuals.Skies;
 
 public abstract class AutoloadedSky : CustomSky, ILoadable
 {
-	internal float _fadeOpacity;
 	internal bool _isActive;
-
-	public void Load(Mod mod)
-	{
-		string key = mod.Name + ":" + GetType().Name;
-		SkyManager.Instance[mod.Name + ":" + GetType().Name] = (CustomSky)Activator.CreateInstance(GetType());
-		AutoloadSkyDict.LoadedSkies.Add(key, new Func<Player, bool>(ActivationCondition));
-	}
-
-	public void Unload()
-	{
-
-	}
 
 	/// <summary>
 	/// The amount that the opacity of the sky increases or decreases with each tick. Defaults to 0.01f
@@ -25,17 +13,30 @@ public abstract class AutoloadedSky : CustomSky, ILoadable
 	internal virtual float FadeSpeed { get; set; } = 0.01f;
 
 	/// <summary>
-	/// Runs after the default update hook for skies, which now contains logic for fading in/out.
+	/// If set to true, disables vanilla sun/moon drawing. Use in combination with <see cref="DrawBelowSunMoon(SpriteBatch)"/> to create a custom sun/moon, if desired.
 	/// </summary>
-	/// <param name="gameTime"></param>
-	internal virtual void OnUpdate(GameTime gameTime) { }
+	internal virtual bool DisablesSunAndMoon { get; set; } = false;
+
+	public float FadeOpacity { get; set; }
+
+	public void Load(Mod mod)
+	{
+		string key = mod.Name + ":" + GetType().Name;
+		SkyManager.Instance[mod.Name + ":" + GetType().Name] = (CustomSky)Activator.CreateInstance(GetType());
+		LoadedSkies.Add(key, new Func<Player, bool>(ActivationCondition));
+	}
+
+	public void Unload()
+	{
+
+	}
 
 	public override void Update(GameTime gameTime)
 	{
 		if (_isActive)
-			_fadeOpacity = Math.Min(1f, FadeSpeed + _fadeOpacity);
+			FadeOpacity = Math.Min(1f, FadeSpeed + FadeOpacity);
 		else
-			_fadeOpacity = Math.Max(0f, _fadeOpacity - FadeSpeed);
+			FadeOpacity = Math.Max(0f, FadeOpacity - FadeSpeed);
 
 		OnUpdate(gameTime);
 	}
@@ -58,7 +59,15 @@ public abstract class AutoloadedSky : CustomSky, ILoadable
 		OnReset();
 	}
 
-	public override bool IsActive() => _isActive || _fadeOpacity > 0;
+	public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
+	{
+		if (maxDepth < float.MaxValue)
+			return;
+
+		DoDraw(spriteBatch);
+	}
+
+	public override bool IsActive() => _isActive || FadeOpacity > 0;
 
 	/// <summary>
 	/// Optional hooks to run when the sky deactivates or resets.
@@ -69,11 +78,27 @@ public abstract class AutoloadedSky : CustomSky, ILoadable
 	internal virtual void OnReset() { }
 
 	/// <summary>
+	/// Draws the sky, with a maxDepth check automatically applied to prevent multiple cases of it drawing.
+	/// </summary>
+	internal virtual void DoDraw(SpriteBatch spriteBatch) { }
+
+	/// <summary>
+	/// Layer of the sky drawn directly underneath the sun and moon. 
+	/// Do note that spritebatch params will be different than from the normal Draw hook
+	/// </summary>
+	/// <param name="spriteBatch"></param>
+	public virtual void DrawBelowSunMoon(SpriteBatch spriteBatch) { }
+
+	/// <summary>
+	/// Runs after the default update hook for skies, which now contains logic for fading in/out.
+	/// </summary>
+	/// <param name="gameTime"></param>
+	internal virtual void OnUpdate(GameTime gameTime) { }
+
+	/// <summary>
 	/// Determines when the sky should be activated. If this returns true, then the sky will automatically fade in, and it will automatically fade out if it returns false.
 	/// </summary>
 	/// <param name="p"></param>
 	/// <returns></returns>
 	internal abstract bool ActivationCondition(Player p);
-
-	public float GetFadeOpacity() => _fadeOpacity;
 }
