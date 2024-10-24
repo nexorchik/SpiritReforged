@@ -45,6 +45,9 @@ internal class SavannaEcotone : EcotoneBase
 
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.SavannaObjects");
 
+		if (WorldGen.genRand.NextBool(3))
+			Campsite();
+
 		for (int i = SavannaArea.Left; i < SavannaArea.Right; ++i)
 		{
 			for (int j = SavannaArea.Top - 2; j < SavannaArea.Bottom; ++j)
@@ -69,13 +72,24 @@ internal class SavannaEcotone : EcotoneBase
 
 				if (tile.TileType == ModContent.TileType<SavannaDirt>())
 				{
-					tile.TileType = (ushort)ModContent.TileType<SavannaGrass>();
+					tile.TileType = (ushort)ModContent.TileType<SavannaGrass>(); //Grow grass on dirt
 					GrowStuffOnGrass(i, j);
 				}
 			}
 		}
 
 		WateringHole(WaterHoleArea.X, WaterHoleArea.Y, true);
+	}
+
+	private static int FindGround(int i, ref int j)
+	{
+		while (WorldGen.SolidOrSlopedTile(i, j - 1))
+			j--; //Up
+
+		while (!WorldGen.SolidOrSlopedTile(i, j))
+			j++; //Down
+
+		return j;
 	}
 
 	private static void GrowStuffOnGrass(int i, int j)
@@ -85,7 +99,7 @@ internal class SavannaEcotone : EcotoneBase
 
 		if (WorldGen.genRand.NextBool(50))
 		{
-			int type = WorldGen.genRand.NextFromList(ModContent.TileType<TermiteMoundSmall>(), 
+			int type = WorldGen.genRand.NextFromList(ModContent.TileType<TermiteMoundSmall>(),
 				ModContent.TileType<TermiteMoundMedium>(), ModContent.TileType<TermiteMoundLarge>());
 			int style = WorldGen.genRand.Next(TileObjectData.GetTileData(type, 0).RandomStyleRange);
 
@@ -111,15 +125,42 @@ internal class SavannaEcotone : EcotoneBase
 		}
 	}
 
-	private static int FindGround(int i, ref int j)
+	private static void Campsite()
 	{
-		while (WorldGen.SolidOrSlopedTile(i, j - 1))
-			j--; //Up
+		const int tries = 200;
+		for (int a = 0; a < tries; a++)
+		{
+			int i = WorldGen.genRand.Next(SavannaArea.Left, SavannaArea.Right);
+			int j = SavannaArea.Top;
 
-		while (!WorldGen.SolidOrSlopedTile(i, j))
-			j++; //Down
+			FindGround(i, ref j);
+			if (Main.tile[i, j].TileType == ModContent.TileType<SavannaDirt>())
+			{
+				const int halfCampfireDistance = 8;
+				if (TileObject.CanPlace(i, j - 1, TileID.LargePiles2, 26, 0, out _, true)) //Can we place the tent here? If so, try placing the campfire nearby
+				{
+					int y = j;
+					for (int x = i - halfCampfireDistance; x < i + halfCampfireDistance; x++)
+					{
+						FindGround(x, ref y);
+						if (Math.Abs(x - i) > 2) //Don't overlap the tent position. This assumes tile widths are 3 each
+						{
+							int campfireType = ModContent.TileType<RoastCampfire>();
 
-		return j;
+							WorldGen.PlaceTile(x, y - 1, campfireType, true); //Place the campfire, and if successful, place the tent in our predetermined location
+							if (Main.tile[x, y - 1].TileType == campfireType)
+							{
+								WorldGen.PlaceTile(i, j - 1, TileID.LargePiles2, true, style: 26);
+								return; //Success!
+							}
+						}
+					}
+				}
+			}
+
+			if (a == tries - 1)
+				SpiritReforgedMod.Instance.Logger.Info("Generator exceeded maximum tries for structure: Savanna Campsite");
+		}
 	}
 
 	private static void WateringHole(int i, int j, bool addWater = false)
@@ -341,7 +382,9 @@ internal class SavannaEcotone : EcotoneBase
 
 		HashSet<int> soft = [TileID.Dirt, TileID.CorruptGrass, TileID.CrimsonGrass, TileID.Sand,
 			ModContent.TileType<SavannaDirt>(), ModContent.TileType<SavannaGrass>()];
-		for (int a = 0; a < 200; a++) //Watering hole base
+		const int tries = 200;
+
+		for (int a = 0; a < tries; a++) //Watering hole base
 		{
 			int i = WorldGen.genRand.Next(SavannaArea.Left, SavannaArea.Right);
 			int j = SavannaArea.Top;
@@ -354,7 +397,7 @@ internal class SavannaEcotone : EcotoneBase
 				break;
 			}
 
-			if (a == 199)
+			if (a == tries - 1)
 				SpiritReforgedMod.Instance.Logger.Info("Generator exceeded maximum tries for structure: Savanna Watering Hole");
 		}
 
