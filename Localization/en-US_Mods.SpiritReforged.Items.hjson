@@ -980,3 +980,8 @@ DrywoodPlatformItem: {
 	DisplayName: Drywood Platform
 	Tooltip: ""
 }
+
+SavannaDirtWallItem: {
+	DisplayName: Savanna Dirt Wall
+	Tooltip: ""
+}
