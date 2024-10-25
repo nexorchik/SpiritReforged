@@ -187,7 +187,7 @@ GarItem: {
 }
 
 SavannaDirtItem: {
-	DisplayName: Savanna Dirt
+	DisplayName: Coarse Dirt
 	Tooltip: ""
 }
 
@@ -982,6 +982,6 @@ DrywoodPlatformItem: {
 }
 
 SavannaDirtWallItem: {
-	DisplayName: Savanna Dirt Wall
+	DisplayName: Coarse Dirt Wall
 	Tooltip: ""
 }
