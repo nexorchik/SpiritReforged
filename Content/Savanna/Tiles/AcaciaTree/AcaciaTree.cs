@@ -68,7 +68,7 @@ public class AcaciaTree : CustomTree
 		if (Framing.GetTileSafely(i, j).TileType == Type && Framing.GetTileSafely(i, j - 1).TileType != Type) //Draw a treetop
 		{
 			var source = topsTexture.Frame();
-			var origin = source.Bottom() - new Vector2(8, 0);
+			var origin = source.Bottom() - new Vector2(0, 2);
 
 			spriteBatch.Draw(topsTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}

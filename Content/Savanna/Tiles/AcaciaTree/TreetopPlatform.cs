@@ -22,9 +22,9 @@ public class TreetopPlatform : SimpleEntity
 		TreePosition ??= Center.ToPoint16(); //Initialize
 		var tilePos = TreePosition.Value;
 		//Use a position convenient to acacia treetops
-		Center = tilePos.ToVector2() * 16 + new Vector2(18, -96) + CustomTree.GetPalmTreeOffset(tilePos.X, tilePos.Y);
+		Center = tilePos.ToVector2() * 16 + new Vector2(8, -112) + CustomTree.GetPalmTreeOffset(tilePos.X, tilePos.Y);
 
-		if (Framing.GetTileSafely(TreePosition.Value).TileType != ModContent.TileType<AcaciaTree>())
+		if (!ModContent.GetInstance<AcaciaTree>().IsTreeTop(TreePosition.Value.X, TreePosition.Value.Y, true))
 			Kill();
 	}
 

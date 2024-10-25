@@ -17,10 +17,10 @@ public class AcaciaSapling : ModTile
 		TileObjectData.newTile.Origin = new Point16(0, 1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, TileObjectData.newTile.Width, 0);
 		TileObjectData.newTile.UsesCustomCanPlace = true;
-		TileObjectData.newTile.CoordinateHeights = new[] { 16, 18 };
+		TileObjectData.newTile.CoordinateHeights = [16, 18];
 		TileObjectData.newTile.CoordinateWidth = 16;
 		TileObjectData.newTile.CoordinatePadding = 2;
-		TileObjectData.newTile.AnchorValidTiles = new[] { ModContent.TileType<SavannaGrass>() };
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.DrawFlipHorizontal = true;
 		TileObjectData.newTile.WaterPlacement = LiquidPlacement.NotAllowed;
@@ -37,7 +37,7 @@ public class AcaciaSapling : ModTile
 		AddMapEntry(new Color(200, 200, 200), Language.GetText("MapObject.Sapling"));
 
 		DustType = DustID.WoodFurniture;
-		AdjTiles = new int[] { TileID.Saplings };
+		AdjTiles = [TileID.Saplings];
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
