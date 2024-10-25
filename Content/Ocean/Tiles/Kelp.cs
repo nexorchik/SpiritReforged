@@ -46,10 +46,24 @@ public class Kelp2x3 : ModTile, IDrawPreview
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
 
+	protected static Vector3 GetGlowColor(int x)
+	{
+		Color[] selections = [new Color(110, 150, 138), Color.LightSeaGreen, new Color(100, 220, 110), new Color(240, 240, 180), Color.LightSkyBlue, Color.Teal, Color.PowderBlue];
+		int seed = (int)((1f + (float)Math.Sin(SpiritReforgedSystem.StaticWorldSeed)) * selections.Length) % selections.Length;
+
+		var unit = selections[seed];
+
+		const float variance = .5f;
+		return Color.Lerp(unit, selections[(seed + 1) % selections.Length], variance + (float)Math.Sin(x / 20f) * variance).ToVector3();
+	}
+
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 	{
 		if (Framing.GetTileSafely(i, j).TileFrameY == 18)
-			(r, g, b) = (0.3f * 1.5f, 0.3f * 1.5f, 0);
+		{
+			var col = GetGlowColor(i) / 2.5f;
+			(r, g, b) = (col.X, col.Y, col.Z);
+		}
 	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
@@ -71,7 +85,9 @@ public class Kelp2x3 : ModTile, IDrawPreview
 	{
 		var t = Framing.GetTileSafely(i, j);
 		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
-		spriteBatch.Draw(glowmask.Value, new Vector2(i * 16, j * 16) - Main.screenPosition + zero, new Rectangle(t.TileFrameX + 18 * FrameOffset.X, t.TileFrameY + 18 * FrameOffset.Y, 16, 16), Color.LightYellow);
+
+		spriteBatch.Draw(glowmask.Value, new Vector2(i * 16, j * 16) - Main.screenPosition + zero, 
+			new Rectangle(t.TileFrameX + 18 * FrameOffset.X, t.TileFrameY + 18 * FrameOffset.Y, 16, 16), new Color(GetGlowColor(0)));
 	}
 
 	public void DrawPreview(SpriteBatch spriteBatch, TileObjectPreviewData op, Vector2 pos)
@@ -134,7 +150,10 @@ public class Kelp2x2 : Kelp2x3
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 	{
 		if (Framing.GetTileSafely(i, j).TileFrameY == 0)
-			(r, g, b) = (0.28f * 1.5f, 0.28f * 1.5f, 0);
+		{
+			var col = GetGlowColor(i) / 2.9f;
+			(r, g, b) = (col.X, col.Y, col.Z);
+		}
 	}
 }
 
@@ -177,7 +196,10 @@ public class Kelp1x2 : Kelp2x3
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 	{
 		if (Framing.GetTileSafely(i, j).TileFrameY == 0)
-			(r, g, b) = (0.34f * 1.5f, 0.34f * 1.5f, 0);
+		{
+			var col = GetGlowColor(i) / 2.9f;
+			(r, g, b) = (col.X, col.Y, col.Z);
+		}
 	}
 }
 
