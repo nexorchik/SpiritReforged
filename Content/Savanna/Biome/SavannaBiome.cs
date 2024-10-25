@@ -3,7 +3,7 @@
 namespace SpiritReforged.Content.Savanna.Biome;
 public class SavannaBiome : ModBiome
 {
-	public override SceneEffectPriority Priority => SceneEffectPriority.BiomeMedium;
+	public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh;
 	public override int Music => (Main.LocalPlayer.townNPCs > 2f) ? -1 : MusicLoader.GetMusicSlot(Mod, "Assets/Music/Savanna");
 	public override ModWaterStyle WaterStyle => ModContent.GetInstance<SavannaWaterStyle>();
 	public override CaptureBiome.TileColorStyle TileColorStyle => CaptureBiome.TileColorStyle.Normal;

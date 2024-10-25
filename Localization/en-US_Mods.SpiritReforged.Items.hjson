@@ -187,7 +187,7 @@ GarItem: {
 }
 
 SavannaDirtItem: {
-	DisplayName: Savanna Dirt
+	DisplayName: Coarse Dirt
 	Tooltip: ""
 }
 
@@ -926,4 +926,62 @@ BotanistHat: {
 BotanistLegs: {
 	DisplayName: Botanist Joggers
 	Tooltip: 10% increased move speed
+}
+
+BeachTowel: {
+	DisplayName: Beach Towel
+	Tooltip: "'It keeps you dry, but make sure you don't jump in the water with it on!'"
+}
+
+BikiniBottom: {
+	DisplayName: Bikini Bottom
+	Tooltip: "'Who needs armor anyways when you can run free in the sun!'"
+}
+
+BikiniTop: {
+	DisplayName: Bikini Top
+	Tooltip: "'Despite what one may expect, it really doesn't provide any sort of defense.'"
+}
+
+SwimmingTrunks: {
+	DisplayName: Swimming Trunks
+	Tooltip: "'They don't provide much in the way of defense, but they're undeniably stylish.'"
+}
+
+TintedGlasses: {
+	DisplayName: Tinted Glasses
+	Tooltip: "'They help sell the look, so it's best to keep them on even when it's dark.'"
+}
+
+WheatgrassSeedPouch: {
+	DisplayName: Wheatgrass Seed Pouch
+	Tooltip:
+		'''
+		Throws a spread of seeds which grow wheatgrass on grass
+		'Shakes and swishes in your hand'
+		'''
+}
+
+SavannaSandstormMusicBoxItem: {
+	Tooltip: ""
+	DisplayName: Music Box (Duststorm)
+}
+
+FishLure: {
+	DisplayName: Fish Lure
+	Tooltip:
+		'''
+		"{$ItemTooltip.CoralTorch}"
+		Attracts schools of fish to nearby waters
+		'''
+}
+
+DrywoodPlatformItem: {
+	DisplayName: Drywood Platform
+	Tooltip: ""
+}
+
+SavannaDirtWallItem: {
+	DisplayName: Coarse Dirt Wall
+	Tooltip: ""
 }
