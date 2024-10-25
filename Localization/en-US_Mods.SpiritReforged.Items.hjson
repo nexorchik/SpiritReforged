@@ -975,3 +975,8 @@ FishLure: {
 		Attracts schools of fish to nearby waters
 		'''
 }
+
+DrywoodPlatformItem: {
+	DisplayName: Drywood Platform
+	Tooltip: ""
+}
