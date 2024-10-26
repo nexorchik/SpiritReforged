@@ -3,6 +3,7 @@ using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Common.WorldGeneration.Ecotones;
 using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
+using SpiritReforged.Content.Savanna.Walls;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Generation;
@@ -16,8 +17,10 @@ internal class SavannaEcotone : EcotoneBase
 	private static Rectangle SavannaArea = Rectangle.Empty;
 	private static Rectangle WaterHoleArea = Rectangle.Empty;
 
+	private static bool HasWaterHole => !WaterHoleArea.IsEmpty;
+	private static bool HasSavanna => !SavannaArea.IsEmpty;
+
 	private static int Steps = 0;
-	private static bool HasSavanna = false;
 
 	protected override void InternalLoad()
 	{
@@ -52,14 +55,14 @@ internal class SavannaEcotone : EcotoneBase
 
 	public override void AddTasks(List<GenPass> tasks, List<EcotoneSurfaceMapping.EcotoneEntry> entries)
 	{
-		int index = tasks.FindIndex(x => x.Name == "Pyramids");
-		int secondIndex = tasks.FindIndex(x => x.Name == "Spreading Grass") + 2;
+		int pyramidIndex = tasks.FindIndex(x => x.Name == "Pyramids");
+		int grassIndex = tasks.FindIndex(x => x.Name == "Spreading Grass") + 2;
 
-		if (index == -1 || secondIndex == -1)
+		if (pyramidIndex == -1 || grassIndex == -1)
 			return;
 
-		tasks.Insert(index, new PassLegacy("Savanna", BaseGeneration(entries)));
-		tasks.Insert(secondIndex, new PassLegacy("Populate Savanna", PopulateSavanna));
+		tasks.Insert(pyramidIndex, new PassLegacy("Savanna", BaseGeneration(entries)));
+		tasks.Insert(grassIndex, new PassLegacy("Populate Savanna", PopulateSavanna));
 	}
 
 	private void PopulateSavanna(GenerationProgress progress, GameConfiguration configuration)
@@ -70,11 +73,16 @@ internal class SavannaEcotone : EcotoneBase
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.SavannaObjects");
 		HashSet<int> treeSpacing = [];
 
+		if (HasWaterHole)
+			WateringHole(WaterHoleArea.X, WaterHoleArea.Y, true);
+		
+		if (!HasWaterHole || WorldGen.genRand.NextBool(3) && SavannaArea.Width > 150)
+			GrowBaobab();
+
 		GrowStones();
+
 		if (WorldGen.genRand.NextBool(3))
 			Campsite();
-
-		WateringHole(WaterHoleArea.X, WaterHoleArea.Y, true);
 
 		for (int i = SavannaArea.Left; i < SavannaArea.Right; ++i)
 		{
@@ -188,6 +196,26 @@ internal class SavannaEcotone : EcotoneBase
 		}
 	}
 
+	private static void GrowBaobab()
+	{
+		const int tries = 50;
+		for (int a = 0; a < tries; a++)
+		{
+			int i = WorldGen.genRand.Next(SavannaArea.Left, SavannaArea.Right);
+			int j = SavannaArea.Top;
+
+			FindGround(i, ref j);
+			if (Main.tile[i, j].TileType == ModContent.TileType<SavannaDirt>() && Main.tile[i, j - 1].LiquidAmount < 50)
+			{
+				BaobabGen.GenerateBaobab(i, j);
+				return;
+			}
+
+			if (a == tries - 1)
+				SpiritReforgedMod.Instance.Logger.Info("Generator exceeded maximum tries for structure: Great Baobab");
+		}
+	}
+
 	private static void GrowStones()
 	{
 		const int rockTries = 50;
@@ -218,7 +246,7 @@ internal class SavannaEcotone : EcotoneBase
 
 			for (int x = 0; x < width; x++)
 			{
-				FindGround(i, ref j);
+				FindGround(i + x, ref j);
 				int _height = (int)(Math.Abs(Math.Sin(x / (float)width * Math.PI)) * height) + 1;
 
 				for (int y = j; y < j + _height; y++)
@@ -395,7 +423,6 @@ internal class SavannaEcotone : EcotoneBase
 		if (entry is null)
 			return;
 
-		HasSavanna = true;
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.SavannaTerrain");
 
 		int startX = entry.Start.X - 0;
@@ -485,25 +512,28 @@ internal class SavannaEcotone : EcotoneBase
 
 		SavannaArea = new Rectangle(startX, topBottomY.X, endX - startX, topBottomY.Y - topBottomY.X);
 
-		HashSet<int> soft = [TileID.Dirt, TileID.CorruptGrass, TileID.CrimsonGrass, TileID.Sand,
+		if (WorldGen.genRand.NextBool())
+		{
+			HashSet<int> soft = [TileID.Dirt, TileID.CorruptGrass, TileID.CrimsonGrass, TileID.Sand,
 			ModContent.TileType<SavannaDirt>(), ModContent.TileType<SavannaGrass>()];
 
-		const int tries = 200;
-		for (int a = 0; a < tries; a++) //Watering hole base
-		{
-			int i = WorldGen.genRand.Next(SavannaArea.Left, SavannaArea.Right);
-			int j = SavannaArea.Top;
-
-			FindGround(i, ref j);
-
-			if (soft.Contains(Main.tile[i, j].TileType))
+			const int tries = 200;
+			for (int a = 0; a < tries; a++) //Watering hole base
 			{
-				WateringHole(i, j);
-				break;
-			}
+				int i = WorldGen.genRand.Next(SavannaArea.Left, SavannaArea.Right);
+				int j = SavannaArea.Top;
 
-			if (a == tries - 1)
-				SpiritReforgedMod.Instance.Logger.Info("Generator exceeded maximum tries for structure: Savanna Watering Hole");
+				FindGround(i, ref j);
+
+				if (soft.Contains(Main.tile[i, j].TileType))
+				{
+					WateringHole(i, j);
+					break;
+				}
+
+				if (a == tries - 1)
+					SpiritReforgedMod.Instance.Logger.Info("Generator exceeded maximum tries for structure: Savanna Watering Hole");
+			}
 		}
 
 		return;
