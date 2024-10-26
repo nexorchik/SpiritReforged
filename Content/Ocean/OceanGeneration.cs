@@ -133,6 +133,8 @@ public class OceanGeneration : ModSystem
 	{
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.PopulateOcean");
 
+		PlaceOceanPendant();
+
 		PopulateOcean(_oceanInfos.Item1, 0);
 		PopulateOcean(_oceanInfos.Item2, 1);
 	}
@@ -492,6 +494,30 @@ public class OceanGeneration : ModSystem
 				}
 
 				WorldGen.oceanCave(i, j);
+			}
+		}
+	}
+
+	private static void PlaceOceanPendant()
+	{
+		while (true)
+		{
+			int x = WorldGen.genRand.Next(40, WorldGen.oceanDistance);
+			if (WorldGen.genRand.NextBool())
+				x = WorldGen.genRand.Next(Main.maxTilesX - WorldGen.oceanDistance, Main.maxTilesX - 40);
+
+			int y = WorldGen.genRand.Next((int)(Main.maxTilesY * 0.35f / 16f), (int)WorldGen.oceanLevel);
+			while (!WorldGen.SolidTile(x, y))
+				y++;
+
+			y--;
+			if (Framing.GetTileSafely(x, y).LiquidType == LiquidID.Water && Framing.GetTileSafely(x, y).LiquidAmount >= 255)
+			{
+				int type = ModContent.TileType<Items.Reefhunter.OceanPendant.OceanPendantTile>();
+
+				WorldGen.PlaceObject(x, y, type);
+				if (Framing.GetTileSafely(x, y).TileType == type)
+					break;
 			}
 		}
 	}
