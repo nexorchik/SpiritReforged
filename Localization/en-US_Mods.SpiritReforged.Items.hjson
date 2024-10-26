@@ -187,7 +187,7 @@ GarItem: {
 }
 
 SavannaDirtItem: {
-	DisplayName: Savanna Dirt
+	DisplayName: Coarse Dirt
 	Tooltip: ""
 }
 
@@ -960,4 +960,28 @@ WheatgrassSeedPouch: {
 		Throws a spread of seeds which grow wheatgrass on grass
 		'Shakes and swishes in your hand'
 		'''
+}
+
+SavannaSandstormMusicBoxItem: {
+	Tooltip: ""
+	DisplayName: Music Box (Duststorm)
+}
+
+FishLure: {
+	DisplayName: Fish Lure
+	Tooltip:
+		'''
+		"{$ItemTooltip.CoralTorch}"
+		Attracts schools of fish to nearby waters
+		'''
+}
+
+DrywoodPlatformItem: {
+	DisplayName: Drywood Platform
+	Tooltip: ""
+}
+
+SavannaDirtWallItem: {
+	DisplayName: Coarse Dirt Wall
+	Tooltip: ""
 }

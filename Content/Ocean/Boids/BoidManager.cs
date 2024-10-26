@@ -88,7 +88,7 @@ public class BoidManager : ModSystem
 		Player player = Main.LocalPlayer;
 		const int spawnRate = 40;
 
-		if (player.ZoneBeach && Main.GameUpdateCount % spawnRate == spawnRate - 1) //Spawn boid fish
+		if (player.ZoneBeach && Main.GameUpdateCount % spawnRate == spawnRate - 1 || Main.GameUpdateCount % spawnRate > spawnRate - 3 && player.GetModPlayer<OceanPlayer>().nearLure)
 		{
 			var weightedBoid = new WeightedRandom<Boid>();
 			for (int i = 0; i < boids.Count; i++)
