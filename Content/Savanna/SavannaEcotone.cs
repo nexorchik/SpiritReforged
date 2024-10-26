@@ -102,10 +102,8 @@ internal class SavannaEcotone : EcotoneBase
 					int treeDistance = Math.Abs(i - treeSpacing.OrderBy(x => Math.Abs(i - x)).FirstOrDefault());
 
 					if (WorldGen.genRand.NextBool(20) && treeDistance > minimumTreeSpace) //Add trees
-					{
 						if (CustomTree.GrowTree<AcaciaTree>(i, j - 1))
 							treeSpacing.Add(i);
-					}
 
 					GrowStuffOnGrass(i, j);
 				}

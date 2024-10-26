@@ -195,21 +195,19 @@ public abstract class CustomTree : ModTile
 		while (!WorldGen.SolidOrSlopedTile(Framing.GetTileSafely(i, j + 1)))
 			j++; //Find the ground
 
-		var instance = ModContent.GetInstance<T>();
+		var instance = ModContent.GetInstance<T>() as CustomTree;
 		int height = instance.TreeHeight;
+
 		if (WorldGen.InWorld(i, j) && WorldGen.EmptyTileCheck(i, i, j, j - (height - 1)))
 		{
-			if (TileID.Sets.TreeSapling[Framing.GetTileSafely(i, j).TileType])
-				WorldGen.KillTile(i, j); //Kill the sapling
-
+			WorldGen.KillTile(i, j);
 			instance.GenerateTree(i, j, height);
 
 			if (WorldGen.PlayerLOS(i, j))
 				instance.GrowEffects(i, j);
-			return true;
 		}
 		
-		return false;
+		return Framing.GetTileSafely(i, j).TileType == instance.Type;
 	}
 
 	protected virtual void GenerateTree(int i, int j, int height)
