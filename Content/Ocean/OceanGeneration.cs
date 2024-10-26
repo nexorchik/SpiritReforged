@@ -210,16 +210,6 @@ public class OceanGeneration : ModSystem
 					continue;
 				}
 
-					WorldGen.PlaceObject(i, j - offset, type, true, WorldGen.genRand.Next(2));
-					NetMessage.SendObjectPlacement(-1, i, j, type, 0, 0, -1, -1);
-					continue;
-				}*/
-
-					WorldGen.PlaceObject(i, j - offset, type, true, WorldGen.genRand.Next(2));
-					NetMessage.SendObjectPlacement(-1, i, j, type, 0, 0, -1, -1);
-					continue;
-				}*/
-
 				//Growing kelp
 				if (WorldGen.genRand.Next(5) < 2 && tilesFromInnerEdge < 133 && ValidGround(i, j, 1, TileID.Sand))
 				{
