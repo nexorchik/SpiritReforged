@@ -1,5 +1,4 @@
-﻿using SpiritReforged.Common.WorldGeneration.Microtones;
-using SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
+﻿using SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 using SpiritReforged.Content.Ocean.Tiles;
 using System.Linq;
 using Terraria.IO;
