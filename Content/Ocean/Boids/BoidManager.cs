@@ -36,10 +36,7 @@ public class BoidManager : ModSystem
 
 	public override void OnWorldLoad()
 	{
-		if (!int.TryParse(WorldGen.currentWorldSeed, out int seed))
-			seed = ReLogic.Utilities.Crc32.Calculate(WorldGen.currentWorldSeed);
-
-		seed = (seed == int.MinValue) ? int.MaxValue : Math.Abs(seed); //Use world seed to determine some logic
+		int seed = SpiritReforgedSystem.StaticWorldSeed;
 		int boidCount = 8 + seed % 5; //The number of unique boids in this world
 
 		for (int i = 0; i < boidCount; i++)
