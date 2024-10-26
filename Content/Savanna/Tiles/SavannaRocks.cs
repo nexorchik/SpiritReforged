@@ -15,7 +15,6 @@ public class SavannaRockLarge : ModTile
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
 		TileObjectData.newTile.Origin = new(0, 1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 3, 0);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaDirt>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.addTile(Type);
@@ -40,7 +39,6 @@ public class SavannaRockSmall : ModTile
 		TileObjectData.newTile.CoordinateHeights = [18];
 		TileObjectData.newTile.Origin = new(1, 0);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 2, 0);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaDirt>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.addTile(Type);
