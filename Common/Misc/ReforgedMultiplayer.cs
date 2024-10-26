@@ -13,7 +13,7 @@ public static class ReforgedMultiplayer
 		SpawnTrail,
 		SpawnSimpleEntity,
 		KillSimpleEntity
-	}
+    }
 
 	public static void HandlePacket(BinaryReader reader, int whoAmI)
 	{
