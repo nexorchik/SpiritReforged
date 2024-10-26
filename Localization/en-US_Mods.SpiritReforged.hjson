@@ -1,6 +1,6 @@
 Tiles: {
 	SunkenTreasureTile.MapEntry: Sunken Treasure
-	VentMapEntry: Hydrothermal Vent
+	HydrothermalVent.MapEntry: Hydrothermal Vent
 	CoralMapEntry: Coral
 	KelpMapEntry: Kelp
 	OceanPirateChest.MapEntry: Pirate Chest
@@ -45,6 +45,7 @@ Projectiles: {
 	TumblerPet.DisplayName: Tumbler Pet
 	BaobabFruitProj.DisplayName: Falling Baobab Fruit
 	WheatgrassSeedProjectile.DisplayName: Wheatgrass Seed Projectile
+	MineralPickup.DisplayName: Mineral Pickup
 }
 
 Configs: {

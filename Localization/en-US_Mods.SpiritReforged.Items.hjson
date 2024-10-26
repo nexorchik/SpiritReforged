@@ -985,3 +985,13 @@ SavannaDirtWallItem: {
 	DisplayName: Coarse Dirt Wall
 	Tooltip: ""
 }
+
+GravelItem: {
+	DisplayName: Gravel
+	Tooltip: ""
+}
+
+MagmastoneItem: {
+	DisplayName: Magmastone
+	Tooltip: ""
+}
