@@ -2,6 +2,11 @@
 
 namespace SpiritReforged.Common.ItemCommon;
 
+/// <summary>
+/// Creates shortcuts to replicate vanilla crate loot database functionality.<br/>
+/// Both <see cref="BiomeCrate(ItemLoot, IItemDropRule, IItemDropRule[])"/> and <see cref="HardmodeBiomeCrate(ItemLoot, IItemDropRule, IItemDropRule[])"/> 
+/// take in the "main" item drop and all sub drops and automatically put them in how vanilla crates work.
+/// </summary>
 internal static class CrateHelper
 {
 	public static void BiomeCrate(ItemLoot loot, IItemDropRule mainDrop, params IItemDropRule[] subDrops)
