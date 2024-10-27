@@ -18,11 +18,6 @@ RawFish: {
 	Tooltip: "'Can be eaten...maybe cook it first?'"
 }
 
-SulfurDeposit: {
-	DisplayName: Sulfur Deposit
-	Tooltip: "'Highly explosive!'"
-}
-
 SunkenTreasure: {
 	DisplayName: Sunken Treasure
 	Tooltip:
