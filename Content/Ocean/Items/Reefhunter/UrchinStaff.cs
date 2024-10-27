@@ -27,15 +27,6 @@ public class UrchinStaff : ModItem
 		Item.shoot = ModContent.ProjectileType<UrchinStaffProjectile>();
 	}
 
-	public override void AddRecipes()
-	{
-		var recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<IridescentScale>(), 8);
-		recipe.AddIngredient(ModContent.ItemType<SulfurDeposit>(), 10);
-		recipe.AddTile(TileID.Anvils);
-		recipe.Register();
-	}
-
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
 		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_LightPop") with { PitchVariance = 0.4f, Pitch = -2f, Volume = .75f, MaxInstances = 3 }, player.Center);
@@ -53,5 +44,14 @@ public class UrchinStaff : ModItem
 		}
 
 		return false;
+	}
+
+	public override void AddRecipes()
+	{
+		var recipe = CreateRecipe();
+		recipe.AddIngredient(ModContent.ItemType<IridescentScale>(), 8);
+		recipe.AddIngredient(ModContent.ItemType<MineralSlag>(), 10);
+		recipe.AddTile(TileID.Anvils);
+		recipe.Register();
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.Particle;
+using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Content.Ocean.Items.Reefhunter;
 using SpiritReforged.Content.Ocean.Tiles.Hydrothermal;
 using SpiritReforged.Content.Particles;
@@ -25,11 +26,10 @@ public class HydrothermalVentPlume : ModProjectile
 
 			if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(4))
 			{
-				var vel = (Projectile.velocity * 2 * Main.rand.NextFloat(.5f, 1f)).RotatedByRandom(1.75f);
-				var proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), 
-					Projectile.Center, vel, ModContent.ProjectileType<MineralPickup>(), 0, 0);
+				int item = Item.NewItem(Projectile.GetSource_FromAI(), Projectile.Center, ModContent.ItemType<MineralSlagPickup>());
 
-				MineralPickup.SpawnItemPickup(ModContent.ItemType<SulfurDeposit>(), proj);
+				if (Main.netMode != NetmodeID.SinglePlayer)
+					NetMessage.SendData(MessageID.SyncItem, number: item);
 			}
 		}
 

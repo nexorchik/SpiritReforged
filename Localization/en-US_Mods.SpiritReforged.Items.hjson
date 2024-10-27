@@ -995,3 +995,8 @@ MagmastoneItem: {
 	DisplayName: Magmastone
 	Tooltip: ""
 }
+
+MineralSlag: {
+	DisplayName: Mineral Slag
+	Tooltip: ""
+}
