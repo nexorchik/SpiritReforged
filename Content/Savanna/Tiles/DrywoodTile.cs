@@ -17,6 +17,8 @@ public class DrywoodTile : ModTile
 		Main.tileMerge[Type][ModContent.TileType<SavannaDirt>()] = true;
 		Main.tileMerge[ModContent.TileType<SavannaDirt>()][Type] = true;
 
+		DustType = DustID.WoodFurniture;
+
 		AddMapEntry(new Color(145, 128, 109));
 	}
 }
