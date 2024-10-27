@@ -28,6 +28,15 @@ internal class OceanKelp : ModTile
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		var drops = base.GetItemDrops(i, j);
+		if (Main.rand.NextBool(100))
+			drops = [new Item(ItemID.LimeKelp)];
+
+		return drops;
+	}
+
 	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak) //Sets and randomizes tile frame
 	{
 		var t = Framing.GetTileSafely(i, j); //this tile :)
