@@ -132,8 +132,8 @@ JellyfishStaff: {
 	Tooltip: Summons a tiny jellyfish to fight for you!
 }
 
-MantarayHuntingHarpoon: {
-	DisplayName: Manta Harpoon
+Lifesaver: {
+	DisplayName: Lifesaver
 	Tooltip:
 		'''
 		Summons a rideable manta ray mount
@@ -1000,3 +1000,5 @@ MineralSlag: {
 	DisplayName: Mineral Slag
 	Tooltip: ""
 }
+
+MineralSlagPickup.Tooltip: ""

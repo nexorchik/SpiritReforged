@@ -108,7 +108,7 @@ Buffs: {
 	}
 
 	MantarayBuff: {
-		DisplayName: Manta Ray
+		DisplayName: Rescue Ray
 		Description: Swift as the tides!
 	}
 

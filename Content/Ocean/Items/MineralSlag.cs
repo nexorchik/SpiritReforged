@@ -44,7 +44,7 @@ public class MineralSlagPickup : MineralSlag //Spawned strictly by Hydrothermal 
 	private int timeLeft = timeLeftMax;
 	private bool collided = false;
 
-	public override string Name => "Mods.SpiritReforged.Items.MineralSlag.DisplayName";
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.MineralSlag.DisplayName");
 
 	public override string Texture => base.Texture.Replace("Pickup", string.Empty);
 
