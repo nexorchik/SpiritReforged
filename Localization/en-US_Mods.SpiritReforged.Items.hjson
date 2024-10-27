@@ -995,3 +995,13 @@ MagmastoneItem: {
 	DisplayName: Magmastone
 	Tooltip: ""
 }
+
+HardmodeSavannaCrate: {
+	DisplayName: Safari Crate
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+SavannaCrate: {
+	DisplayName: Grassland Crate
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
