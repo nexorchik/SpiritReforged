@@ -993,7 +993,7 @@ MagmastoneItem: {
 
 MineralSlag: {
 	DisplayName: Mineral Slag
-	Tooltip: ""
+	Tooltip: Can be used at the Extractinator
 }
 
 MineralSlagPickup.Tooltip: ""
