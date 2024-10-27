@@ -7,9 +7,6 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Content\Savanna\Tiles\SavannaCrateTile.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="NPCUtils">
       <HintPath>lib\NPCUtils.dll</HintPath>
     </Reference>
