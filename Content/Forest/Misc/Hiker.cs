@@ -115,7 +115,7 @@ internal class Hiker : PlayerContainerNPC, INPCButtons
 		else
 			button = "";
 
-		button2 = !PointOfInterestSystem.HasAnyInterests() || !_info.hasPin ? "" : Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Buttons.Map");
+		//button2 = !PointOfInterestSystem.HasAnyInterests() || !_info.hasPin ? "" : Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Buttons.Map");
 	}
 
 	public override void OnChatButtonClicked(bool firstButton, ref string shopName)

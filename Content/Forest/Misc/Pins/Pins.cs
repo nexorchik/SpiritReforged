@@ -25,3 +25,9 @@ public class PinYellow : PinItem
 	public override string PinName => "Yellow";
 	public override Color TextColor => Color.Gold;
 }
+
+public class PinHive : PinItem
+{
+	public override string PinName => "Hive";
+	public override Color TextColor => Color.Honeydew;
+}
