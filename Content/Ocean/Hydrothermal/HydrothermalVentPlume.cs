@@ -1,7 +1,5 @@
 ﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Ocean.Items;
-using SpiritReforged.Content.Ocean.Items.Reefhunter;
-using SpiritReforged.Content.Ocean.Tiles.Hydrothermal;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 
@@ -25,12 +23,7 @@ public class HydrothermalVentPlume : ModProjectile
 			SoundEngine.PlaySound(SoundID.Drown with { Pitch = -.5f, PitchVariance = .25f, Volume = 1.5f }, Projectile.Center);
 
 			if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(4))
-			{
-				int item = Item.NewItem(Projectile.GetSource_FromAI(), Projectile.Center, ModContent.ItemType<MineralSlagPickup>());
-
-				if (Main.netMode != NetmodeID.SinglePlayer)
-					NetMessage.SendData(MessageID.SyncItem, number: item);
-			}
+				Item.NewItem(Projectile.GetSource_FromAI(), Projectile.Center, ModContent.ItemType<MineralSlagPickup>());
 		}
 
 		if (Main.dedServ || !new Rectangle((int)Main.screenPosition.X, (int)Main.screenPosition.Y, Main.screenWidth, Main.screenHeight).Contains(Projectile.Center.ToPoint()))

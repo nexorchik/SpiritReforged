@@ -1,7 +1,7 @@
 ﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 
-namespace SpiritReforged.Content.Ocean.Tiles.Hydrothermal;
+namespace SpiritReforged.Content.Ocean.Hydrothermal;
 
 public class FireParticleScreen : ScreenParticle
 {
