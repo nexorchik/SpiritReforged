@@ -1,4 +1,5 @@
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Content.Ocean.Items;
 
 namespace SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 
@@ -6,6 +7,12 @@ public class Magmastone : ModTile, IAutoloadTileItem
 {
 	private static Asset<Texture2D> glowTexture;
 	public override void Load() => glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow");
+
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe(25)
+			.AddIngredient(ItemID.StoneBlock, 10)
+			.AddIngredient(ModContent.ItemType<MineralSlag>(), 1)
+			.AddTile(TileID.WorkBenches)
+			.Register();
 
 	public override void SetStaticDefaults()
 	{

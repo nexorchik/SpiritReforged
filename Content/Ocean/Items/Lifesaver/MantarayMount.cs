@@ -1,4 +1,4 @@
-﻿namespace SpiritReforged.Content.Ocean.Items.Reefhunter.MantarayHuntingHarpoon;
+﻿namespace SpiritReforged.Content.Ocean.Items.Lifesaver;
 
 public class MantarayMount : ModMount
 {

@@ -12,6 +12,8 @@ public class OceanPlayer : ModPlayer
 	{
 		if (Player.ZoneBeach && attempt.veryrare && Main.rand.NextBool(15))
 			itemDrop = ModContent.ItemType<Items.SunkenTreasure>();
+		if (Player.ZoneBeach && attempt.rare && Main.rand.NextBool(30))
+			itemDrop = ModContent.ItemType<Items.Lifesaver.Lifesaver>();
 	}
 
 	/// <summary>
