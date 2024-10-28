@@ -991,9 +991,17 @@ MagmastoneItem: {
 	Tooltip: ""
 }
 
+HardmodeSavannaCrate: {
+	DisplayName: Safari Crate
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+SavannaCrate: {
+	DisplayName: Grassland Crate
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
 MineralSlag: {
 	DisplayName: Mineral Slag
 	Tooltip: Can be used at the Extractinator
 }
-
-MineralSlagPickup.Tooltip: ""

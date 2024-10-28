@@ -82,6 +82,7 @@ public class MineralSlagPickup : MineralSlag //Spawned strictly by Hydrothermal 
 	private bool collided = false;
 
 	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.MineralSlag.DisplayName");
+	public override LocalizedText Tooltip => Language.GetText("Mods.SpiritReforged.Items.MineralSlag.Tooltip");
 
 	public override string Texture => base.Texture.Replace("Pickup", string.Empty);
 
