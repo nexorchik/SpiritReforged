@@ -462,7 +462,8 @@ internal class SavannaEcotone : EcotoneBase
 
 			bool hitSolid = false;
 			float taper = Math.Clamp((float)Math.Sin((float)(x - startX) / (endX - startX) * Math.PI) * 1.75f, 0, 1);
-			for (int i = -80; i < (30 + depth + minDepth) * taper; ++i)
+
+			for (int i = GetConnectedY(x, -80, [.. noKillIds]); i < (30 + depth + minDepth) * taper; ++i)
 			{
 				int realY = y + i;
 				var tile = Main.tile[x, realY];
@@ -512,13 +513,13 @@ internal class SavannaEcotone : EcotoneBase
 
 		SavannaArea = new Rectangle(startX, topBottomY.X, endX - startX, topBottomY.Y - topBottomY.X);
 
-		if (WorldGen.genRand.NextBool())
+		if (WorldGen.genRand.NextBool()) //Start watering hole gen
 		{
 			HashSet<int> soft = [TileID.Dirt, TileID.CorruptGrass, TileID.CrimsonGrass, TileID.Sand,
 			ModContent.TileType<SavannaDirt>(), ModContent.TileType<SavannaGrass>()];
 
 			const int tries = 200;
-			for (int a = 0; a < tries; a++) //Watering hole base
+			for (int a = 0; a < tries; a++)
 			{
 				int i = WorldGen.genRand.Next(SavannaArea.Left, SavannaArea.Right);
 				int j = SavannaArea.Top;
@@ -556,6 +557,20 @@ internal class SavannaEcotone : EcotoneBase
 				return (ushort)ModContent.TileType<SavannaDirt>(); //Convert ores and stone close to the surface
 
 			return (ushort)((tileType == TileID.Stone) ? TileID.ClayBlock : tileType);
+		}
+
+		static int GetConnectedY(int x, int y, int[] ignoreTypes) //Scans up all connected walls or tiles
+		{
+			while (y > GenVars.worldSurfaceHigh)
+			{
+				var tile = Main.tile[x, y];
+				if (!tile.HasTile && tile.WallType == WallID.None || ignoreTypes.Contains(tile.TileType))
+					break;
+
+				y--;
+			}
+
+			return y;
 		}
 	};
 
