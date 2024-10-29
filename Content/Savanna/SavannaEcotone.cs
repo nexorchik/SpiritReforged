@@ -463,7 +463,7 @@ internal class SavannaEcotone : EcotoneBase
 			bool hitSolid = false;
 			float taper = Math.Clamp((float)Math.Sin((float)(x - startX) / (endX - startX) * Math.PI) * 1.75f, 0, 1);
 
-			for (int i = GetConnectedY(x, -80, [.. noKillIds]); i < (30 + depth + minDepth) * taper; ++i)
+			for (int i = GetConnectedY(x, y, -80, [.. noKillIds]); i < (30 + depth + minDepth) * taper; ++i)
 			{
 				int realY = y + i;
 				var tile = Main.tile[x, realY];
@@ -559,18 +559,18 @@ internal class SavannaEcotone : EcotoneBase
 			return (ushort)((tileType == TileID.Stone) ? TileID.ClayBlock : tileType);
 		}
 
-		static int GetConnectedY(int x, int y, int[] ignoreTypes) //Scans up all connected walls or tiles
+		static int GetConnectedY(int x, int y, int startYOffset, int[] ignoreTypes) //Scans up all connected walls or tiles
 		{
-			while (y > GenVars.worldSurfaceHigh)
+			while (y > 0)
 			{
-				var tile = Main.tile[x, y];
-				if (!tile.HasTile && tile.WallType == WallID.None || ignoreTypes.Contains(tile.TileType))
+				var tile = Main.tile[x, y + startYOffset];
+				if (!tile.HasTile && tile.WallType == WallID.None && tile.LiquidAmount == 0 || ignoreTypes.Contains(tile.TileType))
 					break;
 
-				y--;
+				startYOffset--;
 			}
 
-			return y;
+			return startYOffset;
 		}
 	};
 
