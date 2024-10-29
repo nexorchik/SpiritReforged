@@ -470,8 +470,8 @@ internal class SavannaEcotone : EcotoneBase
 
 				if (i >= 0)
 				{
-					if (i >= 15 && tile.HasTile)
-						hitSolid = true;
+					if (i >= 15 && (tile.HasTile || tile.WallType != WallID.None))
+						hitSolid = true; //Replace tiles a minimum of 15 times, and until a solid tile or wall is hit
 
 					if (i >= 0 && !hitSolid)
 						tile.HasTile = true;
