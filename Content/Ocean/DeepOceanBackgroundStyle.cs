@@ -30,4 +30,6 @@ internal class DeepOceanBackgroundStyle : ModSurfaceBackgroundStyle
 			}
 		}
 	}
+
+	public override void SetStaticDefaults() => base.SetStaticDefaults();
 }

@@ -17,10 +17,7 @@ internal class WaterEdits : ModSystem
 		On_TileDrawing.DrawPartialLiquid += FixSlopes;
 
 		IL_Main.DrawBlack += HijackDrawBlack;
-		On_Main.DrawBlack += On_Main_DrawBlack;
 	}
-
-	private void On_Main_DrawBlack(On_Main.orig_DrawBlack orig, Main self, bool force) => orig(self, force);
 
 	private void HijackDrawBlack(ILContext il)
 	{
@@ -84,7 +81,13 @@ internal class WaterEdits : ModSystem
 	private static void ModifyColor(ref Color color, float opacity = 1f)
 	{
 		color *= Math.Abs(color.B / 255f) * 0.25f + 0.75f;
-		color = Color.Lerp(color, new Color(8, 8, 80) * 0.75f * opacity, 1 - Luminance(color));
+		float luminance = Luminance(color);
+		color = Color.Lerp(color, new Color(8, 8, 80) * 0.75f * opacity, 1 - luminance);
+
+		if (luminance < 0.2f)
+		{
+			color = Color.Lerp(color, Color.Black, 1 - luminance / 0.2f);
+		}
 	}
 
 	private static float Luminance(Color color) => 0.299f * color.R / 255f + 0.587f * color.G / 255f + 0.114f * color.B / 255f;
