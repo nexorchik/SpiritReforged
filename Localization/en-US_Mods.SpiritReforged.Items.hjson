@@ -966,3 +966,8 @@ WheatgrassSeedPouch: {
 		'Shakes and swishes in your hand'
 		'''
 }
+
+RoyalKhopesh: {
+	DisplayName: Royal Khopesh
+	Tooltip: ""
+}

@@ -47,6 +47,7 @@ Projectiles: {
 	SunOrb.DisplayName: Sun Orb
 	SunStaffHeld.DisplayName: Sun Staff Held
 	WheatgrassSeedProjectile.DisplayName: Wheatgrass Seed Projectile
+	RoyalKhopeshHeld.DisplayName: Royal Khopesh Held
 }
 
 Configs: {

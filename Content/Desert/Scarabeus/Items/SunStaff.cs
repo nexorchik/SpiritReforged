@@ -7,6 +7,7 @@ namespace SpiritReforged.Content.Desert.Scarabeus.Items;
 public class SunStaff : ModItem
 {
 	public override void SetStaticDefaults() => Item.staff[Type] = true;
+
 	public override void SetDefaults()
 	{
 		Item.damage = 20;
