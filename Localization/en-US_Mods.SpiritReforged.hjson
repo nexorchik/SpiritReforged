@@ -1,6 +1,6 @@
 Tiles: {
 	SunkenTreasureTile.MapEntry: Sunken Treasure
-	VentMapEntry: Hydrothermal Vent
+	HydrothermalVent.MapEntry: Hydrothermal Vent
 	CoralMapEntry: Coral
 	KelpMapEntry: Kelp
 	OceanPirateChest.MapEntry: Pirate Chest
@@ -48,6 +48,7 @@ Projectiles: {
 	SunStaffHeld.DisplayName: Sun Staff Held
 	WheatgrassSeedProjectile.DisplayName: Wheatgrass Seed Projectile
 	RoyalKhopeshHeld.DisplayName: Royal Khopesh Held
+	MineralPickup.DisplayName: Mineral Pickup
 }
 
 Configs: {
@@ -110,7 +111,7 @@ Buffs: {
 	}
 
 	MantarayBuff: {
-		DisplayName: Manta Ray
+		DisplayName: Rescue Ray
 		Description: Swift as the tides!
 	}
 

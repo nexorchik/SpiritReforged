@@ -10,8 +10,7 @@ public class WheatgrassSeedPouch : ModItem
 
 	public override void SetDefaults()
 	{
-		Item.width = 26;
-		Item.height = 26;
+		Item.width = Item.height = 26;
 		Item.value = Item.sellPrice(0, 0, 0, 5);
 		Item.rare = ItemRarityID.Blue;
 		Item.shoot = ModContent.ProjectileType<WheatgrassSeedProjectile>();

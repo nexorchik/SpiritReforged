@@ -2,11 +2,7 @@
 
 public class EmpoweredSwim : ModBuff
 {
-	public override void SetStaticDefaults()
-	{
-		// DisplayName.SetDefault("Empowered Swim");
-		// Description.SetDefault("You feel much faster in water");
-	}
+	public override void SetStaticDefaults() => Main.buffNoTimeDisplay[Type] = true;
 
 	public override void Update(Player player, ref int buffIndex)
 	{
@@ -22,9 +18,6 @@ public class EmpoweredSwim : ModBuff
 			else
 				player.fullRotation *= 0.8f;
 		else
-		{
 			player.fullRotation = 0f;
-			player.AddBuff(ModContent.BuffType<SwimmingFatigue>(), 35 * 60);
-		}
 	}
 }

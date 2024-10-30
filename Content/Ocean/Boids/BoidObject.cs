@@ -2,17 +2,17 @@ namespace SpiritReforged.Content.Ocean.Boids;
 
 internal class BoidObject : Entity
 {
-	public Vector2 Acceleration { get; set; }
+	public Vector2 acceleration;
 
 	public const float Vision = 100;
-	private const float MaxForce = 0.02f;
-	private const float MaxVelocity = 2f;
+	public const float MaxForce = 0.02f;
+	public const float MaxVelocity = 2f;
 
-	private byte frame = 0;
-	private readonly int textureID;
-	private int spawnTimer = 100;
+	protected byte frame = 0;
+	protected int spawnTimer = 100;
 
-	private readonly Boid parent;
+	public readonly Boid parent;
+	public readonly int textureID;
 
 	public List<BoidObject> AdjFish = [];
 
@@ -22,7 +22,7 @@ internal class BoidObject : Entity
 		textureID = parent.TextureLookup[Main.rand.Next(parent.TextureLookup.Length)];
 	}
 
-	private static Vector2 Limit(Vector2 vec, float val)
+	protected static Vector2 Limit(Vector2 vec, float val)
 	{
 		if (vec.LengthSquared() > val * val)
 			return Vector2.Normalize(vec) * val;
@@ -180,35 +180,35 @@ internal class BoidObject : Entity
 		return Vector2.Zero;
 	}
 
-	public void Draw(SpriteBatch spritebatch)
+	public virtual void Draw(SpriteBatch spritebatch)
 	{
-		Point tilePos = position.ToTileCoordinates();
-		Color lightColour = Lighting.GetColor(tilePos.X, tilePos.Y);
+		var lightColour = Lighting.GetColor(position.ToTileCoordinates());
 
 		float alpha = MathHelper.Clamp(1 - spawnTimer-- / 100f, 0f, 1f);
-		Texture2D texture = BoidManager.FishTextures[textureID].Value;
+		var texture = BoidManager.FishTextures[textureID].Value;
 		var source = texture.Frame(1, 2, 0, frame % 2);
+		var effects = velocity.X > 0 ? SpriteEffects.FlipVertically : SpriteEffects.None;
 
 		spritebatch.Draw(texture, position - Main.screenPosition, source, lightColour * alpha, 
-			velocity.ToRotation() + (float)Math.PI, source.Size() / 2, parent.flockScale, SpriteEffects.None, 0f);
+			velocity.ToRotation() + (float)Math.PI, source.Size() / 2, parent.flockScale, effects, 0f);
 	}
 
 	public void ApplyForces()
 	{
-		velocity += Acceleration;
+		velocity += acceleration;
 		velocity = Limit(velocity, MaxVelocity);
 		position += velocity;
-		Acceleration *= 0;
+		acceleration *= 0;
 	}
 
-	public void Update()
+	public virtual void Update()
 	{
 		//arbitrarily weight
-		Acceleration += Seperation(25) * 1.5f;
-		Acceleration += Allignment(50) * 1f;
-		Acceleration += Cohesion(50) * 1f;
-		Acceleration += AvoidHooman(50) * 4f;
-		Acceleration += AvoidTiles(100) * 5f;
+		acceleration += Seperation(25) * 1.5f;
+		acceleration += Allignment(50) * 1f;
+		acceleration += Cohesion(50) * 1f;
+		acceleration += AvoidHooman(50) * 4f;
+		acceleration += AvoidTiles(100) * 5f;
 		ApplyForces();
 
 		if (Main.rand.NextBool(7))
