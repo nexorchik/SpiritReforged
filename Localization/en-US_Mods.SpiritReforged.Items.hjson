@@ -688,6 +688,11 @@ SafariVest: {
 	Tooltip: ""
 }
 
+SunStaff: {
+	DisplayName: Sunrise Scepter
+	Tooltip: Casts the light of the sun down in front of you
+}
+
 SavannaMusicBoxItem: {
 	DisplayName: Music Box (Savanna)
 	Tooltip: ""
@@ -955,6 +960,11 @@ WheatgrassSeedPouch: {
 		Throws a spread of seeds which grow wheatgrass on grass
 		'Shakes and swishes in your hand'
 		'''
+}
+
+RoyalKhopesh: {
+	DisplayName: Royal Khopesh
+	Tooltip: ""
 }
 
 SavannaSandstormMusicBoxItem: {

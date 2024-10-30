@@ -44,7 +44,10 @@ Projectiles: {
 	ToucanMinion.DisplayName: Toucan Minion
 	TumblerPet.DisplayName: Tumbler Pet
 	BaobabFruitProj.DisplayName: Falling Baobab Fruit
+	SunOrb.DisplayName: Sun Orb
+	SunStaffHeld.DisplayName: Sun Staff Held
 	WheatgrassSeedProjectile.DisplayName: Wheatgrass Seed Projectile
+	RoyalKhopeshHeld.DisplayName: Royal Khopesh Held
 	MineralPickup.DisplayName: Mineral Pickup
 }
 
