@@ -9,6 +9,7 @@ using Terraria.Utilities;
 namespace SpiritReforged.Content.Savanna.NPCs;
 
 [SpawnPack(2, 4)]
+[AutoloadBanner]
 public class Ostrich : ModNPC
 {
 	private static readonly int[] endFrames = [3, 7, 5, 8, 9, 6, 6];

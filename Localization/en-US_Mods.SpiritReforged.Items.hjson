@@ -927,3 +927,6 @@ BotanistLegs: {
 	DisplayName: Botanist Joggers
 	Tooltip: 10% increased move speed
 }
+
+HyenaBannerItem.DisplayName: Hyena Banner
+OstrichBannerItem.DisplayName: Ostrich Banner

@@ -4,6 +4,7 @@ using System.Linq;
 namespace SpiritReforged.Content.Savanna.NPCs;
 
 [SpawnPack(2, 3)]
+[AutoloadBanner]
 public class Hyena : ModNPC
 {
 	private static readonly int[] endFrames = [2, 5, 5, 5, 4, 13];
