@@ -10,7 +10,7 @@ public class Hyena : ModNPC
 	private static readonly int[] endFrames = [4, 2, 5, 5, 5, 13];
 	private bool OnTransitionFrame => (int)NPC.frameCounter == endFrames[AIState] - 1;
 
-	private bool runOffScreen;
+	private bool lowHealth;
 	private bool cautious;
 
 	private enum State : byte
@@ -98,11 +98,13 @@ public class Hyena : ModNPC
 					NPC.velocity.Y = -6.5f; //Jump
 
 				const float runSpeed = 4.8f;
-
-				if (!runOffScreen && NPC.Distance(target.Center) > alertDistance + 96 && Counter % 100 == 0)
+				if (!lowHealth && NPC.Distance(target.Center) > alertDistance + 96 && Counter % 100 == 0)
 					ChangeState(State.TrotEnd);
 				else
 					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .08f);
+
+				if (lowHealth && Main.rand.NextBool(8))
+					Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood);
 
 				Separate();
 				break;
@@ -194,22 +196,23 @@ public class Hyena : ModNPC
 			for (int i = 1; i < 4; i++)
 				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity * Main.rand.NextFloat(.3f), Mod.Find<ModGore>("Hyena" + i).Type);
 
+		TryAggro();
 		const int detectDistance = 16 * 25;
 		var pack = Main.npc.Where(x => x.type == Type && (x.whoAmI == NPC.whoAmI || x.Distance(NPC.Center) < detectDistance)); //All NPC instances of this type, including this one
 
-		if (hit.Damage >= NPC.lifeMax / 2) //Scare nearby hyena
+		foreach (var npc in pack)
+			(npc.ModNPC as Hyena).TryAggro(); //Anger nearby Hyena
+	}
+
+	private void TryAggro()
+	{
+		if (NPC.life < NPC.lifeMax / 4)
 		{
-			foreach (var npc in pack)
-			{
-				(npc.ModNPC as Hyena).ChangeState(State.Trotting);
-				(npc.ModNPC as Hyena).runOffScreen = true;
-			}
+			ChangeState(State.Trotting);
+			lowHealth = true;
 		}
 		else //Anger nearby Hyena
-		{
-			foreach (var npc in pack)
-				(npc.ModNPC as Hyena).ChangeState(State.TrottingAngry);
-		}
+			ChangeState(State.TrottingAngry);
 	}
 
 	public override void FindFrame(int frameHeight)

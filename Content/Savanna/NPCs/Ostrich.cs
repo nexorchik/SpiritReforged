@@ -64,7 +64,10 @@ public class Ostrich : ModNPC
 				{
 					var action = new WeightedRandom<State>();
 					action.Add(State.Running, 1.2f);
-					action.Add(State.MunchStart);
+
+					if (Collision.SolidCollision(NPC.Bottom + new Vector2(50 * NPC.direction, 0), 4, 4)) //Is there solid collision at the head position?
+						action.Add(State.MunchStart);
+
 					action.Add(State.Idle1);
 					action.Add(State.Idle2);
 

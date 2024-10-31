@@ -40,12 +40,12 @@ public class SavannaGlobalNPC : GlobalNPC
 	{
 		if (spawnInfo.Player.InModBiome<Biome.SavannaBiome>())
 		{
-			pool[NPCID.DoctorBones] = 0.005f;
-
 			if (!Main.dayTime)
 			{
 				float odds = spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm ? .22f : .09f;
 				pool[NPCID.Vulture] = odds;
+
+				pool[NPCID.DoctorBones] = 0.005f;
 			}
 		}
 	}
