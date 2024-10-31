@@ -28,7 +28,28 @@ public class Hyena : ModNPC
 
 	private bool IsAngry => AIState is ((int)State.TrottingAngry) or ((int)State.BarkingAngry);
 
-	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 13; //Rows
+	private Entity SelectTarget()
+	{
+		NPC.TargetClosest(false);
+		var player = Main.player[NPC.target];
+
+		if (lowHealth)
+			return player; //Don't target NPCs when health is low
+
+		var nearby = Main.npc.Where(x => x.active && x.type != Type && SavannaGlobalNPC.savannaFaunaTypes.Contains(x.type)).OrderBy(x => x.Distance(NPC.Center)).FirstOrDefault();
+		if (nearby is null)
+			return player;
+
+		return (NPC.Distance(player.Center) < NPC.Distance(nearby.Center)) ? player : nearby;
+	}
+
+	public override void SetStaticDefaults()
+	{
+		NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
+		SavannaGlobalNPC.savannaFaunaTypes.Add(Type);
+
+		Main.npcFrameCount[Type] = 13; //Rows
+	}
 
 	public override void SetDefaults()
 	{
@@ -44,9 +65,8 @@ public class Hyena : ModNPC
 
 	public override void AI()
 	{
-		NPC.TargetClosest(false);
-		var target = Main.player[NPC.target];
-		const int alertDistance = 16 * 12; //The base distance from the player which Hyena will start running
+		var target = SelectTarget();
+		int alertDistance = (target is Player) ? 16 * 12 : 16 * 8;
 
 		switch (AIState)
 		{
@@ -57,17 +77,25 @@ public class Hyena : ModNPC
 				{
 					if (Counter >= 30)
 						NPC.direction = NPC.spriteDirection = (target.Center.X < NPC.Center.X) ? -1 : 1;
-					if (Counter % 150 == 149 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(3) && NPC.Distance(target.Center) > alertDistance + 24)
+
+					if (NPC.Distance(target.Center) > alertDistance + 24)
 					{
-						ChangeState(State.TrotStart, sync: true);
-						cautious = true; //Hyena will slowly encroach
+						if (Counter % 150 == 149 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(3))
+						{
+							ChangeState(State.TrotStart, sync: true);
+							cautious = true; //Hyena will slowly encroach
+						}
 					}
 					else if (NPC.Distance(target.Center) < alertDistance)
-						ChangeState(State.TrotStart);
+					{
+						if (target is Player)
+							ChangeState(State.TrotStart);
+						else if (Counter % 500 == 499 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(2))
+							ChangeState(State.TrottingAngry);
+					}
 				}
 
 				NPC.velocity.X = 0;
-
 				break;
 
 			case (int)State.TrotStart:
@@ -77,12 +105,13 @@ public class Hyena : ModNPC
 				break;
 
 			case (int)State.Trotting:
+				const float walkSpeed = 1.5f;
+				const float runSpeed = 4.8f;
+
 				Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
 
 				if (cautious)
 				{
-					const float walkSpeed = 1.5f;
-
 					if (NPC.Distance(target.Center) > alertDistance + 24)
 						NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(target.Center.X - NPC.Center.X) * walkSpeed, .05f);
 					else
@@ -97,14 +126,20 @@ public class Hyena : ModNPC
 				if (NPC.collideX && NPC.velocity.X == 0 && Counter % 5 == 0)
 					NPC.velocity.Y = -6.5f; //Jump
 
-				const float runSpeed = 4.8f;
-				if (!lowHealth && NPC.Distance(target.Center) > alertDistance + 96 && Counter % 100 == 0)
-					ChangeState(State.TrotEnd);
-				else
-					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .08f);
+				if (lowHealth)
+				{
+					if (Main.rand.NextBool(8))
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood);
 
-				if (lowHealth && Main.rand.NextBool(8))
-					Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood);
+					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * walkSpeed, .08f);
+				}
+				else
+				{
+					if (NPC.Distance(target.Center) > alertDistance + 96 && Counter % 100 == 0)
+						ChangeState(State.TrotEnd);
+					else
+						NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .08f);
+				}
 
 				Separate();
 				break;
@@ -137,10 +172,13 @@ public class Hyena : ModNPC
 			else if (Main.rand.NextBool(100))
 				ChangeState(State.BarkingAngry, false);
 
+			if (NPC.Distance(target.Center) > 16 * 30) //Deaggro when far enough away
+				ChangeState(State.Trotting);
+
 			Separate();
 		}
-		else if (target.statLife < target.statLifeMax2 * .2f)
-			ChangeState(State.TrottingAngry); //Begin to chase the player if they are low on health
+		else if (target is Player p && p.statLife < p.statLifeMax2 * .25f || target is NPC n && n.life < n.lifeMax * .25f)
+			ChangeState(State.TrottingAngry); //Begin to chase the target if they are low on health
 
 		if (NPC.velocity.X < 0)
 			NPC.direction = NPC.spriteDirection = -1;
@@ -151,8 +189,8 @@ public class Hyena : ModNPC
 
 		void Separate(int distance = 32)
 		{
-			var nearest = Main.npc.OrderBy(x => x.Distance(NPC.Center)).Where(x => x.whoAmI != NPC.whoAmI && x.type == Type
-				&& x.Distance(NPC.Center) < distance).FirstOrDefault(); //All NPC instances of this type, including this one
+			var nearest = Main.npc.OrderBy(x => x.Distance(NPC.Center)).Where(x => x.active 
+				&& x.whoAmI != NPC.whoAmI && x.type == Type && x.Distance(NPC.Center) < distance).FirstOrDefault();
 
 			if (nearest != default)
 			{
@@ -182,6 +220,14 @@ public class Hyena : ModNPC
 
 	public override bool CanHitNPC(NPC target) => IsAngry;
 
+	public override void OnHitNPC(NPC target, NPC.HitInfo hit)
+	{
+		if (target.life <= 0)
+			ChangeState(State.Trotting, sync: true); //Deaggro if I killed my target
+	}
+
+	public override bool CanBeHitByNPC(NPC attacker) => SavannaGlobalNPC.savannaFaunaTypes.Contains(attacker.type) && attacker.type != Type;
+
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		bool dead = NPC.life <= 0;
@@ -198,7 +244,8 @@ public class Hyena : ModNPC
 
 		TryAggro();
 		const int detectDistance = 16 * 25;
-		var pack = Main.npc.Where(x => x.type == Type && (x.whoAmI == NPC.whoAmI || x.Distance(NPC.Center) < detectDistance)); //All NPC instances of this type, including this one
+		var pack = Main.npc.Where(x => x.active && x.type == Type 
+			&& (x.whoAmI == NPC.whoAmI || x.Distance(NPC.Center) < detectDistance)); //All NPC instances of this type, including this one
 
 		foreach (var npc in pack)
 			(npc.ModNPC as Hyena).TryAggro(); //Anger nearby Hyena

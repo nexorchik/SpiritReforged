@@ -7,6 +7,8 @@ namespace SpiritReforged.Content.Savanna;
 
 public class SavannaGlobalNPC : GlobalNPC
 {
+	internal static HashSet<int> savannaFaunaTypes = [];
+
 	public override void ModifyActiveShop(NPC npc, string shopName, Item[] items)
 	{
 		if (npc.type == NPCID.Dryad && Main.LocalPlayer.InModBiome<Biome.SavannaBiome>())
@@ -17,6 +19,7 @@ public class SavannaGlobalNPC : GlobalNPC
 				grassSeeds.SetDefaults(ModContent.ItemType<Items.SavannaGrassSeeds>());
 		}
 	}
+
 	public override void ModifyShop(NPCShop shop)
 	{
 		if (shop.NpcType == NPCID.Painter)

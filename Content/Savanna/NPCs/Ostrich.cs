@@ -34,7 +34,13 @@ public class Ostrich : ModNPC
 	public int AIState { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
 	public ref float Counter => ref NPC.ai[1];
 
-	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 9; //Rows
+	public override void SetStaticDefaults()
+	{
+		NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
+		SavannaGlobalNPC.savannaFaunaTypes.Add(Type);
+
+		Main.npcFrameCount[Type] = 9; //Rows
+	}
 
 	public override void SetDefaults()
 	{
@@ -184,6 +190,8 @@ public class Ostrich : ModNPC
 
 	public override bool CanHitNPC(NPC target) => Charging;
 
+	public override bool CanBeHitByNPC(NPC attacker) => SavannaGlobalNPC.savannaFaunaTypes.Contains(attacker.type) && attacker.type != Type;
+
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		bool dead = NPC.life <= 0;
@@ -198,13 +206,14 @@ public class Ostrich : ModNPC
 			for (int i = 1; i < 6; i++)
 				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity * Main.rand.NextFloat(), Mod.Find<ModGore>("Ostrich" + i).Type);
 
-		const int scareDistance = 16 * 20; //Scare nearby Ostriches
-		var pack = Main.npc.Where(x => x.type == Type && (x.whoAmI == NPC.whoAmI || x.Distance(NPC.Center) < scareDistance)); //All NPC instances of this type, including this one
+		const int scareDistance = 16 * 20;
+		var pack = Main.npc.Where(x => x.active && x.type == Type 
+			&& (x.whoAmI == NPC.whoAmI || x.Distance(NPC.Center) < scareDistance)); //All NPC instances of this type, including this one
 
-		foreach (var npc in pack)
+		foreach (var npc in pack) //Scare nearby Ostriches
 		{
 			(npc.ModNPC as Ostrich).ChangeState(State.Running);
-			npc.velocity.X = Math.Sign(npc.Center.X - Main.player[npc.target].Center.X) * (runSpeed + 1);
+			npc.velocity.X = hit.HitDirection * (runSpeed + 1);
 		}
 	}
 
