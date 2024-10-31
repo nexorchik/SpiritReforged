@@ -7,7 +7,7 @@ namespace SpiritReforged.Content.Savanna.NPCs;
 [AutoloadBanner]
 public class Hyena : ModNPC
 {
-	private static readonly int[] endFrames = [2, 5, 5, 5, 4, 13];
+	private static readonly int[] endFrames = [4, 2, 5, 5, 5, 13];
 	private bool OnTransitionFrame => (int)NPC.frameCounter == endFrames[AIState] - 1;
 
 	private bool runOffScreen;
@@ -15,11 +15,11 @@ public class Hyena : ModNPC
 
 	private enum State : byte
 	{
+		TrotEnd,
 		TrotStart,
 		Trotting,
 		TrottingAngry,
 		BarkingAngry,
-		TrotEnd,
 		Laugh
 	}
 
@@ -50,6 +50,26 @@ public class Hyena : ModNPC
 
 		switch (AIState)
 		{
+			case (int)State.TrotEnd: //Doubles as our idle state
+				if (Counter == 250)
+					ChangeState(State.Laugh, false);
+				else if (OnTransitionFrame)
+				{
+					if (Counter >= 30)
+						NPC.direction = NPC.spriteDirection = (target.Center.X < NPC.Center.X) ? -1 : 1;
+					if (Counter % 150 == 149 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(3) && NPC.Distance(target.Center) > alertDistance + 24)
+					{
+						ChangeState(State.TrotStart, sync: true);
+						cautious = true; //Hyena will slowly encroach
+					}
+					else if (NPC.Distance(target.Center) < alertDistance)
+						ChangeState(State.TrotStart);
+				}
+
+				NPC.velocity.X = 0;
+
+				break;
+
 			case (int)State.TrotStart:
 				if (OnTransitionFrame)
 					ChangeState(State.Trotting);
@@ -87,26 +107,6 @@ public class Hyena : ModNPC
 				Separate();
 				break;
 
-			case (int)State.TrotEnd: //Doubles as our idle state
-				if (Counter == 250)
-					ChangeState(State.Laugh, false);
-				else if (OnTransitionFrame)
-				{
-					if (Counter >= 30)
-						NPC.direction = NPC.spriteDirection = (target.Center.X < NPC.Center.X) ? -1 : 1;
-					if (Counter % 150 == 149 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(3) && NPC.Distance(target.Center) > alertDistance + 24)
-					{
-						ChangeState(State.TrotStart, sync: true);
-						cautious = true; //Hyena will slowly encroach
-					}
-					else if (NPC.Distance(target.Center) < alertDistance)
-						ChangeState(State.TrotStart);
-				}
-
-				NPC.velocity.X = 0;
-
-				break;
-
 			case (int)State.Laugh:
 				if (OnTransitionFrame)
 				{
@@ -119,14 +119,13 @@ public class Hyena : ModNPC
 
 		if (IsAngry) //Accounts for states TrottingAngry and BarkingAngry
 		{
+			Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
+			if (NPC.collideX && NPC.velocity == Vector2.Zero && Counter % 5 == 0)
+				NPC.velocity.Y = -6.5f; //Jump
+
 			const float runSpeed = 5.5f;
 			float distance = MathHelper.Clamp(NPC.Distance(target.Center) / (16 * 5), 0, 1);
 			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(target.Center.X - NPC.Center.X) * runSpeed, .002f + distance * .08f);
-
-			Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
-
-			if (NPC.collideX && NPC.velocity.X == 0 && Counter % 30 == 0)
-				NPC.velocity.Y = -6.5f; //Jump
 
 			if (AIState == (int)State.BarkingAngry)
 			{

@@ -6,11 +6,11 @@ namespace SpiritReforged.Common.NPCCommon;
 [AttributeUsage(AttributeTargets.Class)]
 public class SpawnPackAttribute : Attribute
 {
-	public SpawnPackAttribute(int size) => (MinSize, MaxSize) = (size, size);
-	public SpawnPackAttribute(int minSize, int maxSize) => (MinSize, MaxSize) = (minSize, maxSize);
-
 	public int MinSize { get; private set; }
 	public int MaxSize { get; private set; }
+
+	public SpawnPackAttribute(int size) => (MinSize, MaxSize) = (size, size);
+	public SpawnPackAttribute(int minSize, int maxSize) => (MinSize, MaxSize) = (minSize, maxSize);
 }
 
 internal class PackGlobalNPC : GlobalNPC
