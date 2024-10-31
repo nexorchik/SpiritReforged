@@ -4,15 +4,20 @@ namespace SpiritReforged;
 
 public class SpiritReforgedSystem : ModSystem
 {
-	internal static int StaticWorldSeed { get; private set; }
+	private static int staticWorldSeed = -1;
 
-	public override void OnWorldLoad()
+	internal static int GetWorldSeed()
 	{
+		if (staticWorldSeed > -1)
+			return staticWorldSeed;
+
 		if (!int.TryParse(WorldGen.currentWorldSeed, out int seed))
 			seed = ReLogic.Utilities.Crc32.Calculate(WorldGen.currentWorldSeed);
 
-		StaticWorldSeed = (seed == int.MinValue) ? int.MaxValue : Math.Abs(seed); //Parse the world seed and store it on load
+		return staticWorldSeed = (seed == int.MinValue) ? int.MaxValue : Math.Abs(seed); //Parse the world seed and store it
 	}
+
+	public override void OnWorldUnload() => staticWorldSeed = -1;
 
 	public override void PreUpdateItems()
 	{

@@ -36,7 +36,7 @@ public class BoidManager : ModSystem
 
 	public override void OnWorldLoad()
 	{
-		int seed = SpiritReforgedSystem.StaticWorldSeed;
+		int seed = SpiritReforgedSystem.GetWorldSeed();
 		int boidCount = 8 + seed % 5; //The number of unique boids in this world
 
 		for (int i = 0; i < boidCount; i++)
