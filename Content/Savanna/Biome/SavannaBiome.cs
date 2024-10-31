@@ -8,9 +8,9 @@ public class SavannaBiome : ModBiome
 	public override ModWaterStyle WaterStyle => ModContent.GetInstance<SavannaWaterStyle>();
 	public override CaptureBiome.TileColorStyle TileColorStyle => CaptureBiome.TileColorStyle.Normal;
 
-	//Todo
 	public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle => ModContent.GetInstance<SavannaBGStyle>();
-	//public override string BestiaryIcon => base.BestiaryIcon;
+	public override string BestiaryIcon => base.BestiaryIcon;
+	//Todo
 	//public override string BackgroundPath => base.BackgroundPath;
 	//public override Color? BackgroundColor => base.BackgroundColor;
 	//public override string MapBackground => base.MapBackground;
@@ -25,6 +25,7 @@ public class SavannaBiome : ModBiome
 internal class SavannaTileCounts : ModSystem
 {
 	public int savannaCount;
+
 	public static bool InSavanna => ModContent.GetInstance<SavannaTileCounts>().savannaCount >= 100;
 
 	public override void TileCountsAvailable(ReadOnlySpan<int> tileCounts) => savannaCount = tileCounts[ModContent.TileType<Tiles.SavannaGrass>()] + tileCounts[ModContent.TileType<Tiles.SavannaDirt>()];

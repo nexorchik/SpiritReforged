@@ -23,7 +23,7 @@ public class CascadeLeggings : ModItem
 	public override void AddRecipes()
 	{
 		var recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<SulfurDeposit>(), 10);
+		recipe.AddIngredient(ModContent.ItemType<MineralSlag>(), 10);
 		recipe.AddTile(TileID.Anvils);
 		recipe.Register();
 	}

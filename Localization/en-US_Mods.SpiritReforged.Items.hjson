@@ -18,11 +18,6 @@ RawFish: {
 	Tooltip: "'Can be eaten...maybe cook it first?'"
 }
 
-SulfurDeposit: {
-	DisplayName: Sulfur Deposit
-	Tooltip: "'Highly explosive!'"
-}
-
 SunkenTreasure: {
 	DisplayName: Sunken Treasure
 	Tooltip:
@@ -132,8 +127,8 @@ JellyfishStaff: {
 	Tooltip: Summons a tiny jellyfish to fight for you!
 }
 
-MantarayHuntingHarpoon: {
-	DisplayName: Manta Harpoon
+Lifesaver: {
+	DisplayName: Lifesaver
 	Tooltip:
 		'''
 		Summons a rideable manta ray mount
@@ -156,9 +151,9 @@ IridescentScale: {
 	Tooltip: "'Glints beautifully under the water'"
 }
 
-PendantOfTheOcean: {
-	DisplayName: Pendant of the Ocean
-	Tooltip: Double tap {0} to gain unhindered movement underwater for a short time
+OceanPendant: {
+	DisplayName: Seafarer's Pendant
+	Tooltip: Grants unhindered movement underwater
 }
 
 ReefSpear: {
@@ -693,6 +688,11 @@ SafariVest: {
 	Tooltip: ""
 }
 
+SunStaff: {
+	DisplayName: Sunrise Scepter
+	Tooltip: Casts the light of the sun down in front of you
+}
+
 SavannaMusicBoxItem: {
 	DisplayName: Music Box (Savanna)
 	Tooltip: ""
@@ -962,6 +962,11 @@ WheatgrassSeedPouch: {
 		'''
 }
 
+RoyalKhopesh: {
+	DisplayName: Royal Khopesh
+	Tooltip: ""
+}
+
 SavannaSandstormMusicBoxItem: {
 	Tooltip: ""
 	DisplayName: Music Box (Duststorm)
@@ -985,3 +990,31 @@ SavannaDirtWallItem: {
 	DisplayName: Coarse Dirt Wall
 	Tooltip: ""
 }
+
+GravelItem: {
+	DisplayName: Gravel
+	Tooltip: ""
+}
+
+MagmastoneItem: {
+	DisplayName: Magmastone
+	Tooltip: ""
+}
+
+HardmodeSavannaCrate: {
+	DisplayName: Safari Crate
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+SavannaCrate: {
+	DisplayName: Grassland Crate
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+MineralSlag: {
+	DisplayName: Mineral Slag
+	Tooltip: Can be used at the Extractinator
+}
+
+HyenaBannerItem.DisplayName: Hyena Banner
+OstrichBannerItem.DisplayName: Ostrich Banner
