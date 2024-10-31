@@ -1,5 +1,8 @@
+using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon.TileSway;
+using SpiritReforged.Content.Particles;
 using System.Linq;
 using Terraria.Utilities;
 
@@ -10,7 +13,12 @@ public class Ostrich : ModNPC
 {
 	private static readonly int[] endFrames = [3, 7, 5, 8, 9, 6, 6];
 	private bool OnTransitionFrame => (int)NPC.frameCounter == endFrames[AIState] - 1;
+	private bool Charging => Math.Abs(NPC.velocity.X) > runSpeed;
+
 	private float frameRate = .2f;
+	private bool contactDamage = false;
+
+	private const float runSpeed = 4f;
 
 	private enum State : byte
 	{
@@ -26,14 +34,12 @@ public class Ostrich : ModNPC
 	public int AIState { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
 	public ref float Counter => ref NPC.ai[1];
 
-	private static bool NotClient => Main.netMode != NetmodeID.MultiplayerClient; //Needs checked often
-
 	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 9; //Rows
 
 	public override void SetDefaults()
 	{
 		NPC.Size = new Vector2(40, 60);
-		NPC.damage = 0;
+		NPC.damage = 20;
 		NPC.defense = 0;
 		NPC.lifeMax = 100;
 		NPC.HitSound = SoundID.NPCHit1;
@@ -54,7 +60,7 @@ public class Ostrich : ModNPC
 
 				if (NPC.Distance(target.Center) < 16 * 10)
 					ChangeState(State.Running);
-				else if (Main.rand.NextBool(50) && NotClient)
+				else if (Main.rand.NextBool(50) && Main.netMode != NetmodeID.MultiplayerClient)
 				{
 					var action = new WeightedRandom<State>();
 					action.Add(State.Running, 1.2f);
@@ -79,11 +85,11 @@ public class Ostrich : ModNPC
 					NPC.velocity.Y = -6.5f; //Jump
 
 				bool inRange = NPC.Distance(target.Center) <= 16 * 28;
-				if (!inRange && Counter % 80 == 0 && NotClient && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity.X == 0)
+				if (!inRange && Counter % 160 == 159 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity.X == 0)
 				{
 					if (NPC.velocity.X == 0)
 					{
-						if (NotClient)
+						if (Main.netMode != NetmodeID.MultiplayerClient)
 						{
 							NPC.velocity.X = Main.rand.NextFloat(1.25f, 1.5f) * (Main.rand.NextBool() ? -1 : 1); //Wander
 							NPC.netUpdate = true;
@@ -93,11 +99,8 @@ public class Ostrich : ModNPC
 						ChangeState(State.Stopped);
 				}
 
-				if (inRange)
-				{
-					//Prioritize running from the player
+				if (inRange && !Charging) //Prioritize running from the player
 					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .1f);
-				}
 
 				break;
 
@@ -115,7 +118,7 @@ public class Ostrich : ModNPC
 				}
 				else if (OnTransitionFrame && Counter % 30 == 0 && Main.rand.NextBool(3))
 				{
-					if (NotClient && Main.rand.NextBool(4) || Counter > 600)
+					if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(4) || Counter > 600)
 						ChangeState(State.MunchEnd, true);
 					else
 						NPC.frameCounter = 0; //Randomly restart the animation
@@ -146,6 +149,17 @@ public class Ostrich : ModNPC
 		else if (NPC.velocity.X > 0)
 			NPC.direction = NPC.spriteDirection = 1;
 
+		if (Charging && Counter % 15 == 0)
+			ParticleHandler.SpawnParticle(new OstrichImpact(
+				NPC,
+				NPC.Center,
+				Vector2.Zero,
+				250,
+				100f,
+				(Math.Sign(NPC.velocity.X) == 1) ? MathHelper.Pi : 0,
+				30,
+				.5f));
+
 		Counter++;
 	}
 
@@ -163,6 +177,10 @@ public class Ostrich : ModNPC
 			NPC.netUpdate = true;
 	}
 
+	public override bool CanHitPlayer(Player target, ref int cooldownSlot) => Charging;
+
+	public override bool CanHitNPC(NPC target) => Charging;
+
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		bool dead = NPC.life <= 0;
@@ -177,8 +195,14 @@ public class Ostrich : ModNPC
 			for (int i = 1; i < 6; i++)
 				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity * Main.rand.NextFloat(), Mod.Find<ModGore>("Ostrich" + i).Type);
 
-		ChangeState(State.Running);
-		NPC.velocity.X = Math.Sign(NPC.Center.X - Main.player[NPC.target].Center.X) * 4f;
+		const int scareDistance = 16 * 20; //Scare nearby Ostriches
+		var pack = Main.npc.Where(x => x.type == Type && (x.whoAmI == NPC.whoAmI || x.Distance(NPC.Center) < scareDistance)); //All NPC instances of this type, including this one
+
+		foreach (var npc in pack)
+		{
+			(npc.ModNPC as Ostrich).ChangeState(State.Running);
+			npc.velocity.X = Math.Sign(npc.Center.X - Main.player[npc.target].Center.X) * (runSpeed + 1);
+		}
 	}
 
 	public override void FindFrame(int frameHeight)
@@ -215,5 +239,48 @@ public class Ostrich : ModNPC
 		Main.EntitySpriteDraw(texture, position + extraOffset, source, color, NPC.rotation, source.Size() / 2, NPC.scale, effects);
 
 		return false;
+	}
+}
+
+public class OstrichImpact(Entity entity, Vector2 basePosition, Vector2 velocity, float width, float length, float rotation, int maxTime, float taperExponent, int detatchTime = -1) : MotionNoiseCone(entity, basePosition, velocity, width, length, rotation, maxTime, detatchTime)
+{
+	internal override bool UseLightColor => true;
+	private readonly float _taperExponent = taperExponent;
+	internal override float GetScroll() => -1.5f * (EaseFunction.EaseCircularOut.Ease(Progress) + TimeActive / 60f);
+
+	internal override Color BrightColor => Color.Transparent;
+	internal override Color DarkColor => Color.LightGray with { A = 220 };
+
+	internal override void DissipationStyle(ref float dissipationProgress, ref float finalExponent, ref float xCoordExponent)
+	{
+		dissipationProgress = EaseFunction.EaseQuadIn.Ease(Progress);
+		finalExponent = 3f;
+		xCoordExponent = 1.2f;
+	}
+
+	internal override float ColorLerpExponent => 1.5f;
+
+	internal override int NumColors => 8;
+
+	internal override float FinalIntensity => 1.2f;
+
+	internal override void TaperStyle(ref float totalTapering, ref float taperExponent)
+	{
+		totalTapering = 1;
+		taperExponent = _taperExponent;
+	}
+
+	internal override void TextureExponent(ref float minExponent, ref float maxExponent, ref float lerpExponent)
+	{
+		minExponent = 0.01f;
+		maxExponent = 40f;
+		lerpExponent = 2.25f;
+	}
+
+	internal override void XDistanceFade(ref float centeredPosition, ref float exponent)
+	{
+		float easedProgress = EaseFunction.EaseQuadIn.Ease(Progress);
+		centeredPosition = MathHelper.Lerp(0.15f, 0.5f, easedProgress);
+		exponent = MathHelper.Lerp(2.5f, 4f, easedProgress);
 	}
 }

@@ -1,4 +1,5 @@
 using SpiritReforged.Common.NPCCommon;
+using System.Linq;
 
 namespace SpiritReforged.Content.Savanna.NPCs;
 
@@ -59,8 +60,10 @@ public class Hyena : ModNPC
 
 				if (cautious)
 				{
+					const float walkSpeed = 1.5f;
+
 					if (NPC.Distance(target.Center) > alertDistance + 24)
-						NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(target.Center.X - NPC.Center.X) * 1.25f, .05f);
+						NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(target.Center.X - NPC.Center.X) * walkSpeed, .05f);
 					else
 					{
 						ChangeState(State.TrotEnd);
@@ -80,6 +83,7 @@ public class Hyena : ModNPC
 				else
 					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .08f);
 
+				Separate();
 				break;
 
 			case (int)State.TrotEnd: //Doubles as our idle state
@@ -89,7 +93,7 @@ public class Hyena : ModNPC
 				{
 					if (Counter >= 30)
 						NPC.direction = NPC.spriteDirection = (target.Center.X < NPC.Center.X) ? -1 : 1;
-					if (Counter % 150 == 0 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(3) && NPC.Distance(target.Center) > alertDistance + 24)
+					if (Counter % 150 == 149 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(3) && NPC.Distance(target.Center) > alertDistance + 24)
 					{
 						ChangeState(State.TrotStart, sync: true);
 						cautious = true; //Hyena will slowly encroach
@@ -112,7 +116,7 @@ public class Hyena : ModNPC
 				break;
 		}
 
-		if (IsAngry)
+		if (IsAngry) //Accounts for states TrottingAngry and BarkingAngry
 		{
 			const float runSpeed = 5.5f;
 			float distance = MathHelper.Clamp(NPC.Distance(target.Center) / (16 * 5), 0, 1);
@@ -130,6 +134,8 @@ public class Hyena : ModNPC
 			}
 			else if (Main.rand.NextBool(100))
 				ChangeState(State.BarkingAngry, false);
+
+			Separate();
 		}
 		else if (target.statLife < target.statLifeMax2 * .2f)
 			ChangeState(State.TrottingAngry); //Begin to chase the player if they are low on health
@@ -140,6 +146,20 @@ public class Hyena : ModNPC
 			NPC.direction = NPC.spriteDirection = 1;
 
 		Counter++;
+
+		void Separate(int distance = 32)
+		{
+			var nearest = Main.npc.OrderBy(x => x.Distance(NPC.Center)).Where(x => x.whoAmI != NPC.whoAmI && x.type == Type
+				&& x.Distance(NPC.Center) < distance).FirstOrDefault(); //All NPC instances of this type, including this one
+
+			if (nearest != default)
+			{
+				float update = Math.Sign(NPC.Center.X - nearest.Center.X) * .1f;
+
+				if (Math.Sign(NPC.velocity.X) == Math.Sign(NPC.velocity.X + update)) //Does this require a change in direction?
+					NPC.velocity.X += update;
+			}
+		}
 	}
 
 	private void ChangeState(State toState, bool resetCounter = true, bool sync = false)
@@ -174,13 +194,22 @@ public class Hyena : ModNPC
 			for (int i = 1; i < 4; i++)
 				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity * Main.rand.NextFloat(.3f), Mod.Find<ModGore>("Hyena" + i).Type);
 
-		if (hit.Damage >= NPC.lifeMax / 2)
+		const int detectDistance = 16 * 25;
+		var pack = Main.npc.Where(x => x.type == Type && (x.whoAmI == NPC.whoAmI || x.Distance(NPC.Center) < detectDistance)); //All NPC instances of this type, including this one
+
+		if (hit.Damage >= NPC.lifeMax / 2) //Scare nearby hyena
 		{
-			runOffScreen = true;
-			ChangeState(State.Trotting);
+			foreach (var npc in pack)
+			{
+				(npc.ModNPC as Hyena).ChangeState(State.Trotting);
+				(npc.ModNPC as Hyena).runOffScreen = true;
+			}
 		}
-		else
-			ChangeState(State.TrottingAngry);
+		else //Anger nearby Hyena
+		{
+			foreach (var npc in pack)
+				(npc.ModNPC as Hyena).ChangeState(State.TrottingAngry);
+		}
 	}
 
 	public override void FindFrame(int frameHeight)
