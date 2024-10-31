@@ -9,6 +9,7 @@ public class SimpleEntity : Entity
 
 	public virtual string TexturePath => GetType().Namespace.Replace('.', '/') + "/" + GetType().Name;
 
+	/// <summary> Can be used to set defaults. </summary>
 	public virtual void Load() { }
 
 	public virtual void Update() { }

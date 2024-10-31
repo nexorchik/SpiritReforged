@@ -67,7 +67,7 @@ public class ReefSpear : ModItem
 	{
 		var recipe = CreateRecipe();
 		recipe.AddIngredient(ModContent.ItemType<IridescentScale>(), 10);
-		recipe.AddIngredient(ModContent.ItemType<SulfurDeposit>(), 12);
+		recipe.AddIngredient(ModContent.ItemType<MineralSlag>(), 12);
 		recipe.AddTile(TileID.Anvils);
 		recipe.Register();
 	}

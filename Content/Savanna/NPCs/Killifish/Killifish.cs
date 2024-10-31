@@ -270,6 +270,8 @@ public class Killifish : ModNPC
 			NPC.velocity.Y += 0.3f;
 			if (NPC.velocity.Y > 10f)
 				NPC.velocity.Y = 10f;
+			if (NPC.velocity.Y < -3f)
+				NPC.velocity.Y = -3f;
 		}
 	}
 

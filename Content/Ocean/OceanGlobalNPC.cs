@@ -18,5 +18,17 @@ internal class OceanGlobalNPC : GlobalNPC
 			shop.Add(Mod.Find<ModItem>("BeachUmbrellaItem").Type, Condition.InBeach);
 			shop.Add(Mod.Find<ModItem>("LoungeChairItem").Type, Condition.InBeach);
 		}
+
+		if (shop.NpcType == NPCID.Clothier)
+		{
+			var mCondition = new Condition(Language.GetText("LegacyMenu.22"), () => Main.LocalPlayer.Male);
+			var fCondition = new Condition(Language.GetText("LegacyMenu.23"), () => !Main.LocalPlayer.Male);
+
+			shop.Add<Items.Vanity.TintedGlasses>(Condition.InBeach);
+			shop.Add<Items.Vanity.BeachTowel>(Condition.InBeach, mCondition);
+			shop.Add<Items.Vanity.SwimmingTrunks>(Condition.InBeach, mCondition);
+			shop.Add<Items.Vanity.BikiniTop>(Condition.InBeach, fCondition);
+			shop.Add<Items.Vanity.BikiniBottom>(Condition.InBeach, fCondition);
+		}
 	}
 }
