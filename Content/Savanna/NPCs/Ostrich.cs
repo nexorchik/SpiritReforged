@@ -12,13 +12,12 @@ namespace SpiritReforged.Content.Savanna.NPCs;
 public class Ostrich : ModNPC
 {
 	private static readonly int[] endFrames = [3, 7, 5, 8, 9, 6, 6];
+	private const float runSpeed = 4f;
+
 	private bool OnTransitionFrame => (int)NPC.frameCounter == endFrames[AIState] - 1;
 	private bool Charging => Math.Abs(NPC.velocity.X) > runSpeed;
 
 	private float frameRate = .2f;
-	private bool contactDamage = false;
-
-	private const float runSpeed = 4f;
 
 	private enum State : byte
 	{
@@ -154,11 +153,11 @@ public class Ostrich : ModNPC
 				NPC,
 				NPC.Center,
 				Vector2.Zero,
-				250,
+				270,
 				100f,
 				(Math.Sign(NPC.velocity.X) == 1) ? MathHelper.Pi : 0,
 				30,
-				.5f));
+				.6f));
 
 		Counter++;
 	}
@@ -240,6 +239,14 @@ public class Ostrich : ModNPC
 
 		return false;
 	}
+
+	public override float SpawnChance(NPCSpawnInfo spawnInfo)
+	{
+		if (spawnInfo.Player.InModBiome<Biome.SavannaBiome>() && !spawnInfo.Water)
+			return .2f;
+
+		return 0;
+	}
 }
 
 public class OstrichImpact(Entity entity, Vector2 basePosition, Vector2 velocity, float width, float length, float rotation, int maxTime, float taperExponent, int detatchTime = -1) : MotionNoiseCone(entity, basePosition, velocity, width, length, rotation, maxTime, detatchTime)
@@ -260,7 +267,7 @@ public class OstrichImpact(Entity entity, Vector2 basePosition, Vector2 velocity
 
 	internal override float ColorLerpExponent => 1.5f;
 
-	internal override int NumColors => 8;
+	internal override int NumColors => 4;
 
 	internal override float FinalIntensity => 1.2f;
 
@@ -272,7 +279,7 @@ public class OstrichImpact(Entity entity, Vector2 basePosition, Vector2 velocity
 
 	internal override void TextureExponent(ref float minExponent, ref float maxExponent, ref float lerpExponent)
 	{
-		minExponent = 0.01f;
+		minExponent = 0.8f;
 		maxExponent = 40f;
 		lerpExponent = 2.25f;
 	}

@@ -246,4 +246,12 @@ public class Hyena : ModNPC
 
 		return false;
 	}
+
+	public override float SpawnChance(NPCSpawnInfo spawnInfo)
+	{
+		if (spawnInfo.Player.InModBiome<Biome.SavannaBiome>() && !spawnInfo.Water)
+			return .2f;
+
+		return 0;
+	}
 }
