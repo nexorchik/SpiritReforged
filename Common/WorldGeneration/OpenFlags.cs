@@ -1,5 +1,6 @@
 ﻿namespace SpiritReforged.Common.WorldGeneration;
 
+[Flags]
 public enum OpenFlags
 {
 	None = 0,
@@ -13,7 +14,7 @@ public enum OpenFlags
 	DownRight = 128
 }
 
-public static class OpenExtensions
+public static class OpenTools
 {
 	public static OpenFlags GetOpenings(int i, int j, bool onlyVertical = true, bool noDiagonals = true)
 	{

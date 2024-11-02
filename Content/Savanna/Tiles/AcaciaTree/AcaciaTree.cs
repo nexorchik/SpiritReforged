@@ -21,7 +21,7 @@ public class AcaciaTree : CustomTree
 	}
 	public static IEnumerable<TreetopPlatform> Platforms => SimpleEntitySystem.entities.Where(x => x is TreetopPlatform).Cast<TreetopPlatform>();
 
-	public override int TreeHeight => WorldGen.genRand.Next(8, 14);
+	public override int TreeHeight => WorldGen.genRand.Next(8, 16);
 
 	public override void PostSetStaticDefaults()
 	{
