@@ -10,12 +10,6 @@ namespace SpiritReforged.Content.Savanna.Tiles;
 
 public class RoastCampfire : ModTile
 {
-	private static Asset<Texture2D> glowTexture;
-	private static Unit unit;
-	private const int itemType = ItemID.Campfire;
-
-	private const int fullFrameSize = 18 * 3;
-
 	private struct Unit
 	{
 		int i, j;
@@ -29,6 +23,12 @@ public class RoastCampfire : ModTile
 		public readonly bool HasItem => Main.tile[i, j].TileFrameX < fullFrameSize;
 		public readonly bool IsTop => Main.tile[i, j].TileFrameY % fullFrameSize <= 18;
 	}
+
+	private static Asset<Texture2D> glowTexture;
+	private static Unit unit;
+	private const int itemType = ItemID.Campfire;
+
+	private const int fullFrameSize = 18 * 3;
 
 	public override void Load()
 	{
