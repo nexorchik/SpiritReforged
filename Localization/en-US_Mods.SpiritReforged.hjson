@@ -18,8 +18,6 @@ Tiles: {
 }
 
 Projectiles: {
-	DuelistSlash.DisplayName: Duelist Slash
-	LadyLuckProj.DisplayName: Lucky Coin
 	HydrothermalVentPlume.DisplayName: Smoke Plume
 	Cannonbubble.DisplayName: Cannonbubble
 	SkullSentryEye.DisplayName: Eye
@@ -27,9 +25,6 @@ Projectiles: {
 	SkullSentrySentry.DisplayName: Maneater Skull
 	UrchinBall.DisplayName: Urchin Ball
 	UrchinSpike.DisplayName: Urchin Spike
-	BaskingSharkProj.DisplayName: Chum
-	BubbleMineBubble.DisplayName: Bubble
-	CoralCatcherHook.DisplayName: "{$ProjectileName.BobberWooden}"
 	JellyfishBolt.DisplayName: Electric Bolt
 	JellyfishMinion.DisplayName: Little Jellyfish
 	ReefWrathProj.DisplayName: Coral Reef
@@ -39,7 +34,6 @@ Projectiles: {
 	StarPowderProj.DisplayName: Star Powder
 	ButterflyMinion.DisplayName: Butterfly Minion
 	PoolNoodleProj.DisplayName: Pool Noodle Proj
-	SandWarriorMinion.DisplayName: Sand Warrior Minion
 	ToucanFeather.DisplayName: Toucan Feather
 	ToucanMinion.DisplayName: Toucan Minion
 	TumblerPet.DisplayName: Tumbler Pet
@@ -48,7 +42,6 @@ Projectiles: {
 	SunStaffHeld.DisplayName: Sun Staff Held
 	WheatgrassSeedProjectile.DisplayName: Wheatgrass Seed Projectile
 	RoyalKhopeshHeld.DisplayName: Royal Khopesh Held
-	MineralPickup.DisplayName: Mineral Pickup
 }
 
 Configs: {
@@ -103,11 +96,6 @@ Buffs: {
 	EmpoweredSwim: {
 		DisplayName: Empowered Swim
 		Description: You feel much faster in water
-	}
-
-	SwimmingFatigue: {
-		DisplayName: Swimming Fatigue
-		Description: You can't swim very well for a bit
 	}
 
 	MantarayBuff: {

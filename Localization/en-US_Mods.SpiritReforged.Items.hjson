@@ -87,16 +87,6 @@ TubeWormItem: {
 	Tooltip: ""
 }
 
-BaskingShark: {
-	DisplayName: Basking Shark
-	Tooltip: Converts bullets into chum chunks
-}
-
-BubbleMine: {
-	DisplayName: Bubble Mine
-	Tooltip: Right-click to make bubble mines detonate
-}
-
 CascadeChestplate: {
 	DisplayName: Cascade Chestplate
 	Tooltip: 50% knockback resistance
@@ -110,11 +100,6 @@ CascadeHelmet: {
 CascadeLeggings: {
 	DisplayName: Cascade Greaves
 	Tooltip: 15% increased movement in water
-}
-
-CoralCatcher: {
-	DisplayName: Coral Catcher
-	Tooltip: Detects hooked fish
 }
 
 DeepCascadeShard: {
@@ -134,11 +119,6 @@ Lifesaver: {
 		Summons a rideable manta ray mount
 		The manta Ray is incapable of movement on land
 		'''
-}
-
-ReefWrath: {
-	DisplayName: Reef Wrath
-	Tooltip: Conjures harmful coral spires along the ground
 }
 
 ClawCannon: {
