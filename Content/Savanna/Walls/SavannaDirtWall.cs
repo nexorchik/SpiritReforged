@@ -1,6 +1,6 @@
 using SpiritReforged.Common.WallCommon;
 
-namespace SpiritReforged.Content.Savanna.Tiles;
+namespace SpiritReforged.Content.Savanna.Walls;
 
 public class SavannaDirtWall : ModWall, IAutoloadWallItem
 {

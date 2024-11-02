@@ -1,5 +1,4 @@
-﻿using rail;
-using System.Linq;
+﻿using System.Linq;
 using Terraria.GameContent.Generation;
 using Terraria.IO;
 using Terraria.WorldBuilding;
@@ -24,19 +23,35 @@ internal class EcotoneSurfaceMapping : ModSystem
 	}
 
 	private List<EcotoneEntry> Entries = [];
-	private HashSet<Point> TotalSurfacePoints = [];
+
+	internal static readonly HashSet<Point> TotalSurfacePoints = [];
+	internal static readonly Dictionary<short, short> TotalSurfaceY = [];
 
 	public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
 	{
-		int mapIndex = tasks.FindIndex(x => x.Name == "Shimmer");
+		int mapIndex = tasks.FindIndex(x => x.Name == "Corruption");
 
 		if (mapIndex == -1)
 			return;
 
 		foreach (var ecotone in EcotoneBase.Ecotones)
-			ecotone.AddTasks(tasks, Entries, TotalSurfacePoints);
+			ecotone.AddTasks(tasks, Entries);
 
 		tasks.Insert(mapIndex + 1, new PassLegacy("Map Ecotones", MapEcotones));
+
+//#if DEBUG
+//		tasks.Add(new PassLegacy("Ecotone Debug", (progress, config) =>
+//		{
+//			foreach (var item in Entries)
+//			{
+//				for (int x = item.Start.X; x < item.End.X; ++x)
+//				{
+//					for (int nY = 90; nY < 100; ++nY)
+//						WorldGen.PlaceTile(x, nY, item.Definition.DisplayId, true, true);
+//				}
+//			}
+//		}));
+//#endif
 	}
 
 	private void MapEcotones(GenerationProgress progress, GameConfiguration configuration)
@@ -47,32 +62,30 @@ internal class EcotoneSurfaceMapping : ModSystem
 
 		Entries.Clear();
 		TotalSurfacePoints.Clear();
-
-		int y = 0;
-
-		while (Main.tile[StartX, ++y].TileType != TileID.Sand)
-		{
-		}
+		TotalSurfaceY.Clear();
 
 		int transitionCount = 0;
-		EcotoneEntry entry = new EcotoneEntry(new Point(StartX, y), EcotoneEdgeDefinitions.GetEcotone("Ocean"));
-		entry.Left = EcotoneEdgeDefinitions.GetEcotone("Ocean");
+		EcotoneEntry entry = null;
 
 		for (int x = StartX; x < Main.maxTilesX - StartX; ++x)
 		{
-			int dir = WorldGen.SolidOrSlopedTile(x, y) ? -1 : 1;
+			int y = 80;
 
-			if (dir == -1)
+			while (!WorldGen.SolidOrSlopedTile(x, y))
+				y++;
+
+			if (CloudsNearby(x, y, out int newY))
 			{
-				while (SolidTileOrWall(x, y))
-					y -= 1;
+				y = newY;
 
-				y -= dir;
+				while (!WorldGen.SolidOrSlopedTile(x, y))
+					y++;
 			}
-			else
+
+			if (entry is null)
 			{
-				while (!SolidTileOrWall(x, y))
-					y += 1;
+				entry = new EcotoneEntry(new Point(StartX, y), EcotoneEdgeDefinitions.GetEcotone("Ocean"));
+				entry.Left = EcotoneEdgeDefinitions.GetEcotone("Ocean");
 			}
 
 			if (!entry.TileFits(x, y))
@@ -85,43 +98,39 @@ internal class EcotoneSurfaceMapping : ModSystem
 				entry.Right = def;
 				Entries.Add(entry);
 
-				if (entry.SurroundedBy("Desert", "Jungle"))
-				{
-					int oie = 0;
-				}
+				if (x < 390 || x > Main.maxTilesX - 390)
+					def = EcotoneEdgeDefinitions.GetEcotone("Ocean");
 				
 				entry = new EcotoneEntry(new Point(x, y), def);
 				entry.Left = old;
 				transitionCount = 0;
 			}
 
-			//WorldGen.PlaceTile(x, y - 3, entry.Definition.DisplayId, true, true);
 			entry.SurfacePoints.Add(new Point(x, y));
 			TotalSurfacePoints.Add(new Point(x, y));
+			TotalSurfaceY.Add((short)x, (short)y);
+
+			if (x == Main.maxTilesX - StartX - 1)
+				entry.End = new Point(x, y);
 		}
 
-		entry.End = new Point(Main.maxTilesX - StartX, y);
 		entry.Right = EcotoneEdgeDefinitions.GetEcotone("Ocean");
 		Entries.Add(entry);
 		Entries = new(Entries.OrderBy(x => x.Start.X));
+	}
 
-		//foreach (var item in Entries)
-		//{
-		//	for (int x = item.Start.X; x < item.End.X; ++x)
-		//	{
-		//		for (int nY = 40; nY < 80; ++nY)
-		//			WorldGen.PlaceTile(x, nY, item.Definition.DisplayId, true, true);
-		//	}
-		//}
+	private static bool CloudsNearby(int x, int y, out int newY)
+	{
+		bool foundCloud = false;
 
-		//foreach (var item in TotalSurfacePoints)
-		//{
-		//	WorldGen.KillTile(item.X, item.Y);
-		//	WorldGen.PlaceTile(item.X, item.Y, TileID.GreenCandyCaneBlock, true, true);
+		for (int i = 0; i < 30; ++i)
+		{
+			if (!foundCloud && Main.tile[x, y + i].TileType == TileID.Cloud && Main.tile[x, y + i].HasTile)
+				foundCloud = true;
+		}
 
-		//	WorldGen.KillTile(item.X, item.Y + 1);
-		//	WorldGen.PlaceTile(item.X, item.Y + 1, TileID.GreenCandyCaneBlock, true, true);
-		//}
+		newY = y + 30;
+		return foundCloud;
 	}
 
 	private static bool SolidTileOrWall(int x, int y) => WorldGen.SolidOrSlopedTile(x, y) || Main.tile[x, y].WallType != WallID.None;

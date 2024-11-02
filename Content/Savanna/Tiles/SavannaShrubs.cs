@@ -19,7 +19,7 @@ public class SavannaShrubs : ModTile
 		TileObjectData.newTile.CoordinateHeights = [height];
 		TileObjectData.newTile.DrawYOffset = -(height - 18);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 1, 0);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaDirt>(), TileID.Sand];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 11;
 		TileObjectData.addTile(Type);

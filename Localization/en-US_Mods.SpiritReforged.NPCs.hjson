@@ -90,3 +90,5 @@ PeevedTumbler: {
 TridentZombie.DisplayName: "{$NPCName.Zombie}"
 SafariZombie.DisplayName: Safari Zombie
 TumbleZombie.DisplayName: Tumble Zombie
+Hyena.DisplayName: Hyena
+Ostrich.DisplayName: Ostrich

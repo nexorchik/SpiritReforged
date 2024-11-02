@@ -1015,3 +1015,6 @@ MineralSlag: {
 	DisplayName: Mineral Slag
 	Tooltip: Can be used at the Extractinator
 }
+
+HyenaBannerItem.DisplayName: Hyena Banner
+OstrichBannerItem.DisplayName: Ostrich Banner

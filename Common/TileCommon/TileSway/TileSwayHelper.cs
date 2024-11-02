@@ -1,7 +1,16 @@
-﻿namespace SpiritReforged.Common.TileCommon.TileSway;
+﻿using System.Reflection;
+
+namespace SpiritReforged.Common.TileCommon.TileSway;
 
 internal static class TileSwayHelper
 {
+	//Use reflection to access SetWindTime
+	internal static void SetWindTime(int i, int j, Vector2 direction)
+	{
+		var wind = Main.instance.TilesRenderer.Wind;
+		wind.GetType().InvokeMember("SetWindTime", BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.NonPublic, null, wind, [i, j, (int)direction.X, (int)direction.Y]);
+	}
+
 	//Adapted from vanilla - should be used for multitiles
 	internal static float GetHighestWindGridPushComplex(int topLeftX, int topLeftY, int sizeX, int sizeY, int totalPushTime, float pushForcePerFrame, int loops, bool swapLoopDir) //Adapted from vanilla
 	{
