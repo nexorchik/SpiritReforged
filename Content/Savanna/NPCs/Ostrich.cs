@@ -4,6 +4,7 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Particles;
 using System.Linq;
+using Terraria.Audio;
 using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Savanna.NPCs;
@@ -14,11 +15,14 @@ public class Ostrich : ModNPC
 {
 	private static readonly int[] endFrames = [3, 7, 5, 8, 9, 6, 6];
 	private const float runSpeed = 4f;
+	private const int drownTimeMax = 60 * 5;
+	private const int noCollideTimeMax = 10;
 
 	private bool OnTransitionFrame => (int)NPC.frameCounter == endFrames[AIState] - 1;
 	private bool Charging => Math.Abs(NPC.velocity.X) > runSpeed;
 
 	private float frameRate = .2f;
+	private int drownTime;
 
 	private enum State : byte
 	{
@@ -33,6 +37,7 @@ public class Ostrich : ModNPC
 
 	public int AIState { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
 	public ref float Counter => ref NPC.ai[1];
+	public ref float NoCollideTime => ref NPC.localAI[0]; //Counts how long the NPC hasn't been grounded for
 
 	public override void SetStaticDefaults()
 	{
@@ -64,14 +69,14 @@ public class Ostrich : ModNPC
 			case (int)State.Stopped:
 				frameRate = .1f;
 
-				if (NPC.Distance(target.Center) < 16 * 10)
+				if (ShouldRunAway(16 * 10))
 					ChangeState(State.Running);
 				else if (Main.rand.NextBool(50) && Main.netMode != NetmodeID.MultiplayerClient)
 				{
 					var action = new WeightedRandom<State>();
 					action.Add(State.Running, 1.2f);
 
-					if (Collision.SolidCollision(NPC.Bottom + new Vector2(50 * NPC.direction, 0), 4, 4)) //Is there solid collision at the head position?
+					if (!NPC.wet && Collision.SolidCollision(NPC.Bottom + new Vector2(50 * NPC.direction, 0), 4, 4)) //Is there solid collision at the head position?
 						action.Add(State.MunchStart);
 
 					action.Add(State.Idle1);
@@ -93,8 +98,9 @@ public class Ostrich : ModNPC
 				if (NPC.collideX && NPC.velocity == Vector2.Zero && Counter % 5 == 0)
 					NPC.velocity.Y = -6.5f; //Jump
 
-				bool inRange = NPC.Distance(target.Center) <= 16 * 28;
-				if (!inRange && Counter % 160 == 159 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity.X == 0)
+				if (ShouldRunAway(16 * 28, 3.2f) && !Charging) //Prioritize running from the player
+					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .1f);
+				else if (Counter % 160 == 159 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity.X == 0)
 				{
 					if (NPC.velocity.X == 0)
 					{
@@ -108,9 +114,6 @@ public class Ostrich : ModNPC
 						ChangeState(State.Stopped);
 				}
 
-				if (inRange && !Charging) //Prioritize running from the player
-					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .1f);
-
 				break;
 
 			case (int)State.MunchStart:
@@ -120,7 +123,7 @@ public class Ostrich : ModNPC
 				break;
 
 			case (int)State.Munching:
-				if (NPC.Distance(target.Center) < 16 * 8)
+				if (ShouldRunAway(16 * 8))
 				{
 					ChangeState(State.MunchEnd);
 					frameRate = .25f; //Stop in a hurry
@@ -144,7 +147,7 @@ public class Ostrich : ModNPC
 				break;
 		}
 
-		if (AIState is ((int)State.Idle1) or ((int)State.Idle2) or ((int)State.MunchEnd))
+		if (AIState is ((int)State.Idle1) or ((int)State.Idle2) or ((int)State.MunchEnd)) //Any idle animation
 		{
 			if (OnTransitionFrame)
 			{
@@ -153,10 +156,30 @@ public class Ostrich : ModNPC
 			}
 		}
 
-		if (NPC.velocity.X < 0)
-			NPC.direction = NPC.spriteDirection = -1;
-		else if (NPC.velocity.X > 0)
-			NPC.direction = NPC.spriteDirection = 1;
+		if (NPC.wet && Collision.WetCollision(NPC.position, NPC.width, NPC.height / 3))
+		{
+			if (++drownTime > drownTimeMax)
+			{
+				NPC.velocity *= .99f;
+				if (Main.rand.NextBool(8))
+					Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.BreatheBubble);
+
+				if (drownTime % 3 == 0 && --NPC.life <= 0)
+				{
+					SoundEngine.PlaySound(NPC.DeathSound, NPC.Center);
+					HitEffect(new NPC.HitInfo());
+				}
+			}
+			else
+				NPC.velocity.Y = Math.Max(NPC.velocity.Y - .75f, -3f);
+		}
+		else if (!NPC.wet)
+			drownTime = 0;
+
+		if (!NPC.collideY)
+			NoCollideTime++;
+		else
+			NoCollideTime = 0;
 
 		if (Charging && Counter % 15 == 0)
 			ParticleHandler.SpawnParticle(new OstrichImpact(
@@ -169,7 +192,13 @@ public class Ostrich : ModNPC
 				30,
 				.6f));
 
+		if (NPC.velocity.X < 0)
+			NPC.direction = NPC.spriteDirection = -1;
+		else if (NPC.velocity.X > 0)
+			NPC.direction = NPC.spriteDirection = 1;
+
 		Counter++;
+		bool ShouldRunAway(int distance, float limit = 4f) => NPC.Distance(target.Center) < distance && target.velocity.Length() > limit;
 	}
 
 	private void ChangeState(State toState, bool sync = false)
@@ -229,7 +258,7 @@ public class Ostrich : ModNPC
 		else if (NPC.frameCounter >= endFrames[AIState])
 			NPC.frameCounter--;
 
-		if (!NPC.collideY && NPC.velocity.Y < 0) //Jump frame
+		if (!NPC.wet && NoCollideTime > noCollideTimeMax) //Airborne frame
 		{
 			NPC.frameCounter = 3; //Set frameCounter so we transition smoothly from the jump frame
 			(NPC.frame.X, NPC.frame.Y) = (3 * NPC.frame.Width, (int)NPC.frameCounter * frameHeight);

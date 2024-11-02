@@ -1,5 +1,6 @@
 using SpiritReforged.Common.NPCCommon;
 using System.Linq;
+using Terraria.Audio;
 
 namespace SpiritReforged.Content.Savanna.NPCs;
 
@@ -8,10 +9,14 @@ namespace SpiritReforged.Content.Savanna.NPCs;
 public class Hyena : ModNPC
 {
 	private static readonly int[] endFrames = [4, 2, 5, 5, 5, 13];
+	private const int drownTimeMax = 60 * 10;
+	private const int noCollideTimeMax = 10;
+
 	private bool OnTransitionFrame => (int)NPC.frameCounter == endFrames[AIState] - 1;
 
 	private bool lowHealth;
 	private bool cautious;
+	private int drownTime;
 
 	private enum State : byte
 	{
@@ -25,6 +30,7 @@ public class Hyena : ModNPC
 
 	public int AIState { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
 	public ref float Counter => ref NPC.ai[1];
+	public ref float NoCollideTime => ref NPC.localAI[0]; //Counts how long the NPC hasn't been grounded for
 
 	private bool IsAngry => AIState is ((int)State.TrottingAngry) or ((int)State.BarkingAngry);
 
@@ -71,7 +77,7 @@ public class Hyena : ModNPC
 		switch (AIState)
 		{
 			case (int)State.TrotEnd: //Doubles as our idle state
-				if (Counter == 250)
+				if (Counter == 100 && Main.rand.NextBool())
 					ChangeState(State.Laugh, false);
 				else if (OnTransitionFrame)
 				{
@@ -180,6 +186,31 @@ public class Hyena : ModNPC
 		else if (target is Player p && p.statLife < p.statLifeMax2 * .25f || target is NPC n && n.life < n.lifeMax * .25f)
 			ChangeState(State.TrottingAngry); //Begin to chase the target if they are low on health
 
+		if (NPC.wet && Collision.WetCollision(NPC.position, NPC.width, NPC.height / 3))
+		{
+			if (++drownTime > drownTimeMax)
+			{
+				NPC.velocity *= .99f;
+				if (Main.rand.NextBool(8))
+					Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.BreatheBubble);
+
+				if (drownTime % 3 == 0 && --NPC.life <= 0)
+				{
+					SoundEngine.PlaySound(NPC.DeathSound, NPC.Center);
+					HitEffect(new NPC.HitInfo());
+				}
+			}
+			else
+				NPC.velocity.Y = Math.Max(NPC.velocity.Y - .75f, -3f);
+		}
+		else if (!NPC.wet)
+			drownTime = 0;
+
+		if (!NPC.collideY)
+			NoCollideTime++;
+		else
+			NoCollideTime = 0;
+
 		if (NPC.velocity.X < 0)
 			NPC.direction = NPC.spriteDirection = -1;
 		else if (NPC.velocity.X > 0)
@@ -274,7 +305,7 @@ public class Hyena : ModNPC
 		else if (NPC.frameCounter >= endFrames[AIState])
 			NPC.frameCounter--;
 
-		if (!NPC.collideY && NPC.velocity.Y < 0) //Jump frame
+		if (!NPC.wet && NoCollideTime > noCollideTimeMax) //Jump frame
 		{
 			NPC.frameCounter = 0; //Set frameCounter so we transition smoothly from the jump frame
 			(NPC.frame.X, NPC.frame.Y) = (1, (int)NPC.frameCounter * frameHeight);
