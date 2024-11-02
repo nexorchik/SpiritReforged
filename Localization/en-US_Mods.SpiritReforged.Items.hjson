@@ -1018,3 +1018,8 @@ MineralSlag: {
 
 HyenaBannerItem.DisplayName: Hyena Banner
 OstrichBannerItem.DisplayName: Ostrich Banner
+
+SavannaCampfireItem: {
+	DisplayName: Savanna Campfire
+	Tooltip: "{$ItemTooltip.Campfire}"
+}
