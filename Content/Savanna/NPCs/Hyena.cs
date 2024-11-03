@@ -8,14 +8,13 @@ namespace SpiritReforged.Content.Savanna.NPCs;
 [AutoloadBanner]
 public class Hyena : ModNPC
 {
-	private static readonly int[] endFrames = [4, 2, 5, 5, 5, 13];
+	private static readonly int[] endFrames = [4, 2, 5, 5, 5, 13, 7];
 	private const int drownTimeMax = 60 * 10;
 	private const int noCollideTimeMax = 10;
 
 	private bool OnTransitionFrame => (int)NPC.frameCounter == endFrames[AIState] - 1;
+	private bool NearlyDead => NPC.life < NPC.lifeMax / 4;
 
-	private bool lowHealth;
-	private bool cautious;
 	private int drownTime;
 
 	private enum State : byte
@@ -25,7 +24,8 @@ public class Hyena : ModNPC
 		Trotting,
 		TrottingAngry,
 		BarkingAngry,
-		Laugh
+		Laugh,
+		Walking
 	}
 
 	public int AIState { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
@@ -39,7 +39,7 @@ public class Hyena : ModNPC
 		NPC.TargetClosest(false);
 		var player = Main.player[NPC.target];
 
-		if (lowHealth)
+		if (NearlyDead)
 			return player; //Don't target NPCs when health is low
 
 		var nearby = Main.npc.Where(x => x.active && x.type != Type && SavannaGlobalNPC.savannaFaunaTypes.Contains(x.type)).OrderBy(x => x.Distance(NPC.Center)).FirstOrDefault();
@@ -66,6 +66,7 @@ public class Hyena : ModNPC
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = .45f;
+		NPC.direction = 1; //Don't start at 0
 		AIType = -1;
 	}
 
@@ -87,10 +88,7 @@ public class Hyena : ModNPC
 					if (NPC.Distance(target.Center) > alertDistance + 24)
 					{
 						if (Counter % 150 == 149 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(3))
-						{
-							ChangeState(State.TrotStart, sync: true);
-							cautious = true; //Hyena will slowly encroach
-						}
+							ChangeState(State.Walking, sync: true);
 					}
 					else if (NPC.Distance(target.Center) < alertDistance)
 					{
@@ -111,33 +109,13 @@ public class Hyena : ModNPC
 				break;
 
 			case (int)State.Trotting:
-				const float walkSpeed = 1.5f;
 				const float runSpeed = 4.8f;
 
-				Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
+				TryJump();
 
-				if (cautious)
+				if (NPC.wet)
 				{
-					if (NPC.Distance(target.Center) > alertDistance + 24)
-						NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(target.Center.X - NPC.Center.X) * walkSpeed, .05f);
-					else
-					{
-						ChangeState(State.TrotEnd);
-						cautious = false;
-					}
-
-					break;
-				}
-
-				if (NPC.collideX && NPC.velocity.X == 0 && Counter % 5 == 0)
-					NPC.velocity.Y = -6.5f; //Jump
-
-				if (lowHealth)
-				{
-					if (Main.rand.NextBool(8))
-						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood);
-
-					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * walkSpeed, .08f);
+					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * runSpeed, .05f); //Always swim ahead
 				}
 				else
 				{
@@ -158,13 +136,34 @@ public class Hyena : ModNPC
 				}
 
 				break;
+
+			case (int)State.Walking:
+				const float walkSpeed = 1.5f;
+
+				TryJump();
+
+				if (NearlyDead)
+				{
+					if (Main.rand.NextBool(8))
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood);
+
+					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * walkSpeed, .08f);
+				}
+				else
+				{
+					if (NPC.Distance(target.Center) > alertDistance + 24 && !(Counter > 60 && Math.Abs(NPC.velocity.X) < .3f))
+						NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(target.Center.X - NPC.Center.X) * walkSpeed, .05f);
+					else
+						ChangeState(State.TrotEnd);
+				}
+
+				Separate();
+				break;
 		}
 
 		if (IsAngry) //Accounts for states TrottingAngry and BarkingAngry
 		{
-			Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
-			if (NPC.collideX && NPC.velocity == Vector2.Zero && Counter % 5 == 0)
-				NPC.velocity.Y = -6.5f; //Jump
+			TryJump();
 
 			const float runSpeed = 5.5f;
 			float distance = MathHelper.Clamp(NPC.Distance(target.Center) / (16 * 5), 0, 1);
@@ -186,9 +185,9 @@ public class Hyena : ModNPC
 		else if (target is Player p && p.statLife < p.statLifeMax2 * .25f || target is NPC n && n.life < n.lifeMax * .25f)
 			ChangeState(State.TrottingAngry); //Begin to chase the target if they are low on health
 
-		if (NPC.wet && Collision.WetCollision(NPC.position, NPC.width, NPC.height / 3))
+		if (NPC.wet && Collision.WetCollision(NPC.position, NPC.width, NPC.height / 2))
 		{
-			if (++drownTime > drownTimeMax)
+			if (++drownTime > drownTimeMax) //Drown behaviour
 			{
 				NPC.velocity *= .99f;
 				if (Main.rand.NextBool(8))
@@ -201,12 +200,15 @@ public class Hyena : ModNPC
 				}
 			}
 			else
-				NPC.velocity.Y = Math.Max(NPC.velocity.Y - .75f, -3f);
+				NPC.velocity.Y = Math.Max(NPC.velocity.Y - .75f, -1.5f);
+
+			if (AIState is (int)State.TrotStart or (int)State.TrotEnd or (int)State.Walking && !NearlyDead)
+				ChangeState(State.Trotting, false);
 		}
 		else if (!NPC.wet)
 			drownTime = 0;
 
-		if (!NPC.collideY)
+		if (!Collision.SolidCollision(NPC.position, NPC.width, NPC.height + 2))
 			NoCollideTime++;
 		else
 			NoCollideTime = 0;
@@ -230,6 +232,14 @@ public class Hyena : ModNPC
 				if (Math.Sign(NPC.velocity.X) == Math.Sign(NPC.velocity.X + update)) //Does this require a change in direction?
 					NPC.velocity.X += update;
 			}
+		}
+
+		void TryJump(float height = 6.5f)
+		{
+			Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
+
+			if (NPC.collideX && NPC.velocity == Vector2.Zero) //Jump
+				NPC.velocity.Y = -height;
 		}
 	}
 
@@ -279,18 +289,15 @@ public class Hyena : ModNPC
 			&& (x.whoAmI == NPC.whoAmI || x.Distance(NPC.Center) < detectDistance)); //All NPC instances of this type, including this one
 
 		foreach (var npc in pack)
-			(npc.ModNPC as Hyena).TryAggro(); //Anger nearby Hyena
+			(npc.ModNPC as Hyena).TryAggro();
 	}
 
 	private void TryAggro()
 	{
-		if (NPC.life < NPC.lifeMax / 4)
-		{
-			ChangeState(State.Trotting);
-			lowHealth = true;
-		}
-		else //Anger nearby Hyena
-			ChangeState(State.TrottingAngry);
+		if (NearlyDead)
+			ChangeState(State.Walking);
+		else
+			ChangeState(State.TrottingAngry); //Anger nearby Hyena
 	}
 
 	public override void FindFrame(int frameHeight)
@@ -298,18 +305,15 @@ public class Hyena : ModNPC
 		NPC.frame.Width = 72; //frameHeight = 48
 		NPC.frame.X = NPC.frame.Width * AIState;
 
-		NPC.frameCounter += cautious ? .1f : .2f;
+		NPC.frameCounter += .2f;
 
-		if (AIState is (int)State.Trotting or (int)State.TrottingAngry) //Trotting states loop automatically
+		if (AIState is (int)State.Trotting or (int)State.TrottingAngry or (int)State.Walking) //Movement states loop automatically
 			NPC.frameCounter %= endFrames[AIState];
 		else if (NPC.frameCounter >= endFrames[AIState])
 			NPC.frameCounter--;
 
-		if (!NPC.wet && NoCollideTime > noCollideTimeMax) //Jump frame
-		{
-			NPC.frameCounter = 0; //Set frameCounter so we transition smoothly from the jump frame
-			(NPC.frame.X, NPC.frame.Y) = (1, (int)NPC.frameCounter * frameHeight);
-		}
+		if (!NPC.wet && NoCollideTime > noCollideTimeMax)
+			(NPC.frame.X, NPC.frame.Y) = (1, 0); //Airborne frame
 		else
 			NPC.frame.Y = (int)NPC.frameCounter * frameHeight;
 	}

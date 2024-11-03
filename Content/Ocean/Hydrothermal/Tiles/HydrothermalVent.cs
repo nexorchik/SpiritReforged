@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -139,6 +140,8 @@ public class HydrothermalVent : ModTile
 	{
 		if (Main.netMode == NetmodeID.MultiplayerClient || !IsValid(i, j))
 			return; //Redundant
+
+		TileExtensions.GetTopLeft(ref i, ref j); //Allows any tile update (not just the top leftmost) to cause an eruption
 
 		var pt = new Point16(i, j);
 		if (IsValid(i, j) && !cooldowns.ContainsKey(pt))

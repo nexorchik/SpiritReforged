@@ -4,6 +4,8 @@ internal class LivingBaobabLeaf : ModTile
 {
 	public override void SetStaticDefaults()
 	{
+		TileID.Sets.IsSkippedForNPCSpawningGroundTypeCheck[Type] = true;
+
 		Main.tileSolid[Type] = true;
 		Main.tileBlendAll[Type] = true;
 		Main.tileMergeDirt[Type] = true;

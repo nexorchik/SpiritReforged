@@ -56,6 +56,7 @@ public class Ostrich : ModNPC
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = .45f;
+		NPC.direction = 1; //Don't start at 0
 		AIType = -1;
 	}
 
@@ -67,6 +68,7 @@ public class Ostrich : ModNPC
 		switch (AIState)
 		{
 			case (int)State.Stopped:
+
 				frameRate = .1f;
 
 				if (ShouldRunAway(16 * 10))
@@ -91,16 +93,15 @@ public class Ostrich : ModNPC
 				break;
 
 			case (int)State.Running:
+
 				const float runSpeed = 4f;
 				frameRate = MathHelper.Clamp(Math.Abs(NPC.velocity.X) / runSpeed, .5f, 1f) * .25f;
 
-				Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
-				if (NPC.collideX && NPC.velocity == Vector2.Zero && Counter % 5 == 0)
-					NPC.velocity.Y = -6.5f; //Jump
+				TryJump();
 
-				if (ShouldRunAway(16 * 28, 3.2f) && !Charging) //Prioritize running from the player
+				if (ShouldRunAway(16 * 28, 2.5f) && !Charging) //Prioritize running from the player
 					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .1f);
-				else if (Counter % 160 == 159 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity.X == 0)
+				else if (Counter % 160 == 159 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity == Vector2.Zero)
 				{
 					if (NPC.velocity.X == 0)
 					{
@@ -114,15 +115,20 @@ public class Ostrich : ModNPC
 						ChangeState(State.Stopped);
 				}
 
+				if (Math.Abs(NPC.velocity.X) < 1)
+					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction, .03f);
+
 				break;
 
 			case (int)State.MunchStart:
+
 				if (OnTransitionFrame)
 					ChangeState(State.Munching);
 
 				break;
 
 			case (int)State.Munching:
+
 				if (ShouldRunAway(16 * 8))
 				{
 					ChangeState(State.MunchEnd);
@@ -176,7 +182,7 @@ public class Ostrich : ModNPC
 		else if (!NPC.wet)
 			drownTime = 0;
 
-		if (!NPC.collideY)
+		if (!Collision.SolidCollision(NPC.position, NPC.width, NPC.height + 2))
 			NoCollideTime++;
 		else
 			NoCollideTime = 0;
@@ -198,7 +204,15 @@ public class Ostrich : ModNPC
 			NPC.direction = NPC.spriteDirection = 1;
 
 		Counter++;
+
 		bool ShouldRunAway(int distance, float limit = 4f) => NPC.Distance(target.Center) < distance && target.velocity.Length() > limit;
+		void TryJump(float height = 6.5f)
+		{
+			Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
+
+			if (NPC.collideX && NPC.velocity == Vector2.Zero) //Jump
+				NPC.velocity.Y = -height;
+		}
 	}
 
 	private void ChangeState(State toState, bool sync = false)
@@ -258,11 +272,8 @@ public class Ostrich : ModNPC
 		else if (NPC.frameCounter >= endFrames[AIState])
 			NPC.frameCounter--;
 
-		if (!NPC.wet && NoCollideTime > noCollideTimeMax) //Airborne frame
-		{
-			NPC.frameCounter = 3; //Set frameCounter so we transition smoothly from the jump frame
-			(NPC.frame.X, NPC.frame.Y) = (3 * NPC.frame.Width, (int)NPC.frameCounter * frameHeight);
-		}
+		if (!NPC.wet && NoCollideTime > noCollideTimeMax)
+			(NPC.frame.X, NPC.frame.Y) = (3 * NPC.frame.Width, 3 * frameHeight); //Airborne frame
 		else
 			NPC.frame.Y = (int)NPC.frameCounter * frameHeight;
 	}
