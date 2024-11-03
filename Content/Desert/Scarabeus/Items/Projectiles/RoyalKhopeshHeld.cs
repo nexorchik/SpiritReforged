@@ -1,21 +1,18 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using SpiritReforged.Common.Easing;
-using SpiritReforged.Common.Particle;
-using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
+﻿using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.ProjectileCommon;
-using SpiritReforged.Common.Visuals.Glowmasks;
-using SpiritReforged.Content.Particles;
 using System.IO;
-using Terraria;
-using Terraria.ModLoader;
 using static Terraria.Player;
+using static SpiritReforged.Common.Easing.EaseFunction;
+using static Microsoft.Xna.Framework.MathHelper;
+using Terraria.Audio;
 
 namespace SpiritReforged.Content.Desert.Scarabeus.Items.Projectiles;
 
 public class RoyalKhopeshHeld : ModProjectile
 {
 	public int SwingTime { get; set; }
+	public int Combo { get; set; }
 	public float SwingRadians { get; set; }
 
 	public int SwingDirection { get; set; }
@@ -49,6 +46,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		//owner.heldProj = Projectile.whoAmI;
 		owner.itemAnimation = 2;
 		owner.itemTime = 2;
+		owner.reuseDelay = 2;
 		Projectile.timeLeft = 2;
 
 		int tempDirection = owner.direction;
@@ -60,21 +58,19 @@ public class RoyalKhopeshHeld : ModProjectile
 		Projectile.spriteDirection = direction;
 
 		float progress = AiTimer / SwingTime;
-		float swingProgress = EaseFunction.EaseQuarticOut.Ease(progress);
+		switch (Combo)
+		{
+			case 0: FirstSwing(progress, direction);
+				break;
+			case 1: DoubleSwing(progress, ref direction);
+				break;
+			default: FirstSwing(progress, direction);
+				break;
+		}
+
+		float armRot = Projectile.rotation - 3 * PiOver4;
 		if (direction < 0)
-			swingProgress = 1 - swingProgress;
-
-		Projectile.rotation = MathHelper.Lerp(-SwingRadians * 0.6f, SwingRadians * 0.6f - MathHelper.PiOver4, swingProgress);
-
-		Projectile.rotation += BaseDirection.ToRotation() + MathHelper.PiOver4;
-		if (direction < 0)
-			Projectile.rotation += MathHelper.PiOver4 + MathHelper.PiOver2;
-
-		Projectile.scale = EaseFunction.EaseQuadOut.Ease((float)Math.Sin(swingProgress * MathHelper.Pi)) * 0.4f + 0.6f;
-
-		float armRot = Projectile.rotation - 3 * MathHelper.PiOver4;
-		if (direction < 0)
-			armRot -= MathHelper.PiOver2;
+			armRot -= PiOver2;
 
 		owner.SetCompositeArmFront(true, CompositeArmStretchAmount.Full, armRot);
 		Projectile.Center = owner.GetFrontHandPosition(CompositeArmStretchAmount.Full, armRot);
@@ -84,23 +80,80 @@ public class RoyalKhopeshHeld : ModProjectile
 			Projectile.Kill();
 	}
 
+	private void FirstSwing(float progress, int direction)
+	{
+		float swingProgress = EaseQuarticOut.Ease(progress);
+		if (direction < 0)
+			swingProgress = 1 - swingProgress;
+
+		Projectile.rotation = Lerp(-SwingRadians * 0.6f, SwingRadians * 0.6f - PiOver4, swingProgress);
+
+		Projectile.rotation += BaseDirection.ToRotation() + PiOver4;
+		if (direction < 0)
+			Projectile.rotation += PiOver4 + PiOver2;
+
+		Projectile.scale = EaseQuadOut.Ease(EaseSine.Ease(swingProgress)) * 0.4f + 0.6f;
+	}
+
+	private void DoubleSwing(float progress, ref int direction)
+	{
+		float halfProgress = (progress % 0.5f) * 2;
+
+		float swingProgress = EaseQuadOut.Ease(halfProgress);
+		if (progress >= 0.5f)
+			swingProgress = 1 - swingProgress;
+
+		if(AiTimer == SwingTime / 2)
+		{
+			Projectile.ResetLocalNPCHitImmunity();
+			if(Main.netMode != NetmodeID.Server)
+				SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing with {MaxInstances = -1 }, Projectile.Center);
+		}
+
+		Projectile.rotation = Lerp(-SwingRadians * 0.6f, SwingRadians * 0.6f - PiOver4, swingProgress);
+
+		Projectile.rotation += BaseDirection.ToRotation() + PiOver4;
+		if (direction < 0)
+			Projectile.rotation += PiOver4 + PiOver2;
+
+		Projectile.scale = EaseQuadIn.Ease(EaseSine.Ease(halfProgress)) * 0.4f + 0.6f;
+	}
+
 	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 	{
 		Projectile.TryGetOwner(out Player Owner);
-		Vector2 directionUnit = Vector2.UnitX.RotatedBy(Projectile.rotation - MathHelper.PiOver4);
+		Vector2 directionUnit = Vector2.UnitX.RotatedBy(Projectile.rotation - PiOver4);
 		return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Owner.MountedCenter, Owner.MountedCenter + directionUnit * Projectile.Size.Length() * Projectile.scale);
 	}
 
 	public override bool PreDraw(ref Color lightColor)
 	{
-		Projectile.TryGetOwner(out Player Owner);
 		Texture2D swordTex = TextureAssets.Projectile[Type].Value;
 		Vector2 origin = new Vector2(0.2f, 0.8f) * swordTex.Size();
 		if (Projectile.spriteDirection < 0)
 			origin = new Vector2(0.8f, 0.8f) * swordTex.Size();
 
+		DrawTrail(lightColor);
+
+		Projectile.QuickDraw(origin: origin);
+		return false;
+	}
+
+	private void DrawTrail(Color lightColor)
+	{
+		Projectile.TryGetOwner(out Player Owner);
 		float progress = AiTimer / SwingTime;
-		float swingProgress = EaseFunction.EaseCubicOut.Ease(progress);
+		float swingProgress = EaseCubicOut.Ease(progress);
+		float trailDirection = SwingDirection;
+
+		if(Combo == 1)
+		{
+			if (progress > 0.5f)
+				trailDirection *= -1;
+
+			progress = (progress % 0.5f) * 2;
+			swingProgress = EaseQuadOut.Ease(progress);
+		}
 
 		Effect effect = AssetLoader.LoadedShaders["NoiseParticleTrail"];
 		effect.Parameters["baseTexture"].SetValue(AssetLoader.LoadedTextures["cloudNoise"]);
@@ -111,30 +164,29 @@ public class RoyalKhopeshHeld : ModProjectile
 
 		effect.Parameters["coordMods"].SetValue(new Vector2(0.5f, 0.25f));
 		effect.Parameters["overlayCoordMods"].SetValue(new Vector2(1f, 0.1f) * 1.5f);
-		effect.Parameters["overlayScrollMod"].SetValue(new Vector2(0.5f, -1f));
+		effect.Parameters["overlayScrollMod"].SetValue(new Vector2(0.4f, -1f));
 		effect.Parameters["overlayExponentRange"].SetValue(new Vector2(5f, 0.5f));
 
-		effect.Parameters["timer"].SetValue(-swingProgress * 0.5f - progress * 0.3f);
+		effect.Parameters["timer"].SetValue(-swingProgress * 0.5f - progress * 0.2f);
 		effect.Parameters["progress"].SetValue(swingProgress);
-		effect.Parameters["alphaMod"].SetValue(1);
-		effect.Parameters["intensity"].SetValue(2);
+		effect.Parameters["alphaMod"].SetValue(1f);
+		effect.Parameters["intensity"].SetValue(2f);
 
 		Vector2 pos = Owner.MountedCenter - Main.screenPosition;
 		var slash = new PrimitiveSlashArc
 		{
 			BasePosition = pos,
-			StartDistance = Projectile.Size.Length() * 0.5f,
-			EndDistance = Projectile.Size.Length() * 0.9f,
-			AngleRange = new Vector2(SwingRadians / 2 * SwingDirection, -SwingRadians / 2 * SwingDirection) * (Owner.direction * -1),
+			MinDistance = Projectile.Size.Length() * 0.6f,
+			MaxDistance = Projectile.Size.Length(),
+			Width = Projectile.Size.Length() * 0.4f,
+			AngleRange = new Vector2(SwingRadians / 2 * trailDirection, -SwingRadians / 2 * trailDirection) * (Owner.direction * -1),
 			DirectionUnit = Vector2.Normalize(BaseDirection),
-			Color = lightColor * EaseFunction.EaseQuadOut.Ease(EaseFunction.EaseCircularOut.Ease((float)Math.Sin(swingProgress * MathHelper.Pi))),
+			Color = lightColor * EaseCircularOut.Ease(EaseSine.Ease(swingProgress)),
+			DistanceEase = EaseQuinticIn,
 			SlashProgress = swingProgress,
 			RectangleCount = 30
 		};
 		PrimitiveRenderer.DrawPrimitiveShape(slash, effect);
-
-		Projectile.QuickDraw(origin: origin);
-		return false;
 	}
 
 	public override void SendExtraAI(BinaryWriter writer)

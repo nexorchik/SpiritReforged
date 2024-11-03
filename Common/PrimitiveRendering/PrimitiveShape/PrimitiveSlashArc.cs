@@ -1,3 +1,5 @@
+using SpiritReforged.Common.Easing;
+
 namespace SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 
 /// <summary>
@@ -8,8 +10,10 @@ public class PrimitiveSlashArc : IPrimitiveShape
 	public PrimitiveType GetPrimitiveType => PrimitiveType.TriangleStrip;
 	public Vector2 BasePosition { get; set; }
 	public Vector2 DirectionUnit { get; set; }
-	public float StartDistance { get; set; } = 0;
-	public float EndDistance { get; set; }
+	public float MinDistance { get; set; } = 0;
+	public float MaxDistance { get; set; } = -1;
+	public EaseFunction DistanceEase { get; set; } = EaseFunction.Linear;
+	public float Width { get; set; }
 	public Vector2 AngleRange { get; set; }
 	public Color Color { get; set; }
 	public float SlashProgress { get; set; }
@@ -19,6 +23,9 @@ public class PrimitiveSlashArc : IPrimitiveShape
 	{
 		var vertexList = new List<VertexPositionColorTexture>();
 		var indexList = new List<short>();
+
+		if (MaxDistance == -1)
+			MaxDistance = MinDistance;
 
 		//Cut down a bit on boilerplate by adding a method
 		void AddVertexIndex(Vector2 position, Vector2 TextureCoords)
@@ -33,9 +40,10 @@ public class PrimitiveSlashArc : IPrimitiveShape
 			progress *= SlashProgress;
 
 			float angle = MathHelper.Lerp(AngleRange.X, AngleRange.Y, progress);
+			float distance = MathHelper.Lerp(MinDistance, MaxDistance, DistanceEase.Ease(EaseFunction.EaseSine.Ease(progress)));
 
-			Vector2 minDistPoint = BasePosition + DirectionUnit.RotatedBy(angle) * StartDistance;
-			Vector2 maxDistPoint = BasePosition + DirectionUnit.RotatedBy(angle) * EndDistance;
+			Vector2 minDistPoint = BasePosition + DirectionUnit.RotatedBy(angle) * (distance - Width / 2);
+			Vector2 maxDistPoint = BasePosition + DirectionUnit.RotatedBy(angle) * (distance + Width / 2);
 
 			AddVertexIndex(maxDistPoint, new Vector2(progress, 1));
 			AddVertexIndex(minDistPoint, new Vector2(progress, 0));

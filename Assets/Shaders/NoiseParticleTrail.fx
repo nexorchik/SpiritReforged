@@ -58,7 +58,7 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
     return output;
 };
 
-const float FadeOutRangeX = 1;
+const float FadeOutRangeX = 0.9f;
 const float FadeOutRangeY = 1;
 
 float4 FadeOutColor(float4 inputColor, float fadeProgress)
@@ -90,9 +90,10 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
         textureColor = lerp(baseColorLight, baseColorDark, fadeProgress * progress) * samplerStrength;
     }
     
-    if (input.TextureCoordinates.x > (progress * 0.9f))
+    //fade out at the other horizontal edge
+    if (input.TextureCoordinates.x > (progress * FadeOutRangeX))
     {
-        strength *= 1 - ((input.TextureCoordinates.x - (progress * 0.9f)) / (progress * 0.1f));
+        strength *= 1 - ((input.TextureCoordinates.x - (progress * FadeOutRangeX)) / (progress * (1 - FadeOutRangeX)));
     }
     
     //vertical
