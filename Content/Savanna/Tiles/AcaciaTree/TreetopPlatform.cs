@@ -44,7 +44,10 @@ public class TreetopPlatform : SimpleEntity
 		float disp = (entity is NPC) ? 5f : 10f;
 
 		entity.velocity.Y = 0;
-		entity.position = new Vector2(entity.position.X + diff * disp, Hitbox.Top + 10 - entity.height + rotation * strength * disp);
+
+		var newPosition = new Vector2(entity.position.X + diff * disp, Hitbox.Top + 10 - entity.height + rotation * strength * disp);
+		if (!Collision.SolidCollision(newPosition, entity.width, entity.height))
+			entity.position = newPosition;
 
 		if (entity is Player player)
 		{

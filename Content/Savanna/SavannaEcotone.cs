@@ -57,12 +57,14 @@ internal class SavannaEcotone : EcotoneBase
 	{
 		int pyramidIndex = tasks.FindIndex(x => x.Name == "Pyramids");
 		int grassIndex = tasks.FindIndex(x => x.Name == "Spreading Grass") + 2;
+		int pilesIndex = tasks.FindIndex(x => x.Name == "Piles") + 3;
 
-		if (pyramidIndex == -1 || grassIndex == -1)
+		if (pyramidIndex == -1 || grassIndex == -1 || pilesIndex == -1)
 			return;
 
 		tasks.Insert(pyramidIndex, new PassLegacy("Savanna", BaseGeneration(entries)));
 		tasks.Insert(grassIndex, new PassLegacy("Populate Savanna", PopulateSavanna));
+		tasks.Insert(pilesIndex, new PassLegacy("Grow Baobab", GrowBaobab));
 	}
 
 	private void PopulateSavanna(GenerationProgress progress, GameConfiguration configuration)
@@ -75,9 +77,6 @@ internal class SavannaEcotone : EcotoneBase
 
 		if (HasWaterHole)
 			WateringHole(WaterHoleArea.X, WaterHoleArea.Y, true);
-		
-		if (!HasWaterHole || WorldGen.genRand.NextBool(3) && SavannaArea.Width > 150)
-			GrowBaobab();
 
 		GrowStones();
 
@@ -196,23 +195,28 @@ internal class SavannaEcotone : EcotoneBase
 		}
 	}
 
-	private static void GrowBaobab()
+	private void GrowBaobab(GenerationProgress progress, GameConfiguration configuration)
 	{
-		const int tries = 50;
-		for (int a = 0; a < tries; a++)
+		if (!HasWaterHole || WorldGen.genRand.NextBool(3) && SavannaArea.Width > 150)
 		{
-			int i = WorldGen.genRand.Next(SavannaArea.Left, SavannaArea.Right);
-			int j = SavannaArea.Top;
+			progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.GreatBaobab");
 
-			FindGround(i, ref j);
-			if (Main.tile[i, j].TileType == ModContent.TileType<SavannaDirt>() && Main.tile[i, j - 1].LiquidAmount < 50)
+			const int tries = 50;
+			for (int a = 0; a < tries; a++)
 			{
-				BaobabGen.GenerateBaobab(i, j);
-				return;
-			}
+				int i = WorldGen.genRand.Next(SavannaArea.Left, SavannaArea.Right);
+				int j = SavannaArea.Top;
 
-			if (a == tries - 1)
-				SpiritReforgedMod.Instance.Logger.Info("Generator exceeded maximum tries for structure: Great Baobab");
+				FindGround(i, ref j);
+				if (Main.tile[i, j].TileType == ModContent.TileType<SavannaGrass>() && Main.tile[i, j - 1].LiquidAmount < 50)
+				{
+					BaobabGen.GenerateBaobab(i, j);
+					return;
+				}
+
+				if (a == tries - 1)
+					SpiritReforgedMod.Instance.Logger.Info("Generator exceeded maximum tries for structure: Great Baobab");
+			}
 		}
 	}
 
