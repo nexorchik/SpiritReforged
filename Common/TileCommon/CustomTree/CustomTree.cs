@@ -1,5 +1,4 @@
-﻿using MonoMod.Cil;
-using SpiritReforged.Common.TileCommon.TileSway;
+﻿using SpiritReforged.Common.TileCommon.TileSway;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
@@ -48,26 +47,13 @@ public abstract class CustomTree : ModTile
 			if ((intoRenderTargets || Lighting.UpdateEveryFrame) && !solidLayer)
 				treeDrawPoints.Clear(); //Clear our treeDrawPoints
 		};
-		IL_Main.DrawTileCracks += MoveTileCracks;
-	}
-
-	private void MoveTileCracks(ILContext il)
-	{
-		var c = new ILCursor(il);
-
-		if (!c.TryGotoNext(MoveType.After, x => x.MatchNewobj<Vector2>()))
-			return;
-
-		c.EmitLdloc(4);
-		c.EmitLdloc(5);
-		c.EmitDelegate((Vector2 position, int x, int y) 
-			=> (Framing.GetTileSafely(x, y).TileType == Type) ? position + GetPalmTreeOffset(x, y) : position);
 	}
 
 	public override void SetStaticDefaults()
 	{
+		Main.tileSolid[Type] = false;
 		Main.tileFrameImportant[Type] = true;
-		Main.tileNoAttach[Type] = false;
+		Main.tileNoAttach[Type] = true;
 		Main.tileLavaDeath[Type] = true;
 		Main.tileAxe[Type] = true;
 
@@ -82,7 +68,7 @@ public abstract class CustomTree : ModTile
 		TileObjectData.newTile.AnchorValidTiles = [TileID.Grass];
 		TileObjectData.newTile.AnchorAlternateTiles = [Type];
 
-		TileID.Sets.IsATreeTrunk[Type] = true;
+		//TileID.Sets.IsATreeTrunk[Type] = true; //When true, allows torches to be placed on trunks regardless of tileNoAttach
 		TileID.Sets.IsShakeable[Type] = true;
 		TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
 		DustType = -1;

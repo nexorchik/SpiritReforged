@@ -60,6 +60,7 @@ public class TreetopPlatform : SimpleEntity
 internal class AcaciaPlatformPlayer : ModPlayer
 {
 	private bool wasOnPlatform;
+	private bool pressedDown;
 
 	public override void PreUpdateMovement()
 	{
@@ -68,9 +69,15 @@ internal class AcaciaPlatformPlayer : ModPlayer
 		foreach (var p in AcaciaTree.Platforms)
 		{
 			var lowRect = Player.getRect() with { Height = Player.height / 2, Y = (int)Player.position.Y + Player.height / 2 };
-			if (lowRect.Intersects(p.Hitbox) && Player.velocity.Y >= 0 && !Player.controlDown)
+			if (lowRect.Intersects(p.Hitbox) && Player.velocity.Y >= 0)
 			{
-				p.UpdateStanding(Player);
+				if (!pressedDown)
+				{
+					p.UpdateStanding(Player);
+
+					if (Player.controlDown)
+						pressedDown = true;
+				}
 				
 				onPlatform = wasOnPlatform = true;
 				break; //It would be redundant to check for other platforms when the player is already on one
@@ -80,6 +87,8 @@ internal class AcaciaPlatformPlayer : ModPlayer
 		if (!onPlatform && wasOnPlatform) //Reset rotation when the player just leaves a platform
 		{
 			Player.fullRotation = 0;
+
+			pressedDown = false;
 			wasOnPlatform = false;
 		}
 	}
