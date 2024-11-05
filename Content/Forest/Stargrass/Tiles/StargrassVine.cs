@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Common.TileCommon;
-using SpiritReforged.Common.WorldGeneration;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
 
@@ -26,12 +25,6 @@ internal class StargrassVine : ModTile
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
-
-	public override void RandomUpdate(int i, int j)
-	{
-		//if (!Main.tile[i, j + 1].HasTile && Main.rand.NextBool(10))
-		//	TileHelper.SyncedPlace(i, j + 1, Type, true);
-	}
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
