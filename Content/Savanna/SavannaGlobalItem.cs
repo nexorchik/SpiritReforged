@@ -4,14 +4,26 @@ namespace SpiritReforged.Content.Savanna;
 
 public class SavannaGlobalItem : GlobalItem
 {
+	public override bool InstancePerEntity => true;
 	public override bool? UseItem(Item item, Player player)
 	{
 		if (player.GetModPlayer<SavannaPlayer>().quenchPotion)
 		{
-			if (item.useStyle == ItemUseStyleID.DrinkLiquid)
+			if (item.useStyle == ItemUseStyleID.DrinkLiquid && item.buffType > 0 && item.buffTime > 0)
 			{
 				if (!player.HasBuff(item.buffType))
-					item.buffTime = (int)(item.buffTime * 1.25f);
+				{
+					player.AddBuff(item.buffType, item.buffTime);
+
+					for (int i = 0; i < player.buffType.Length; i++)
+					{
+						if (player.buffType[i] == item.buffType)
+						{
+							player.buffTime[i] = (int)(player.buffTime[i] * 1.25f);
+							break;
+						}
+					}
+				}
 			}
 		}	
 
