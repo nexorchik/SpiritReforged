@@ -956,7 +956,7 @@ FishLure: {
 	DisplayName: Fish Lure
 	Tooltip:
 		'''
-		"{$ItemTooltip.CoralTorch}"
+		{$ItemTooltip.CoralTorch}
 		Attracts schools of fish to nearby waters
 		'''
 }
