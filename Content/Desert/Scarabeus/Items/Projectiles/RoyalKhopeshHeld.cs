@@ -11,6 +11,8 @@ namespace SpiritReforged.Content.Desert.Scarabeus.Items.Projectiles;
 
 public class RoyalKhopeshHeld : ModProjectile
 {
+	private const float WindupTime = 0.55f;
+
 	public int SwingTime { get; set; }
 	public int Combo { get; set; }
 	public float SwingRadians { get; set; }
@@ -46,7 +48,9 @@ public class RoyalKhopeshHeld : ModProjectile
 		//owner.heldProj = Projectile.whoAmI;
 		owner.itemAnimation = 2;
 		owner.itemTime = 2;
-		owner.reuseDelay = 2;
+		if(Combo == 2)
+			owner.reuseDelay = 10;
+
 		Projectile.timeLeft = 2;
 
 		int tempDirection = owner.direction;
@@ -64,7 +68,7 @@ public class RoyalKhopeshHeld : ModProjectile
 				break;
 			case 1: DoubleSwing(progress, ref direction);
 				break;
-			default: FirstSwing(progress, direction);
+			default: FinalSwing(progress, direction);
 				break;
 		}
 
@@ -119,6 +123,37 @@ public class RoyalKhopeshHeld : ModProjectile
 		Projectile.scale = EaseQuadIn.Ease(EaseSine.Ease(halfProgress)) * 0.4f + 0.6f;
 	}
 
+	private void FinalSwing(float progress, int direction)
+	{
+		if(progress < WindupTime)
+		{
+			float windupProgress = progress / WindupTime;
+			windupProgress = EaseCircularOut.Ease(windupProgress);
+
+			Projectile.rotation = Lerp(-SwingRadians * 0.2f, -SwingRadians * 0.6f, windupProgress) * direction;
+			Projectile.rotation += BaseDirection.ToRotation() + PiOver4;
+			if (direction < 0)
+				Projectile.rotation += PiOver4;
+
+			Projectile.scale = windupProgress * 0.2f + 0.6f;
+		}
+		else
+		{
+			float swingProgress = (progress - WindupTime) / (1 - WindupTime);
+			swingProgress = EaseCircularOut.Ease(swingProgress);
+			if (direction < 0)
+				swingProgress = 1 - swingProgress;
+
+			Projectile.rotation = Lerp(-SwingRadians * 0.6f, SwingRadians * 0.6f - PiOver4, swingProgress);
+
+			Projectile.rotation += BaseDirection.ToRotation() + PiOver4;
+			if (direction < 0)
+				Projectile.rotation += PiOver4 + PiOver2;
+
+			Projectile.scale = EaseQuadIn.Ease(EaseSine.Ease(swingProgress)) * 0.2f + 0.8f - EaseCubicIn.Ease(swingProgress) * 0.2f;
+		}
+	}
+
 	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 	{
 		Projectile.TryGetOwner(out Player Owner);
@@ -151,8 +186,19 @@ public class RoyalKhopeshHeld : ModProjectile
 			if (progress > 0.5f)
 				trailDirection *= -1;
 
+			trailDirection *= Owner.direction;
+
 			progress = (progress % 0.5f) * 2;
 			swingProgress = EaseQuadOut.Ease(progress);
+		}
+
+		if(Combo == 2)
+		{
+			if (progress < WindupTime)
+				return;
+
+			progress = (progress - WindupTime) / (1 - WindupTime);
+			swingProgress = EaseCubicOut.Ease(progress);
 		}
 
 		Effect effect = AssetLoader.LoadedShaders["NoiseParticleTrail"];
@@ -169,19 +215,20 @@ public class RoyalKhopeshHeld : ModProjectile
 
 		effect.Parameters["timer"].SetValue(-swingProgress * 0.5f - progress * 0.2f);
 		effect.Parameters["progress"].SetValue(swingProgress);
-		effect.Parameters["alphaMod"].SetValue(1f);
 		effect.Parameters["intensity"].SetValue(2f);
+		effect.Parameters["opacity"].SetValue(EaseCircularOut.Ease(EaseSine.Ease(EaseQuadOut.Ease(swingProgress))));
 
 		Vector2 pos = Owner.MountedCenter - Main.screenPosition;
 		var slash = new PrimitiveSlashArc
 		{
 			BasePosition = pos,
 			MinDistance = Projectile.Size.Length() * 0.6f,
-			MaxDistance = Projectile.Size.Length(),
+			MaxDistance = Projectile.Size.Length() * 0.8f,
 			Width = Projectile.Size.Length() * 0.4f,
+			MaxWidth = Projectile.Size.Length() * 0.7f,
 			AngleRange = new Vector2(SwingRadians / 2 * trailDirection, -SwingRadians / 2 * trailDirection) * (Owner.direction * -1),
 			DirectionUnit = Vector2.Normalize(BaseDirection),
-			Color = lightColor * EaseCircularOut.Ease(EaseSine.Ease(swingProgress)),
+			Color = lightColor,
 			DistanceEase = EaseQuinticIn,
 			SlashProgress = swingProgress,
 			RectangleCount = 30

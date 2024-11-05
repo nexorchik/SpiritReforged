@@ -34,8 +34,8 @@ public class RoyalKhopesh : ModItem
 			if (p.ModProjectile is RoyalKhopeshHeld khopesh)
 			{
 				khopesh.BaseDirection = velocity;
-				khopesh.SwingDirection = (_combo % 3 < 2 ? 1 : -1) * player.direction;
-				khopesh.SwingTime = Item.useTime;
+				khopesh.SwingDirection = (_combo % 3 == 1) ? -1 : 1;
+				khopesh.SwingTime = (_combo == 2) ? (int)(Item.useTime * 1.4f) : Item.useTime;
 				khopesh.Combo = _combo;
 				khopesh.SwingRadians = MathHelper.Pi * 1.75f;
 				p.netUpdate = true;

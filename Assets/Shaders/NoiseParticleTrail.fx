@@ -28,8 +28,8 @@ float2 overlayScrollMod;
 float2 overlayExponentRange;
 float timer;
 float progress;
-float alphaMod;
 float intensity;
+float opacity;
 
 struct VertexShaderInput
 {
@@ -98,17 +98,18 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     
     //vertical
     float yAbsDist = 1 - (2 * abs(input.TextureCoordinates.y - 0.5f));
-    float fadeProgressY = pow(yAbsDist / FadeOutRangeY, 0.66f);
+    float fadeProgressY = pow(yAbsDist / FadeOutRangeY, 0.5f);
     strength *= pow(fadeProgressY, 1.5f);
 
-    textureColor = FadeOutColor(textureColor, fadeProgressY);
+    textureColor = FadeOutColor(textureColor, fadeProgressY) * pow(opacity, lerp(2, 0.33f, strength));
     
     //add overlay color
-    textureColor = lerp(textureColor, overlayColor, pow(tex2D(overlaySampler, overlayTexCoords).r, lerp(overlayExponentRange.x, overlayExponentRange.y, strength))); //raised to absurdly high power to create smaller stars, without making them too close to each other
+    float overlayStrength = pow(tex2D(overlaySampler, overlayTexCoords).r, lerp(overlayExponentRange.x, overlayExponentRange.y, strength));
+    overlayStrength *= pow(opacity, 0.33f);
+    textureColor = lerp(textureColor, overlayColor, overlayStrength); //raised to absurdly high power to create smaller stars, without making them too close to each other
 
     float4 finalColor = color * textureColor * strength;
-    finalColor.a *= alphaMod;
-    return finalColor * intensity; //final band-aid fix to make colors more intense
+    return finalColor * intensity;
 }
 
 technique BasicColorDrawing
