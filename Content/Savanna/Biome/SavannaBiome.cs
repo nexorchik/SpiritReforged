@@ -26,7 +26,7 @@ internal class SavannaTileCounts : ModSystem
 {
 	public int savannaCount;
 
-	public static bool InSavanna => ModContent.GetInstance<SavannaTileCounts>().savannaCount >= 300;
+	public static bool InSavanna => ModContent.GetInstance<SavannaTileCounts>().savannaCount >= 400;
 
 	public override void TileCountsAvailable(ReadOnlySpan<int> tileCounts) => savannaCount = tileCounts[ModContent.TileType<Tiles.SavannaGrass>()] + tileCounts[ModContent.TileType<Tiles.SavannaDirt>()];
 }
