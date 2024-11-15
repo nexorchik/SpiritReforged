@@ -105,10 +105,10 @@ internal class SavannaEcotone : EcotoneBase
 				{
 					tile.TileType = (ushort)ModContent.TileType<SavannaGrass>(); //Grow grass on dirt
 
-					const int minimumTreeSpace = 35;
+					const int minimumTreeSpace = 28;
 					int treeDistance = Math.Abs(i - treeSpacing.OrderBy(x => Math.Abs(i - x)).FirstOrDefault());
 
-					if (WorldGen.genRand.NextBool(20) && treeDistance > minimumTreeSpace) //Add trees
+					if (WorldGen.genRand.NextBool(32) && treeDistance > minimumTreeSpace) //Add trees
 						if (CustomTree.GrowTree<AcaciaTree>(i, j - 1))
 							treeSpacing.Add(i);
 
@@ -162,7 +162,7 @@ internal class SavannaEcotone : EcotoneBase
 
 	private static void GrowStuffOnGrass(int i, int j)
 	{
-		if (WorldGen.genRand.NextBool(20)) //Elephant grass patch
+		if (WorldGen.genRand.NextBool(13)) //Elephant grass patch
 			CreatePatch(WorldGen.genRand.Next(5, 11), 0, ModContent.TileType<ElephantGrass>(), ModContent.TileType<ElephantGrassShort>());
 
 		if (WorldGen.genRand.NextBool(9)) //Foliage pouch
@@ -500,8 +500,13 @@ internal class SavannaEcotone : EcotoneBase
 
 					tile.TileType = (ushort)type;
 
-					if (i > 1)
+					if (i > 1) //Convert walls
 					{
+						if (tile.TileType == TileID.Sand)
+							tile.WallType = WallID.HardenedSand;
+						else if (tile.TileType == TileID.Sandstone)
+							tile.WallType = WallID.Sandstone;
+
 						if (tile.WallType is WallID.None or WallID.DirtUnsafe)
 							tile.WallType = (ushort)ModContent.WallType<SavannaDirtWall>();
 					}
