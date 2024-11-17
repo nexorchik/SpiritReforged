@@ -19,6 +19,7 @@ public class PrimitiveSlashArc : IPrimitiveShape
 	public Color Color { get; set; }
 	public float SlashProgress { get; set; }
 	public int RectangleCount { get; set; } = 20;
+	public bool UseLightColor { get; set; } = false;
 
 	public void PrimitiveStructure(out VertexPositionColorTexture[] vertices, out short[] indeces)
 	{
@@ -35,7 +36,10 @@ public class PrimitiveSlashArc : IPrimitiveShape
 		void AddVertexIndex(Vector2 position, Vector2 TextureCoords)
 		{
 			indexList.Add((short)vertexList.Count);
-			vertexList.Add(new VertexPositionColorTexture(new Vector3(position, 0), Color, TextureCoords));
+			Color adjustColor = Color;
+			if (UseLightColor)
+				adjustColor = adjustColor.MultiplyRGBA(Lighting.GetColor((position + Main.screenPosition).ToTileCoordinates()));
+			vertexList.Add(new VertexPositionColorTexture(new Vector3(position, 0), adjustColor, TextureCoords));
 		}
 
 		for (int i = 0; i <= RectangleCount; i++)
