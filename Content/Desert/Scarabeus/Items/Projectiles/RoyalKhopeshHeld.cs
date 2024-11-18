@@ -7,13 +7,21 @@ using static SpiritReforged.Common.Easing.EaseFunction;
 using static Microsoft.Xna.Framework.MathHelper;
 using Terraria.Audio;
 using SpiritReforged.Common.Visuals.Glowmasks;
+using Terraria;
+using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Particle;
+using SpiritReforged.Content.Particles;
 
 namespace SpiritReforged.Content.Desert.Scarabeus.Items.Projectiles;
 
 [AutoloadGlowmask("255,255,255", false)]
 public class RoyalKhopeshHeld : ModProjectile
 {
-	private const float WindupTime = 0.35f;
+	public const int EXTRA_UPDATES = 1;
+
+	private const int HIT_FX_COOLDOWN_MAX = 30 * (1 + EXTRA_UPDATES);
+
+	private const float WINDUP_TIME = 0.35f;
 
 	public int SwingTime { get; set; }
 	public int Combo { get; set; }
@@ -24,6 +32,8 @@ public class RoyalKhopeshHeld : ModProjectile
 	public Vector2 BaseDirection { get; set; }
 
 	private float AiTimer { get => Projectile.ai[0]; set => Projectile.ai[0] = value; }
+
+	private int _hitFXCooldown;
 
 	public override void SetDefaults()
 	{
@@ -37,11 +47,12 @@ public class RoyalKhopeshHeld : ModProjectile
 		Projectile.penetrate = -1;
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = -1;
+		Projectile.extraUpdates = EXTRA_UPDATES;
 	}
 
 	public override void AI()
 	{
-		if(!Projectile.TryGetOwner(out Player owner))
+		if (!Projectile.TryGetOwner(out Player owner))
 		{
 			Projectile.Kill();
 			return;
@@ -50,7 +61,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		//owner.heldProj = Projectile.whoAmI;
 		owner.itemAnimation = 2;
 		owner.itemTime = 2;
-		if(Combo == 2)
+		if (Combo == 2)
 			owner.reuseDelay = 10;
 
 		Projectile.timeLeft = 2;
@@ -82,6 +93,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		Projectile.Center = owner.GetFrontHandPosition(CompositeArmStretchAmount.Full, armRot);
 
 		AiTimer++;
+		_hitFXCooldown--;
 		if (AiTimer > SwingTime)
 			Projectile.Kill();
 	}
@@ -95,7 +107,7 @@ public class RoyalKhopeshHeld : ModProjectile
 	private void FirstSwing(float progress, int direction)
 	{
 		float swingProgress = EaseQuarticOut.Ease(progress);
-		Projectile.scale = EaseCircularIn.Ease(EaseSine.Ease(swingProgress)) * 0.4f + 0.6f;
+		Projectile.scale = EaseCircularIn.Ease(EaseSine.Ease(swingProgress)) * 0.3f + 0.7f;
 
 		if (direction < 0)
 			swingProgress = 1 - swingProgress;
@@ -111,13 +123,13 @@ public class RoyalKhopeshHeld : ModProjectile
 	{
 		float halfProgress = (progress % 0.5f) * 2;
 
-		float swingProgress = EaseQuarticOut.Ease(halfProgress);
-		Projectile.scale = EaseQuadIn.Ease(EaseSine.Ease(halfProgress)) * 0.2f + 0.6f;
+		float swingProgress = EaseCircularOut.Ease(halfProgress);
+		Projectile.scale = EaseQuadIn.Ease(EaseSine.Ease(swingProgress)) * 0.3f + 0.7f;
 
 		if (progress >= 0.5f)
 			swingProgress = 1 - swingProgress;
 
-		if(AiTimer == SwingTime / 2)
+		if (AiTimer == SwingTime / 2)
 		{
 			Projectile.ResetLocalNPCHitImmunity();
 			DoSwingNoise();
@@ -132,9 +144,9 @@ public class RoyalKhopeshHeld : ModProjectile
 
 	private void FinalSwing(float progress, int direction)
 	{
-		if(progress < WindupTime)
+		if (progress < WINDUP_TIME)
 		{
-			float windupProgress = progress / WindupTime;
+			float windupProgress = progress / WINDUP_TIME;
 			windupProgress = EaseCircularOut.Ease(windupProgress);
 
 			Projectile.rotation = Lerp(-SwingRadians * 0.2f, -SwingRadians * 0.6f, windupProgress) * direction;
@@ -142,16 +154,16 @@ public class RoyalKhopeshHeld : ModProjectile
 			if (direction < 0)
 				Projectile.rotation += PiOver4;
 
-			Projectile.scale = windupProgress * 0.2f + 0.6f;
+			Projectile.scale = windupProgress * 0.2f + 0.7f;
 		}
 		else
 		{
-			if ((int)(progress * SwingTime) == (int)(WindupTime * SwingTime) + 1)
+			if ((int)(progress * SwingTime) == (int)(WINDUP_TIME * SwingTime) + 1)
 				DoSwingNoise();
 
-			float swingProgress = (progress - WindupTime) / (1 - WindupTime);
+			float swingProgress = (progress - WINDUP_TIME) / (1 - WINDUP_TIME);
 			swingProgress = EaseCircularOut.Ease(EaseQuadOut.Ease(swingProgress));
-			Projectile.scale = EaseQuadIn.Ease(EaseSine.Ease(swingProgress)) * 0.2f + 0.8f - EaseCubicIn.Ease(swingProgress) * 0.2f;
+			Projectile.scale = EaseQuadIn.Ease(EaseSine.Ease(swingProgress)) * 0.1f + 0.9f - EaseCubicIn.Ease(swingProgress) * 0.1f;
 
 			if (direction < 0)
 				swingProgress = 1 - swingProgress;
@@ -166,17 +178,72 @@ public class RoyalKhopeshHeld : ModProjectile
 
 	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 	{
+		if (Combo == 2 && (AiTimer / SwingTime) < WINDUP_TIME)
+			return false;
+
 		Projectile.TryGetOwner(out Player Owner);
 		Vector2 directionUnit = Vector2.UnitX.RotatedBy(Projectile.rotation - PiOver4);
-		return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Owner.MountedCenter, Owner.MountedCenter + directionUnit * Projectile.Size.Length() * Projectile.scale);
+		float _ = 0;
+		float hitboxLengthMod = Lerp(1.3f, 1.5f, EaseSine.Ease(GetSwingProgress()));
+		return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Owner.MountedCenter, Owner.MountedCenter + directionUnit * Projectile.Size.Length() * Projectile.scale * hitboxLengthMod, 20f, ref _);
+	}
+
+	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+	{
+		if(Combo == 2)
+		{
+			modifiers.FinalDamage *= 1.5f;
+			modifiers.FinalDamage += Min(target.defense / 2, 20);
+		}
+	}
+
+	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+	{
+		if (Main.dedServ || _hitFXCooldown > 0)
+			return;
+
+		if(Combo < 2)
+		{
+			int numSmoke = 4;
+			for (int i = 0; i < numSmoke; i++)
+			{
+				Color smokeColor = new Color(223, 219, 147) * 0.3f;
+				float progress = i / (float)numSmoke;
+				float scale = Lerp(0.08f, 0.04f, progress);
+				var vel = Vector2.UnitX.RotatedBy(Projectile.rotation - PiOver4).RotatedByRandom(Pi / 8) * Main.rand.NextFloat(0.4f, 2f);
+				ParticleHandler.SpawnParticle(new DissipatingImage(target.Center, smokeColor, Main.rand.NextFloatDirection(), scale, 0.6f, "Smoke", 30) { Velocity = vel, UseLightColor = true });
+			}
+		}
+	}
+
+	private float GetSwingProgress()
+	{
+		float progress = AiTimer / SwingTime;
+		switch(Combo)
+		{
+			case 0:
+				progress = EaseQuarticOut.Ease(progress);
+				break;
+			case 1:
+				float halfProgress = (progress % 0.5f) * 2;
+				progress = EaseCircularOut.Ease(halfProgress);
+				break;
+			case 2:
+				float swingProgress = Max((progress - WINDUP_TIME) / (1 - WINDUP_TIME), 0);
+				progress = EaseCircularOut.Ease(EaseQuadOut.Ease(swingProgress));
+				break;
+		}
+		return progress;
 	}
 
 	public override bool PreDraw(ref Color lightColor)
 	{
 		Texture2D swordTex = TextureAssets.Projectile[Type].Value;
-		Vector2 origin = new Vector2(0.2f, 0.8f) * swordTex.Size();
+		float diagonalOrigin = 0.2f;
+		diagonalOrigin = Lerp(diagonalOrigin, 0, EaseQuadIn.Ease(EaseSine.Ease(GetSwingProgress())));
+		Vector2 origin = new Vector2(diagonalOrigin, 1 - diagonalOrigin) * swordTex.Size();
 		if (Projectile.spriteDirection < 0)
-			origin = new Vector2(0.8f, 0.8f) * swordTex.Size();
+			origin = new Vector2(1 - diagonalOrigin) * swordTex.Size();
 
 		DrawTrail();
 
@@ -191,11 +258,13 @@ public class RoyalKhopeshHeld : ModProjectile
 	{
 		Projectile.TryGetOwner(out Player Owner);
 		float progress = AiTimer / SwingTime;
-		float swingProgress = EaseCubicOut.Ease(progress);
+		float swingProgress = GetSwingProgress();
 		float trailDirection = SwingDirection;
-		float maxDist = 0.9f;
+		float maxDist = 1f;
+		float minDist = 0.6f;
 		int rectCount = 30;
 		bool useLightColor = true;
+		float opacityMod = 1f;
 		Effect effect;
 
 		if (Combo == 1)
@@ -204,22 +273,19 @@ public class RoyalKhopeshHeld : ModProjectile
 				trailDirection *= -1;
 
 			trailDirection *= Owner.direction;
-
-			progress = (progress % 0.5f) * 2;
-			maxDist = 0.7f;
-			swingProgress = EaseQuadOut.Ease(progress);
+			opacityMod = 0.8f;
 		}
 
 		if(Combo == 2)
 		{
-			if (progress < WindupTime)
+			if (progress < WINDUP_TIME)
 				return;
 
-			progress = (progress - WindupTime) / (1 - WindupTime);
-			swingProgress = EaseCircularOut.Ease(EaseQuadOut.Ease(progress));
+			progress = (progress - WINDUP_TIME) / (1 - WINDUP_TIME);
 			SetRedtrailParams(out effect, progress, swingProgress);
 			//rectCount = 10;
 			useLightColor = false;
+			minDist = 0.8f;
 		}
 		else
 			SetSandtrailParams(out effect, progress, swingProgress);
@@ -228,13 +294,13 @@ public class RoyalKhopeshHeld : ModProjectile
 		var slash = new PrimitiveSlashArc
 		{
 			BasePosition = pos,
-			MinDistance = Projectile.Size.Length() * 0.6f,
+			MinDistance = Projectile.Size.Length() * minDist,
 			MaxDistance = Projectile.Size.Length() * maxDist,
-			Width = Projectile.Size.Length() * 0.45f,
-			MaxWidth = Projectile.Size.Length() * 0.55f,
-			AngleRange = new Vector2(SwingRadians / 2 * trailDirection, -SwingRadians / 2 * trailDirection) * (Owner.direction * -1),
+			Width = Projectile.Size.Length() * 0.55f,
+			MaxWidth = Projectile.Size.Length() * 0.75f,
+			AngleRange = new Vector2(SwingRadians / 2 * trailDirection, -SwingRadians / 2 * trailDirection) * (Owner.direction * -1) * 1.1f,
 			DirectionUnit = Vector2.Normalize(BaseDirection),
-			Color = Color.White,
+			Color = Color.White * opacityMod,
 			UseLightColor = useLightColor,
 			DistanceEase = EaseQuinticIn,
 			SlashProgress = swingProgress,
@@ -247,7 +313,7 @@ public class RoyalKhopeshHeld : ModProjectile
 	{
 		effect = AssetLoader.LoadedShaders["NoiseParticleTrail"];
 		effect.Parameters["baseTexture"].SetValue(AssetLoader.LoadedTextures["noise"]);
-		effect.Parameters["baseColorDark"].SetValue(new Color(186, 168, 84).ToVector4() * 0.25f);
+		effect.Parameters["baseColorDark"].SetValue(new Color(150, 111, 44).ToVector4());
 		effect.Parameters["baseColorLight"].SetValue(new Color(223, 219, 147).ToVector4());
 		effect.Parameters["overlayTexture"].SetValue(AssetLoader.LoadedTextures["particlenoise"]);
 		effect.Parameters["overlayColor"].SetValue(new Color(58, 49, 18).ToVector4());
@@ -259,7 +325,7 @@ public class RoyalKhopeshHeld : ModProjectile
 
 		effect.Parameters["timer"].SetValue(-swingProgress * 0.5f - progress * 0.2f);
 		effect.Parameters["progress"].SetValue(swingProgress);
-		effect.Parameters["intensity"].SetValue(2f);
+		effect.Parameters["intensity"].SetValue(2.5f);
 		effect.Parameters["opacity"].SetValue(EaseCircularOut.Ease(EaseSine.Ease(EaseQuadOut.Ease(swingProgress))));
 	}
 
@@ -267,26 +333,26 @@ public class RoyalKhopeshHeld : ModProjectile
 	{
 		effect = AssetLoader.LoadedShaders["NoiseParticleTrail"];
 		effect.Parameters["baseTexture"].SetValue(AssetLoader.LoadedTextures["noiseCrystal"]);
-		effect.Parameters["baseColorDark"].SetValue(new Color(255, 3, 32).ToVector4());
-		effect.Parameters["baseColorLight"].SetValue(new Color(252, 124, 158).ToVector4());
+		effect.Parameters["baseColorDark"].SetValue(new Color(217, 2, 20).ToVector4());
+		effect.Parameters["baseColorLight"].SetValue(new Color(255, 105, 155).ToVector4());
 		effect.Parameters["overlayTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"]);
 		effect.Parameters["overlayColor"].SetValue(new Color(252, 124, 158).ToVector4());
 
 		effect.Parameters["coordMods"].SetValue(new Vector2(4f, 1f));
-		effect.Parameters["overlayCoordMods"].SetValue(new Vector2(1f, 0.1f) * 2f);
+		effect.Parameters["overlayCoordMods"].SetValue(new Vector2(1f, 0.1f) * 3f);
 		effect.Parameters["overlayScrollMod"].SetValue(new Vector2(0.4f, -1f));
-		effect.Parameters["overlayExponentRange"].SetValue(new Vector2(50f, 50f));
+		effect.Parameters["overlayExponentRange"].SetValue(new Vector2(20f, 5f));
 
 		effect.Parameters["timer"].SetValue(-swingProgress * 0.5f - progress * 0.2f);
 		effect.Parameters["progress"].SetValue(swingProgress);
-		effect.Parameters["intensity"].SetValue(2f);
+		effect.Parameters["intensity"].SetValue(3f);
 		effect.Parameters["opacity"].SetValue(EaseCircularOut.Ease(EaseSine.Ease(EaseQuadOut.Ease(swingProgress))));
 	}
 
 	private void EmpoweredGlow(Vector2 origin)
 	{
 		float progress = AiTimer / SwingTime;
-		float windupProgress = (progress) / WindupTime;
+		float windupProgress = (progress) / WINDUP_TIME;
 		windupProgress = Min(windupProgress, 1);
 
 		Texture2D starTex = AssetLoader.LoadedTextures["Star"];

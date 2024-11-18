@@ -7,9 +7,9 @@ public class RoyalKhopesh : ModItem
 {
 	public override void SetDefaults()
 	{
-		Item.damage = 24;
+		Item.damage = 28;
 		Item.Size = new Vector2(48, 52);
-		Item.useTime = Item.useAnimation = 36;
+		Item.useTime = Item.useAnimation = 40;
 		Item.knockBack = 1f;
 		Item.shootSpeed = 1;
 		Item.noMelee = true;
@@ -39,6 +39,7 @@ public class RoyalKhopesh : ModItem
 				khopesh.BaseDirection = velocity;
 				khopesh.SwingDirection = (kPlayer.Combo % 3 == 1) ? -1 : 1;
 				khopesh.SwingTime = (kPlayer.Combo == 2) ? (int)(Item.useTime * 1.7f) : Item.useTime;
+				khopesh.SwingTime *= 1 + RoyalKhopeshHeld.EXTRA_UPDATES;
 				khopesh.Combo = kPlayer.Combo;
 				khopesh.SwingRadians = MathHelper.Pi * 1.75f;
 				p.netUpdate = true;

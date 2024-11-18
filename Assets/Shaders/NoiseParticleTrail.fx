@@ -61,9 +61,9 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 const float FadeOutRangeX = 0.9f;
 const float FadeOutRangeY = 1;
 
-float4 FadeOutColor(float4 inputColor, float fadeProgress)
+float4 FadeOutColor(float4 inputColor, float inputStrength, float fadeAmount)
 {
-    return float4(inputColor.rgb * lerp(1, pow(inputColor.a, 0.75f), 1 - fadeProgress), inputColor.a); //Raise base color to a power based on fade progress, to make the less opaque parts fade out first
+    return inputColor * lerp(1, inputStrength, fadeAmount);
 }
 
 float4 MainPS(VertexShaderOutput input) : COLOR0
@@ -78,35 +78,36 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     
     //add base texture color
     float samplerStrength = tex2D(baseSampler, baseTexCoords).r;
-    textureColor = baseColorLight * samplerStrength;
+    textureColor = lerp(baseColorLight, baseColorDark, 1 - samplerStrength) * pow(samplerStrength, 0.75f);
     
     //fade out based on position
     if (input.TextureCoordinates.x < progress) //horizontal
     {
         float fadeProgress = input.TextureCoordinates.x / progress;
         strength *= pow(fadeProgress, 1.5f);
-        
-        textureColor = FadeOutColor(textureColor, fadeProgress);
-        textureColor = lerp(baseColorLight, baseColorDark, fadeProgress * progress) * samplerStrength;
+        textureColor = FadeOutColor(textureColor, samplerStrength.r, pow(1 - fadeProgress, 0.5f));
     }
     
     //fade out at the other horizontal edge
     if (input.TextureCoordinates.x > (progress * FadeOutRangeX))
     {
-        strength *= 1 - ((input.TextureCoordinates.x - (progress * FadeOutRangeX)) / (progress * (1 - FadeOutRangeX)));
+        float fadeFactor = 1 - ((input.TextureCoordinates.x - (progress * FadeOutRangeX)) / (progress * (1 - FadeOutRangeX)));
+        strength *= pow(fadeFactor, 0.75f);
+        textureColor = FadeOutColor(textureColor, samplerStrength, 1 - fadeFactor);
     }
     
     //vertical
     float yAbsDist = 1 - (2 * abs(input.TextureCoordinates.y - 0.5f));
-    float fadeProgressY = pow(yAbsDist / FadeOutRangeY, 0.5f);
-    strength *= pow(fadeProgressY, 1.5f);
+    float fadeProgressY = 1 - pow(yAbsDist - 1, 2);
+    strength *= pow(fadeProgressY, 1.75f);
 
-    textureColor = FadeOutColor(textureColor, fadeProgressY) * pow(opacity, lerp(2, 0.33f, strength));
+    textureColor = FadeOutColor(textureColor, samplerStrength.r, pow(1 - fadeProgressY, 0.75f));
+    textureColor *= pow(opacity, lerp(2, 0.33f, strength));
     
     //add overlay color
     float overlayStrength = pow(tex2D(overlaySampler, overlayTexCoords).r, lerp(overlayExponentRange.x, overlayExponentRange.y, strength));
     overlayStrength *= pow(opacity, 0.33f);
-    textureColor = lerp(textureColor, overlayColor, overlayStrength); //raised to absurdly high power to create smaller stars, without making them too close to each other
+    textureColor = lerp(textureColor, overlayColor, overlayStrength);
 
     float4 finalColor = color * textureColor * strength;
     return finalColor * intensity;
@@ -116,7 +117,7 @@ technique BasicColorDrawing
 {
     pass DefaultPass
 	{
-        VertexShader = compile vs_2_0 MainVS();
-        PixelShader = compile ps_2_0 MainPS();
+        VertexShader = compile vs_3_0 MainVS();
+        PixelShader = compile ps_3_0 MainPS();
     }
 };
