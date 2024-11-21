@@ -12,6 +12,7 @@ using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace SpiritReforged.Content.Desert.Scarabeus.Items.Projectiles;
 
@@ -26,9 +27,7 @@ public class RoyalKhopeshHeld : ModProjectile
 	private static Color RUBY_DARK = new Color(217, 2, 20);
 	private static Color RUBY_PARTICLE = new Color(252, 124, 158);
 
-	public const int EXTRA_UPDATES = 1;
-
-	private const int HIT_FX_COOLDOWN_MAX = 30 * (1 + EXTRA_UPDATES);
+	public const int EXTRA_UPDATES = 3;
 
 	private const float WINDUP_TIME = 0.35f;
 
@@ -41,6 +40,14 @@ public class RoyalKhopeshHeld : ModProjectile
 	public Vector2 BaseDirection { get; set; }
 
 	private float AiTimer { get => Projectile.ai[0]; set => Projectile.ai[0] = value; }
+
+	private float[] oldScale = { 0 };
+
+	public override void SetStaticDefaults()
+	{
+		ProjectileID.Sets.TrailCacheLength[Type] = 15;
+		ProjectileID.Sets.TrailingMode[Type] = 2;
+	}
 
 	public override void SetDefaults()
 	{
@@ -55,6 +62,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = -1;
 		Projectile.extraUpdates = EXTRA_UPDATES;
+		oldScale = new float[ProjectileID.Sets.TrailCacheLength[Type]]; //Match the rest of the oldX arrays
 	}
 
 	public override void AI()
@@ -102,6 +110,10 @@ public class RoyalKhopeshHeld : ModProjectile
 		AiTimer++;
 		if (AiTimer > SwingTime)
 			Projectile.Kill();
+
+		oldScale[0] = Projectile.scale;
+		for (int i = oldScale.Length - 1; i > 0; i--)
+			oldScale[i] = oldScale[i - 1];
 	}
 
 	public void DoSwingNoise()
@@ -283,11 +295,31 @@ public class RoyalKhopeshHeld : ModProjectile
 
 		DrawTrail();
 
+		if (Combo != 2 || (AiTimer / SwingTime) >= WINDUP_TIME)
+			DrawAfterimages(lightColor, origin);
+
 		Projectile.QuickDraw(origin: origin);
 		if (Combo == 2)
 			EmpoweredGlow(origin);
 
 		return false;
+	}
+
+	private void DrawAfterimages(Color lightColor, Vector2 origin)
+	{
+		Texture2D tex = TextureAssets.Projectile[Projectile.type].Value;
+		float baseOpacity = 0.4f;
+
+		for(int i = 0; i < ProjectileID.Sets.TrailCacheLength[Type]; i++)
+		{
+			if (oldScale[i] == 0)
+				return;
+
+			float progress = i / (float)ProjectileID.Sets.TrailCacheLength[Type];
+			float opacity = baseOpacity * EaseQuadIn.Ease(1 - progress);
+			SpriteEffects effect = Projectile.oldSpriteDirection[i] == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+			Main.EntitySpriteDraw(tex, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor) * opacity, Projectile.oldRot[i], origin, oldScale[i], effect, 0);
+		}
 	}
 
 	private void DrawTrail()
