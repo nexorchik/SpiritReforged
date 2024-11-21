@@ -28,20 +28,31 @@ internal static class BaobabGen
 
 		for (int offX = 0; offX < width; offX++)
 		{
-			int _height = height - curveHeight + (int)(Math.Sin((float)offX / (width - 1) * Math.PI) * curveHeight);
-			for (int offY = 0; offY < _height; offY++)
+			int realHeight = height - curveHeight + (int)(Math.Sin((float)offX / (width - 1) * Math.PI) * curveHeight);
+			for (int offY = 0; offY < realHeight; offY++)
 			{
 				var pos = new Point(x + offX, y - offY);
-				if (!opening.Contains(pos))
+
+				if (opening.Contains(pos))
+				{
+					WorldGen.PlaceLiquid(pos.X, pos.Y, (byte)LiquidID.Water, 190);
+				}
+				else
 				{
 					WorldGen.KillTile(pos.X, pos.Y);
 					WorldGen.PlaceTile(pos.X, pos.Y, ModContent.TileType<LivingBaobab>(), true);
 				}
-				else
-					WorldGen.PlaceLiquid(pos.X, pos.Y, (byte)LiquidID.Water, 190);
+			}
+		}
 
-				if (offX > 0 && offX < width - 1)
-					WorldGen.PlaceWall(pos.X, pos.Y, ModContent.WallType<LivingBaobabWall>(), true);
+		for (int i = x; i < x + width; i++) //Fill walls
+		{
+			for (int j = y; j > y - height; j--)
+			{
+				OpenFlags flags = OpenTools.GetOpenings(i, j, false, false);
+
+				if ((flags == OpenFlags.None || opening.Contains(new Point(i, j))) && Main.tile[i, j].TileType == ModContent.TileType<LivingBaobab>())
+					WorldGen.PlaceWall(i, j, ModContent.WallType<LivingBaobabWall>(), true);
 			}
 		}
 
@@ -57,10 +68,8 @@ internal static class BaobabGen
 			int startX = (int)MathHelper.Lerp(x - width / 2, x + width / 2, (float)i / (repeats - 1));
 			var points = Spline.CreateSpline(GetBranchPositions(startX, y, startX > x ? 1 : -1, 3, true), 3);
 
-			PointToPointRunner.SingleTile(new(points), (ref Vector2 position, ref Vector2 direction) =>
-			{
-				CreateChunk((int)position.X, (int)position.Y, ModContent.TileType<LivingBaobab>(), 2);
-			}, false);
+			PointToPointRunner.SingleTile(new(points), (ref Vector2 position, ref Vector2 direction) 
+				=> CreateChunk((int)position.X, (int)position.Y, ModContent.TileType<LivingBaobab>(), 2), false);
 		}
 	}
 
@@ -74,10 +83,8 @@ internal static class BaobabGen
 			var start = (new Vector2(x, y) - (Vector2.UnitY * (width / 2 - 1)).RotatedBy(radians / (repeats - 1) * i - radians / 2)).ToPoint();
 			var points = GetBranchPositions(start.X, start.Y, start.X > x ? 1 : -1, WorldGen.genRand.Next(2, 4), false);
 
-			PointToPointRunner.SingleTile(new(points), (ref Vector2 position, ref Vector2 direction) => 
-			{
-				CreateChunk((int)position.X, (int)position.Y, ModContent.TileType<LivingBaobab>(), 2);
-			}, false);
+			PointToPointRunner.SingleTile(new(points), (ref Vector2 position, ref Vector2 direction) 
+				=> CreateChunk((int)position.X, (int)position.Y, ModContent.TileType<LivingBaobab>(), 2), false);
 
 			var last = points.Last().ToPoint();
 			WorldGen.TileRunner(last.X, last.Y, 15, 5, ModContent.TileType<LivingBaobabLeaf>(), true, overRide: false);
@@ -89,37 +96,11 @@ internal static class BaobabGen
 		{
 			for (int _y = leafArea.Top; _y < leafArea.Bottom; _y++)
 			{
-				if (Main.tile[_x, _y].TileType == ModContent.TileType<LivingBaobabLeaf>())
+				OpenFlags flags = OpenTools.GetOpenings(_x, _y, false, false);
+
+				if (flags == OpenFlags.None && Main.tile[_x, _y].TileType == ModContent.TileType<LivingBaobabLeaf>())
 					WorldGen.PlaceWall(_x, _y, ModContent.WallType<LivingBaobabLeafWall>());
-				else
-				{
-					int wallType = ModContent.WallType<LivingBaobabLeafWall>();
-					if (WorldGen.genRand.NextBool(3) && AdjacentWall(_x, _y, wallType))
-						WorldGen.PlaceWall(_x, _y, wallType);
-				}
 			}
-		}
-
-		return;
-		static bool AdjacentWall(int i, int j, int type)
-		{
-			var t = Main.tile[i, j + 1];
-			if (t.HasTile && t.WallType == type)
-				return true;
-
-			t = Main.tile[i, j - 1];
-			if (t.HasTile && t.WallType == type)
-				return true;
-
-			t = Main.tile[i + 1, j];
-			if (t.HasTile && t.WallType == type)
-				return true;
-
-			t = Main.tile[i - 1, j];
-			if (t.HasTile && t.WallType == type)
-				return true;
-
-			return false;
 		}
 	}
 

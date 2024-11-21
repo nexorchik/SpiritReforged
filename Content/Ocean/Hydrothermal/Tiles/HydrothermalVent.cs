@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -11,7 +12,7 @@ namespace SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 public class HydrothermalVent : ModTile
 {
 	internal static readonly Dictionary<Point16, int> cooldowns = [];
-	internal const int cooldownMax = (int)Main.dayLength / 3;
+	internal const int cooldownMax = (int)(Main.dayLength / 5);
 	internal const int eruptDuration = 60 * 10;
 
 	private static readonly Point[] tops = [new Point(16, 16), new Point(16, 16), new Point(16, 24), new Point(12, 4), new Point(20, 4), new Point(16, 16), new Point(16, 16), new Point(16, 16)];
@@ -85,6 +86,7 @@ public class HydrothermalVent : ModTile
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
 		Main.tileSpelunker[Type] = true;
+		Main.tileLighted[Type] = true;
 		TileID.Sets.DisableSmartCursor[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
@@ -135,29 +137,39 @@ public class HydrothermalVent : ModTile
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
 
+	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
+	{
+		if (Framing.GetTileSafely(i, j).TileFrameY == 0)
+		{
+			float pulse = Main.rand.Next(28, 42) * .001f;
+			var col = Color.Orange.ToVector3() / 3.5f;
+
+			(r, g, b) = (col.X + pulse, col.Y + pulse, col.Z + pulse);
+		}
+	}
+
 	public override void RandomUpdate(int i, int j)
 	{
-		if (Main.netMode == NetmodeID.MultiplayerClient || !IsValid(i, j))
+		if (Main.netMode == NetmodeID.MultiplayerClient)
 			return; //Redundant
+
+		TileExtensions.GetTopLeft(ref i, ref j); //Allows any tile update (not just the top leftmost) to cause an eruption
 
 		var pt = new Point16(i, j);
 		if (IsValid(i, j) && !cooldowns.ContainsKey(pt))
 			cooldowns.Add(pt, cooldownMax); //Initialize cooldown counters on the server/singleplayer
 
-		if (cooldowns[pt] == 0)
+		if (cooldowns[pt] == 0 && WorldGen.PlayerLOS(i, j))
 		{
+			Erupt(i, j);
 			cooldowns[pt] = cooldownMax;
-			if (WorldGen.PlayerLOS(i, j))
-			{
-				Erupt(i, j);
 
-				if (Main.netMode != NetmodeID.SinglePlayer) //Sync vent eruption with clients
-				{
-					var packet = SpiritReforgedMod.Instance.GetPacket(MessageType.SendVentEruption, 2);
-					packet.Write((short)i);
-					packet.Write((short)j);
-					packet.Send();
-				}
+			if (Main.netMode != NetmodeID.SinglePlayer) //Sync vent eruption with clients
+			{
+				var packet = SpiritReforgedMod.Instance.GetPacket(MessageType.SendVentEruption, 2);
+				packet.Write((short)i);
+				packet.Write((short)j);
+				packet.Send();
 			}
 		}
 	}

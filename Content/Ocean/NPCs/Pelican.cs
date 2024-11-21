@@ -148,6 +148,9 @@ public class Pelican : ModNPC
 		}
 		else
 		{
+			if (Main.rand.NextBool(750))
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Pelican_Idle") with { PitchVariance = 0.6f, Pitch = .25f, Volume = .4f, MaxInstances = 2 }, NPC.Center);
+
 			if (NPC.wet)
 			{
 				//Level with the liquid
@@ -199,6 +202,8 @@ public class Pelican : ModNPC
 
 				ChangeState(State.Startle);
 				NPC.frameCounter = 1; //Use the startle frame in Idle's column
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Pelican_Surprise") with { PitchVariance = 0.4f, Pitch = .2f, Volume = 1f, MaxInstances = 2 }, NPC.Center);
+
 
 				if (heldItemType != ItemID.None) //Startled - drop the held item
 				{

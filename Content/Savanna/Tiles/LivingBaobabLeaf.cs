@@ -4,6 +4,8 @@ internal class LivingBaobabLeaf : ModTile
 {
 	public override void SetStaticDefaults()
 	{
+		TileID.Sets.IsSkippedForNPCSpawningGroundTypeCheck[Type] = true;
+
 		Main.tileSolid[Type] = true;
 		Main.tileBlendAll[Type] = true;
 		Main.tileMergeDirt[Type] = true;
@@ -16,8 +18,7 @@ internal class LivingBaobabLeaf : ModTile
 
 	public override void RandomUpdate(int i, int j)
 	{
-		//Randomly grow hanging baobab fruit
-		if (Main.rand.NextBool(50))
+		if (Main.rand.NextBool(50)) //Randomly grow hanging baobab fruit
 		{
 			WorldGen.PlaceObject(i, j + 1, ModContent.TileType<Items.BaobabFruit.BaobabFruitTile>(), true);
 

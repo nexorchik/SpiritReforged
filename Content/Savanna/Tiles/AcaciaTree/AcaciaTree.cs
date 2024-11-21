@@ -26,6 +26,8 @@ public class AcaciaTree : CustomTree
 	public override void PostSetStaticDefaults()
 	{
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
+
+		AddMapEntry(new Color(120, 80, 75));
 		RegisterItemDrop(ModContent.ItemType<Items.Drywood.Drywood>());
 		DustType = DustID.WoodFurniture;
 	}
@@ -137,17 +139,34 @@ public class AcaciaTree : CustomTree
 
 		int variance = WorldGen.genRand.Next(-8, 9) * 2;
 		short xOff = 0;
+		bool branchLeft = false, branchRight = false; //Only allow one left and right branch per tree
 
 		for (int h = 0; h < height; h++)
 		{
 			int style = 0;
 
-			//Randomly select rare segments
-			if (WorldGen.genRand.NextBool(6))
+			if (WorldGen.genRand.NextBool(6)) //Select rare segments
 				style = 1;
-			//Randomly select branched segments. These are determined by exceding the normal style limit
-			if (h > height / 2 && h % 2 == 0 && WorldGen.genRand.NextBool(4))
-				style += numStyles * (WorldGen.genRand.Next(2) + 1);
+			
+			if (h > height / 2 && WorldGen.genRand.NextBool(4)) //Select branched segments by exceding the normal style limit
+			{
+				if (WorldGen.genRand.NextBool())
+				{
+					if (!branchLeft)
+					{
+						style += numStyles;
+						branchLeft = true;
+					}
+				}
+				else
+				{
+					if (!branchRight)
+					{
+						style += numStyles * 2;
+						branchRight = true;
+					}
+				}
+			}
 
 			WorldGen.PlaceTile(i, j - h, Type, true);
 			Framing.GetTileSafely(i, j - h).TileFrameX = (short)(style * frameSize * 3 + WorldGen.genRand.Next(3) * frameSize);

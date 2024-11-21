@@ -1,11 +1,11 @@
+using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.ButterflyStaff;
 
+[AutoloadGlowmask("200,200,200")]
 public class ButterflyStaff : ModItem
 {
-	//public override void SetStaticDefaults() => SpiritGlowmask.AddGlowMask(Item.type, Texture + "_Glow");
-
 	public override void SetDefaults()
 	{
 		Item.damage = 12;
@@ -24,9 +24,7 @@ public class ButterflyStaff : ModItem
 		Item.UseSound = SoundID.Item44;
 	}
 
-	//public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) =>
-	//GlowmaskUtils.DrawItemGlowMaskWorld(spriteBatch, Item, ModContent.Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
-
+	public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => Lighting.AddLight(Item.position, 0.4f, .18f, .42f);
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
 		position = player.Center - new Vector2(0, 40);

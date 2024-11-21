@@ -145,7 +145,7 @@ public class MineralSlagPickup : MineralSlag //Spawned strictly by Hydrothermal 
 
 	public override bool OnPickup(Player player)
 	{
-		player.QuickSpawnItem(Item.GetSource_FromThis(), ModContent.ItemType<MineralSlag>());
+		player.QuickSpawnItem(Item.GetSource_FromThis(), ModContent.ItemType<MineralSlag>(), Item.stack);
 		return false;
 	}
 }

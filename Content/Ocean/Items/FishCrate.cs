@@ -28,20 +28,6 @@ public class FishCrate : FloatingItem
 
 	public override bool CanRightClick() => true;
 
-	public override void Update(ref float gravity, ref float maxFallSpeed)
-	{
-		if (Item.wet)
-		{
-			gravity *= 0f;
-			maxFallSpeed *= -.09f;
-		}
-		else
-		{
-			maxFallSpeed *= 1f;
-			gravity *= 1f;
-		}
-	}
-
 	public override void ModifyItemLoot(ItemLoot itemLoot)
 	{
 		itemLoot.AddCommon<Vanilla.Items.Food.RawFish>(2);
