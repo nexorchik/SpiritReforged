@@ -57,12 +57,6 @@ namespace SpiritReforged.Content.Particles
 			Texture2D tex = ParticleHandler.GetTexture(Type);
 			Vector2 origin = new Vector2(tex.Width / 2, tex.Height / 2);
 
-			/*if (Progress > 0.5f)
-			{
-				offset = Velocity.SafeNormalize(Vector2.UnitX) * tex.Height * _scaleMod.Y;
-				origin.Y = 0;
-			}*/
-
 			spriteBatch.Draw(tex, Position + offset - Main.screenPosition, null, Color * ((progress / 5) + 0.8f), Rotation, origin, scale, SpriteEffects.None, 0);
 		}
 	}

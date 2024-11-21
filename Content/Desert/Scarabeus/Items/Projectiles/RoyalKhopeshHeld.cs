@@ -18,6 +18,14 @@ namespace SpiritReforged.Content.Desert.Scarabeus.Items.Projectiles;
 [AutoloadGlowmask("255,255,255", false)]
 public class RoyalKhopeshHeld : ModProjectile
 {
+	private static Color SAND_LIGHT = new Color(223, 219, 147);
+	private static Color SAND_DARK = new Color(150, 111, 44);
+	private static Color SAND_PARTICLE = new Color(58, 49, 18);
+
+	private static Color RUBY_LIGHT = new Color(255, 105, 155);
+	private static Color RUBY_DARK = new Color(217, 2, 20);
+	private static Color RUBY_PARTICLE = new Color(252, 124, 158);
+
 	public const int EXTRA_UPDATES = 1;
 
 	private const int HIT_FX_COOLDOWN_MAX = 30 * (1 + EXTRA_UPDATES);
@@ -33,8 +41,6 @@ public class RoyalKhopeshHeld : ModProjectile
 	public Vector2 BaseDirection { get; set; }
 
 	private float AiTimer { get => Projectile.ai[0]; set => Projectile.ai[0] = value; }
-
-	private int _hitFXCooldown;
 
 	public override void SetDefaults()
 	{
@@ -53,13 +59,13 @@ public class RoyalKhopeshHeld : ModProjectile
 
 	public override void AI()
 	{
-		if (!Projectile.TryGetOwner(out Player owner))
+		if (!Projectile.TryGetOwner(out Player owner) || owner.dead)
 		{
 			Projectile.Kill();
 			return;
 		}
 
-		//owner.heldProj = Projectile.whoAmI;
+		//owner.heldProj = Projectile.whoAmI; Causes trail to break, looks fine enough without it imo
 		owner.itemAnimation = 2;
 		owner.itemTime = 2;
 		if (Combo == 2)
@@ -94,7 +100,6 @@ public class RoyalKhopeshHeld : ModProjectile
 		Projectile.Center = owner.GetFrontHandPosition(CompositeArmStretchAmount.Full, armRot);
 
 		AiTimer++;
-		_hitFXCooldown--;
 		if (AiTimer > SwingTime)
 			Projectile.Kill();
 	}
@@ -107,8 +112,8 @@ public class RoyalKhopeshHeld : ModProjectile
 
 	private void FirstSwing(float progress, int direction)
 	{
-		float swingProgress = EaseQuarticOut.Ease(progress);
-		Projectile.scale = EaseCircularIn.Ease(EaseSine.Ease(swingProgress)) * 0.3f + 0.7f;
+		float swingProgress = GetSwingProgress();
+		Projectile.scale = EaseCircularIn.Ease(EaseSine.Ease(GetSwingProgress())) * 0.3f + 0.7f;
 
 		if (direction < 0)
 			swingProgress = 1 - swingProgress;
@@ -122,9 +127,7 @@ public class RoyalKhopeshHeld : ModProjectile
 
 	private void DoubleSwing(float progress, ref int direction)
 	{
-		float halfProgress = (progress % 0.5f) * 2;
-
-		float swingProgress = EaseCircularOut.Ease(halfProgress);
+		float swingProgress = GetSwingProgress();
 		Projectile.scale = EaseQuadIn.Ease(EaseSine.Ease(swingProgress)) * 0.3f + 0.7f;
 
 		if (progress >= 0.5f)
@@ -134,6 +137,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		{
 			Projectile.ResetLocalNPCHitImmunity();
 			DoSwingNoise();
+			Projectile.netUpdate = true;
 		}
 
 		Projectile.rotation = Lerp(-SwingRadians * 0.6f, SwingRadians * 0.6f - PiOver4, swingProgress);
@@ -162,8 +166,7 @@ public class RoyalKhopeshHeld : ModProjectile
 			if ((int)(progress * SwingTime) == (int)(WINDUP_TIME * SwingTime) + 1)
 				DoSwingNoise();
 
-			float swingProgress = (progress - WINDUP_TIME) / (1 - WINDUP_TIME);
-			swingProgress = EaseCircularOut.Ease(EaseQuadOut.Ease(swingProgress));
+			float swingProgress = GetSwingProgress();
 			Projectile.scale = EaseQuadIn.Ease(EaseSine.Ease(swingProgress)) * 0.1f + 0.9f - EaseCubicIn.Ease(swingProgress) * 0.1f;
 
 			if (direction < 0)
@@ -177,83 +180,10 @@ public class RoyalKhopeshHeld : ModProjectile
 		}
 	}
 
-	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-	{
-		switch (Combo)
-		{
-			case 1 when Projectile.scale < 0.9f:
-				return false;
-			case 2 when AiTimer / SwingTime < WINDUP_TIME:
-				return false;
-		}
-
-		Projectile.TryGetOwner(out Player Owner);
-		Vector2 directionUnit = Vector2.UnitX.RotatedBy(Projectile.rotation - PiOver4);
-		float _ = 0;
-		float hitboxLengthMod = Lerp(0.8f, 1.5f, EaseQuadOut.Ease(EaseSine.Ease(GetSwingProgress())));
-		return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Owner.MountedCenter, Owner.MountedCenter + directionUnit * Projectile.Size.Length() * Projectile.scale * hitboxLengthMod, 10f, ref _);
-	}
-
-	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-	{
-		if(Combo == 2)
-		{
-			modifiers.FinalDamage *= 1.5f;
-			modifiers.FinalDamage += Min(target.defense / 2, 20);
-		}
-	}
-
-	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-	{
-		if (Main.dedServ || _hitFXCooldown > 0)
-			return;
-
-		Vector2 vel = Vector2.Lerp(Vector2.UnitX.RotatedBy(Projectile.rotation - PiOver4).RotatedByRandom(Pi / 8), BaseDirection, 0.75f).SafeNormalize(BaseDirection);
-		float sineProgress = Max(EaseSine.Ease(GetSwingProgress()), 0.3f);
-		if (Combo < 2)
-		{
-			int numSmoke = 8;
-			for (int i = 0; i < numSmoke; i++)
-			{
-				Color smokeColor = new Color(223, 219, 147) * 0.5f;
-				float progress = i / (float)numSmoke;
-				float scale = Main.rand.NextFloat(0.04f, 0.08f) * EaseCubicOut.Ease(sineProgress);
-				var velSmoke = vel.RotatedByRandom(Pi / 8) * Main.rand.NextFloat(3, 5) * sineProgress * progress;
-				ParticleHandler.SpawnParticle(new SmokeCloud(target.Center, velSmoke, smokeColor, scale, EaseQuadOut, Main.rand.Next(30, 40)));
-			}
-
-			for (int i = 0; i < (int)(Main.rand.Next(7, 10) * sineProgress); i++)
-			{
-				Vector2 velDust = vel.RotatedByRandom(PiOver4) * Main.rand.NextFloat(3, 7) * sineProgress;
-				float scale = Main.rand.NextFloat(0.9f, 1.3f) * sineProgress;
-				Dust d = Dust.NewDustDirect(target.Center, 3, 8, DustID.Sand, velDust.X, velDust.Y, Scale: scale);
-				d.noGravity = true;
-			}
-		}
-		else
-		{
-			int lifeTime = 20;
-			Vector2 slashVel = vel * 3;
-			Vector2 slashImpactOffset = -slashVel * lifeTime / 2;
-			ParticleHandler.SpawnParticle(new ImpactLine(target.Center + slashImpactOffset, slashVel, new Color(255, 105, 155, 150), new Vector2(0.75f, 2.25f), lifeTime, target)); 
-
-			for (int i = 0; i < (int)(Main.rand.Next(7, 10) * sineProgress); i++)
-			{
-				Vector2 velDust = vel.RotatedByRandom(PiOver4) * Main.rand.NextFloat(2, 6) * sineProgress;
-				float scale = Main.rand.NextFloat(0.6f, 1f) * sineProgress;
-				static void DelegateAction(Particle p)
-				{
-					p.Velocity *= 0.93f;
-				}
-				ParticleHandler.SpawnParticle(new GlowParticle(target.Center + Main.rand.NextVector2Square(8, 8), velDust, new Color(255, 105, 155), new Color(217, 2, 20), scale, 30, 5, DelegateAction));
-			}
-		}
-	}
-
 	private float GetSwingProgress()
 	{
 		float progress = AiTimer / SwingTime;
-		switch(Combo)
+		switch (Combo)
 		{
 			case 0:
 				progress = EaseQuarticOut.Ease(progress);
@@ -268,6 +198,78 @@ public class RoyalKhopeshHeld : ModProjectile
 				break;
 		}
 		return progress;
+	}
+
+	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+	{
+		if (Combo == 2 && (AiTimer / SwingTime) < WINDUP_TIME)
+			return false;
+
+		Projectile.TryGetOwner(out Player Owner);
+		Vector2 directionUnit = Vector2.UnitX.RotatedBy(Projectile.rotation - PiOver4);
+		float _ = 0;
+		float hitboxLengthMod = Lerp(0.8f, 1.5f, EaseSine.Ease(GetSwingProgress()));
+		return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Owner.MountedCenter, Owner.MountedCenter + directionUnit * Projectile.Size.Length() * Projectile.scale * hitboxLengthMod, 10f, ref _);
+	}
+
+	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+	{
+		if(Combo == 2)
+		{
+			modifiers.FinalDamage *= 1.5f;
+			modifiers.FinalDamage += Min(target.defense / 2, 20);
+			if (Main.rand.NextBool())
+				modifiers.SetCrit();
+		}
+	}
+
+	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+	{
+		if (Main.dedServ)
+			return;
+
+		Vector2 particleDirection = Vector2.Lerp(Vector2.UnitX.RotatedBy(Projectile.rotation - PiOver4).RotatedByRandom(Pi / 8), BaseDirection, 0.75f).SafeNormalize(BaseDirection);
+		float sineProgress = Max(EaseSine.Ease(GetSwingProgress()), 0.3f);
+		if (Combo < 2)
+		{
+			//Sand dust (icky!) and smoke clouds on normal swings
+			int numSmoke = 8;
+			for (int i = 0; i < numSmoke; i++)
+			{
+				Color smokeColor = SAND_LIGHT * 0.5f;
+				float progress = i / (float)numSmoke;
+				float scale = Main.rand.NextFloat(0.04f, 0.08f) * EaseCubicOut.Ease(sineProgress);
+				var velSmoke = particleDirection.RotatedByRandom(Pi / 8) * Main.rand.NextFloat(3, 5) * sineProgress * progress;
+				ParticleHandler.SpawnParticle(new SmokeCloud(target.Center, velSmoke, smokeColor, scale, EaseQuadOut, Main.rand.Next(30, 40)));
+			}
+
+			for (int i = 0; i < (int)(Main.rand.Next(7, 10) * sineProgress); i++)
+			{
+				Vector2 velDust = particleDirection.RotatedByRandom(PiOver4) * Main.rand.NextFloat(3, 7) * sineProgress;
+				float scale = Main.rand.NextFloat(0.9f, 1.3f) * sineProgress;
+				Dust d = Dust.NewDustDirect(target.Center, 3, 8, DustID.Sand, velDust.X, velDust.Y, Scale: scale);
+				d.noGravity = true;
+			}
+		}
+		else
+		{
+			//Red impact slash and glowy particles on empowered swing
+			int lifeTime = 20;
+			Vector2 slashVel = particleDirection * 3;
+			Vector2 slashImpactOffset = -slashVel * lifeTime / 2;
+			ParticleHandler.SpawnParticle(new ImpactLine(target.Center + slashImpactOffset, slashVel, RUBY_LIGHT.Additive(150), new Vector2(0.75f, 2.25f), lifeTime, target));
+
+			for (int i = 0; i < (int)(Main.rand.Next(7, 10) * sineProgress); i++)
+			{
+				Vector2 velParticle = particleDirection.RotatedByRandom(PiOver4) * Main.rand.NextFloat(2, 6) * sineProgress;
+				float scale = Main.rand.NextFloat(0.6f, 1f) * sineProgress;
+				static void DelegateAction(Particle p)
+				{
+					p.Velocity *= 0.93f;
+				}
+				ParticleHandler.SpawnParticle(new GlowParticle(target.Center + Main.rand.NextVector2Square(8, 8), velParticle, RUBY_LIGHT, RUBY_DARK, scale, 30, 5, DelegateAction));
+			}
+		}
 	}
 
 	public override bool PreDraw(ref Color lightColor)
@@ -296,11 +298,14 @@ public class RoyalKhopeshHeld : ModProjectile
 		float trailDirection = SwingDirection;
 		float maxDist = 1f;
 		float minDist = 0.6f;
-		int rectCount = 30;
 		bool useLightColor = true;
 		float opacityMod = 1f;
+		float minWidth = 0.55f;
+		float maxWidth = 0.75f;
+		float angleRangeStretch = 1.1f;
 		Effect effect;
 
+		//Switch trail direction during the double hit swing
 		if (Combo == 1)
 		{
 			if (progress < 0.5f)
@@ -310,6 +315,7 @@ public class RoyalKhopeshHeld : ModProjectile
 			opacityMod = 0.8f;
 		}
 
+		//Fix trail drawing to account for windup swing, set different params on windup swing
 		if(Combo == 2)
 		{
 			if (progress < WINDUP_TIME)
@@ -317,7 +323,6 @@ public class RoyalKhopeshHeld : ModProjectile
 
 			progress = (progress - WINDUP_TIME) / (1 - WINDUP_TIME);
 			SetRedtrailParams(out effect, progress, swingProgress);
-			//rectCount = 10;
 			useLightColor = false;
 			minDist = 0.8f;
 		}
@@ -330,15 +335,15 @@ public class RoyalKhopeshHeld : ModProjectile
 			BasePosition = pos,
 			MinDistance = Projectile.Size.Length() * minDist,
 			MaxDistance = Projectile.Size.Length() * maxDist,
-			Width = Projectile.Size.Length() * 0.55f,
-			MaxWidth = Projectile.Size.Length() * 0.75f,
-			AngleRange = new Vector2(SwingRadians / 2 * trailDirection, -SwingRadians / 2 * trailDirection) * (Owner.direction * -1) * 1.1f,
+			Width = Projectile.Size.Length() * minWidth,
+			MaxWidth = Projectile.Size.Length() * maxWidth,
+			AngleRange = new Vector2(SwingRadians / 2 * trailDirection, -SwingRadians / 2 * trailDirection) * (Owner.direction * -1) * angleRangeStretch,
 			DirectionUnit = Vector2.Normalize(BaseDirection),
 			Color = Color.White * opacityMod,
 			UseLightColor = useLightColor,
 			DistanceEase = EaseQuinticIn,
 			SlashProgress = swingProgress,
-			RectangleCount = rectCount
+			RectangleCount = 30
 		};
 		PrimitiveRenderer.DrawPrimitiveShape(slash, effect);
 	}
@@ -347,10 +352,10 @@ public class RoyalKhopeshHeld : ModProjectile
 	{
 		effect = AssetLoader.LoadedShaders["NoiseParticleTrail"];
 		effect.Parameters["baseTexture"].SetValue(AssetLoader.LoadedTextures["noise"]);
-		effect.Parameters["baseColorDark"].SetValue(new Color(150, 111, 44).ToVector4());
-		effect.Parameters["baseColorLight"].SetValue(new Color(223, 219, 147).ToVector4());
+		effect.Parameters["baseColorDark"].SetValue(SAND_DARK.ToVector4());
+		effect.Parameters["baseColorLight"].SetValue(SAND_LIGHT.ToVector4());
 		effect.Parameters["overlayTexture"].SetValue(AssetLoader.LoadedTextures["particlenoise"]);
-		effect.Parameters["overlayColor"].SetValue(new Color(58, 49, 18).ToVector4());
+		effect.Parameters["overlayColor"].SetValue(SAND_PARTICLE.ToVector4());
 
 		effect.Parameters["coordMods"].SetValue(new Vector2(1.8f, 0.3f));
 		effect.Parameters["overlayCoordMods"].SetValue(new Vector2(1f, 0.1f));
@@ -367,10 +372,10 @@ public class RoyalKhopeshHeld : ModProjectile
 	{
 		effect = AssetLoader.LoadedShaders["NoiseParticleTrail"];
 		effect.Parameters["baseTexture"].SetValue(AssetLoader.LoadedTextures["noiseCrystal"]);
-		effect.Parameters["baseColorDark"].SetValue(new Color(217, 2, 20).ToVector4());
-		effect.Parameters["baseColorLight"].SetValue(new Color(255, 105, 155).ToVector4());
+		effect.Parameters["baseColorDark"].SetValue(RUBY_DARK.ToVector4());
+		effect.Parameters["baseColorLight"].SetValue(RUBY_LIGHT.ToVector4());
 		effect.Parameters["overlayTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"]);
-		effect.Parameters["overlayColor"].SetValue(new Color(252, 124, 158).ToVector4());
+		effect.Parameters["overlayColor"].SetValue(RUBY_PARTICLE.ToVector4());
 
 		effect.Parameters["coordMods"].SetValue(new Vector2(4f, 1f));
 		effect.Parameters["overlayCoordMods"].SetValue(new Vector2(1f, 0.1f) * 3f);
@@ -393,18 +398,19 @@ public class RoyalKhopeshHeld : ModProjectile
 		GlowmaskProjectile.ProjIdToGlowmask.TryGetValue(Type, out GlowmaskInfo glowmaskInfo);
 		Texture2D glowmaskTex = glowmaskInfo.Glowmask.Value;
 
-
+		//Draw a star at the hilt
 		var center = Projectile.Center - Main.screenPosition;
 		float maxSize = 0.6f * Projectile.scale;
 		float starProgress = EaseSine.Ease(windupProgress);
 
 		Vector2 scale = new Vector2(1f, 1f) * Lerp(0, maxSize, starProgress) * 0.7f;
 		var starOrigin = starTex.Size() / 2;
-		Color color = Projectile.GetAlpha(Color.Lerp(new Color(252, 124, 158, 0), new Color(255, 3, 32, 0), starProgress)) * EaseQuadOut.Ease(starProgress);
+		Color color = Projectile.GetAlpha(Color.Lerp(RUBY_LIGHT.Additive(), RUBY_DARK.Additive(), starProgress)) * EaseQuadOut.Ease(starProgress);
 		Main.spriteBatch.Draw(starTex, center, null, color, Projectile.rotation, starOrigin, scale, SpriteEffects.None, 0);
 
+		//Glowmask drawing
 		float glowProgress = EaseCircularIn.Ease(windupProgress);
-		color = new Color(255, 53, 72, 0) * glowProgress * EaseCircularOut.Ease(1 - progress);
+		color = RUBY_DARK.Additive() * glowProgress * EaseCircularOut.Ease(1 - progress);
 		SpriteEffects effects = (Projectile.spriteDirection < 0) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 		for (int i = 0; i < 6; i++)
 		{
@@ -420,6 +426,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		writer.Write(SwingDirection);
 		writer.Write(SwingRadians);
 		writer.Write(SwingTime);
+		writer.Write(Combo);
 	}
 
 	public override void ReceiveExtraAI(BinaryReader reader)
@@ -428,5 +435,6 @@ public class RoyalKhopeshHeld : ModProjectile
 		SwingDirection = reader.ReadInt32();
 		SwingRadians = reader.ReadSingle();
 		SwingTime = reader.ReadInt32();
+		Combo = reader.ReadInt32();
 	}
 }
