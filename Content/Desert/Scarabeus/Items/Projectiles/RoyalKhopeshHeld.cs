@@ -11,6 +11,7 @@ using Terraria;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 
 namespace SpiritReforged.Content.Desert.Scarabeus.Items.Projectiles;
 
@@ -178,14 +179,19 @@ public class RoyalKhopeshHeld : ModProjectile
 
 	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 	{
-		if (Combo == 2 && (AiTimer / SwingTime) < WINDUP_TIME)
-			return false;
+		switch (Combo)
+		{
+			case 1 when Projectile.scale < 0.9f:
+				return false;
+			case 2 when AiTimer / SwingTime < WINDUP_TIME:
+				return false;
+		}
 
 		Projectile.TryGetOwner(out Player Owner);
 		Vector2 directionUnit = Vector2.UnitX.RotatedBy(Projectile.rotation - PiOver4);
 		float _ = 0;
-		float hitboxLengthMod = Lerp(1.3f, 1.5f, EaseSine.Ease(GetSwingProgress()));
-		return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Owner.MountedCenter, Owner.MountedCenter + directionUnit * Projectile.Size.Length() * Projectile.scale * hitboxLengthMod, 20f, ref _);
+		float hitboxLengthMod = Lerp(0.8f, 1.5f, EaseQuadOut.Ease(EaseSine.Ease(GetSwingProgress())));
+		return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Owner.MountedCenter, Owner.MountedCenter + directionUnit * Projectile.Size.Length() * Projectile.scale * hitboxLengthMod, 10f, ref _);
 	}
 
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -202,16 +208,44 @@ public class RoyalKhopeshHeld : ModProjectile
 		if (Main.dedServ || _hitFXCooldown > 0)
 			return;
 
-		if(Combo < 2)
+		Vector2 vel = Vector2.Lerp(Vector2.UnitX.RotatedBy(Projectile.rotation - PiOver4).RotatedByRandom(Pi / 8), BaseDirection, 0.75f).SafeNormalize(BaseDirection);
+		float sineProgress = Max(EaseSine.Ease(GetSwingProgress()), 0.3f);
+		if (Combo < 2)
 		{
-			int numSmoke = 4;
+			int numSmoke = 8;
 			for (int i = 0; i < numSmoke; i++)
 			{
-				Color smokeColor = new Color(223, 219, 147) * 0.3f;
+				Color smokeColor = new Color(223, 219, 147) * 0.5f;
 				float progress = i / (float)numSmoke;
-				float scale = Lerp(0.08f, 0.04f, progress);
-				var vel = Vector2.UnitX.RotatedBy(Projectile.rotation - PiOver4).RotatedByRandom(Pi / 8) * Main.rand.NextFloat(0.4f, 2f);
-				ParticleHandler.SpawnParticle(new DissipatingImage(target.Center, smokeColor, Main.rand.NextFloatDirection(), scale, 0.6f, "Smoke", 30) { Velocity = vel, UseLightColor = true });
+				float scale = Main.rand.NextFloat(0.04f, 0.08f) * EaseCubicOut.Ease(sineProgress);
+				var velSmoke = vel.RotatedByRandom(Pi / 8) * Main.rand.NextFloat(3, 5) * sineProgress * progress;
+				ParticleHandler.SpawnParticle(new SmokeCloud(target.Center, velSmoke, smokeColor, scale, EaseQuadOut, Main.rand.Next(30, 40)));
+			}
+
+			for (int i = 0; i < (int)(Main.rand.Next(7, 10) * sineProgress); i++)
+			{
+				Vector2 velDust = vel.RotatedByRandom(PiOver4) * Main.rand.NextFloat(3, 7) * sineProgress;
+				float scale = Main.rand.NextFloat(0.9f, 1.3f) * sineProgress;
+				Dust d = Dust.NewDustDirect(target.Center, 3, 8, DustID.Sand, velDust.X, velDust.Y, Scale: scale);
+				d.noGravity = true;
+			}
+		}
+		else
+		{
+			int lifeTime = 20;
+			Vector2 slashVel = vel * 3;
+			Vector2 slashImpactOffset = -slashVel * lifeTime / 2;
+			ParticleHandler.SpawnParticle(new ImpactLine(target.Center + slashImpactOffset, slashVel, new Color(255, 105, 155, 150), new Vector2(0.75f, 2.25f), lifeTime, target)); 
+
+			for (int i = 0; i < (int)(Main.rand.Next(7, 10) * sineProgress); i++)
+			{
+				Vector2 velDust = vel.RotatedByRandom(PiOver4) * Main.rand.NextFloat(2, 6) * sineProgress;
+				float scale = Main.rand.NextFloat(0.6f, 1f) * sineProgress;
+				static void DelegateAction(Particle p)
+				{
+					p.Velocity *= 0.93f;
+				}
+				ParticleHandler.SpawnParticle(new GlowParticle(target.Center + Main.rand.NextVector2Square(8, 8), velDust, new Color(255, 105, 155), new Color(217, 2, 20), scale, 30, 5, DelegateAction));
 			}
 		}
 	}
