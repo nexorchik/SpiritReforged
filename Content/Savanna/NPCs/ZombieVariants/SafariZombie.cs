@@ -1,4 +1,5 @@
 using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Content.Savanna.Items.HuntingRifle;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
@@ -51,6 +52,7 @@ public class SafariZombie : ReplaceNPC
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
+		npcLoot.AddCommon(ModContent.ItemType<HuntingRifle>(), 300);
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
 		npcLoot.AddOneFromOptions(75, ModContent.ItemType<Items.Vanity.SafariHat>(), 
