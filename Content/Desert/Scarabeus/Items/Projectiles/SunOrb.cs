@@ -159,8 +159,8 @@ public class SunOrb : ModProjectile
 			Color smokeColor = Color.LightGoldenrodYellow.Additive() * 0.3f;
 			float progress = i / (float)numSmoke;
 			float scale = Lerp(0.08f, 0.04f, progress);
-			var vel = Vector2.Lerp(-Vector2.UnitY / 3, -Vector2.UnitY * 2, progress);
-			ParticleHandler.SpawnParticle(new DissipatingImage(target.Center, smokeColor, Main.rand.NextFloatDirection(), scale, 0.6f, "Smoke", 40) { Velocity = vel });
+			var vel = Vector2.Lerp(-Vector2.UnitY, -Vector2.UnitY * 4, progress);
+			ParticleHandler.SpawnParticle(new SmokeCloud(target.Center, vel, smokeColor, scale, EaseQuadOut, 40, false));
 		}
 
 		for (int i = 0; i < 6; i++)

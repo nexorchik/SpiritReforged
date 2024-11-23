@@ -7,6 +7,8 @@ namespace SpiritReforged.Content.Particles;
 
 public class DissipatingImage : Particle
 {
+	public bool UseLightColor { get; set; }
+
 	private readonly string _texture;
 	private readonly float _maxDistortion;
 	private readonly Vector2 _noiseStretch = new (1);
@@ -15,8 +17,6 @@ public class DissipatingImage : Particle
 	private float _opacity;
 
 	internal float _scaleMod = 1;
-
-	public bool UseLightColor;
 
 	public DissipatingImage(Vector2 position, Color color, float rotation, float scale, float maxDistortion, string texture, int maxTime)
 	{

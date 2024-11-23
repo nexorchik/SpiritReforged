@@ -27,6 +27,8 @@ public abstract class EaseFunction
 	public static readonly EaseFunction EaseCircularOut = new PolynomialEase((float x) => (float)Math.Sqrt(1.0 - Math.Pow(x - 1.0, 2)));
 	public static readonly EaseFunction EaseCircularInOut = new PolynomialEase((float x) => (x < 0.5f) ? (1f - (float)Math.Sqrt(1.0 - Math.Pow(x * 2, 2))) * 0.5f : (float)((Math.Sqrt(1.0 - Math.Pow(-2 * x + 2, 2)) + 1) * 0.5));
 
+	public static readonly EaseFunction EaseSine = new PolynomialEase((float x) => (float)Math.Sin(x * MathHelper.Pi));
+
 	public static EaseFunction EaseOutBack(double maxValue = 1.70158)
 	{
 		double c1 = maxValue;
