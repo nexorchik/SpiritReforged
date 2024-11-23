@@ -34,6 +34,7 @@ public class RoyalKhopeshHeld : ModProjectile
 	public int SwingTime { get; set; }
 	public int Combo { get; set; }
 	public float SwingRadians { get; set; }
+	public float SizeModifier { get; set; }
 
 	public int SwingDirection { get; set; }
 
@@ -111,6 +112,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		if (AiTimer > SwingTime)
 			Projectile.Kill();
 
+		Projectile.scale *= SizeModifier;
 		oldScale[0] = Projectile.scale;
 		for (int i = oldScale.Length - 1; i > 0; i--)
 			oldScale[i] = oldScale[i - 1];
@@ -220,7 +222,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		Projectile.TryGetOwner(out Player Owner);
 		Vector2 directionUnit = Vector2.UnitX.RotatedBy(Projectile.rotation - PiOver4);
 		float _ = 0;
-		float hitboxLengthMod = Lerp(0.8f, 1.5f, EaseSine.Ease(GetSwingProgress()));
+		float hitboxLengthMod = Lerp(0.8f, 1.5f, EaseSine.Ease(GetSwingProgress())) * SizeModifier;
 		return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Owner.MountedCenter, Owner.MountedCenter + directionUnit * Projectile.Size.Length() * Projectile.scale * hitboxLengthMod, 10f, ref _);
 	}
 
@@ -229,9 +231,8 @@ public class RoyalKhopeshHeld : ModProjectile
 		if(Combo == 2)
 		{
 			modifiers.FinalDamage *= 1.5f;
-			modifiers.FinalDamage += Min(target.defense / 2, 20);
-			if (Main.rand.NextBool())
-				modifiers.SetCrit();
+			modifiers.FlatBonusDamage += Min(target.defense / 2, 20);
+			modifiers.SetCrit();
 		}
 	}
 
@@ -250,15 +251,15 @@ public class RoyalKhopeshHeld : ModProjectile
 			{
 				Color smokeColor = SAND_LIGHT * 0.5f;
 				float progress = i / (float)numSmoke;
-				float scale = Main.rand.NextFloat(0.04f, 0.08f) * EaseCubicOut.Ease(sineProgress);
-				var velSmoke = particleDirection.RotatedByRandom(Pi / 8) * Main.rand.NextFloat(3, 5) * sineProgress * progress;
+				float scale = Main.rand.NextFloat(0.04f, 0.08f) * EaseCubicOut.Ease(sineProgress) * SizeModifier;
+				var velSmoke = particleDirection.RotatedByRandom(Pi / 8) * Main.rand.NextFloat(3, 5) * sineProgress * progress * SizeModifier;
 				ParticleHandler.SpawnParticle(new SmokeCloud(target.Center, velSmoke, smokeColor, scale, EaseQuadOut, Main.rand.Next(30, 40)));
 			}
 
 			for (int i = 0; i < (int)(Main.rand.Next(7, 10) * sineProgress); i++)
 			{
 				Vector2 velDust = particleDirection.RotatedByRandom(PiOver4) * Main.rand.NextFloat(3, 7) * sineProgress;
-				float scale = Main.rand.NextFloat(0.9f, 1.3f) * sineProgress;
+				float scale = Main.rand.NextFloat(0.9f, 1.3f) * sineProgress * SizeModifier * SizeModifier;
 				Dust d = Dust.NewDustDirect(target.Center, 3, 8, DustID.Sand, velDust.X, velDust.Y, Scale: scale);
 				d.noGravity = true;
 			}
@@ -269,17 +270,17 @@ public class RoyalKhopeshHeld : ModProjectile
 			int lifeTime = 20;
 			Vector2 slashVel = particleDirection * 3;
 			Vector2 slashImpactOffset = -slashVel * lifeTime / 2;
-			ParticleHandler.SpawnParticle(new ImpactLine(target.Center + slashImpactOffset, slashVel, RUBY_LIGHT.Additive(150), new Vector2(0.75f, 2.25f), lifeTime, target));
+			ParticleHandler.SpawnParticle(new ImpactLine(target.Center + slashImpactOffset, slashVel, RUBY_LIGHT.Additive(150), new Vector2(0.75f, 2.5f) * SizeModifier, lifeTime, target));
 
 			for (int i = 0; i < (int)(Main.rand.Next(7, 10) * sineProgress); i++)
 			{
-				Vector2 velParticle = particleDirection.RotatedByRandom(PiOver4) * Main.rand.NextFloat(2, 6) * sineProgress;
-				float scale = Main.rand.NextFloat(0.6f, 1f) * sineProgress;
+				Vector2 velParticle = particleDirection.RotatedByRandom(PiOver4) * Main.rand.NextFloat(2, 6) * sineProgress * SizeModifier;
+				float scale = Main.rand.NextFloat(0.6f, 1f) * sineProgress * SizeModifier;
 				static void DelegateAction(Particle p)
 				{
 					p.Velocity *= 0.93f;
 				}
-				ParticleHandler.SpawnParticle(new GlowParticle(target.Center + Main.rand.NextVector2Square(8, 8), velParticle, RUBY_LIGHT, RUBY_DARK, scale, 30, 5, DelegateAction));
+				ParticleHandler.SpawnParticle(new GlowParticle(target.Center + Main.rand.NextVector2Square(8, 8), velParticle, RUBY_LIGHT, RUBY_DARK, scale, Main.rand.Next(20, 40), 5, DelegateAction));
 			}
 		}
 	}
@@ -365,10 +366,10 @@ public class RoyalKhopeshHeld : ModProjectile
 		var slash = new PrimitiveSlashArc
 		{
 			BasePosition = pos,
-			MinDistance = Projectile.Size.Length() * minDist,
-			MaxDistance = Projectile.Size.Length() * maxDist,
-			Width = Projectile.Size.Length() * minWidth,
-			MaxWidth = Projectile.Size.Length() * maxWidth,
+			MinDistance = Projectile.Size.Length() * minDist * SizeModifier,
+			MaxDistance = Projectile.Size.Length() * maxDist * SizeModifier,
+			Width = Projectile.Size.Length() * minWidth * SizeModifier,
+			MaxWidth = Projectile.Size.Length() * maxWidth * SizeModifier,
 			AngleRange = new Vector2(SwingRadians / 2 * trailDirection, -SwingRadians / 2 * trailDirection) * (Owner.direction * -1) * angleRangeStretch,
 			DirectionUnit = Vector2.Normalize(BaseDirection),
 			Color = Color.White * opacityMod,
@@ -457,6 +458,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		writer.WriteVector2(BaseDirection);
 		writer.Write(SwingDirection);
 		writer.Write(SwingRadians);
+		writer.Write(SizeModifier);
 		writer.Write(SwingTime);
 		writer.Write(Combo);
 	}
@@ -466,6 +468,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		BaseDirection = reader.ReadVector2();
 		SwingDirection = reader.ReadInt32();
 		SwingRadians = reader.ReadSingle();
+		SizeModifier = reader.ReadSingle();
 		SwingTime = reader.ReadInt32();
 		Combo = reader.ReadInt32();
 	}
