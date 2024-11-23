@@ -16,6 +16,8 @@ namespace SpiritReforged.Content.Particles
 		private Vector2 _offset;
 		private int _timeLeft;
 
+		public override ParticleDrawType DrawType => ParticleDrawType.Custom;
+
 		public ImpactLine(Vector2 position, Vector2 velocity, Color color, Vector2 scale, int timeLeft, Entity attatchedEntity = null)
 		{
 			Position = position;
@@ -46,8 +48,6 @@ namespace SpiritReforged.Content.Particles
 				_offset += Velocity;
 			}
 		}
-
-		public override ParticleDrawType DrawType => ParticleDrawType.Custom;
 
 		public override void CustomDraw(SpriteBatch spriteBatch)
 		{

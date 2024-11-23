@@ -29,27 +29,23 @@ public class RoyalKhopesh : ModItem
 	{
 		var p = Projectile.NewProjectileDirect(source, player.Center, Vector2.Zero, Item.shoot, Item.damage, Item.knockBack, player.whoAmI);
 		KhopeshPlayer kPlayer = player.GetModPlayer<KhopeshPlayer>();
-		if (p.ModProjectile != null)
-		{
-			if (p.ModProjectile is RoyalKhopeshHeld khopesh)                                                                      
-			{
-				if (kPlayer.Combo != 2) //Don't use standard item use sound on use, allow the final swing to do it at a specified time
-					khopesh.DoSwingNoise();
+		RoyalKhopeshHeld khopesh = p.ModProjectile as RoyalKhopeshHeld;
 
-				int useSpeed = (int)(Item.useTime / player.GetTotalAttackSpeed(DamageClass.Melee));
-				khopesh.BaseDirection = velocity;
-				khopesh.SwingDirection = (kPlayer.Combo % 3 == 1) ? -1 : 1;
-				khopesh.SwingTime = (kPlayer.Combo == 2) ? (int)(useSpeed * 1.7f) : useSpeed;
-				khopesh.SwingTime *= 1 + RoyalKhopeshHeld.EXTRA_UPDATES;
-				khopesh.Combo = kPlayer.Combo;
-				khopesh.SwingRadians = MathHelper.Pi * 1.75f;
+		if (kPlayer.Combo != 2) //Don't use standard item use sound on use, allow the final swing to do it at a specified time
+			khopesh.DoSwingNoise();
 
-				float scale = Item.scale;
-				player.ApplyMeleeScale(ref scale);
-				khopesh.SizeModifier = scale;
-				p.netUpdate = true;
-			}
-		}
+		int useSpeed = (int)(Item.useTime / player.GetTotalAttackSpeed(DamageClass.Melee));
+		khopesh.BaseDirection = velocity;
+		khopesh.SwingDirection = (kPlayer.Combo % 3 == 1) ? -1 : 1;
+		khopesh.SwingTime = (kPlayer.Combo == 2) ? (int)(useSpeed * 1.7f) : useSpeed;
+		khopesh.SwingTime *= 1 + RoyalKhopeshHeld.EXTRA_UPDATES;
+		khopesh.Combo = kPlayer.Combo;
+		khopesh.SwingRadians = MathHelper.Pi * 1.75f;
+
+		float scale = Item.scale;
+		player.ApplyMeleeScale(ref scale);
+		khopesh.SizeModifier = scale;
+		p.netUpdate = true;
 
 		kPlayer.IncrementCombo();
 
