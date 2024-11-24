@@ -60,7 +60,7 @@ public class ClawCannon : ModItem
 	{
 		var recipe = CreateRecipe();
 		recipe.AddIngredient(ModContent.ItemType<IridescentScale>(), 6);
-		recipe.AddIngredient(ModContent.ItemType<SulfurDeposit>(), 14);
+		recipe.AddIngredient(ModContent.ItemType<MineralSlag>(), 14);
 		recipe.AddTile(TileID.Anvils);
 		recipe.Register();
 	}

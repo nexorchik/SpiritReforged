@@ -95,7 +95,7 @@ float GetAngle(float2 input)
 float4 TexturedRing(VertexShaderOutput input) : COLOR0
 {
     float4 baseRing = GeometricRing(input);
-    float xCoord = GetAngle(input.TextureCoordinates) / 6.14f;
+    float xCoord = GetAngle(input.TextureCoordinates) / 6.28f;
     xCoord += scroll;
     float yCoord = GetDistance(input.TextureCoordinates);
     yCoord -= 0.5f;

@@ -111,7 +111,7 @@ internal class QuickConversion
 					tile.TileType = (ushort)turnId;
 
 					if (grassType != -1 && (tile.TileType is TileID.Dirt or TileID.Mud) 
-						&& OpenExtensions.GetOpenings(condition.Position.X, condition.Position.Y, false, false) != OpenFlags.None && growGrassIfApplicable)
+						&& OpenTools.GetOpenings(condition.Position.X, condition.Position.Y, false, false) != OpenFlags.None && growGrassIfApplicable)
 						grasses.Add(condition.Position);
 				}
 

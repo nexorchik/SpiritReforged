@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.MathHelpers;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Savanna.Tiles;
+using SpiritReforged.Content.Savanna.Walls;
 using System.Linq;
 
 namespace SpiritReforged.Content.Savanna;
@@ -9,37 +10,103 @@ internal static class BaobabGen
 {
 	public static void GenerateBaobab(int x, int y)
 	{
-		GenerateBase(x, y, out int minX, out int maxX, out int height, out int topMinX, out int topMaxX);
-		MineInterior(x - 1, y - WorldGen.genRand.Next(2, 5));
-		CreateRoots(minX, maxX, y);
-		CreateBranches(topMinX, topMaxX, y, height);
+		int width = 10;
+		int height = WorldGen.genRand.Next(25, 30);
+
+		CreateBase(x, y, width, height);
+		CreateRoots(x, y, width);
+		CreateBranches(x, y - height + 6, width);
 	}
 
-	private static void CreateBranches(int minX, int maxX, int y, int height)
+	private static void CreateBase(int x, int y, int width, int height)
 	{
-		float repeats = WorldGen.genRand.Next(3, 6);
-		int center = (int)((minX + maxX) / 2f);
+		var openingSize = new Point(4, 8);
+		var opening = new Rectangle(x - openingSize.X / 2, y - openingSize.Y - 1, openingSize.X, openingSize.Y);
+		int curveHeight = width;
 
-		y -= height - 2;
+		x -= width / 2; //Center
+
+		for (int offX = 0; offX < width; offX++)
+		{
+			int realHeight = height - curveHeight + (int)(Math.Sin((float)offX / (width - 1) * Math.PI) * curveHeight);
+			for (int offY = 0; offY < realHeight; offY++)
+			{
+				var pos = new Point(x + offX, y - offY);
+
+				if (opening.Contains(pos))
+				{
+					WorldGen.PlaceLiquid(pos.X, pos.Y, (byte)LiquidID.Water, 190);
+				}
+				else
+				{
+					WorldGen.KillTile(pos.X, pos.Y);
+					WorldGen.PlaceTile(pos.X, pos.Y, ModContent.TileType<LivingBaobab>(), true);
+				}
+			}
+		}
+
+		for (int i = x; i < x + width; i++) //Fill walls
+		{
+			for (int j = y; j > y - height; j--)
+			{
+				OpenFlags flags = OpenTools.GetOpenings(i, j, false, false);
+
+				if ((flags == OpenFlags.None || opening.Contains(new Point(i, j))) && Main.tile[i, j].TileType == ModContent.TileType<LivingBaobab>())
+					WorldGen.PlaceWall(i, j, ModContent.WallType<LivingBaobabWall>(), true);
+			}
+		}
+
+		WorldGen.PlaceTile(opening.Center.X - 1, opening.Bottom - 1, ModContent.TileType<BaobabPod>(), true);
+	}
+
+	private static void CreateRoots(int x, int y, int width)
+	{
+		int repeats = 5;
 
 		for (int i = 0; i < repeats; ++i)
 		{
-			float factor = i / (repeats - 1f);
-			int x = (int)MathHelper.Lerp(minX, maxX, factor);
-			float xOff = MathHelper.Lerp(-3, 3, factor);
+			int startX = (int)MathHelper.Lerp(x - width / 2, x + width / 2, (float)i / (repeats - 1));
+			var points = Spline.CreateSpline(GetBranchPositions(startX, y, startX > x ? 1 : -1, 3, true), 3);
 
-			var points = GetBranchPositions(x, y, x > center ? -1 : 1, WorldGen.genRand.Next(1, 3), false);
-			PointToPointRunner.SingleTile(new(points), PointToPointRunner.PlaceTileClearSlope(ModContent.TileType<LivingBaobab>(), true), false);
+			PointToPointRunner.SingleTile(new(points), (ref Vector2 position, ref Vector2 direction) 
+				=> CreateChunk((int)position.X, (int)position.Y, ModContent.TileType<LivingBaobab>(), 2), false);
+		}
+	}
 
-			Vector2 position = points.Last();
-			WorldGen.TileRunner((int)position.X, (int)position.Y, 4, 3, ModContent.TileType<LivingBaobabLeaf>(), true, 0, 0, true, false);
-			WorldGen.SquareTileFrame((int)position.X, (int)position.Y);
+	private static void CreateBranches(int x, int y, int width)
+	{
+		const float radians = 3.5f;
+		const int repeats = 4;
+
+		for (int i = 0; i < repeats; ++i)
+		{
+			var start = (new Vector2(x, y) - (Vector2.UnitY * (width / 2 - 1)).RotatedBy(radians / (repeats - 1) * i - radians / 2)).ToPoint();
+			var points = GetBranchPositions(start.X, start.Y, start.X > x ? 1 : -1, WorldGen.genRand.Next(2, 4), false);
+
+			PointToPointRunner.SingleTile(new(points), (ref Vector2 position, ref Vector2 direction) 
+				=> CreateChunk((int)position.X, (int)position.Y, ModContent.TileType<LivingBaobab>(), 2), false);
+
+			var last = points.Last().ToPoint();
+			WorldGen.TileRunner(last.X, last.Y, 15, 5, ModContent.TileType<LivingBaobabLeaf>(), true, overRide: false);
+		}
+
+		const int leafAreaSize = 100; //Approximate wall generation
+		var leafArea = new Rectangle(x - leafAreaSize / 2, y - leafAreaSize / 2, leafAreaSize, leafAreaSize);
+		for (int _x = leafArea.Left; _x < leafArea.Right; _x++)
+		{
+			for (int _y = leafArea.Top; _y < leafArea.Bottom; _y++)
+			{
+				OpenFlags flags = OpenTools.GetOpenings(_x, _y, false, false);
+
+				if (flags == OpenFlags.None && Main.tile[_x, _y].TileType == ModContent.TileType<LivingBaobabLeaf>())
+					WorldGen.PlaceWall(_x, _y, ModContent.WallType<LivingBaobabLeafWall>());
+			}
 		}
 	}
 
 	private static Vector2[] GetBranchPositions(int x, int y, int dir, int size, bool down)
 	{
-		Point current = new Point(x, y);
+		var current = new Point(x, y);
 		List<Vector2> points = [current.ToVector2()];
 		bool hori = WorldGen.genRand.NextBool();
 		int vDir = down ? 1 : -1;
@@ -47,7 +114,7 @@ internal static class BaobabGen
 		for (int i = 0; i < size; ++i)
 		{
 			if (hori)
-				current.X += WorldGen.genRand.Next(1, 3) * dir;
+				current.X += WorldGen.genRand.Next(3, 7) * dir;
 			else
 				current.Y += WorldGen.genRand.Next(2, 5) * vDir;
 
@@ -58,84 +125,13 @@ internal static class BaobabGen
 		return [.. points];
 	}
 
-	private static void CreateRoots(int minX, int maxX, int y)
+	private static void CreateChunk(int i, int j, int type, int size)
 	{
-		const float Repeats = 6f;
-
-		int center = (int)((minX + maxX) / 2f);
-
-		for (int i = 0; i < Repeats; ++i)
-		{
-			int x = (int)MathHelper.Lerp(minX, maxX, i / (Repeats - 1));
-			int size = 4 - (int)Math.Abs(i - Repeats / 2);
-
-			var points = Spline.CreateSpline(GetBranchPositions(x, y, x < center ? -1 : 1, size, true), 8);
-			PointToPointRunner.SingleTile(new(points), PointToPointRunner.PlaceTileClearSlope(ModContent.TileType<LivingBaobab>(), true));
-		}
-	}
-
-	private static void MineInterior(int x, int y)
-	{
-		for (int i = x; i < x + 2; ++i)
-		{
-			for (int j = y; j > y - 5; --j)
+		for (int x = i; x < i + size; x++)
+			for (int y = j; y < j + size; y++)
 			{
-				WorldGen.KillTile(i, j);
-				WorldGen.PlaceLiquid(i, j, (byte)LiquidID.Water, 255);
+				WorldGen.KillTile(x, y);
+				WorldGen.PlaceTile(x, y, type);
 			}
-		}
-	}
-
-	private static void GenerateBase(int x, int y, out int minX, out int maxX, out int height, out int topMinX, out int topMinY)
-	{
-		height = WorldGen.genRand.Next(15, 21);
-		(int leftCount, int rightCount) = (1, 1);
-		(int leftAdd, int rightAdd) = (WorldGen.genRand.Next(2) - 1, WorldGen.genRand.Next(2) - 1);
-		(int leftWidth, int rightWidth) = (WorldGen.genRand.Next(1, 4), WorldGen.genRand.Next(1, 4));
-
-		topMinX = x - leftWidth;
-		topMinY = x + rightWidth;
-		minX = x;
-		maxX = x;
-		y -= height;
-
-		for (int j = y; j < y + height; ++j)
-		{
-			for (int i = x - leftWidth; i < x + rightWidth; ++i)
-			{
-				WorldGen.PlaceTile(i, j, ModContent.TileType<LivingBaobab>(), true, true);
-
-				if (i < minX)
-					minX = i;
-
-				if (i > maxX) 
-					maxX = i;
-			}
-
-			leftCount--;
-			rightCount--;
-
-			if (leftCount <= 0)
-				leftCount = ModifyWidth(ref leftAdd, ref leftWidth);
-
-			if (rightCount <= 0)
-				rightCount = ModifyWidth(ref rightAdd, ref rightWidth);
-		}
-	}
-
-	private static int ModifyWidth(ref int widthAdditions, ref int width)
-	{
-		width++;
-		int widthDenom = widthAdditions switch
-		{
-			<= 0 => ++widthAdditions,
-			1 => widthAdditions + (!WorldGen.genRand.NextBool(6) ? 1 : 0),
-			_ => WorldGen.genRand.NextBool(10) ? widthAdditions++ : 200
-		};
-		widthAdditions = widthDenom;
-
-		if (widthDenom > 2)
-			widthAdditions = 200;
-		return widthDenom;
 	}
 }

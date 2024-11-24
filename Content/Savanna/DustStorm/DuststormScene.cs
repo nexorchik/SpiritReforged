@@ -3,11 +3,11 @@ using Terraria.Graphics.Effects;
 
 namespace SpiritReforged.Content.Savanna.DustStorm;
 
-public class DuststormScene : ModSceneEffect
+public class DustStormScene : ModSceneEffect
 {
 	private bool wasDustStorm;
 
-	public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh;
+	public override SceneEffectPriority Priority => SceneEffectPriority.Environment;
 	public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Music/Duststorm");
 
 	public override bool IsSceneEffectActive(Player player) => player.GetModPlayer<DustStormPlayer>().ZoneDustStorm || wasDustStorm;

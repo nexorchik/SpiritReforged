@@ -18,11 +18,6 @@ RawFish: {
 	Tooltip: "'Can be eaten...maybe cook it first?'"
 }
 
-SulfurDeposit: {
-	DisplayName: Sulfur Deposit
-	Tooltip: "'Highly explosive!'"
-}
-
 SunkenTreasure: {
 	DisplayName: Sunken Treasure
 	Tooltip:
@@ -92,16 +87,6 @@ TubeWormItem: {
 	Tooltip: ""
 }
 
-BaskingShark: {
-	DisplayName: Basking Shark
-	Tooltip: Converts bullets into chum chunks
-}
-
-BubbleMine: {
-	DisplayName: Bubble Mine
-	Tooltip: Right-click to make bubble mines detonate
-}
-
 CascadeChestplate: {
 	DisplayName: Cascade Chestplate
 	Tooltip: 50% knockback resistance
@@ -117,11 +102,6 @@ CascadeLeggings: {
 	Tooltip: 15% increased movement in water
 }
 
-CoralCatcher: {
-	DisplayName: Coral Catcher
-	Tooltip: Detects hooked fish
-}
-
 DeepCascadeShard: {
 	DisplayName: Deep Cascade Shard
 	Tooltip: "'Where magma meets seawater'"
@@ -132,18 +112,13 @@ JellyfishStaff: {
 	Tooltip: Summons a tiny jellyfish to fight for you!
 }
 
-MantarayHuntingHarpoon: {
-	DisplayName: Manta Harpoon
+Lifesaver: {
+	DisplayName: Lifesaver
 	Tooltip:
 		'''
 		Summons a rideable manta ray mount
 		The manta Ray is incapable of movement on land
 		'''
-}
-
-ReefWrath: {
-	DisplayName: Reef Wrath
-	Tooltip: Conjures harmful coral spires along the ground
 }
 
 ClawCannon: {
@@ -156,9 +131,9 @@ IridescentScale: {
 	Tooltip: "'Glints beautifully under the water'"
 }
 
-PendantOfTheOcean: {
-	DisplayName: Pendant of the Ocean
-	Tooltip: Double tap {0} to gain unhindered movement underwater for a short time
+OceanPendant: {
+	DisplayName: Seafarer's Pendant
+	Tooltip: Grants unhindered movement underwater
 }
 
 ReefSpear: {
@@ -187,7 +162,7 @@ GarItem: {
 }
 
 SavannaDirtItem: {
-	DisplayName: Savanna Dirt
+	DisplayName: Coarse Dirt
 	Tooltip: ""
 }
 
@@ -693,6 +668,11 @@ SafariVest: {
 	Tooltip: ""
 }
 
+SunStaff: {
+	DisplayName: Sunrise Scepter
+	Tooltip: Casts the light of the sun down in front of you
+}
+
 SavannaMusicBoxItem: {
 	DisplayName: Music Box (Savanna)
 	Tooltip: ""
@@ -962,7 +942,64 @@ WheatgrassSeedPouch: {
 		'''
 }
 
+RoyalKhopesh: {
+	DisplayName: Royal Khopesh
+	Tooltip: ""
+}
+
 SavannaSandstormMusicBoxItem: {
 	Tooltip: ""
 	DisplayName: Music Box (Duststorm)
+}
+
+FishLure: {
+	DisplayName: Fish Lure
+	Tooltip:
+		'''
+		{$ItemTooltip.CoralTorch}
+		Attracts schools of fish to nearby waters
+		'''
+}
+
+DrywoodPlatformItem: {
+	DisplayName: Drywood Platform
+	Tooltip: ""
+}
+
+SavannaDirtWallItem: {
+	DisplayName: Coarse Dirt Wall
+	Tooltip: ""
+}
+
+GravelItem: {
+	DisplayName: Gravel
+	Tooltip: ""
+}
+
+MagmastoneItem: {
+	DisplayName: Magmastone
+	Tooltip: ""
+}
+
+HardmodeSavannaCrate: {
+	DisplayName: Safari Crate
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+SavannaCrate: {
+	DisplayName: Grassland Crate
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+MineralSlag: {
+	DisplayName: Mineral Slag
+	Tooltip: Can be used at the Extractinator
+}
+
+HyenaBannerItem.DisplayName: Hyena Banner
+OstrichBannerItem.DisplayName: Ostrich Banner
+
+SavannaCampfireItem: {
+	DisplayName: Savanna Campfire
+	Tooltip: "{$ItemTooltip.Campfire}"
 }
