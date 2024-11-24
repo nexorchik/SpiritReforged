@@ -6,6 +6,15 @@ using Terraria.Graphics;
 
 namespace SpiritReforged.Common.Visuals;
 
+// Todo: Needs better water slopes?
+
+/// <summary>
+/// Handles transparency edits for <see cref="LiquidRenderer.DrawNormalLiquids(SpriteBatch, Vector2, int, float, bool)"/>,
+/// <see cref="Main.DrawBlack(bool)"/> (my beloathed), <see cref="TileDrawing"/>.DrawPartialLiquid, and 
+/// <see cref="Lighting.GetCornerColors(int, int, out VertexColors, float)"/>.<br/>
+/// 
+/// Allows transparency functionality everywhere.
+/// </summary>
 internal class WaterEdits : ModSystem
 {
 	public bool DrawingLiquid = false;
@@ -44,7 +53,10 @@ internal class WaterEdits : ModSystem
 
 	public static void ModifyEdges(ref int left, int y, ref int drawPosX)
 	{
-		if (left - drawPosX > 0) // && Main.tile[left, y].Slope != SlopeType.Solid)
+		if (Lighting.Brightness(left, y) < 0.1f)
+			return;
+
+		if (left > drawPosX)
 			left--;
 
 		if (left - drawPosX > 0)
@@ -80,14 +92,11 @@ internal class WaterEdits : ModSystem
 
 	private static void ModifyColor(ref Color color, float opacity = 1f)
 	{
-		color *= Math.Abs(color.B / 255f) * 0.25f + 0.75f;
 		float luminance = Luminance(color);
-		color = Color.Lerp(color, new Color(8, 8, 80) * 0.75f * opacity, 1 - luminance);
+		color = Color.Lerp(color, new Color(8, 8, 80) * 0.6f * opacity, 1 - luminance);
 
 		if (luminance < 0.2f)
-		{
 			color = Color.Lerp(color, Color.Black, 1 - luminance / 0.2f);
-		}
 	}
 
 	private static float Luminance(Color color) => 0.299f * color.R / 255f + 0.587f * color.G / 255f + 0.114f * color.B / 255f;
