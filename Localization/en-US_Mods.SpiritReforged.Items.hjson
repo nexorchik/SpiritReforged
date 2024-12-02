@@ -1003,3 +1003,8 @@ SavannaCampfireItem: {
 	DisplayName: Savanna Campfire
 	Tooltip: "{$ItemTooltip.Campfire}"
 }
+
+SavannaFountainItem: {
+	DisplayName: Savanna Water Fountain
+	Tooltip: ""
+}
