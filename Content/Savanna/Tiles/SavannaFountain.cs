@@ -1,6 +1,7 @@
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Content.Savanna.Biome;
 using Terraria.GameContent.ObjectInteractions;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
@@ -38,7 +39,7 @@ public class SavannaFountain : ModTile, IAutoloadTileItem
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
 		if (Main.tile[i, j].TileFrameY >= 72)
-			Main.LocalPlayer.GetModPlayer<FountainPlayer>().fountain = FountainPlayer.Fountain.Savanna;
+			Main.LocalPlayer.GetModPlayer<FountainPlayer>().SetFountain<SavannaWaterStyle>();
 	}
 
 	public override bool RightClick(int i, int j)

@@ -1,34 +1,22 @@
-﻿
-using SpiritReforged.Content.Savanna.Biome;
-
-namespace SpiritReforged.Common.PlayerCommon;
+﻿namespace SpiritReforged.Common.PlayerCommon;
 
 internal class FountainPlayer : ModPlayer
 {
-	public enum Fountain
-	{
-		None = 0,
-		Savanna
-	}
+	private int fountainSlot = -1;
 
-	public Fountain fountain = Fountain.None;
-
-	private void TileReset() => fountain = Fountain.None;
+	private void TileReset() => fountainSlot = -1;
 
 	public override void PreUpdate()
 	{
-		if (fountain != Fountain.None)
-		{
-			Main.SceneMetrics.ActiveFountainColor = ModContent.Find<ModWaterStyle>(GetFountainWaterStyle()).Slot;
-			//Main.CalculateWaterStyle
-		}
+		if (fountainSlot != -1)
+			Main.SceneMetrics.ActiveFountainColor = fountainSlot;
 	}
 
-	private string GetFountainWaterStyle() => fountain switch
-	{
-		Fountain.Savanna => "SpiritReforged/" + nameof(SavannaWaterStyle),
-		_ => throw new NotImplementedException("Invalid custom water style."),
-	};
+	/// <summary>
+	/// Sets the player's current fountain to the given water style.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	internal void SetFountain<T>() where T : ModWaterStyle => fountainSlot = ModContent.GetInstance<T>().Slot;
 
 	public class FountainResetSystem : ModSystem
 	{
