@@ -1,4 +1,5 @@
 using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Content.Savanna.Items.HuntingRifle;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
@@ -66,6 +67,7 @@ public class TumbleZombie : ReplaceNPC
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
 		npcLoot.AddCommon(ModContent.ItemType<Items.WrithingSticks.WrithingSticks>(), 800);
+		npcLoot.AddCommon(ModContent.ItemType<HuntingRifle>(), 300);
 
 	}
 

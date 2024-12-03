@@ -36,7 +36,7 @@ public class SunStaffHeld : ModProjectile
 
 	public override void AI()
 	{
-		if(!Projectile.TryGetOwner(out Player owner))
+		if(!Projectile.TryGetOwner(out Player owner) || owner.dead)
 		{
 			Projectile.Kill();
 			return;
