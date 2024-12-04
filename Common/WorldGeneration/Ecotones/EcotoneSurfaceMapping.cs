@@ -70,17 +70,10 @@ internal class EcotoneSurfaceMapping : ModSystem
 		for (int x = StartX; x < Main.maxTilesX - StartX; ++x)
 		{
 			int y = 80;
+			int addY = 0;
 
-			while (!WorldGen.SolidOrSlopedTile(x, y))
-				y++;
-
-			if (CloudsNearby(x, y, out int newY))
-			{
-				y = newY;
-
-				while (!WorldGen.SolidOrSlopedTile(x, y))
-					y++;
-			}
+			while (!WorldGen.SolidOrSlopedTile(x, y) || WorldMethods.CloudsBelow(x, y, out addY))
+				y += addY + 1;
 
 			if (entry is null)
 			{
@@ -118,20 +111,4 @@ internal class EcotoneSurfaceMapping : ModSystem
 		Entries.Add(entry);
 		Entries = new(Entries.OrderBy(x => x.Start.X));
 	}
-
-	private static bool CloudsNearby(int x, int y, out int newY)
-	{
-		bool foundCloud = false;
-
-		for (int i = 0; i < 30; ++i)
-		{
-			if (!foundCloud && Main.tile[x, y + i].TileType == TileID.Cloud && Main.tile[x, y + i].HasTile)
-				foundCloud = true;
-		}
-
-		newY = y + 30;
-		return foundCloud;
-	}
-
-	private static bool SolidTileOrWall(int x, int y) => WorldGen.SolidOrSlopedTile(x, y) || Main.tile[x, y].WallType != WallID.None;
 }

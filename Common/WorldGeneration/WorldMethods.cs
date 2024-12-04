@@ -83,4 +83,20 @@ public class WorldMethods
 					return true;
 		return false;
 	}
+
+	public static bool CloudsBelow(int x, int y, out int addY)
+	{
+		const int scanDistance = 30;
+		HashSet<int> types = [TileID.Cloud, TileID.RainCloud, TileID.SnowCloud];
+
+		for (int i = 0; i < scanDistance; i++)
+			if (Main.tile[x, y + i].HasTile && types.Contains(Main.tile[x, y + i].TileType))
+			{
+				addY = scanDistance;
+				return true;
+			}
+
+		addY = 0;
+		return false;
+	}
 }

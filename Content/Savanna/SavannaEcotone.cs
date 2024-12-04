@@ -7,6 +7,7 @@ using SpiritReforged.Content.Savanna.Walls;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Generation;
+using Terraria.ID;
 using Terraria.IO;
 using Terraria.WorldBuilding;
 
@@ -437,7 +438,6 @@ internal class SavannaEcotone : EcotoneBase
 		short startY = EcotoneSurfaceMapping.TotalSurfaceY[(short)entry.Start.X];
 		short endY = EcotoneSurfaceMapping.TotalSurfaceY[(short)entry.End.X];
 		HashSet<int> validIds = [TileID.Dirt, TileID.Grass, TileID.ClayBlock, TileID.CrimsonGrass, TileID.CorruptGrass, TileID.Stone];
-		HashSet<int> noKillIds = [TileID.Cloud, TileID.RainCloud]; //Ignore these types when clearing tiles above the biome
 
 		var topBottomY = new Point(Math.Min(startY, endY), Math.Max(startY, endY));
 
@@ -469,8 +469,9 @@ internal class SavannaEcotone : EcotoneBase
 
 			bool hitSolid = false;
 			float taper = Math.Clamp((float)Math.Sin((float)(x - startX) / (endX - startX) * Math.PI) * 1.75f, 0, 1);
+			int startHeight = Math.Min(HighestSurfacePoint(x) - y, 0);
 
-			for (int i = GetConnectedY(x, y, -80, [.. noKillIds]); i < (30 + depth + minDepth) * taper; ++i)
+			for (int i = startHeight; i < (30 + depth + minDepth) * taper; ++i)
 			{
 				int realY = y + i;
 				var tile = Main.tile[x, realY];
@@ -516,8 +517,10 @@ internal class SavannaEcotone : EcotoneBase
 					else
 						tile.Clear(TileDataType.Wall); //Clear walls above the Savanna surface
 				}
-				else if (!noKillIds.Contains(tile.TileType))
+				else
+				{
 					tile.Clear(TileDataType.All);
+				}
 			}
 
 			xOffsetForFactor += (int)Math.Round(Math.Max(sandNoise.GetNoise(x, 0), 0) * 5);
@@ -571,18 +574,13 @@ internal class SavannaEcotone : EcotoneBase
 			return (ushort)((tileType == TileID.Stone) ? TileID.ClayBlock : tileType);
 		}
 
-		static int GetConnectedY(int x, int y, int startYOffset, int[] ignoreTypes) //Scans up all connected walls or tiles
+		static int HighestSurfacePoint(int x)
 		{
-			while (y > 0)
-			{
-				var tile = Main.tile[x, y + startYOffset];
-				if (!tile.HasTile && tile.WallType == WallID.None && tile.LiquidAmount == 0 || ignoreTypes.Contains(tile.TileType))
-					break;
+			int y = (int)(Main.worldSurface * 0.35); //Sky height
+			while (!Main.tile[x, y].HasTile && Main.tile[x, y].WallType == WallID.None && Main.tile[x, y].LiquidAmount == 0 || WorldMethods.CloudsBelow(x, y, out int addY))
+				y++;
 
-				startYOffset--;
-			}
-
-			return startYOffset;
+			return y;
 		}
 	};
 
