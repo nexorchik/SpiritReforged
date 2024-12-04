@@ -197,6 +197,9 @@ internal class SavannaEcotone : EcotoneBase
 
 	private void GrowBaobab(GenerationProgress progress, GameConfiguration configuration)
 	{
+		if (!HasSavanna)
+			return;
+
 		if (!HasWaterHole || WorldGen.genRand.NextBool(3) && SavannaArea.Width > 150)
 		{
 			progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.GreatBaobab");
