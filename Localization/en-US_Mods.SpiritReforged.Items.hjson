@@ -1008,3 +1008,13 @@ SavannaFountainItem: {
 	DisplayName: Savanna Water Fountain
 	Tooltip: ""
 }
+
+DrywoodFenceItem: {
+	DisplayName: Drywood Fence
+	Tooltip: ""
+}
+
+DrywoodWallItem: {
+	DisplayName: Drywood Wall
+	Tooltip: ""
+}
