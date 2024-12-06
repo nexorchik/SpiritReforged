@@ -1,7 +1,22 @@
+using SpiritReforged.Common.BuffCommon;
+
 namespace SpiritReforged.Content.Savanna.Items.Gar;
 
 public class QuenchPotion : ModItem
 {
+	public override void Load() => BuffHooks.ModifyBuffTime += QuenchifyBuff;
+
+	private void QuenchifyBuff(int buffType, ref int buffTime, Player player, bool quickBuff)
+	{
+		bool Quenched() => player.HasBuff<QuenchPotion_Buff>() || quickBuff 
+			&& player.HasItemInInventoryOrOpenVoidBag(Item.type) && player.CountBuffs() + 1 <= Player.MaxBuffs;
+
+		if (Main.debuff[buffType] || buffType == ModContent.BuffType<QuenchPotion_Buff>() || !Quenched())
+			return;
+
+		buffTime = (int)(buffTime * 1.25f);
+	}
+
 	public override void SetDefaults()
 	{
 		Item.width = 20;
@@ -30,19 +45,5 @@ public class QuenchPotion : ModItem
 		recipe.Register();
 	}
 }
-public class QuenchPotion_Buff : ModBuff
-{
-	public override void Update(Player player, ref int buffIndex)
-	{
-		player.GetModPlayer<SavannaPlayer>().quenchPotion = true;
 
-		for (int i = 0; i < player.buffType.Length; i++)
-		{
-			if (player.buffType[i] > 0 && player.buffType[i] != ModContent.BuffType<QuenchPotion_Buff>())
-			{
-				player.buffTime[i] = (int)(player.buffTime[i] * 1.25f);
-				break;
-			}
-		}
-	}
-}
+public class QuenchPotion_Buff : ModBuff { }
