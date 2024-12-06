@@ -2,8 +2,8 @@
 
 public class BuffHooks : ILoadable
 {
-	public delegate void DelegateAction(int buffType, ref int buffTime, Player player, bool quickBuff);
-	public static event DelegateAction ModifyBuffTime;
+	public delegate void ModifyBuffTimeDelegate(int buffType, ref int buffTime, Player player, bool quickBuff);
+	public static event ModifyBuffTimeDelegate ModifyBuffTime;
 
 	private static bool UsedQuickBuff;
 

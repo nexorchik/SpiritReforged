@@ -29,13 +29,10 @@ public class SavannaGlobalItem : GlobalItem
 		}
 	}
 
-	public override void AddRecipes()
-	{
-		var recipe = Recipe.Create(ItemID.HunterPotion, 1);
-		recipe.AddIngredient(ItemID.BottledWater)
+	public override void AddRecipes() => Recipe.Create(ItemID.HunterPotion, 1)
+			.AddIngredient(ItemID.BottledWater)
 			.AddIngredient(ItemID.Blinkroot)
 			.AddIngredient(Mod.Find<ModItem>("GarItem").Type)
 			.AddTile(TileID.Bottles)
 			.Register();
-	}
 }

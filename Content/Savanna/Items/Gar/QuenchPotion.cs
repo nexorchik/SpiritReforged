@@ -49,17 +49,13 @@ public class QuenchPotion : ModItem
 		Item.UseSound = SoundID.Item3;
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(Mod.Find<ModItem>("GarItem").Type, 1);
-		recipe.AddIngredient(ItemID.Blinkroot, 1);
-		recipe.AddIngredient(ItemID.Moonglow, 1);
-		recipe.AddIngredient(ItemID.Waterleaf, 1);
-		recipe.AddIngredient(ItemID.BottledWater, 1);
-		recipe.AddTile(TileID.Bottles);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe()
+			.AddIngredient(Mod.Find<ModItem>("GarItem").Type, 1)
+			.AddIngredient(ItemID.Blinkroot, 1).AddIngredient(ItemID.Moonglow, 1)
+			.AddIngredient(ItemID.Waterleaf, 1)
+			.AddIngredient(ItemID.BottledWater, 1)
+			.AddTile(TileID.Bottles)
+			.Register();
 }
 
 public class QuenchPotion_Buff : ModBuff { }
