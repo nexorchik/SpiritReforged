@@ -4,17 +4,33 @@ namespace SpiritReforged.Content.Savanna.Items.Gar;
 
 public class QuenchPotion : ModItem
 {
-	public override void Load() => BuffHooks.ModifyBuffTime += QuenchifyBuff;
+	public override void Load()
+	{
+		On_Player.QuickBuff += FocusQuenchPotion;
+		BuffHooks.ModifyBuffTime += QuenchifyBuff;
+	}
+
+	private void FocusQuenchPotion(On_Player.orig_QuickBuff orig, Player self)
+	{
+		if (!self.cursed && !self.CCed && !self.dead && !self.HasBuff<QuenchPotion_Buff>() && self.CountBuffs() < Player.MaxBuffs)
+		{
+			int itemIndex = self.FindItemInInventoryOrOpenVoidBag(Type, out bool inVoidBag);
+			var item = inVoidBag ? self.bank4.item[itemIndex] : self.inventory[itemIndex];
+
+			ItemLoader.UseItem(item, self);
+			self.AddBuff(item.buffType, item.buffTime);
+
+			if (item.consumable && ItemLoader.ConsumeItem(item, self) && --item.stack <= 0)
+				item.TurnToAir();
+		}
+
+		orig(self);
+	}
 
 	private void QuenchifyBuff(int buffType, ref int buffTime, Player player, bool quickBuff)
 	{
-		bool Quenched() => player.HasBuff<QuenchPotion_Buff>() || quickBuff 
-			&& player.HasItemInInventoryOrOpenVoidBag(Item.type) && player.CountBuffs() + 1 <= Player.MaxBuffs;
-
-		if (Main.debuff[buffType] || buffType == ModContent.BuffType<QuenchPotion_Buff>() || !Quenched())
-			return;
-
-		buffTime = (int)(buffTime * 1.25f);
+		if (!Main.debuff[buffType] && buffType != ModContent.BuffType<QuenchPotion_Buff>() && player.HasBuff<QuenchPotion_Buff>())
+			buffTime = (int)(buffTime * 1.25f);
 	}
 
 	public override void SetDefaults()
