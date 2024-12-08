@@ -43,6 +43,8 @@ Projectiles: {
 	WheatgrassSeedProjectile.DisplayName: Wheatgrass Seed Projectile
 	RoyalKhopeshHeld.DisplayName: Royal Khopesh Held
 	Zipline.DisplayName: Zipline
+	FrostbiteProj.DisplayName: Frostbite
+	FrozenFragment.DisplayName: Frozen Fragment
 }
 
 Configs: {
@@ -172,6 +174,11 @@ Buffs: {
 	TumblerPetBuff: {
 		DisplayName: Ambivalent Tumbler
 		Description: A friendly tumbleweed is following you
+	}
+
+	Frozen: {
+		DisplayName: Frozen
+		Description: Mods.SpiritReforged.Buffs.Frozen.Description
 	}
 }
 
