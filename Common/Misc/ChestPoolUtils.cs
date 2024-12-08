@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using static SpiritReforged.Common.Misc.ChestPoolUtils;
 
 namespace SpiritReforged.Common.Misc;
 
@@ -13,6 +14,7 @@ public static class ChestPoolUtils
 		public object Items;
 		public int Stack;
 		public float Chance;
+
 		public ChestInfo(object Items, int Stack = 1, float Chance = 1)
 		{
 			this.Items = Items;
@@ -27,96 +29,93 @@ public static class ChestPoolUtils
 	/// Method to greatly reduce the amount of effort needed to make a chest pool. <br />
 	/// Input the chest's pool as a list of structs representing the item pool for each slot, stack for that pool, and chance to be added.
 	/// </summary>
+
+	//Vanilla Chest IDs
+	public const int woodChests = 0;
+	public const int goldChests = 1;
+	public const int lockedgoldChests = 2;
+	public const int ivyChests = 10;
+	public const int skyChests = 13;
+	public const int livingWoodChests = 12;
+	public const int spiderChests = 15;
+	public const int waterChests = 17;
+	public const int dynastyChests = 28;
+
+	// Helper method for adding items to chests
+	private static void AddItemsToChest(IEnumerable<ChestInfo> list, Chest chest, int itemIndex)
+	{
+		foreach (ChestInfo chestInfo in list)
+		{ 
+			switch (chestInfo.Items)
+			{
+				case int[] itemPool:
+					chest.item[itemIndex].SetDefaults(itemPool[Main.rand.Next(itemPool.Length)]);
+					chest.item[itemIndex].stack = chestInfo.Stack;
+					break;
+				case int intItem:
+					chest.item[itemIndex].SetDefaults((int)chestInfo.Items);
+					chest.item[itemIndex].stack = chestInfo.Stack;
+					break;
+				case short shortItem:
+					chest.item[itemIndex].SetDefaults((short)chestInfo.Items);
+					chest.item[itemIndex].stack = chestInfo.Stack;
+					break;
+			}
+
+			itemIndex++;
+		}
+	}
 	public static void PlaceChestItems(List<ChestInfo> list, Chest chest, int startIndex = 0)
 	{
-		int itemindex = startIndex;
+		int itemIndex = startIndex;
 
-		var newlist = new List<ChestInfo>();
+		var newList = new List<ChestInfo>();
 
 		foreach (ChestInfo c in list)
 		{ //prune the list based on the chances of items being added and stacks
 			if (Main.rand.NextFloat() >= c.Chance || c.Stack == 0)
 				continue; //skip
 
-			newlist.Add(c);
+			newList.Add(c);
 		}
 
-		if (chest.item[itemindex].active && newlist.Count > 0)
+		if (chest.item[itemIndex].active && newList.Count > 0)
 		{ //check if the spot items are being added to is active
-			int itemstomove = itemindex + chest.item.Skip(itemindex).Where(x => x.active).Count();
-			for (int i = itemstomove; i >= itemindex; i--)
-				chest.item[i + newlist.Count] = chest.item[i].Clone();
+			int itemsToMove = itemIndex + chest.item.Skip(itemIndex).Where(x => x.active).Count();
+			for (int i = itemsToMove; i >= itemIndex; i--)
+				chest.item[i + newList.Count] = chest.item[i].Clone();
 		}
 
-		foreach (ChestInfo c in newlist)
-		{ //finally, add the items to the pool
-			switch (c.Items)
-			{
-				case Array a:
-					int[] itempool = (int[])c.Items;
-					chest.item[itemindex].SetDefaults(itempool[Main.rand.Next(itempool.Length)]);
-					chest.item[itemindex].stack = c.Stack;
-					break;
-				case int i:
-					chest.item[itemindex].SetDefaults((int)c.Items);
-					chest.item[itemindex].stack = c.Stack;
-					break;
-				case short s:
-					chest.item[itemindex].SetDefaults((short)c.Items);
-					chest.item[itemindex].stack = c.Stack;
-					break;
-			}
-
-			itemindex++;
-		}
+		AddItemsToChest(newList, chest, itemIndex);
 	}
 
 	public static void PlaceModChestItemsWCheck(List<ChestInfo> list, Chest chest, ref bool[] placedItems)
 	{
-		int itemindex = 0;
+		int itemIndex = 0;
 
-		int[] importantitempool = (int[])list.ElementAt(0).Items;
-		int itemtoplace = 0;
-		bool canplace = false;
-		while (!canplace)
+		int[] importantItemPool = (int[])list.ElementAt(0).Items;
+		int itemToPlace = 0;
+		bool canPlace = false;
+		while (!canPlace)
 		{ //check if the chosen item has been placed before, and if all items havent already been placed
-			itemtoplace = WorldGen.genRand.Next(importantitempool.Length);
-			if (!placedItems[itemtoplace] || placedItems.All(x => x == true))
+			itemToPlace = WorldGen.genRand.Next(importantItemPool.Length);
+			if (!placedItems[itemToPlace] || placedItems.All(x => x == true))
 			{
-				placedItems[itemtoplace] = true;
-				canplace = true;
+				placedItems[itemToPlace] = true;
+				canPlace = true;
 				break;
 			}
 		}
 
-		if (canplace)
+		if (canPlace)
 		{
-			placedItems[itemtoplace] = true;
-			chest.item[itemindex].SetDefaults(importantitempool[itemtoplace]);
-			itemindex++;
+			placedItems[itemToPlace] = true;
+			chest.item[itemIndex].SetDefaults(importantItemPool[itemToPlace]);
+			itemIndex++;
 		}
 
-		foreach (ChestInfo c in list.Skip(1))
-		{ //add the other items to the pool
-			switch (c.Items)
-			{
-				case Array a:
-					int[] itempool = (int[])c.Items;
-					chest.item[itemindex].SetDefaults(itempool[Main.rand.Next(itempool.Length)]);
-					chest.item[itemindex].stack = c.Stack;
-					break;
-				case int i:
-					chest.item[itemindex].SetDefaults((int)c.Items);
-					chest.item[itemindex].stack = c.Stack;
-					break;
-				case short s:
-					chest.item[itemindex].SetDefaults((short)c.Items);
-					chest.item[itemindex].stack = c.Stack;
-					break;
-			}
+		AddItemsToChest(list.Skip(1), chest, itemIndex);
 
-			itemindex++;
-		}
 	}
 
 	public static void AddToModdedChest(List<ChestInfo> list, int chestType)
@@ -132,24 +131,14 @@ public static class ChestPoolUtils
 	public static void AddToModdedChestWithOverlapCheck(List<ChestInfo> list, int chestType)
 	{
 		int[] items = (int[])list.ElementAt(0).Items;
-		bool[] placeditems = new bool[items.Length];
+		bool[] placedItems = new bool[items.Length];
 		for (int chestIndex = 0; chestIndex < Main.chest.Length; chestIndex++)
 		{
 			Chest chest = Main.chest[chestIndex];
 			if (chest != null && Main.tile[chest.x, chest.y].TileType == chestType)
-				PlaceModChestItemsWCheck(list, chest, ref placeditems);
+				PlaceModChestItemsWCheck(list, chest, ref placedItems);
 		}
 	}
-
-	public const int woodChests = 0;
-	public const int goldChests = 1;
-	public const int lockedgoldChests = 2;
-	public const int ivyChests = 10;
-	public const int skyChests = 13;
-	public const int livingWoodChests = 12;
-	public const int spiderChests = 15;
-	public const int waterChests = 17;
-	public const int dynastyChests = 28;
 
 	public static void AddToVanillaChest(List<ChestInfo> list, int chestFrame, int index = 0)
 	{

@@ -2,7 +2,7 @@ using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Underground.Items.Railgun;
+namespace SpiritReforged.Content.Underground.Railgun;
 
 [AutoloadGlowmask("200,200,200")]
 public class ZiplineGun : ModItem
@@ -33,6 +33,7 @@ public class ZiplineGun : ModItem
 			position += muzzleOffset;
 
 		if (player.ownedProjectileCounts[type] > 0)
+		{
 			foreach (Projectile proj in Main.projectile)
 			{
 				if (proj.ModProjectile is not Zipline zipline)
@@ -47,6 +48,7 @@ public class ZiplineGun : ModItem
 					break;
 				}
 			}
+		}
 
 		SoundEngine.PlaySound(SoundID.Item102, position);
 

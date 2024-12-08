@@ -1,4 +1,4 @@
-namespace SpiritReforged.Content.Underground.Items.Railgun;
+namespace SpiritReforged.Content.Underground.Railgun;
 
 public class ZiplinePlayer : ModPlayer
 {

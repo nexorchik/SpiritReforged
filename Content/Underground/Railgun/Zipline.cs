@@ -3,12 +3,18 @@ using Terraria.Audio;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Common.Particle;
 
-namespace SpiritReforged.Content.Underground.Items.Railgun;
+namespace SpiritReforged.Content.Underground.Railgun;
 
 public class Zipline : ModProjectile
 {
-	// public override void SetStaticDefaults() => DisplayName.SetDefault("Zipline");
 
+	private const int prLength = 4;
+	private readonly float[] playerProgress = new float[prLength];
+	public float vFadeout;
+
+	private bool Deployed => Projectile.velocity == Vector2.Zero;
+
+	public bool isHovering;
 	public override void SetDefaults()
 	{
 		Projectile.hostile = false;
@@ -27,19 +33,12 @@ public class Zipline : ModProjectile
 		get => Projectile.ai[0] > 0;
 		set => Projectile.ai[0] = value ? 1 : 0;
 	}
+
 	public int PartnerIndex
 	{
 		get => (int)Projectile.ai[1];
 		set => Projectile.ai[1] = value;
 	}
-
-	private const int prLength = 4;
-	private readonly float[] playerProgress = new float[prLength];
-	public float vFadeout;
-
-	private bool Deployed => Projectile.velocity == Vector2.Zero;
-
-	public bool isHovering;
 
 	public override void AI()
 	{
