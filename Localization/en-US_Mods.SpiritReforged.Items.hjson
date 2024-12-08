@@ -1028,8 +1028,3 @@ ZiplineGun: {
 		'''
 	DisplayName: Rail-gun
 }
-
-FrostbiteItem: {
-	DisplayName: Frostbite
-	Tooltip: "Creates a slow-moving blizzard that follows your cursor"
-}
