@@ -23,6 +23,18 @@ public class WorldMethods
 		return y;
 	}
 
+	/// <summary> Scans up, then down for the nearest surface tile. </summary>
+	public static int FindGround(int i, ref int j)
+	{
+		while (WorldGen.SolidOrSlopedTile(i, j - 1))
+			j--; //Up
+
+		while (!WorldGen.SolidOrSlopedTile(i, j))
+			j++; //Down
+
+		return j;
+	}
+
 	public static void CragSpike(int X, int Y, int length, int height, ushort type2, float slope, float sloperight)
 	{
 		float trueslope = 1 / slope;

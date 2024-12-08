@@ -70,10 +70,9 @@ internal class EcotoneSurfaceMapping : ModSystem
 		for (int x = StartX; x < Main.maxTilesX - StartX; ++x)
 		{
 			int y = 80;
-			int addY = 0;
 
-			while (!WorldGen.SolidOrSlopedTile(x, y) || WorldMethods.CloudsBelow(x, y, out addY))
-				y += addY + 1;
+			while (!WorldGen.SolidOrSlopedTile(x, y) || WorldMethods.CloudsBelow(x, y, out int addY))
+				y++;
 
 			if (entry is null)
 			{
