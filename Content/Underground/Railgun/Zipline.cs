@@ -7,7 +7,6 @@ namespace SpiritReforged.Content.Underground.Railgun;
 
 public class Zipline : ModProjectile
 {
-
 	private const int prLength = 4;
 	private readonly float[] playerProgress = new float[prLength];
 	public float vFadeout;
@@ -15,6 +14,17 @@ public class Zipline : ModProjectile
 	private bool Deployed => Projectile.velocity == Vector2.Zero;
 
 	public bool isHovering;
+	public bool Right
+	{
+		get => Projectile.ai[0] > 0;
+		set => Projectile.ai[0] = value ? 1 : 0;
+	}
+
+	public int PartnerIndex
+	{
+		get => (int)Projectile.ai[1];
+		set => Projectile.ai[1] = value;
+	}
 	public override void SetDefaults()
 	{
 		Projectile.hostile = false;
@@ -26,18 +36,6 @@ public class Zipline : ModProjectile
 		Projectile.tileCollide = false;
 		Projectile.alpha = 255;
 		Projectile.extraUpdates = 4;
-	}
-
-	public bool Right
-	{
-		get => Projectile.ai[0] > 0;
-		set => Projectile.ai[0] = value ? 1 : 0;
-	}
-
-	public int PartnerIndex
-	{
-		get => (int)Projectile.ai[1];
-		set => Projectile.ai[1] = value;
 	}
 
 	public override void AI()
@@ -163,9 +161,9 @@ public class Zipline : ModProjectile
 
 	private bool TryPair()
 	{
-		int maxRange = 1800;
+		const int maxRange = 1800;
 
-		foreach (Projectile proj in Main.projectile)
+		foreach (Projectile proj in Main.ActiveProjectiles)
 		{
 			if (proj.ModProjectile is not Zipline zipline)
 				continue;
