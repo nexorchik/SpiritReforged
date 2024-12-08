@@ -12,11 +12,13 @@ public class FrozenFragment : ModProjectile
 		get => (int)Projectile.ai[0];
 		set => Projectile.ai[0] = value;
 	}
+
 	private float MaxScale
 	{
 		get => Projectile.ai[1];
 		set => Projectile.ai[1] = value;
 	}
+
 	private Vector2 relativeOffset;
 
 	public override void SetStaticDefaults() =>	Main.projFrames[Type] = 3;
@@ -30,11 +32,6 @@ public class FrozenFragment : ModProjectile
 		Projectile.penetrate = -1;
 		Projectile.timeLeft = timeLeftMax;
 		Projectile.scale = 0;
-	}
-
-	public override void OnSpawn(IEntitySource source)
-	{
-
 	}
 
 	public override void AI()

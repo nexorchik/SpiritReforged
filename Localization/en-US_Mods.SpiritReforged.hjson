@@ -45,6 +45,7 @@ Projectiles: {
 	Zipline.DisplayName: Zipline
 	FrostbiteProj.DisplayName: Frostbite
 	FrozenFragment.DisplayName: Frozen Fragment
+	FrostbiteHeldOut.DisplayName: Frostbite Held Out
 }
 
 Configs: {
@@ -178,7 +179,7 @@ Buffs: {
 
 	Frozen: {
 		DisplayName: Frozen
-		Description: Mods.SpiritReforged.Buffs.Frozen.Description
+		Description: Slows enemy speed
 	}
 }
 

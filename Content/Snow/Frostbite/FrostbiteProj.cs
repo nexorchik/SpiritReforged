@@ -7,7 +7,11 @@ namespace SpiritReforged.Content.Snow.Frostbite;
 
 public class FrostbiteProj : ModProjectile
 {
-	private bool Released { get => Projectile.ai[0] == 1; set => Projectile.ai[0] = value ? 1 : 0; }
+	private bool Released 
+	{ 
+		get => Projectile.ai[0] == 1; 
+		set => Projectile.ai[0] = value ? 1 : 0; 
+	}
 
 	public override void SetDefaults()
 	{
@@ -89,10 +93,14 @@ public class FrostbiteProj : ModProjectile
 
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 	{
-		int bonusDamageRange = (int)(Projectile.Size.Length() * .15f);
+		int damageRange = (int)(Projectile.Size.Length() * .15f);
+		float distance = Projectile.Distance(target.Center);
 
-		if (Projectile.Distance(target.Center) <= bonusDamageRange) //Deal more damage toward the projectile's center
-			modifiers.FinalDamage *= 2f;
+		if (distance <= damageRange)
+		{
+			float damageMult = 2f - (distance / damageRange) * 1f;
+			modifiers.FinalDamage *= damageMult;
+		}
 
 		target.AddBuff(ModContent.BuffType<Frozen>(), 300);
 	}

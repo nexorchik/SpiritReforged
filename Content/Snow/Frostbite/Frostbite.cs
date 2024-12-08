@@ -42,8 +42,6 @@ public class FrostbiteHeldOut : ModProjectile
 {
 	public Player Owner => Main.player[Projectile.owner];
 
-	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritMod.Items.HowlingScepter.DisplayName");
-
 	public override void SetStaticDefaults() => Main.projFrames[Type] = 4;
 
 	public override void SetDefaults()
