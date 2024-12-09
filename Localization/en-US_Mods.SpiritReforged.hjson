@@ -46,6 +46,7 @@ Projectiles: {
 	FrostbiteProj.DisplayName: Frostbite
 	FrozenFragment.DisplayName: Frozen Fragment
 	FrostbiteHeldOut.DisplayName: Frostbite Held Out
+	RogueKnifeMinion.DisplayName: Rusted Knife
 }
 
 Configs: {
