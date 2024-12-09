@@ -74,228 +74,6 @@ internal class SavannaEcotone : EcotoneBase
 		tasks.Insert(pilesIndex, new PassLegacy("Grow Baobab", GrowBaobab));
 	}
 
-	private void PopulateSavanna(GenerationProgress progress, GameConfiguration configuration)
-	{
-		if (SavannaArea.IsEmpty)
-			return;
-
-		const int minimumTreeSpace = 28;
-
-		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.SavannaObjects");
-		HashSet<int> treeSpacing = [];
-		HashSet<Point16> grassTop = [];
-
-		WateringHoleGen.AddWaterAndClay();
-		GrowStones();
-
-		if (WorldGen.genRand.NextBool(3))
-			Campsite();
-
-		for (int i = SavannaArea.Left; i < SavannaArea.Right; ++i)
-			for (int j = SavannaArea.Top - 1; j < SavannaArea.Bottom; ++j)
-			{
-				OpenFlags flags = OpenTools.GetOpenings(i, j);
-				var tile = Main.tile[i, j];
-
-				if (flags == OpenFlags.None)
-					continue;
-
-				if (tile.TileType == TileID.Stone && WorldGen.genRand.NextBool()) //Place stone piles on stone
-				{
-					if (WorldGen.genRand.NextBool(3))
-						WorldGen.PlaceTile(i, j - 1, ModContent.TileType<SavannaRockLarge>(), true, style: WorldGen.genRand.Next(3));
-					else
-						WorldGen.PlaceTile(i, j - 1, ModContent.TileType<SavannaRockSmall>(), true, style: WorldGen.genRand.Next(3));
-				}
-
-				if (tile.TileType == ModContent.TileType<SavannaDirt>())
-				{
-					tile.TileType = (ushort)ModContent.TileType<SavannaGrass>(); //Grow grass on dirt
-
-					if (flags.HasFlag(OpenFlags.Above))
-						grassTop.Add(new Point16(i, j));
-				}
-			}
-
-		foreach (var p in grassTop)
-		{
-			(int i, int j) = (p.X, p.Y - 1);
-
-			GrowStuffOnGrass(i, j);
-
-			int treeDistance = Math.Abs(i - treeSpacing.OrderBy(x => Math.Abs(i - x)).FirstOrDefault());
-			if (treeDistance > minimumTreeSpace && WorldGen.genRand.NextBool(32) && GrowTree(i, j))
-				treeSpacing.Add(i);
-		}
-	}
-
-	private static void GrowStuffOnGrass(int i, int j)
-	{
-		if (WorldGen.genRand.NextBool(13)) //Elephant grass patch
-			CreatePatch(WorldGen.genRand.Next(5, 11), 0, ModContent.TileType<ElephantGrass>(), ModContent.TileType<ElephantGrassShort>());
-
-		if (WorldGen.genRand.NextBool(9)) //Foliage patch
-			CreatePatch(WorldGen.genRand.Next(6, 13), 2, ModContent.TileType<SavannaFoliage>());
-
-		if (WorldGen.genRand.NextBool(50)) //Termite mound
-		{
-			int type = WorldGen.genRand.NextFromList(ModContent.TileType<TermiteMoundSmall>(),
-				ModContent.TileType<TermiteMoundMedium>(), ModContent.TileType<TermiteMoundLarge>());
-			int style = WorldGen.genRand.Next(TileObjectData.GetTileData(type, 0).RandomStyleRange);
-
-			WorldGen.PlaceTile(i, j - 1, type, true, style: style);
-		}
-
-		void CreatePatch(int size, int chance, params int[] types)
-		{
-			for (int x = i - size / 2; x < i + size / 2; x++)
-			{
-				if (chance > 1 && !WorldGen.genRand.NextBool(chance))
-					continue;
-
-				int y = j;
-				WorldMethods.FindGround(x, ref y);
-
-				int type = types[WorldGen.genRand.Next(types.Length)];
-				int styleRange = TileObjectData.GetTileData(type, 0).RandomStyleRange;
-
-				WorldGen.PlaceTile(x, y - 1, type, true, style: WorldGen.genRand.Next(styleRange));
-			}
-		}
-	}
-
-	private static bool GrowTree(int i, int j)
-	{
-		const int shrubSpread = 12;
-		const int rootSpread = 3;
-
-		bool success = CustomTree.GrowTree<AcaciaTree>(i, j);
-		if (success) //Place shrubs and roots around trees
-		{
-			for (int x = i - rootSpread; x < i + rootSpread; x++)
-			{
-				if (!WorldGen.genRand.NextBool(3))
-					continue;
-
-				int y = SavannaArea.Top;
-				WorldMethods.FindGround(x, ref y);
-
-				if (WorldGen.genRand.NextBool(3))
-					WorldGen.PlaceTile(x, y - 1, ModContent.TileType<SavannaShrubs>(), true, style: WorldGen.genRand.Next(11));
-
-				int type = WorldGen.genRand.NextBool() ? ModContent.TileType<AcaciaRootsLarge>() : ModContent.TileType<AcaciaRootsSmall>();
-				int styleRange = TileObjectData.GetTileData(type, 0).RandomStyleRange;
-
-				WorldGen.PlaceTile(x, y - 1, type, true, style: WorldGen.genRand.Next(styleRange));
-			}
-
-			for (int x = i - shrubSpread; x < i + shrubSpread; x++)
-			{
-				int y = SavannaArea.Top;
-				WorldMethods.FindGround(x, ref y);
-
-				if (WorldGen.genRand.NextBool(3))
-					WorldGen.PlaceTile(x, y - 1, ModContent.TileType<SavannaShrubs>(), true, style: WorldGen.genRand.Next(11));
-			}
-		}
-
-		return success;
-	}
-
-	private void GrowBaobab(GenerationProgress progress, GameConfiguration configuration)
-	{
-		if (SavannaArea.IsEmpty)
-			return;
-
-		if (WateringHoleGen.Area.IsEmpty || WorldGen.genRand.NextBool(3) && SavannaArea.Width > 150)
-		{
-			if (IterateGen(50, BaobabTreeGen, out int i, out int j, "Great Baobab"))
-				BaobabGen.GenerateBaobab(i, j);
-
-			static bool BaobabTreeGen(int i, int j)
-				=> Main.tile[i, j].TileType == ModContent.TileType<SavannaGrass>() && Main.tile[i, j - 1].LiquidAmount < 50;
-		}
-	}
-
-	private static void GrowStones()
-	{
-		const int rockTries = 50;
-		int rocksMax = Math.Min(SavannaArea.Width / 120, 4);
-		int rocks = 0;
-
-		for (int a = 0; a < rockTries; a++) //rocks
-		{
-			int i = WorldGen.genRand.NextBool() ? WorldGen.genRand.Next(SavannaArea.Left, SavannaArea.Left + 60)
-				: WorldGen.genRand.Next(SavannaArea.Right - 60, SavannaArea.Right);
-			int j = SavannaArea.Top;
-
-			WorldMethods.FindGround(i, ref j);
-
-			if (Main.tile[i, j].TileType == ModContent.TileType<SavannaDirt>())
-			{
-				CreateStone(i, j, WorldGen.genRand.Next(5, 10), WorldGen.genRand.Next(3, 6));
-				if (++rocks > rocksMax)
-					break;
-			}
-		}
-
-		return;
-		static void CreateStone(int i, int j, int width, int height)
-		{
-			HashSet<int> soft = [TileID.Dirt, TileID.CorruptGrass, TileID.CrimsonGrass, ModContent.TileType<SavannaDirt>()];
-			i -= width / 2; //Automatically center
-
-			for (int x = 0; x < width; x++)
-			{
-				WorldMethods.FindGround(i + x, ref j);
-				int _height = (int)(Math.Abs(Math.Sin(x / (float)width * Math.PI)) * height) + 1;
-
-				for (int y = j; y < j + _height; y++)
-				{
-					var tile = Main.tile[i + x, y];
-					if (soft.Contains(tile.TileType))
-					{
-						tile.HasTile = true;
-						tile.TileType = TileID.Stone;
-					}
-				}
-			}
-		}
-	}
-
-	private static void Campsite()
-	{
-		IterateGen(200, CampsiteGen, out int i, out int j, "Savanna Campsite");
-
-		static bool CampsiteGen(int i, int j)
-		{
-			const int halfCampfireDistance = 8;
-
-			if (Main.tile[i, j].TileType != ModContent.TileType<SavannaDirt>() || !TileObject.CanPlace(i, j - 1, TileID.LargePiles2, 26, 0, out _, true))
-				return false;
-			//Can we place the tent here? If so, try placing the campfire nearby
-
-			int y = j;
-			for (int x = i - halfCampfireDistance; x < i + halfCampfireDistance; x++)
-			{
-				WorldMethods.FindGround(x, ref y);
-				if (Math.Abs(x - i) > 2) //Don't overlap the tent position. This assumes tile widths are 3 each
-				{
-					int campfireType = ModContent.TileType<RoastCampfire>();
-
-					WorldGen.PlaceTile(x, y - 1, campfireType, true); //Place the campfire, and if successful, place the tent in our predetermined location
-					if (Main.tile[x, y - 1].TileType == campfireType)
-					{
-						WorldGen.PlaceTile(i, j - 1, TileID.LargePiles2, true, style: 26);
-						return true; //Success!
-					}
-				}
-			}
-
-			return false;
-		}
-	}
-
 	private static WorldGenLegacyMethod BaseGeneration(List<EcotoneSurfaceMapping.EcotoneEntry> entries) => (progress, _) =>
 	{
 		//Don't generate next to the ocean
@@ -452,6 +230,222 @@ internal class SavannaEcotone : EcotoneBase
 			return y;
 		}
 	};
+
+	private void PopulateSavanna(GenerationProgress progress, GameConfiguration configuration)
+	{
+		if (SavannaArea.IsEmpty)
+			return;
+
+		const int minimumTreeSpace = 28;
+
+		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.SavannaObjects");
+		HashSet<int> treeSpacing = [];
+		HashSet<Point16> grassTop = [];
+
+		WateringHoleGen.AddWaterAndClay();
+		GrowStones();
+
+		if (WorldGen.genRand.NextBool(3))
+			Campsite();
+
+		for (int i = SavannaArea.Left; i < SavannaArea.Right; ++i)
+			for (int j = SavannaArea.Top - 1; j < SavannaArea.Bottom; ++j)
+			{
+				OpenFlags flags = OpenTools.GetOpenings(i, j);
+				var tile = Main.tile[i, j];
+
+				if (flags == OpenFlags.None)
+					continue;
+
+				if (tile.TileType == TileID.Stone && WorldGen.genRand.NextBool()) //Place stone piles on stone
+				{
+					if (WorldGen.genRand.NextBool(3))
+						WorldGen.PlaceTile(i, j - 1, ModContent.TileType<SavannaRockLarge>(), true, style: WorldGen.genRand.Next(3));
+					else
+						WorldGen.PlaceTile(i, j - 1, ModContent.TileType<SavannaRockSmall>(), true, style: WorldGen.genRand.Next(3));
+				}
+
+				if (tile.TileType == ModContent.TileType<SavannaDirt>())
+				{
+					tile.TileType = (ushort)ModContent.TileType<SavannaGrass>(); //Grow grass on dirt
+
+					if (flags.HasFlag(OpenFlags.Above))
+						grassTop.Add(new Point16(i, j));
+				}
+			}
+
+		foreach (var p in grassTop)
+		{
+			(int i, int j) = (p.X, p.Y - 1);
+
+			GrowStuffOnGrass(i, j);
+
+			int treeDistance = Math.Abs(i - treeSpacing.OrderBy(x => Math.Abs(i - x)).FirstOrDefault());
+			if (treeDistance > minimumTreeSpace && WorldGen.genRand.NextBool(32) && GrowTree(i, j))
+				treeSpacing.Add(i);
+		}
+	}
+
+	private void GrowBaobab(GenerationProgress progress, GameConfiguration configuration)
+	{
+		if (SavannaArea.IsEmpty)
+			return;
+
+		if (WateringHoleGen.Area.IsEmpty || WorldGen.genRand.NextBool(3) && SavannaArea.Width > 150)
+		{
+			if (IterateGen(50, BaobabTreeGen, out int i, out int j, "Great Baobab"))
+				BaobabGen.GenerateBaobab(i, j);
+
+			static bool BaobabTreeGen(int i, int j)
+				=> Main.tile[i, j].TileType == ModContent.TileType<SavannaGrass>() && Main.tile[i, j - 1].LiquidAmount < 50;
+		}
+	}
+
+	private static void GrowStuffOnGrass(int i, int j)
+	{
+		if (WorldGen.genRand.NextBool(13)) //Elephant grass patch
+			CreatePatch(WorldGen.genRand.Next(5, 11), 0, ModContent.TileType<ElephantGrass>(), ModContent.TileType<ElephantGrassShort>());
+
+		if (WorldGen.genRand.NextBool(9)) //Foliage patch
+			CreatePatch(WorldGen.genRand.Next(6, 13), 2, ModContent.TileType<SavannaFoliage>());
+
+		if (WorldGen.genRand.NextBool(50)) //Termite mound
+		{
+			int type = WorldGen.genRand.NextFromList(ModContent.TileType<TermiteMoundSmall>(),
+				ModContent.TileType<TermiteMoundMedium>(), ModContent.TileType<TermiteMoundLarge>());
+			int style = WorldGen.genRand.Next(TileObjectData.GetTileData(type, 0).RandomStyleRange);
+
+			WorldGen.PlaceTile(i, j - 1, type, true, style: style);
+		}
+
+		void CreatePatch(int size, int chance, params int[] types)
+		{
+			for (int x = i - size / 2; x < i + size / 2; x++)
+			{
+				if (chance > 1 && !WorldGen.genRand.NextBool(chance))
+					continue;
+
+				int y = j;
+				WorldMethods.FindGround(x, ref y);
+
+				int type = types[WorldGen.genRand.Next(types.Length)];
+				int styleRange = TileObjectData.GetTileData(type, 0).RandomStyleRange;
+
+				WorldGen.PlaceTile(x, y - 1, type, true, style: WorldGen.genRand.Next(styleRange));
+			}
+		}
+	}
+
+	private static bool GrowTree(int i, int j)
+	{
+		const int shrubSpread = 12;
+		const int rootSpread = 3;
+
+		bool success = CustomTree.GrowTree<AcaciaTree>(i, j);
+		if (success) //Place shrubs and roots around trees
+		{
+			for (int x = i - rootSpread; x < i + rootSpread; x++)
+			{
+				if (!WorldGen.genRand.NextBool(3))
+					continue;
+
+				int y = SavannaArea.Top;
+				WorldMethods.FindGround(x, ref y);
+
+				if (WorldGen.genRand.NextBool(3))
+					WorldGen.PlaceTile(x, y - 1, ModContent.TileType<SavannaShrubs>(), true, style: WorldGen.genRand.Next(11));
+
+				int type = WorldGen.genRand.NextBool() ? ModContent.TileType<AcaciaRootsLarge>() : ModContent.TileType<AcaciaRootsSmall>();
+				int styleRange = TileObjectData.GetTileData(type, 0).RandomStyleRange;
+
+				WorldGen.PlaceTile(x, y - 1, type, true, style: WorldGen.genRand.Next(styleRange));
+			}
+
+			for (int x = i - shrubSpread; x < i + shrubSpread; x++)
+			{
+				int y = SavannaArea.Top;
+				WorldMethods.FindGround(x, ref y);
+
+				if (WorldGen.genRand.NextBool(3))
+					WorldGen.PlaceTile(x, y - 1, ModContent.TileType<SavannaShrubs>(), true, style: WorldGen.genRand.Next(11));
+			}
+		}
+
+		return success;
+	}
+
+	private static void GrowStones()
+	{
+		const int spawnRegion = 80;
+
+		int rocksMax = Math.Min(SavannaArea.Width / 120, 4);
+		int rocks = 0;
+
+		IterateGen(80, RockGen, out int i, out int j);
+
+		bool RockGen(int i, int j)
+		{
+			if (i > SavannaArea.Left + spawnRegion && i < SavannaArea.Right - spawnRegion)
+				return false;
+
+			(int width, int height) = (WorldGen.genRand.Next(3, 10), WorldGen.genRand.Next(3, 6));
+			bool hasMoss = WorldGen.genRand.NextBool(3);
+			var t = Main.tile[i, j];
+
+			i -= width / 2; //Automatically center
+
+			for (int x = 0; x < width; x++) //Generate the rock
+			{
+				WorldMethods.FindGround(i + x, ref j);
+				int _height = (int)(Math.Abs(Math.Sin(x / (float)width * Math.PI)) * height) + 1;
+
+				for (int y = j; y < j + _height; y++)
+				{
+					var tile = Main.tile[i + x, y];
+					if (!tile.HasTile || tile.TileType == ModContent.TileType<SavannaDirt>())
+					{
+						tile.HasTile = true;
+						tile.TileType = (OpenTools.GetOpenings(i + x, y) == OpenFlags.None || !hasMoss) ? TileID.Stone : TileID.BrownMoss;
+					}
+				}
+			}
+
+			return ++rocks > rocksMax;
+		}
+	}
+
+	private static void Campsite()
+	{
+		IterateGen(200, CampsiteGen, out int i, out int j, "Savanna Campsite");
+
+		static bool CampsiteGen(int i, int j)
+		{
+			const int halfCampfireDistance = 8;
+
+			if (Main.tile[i, j].TileType != ModContent.TileType<SavannaDirt>() || !TileObject.CanPlace(i, j - 1, TileID.LargePiles2, 26, 0, out _, true))
+				return false;
+			//Can we place the tent here? If so, try placing the campfire nearby
+
+			int y = j;
+			for (int x = i - halfCampfireDistance; x < i + halfCampfireDistance; x++)
+			{
+				WorldMethods.FindGround(x, ref y);
+				if (Math.Abs(x - i) > 2) //Don't overlap the tent position. This assumes tile widths are 3 each
+				{
+					int campfireType = ModContent.TileType<RoastCampfire>();
+
+					WorldGen.PlaceTile(x, y - 1, campfireType, true); //Place the campfire, and if successful, place the tent in our predetermined location
+					if (Main.tile[x, y - 1].TileType == campfireType)
+					{
+						WorldGen.PlaceTile(i, j - 1, TileID.LargePiles2, true, style: 26);
+						return true; //Success!
+					}
+				}
+			}
+
+			return false;
+		}
+	}
 
 	private static float GetBaseLerpFactorForX(int startX, int endX, int xOffsetForFactor, int x)
 	{
