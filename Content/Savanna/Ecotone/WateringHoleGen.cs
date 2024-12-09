@@ -5,7 +5,7 @@ namespace SpiritReforged.Content.Savanna.Ecotone;
 
 internal static class WateringHoleGen
 {
-	private static Rectangle Area;
+	internal static Rectangle Area;
 
 	public static void GenerateWateringHole(int i, int j)
 	{
@@ -35,11 +35,12 @@ internal static class WateringHoleGen
 		return;
 	}
 
-	public static void AddWaterAndClay()
+	/// <returns> Whether the watering hole exists. </returns>
+	public static bool AddWaterAndClay()
 	{
 		var area = Area;
-		if (area == Rectangle.Empty)
-			return;
+		if (area.IsEmpty)
+			return false;
 
 		for (int x = area.Left; x < area.Right; x++)
 			for (int y = area.Top; y < area.Bottom; y++)
@@ -60,6 +61,8 @@ internal static class WateringHoleGen
 						ClaySplotch(x, y + 1);
 				}
 			}
+
+		return true;
 	}
 
 	private static Rectangle DigHole(int i, int j, int width, int depth)
