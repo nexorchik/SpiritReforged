@@ -42,6 +42,10 @@ Projectiles: {
 	SunStaffHeld.DisplayName: Sun Staff Held
 	WheatgrassSeedProjectile.DisplayName: Wheatgrass Seed Projectile
 	RoyalKhopeshHeld.DisplayName: Royal Khopesh Held
+	Zipline.DisplayName: Zipline
+	FrostbiteProj.DisplayName: Frostbite
+	FrozenFragment.DisplayName: Frozen Fragment
+	FrostbiteHeldOut.DisplayName: Frostbite Held Out
 }
 
 Configs: {
@@ -171,6 +175,11 @@ Buffs: {
 	TumblerPetBuff: {
 		DisplayName: Ambivalent Tumbler
 		Description: A friendly tumbleweed is following you
+	}
+
+	Frozen: {
+		DisplayName: Frozen
+		Description: Slows enemy speed
 	}
 }
 

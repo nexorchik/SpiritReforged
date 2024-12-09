@@ -1003,3 +1003,33 @@ SavannaCampfireItem: {
 	DisplayName: Savanna Campfire
 	Tooltip: "{$ItemTooltip.Campfire}"
 }
+
+SavannaFountainItem: {
+	DisplayName: Savanna Water Fountain
+	Tooltip: ""
+}
+
+DrywoodFenceItem: {
+	DisplayName: Drywood Fence
+	Tooltip: ""
+}
+
+DrywoodWallItem: {
+	DisplayName: Drywood Wall
+	Tooltip: ""
+}
+
+ZiplineGun: {
+	Tooltip:
+		'''
+		Use left or right click to latch each side of the rail to tiles
+		Rails carry players swiftly in either direction
+		Tethers can be removed when hovered over or replaced by firing
+		'''
+	DisplayName: Rail-gun
+}
+
+FrostbiteItem: {
+	DisplayName: Frostbite
+	Tooltip: Creates a slow-moving blizzard that follows your cursor
+}
