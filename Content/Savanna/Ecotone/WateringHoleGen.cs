@@ -81,11 +81,11 @@ internal static class WateringHoleGen
 
 				Main.tile[i + x - 1, j + y].WallType = WallID.None; //Clear walls to the left and right
 				Main.tile[i + x + 1, j + y].WallType = WallID.None;
-				Main.tile[i + x - 1, j + y + 1].WallType = WallID.None;
+				Main.tile[i + x - 1, j + y + 1].WallType = WallID.None; //Diagonals
 				Main.tile[i + x + 1, j + y + 1].WallType = WallID.None;
 			}
 
-			if (!WaterSafe(i + x, j + minDepth))
+			if (!WaterSafe(i + x, j + minDepth, true))
 				continue;
 
 			for (int y = 0; y < 5; y++) //Line the sides of the hole with sandstone
@@ -100,12 +100,12 @@ internal static class WateringHoleGen
 		return Area;
 	}
 
-	private static bool WaterSafe(int i, int j)
+	private static bool WaterSafe(int i, int j, bool checkWalls = false)
 	{
-		if (WorldGen.SolidTile(i - 1, j) || Main.tile[i - 1, j].LiquidAmount == 255)
+		if (WorldGen.SolidTile(i - 1, j) || Main.tile[i - 1, j].LiquidAmount == 255 || checkWalls && Main.tile[i - 1, j].WallType != WallID.None)
 			return true;
 
-		if (WorldGen.SolidTile(i + 1, j) || Main.tile[i + 1, j].LiquidAmount == 255)
+		if (WorldGen.SolidTile(i + 1, j) || Main.tile[i + 1, j].LiquidAmount == 255 || checkWalls && Main.tile[i + 1, j].WallType != WallID.None)
 			return true;
 
 		return false;
