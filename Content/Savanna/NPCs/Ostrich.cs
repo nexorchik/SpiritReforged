@@ -53,7 +53,8 @@ public class Ostrich : ModNPC
 		NPC.Size = new Vector2(40, 60);
 		NPC.damage = 20;
 		NPC.defense = 0;
-		NPC.lifeMax = 100;
+		NPC.value = 45f;
+		NPC.lifeMax = 62;
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = .45f;
@@ -345,5 +346,4 @@ public class OstrichImpact(Entity entity, Vector2 basePosition, Vector2 velocity
 		centeredPosition = MathHelper.Lerp(0.15f, 0.5f, easedProgress);
 		exponent = MathHelper.Lerp(2.5f, 4f, easedProgress);
 	}
-
 }

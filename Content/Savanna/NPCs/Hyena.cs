@@ -63,7 +63,8 @@ public class Hyena : ModNPC
 		NPC.Size = new Vector2(40, 40);
 		NPC.damage = 10;
 		NPC.defense = 0;
-		NPC.lifeMax = 100;
+		NPC.lifeMax = 40;
+		NPC.value = 38f;
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = .45f;
