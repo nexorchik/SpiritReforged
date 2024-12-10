@@ -25,6 +25,7 @@ public class AcaciaTree : CustomTree
 
 	public override void PostSetStaticDefaults()
 	{
+
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
 
 		AddMapEntry(new Color(120, 80, 75));
