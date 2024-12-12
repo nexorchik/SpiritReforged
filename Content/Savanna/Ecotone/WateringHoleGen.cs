@@ -7,11 +7,12 @@ internal static class WateringHoleGen
 {
 	internal static Rectangle Area;
 
+	/// <summary> Generates the watering hole at the given tile coordinates. Area data for only ONE watering hole can be stored at a time. </summary>
 	public static void GenerateWateringHole(int i, int j)
 	{
-		DigHole(i, j, WorldGen.genRand.Next(20, 26), WorldGen.genRand.Next(20, 28));
-
 		const int halfDistance = 35;
+
+		DigHole(i, j, WorldGen.genRand.Next(20, 26), WorldGen.genRand.Next(20, 28));
 		for (int a = 0; a < 5; a++) //Generate surrounding sand patches
 		{
 			int x = i + WorldGen.genRand.Next(-halfDistance, halfDistance);
@@ -35,6 +36,8 @@ internal static class WateringHoleGen
 		return;
 	}
 
+	/// <summary> Fills the previously-defined watering hole area with water and converts the upper, surrounding tiles to clay. <br/>
+	/// Should be used after genpasses that don't interfere with surface water and clay. </summary>
 	/// <returns> Whether the watering hole exists. </returns>
 	public static bool AddWaterAndClay()
 	{
@@ -43,6 +46,7 @@ internal static class WateringHoleGen
 			return false;
 
 		for (int x = area.Left; x < area.Right; x++)
+		{
 			for (int y = area.Top; y < area.Bottom; y++)
 			{
 				var tile = Main.tile[x, y];
@@ -61,6 +65,7 @@ internal static class WateringHoleGen
 						ClaySplotch(x, y + 1);
 				}
 			}
+		}
 
 		return true;
 	}
@@ -116,6 +121,7 @@ internal static class WateringHoleGen
 		i -= 1;
 
 		for (int x = i; x < i + 3; x++)
+		{
 			for (int y = j; y < j + 4; y++)
 			{
 				var t = Main.tile[x, y];
@@ -123,5 +129,6 @@ internal static class WateringHoleGen
 				if (WorldGen.SolidOrSlopedTile(t))
 					t.TileType = TileID.ClayBlock;
 			}
+		}
 	}
 }
