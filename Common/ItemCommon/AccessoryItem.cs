@@ -9,7 +9,7 @@ public abstract class AccessoryItem : ModItem
 {
 	public virtual string AccName => GetType().Name;
 
-	public sealed override void UpdateAccessory(Player player, bool hideVisual)
+	public override void UpdateAccessory(Player player, bool hideVisual)
 	{
 		player.GetModPlayer<MiscAccessoryPlayer>().accessory[AccName] = true;
 		SafeUpdateAccessory(player, hideVisual);
