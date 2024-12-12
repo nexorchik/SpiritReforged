@@ -99,7 +99,7 @@ public class PeevedTumbler : ModNPC
 			NPC.velocity.X += windPush;
 		}
 
-		if (heldItemType != ItemID.None && Main.rand.NextBool(30)) //Sparkle when carrying an item
+		if (heldItemType != ItemID.None && Main.rand.NextBool(26)) //Sparkle when carrying an item
 			Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.TreasureSparkle, Scale: Main.rand.NextFloat(.25f, 1f)).velocity = Vector2.Zero;
 	}
 

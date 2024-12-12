@@ -35,6 +35,7 @@ public static class ChestPoolUtils
 	public const int goldChests = 1;
 	public const int lockedgoldChests = 2;
 	public const int ivyChests = 10;
+	public const int snowChests = 11;
 	public const int skyChests = 13;
 	public const int livingWoodChests = 12;
 	public const int spiderChests = 15;
