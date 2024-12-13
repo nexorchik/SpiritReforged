@@ -40,9 +40,6 @@ public class RogueKnifeMinion : BaseMinion
 	{
 		Player mp = Main.player[Projectile.owner];
 
-		if (Projectile.damage == 0) //This shouldn't happen
-			Projectile.damage = (int)Main.player[Projectile.owner].GetDamage(Projectile.DamageType).ApplyTo(5);
-
 		if (mp.HasAccessory<RogueCrest>())
 			Projectile.timeLeft = 2;
 

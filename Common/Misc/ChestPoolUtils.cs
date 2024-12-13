@@ -30,7 +30,7 @@ public static class ChestPoolUtils
 	/// Input the chest's pool as a list of structs representing the item pool for each slot, stack for that pool, and chance to be added.
 	/// </summary>
 
-	//Vanilla Chest IDs
+	//Vanilla Chest IDs for TileID.Containers
 	public const int woodChests = 0;
 	public const int goldChests = 1;
 	public const int lockedgoldChests = 2;
@@ -41,6 +41,12 @@ public static class ChestPoolUtils
 	public const int spiderChests = 15;
 	public const int waterChests = 17;
 	public const int dynastyChests = 28;
+
+	/// <summary>
+	/// Vanilla Chest IDs for TileID.Containers2
+	/// To use these, override the default argument for tileType with TileID.Containers2
+	/// </summary>
+	public const int sandstoneChests = 11;
 
 	// Helper method for adding items to chests
 	private static void AddItemsToChest(IEnumerable<ChestInfo> list, Chest chest, int itemIndex)
@@ -141,24 +147,24 @@ public static class ChestPoolUtils
 		}
 	}
 
-	public static void AddToVanillaChest(List<ChestInfo> list, int chestFrame, int index = 0)
+	public static void AddToVanillaChest(List<ChestInfo> list, int chestFrame, int index = 0, ushort tileType = TileID.Containers)
 	{
 		chestFrame *= 36;
 		for (int chestIndex = 0; chestIndex < Main.chest.Length; chestIndex++)
 		{
 			Chest chest = Main.chest[chestIndex];
-			if (chest != null && Main.tile[chest.x, chest.y].TileType == TileID.Containers && Main.tile[chest.x, chest.y].TileFrameX == chestFrame)
+			if (chest != null && Main.tile[chest.x, chest.y].TileType == tileType && Main.tile[chest.x, chest.y].TileFrameX == chestFrame)
 				PlaceChestItems(list, chest, index);
 		}
 	}
 
-	public static void AddToVanillaChest(ChestInfo item, int chestFrame, int index)
+	public static void AddToVanillaChest(ChestInfo item, int chestFrame, int index, ushort tileType = TileID.Containers)
 	{
 		chestFrame *= 36;
 		for (int chestIndex = 0; chestIndex < Main.chest.Length; chestIndex++)
 		{
 			Chest chest = Main.chest[chestIndex];
-			if (chest != null && Main.tile[chest.x, chest.y].TileType == TileID.Containers && Main.tile[chest.x, chest.y].TileFrameX == chestFrame)
+			if (chest != null && Main.tile[chest.x, chest.y].TileType == tileType && Main.tile[chest.x, chest.y].TileFrameX == chestFrame)
 				PlaceChestItems(item.ToList(), chest, index);
 
 		}

@@ -182,6 +182,11 @@ Buffs: {
 		DisplayName: Frozen
 		Description: Slows enemy speed
 	}
+
+	GildedScarab_buff: {
+		DisplayName: Scarab Shield
+		Description: Defense increased by {0}
+	}
 }
 
 SetBonuses: {

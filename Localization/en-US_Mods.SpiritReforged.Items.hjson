@@ -1042,3 +1042,12 @@ RogueCrest: {
 		This sword does not take up minion slots
 		'''
 }
+
+GildedScarab: {
+	DisplayName: Gilded Scarab
+	Tooltip:
+		'''
+		Getting hit provides a temporary buff to defense
+		This shield provides more defense based on the damage taken
+		'''
+}
