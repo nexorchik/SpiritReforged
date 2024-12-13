@@ -7,6 +7,20 @@ namespace SpiritReforged.Content.Forest.RoguesCrest;
 public class RogueKnifeMinion : BaseMinion
 {
 	public RogueKnifeMinion() : base(500, 900, new Vector2(12, 12)) { }
+	private bool Trailing => Projectile.velocity.Length() >= ProjectileID.Sets.TrailCacheLength[Projectile.type] && AiState == Attacking;
+
+	private bool animate = false;
+
+	//private AnimePrimTrail trail;
+
+	private const int Returning = 0;
+	private const int Attacking = 1;
+	private const int LockedToPlayer = 2;
+
+	private readonly int attackCooldown = 30;
+
+	private ref float AiTimer => ref Projectile.ai[0];
+	private ref float AiState => ref Projectile.ai[1];
 
 	public override void AbstractSetStaticDefaults()
 	{
@@ -42,11 +56,13 @@ public class RogueKnifeMinion : BaseMinion
 		base.AI();
 
 		if (animate || Projectile.frame != 0)
+		{
 			if (++Projectile.frameCounter >= 6)
 			{
 				Projectile.frameCounter = 0;
 				Projectile.frame = ++Projectile.frame % Main.projFrames[Type];
 			}
+		}
 
 		/*
 		if (AiTimer <= attackCooldown - 5 && trail != null && !trail.Destroyed)
@@ -54,21 +70,6 @@ public class RogueKnifeMinion : BaseMinion
 
 		AiTimer = Math.Max(0, AiTimer - 1);
 	}
-
-	private bool Trailing => Projectile.velocity.Length() >= ProjectileID.Sets.TrailCacheLength[Projectile.type] && AiState == Attacking;
-	private bool animate = false;
-
-	//private AnimePrimTrail trail;
-
-	private const int Returning = 0;
-	private const int Attacking = 1;
-	private const int LockedToPlayer = 2;
-
-	private readonly int attackCooldown = 30;
-
-	private ref float AiTimer => ref Projectile.ai[0];
-	private ref float AiState => ref Projectile.ai[1];
-
 	public override void IdleMovement(Player player)
 	{
 		Vector2 desiredPos = player.Center + new Vector2(0, -60 + (float)Math.Sin(Main.GameUpdateCount / 30f) * 5);
