@@ -32,7 +32,7 @@ public class FrostbiteProj : ModProjectile
 	public override void AI()
 	{
 		Player owner = Main.player[Projectile.owner];
-		int fadeInTime = 120;
+		int fadeInTime = 60;
 		int fadeOutTime = 60;
 
 		if (Projectile.timeLeft > fadeOutTime) //One-time on spawn effects
@@ -52,7 +52,7 @@ public class FrostbiteProj : ModProjectile
 			if (owner.whoAmI == Main.myPlayer)
 			{
 				if (Main.MouseWorld != Projectile.Center)
-					Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(Main.MouseWorld) * Math.Min(Projectile.Distance(Main.MouseWorld) / 100, 5), 0.05f);
+					Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(Main.MouseWorld) * Math.Min(Projectile.Distance(Main.MouseWorld) / 100, 5), 0.15f);
 
 				Projectile.netUpdate = true;
 			}
@@ -78,7 +78,7 @@ public class FrostbiteProj : ModProjectile
 		float randomMagnitude = Main.rand.NextFloat() * .3f;
 		Vector2 dustVel = (Vector2.Normalize(dirUnit) * randomMagnitude).RotatedBy(Main.rand.NextFloat(1.0f, 2.0f));
 
-		Dust.NewDustPerfect(Projectile.Center + dirUnit, Main.rand.NextBool(2) ? DustID.ApprenticeStorm : DustID.Snow, dustVel, 180, Color.White with { A = 0 }, randomMagnitude * 6.5f).noGravity = true;
+		Dust.NewDustPerfect(Projectile.Center + dirUnit, Main.rand.NextBool(2) ? DustID.ApprenticeStorm : DustID.Snow, dustVel, 180, Color.White with { A = 0 }, randomMagnitude * 8.5f).noGravity = true;
 		if (Main.netMode != NetmodeID.Server && Main.rand.NextBool(3))
 		{
 			Vector2 spawnPos = Projectile.Center + dirUnit / 2;
