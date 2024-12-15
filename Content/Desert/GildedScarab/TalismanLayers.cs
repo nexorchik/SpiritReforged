@@ -26,6 +26,7 @@ internal abstract class ScarabLayerBase : PlayerDrawLayer
 		}
 	}
 }
+
 internal class ScarabFrontLayer : ScarabLayerBase
 {
 	public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.ProjectileOverArm);

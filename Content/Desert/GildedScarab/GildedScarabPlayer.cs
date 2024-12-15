@@ -9,6 +9,7 @@ internal class GildedScarabPlayer : ModPlayer
 	public int scarabTimer;
 	public int scarabFadeTimer;
 	private bool canActivate;
+
 	public override void UpdateEquips()
 	{
 		if (++scarabTimer >= 32)
@@ -17,6 +18,7 @@ internal class GildedScarabPlayer : ModPlayer
 		if (Player.HasBuff(ModContent.BuffType<GildedScarab_buff>()))
 			scarabFadeTimer++;
 	}
+
 	public override void ModifyHurt(ref Player.HurtModifiers modifiers)
 	{
 		if (modifiers.DamageSource.SourceOtherIndex == 3 || modifiers.DamageSource.SourceOtherIndex == 2)
@@ -24,6 +26,7 @@ internal class GildedScarabPlayer : ModPlayer
 		else
 			canActivate = true;
 	}
+
 	public override void OnHurt(Player.HurtInfo info)
 	{
 		if (Player.HasAccessory<GildedScarab>() && canActivate)

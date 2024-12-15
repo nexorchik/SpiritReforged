@@ -4,9 +4,8 @@ using Terraria.Audio;
 
 namespace SpiritReforged.Content.Forest.RoguesCrest;
 
-public class RogueKnifeMinion : BaseMinion
+public class RogueKnifeMinion() : BaseMinion(500, 900, new(12, 12))
 {
-	public RogueKnifeMinion() : base(500, 900, new Vector2(12, 12)) { }
 	private bool Trailing => Projectile.velocity.Length() >= ProjectileID.Sets.TrailCacheLength[Projectile.type] && AiState == Attacking;
 
 	private bool animate = false;
@@ -67,6 +66,7 @@ public class RogueKnifeMinion : BaseMinion
 
 		AiTimer = Math.Max(0, AiTimer - 1);
 	}
+
 	public override void IdleMovement(Player player)
 	{
 		Vector2 desiredPos = player.Center + new Vector2(0, -60 + (float)Math.Sin(Main.GameUpdateCount / 30f) * 5);
@@ -126,7 +126,7 @@ public class RogueKnifeMinion : BaseMinion
 		}
 	}
 
-	public override bool DoAutoFrameUpdate(ref int framespersecond, ref int startframe, ref int endframe) => false;
+	public override bool DoAutoFrameUpdate(ref int framesPerSecond, ref int startFrame, ref int endFrame) => false;
 
 	public override bool PreDraw(ref Color lightColor)
 	{

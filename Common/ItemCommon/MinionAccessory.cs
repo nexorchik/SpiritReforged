@@ -11,10 +11,10 @@ public abstract class MinionAccessory : AccessoryItem
 {
 	public abstract MinionAccessoryData Data { get; }
 
-	public override void UpdateAccessory(Player player, bool hideVisual)
+	public override void SetStaticDefaults()
 	{
-		player.GetModPlayer<MinionAccessoryPlayer>().MinionDataByItemId.Add(Type, Data);
+		MinionAccessoryPlayer.MinionDataByItemId.Add(Type, Data);
 
-		base.UpdateAccessory(player, hideVisual);
+		base.SetStaticDefaults();
 	}
 }
