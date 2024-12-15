@@ -15,7 +15,6 @@ public class Sparrow : ModNPC
 		AIType = NPCID.Bird;
 		AnimationType = NPCID.Bird;
 		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
-
 	}
 
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
