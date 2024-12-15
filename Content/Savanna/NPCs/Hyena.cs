@@ -291,7 +291,7 @@ public class Hyena : ModNPC
 			for (int i = 1; i < 4; i++)
 				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity * Main.rand.NextFloat(.3f), Mod.Find<ModGore>("Hyena" + i).Type);
 
-		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/Hyena_Hit") with { Volume = .75f, Pitch = -.25f, PitchVariance = .6f, MaxInstances = 0 }, NPC.Center);
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Hyena_Death") with { Volume = .75f, Pitch = -.25f, PitchVariance = .6f, MaxInstances = 0 }, NPC.Center);
 
 		if (dead)
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Hyena_Death") with { Volume = .75f, MaxInstances = 0 }, NPC.Center);
