@@ -4,7 +4,7 @@ using Terraria.Audio;
 
 namespace SpiritReforged.Content.Forest.RoguesCrest;
 
-public class RogueKnifeMinion() : BaseMinion(500, 900, new(12, 12))
+public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 {
 	private bool Trailing => Projectile.velocity.Length() >= ProjectileID.Sets.TrailCacheLength[Projectile.type] && AiState == Attacking;
 
