@@ -14,9 +14,11 @@ public class Sparrow : ModNPC
 		NPC.CloneDefaults(NPCID.Bird);
 		AIType = NPCID.Bird;
 		AnimationType = NPCID.Bird;
+		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
+
 	}
 
-	//public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Savanna");
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
