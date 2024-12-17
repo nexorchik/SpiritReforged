@@ -1,4 +1,5 @@
 using SpiritReforged.Content.Savanna.Biome;
+using SpiritReforged.Content.Vanilla.Items.Food;
 using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -168,4 +169,5 @@ public class PeevedTumbler : ModNPC
 
 		return 0;
 	}
+	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon(ItemID.Nachos, 33);
 }
