@@ -1056,3 +1056,8 @@ SparrowItem: {
 	DisplayName: Sparrow
 	Tooltip: ""
 }
+
+Blunderbuss: {
+	DisplayName: Blunderbuss
+	Tooltip: Fires a wide spread of bullets
+}
