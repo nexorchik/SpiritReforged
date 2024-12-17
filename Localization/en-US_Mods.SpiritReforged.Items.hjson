@@ -1038,3 +1038,8 @@ SparrowItem: {
 	DisplayName: Sparrow
 	Tooltip: ""
 }
+
+Blunderbuss: {
+	DisplayName: Blunderbuss
+	Tooltip: ""
+}
