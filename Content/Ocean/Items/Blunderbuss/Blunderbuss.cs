@@ -8,7 +8,7 @@ public class Blunderbuss : ModItem
 	public override void SetDefaults()
     {
         Item.width = Item.height = 12;
-        Item.damage = 7;
+        Item.damage = 5;
         Item.knockBack = 3.5f;
         Item.useAnimation = Item.useTime = 80;
 		Item.UseSound = new SoundStyle("SpiritReforged/Assets/SFX/Item/Cannon_1") with { PitchVariance = .35f };

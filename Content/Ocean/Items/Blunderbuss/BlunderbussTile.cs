@@ -1,4 +1,5 @@
 using SpiritReforged.Common.TileCommon;
+using System.Linq;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean.Items.Blunderbuss;
@@ -23,6 +24,14 @@ public class BlunderbussTile : ModTile
 		RegisterItemDrop(ModContent.ItemType<Blunderbuss>());
 
 		DustType = -1; //No dust
+	}
+
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		var drops = base.GetItemDrops(i, j);
+		drops = drops.Concat([new Item(ItemID.MusketBall, 30)]); //Guarantee an additional 30 musket balls
+
+		return drops;
 	}
 
 	public override void PostTileFrame(int i, int j, int up, int down, int left, int right, int upLeft, int upRight, int downLeft, int downRight)
