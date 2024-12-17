@@ -183,7 +183,7 @@ Buffs: {
 		Description: Slows enemy speed
 	}
 
-	GildedScarab_buff: {
+	GildedScarabBuff: {
 		DisplayName: Scarab Shield
 		Description: Defense increased by {0}
 	}

@@ -5,7 +5,9 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SpiritReforged.Common.PlayerCommon;
 
-/// <summary> automatically spawns all minion accessory type projectiles in one place!
+/// <summary> 
+/// Uses the dictionary MinionDataByItemID to spawn all equipped minion accessories onto the player in one place.
+/// </summary>
 public class MinionAccessoryPlayer : ModPlayer
 {
 	public static Dictionary<int, MinionAccessoryData> MinionDataByItemId = new();

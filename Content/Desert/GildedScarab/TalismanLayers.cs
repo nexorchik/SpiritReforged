@@ -4,6 +4,14 @@ namespace SpiritReforged.Content.Desert.GildedScarab;
 
 internal abstract class ScarabLayerBase : PlayerDrawLayer
 {
+	private static Asset<Texture2D> gildedScarabTexture;
+
+	public override void Load()
+	{
+		if (!Main.dedServ)
+			gildedScarabTexture = ModContent.Request<Texture2D>("SpiritReforged/Content/Desert/GildedScarab/GildedScarab_player");
+	}
+
 	protected abstract bool DrawConditions(ref PlayerDrawSet drawInfo);
 
 	protected override void Draw(ref PlayerDrawSet drawInfo)
@@ -12,18 +20,14 @@ internal abstract class ScarabLayerBase : PlayerDrawLayer
 			return;
 
 		Player drawPlayer = drawInfo.drawPlayer;
+		Texture2D texture = gildedScarabTexture.Value;
+		var size = new Vector2(68, 54);
+		Vector2 origin = size / 2;
+		Vector2 drawPos = drawPlayer.Center;
+		Point tileLocation = Main.LocalPlayer.Center.ToTileCoordinates();
 
-		if (drawPlayer.HasBuff(ModContent.BuffType<GildedScarab_buff>()) && (drawPlayer.GetModPlayer<GildedScarabPlayer>().scarabTimer <= 12 || drawPlayer.GetModPlayer<GildedScarabPlayer>().scarabTimer >= 24))
-		{
-			Texture2D texture = ModContent.Request<Texture2D>("SpiritReforged/Content/Desert/GildedScarab/GildedScarab_player").Value;
-			var size = new Vector2(68, 54);
-			Vector2 origin = size / 2;
-			Vector2 drawPos = drawPlayer.Center;
-			Point tileLocation = Main.LocalPlayer.Center.ToTileCoordinates();
-
-			var drawData = new DrawData(texture, drawPos - Main.screenPosition, new Rectangle(0, 56 * (drawPlayer.GetModPlayer<GildedScarabPlayer>().scarabTimer / 4), 68, 54), Lighting.GetColor(tileLocation), 0, origin, 1, SpriteEffects.None, 0);
-			drawInfo.DrawDataCache.Add(drawData);
-		}
+		var drawData = new DrawData(texture, drawPos - Main.screenPosition, new Rectangle(0, 56 * (drawPlayer.GetModPlayer<GildedScarabPlayer>().scarabTimer / 4), 68, 54), Lighting.GetColor(tileLocation), 0, origin, 1, SpriteEffects.None, 0);
+		drawInfo.DrawDataCache.Add(drawData);
 	}
 }
 
@@ -34,16 +38,17 @@ internal class ScarabFrontLayer : ScarabLayerBase
 	protected override bool DrawConditions(ref PlayerDrawSet drawInfo)
 	{
 		Player drawPlayer = drawInfo.drawPlayer;
-		return drawPlayer.HasBuff(ModContent.BuffType<GildedScarab_buff>()) && (drawPlayer.GetModPlayer<GildedScarabPlayer>().scarabTimer <= 12 || drawPlayer.GetModPlayer<GildedScarabPlayer>().scarabTimer >= 24);
+		return drawPlayer.HasBuff(ModContent.BuffType<GildedScarabBuff>()) && (drawPlayer.GetModPlayer<GildedScarabPlayer>().scarabTimer <= 12 || drawPlayer.GetModPlayer<GildedScarabPlayer>().scarabTimer >= 24);
 	}
 }
 
 internal class ScarabBackLayer : ScarabLayerBase
 {
 	public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.ForbiddenSetRing);
+
 	protected override bool DrawConditions(ref PlayerDrawSet drawInfo)
 	{
 		Player drawPlayer = drawInfo.drawPlayer;
-		return drawPlayer.HasBuff(ModContent.BuffType<GildedScarab_buff>()) && drawPlayer.GetModPlayer<GildedScarabPlayer>().scarabTimer >= 13 && drawPlayer.GetModPlayer<GildedScarabPlayer>().scarabTimer <= 23;
+		return drawPlayer.HasBuff(ModContent.BuffType<GildedScarabBuff>()) && (drawPlayer.GetModPlayer<GildedScarabPlayer>().scarabTimer >= 13 && drawPlayer.GetModPlayer<GildedScarabPlayer>().scarabTimer <= 23);
 	}
 }

@@ -12,15 +12,17 @@ internal class GildedScarabPlayer : ModPlayer
 
 	public override void UpdateEquips()
 	{
+
 		if (++scarabTimer >= 32)
 			scarabTimer = 0;
 
-		if (Player.HasBuff(ModContent.BuffType<GildedScarab_buff>()))
+		if (Player.HasBuff(ModContent.BuffType<GildedScarabBuff>()))
 			scarabFadeTimer++;
 	}
 
 	public override void ModifyHurt(ref Player.HurtModifiers modifiers)
 	{
+		// lava and spike damage
 		if (modifiers.DamageSource.SourceOtherIndex == 3 || modifiers.DamageSource.SourceOtherIndex == 2)
 			canActivate = false;
 		else
@@ -32,9 +34,9 @@ internal class GildedScarabPlayer : ModPlayer
 		if (Player.HasAccessory<GildedScarab>() && canActivate)
 		{
 			scarabFadeTimer = 0;
-			if (Player.HasBuff(ModContent.BuffType<GildedScarab_buff>()))
+			if (Player.HasBuff(ModContent.BuffType<GildedScarabBuff>()))
 			{
-				Player.ClearBuff(ModContent.BuffType<GildedScarab_buff>());
+				Player.ClearBuff(ModContent.BuffType<GildedScarabBuff>());
 				scarabDefense = scarabDefense + (int)(info.Damage / 8f) >= 50 || scarabDefense >= 50 ? 50 : scarabDefense + (int)(info.Damage / 8f);
 			}
 			else
@@ -43,7 +45,7 @@ internal class GildedScarabPlayer : ModPlayer
 				scarabDefense = info.Damage >= 400 ? 50 : 5 + (int)(info.Damage / 8f);
 			}
 
-			Player.AddBuff(ModContent.BuffType<GildedScarab_buff>(), 300);
+			Player.AddBuff(ModContent.BuffType<GildedScarabBuff>(), 300);
 		}
 	}
 }
