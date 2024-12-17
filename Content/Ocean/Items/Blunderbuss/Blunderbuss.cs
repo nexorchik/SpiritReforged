@@ -11,7 +11,7 @@ public class Blunderbuss : ModItem
         Item.damage = 7;
         Item.knockBack = 3.5f;
         Item.useAnimation = Item.useTime = 80;
-		Item.UseSound = SoundID.Item36 with { Pitch = -.5f };
+		Item.UseSound = new SoundStyle("SpiritReforged/Assets/SFX/Item/Cannon_1") with { PitchVariance = .35f };
         Item.noMelee = true;
         Item.noUseGraphic = true;
         Item.autoReuse = true;
@@ -31,7 +31,7 @@ public class Blunderbuss : ModItem
         var unit = Vector2.Normalize(velocity);
 		float fxDistance = 30;
 
-		SoundEngine.PlaySound(SoundID.Item101 with { Volume = .75f, PitchVariance = .2f, Pitch = 1f }, position);
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/Cannon_2") with { Volume = .75f, Pitch = .5f }, position);
 
 		for (int i = 0; i < 10; i++)
             Dust.NewDustPerfect(position + unit * fxDistance + Main.rand.NextVector2Unit() * Main.rand.NextFloat(12f), 
@@ -57,7 +57,7 @@ public class Blunderbuss : ModItem
 				shot.netUpdate = true; //Sync all changes made after NewProjectileDirect was called
 
 				for (int d = 0; d < 3; d++)
-					Dust.NewDustPerfect(position + unit * fxDistance, DustID.Torch, shot.velocity * Main.rand.NextFloat(.5f, 1.5f), 0, default).noGravity = true;
+					Dust.NewDustPerfect(position + unit * fxDistance, DustID.Torch, shot.velocity * Main.rand.NextFloat(.5f, 1.5f)).noGravity = true;
 			}
 		}
 
@@ -102,8 +102,10 @@ public class BlunderbussProj : ModProjectile
 			_ => Player.CompositeArmStretchAmount.None
 		};
 
-		if (Projectile.timeLeft == 20)
-			SoundEngine.PlaySound(SoundID.Unlock with { Pitch = -.2f }, Projectile.Center);
+		if (Projectile.timeLeft == 45)
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/ClickClack") with { Volume = .25f, Pitch = -.5f }, Projectile.Center);
+		else if (Projectile.timeLeft == 20)
+			SoundEngine.PlaySound(SoundID.Unlock with { Volume = .5f, Pitch = -.2f }, Projectile.Center);
 
 		if (Projectile.timeLeft < 50)
 		{

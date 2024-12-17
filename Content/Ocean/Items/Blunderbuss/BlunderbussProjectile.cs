@@ -1,12 +1,16 @@
-﻿namespace SpiritReforged.Content.Ocean.Items.Blunderbuss;
+﻿using System.Linq;
+
+namespace SpiritReforged.Content.Ocean.Items.Blunderbuss;
 
 internal class BlunderbussProjectile : GlobalProjectile
 {
+	private static readonly Dictionary<Texture2D, Color> colorCache = [];
+
 	public const int timeLeftMax = 25;
 	public bool firedFromBlunderbuss;
 
 	public override bool InstancePerEntity => true;
-	public override bool AppliesToEntity(Projectile entity, bool lateInstantiation) => !entity.arrow;
+	public override bool AppliesToEntity(Projectile entity, bool lateInstantiation) => lateInstantiation && !entity.arrow;
 
 	public override bool PreDraw(Projectile projectile, ref Color lightColor)
 	{
@@ -15,6 +19,7 @@ internal class BlunderbussProjectile : GlobalProjectile
 		if (!firedFromBlunderbuss)
 			return true;
 
+		var defaultTexture = TextureAssets.Projectile[projectile.type].Value;
 		float time = MathHelper.Min((float)projectile.timeLeft / timeLeftMax, 1f);
 
 		for (int i = 0; i < trailLength; i++)
@@ -22,8 +27,7 @@ internal class BlunderbussProjectile : GlobalProjectile
 			var texture = TextureAssets.Projectile[873].Value;
 
 			float lerp = 1f - i / (float)(trailLength - 1);
-			var color = (Color.Lerp(Color.Red, Color.Goldenrod, lerp) with { A = 0 }) * lerp;
-
+			var color = (Color.Lerp(GetBrightestColor(defaultTexture).MultiplyRGBA(Color.Black * .5f), GetBrightestColor(defaultTexture), lerp) with { A = 0 }) * lerp;
 			var position = projectile.Center - Main.screenPosition - projectile.velocity * i * (1f - time);
 			var scale = new Vector2(time, 1f) * projectile.scale;
 
@@ -46,5 +50,17 @@ internal class BlunderbussProjectile : GlobalProjectile
 			return true;
 
 		return timeLeft > 0; //prevent on-kill effects (such as SoundID.Dig) when visibly faded out
+	}
+
+	private static Color GetBrightestColor(Texture2D texture)
+	{
+		if (colorCache.TryGetValue(texture, out Color value))
+			return value;
+
+		var data = new Color[texture.Width * texture.Height];
+		texture.GetData(data);
+		var brightest = data.OrderBy(x => x.ToVector3().Length()).FirstOrDefault();
+
+		return (brightest == default) ? Color.Goldenrod : brightest;
 	}
 }
