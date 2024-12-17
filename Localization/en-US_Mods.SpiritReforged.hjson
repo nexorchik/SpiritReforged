@@ -46,6 +46,7 @@ Projectiles: {
 	FrostbiteProj.DisplayName: Frostbite
 	FrozenFragment.DisplayName: Frozen Fragment
 	FrostbiteHeldOut.DisplayName: Frostbite Held Out
+	RogueKnifeMinion.DisplayName: Rusted Knife
 }
 
 Configs: {
@@ -180,6 +181,11 @@ Buffs: {
 	Frozen: {
 		DisplayName: Frozen
 		Description: Slows enemy speed
+	}
+
+	GildedScarabBuff: {
+		DisplayName: Scarab Shield
+		Description: Defense increased by {0}
 	}
 }
 

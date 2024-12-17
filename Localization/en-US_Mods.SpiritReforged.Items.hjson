@@ -1034,6 +1034,24 @@ FrostbiteItem: {
 	Tooltip: Creates a slow-moving blizzard that follows your cursor
 }
 
+RogueCrest: {
+	DisplayName: Rogue's Crest
+	Tooltip:
+		'''
+		Summons a rusted sword to fight for you
+		This sword does not take up minion slots
+		'''
+}
+
+GildedScarab: {
+	DisplayName: Gilded Scarab
+	Tooltip:
+		'''
+		Getting hit provides a temporary buff to defense
+		This shield provides more defense based on the damage taken
+		'''
+}
+
 SparrowItem: {
 	DisplayName: Sparrow
 	Tooltip: ""
