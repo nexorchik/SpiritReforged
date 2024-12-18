@@ -7,7 +7,7 @@ namespace SpiritReforged.Common.WorldGeneration.Micropasses;
 
 internal class ScarecrowMicropass : Micropass
 {
-	public override string WorldGenName => "Scarecrow";
+	public override string WorldGenName => "Scarecrow (Discovery)";
 
 	public override int GetWorldGenIndexInsert(List<GenPass> passes, ref bool afterIndex)
 	{
