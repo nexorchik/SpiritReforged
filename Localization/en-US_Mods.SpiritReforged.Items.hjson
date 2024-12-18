@@ -1061,3 +1061,5 @@ Blunderbuss: {
 	DisplayName: Blunderbuss
 	Tooltip: Fires a wide spread of bullets
 }
+
+PeevedTumblerBannerItem.DisplayName: Peeved Tumbler Banner

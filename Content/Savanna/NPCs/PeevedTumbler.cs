@@ -8,6 +8,7 @@ using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Savanna.NPCs;
 
+[AutoloadBanner]
 public class PeevedTumbler : ModNPC
 {
 	public ref float Counter => ref NPC.ai[0];
