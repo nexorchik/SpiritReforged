@@ -2,6 +2,9 @@ using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
 using System.Linq;
+using SpiritReforged.Content.Particles;
+using Terraria.Audio;
+using Terraria;
 
 namespace SpiritReforged.Content.Forest.Safekeeper;
 
@@ -20,7 +23,7 @@ public class SafekeeperRing : AccessoryItem
 	{
 		base.UpdateAccessory(player, hideVisual);
 
-		var nearby = Main.npc.Where(x => x.active && UndeadNPC.undeadTypes.Contains(x.type)).OrderBy(x => x.Distance(player.Center)).FirstOrDefault();
+		var nearby = Main.npc.Where(x => x.active && UndeadNPC.IsUndeadType(x.type)).OrderBy(x => x.Distance(player.Center)).FirstOrDefault();
 
 		if (nearby != default)
 		{
@@ -34,7 +37,7 @@ public class SafekeeperRing : AccessoryItem
 				var position = Main.rand.NextVector2FromRectangle(player.getRect());
 				var newCol = Color.Lerp(Color.Gold, Color.Orange, Main.rand.NextFloat());
 
-				ParticleHandler.SpawnParticle(new Particles.GlowParticle(position, Vector2.UnitY * -Main.rand.NextFloat(.5f, 1f), newCol, Main.rand.NextFloat(.2f, .4f), 60, 20));
+				ParticleHandler.SpawnParticle(new GlowParticle(position, Vector2.UnitY * -Main.rand.NextFloat(.5f, 1f), newCol, Main.rand.NextFloat(.2f, .4f), 60, 20));
 			}
 		}
 	}
@@ -44,7 +47,26 @@ public class UndeadModPlayer : ModPlayer
 {
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 	{
-		if (Player.HasAccessory<SafekeeperRing>() && UndeadNPC.undeadTypes.Contains(target.type))
+		if (Player.HasAccessory<SafekeeperRing>() && UndeadNPC.IsUndeadType(target.type))
 			modifiers.FinalDamage *= 1.25f;
+	}
+
+	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+	{
+		const int particleTime = 24;
+
+		if (!Main.dedServ && Player.HasAccessory<SafekeeperRing>() && UndeadNPC.IsUndeadType(target.type) && target.life < MathHelper.Min(100, target.lifeMax * .25f))
+		{
+			var start = Main.rand.NextVector2FromRectangle(target.getRect());
+			var end = Main.rand.NextVector2FromRectangle(target.getRect());
+
+			ParticleHandler.SpawnParticle(new GlowParticle(start, Vector2.Zero, Color.White, Color.DarkGoldenrod, .5f, particleTime));
+			ParticleHandler.SpawnParticle(new GlowParticle(end, Vector2.Zero, Color.White, Color.DarkGoldenrod, .5f, particleTime));
+
+			ParticleHandler.SpawnParticle(new LightningParticle(start, end, Color.Yellow, particleTime, 10f));
+
+			//SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricZap") with { Pitch = .5f, PitchVariance = .5f }, target.Center);
+			SoundEngine.PlaySound(SoundID.DD2_LightningBugZap with { Pitch = .5f }, target.Center);
+		}
 	}
 }
