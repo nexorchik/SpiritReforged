@@ -1061,3 +1061,12 @@ Blunderbuss: {
 	DisplayName: Blunderbuss
 	Tooltip: Fires a wide spread of bullets
 }
+
+SafekeeperRing: {
+	DisplayName: Safekeeper's Ring
+	Tooltip:
+		'''
+		Slightly increases damage dealt against undead
+		'It gives off an eerie light'
+		'''
+}
