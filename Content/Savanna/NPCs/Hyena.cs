@@ -17,7 +17,7 @@ public class Hyena : ModNPC
 	private bool NearlyDead => NPC.life < NPC.lifeMax / 4;
 
 	private int drownTime;
-
+	private bool angryBark = false;
 	private enum State : byte
 	{
 		TrotEnd,
@@ -168,6 +168,12 @@ public class Hyena : ModNPC
 
 		if (IsAngry) //Accounts for states TrottingAngry and BarkingAngry
 		{
+			if (!angryBark)
+			{
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Bark") with { Volume = .18f, PitchVariance = .4f, MaxInstances = 0 }, NPC.Center);
+				angryBark = true;
+			}
+
 			TryJump();
 
 			const float runSpeed = 5.5f;
@@ -176,9 +182,6 @@ public class Hyena : ModNPC
 
 			if (AIState == (int)State.BarkingAngry)
 			{
-				if(Main.rand.NextBool(50))
-					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Bark") with { Volume = .18f, PitchVariance = .4f, MaxInstances = 0 }, NPC.Center);
-
 				if (OnTransitionFrame)
 					ChangeState(State.TrottingAngry, false);
 			}
@@ -291,10 +294,10 @@ public class Hyena : ModNPC
 			for (int i = 1; i < 4; i++)
 				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity * Main.rand.NextFloat(.3f), Mod.Find<ModGore>("Hyena" + i).Type);
 
-		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/Hyena_Hit") with { Volume = .75f, Pitch = -.25f, PitchVariance = .6f, MaxInstances = 0 }, NPC.Center);
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/Hyena_Hit") with { Volume = .75f, Pitch = -.05f, PitchVariance = .4f, MaxInstances = 0 }, NPC.Center);
 
 		if (dead)
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Hyena_Death") with { Volume = .75f, MaxInstances = 0 }, NPC.Center);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Hyena_Death") with { Volume = .75f, Pitch = .2f, MaxInstances = 0 }, NPC.Center);
 
 		TryAggro();
 		const int detectDistance = 16 * 25;
