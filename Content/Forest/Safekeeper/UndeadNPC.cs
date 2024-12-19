@@ -28,43 +28,33 @@ public class UndeadNPC : GlobalNPC
 	private const float decayRate = .025f;
 	private float decayTime = 1;
 
-	private static bool ShouldTrackGore(NPC self) => self.life <= 0 && self.TryGetGlobalNPC(out UndeadNPC _) && Main.player[self.lastInteraction].HasAccessory<SafekeeperRing>();
+	private static bool ShouldTrackGore(NPC self, int dmg = 0) => self.life - dmg <= 0 && self.TryGetGlobalNPC(out UndeadNPC _) && Main.player[self.lastInteraction].HasAccessory<SafekeeperRing>();
 
 	public override bool InstancePerEntity => true;
-	public override bool AppliesToEntity(NPC entity, bool lateInstantiation) => undeadTypes.Contains(entity.type);
+	public override bool AppliesToEntity(NPC entity, bool lateInstantiation) => IsUndeadType(entity.type);
 
 	public override void Load()
 	{
-		On_NPC.VanillaHitEffect += TrackGore_Vanilla;
-		On_NPC.HitEffect_HitInfo += TrackGore_HitInfo;
-		On_Gore.NewGore_Vector2_Vector2_int_float += StopGore;
+		On_NPC.HitEffect_HitInfo += TrackGore;
+		On_Gore.NewGore_IEntitySource_Vector2_Vector2_int_float += StopGore;
 		On_Main.DrawNPCs += DrawNPCsinQueue;
 	}
 
-	private static void TrackGore_Vanilla(On_NPC.orig_VanillaHitEffect orig, NPC self, int hitDirection, double dmg, bool instantKill)
+	private static void TrackGore(On_NPC.orig_HitEffect_HitInfo orig, NPC self, NPC.HitInfo hit)
 	{
-		trackingGore = ShouldTrackGore(self);
-
-		orig(self, hitDirection, dmg, instantKill);
-
-		trackingGore = false;
-	}
-
-	private static void TrackGore_HitInfo(On_NPC.orig_HitEffect_HitInfo orig, NPC self, NPC.HitInfo hit)
-	{
-		trackingGore = ShouldTrackGore(self);
+		trackingGore = ShouldTrackGore(self, hit.Damage);
 
 		orig(self, hit);
 
 		trackingGore = false;
 	}
 
-	private static int StopGore(On_Gore.orig_NewGore_Vector2_Vector2_int_float orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
+	private static int StopGore(On_Gore.orig_NewGore_IEntitySource_Vector2_Vector2_int_float orig, Terraria.DataStructures.IEntitySource source, Vector2 Position, Vector2 Velocity, int Type, float Scale)
 	{
 		if (trackingGore)
 			return 0; //Skips orig
 
-		return orig(Position, Velocity, Type, Scale);
+		return orig(source, Position, Velocity, Type, Scale);
 	}
 
 	private static void DrawNPCsinQueue(On_Main.orig_DrawNPCs orig, Main self, bool behindTiles)

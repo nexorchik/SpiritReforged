@@ -27,16 +27,30 @@ public class SafekeeperRing : AccessoryItem
 		if (nearby != default)
 		{
 			float mult = MathHelper.Clamp(1f - nearby.Distance(player.Center) / 1200f, 0, 1);
-			var color = Color.Yellow.ToVector3() * .34f * mult;
+			var color = Color.LightGoldenrodYellow.ToVector3() * .34f * mult;
 
 			Lighting.AddLight(player.Center, color.X, color.Y, color.Z);
 
-			if (!hideVisual && mult > .75f && Main.rand.NextBool(30))
+			if (!hideVisual && mult > .8f)
 			{
-				var position = Main.rand.NextVector2FromRectangle(player.getRect());
-				var newCol = Color.Lerp(Color.Gold, Color.Orange, Main.rand.NextFloat());
+				if (Main.rand.NextBool(30))
+				{
+					var position = Main.rand.NextVector2FromRectangle(player.getRect());
+					var newCol = Color.Lerp(Color.Gold, Color.Orange, Main.rand.NextFloat());
 
-				ParticleHandler.SpawnParticle(new GlowParticle(position, Vector2.UnitY * -Main.rand.NextFloat(.5f, 1f), newCol, Main.rand.NextFloat(.2f, .4f), 60, 20));
+					ParticleHandler.SpawnParticle(new GlowParticle(position, Vector2.UnitY * -Main.rand.NextFloat(.5f, 1f), newCol, Main.rand.NextFloat(.2f, .4f), 60, 20));
+				}
+
+				if (Main.rand.NextBool(12))
+				{
+					var rect = player.getRect();
+					rect.Inflate(50, 50);
+
+					var position = Main.rand.NextVector2FromRectangle(rect);
+					var newCol = Color.Lerp(Color.Gold, Color.Orange, Main.rand.NextFloat());
+
+					ParticleHandler.SpawnParticle(new GlowParticle(position, Vector2.UnitY * -Main.rand.NextFloat(.5f), newCol, Main.rand.NextFloat(.1f, .2f), 80, 5));
+				}
 			}
 		}
 	}
@@ -56,13 +70,18 @@ public class UndeadModPlayer : ModPlayer
 
 		if (!Main.dedServ && Player.HasAccessory<SafekeeperRing>() && UndeadNPC.IsUndeadType(target.type) && target.life < MathHelper.Min(100, target.lifeMax * .25f))
 		{
-			var start = Main.rand.NextVector2FromRectangle(target.getRect());
-			var end = Main.rand.NextVector2FromRectangle(target.getRect());
+			var points = new Vector2[Main.rand.Next(2, 4)];
 
-			ParticleHandler.SpawnParticle(new GlowParticle(start, Vector2.Zero, Color.White, Color.DarkGoldenrod, .5f, particleTime));
-			ParticleHandler.SpawnParticle(new GlowParticle(end, Vector2.Zero, Color.White, Color.DarkGoldenrod, .5f, particleTime));
+			for (int i = 0; i < points.Length; i++)
+				points[i] = Main.rand.NextVector2FromRectangle(target.getRect());
 
-			ParticleHandler.SpawnParticle(new LightningParticle(start, end, Color.Yellow, particleTime, 10f));
+			for (int i = 0; i < points.Length; i++)
+			{
+				ParticleHandler.SpawnParticle(new GlowParticle(points[i], Vector2.Zero, Color.White, Color.DarkGoldenrod, .5f, particleTime));
+
+				if (i < points.Length - 1)
+					ParticleHandler.SpawnParticle(new LightningParticle(points[i], points[i + 1], Color.Yellow, particleTime, 10f));
+			}
 
 			SoundEngine.PlaySound(SoundID.DD2_LightningBugZap with { Pitch = .5f }, target.Center);
 		}
