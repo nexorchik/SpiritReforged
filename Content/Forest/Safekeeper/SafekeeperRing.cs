@@ -4,7 +4,6 @@ using SpiritReforged.Common.PlayerCommon;
 using System.Linq;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
-using Terraria;
 
 namespace SpiritReforged.Content.Forest.Safekeeper;
 
@@ -65,7 +64,6 @@ public class UndeadModPlayer : ModPlayer
 
 			ParticleHandler.SpawnParticle(new LightningParticle(start, end, Color.Yellow, particleTime, 10f));
 
-			//SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricZap") with { Pitch = .5f, PitchVariance = .5f }, target.Center);
 			SoundEngine.PlaySound(SoundID.DD2_LightningBugZap with { Pitch = .5f }, target.Center);
 		}
 	}
