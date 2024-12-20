@@ -122,7 +122,7 @@ public class BlunderbussProj : ModProjectile
 			}
 		}
 
-		Projectile.Center = owner.Center + Projectile.velocity * holdDistance;
+		Projectile.Center = owner.MountedCenter + Projectile.velocity * holdDistance;
         Projectile.spriteDirection = Projectile.direction = (Projectile.velocity.X > 0) ? 1 : -1;
         Projectile.rotation = Projectile.velocity.ToRotation() + (float)(Math.Sin(GetFeedback() * 4f) * .25f) * -owner.direction;
 
