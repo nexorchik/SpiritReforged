@@ -10,6 +10,7 @@ internal class DiscoveryHandler : ILoadable
 
 	public void Load(Mod mod) => On_WorldGen.GenerateWorld_RunTasksAndFinish += SelectDiscoveries;
 
+	//Ensure Discoveries are selected before ModifyWorldGenTasks is called so that passes using this data are inserted correctly
 	private static void SelectDiscoveries(On_WorldGen.orig_GenerateWorld_RunTasksAndFinish orig, int seed, Stopwatch generationStopwatch, GenerationProgress customProgressObject)
 	{
 		const int numDiscoveries = 2; //Per world

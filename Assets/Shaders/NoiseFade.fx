@@ -25,11 +25,8 @@ float4 MainPS(VertexShaderInput input) : COLOR0
     float4 noiseColor = tex2D(noise, float2((input.TextureCoordinates.x * size.x + offset.x) % 1, (input.TextureCoordinates.y * size.y + offset.y) % 1));
     float4 noiseStrength = noiseColor.r;
     noiseStrength = pow(noiseStrength, power);
-    
-    if (noiseStrength.r > 0 || texColor.r == 0)
-        return float4(0, 0, 0, 0);
 
-    return input.Color * (1 - noiseStrength);
+    return input.Color * texColor.a * (1 - noiseStrength.r * 255);
 }
 
 technique BasicColorDrawing

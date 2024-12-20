@@ -1,7 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
-using System.Linq;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 
@@ -22,36 +21,42 @@ public class SafekeeperRing : AccessoryItem
 	{
 		base.UpdateAccessory(player, hideVisual);
 
-		var nearby = Main.npc.Where(x => x.active && UndeadNPC.IsUndeadType(x.type)).OrderBy(x => x.Distance(player.Center)).FirstOrDefault();
-
-		if (nearby != default)
+		float mult = 0;
+		foreach (var npc in Main.ActiveNPCs)
 		{
-			float mult = MathHelper.Clamp(1f - nearby.Distance(player.Center) / 1200f, 0, 1);
-			var color = Color.LightGoldenrodYellow.ToVector3() * .34f * mult;
+			if (UndeadNPC.IsUndeadType(npc.type))
+				mult = MathHelper.Max(mult, 1f - npc.Distance(player.Center) / 1200f);
+		}
 
-			Lighting.AddLight(player.Center, color.X, color.Y, color.Z);
+		if (mult > 0)
+			EmitLight(player, mult, hideVisual);
+	}
 
-			if (!hideVisual && mult > .8f)
-			{
-				if (Main.rand.NextBool(30))
-				{
-					var position = Main.rand.NextVector2FromRectangle(player.getRect());
-					var newCol = Color.Lerp(Color.Gold, Color.Orange, Main.rand.NextFloat());
+	private static void EmitLight(Player player, float strength, bool hideVisual)
+	{
+		var color = Color.LightGoldenrodYellow.ToVector3() * .34f * strength;
+		Lighting.AddLight(player.Center, color.X, color.Y, color.Z);
 
-					ParticleHandler.SpawnParticle(new GlowParticle(position, Vector2.UnitY * -Main.rand.NextFloat(.5f, 1f), newCol, Main.rand.NextFloat(.2f, .4f), 60, 20));
-				}
+		if (hideVisual || strength <= .8f)
+			return;
 
-				if (Main.rand.NextBool(12))
-				{
-					var rect = player.getRect();
-					rect.Inflate(50, 50);
+		if (Main.rand.NextBool(30))
+		{
+			var position = Main.rand.NextVector2FromRectangle(player.getRect());
+			var newCol = Color.Lerp(Color.Gold, Color.Orange, Main.rand.NextFloat());
 
-					var position = Main.rand.NextVector2FromRectangle(rect);
-					var newCol = Color.Lerp(Color.Gold, Color.Orange, Main.rand.NextFloat());
+			ParticleHandler.SpawnParticle(new GlowParticle(position, Vector2.UnitY * -Main.rand.NextFloat(.5f, 1f), newCol, Main.rand.NextFloat(.2f, .4f), 60, 20));
+		}
 
-					ParticleHandler.SpawnParticle(new GlowParticle(position, Vector2.UnitY * -Main.rand.NextFloat(.5f), newCol, Main.rand.NextFloat(.1f, .2f), 80, 5));
-				}
-			}
+		if (Main.rand.NextBool(12))
+		{
+			var rect = player.getRect();
+			rect.Inflate(50, 50);
+
+			var position = Main.rand.NextVector2FromRectangle(rect);
+			var newCol = Color.Lerp(Color.Gold, Color.Orange, Main.rand.NextFloat());
+
+			ParticleHandler.SpawnParticle(new GlowParticle(position, Vector2.UnitY * -Main.rand.NextFloat(.5f), newCol, Main.rand.NextFloat(.1f, .2f), 80, 5));
 		}
 	}
 }

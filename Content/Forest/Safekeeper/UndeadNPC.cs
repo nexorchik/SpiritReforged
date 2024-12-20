@@ -20,13 +20,22 @@ public class UndeadNPC : GlobalNPC
 		NPCID.AngryBonesBigHelmet, NPCID.AngryBonesBigMuscle, NPCID.UndeadMiner, NPCID.UndeadViking, NPCID.BoneSerpentBody, NPCID.BoneSerpentHead, NPCID.BoneSerpentTail, 
 		NPCID.DemonEye, NPCID.DemonEyeOwl, NPCID.DemonEyeSpaceship, NPCID.ServantofCthulhu, NPCID.EyeofCthulhu, NPCID.SkeletronHand, NPCID.SkeletronHead];
 
-	internal static bool IsUndeadType(int type) => undeadTypes.Contains(type) || NPCID.Sets.Zombies[type] || NPCID.Sets.Skeletons[type] || NPCID.Sets.DemonEyes[type];
+	internal static bool IsUndeadType(int type) => undeadTypes.Contains(type) || customUndeadTypes.Contains(type) || NPCID.Sets.Zombies[type] || NPCID.Sets.Skeletons[type] || NPCID.Sets.DemonEyes[type];
 
 	private static readonly HashSet<NPC> toDraw = [];
 	private static bool trackingGore;
 
 	private const float decayRate = .025f;
 	private float decayTime = 1;
+
+	private static readonly HashSet<int> customUndeadTypes = [];
+	internal static bool AddCustomUndead(params object[] args)
+	{
+		if (args.Length == 2 && args[1] is int customType) //Context, undead type
+			return customUndeadTypes.Add(customType);
+
+		return false;
+	}
 
 	private static bool ShouldTrackGore(NPC self, int dmg = 0) => self.life - dmg <= 0 && self.TryGetGlobalNPC(out UndeadNPC _) && Main.player[self.lastInteraction].HasAccessory<SafekeeperRing>();
 
@@ -37,7 +46,7 @@ public class UndeadNPC : GlobalNPC
 	{
 		On_NPC.HitEffect_HitInfo += TrackGore;
 		On_Gore.NewGore_IEntitySource_Vector2_Vector2_int_float += StopGore;
-		On_Main.DrawNPCs += DrawNPCsinQueue;
+		On_Main.DrawNPCs += DrawNPCsInQueue;
 	}
 
 	private static void TrackGore(On_NPC.orig_HitEffect_HitInfo orig, NPC self, NPC.HitInfo hit)
@@ -51,13 +60,15 @@ public class UndeadNPC : GlobalNPC
 
 	private static int StopGore(On_Gore.orig_NewGore_IEntitySource_Vector2_Vector2_int_float orig, Terraria.DataStructures.IEntitySource source, Vector2 Position, Vector2 Velocity, int Type, float Scale)
 	{
-		if (trackingGore)
-			return 0; //Skips orig
+		int result = orig(source, Position, Velocity, Type, Scale);
 
-		return orig(source, Position, Velocity, Type, Scale);
+		if (trackingGore)
+			Main.gore[result].active = false; //Instantly deactivate the spawned gore
+
+		return result;
 	}
 
-	private static void DrawNPCsinQueue(On_Main.orig_DrawNPCs orig, Main self, bool behindTiles)
+	private static void DrawNPCsInQueue(On_Main.orig_DrawNPCs orig, Main self, bool behindTiles)
 	{
 		const float spotScale = .5f;
 
@@ -67,7 +78,7 @@ public class UndeadNPC : GlobalNPC
 			return; //Nothing to draw; don't restart the spritebatch
 
 		Main.spriteBatch.End();
-		Main.spriteBatch.Begin(SpriteSortMode.Immediate, default, null, null, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+		Main.spriteBatch.Begin(SpriteSortMode.Immediate, default, SamplerState.PointClamp, null, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
 
 		var effect = AssetLoader.LoadedShaders["NoiseFade"];
 
@@ -81,7 +92,7 @@ public class UndeadNPC : GlobalNPC
 			if (npc.TryGetGlobalNPC(out UndeadNPC gNPC))
 				decayTime = gNPC.decayTime;
 
-			effect.Parameters["power"].SetValue(decayTime * 500f);
+			effect.Parameters["power"].SetValue(decayTime * 50f);
 			effect.Parameters["size"].SetValue(new Vector2(1, Main.npcFrameCount[npc.type]) * spotScale);
 			effect.Parameters["noiseTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"]);
 			effect.CurrentTechnique.Passes[0].Apply();
