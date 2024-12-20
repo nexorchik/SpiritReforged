@@ -1063,3 +1063,18 @@ Blunderbuss: {
 }
 
 PeevedTumblerBannerItem.DisplayName: Peeved Tumbler Banner
+
+LeatherHood: {
+	DisplayName: Leather Hood
+	Tooltip: ""
+}
+
+LeatherLegs: {
+	DisplayName: Leather Legs
+	Tooltip: ""
+}
+
+LeatherPlate: {
+	DisplayName: Leather Plate
+	Tooltip: ""
+}

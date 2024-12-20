@@ -12,7 +12,6 @@ internal class GildedScarabPlayer : ModPlayer
 
 	public override void UpdateEquips()
 	{
-
 		if (++scarabTimer >= 32)
 			scarabTimer = 0;
 
