@@ -32,9 +32,6 @@ public class PoolNoodleProj : BaseWhipProj
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
-		for (int i = 0; i < 3; i++)
-			ParticleHandler.SpawnParticle(new BubbleParticle(target.Center, Main.rand.NextVec2CircularEven(2, 2), Main.rand.NextFloat(0.1f, 0.2f), 40));
-
 		base.OnHitNPC(target, hit, damageDone);
 		target.AddBuff(ModContent.BuffType<SummonTag3>(), 360);
 		target.AddBuff(ModContent.BuffType<PoolNoodleBubbleBuff>(), 600);

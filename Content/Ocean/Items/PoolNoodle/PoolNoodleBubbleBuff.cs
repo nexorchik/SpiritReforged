@@ -17,7 +17,7 @@ public class PoolNoodleBubbleBuff : ModBuff
 	{
 		npc.GetGlobalNPC<PoolNoodleGNPC>().bubbled = true;
 
-		if (Main.rand.NextBool(40))
+		if (Main.rand.NextBool(35))
 			ParticleHandler.SpawnParticle(new BubbleParticle(npc.Center, new Vector2(0, Main.rand.NextFloat(-1.5f, 0.5f)), Main.rand.NextFloat(0.05f, 0.1f), 40));
 	}
 }
