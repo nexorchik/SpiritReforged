@@ -28,7 +28,7 @@ public class PoolNoodleGNPC : GlobalNPC
 			for (int i = 0; i < Main.maxNPCs; ++i)
 			{
 				NPC n = Main.npc[i];
-				if (n.active && n.CanBeChasedBy() && n.DistanceSQ(projectile.Center) < radius * radius)
+				if (n.CanBeChasedBy() && n.DistanceSQ(projectile.Center) < radius * radius)
 					n.SimpleStrikeNPC((int)(damageDone * 1.5f), p.Center.X < n.Center.X ? -1 : 1, false, 4f);
 			}
 		}

@@ -190,7 +190,7 @@ Buffs: {
 
 	PoolNoodleBubbleBuff: {
 		DisplayName: Pool Noodle Bubble Buff
-		Description: Mods.SpiritReforged.Buffs.PoolNoodleBubbleBuff.Description
+		Description: You've found the secret Spirit Lore Codex... Stay tuned for our superboss Darksteel, the Fallen Star!
 	}
 }
 
