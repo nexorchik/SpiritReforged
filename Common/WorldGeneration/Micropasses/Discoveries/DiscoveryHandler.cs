@@ -13,8 +13,8 @@ internal class DiscoveryHandler : ILoadable
 	//Ensure Discoveries are selected before ModifyWorldGenTasks is called so that passes using this data are inserted correctly
 	private static void SelectDiscoveries(On_WorldGen.orig_GenerateWorld_RunTasksAndFinish orig, int seed, Stopwatch generationStopwatch, GenerationProgress customProgressObject)
 	{
-		const int numDiscoveries = 2; //Per world
 		var discoveries = ModContent.GetContent<Discovery>().ToArray();
+		int numDiscoveries = Math.Min(Main.maxTilesX / 2100, discoveries.Length); //Per world
 
 		for (int a = 0; a < numDiscoveries; a++)
 			if (!valid.Add(discoveries[WorldGen.genRand.Next(discoveries.Length)]))

@@ -20,8 +20,6 @@ public class UndeadNPC : GlobalNPC
 		NPCID.AngryBonesBigHelmet, NPCID.AngryBonesBigMuscle, NPCID.UndeadMiner, NPCID.UndeadViking, NPCID.BoneSerpentBody, NPCID.BoneSerpentHead, NPCID.BoneSerpentTail, 
 		NPCID.DemonEye, NPCID.DemonEyeOwl, NPCID.DemonEyeSpaceship, NPCID.ServantofCthulhu, NPCID.EyeofCthulhu, NPCID.SkeletronHand, NPCID.SkeletronHead];
 
-	internal static bool IsUndeadType(int type) => undeadTypes.Contains(type) || customUndeadTypes.Contains(type) || NPCID.Sets.Zombies[type] || NPCID.Sets.Skeletons[type] || NPCID.Sets.DemonEyes[type];
-
 	private static readonly HashSet<NPC> toDraw = [];
 	private static bool trackingGore;
 
@@ -36,6 +34,8 @@ public class UndeadNPC : GlobalNPC
 
 		return false;
 	}
+
+	internal static bool IsUndeadType(int type) => undeadTypes.Contains(type) || customUndeadTypes.Contains(type) || NPCID.Sets.Zombies[type] || NPCID.Sets.Skeletons[type] || NPCID.Sets.DemonEyes[type];
 
 	private static bool ShouldTrackGore(NPC self, int dmg = 0) => self.life - dmg <= 0 && self.TryGetGlobalNPC(out UndeadNPC _) && Main.player[self.lastInteraction].HasAccessory<SafekeeperRing>();
 
