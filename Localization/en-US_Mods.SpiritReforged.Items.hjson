@@ -1063,3 +1063,12 @@ Blunderbuss: {
 }
 
 PeevedTumblerBannerItem.DisplayName: Peeved Tumbler Banner
+
+PearlString: {
+	DisplayName: Pearl String
+	Tooltip:
+		'''
+		Slain enemies drop more coins
+		'You feel lucky'
+		'''
+}
