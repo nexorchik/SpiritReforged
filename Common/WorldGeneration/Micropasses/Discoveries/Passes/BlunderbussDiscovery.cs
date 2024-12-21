@@ -2,13 +2,13 @@
 using Terraria.IO;
 using Terraria.WorldBuilding;
 
-namespace SpiritReforged.Common.WorldGeneration.Micropasses;
+namespace SpiritReforged.Common.WorldGeneration.Micropasses.Discoveries.Passes;
 
-internal class BlunderbussMicropass : Micropass
+internal class BlunderbussDiscovery : Discovery
 {
-	public override string WorldGenName => "Blunderbuss (Discovery)";
+	public override string WorldGenName => "Buried Blunderbuss";
 
-	public override int GetWorldGenIndexInsert(List<GenPass> passes, ref bool afterIndex)
+	public override int GetWorldGenIndexInsert(List<GenPass> passes, List<Discovery> discoveries, ref bool afterIndex)
 	{
 		afterIndex = true;
 		return passes.FindIndex(genpass => genpass.Name.Equals("Pots"));
