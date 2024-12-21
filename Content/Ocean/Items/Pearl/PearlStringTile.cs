@@ -63,7 +63,7 @@ public class PearlStringTile : ModTile
 		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(0, 14);
 
 		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-		spriteBatch.Draw(glowTexture.Value, position, source, Lighting.GetColor(i, j) * 3, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+		spriteBatch.Draw(glowTexture.Value, position, source, Lighting.GetColor(i, j) * 2, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
 		var rect = new Rectangle(i * 16, j * 16 + 14, 16, 16);
 		if (!Main.gamePaused && Main.rand.NextBool(50) && Main.LocalPlayer.Distance(rect.Center()) < 100) //Nearby dust effects
