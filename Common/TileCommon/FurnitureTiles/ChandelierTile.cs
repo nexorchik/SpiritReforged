@@ -5,6 +5,7 @@ using Terraria.DataStructures;
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
 [AutoloadGlowmask("255,165,0", false)]
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid)]
 public abstract class ChandelierTile : FurnitureTile, ISwayInWind
 {
 	public override void StaticDefaults()

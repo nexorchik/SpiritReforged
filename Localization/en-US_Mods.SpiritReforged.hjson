@@ -114,7 +114,7 @@ Buffs: {
 	}
 
 	JellyfishBuff: {
-		DisplayName: Jellyfish Buff
+		DisplayName: Friendly Jellyfish
 		Description: This energetic jellyfish loves following you around!
 	}
 
