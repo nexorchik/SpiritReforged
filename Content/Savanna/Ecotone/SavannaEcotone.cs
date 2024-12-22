@@ -236,7 +236,8 @@ internal class SavannaEcotone : EcotoneBase
 		if (SavannaArea.IsEmpty)
 			return;
 
-		const int minimumTreeSpace = 28;
+		const int chanceMax = 64, chanceMin = 20; //Maximum, minimum odds to generate a tree
+		const int minimumTreeSpace = 5;
 
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.SavannaObjects");
 		HashSet<int> treeSpacing = [];
@@ -244,9 +245,6 @@ internal class SavannaEcotone : EcotoneBase
 
 		WateringHoleGen.AddWaterAndClay();
 		GrowStones();
-
-		if (WorldGen.genRand.NextBool(3))
-			Campsite();
 
 		for (int i = SavannaArea.Left; i < SavannaArea.Right; ++i)
 			for (int j = SavannaArea.Top - 1; j < SavannaArea.Bottom; ++j)
@@ -274,6 +272,10 @@ internal class SavannaEcotone : EcotoneBase
 				}
 			}
 
+		if (WorldGen.genRand.NextBool(3))
+			Campsite();
+
+		int treeOdds = chanceMax;
 		foreach (var p in grassTop)
 		{
 			(int i, int j) = (p.X, p.Y - 1);
@@ -281,8 +283,18 @@ internal class SavannaEcotone : EcotoneBase
 			GrowStuffOnGrass(i, j);
 
 			int treeDistance = Math.Abs(i - treeSpacing.OrderBy(x => Math.Abs(i - x)).FirstOrDefault());
-			if (treeDistance > minimumTreeSpace && WorldGen.genRand.NextBool(32) && GrowTree(i, j))
-				treeSpacing.Add(i);
+			if (treeDistance > minimumTreeSpace)
+			{
+				if (WorldGen.genRand.NextBool(treeOdds) && GrowTree(i, j))
+				{
+					treeSpacing.Add(i);
+					treeOdds = chanceMax;
+				}
+				else
+				{
+					treeOdds = Math.Max(treeOdds - 1, chanceMin); //Decrease the odds every time a tree fails to generate
+				}
+			}
 		}
 	}
 
@@ -338,7 +350,7 @@ internal class SavannaEcotone : EcotoneBase
 
 	private static bool GrowTree(int i, int j)
 	{
-		const int shrubSpread = 12;
+		const int shrubSpread = 16;
 		const int rootSpread = 3;
 
 		bool success = CustomTree.GrowTree<AcaciaTree>(i, j);
@@ -366,7 +378,7 @@ internal class SavannaEcotone : EcotoneBase
 				int y = SavannaArea.Top;
 				WorldMethods.FindGround(x, ref y);
 
-				if (WorldGen.genRand.NextBool(3))
+				if (WorldGen.genRand.NextBool(4))
 					WorldGen.PlaceTile(x, y - 1, ModContent.TileType<SavannaShrubs>(), true, style: WorldGen.genRand.Next(11));
 			}
 		}
@@ -422,7 +434,7 @@ internal class SavannaEcotone : EcotoneBase
 		{
 			const int halfCampfireDistance = 8;
 
-			if (Main.tile[i, j].TileType != ModContent.TileType<SavannaDirt>() || !TileObject.CanPlace(i, j - 1, TileID.LargePiles2, 26, 0, out _, true))
+			if (Main.tile[i, j].TileType != ModContent.TileType<SavannaGrass>() || !TileObject.CanPlace(i, j - 1, TileID.LargePiles2, 26, 0, out _, true))
 				return false;
 			//Can we place the tent here? If so, try placing the campfire nearby
 

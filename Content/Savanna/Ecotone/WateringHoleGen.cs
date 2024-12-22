@@ -55,7 +55,7 @@ internal static class WateringHoleGen
 				{
 					int holeDepth = y - area.Top;
 
-					if (holeDepth > 1)
+					if (holeDepth > 2)
 					{
 						tile.LiquidAmount = 255;
 						tile.LiquidType = LiquidID.Water;
@@ -80,6 +80,17 @@ internal static class WateringHoleGen
 			int minDepth = (int)(Math.Abs(Math.Sin(x / (float)width * Math.PI)) * depth);
 			WorldMethods.FindGround(i + x, ref j);
 
+			if (WaterSafe(i + x, j + minDepth, true))
+			{
+				for (int y = 0; y < 5; y++) //Line the sides of the hole with sandstone
+				{
+					var t = Main.tile[i + x, j + y + minDepth];
+
+					t.TileType = TileID.Sandstone;
+					t.HasTile = true;
+				}
+			}
+
 			for (int y = 0; y < minDepth; y++)
 			{
 				Main.tile[i + x, j + y].ClearEverything();
@@ -88,17 +99,6 @@ internal static class WateringHoleGen
 				Main.tile[i + x + 1, j + y].WallType = WallID.None;
 				Main.tile[i + x - 1, j + y + 1].WallType = WallID.None; //Diagonals
 				Main.tile[i + x + 1, j + y + 1].WallType = WallID.None;
-			}
-
-			if (!WaterSafe(i + x, j + minDepth, true))
-				continue;
-
-			for (int y = 0; y < 5; y++) //Line the sides of the hole with sandstone
-			{
-				var t = Main.tile[i + x, j + y + minDepth];
-
-				t.TileType = TileID.Sandstone;
-				t.HasTile = true;
 			}
 		}
 
