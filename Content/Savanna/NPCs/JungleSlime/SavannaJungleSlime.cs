@@ -11,13 +11,9 @@ public class SavannaJungleSlime : ModNPC
 
 	public override void SetDefaults()
 	{
-		// I'm not cloning JungleSLime defaults because the color the Jungle Slime draws looks ugly. Doing it manually.
-		NPC.width = NPC.height = 30;
-		NPC.lifeMax = 60;
-		NPC.damage = 18;
-		NPC.defense = 6;
-		NPC.knockBackResist = 1f;
-		NPC.aiStyle = 1;
+		NPC.CloneDefaults(NPCID.SandSlime);
+		NPC.color = Color.White * .8f;
+
 		AIType = NPCID.JungleSlime;
 		AnimationType = NPCID.BlueSlime;
 		Banner = Item.NPCtoBanner(NPCID.JungleSlime);
