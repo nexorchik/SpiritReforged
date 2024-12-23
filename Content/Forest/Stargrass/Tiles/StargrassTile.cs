@@ -75,6 +75,18 @@ internal class StargrassTile : ModTile
 		return true;
 	}
 
+	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
+	{
+		//Surrounded by solid tiles
+		if (WorldGen.SolidOrSlopedTile(i, j - 1) && WorldGen.SolidOrSlopedTile(i, j + 1) && WorldGen.SolidOrSlopedTile(i - 1, j) && WorldGen.SolidOrSlopedTile(i + 1, j))
+		{
+			Main.tile[i, j].TileType = TileID.Grass;
+			return false;
+		}
+
+		return true;
+	}
+
 	public override void RandomUpdate(int i, int j)
 	{
 		if (!Framing.GetTileSafely(i, j - 1).HasTile && Main.rand.NextBool(4))
