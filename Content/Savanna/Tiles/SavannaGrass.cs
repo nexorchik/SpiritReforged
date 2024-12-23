@@ -19,7 +19,6 @@ public class SavannaGrass : ModTile
 		TileID.Sets.Grass[Type] = true;
 		TileID.Sets.NeedsGrassFramingDirt[Type] = DirtType;
 		TileID.Sets.CanBeDugByShovel[Type] = true;
-		TileID.Sets.CanBeClearedDuringGeneration[Type] = false;
 
 		AddMapEntry(new Color(104, 156, 70));
 	}
@@ -42,6 +41,20 @@ public class SavannaGrass : ModTile
 		{
 			fail = true;
 			Framing.GetTileSafely(i, j).TileType = (ushort)DirtType;
+		}
+	}
+
+	public override void FloorVisuals(Player player)
+	{
+		if (player.flowerBoots) //Flower Boots functionality
+		{
+			var pos = ((player.Bottom - new Vector2(0, 8 * player.gravDir)) / 16).ToPoint16();
+
+			if (!Main.tile[pos.X, pos.Y].HasTile)
+			{
+				WorldGen.PlaceTile(pos.X, pos.Y, ModContent.TileType<SavannaFoliage>(), true, style: Main.rand.Next(5));
+				NetMessage.SendTileSquare(-1, pos.X, pos.Y);
+			}
 		}
 	}
 }
