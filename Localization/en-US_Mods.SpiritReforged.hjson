@@ -192,6 +192,11 @@ Buffs: {
 		DisplayName: Pool Noodle Bubble Buff
 		Description: You've found the secret Spirit Lore Codex... Stay tuned for our superboss Darksteel, the Fallen Star!
 	}
+
+	ExplorerSpeed: {
+		DisplayName: Explorer Speed
+		Description: Your speed is greatly improved
+	}
 }
 
 SetBonuses: {
