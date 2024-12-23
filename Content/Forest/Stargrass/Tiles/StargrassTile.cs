@@ -3,6 +3,7 @@ using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Particles;
+using System.Linq;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
 
@@ -33,6 +34,9 @@ internal class StargrassTile : ModTile
 
 		AddMapEntry(new Color(28, 216, 151));
 		DustType = DustID.Flare_Blue;
+
+		var data = TileObjectData.GetTileData(TileID.Sunflower, 0);
+		data.AnchorValidTiles = data.AnchorValidTiles.Concat([Type]).ToArray(); //Allow sunflowers to be planted on this tile
 	}
 
 	public override void FloorVisuals(Player player)

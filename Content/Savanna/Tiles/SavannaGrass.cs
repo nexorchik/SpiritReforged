@@ -1,4 +1,5 @@
 using SpiritReforged.Common.TileCommon;
+using System.Linq;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
@@ -21,6 +22,9 @@ public class SavannaGrass : ModTile
 		TileID.Sets.CanBeDugByShovel[Type] = true;
 
 		AddMapEntry(new Color(104, 156, 70));
+
+		var data = TileObjectData.GetTileData(TileID.Sunflower, 0);
+		data.AnchorValidTiles = data.AnchorValidTiles.Concat([Type]).ToArray(); //Allow sunflowers to be planted on this tile
 	}
 
 	public override bool CanExplode(int i, int j)
