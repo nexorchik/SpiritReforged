@@ -5,6 +5,11 @@ namespace SpiritReforged.Content.Savanna.Tiles;
 
 public class SavannaDirt : ModTile, IAutoloadTileItem, ICheckItemUse
 {
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+			.AddIngredient(ItemID.SandBlock)
+			.AddIngredient(ItemID.MudBlock)
+			.Register();
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = true;
