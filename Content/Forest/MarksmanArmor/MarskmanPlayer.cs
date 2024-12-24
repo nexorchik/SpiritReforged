@@ -4,14 +4,13 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using Terraria;
 using Terraria.Audio;
-using Terraria.WorldBuilding;
 
-namespace SpiritReforged.Content.Forest.LeatherArmor;
+namespace SpiritReforged.Content.Forest.MarksmanArmor;
 
 internal class MarksmanPlayer : ModPlayer
 {
 	public bool active = false;
-	public bool concentrated;
+	public bool Concentrated => concentratedCooldown <= 0;
 	public int concentratedCooldown = 360;
 
 	public override void ResetEffects() => active = false;
@@ -35,14 +34,10 @@ internal class MarksmanPlayer : ModPlayer
 		}
 		else
 		{
-			concentrated = false;
 			concentratedCooldown = 420;
 		}
 
-		if (concentratedCooldown <= 0)
-			concentrated = true;
-
-		if (concentrated)
+		if (Concentrated)
 		{
 			if (Main.rand.NextBool(12))
 			{
@@ -59,26 +54,18 @@ internal class MarksmanPlayer : ModPlayer
 	{
 		if (active)
 		{
-			if (concentrated)
+			if (Concentrated)
 			{
 				SoundEngine.PlaySound(SoundID.DD2_LightningAuraZap with { PitchVariance = .5f }, Player.Center);
 				SoundEngine.PlaySound(SoundID.Item98 with { Volume = .5f }, Player.Center);
 			}
 
 			concentratedCooldown = 360;
-			concentrated = false;
 		}
 	}
-
-	public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
+	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) 
 	{
-		if (concentrated)
-			ConcentratedCrit(target, ref modifiers);
-	}
-
-	public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)
-	{ 
-		if (concentrated)
+		if (Concentrated)
 			ConcentratedCrit(target, ref modifiers);
 	}
 
@@ -97,7 +84,6 @@ internal class MarksmanPlayer : ModPlayer
 
 		modifiers.FinalDamage *= 1.2f;
 		modifiers.SetCrit();
-		concentrated = false;
 		concentratedCooldown = 300;
 	}
 }

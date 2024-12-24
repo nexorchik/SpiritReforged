@@ -1,7 +1,6 @@
-using SpiritReforged.Content.Forest.Botanist.Items;
 using Terraria.Graphics.Shaders;
 
-namespace SpiritReforged.Content.Forest.LeatherArmor;
+namespace SpiritReforged.Content.Forest.MarksmanArmor;
 
 [AutoloadEquip(EquipType.Head)]
 public class LeatherHood : ModItem
@@ -22,16 +21,16 @@ public class LeatherHood : ModItem
 
 	public override void UpdateArmorSet(Player player)
 	{
-		player.setBonus = Language.GetTextValue("Mods.SpiritReforged.SetBonuses.Leather");
+		player.setBonus = Language.GetTextValue("Mods.SpiritReforged.SetBonuses.Marksman");
 		player.GetModPlayer<MarksmanPlayer>().active = true;
 
-		if (player.GetModPlayer<MarksmanPlayer>().concentrated)
+		if (player.GetModPlayer<MarksmanPlayer>().Concentrated)
 			Yoraiz0rEye(player);
 	}
 
 	public override void ArmorSetShadows(Player player)
 	{
-		if (player.GetModPlayer<MarksmanPlayer>().concentrated)
+		if (player.GetModPlayer<MarksmanPlayer>().Concentrated)
 			player.armorEffectDrawOutlinesForbidden = true;
 	}
 

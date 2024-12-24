@@ -1,4 +1,4 @@
-namespace SpiritReforged.Content.Forest.LeatherArmor;
+namespace SpiritReforged.Content.Forest.MarksmanArmor;
 
 [AutoloadEquip(EquipType.Legs)]
 public class LeatherLegs : ModItem
