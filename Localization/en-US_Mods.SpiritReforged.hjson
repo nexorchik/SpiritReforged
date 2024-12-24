@@ -217,6 +217,12 @@ SetBonuses: {
 		You gain increased rewards from herbs of all kinds
 		You have a powerful eye for spotting herbs
 		'''
+	Marksman:
+		'''
+		Wearing Marksman's Armor builds up concentration
+		While concentrated, your next strike is a critical strike and deals more damage
+		Concentration is disrupted when hurt, but charges faster while standing still
+		'''
 }
 
 Biomes: {

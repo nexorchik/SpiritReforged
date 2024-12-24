@@ -1073,9 +1073,24 @@ SafekeeperRing: {
 
 PeevedTumblerBannerItem.DisplayName: Peeved Tumbler Banner
 
+LeatherHood: {
+	DisplayName: Marksman's Hood
+	Tooltip: Increases critical strike chance by 5%
+}
+
+LeatherLegs: {
+	DisplayName: Marksman's Boots
+	Tooltip: ""
+}
+
+LeatherPlate: {
+	DisplayName: Marksman's Plate
+	Tooltip: ""
+}
+
 ExplorerTreads: {
 	DisplayName: Explorer's Treads
-	Tooltip: 
+	Tooltip:
 		'''
 		+5% Movement speed for every 10% missing health
 		50% chance to avoid traps and hazards
