@@ -114,7 +114,7 @@ Buffs: {
 	}
 
 	JellyfishBuff: {
-		DisplayName: Jellyfish Buff
+		DisplayName: Friendly Jellyfish
 		Description: This energetic jellyfish loves following you around!
 	}
 
@@ -191,6 +191,11 @@ Buffs: {
 	PoolNoodleBubbleBuff: {
 		DisplayName: Pool Noodle Bubble Buff
 		Description: You've found the secret Spirit Lore Codex... Stay tuned for our superboss Darksteel, the Fallen Star!
+	}
+
+	ExplorerSpeed: {
+		DisplayName: Explorer Speed
+		Description: Your speed is greatly improved
 	}
 }
 

@@ -1,6 +1,4 @@
 ﻿using SpiritReforged.Common.PlayerCommon;
-using Terraria;
-using Terraria.ModLoader;
 
 namespace SpiritReforged.Common.ItemCommon;
 
@@ -15,7 +13,5 @@ public abstract class AccessoryItem : ModItem
 		SafeUpdateAccessory(player, hideVisual);
 	}
 
-	public virtual void SafeUpdateAccessory(Player player, bool hideVisual)
-	{
-	}
+	public virtual void SafeUpdateAccessory(Player player, bool hideVisual) { }
 }

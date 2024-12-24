@@ -1062,6 +1062,15 @@ Blunderbuss: {
 	Tooltip: Fires a wide spread of bullets
 }
 
+SafekeeperRing: {
+	DisplayName: Safekeeper's Ring
+	Tooltip:
+		'''
+		Slightly increases damage dealt against undead
+		'It gives off an eerie light'
+		'''
+}
+
 PeevedTumblerBannerItem.DisplayName: Peeved Tumbler Banner
 
 LeatherHood: {
@@ -1077,4 +1086,14 @@ LeatherLegs: {
 LeatherPlate: {
 	DisplayName: Leather Plate
 	Tooltip: ""
+
+ExplorerTreads: {
+	DisplayName: Explorer's Treads
+	Tooltip: 
+		'''
+		+5% Movement speed for every 10% missing health
+		50% chance to avoid traps and hazards
+		'Makes exploring temples like a walk in the park'
+		'''
+
 }
