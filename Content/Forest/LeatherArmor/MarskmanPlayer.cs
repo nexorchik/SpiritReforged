@@ -1,4 +1,7 @@
-﻿using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Particle;
+using SpiritReforged.Content.Particles;
 using Terraria;
 using Terraria.Audio;
 
@@ -28,6 +31,20 @@ internal class MarksmanPlayer : ModPlayer
 
 		if (concentratedCooldown <= 0)
 			concentrated = true;
+
+		if (concentrated)
+		{
+			if (Main.rand.NextBool(12))
+			{
+				var rect = Player.getRect();
+				var headRect = new Rectangle(rect.X, rect.Y, rect.Width, rect.Height / 3);
+
+				var position = Main.rand.NextVector2FromRectangle(headRect);
+				var newCol = Color.Lerp(Color.LightGoldenrodYellow, Color.Goldenrod, Main.rand.NextFloat());
+
+				ParticleHandler.SpawnParticle(new GlowParticle(position, Vector2.UnitY * -Main.rand.NextFloat(.5f), newCol, Main.rand.NextFloat(.2f, .3f), 80, 12));
+			}
+		}
 	}
 	public override void OnHurt(Player.HurtInfo info)
 	{
@@ -41,22 +58,13 @@ internal class MarksmanPlayer : ModPlayer
 	{
 		if (concentrated)
 		{
-			for (int i = 0; i < 40; i++)
-			{
-				int dust = Dust.NewDust(target.Center, target.width, target.height, DustID.GoldCoin);
-				Main.dust[dust].velocity *= -1f;
-				Main.dust[dust].noGravity = true;
+			var newCol = Color.Lerp(Color.LightGoldenrodYellow, Color.Goldenrod, Main.rand.NextFloat());
 
-				Vector2 vector2_1 = new Vector2(Main.rand.Next(-100, 101), Main.rand.Next(-100, 101));
-				vector2_1.Normalize();
+			for (int i = 0; i < 8; i++)
+				ParticleHandler.SpawnParticle(new GlowParticle(target.Center, Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(1f, 3f), newCol, Main.rand.NextFloat(0.3f, 0.5f), Main.rand.Next(30, 50), 12, delegate (Particle p) { p.Velocity *= 0.9f; }));
 
-				Vector2 vector2_2 = vector2_1 * (Main.rand.Next(50, 100) * 0.04f);
-				Main.dust[dust].velocity = vector2_2;
-				vector2_2.Normalize();
-
-				Vector2 vector2_3 = vector2_2 * 34f;
-				Main.dust[dust].position = target.Center - vector2_3;
-			}
+			ParticleHandler.SpawnParticle(new DissipatingImage(target.Center, newCol.Additive(), Main.rand.NextFloat(MathHelper.TwoPi), 0.085f, Main.rand.NextFloat(-0.5f, 0.5f), "Fire", new(0.4f, 0.4f), new(4, 1), 25)); 
+			ParticleHandler.SpawnParticle(new PulseCircle(target.Center, newCol, newCol * 0.5f, 0.3f, 60, 40, EaseFunction.EaseQuadOut).WithSkew(Main.rand.NextFloat(), Main.rand.NextFloat(MathHelper.TwoPi)).UsesLightColor());
 
 			modifiers.FinalDamage *= 1.2f;
 			modifiers.SetCrit();
@@ -68,19 +76,13 @@ internal class MarksmanPlayer : ModPlayer
 	{ 
 		if (concentrated)
 		{
-			for (int i = 0; i < 40; i++)
-			{
-				int dust = Dust.NewDust(target.Center, target.width, target.height, DustID.GoldCoin);
-				Main.dust[dust].velocity *= -1f;
-				Main.dust[dust].noGravity = true;
+			var newCol = Color.Lerp(Color.LightGoldenrodYellow, Color.Goldenrod, Main.rand.NextFloat());
 
-				Vector2 velocity = Vector2.Normalize(new Vector2(Main.rand.Next(-100, 101), Main.rand.Next(-100, 101))) * (Main.rand.Next(50, 100) * 0.04f);
-				Main.dust[dust].velocity = velocity;
-				velocity.Normalize();
+			for (int i = 0; i < 8; i++)
+				ParticleHandler.SpawnParticle(new GlowParticle(target.Center, Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(1f, 3f), newCol, Main.rand.NextFloat(0.3f, 0.5f), Main.rand.Next(30, 50), 12, delegate (Particle p) { p.Velocity *= 0.9f; }));
 
-				Vector2 vector2_3 = velocity * 34f;
-				Main.dust[dust].position = target.Center - vector2_3;
-			}
+			ParticleHandler.SpawnParticle(new DissipatingImage(target.Center, newCol.Additive(), Main.rand.NextFloat(MathHelper.TwoPi), 0.085f, Main.rand.NextFloat(-0.5f, 0.5f), "Fire", new(0.4f, 0.4f), new(4, 1), 25));
+			ParticleHandler.SpawnParticle(new PulseCircle(target.Center, newCol, newCol * 0.5f, 0.3f, 60, 40, EaseFunction.EaseQuadOut).WithSkew(Main.rand.NextFloat(), Main.rand.NextFloat(MathHelper.TwoPi)).UsesLightColor());
 
 			modifiers.FinalDamage *= 1.2f;
 			modifiers.SetCrit();
