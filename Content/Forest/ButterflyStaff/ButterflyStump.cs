@@ -74,6 +74,8 @@ public class ButterflyStump : ModTile
 			if (Main.netMode != NetmodeID.SinglePlayer)
 				NetMessage.SendData(MessageID.SyncItem, number: item);
 
+			NPC.NewNPCDirect(null, (i + 1) * 16, (j + 1) * 16, ModContent.NPCType<ButterflyCritter>()).netUpdate = true;
+
 			return true;
 		}
 
