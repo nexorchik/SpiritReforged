@@ -47,6 +47,7 @@ Projectiles: {
 	FrozenFragment.DisplayName: Frozen Fragment
 	FrostbiteHeldOut.DisplayName: Frostbite Held Out
 	RogueKnifeMinion.DisplayName: Rusted Knife
+	CactusWallProj.DisplayName: Cactus Wall
 }
 
 Configs: {
