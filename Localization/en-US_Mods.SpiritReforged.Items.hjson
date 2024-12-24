@@ -1074,17 +1074,17 @@ SafekeeperRing: {
 PeevedTumblerBannerItem.DisplayName: Peeved Tumbler Banner
 
 LeatherHood: {
-	DisplayName: Leather Hood
-	Tooltip: ""
+	DisplayName: Marksman's Hood
+	Tooltip: Increases critical strike chance by 5%
 }
 
 LeatherLegs: {
-	DisplayName: Leather Legs
+	DisplayName: Marksman's Boots
 	Tooltip: ""
 }
 
 LeatherPlate: {
-	DisplayName: Leather Plate
+	DisplayName: Marksman's Plate
 	Tooltip: ""
 }
 

@@ -17,7 +17,7 @@ public class LeatherLegs : ModItem
 	{
 		Recipe recipe = CreateRecipe();
 		recipe.AddIngredient(ItemID.Leather, 7);
-		recipe.AddIngredient(RecipeGroupID.IronBar, 2);
+		recipe.AddIngredient(ItemID.IronBar, 2);
 		recipe.AddTile(TileID.Anvils);
 		recipe.Register();
 	}
