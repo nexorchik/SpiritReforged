@@ -1,4 +1,5 @@
 using SpiritReforged.Common.TileCommon;
+using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.ObjectInteractions;
@@ -45,6 +46,15 @@ public class ButterflyStump : ModTile
 	public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => HasItem(i, j);
 	public override bool CanKillTile(int i, int j, ref bool blockDamaged) => !TopHalf(i, j) || HasItem(i, j);
 	public override bool CanDrop(int i, int j) => HasItem(i, j);
+
+	public override void KillMultiTile(int i, int j, int frameX, int frameY)
+	{
+		var system = ModContent.GetInstance<ButterflySystem>();
+		var thisZone = system.butterflyZones.Where(x => x.Contains(new Point(i, j))).FirstOrDefault();
+
+		if (thisZone != default)
+			system.butterflyZones.Remove(thisZone); //Remove the zone associated with this stump if it is destroyed
+	}
 
 	public override void MouseOver(int i, int j)
 	{
