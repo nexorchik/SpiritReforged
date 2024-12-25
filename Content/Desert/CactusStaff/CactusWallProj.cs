@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using Terraria.Audio;
+﻿using Terraria.Audio;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Desert.CactusStaff;

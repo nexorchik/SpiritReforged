@@ -1,9 +1,11 @@
+using SpiritReforged.Common.ItemCommon;
 using Terraria.Audio;
 using Terraria.DataStructures;
+
 namespace SpiritReforged.Content.Underground.ExplorerTreads;
 
 [AutoloadEquip(EquipType.Shoes)]
-public class ExplorerTreads : ModItem
+public class ExplorerTreads : AccessoryItem
 {
 	public override void SetDefaults()
 	{
@@ -13,8 +15,6 @@ public class ExplorerTreads : ModItem
 		Item.rare = ItemRarityID.Green;
 		Item.accessory = true;
 	}
-
-	public override void UpdateAccessory(Player player, bool hideVisual) => player.GetModPlayer<ExplorerTreadsPlayer>().active = true;
 
 	public static bool DoDodgeEffect(Player player, IEntitySource damageSource)
 	{
@@ -30,6 +30,7 @@ public class ExplorerTreads : ModItem
 					2 => GoreID.Smoke3,
 					_ => GoreID.Smoke1
 				};
+
 				var gore = Gore.NewGoreDirect(damageSource, player.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat() * 30 - new Vector2(20), Vector2.Zero, goreType);
 				gore.velocity = -Vector2.UnitY;
 				gore.alpha = 180;
