@@ -501,6 +501,7 @@ PoolNoodle: {
 		'''
 		3 summon tag damage
 		{$CommonItemTooltip.Whips}
+		Struck enemies may release bubbly explosions when hit by summons
 		'''
 }
 
