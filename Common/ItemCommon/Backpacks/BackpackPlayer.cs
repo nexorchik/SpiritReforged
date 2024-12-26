@@ -7,6 +7,7 @@ internal class BackpackPlayer : ModPlayer
 {
 	public Item Backpack = BackpackUIState.AirItem;
 	public Item VanityBackpack = BackpackUIState.AirItem;
+	public bool backpackVisible = true;
 
 	private int _lastSelectedEquipPage = 0;
 	private bool _hadBackpack = false;
@@ -33,7 +34,7 @@ internal class BackpackPlayer : ModPlayer
 	{
 		if (VanityBackpack is not null && !VanityBackpack.IsAir)
 			ApplyEquip(VanityBackpack);
-		else if (Backpack is not null && !Backpack.IsAir)
+		else if (Backpack is not null && !Backpack.IsAir && backpackVisible)
 			ApplyEquip(Backpack);
 
 		if (Player.HeldItem.ModItem is BackpackItem)

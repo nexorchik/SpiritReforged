@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
-using Steamworks;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
@@ -35,6 +34,28 @@ internal class BackpackUIState : UIState
 
 	public void SetBackpack(Item item) => _backSlots[0] = item;
 	public void SetVanityBackpack(Item item) => _backSlots[1] = item;
+
+	public override void OnInitialize()
+	{
+		Width = StyleDimension.Fill;
+		Height = StyleDimension.Fill;
+
+		_slotItem = new BackpackUISlot(_backSlots, 0, false)
+		{
+			Left = new StyleDimension(-186, 1),
+			Top = new StyleDimension(430, 0)
+		};
+
+		Append(_slotItem);
+
+		_vanityItem = new BackpackUISlot(_backSlots, 1, true)
+		{
+			Left = new StyleDimension(_slotItem.Left.Pixels - 48, 1),
+			Top = _slotItem.Top
+		};
+
+		Append(_vanityItem);
+	}
 
 	public override void Update(GameTime gameTime)
 	{
@@ -113,32 +134,6 @@ internal class BackpackUIState : UIState
 		}
 
 		_lastHasBackpack = HasBackpack;
-	}
-
-	public override void OnInitialize()
-	{
-		Width = StyleDimension.Fill;
-		Height = StyleDimension.Fill;
-
-		_slotItem = new BackpackUISlot(_backSlots, 0, false)
-		{
-			Left = new StyleDimension(-180, 1),
-			Top = new StyleDimension(437, 0),
-			Width = StyleDimension.FromPixels(32),
-			Height = StyleDimension.FromPixels(32)
-		};
-
-		Append(_slotItem);
-
-		_vanityItem = new BackpackUISlot(_backSlots, 1, true)
-		{
-			Left = new StyleDimension(-228, 1),
-			Top = new StyleDimension(437, 0),
-			Width = StyleDimension.FromPixels(32),
-			Height = StyleDimension.FromPixels(32)
-		};
-
-		Append(_vanityItem);
 	}
 
 	protected override void DrawChildren(SpriteBatch spriteBatch)

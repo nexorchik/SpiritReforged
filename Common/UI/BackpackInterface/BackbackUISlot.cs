@@ -1,54 +1,58 @@
-﻿using Microsoft.Xna.Framework.Input;
-using SpiritReforged.Common.ItemCommon.Backpacks;
+﻿using SpiritReforged.Common.ItemCommon.Backpacks;
 using System.Linq;
+using Terraria.Audio;
+using Terraria.GameInput;
 using Terraria.UI;
 
 namespace SpiritReforged.Common.UI.BackpackInterface;
 
 public class BackpackUISlot : UIElement
 {
-	private Item[] _itemArray;
-	private int _itemIndex;
-	private int _itemSlotContext;
-	private bool _isVanity;
+	public const int context = ItemSlot.Context.ChestItem;
+	public const float scale = .85f;
+
+	private static Asset<Texture2D> icon;
+
+	private readonly Item[] _itemArray;
+	private readonly int _itemIndex;
+	private readonly bool _isVanity;
 
 	public BackpackUISlot(Item[] itemArray, int itemIndex, bool isVanity)
 	{
 		_itemArray = itemArray;
 		_itemIndex = itemIndex;
-		_itemSlotContext = isVanity ? ItemSlot.Context.ModdedVanityAccessorySlot : ItemSlot.Context.ChestItem;
 		_isVanity = isVanity;
 
-		Width = new StyleDimension(48f, 0f);
-		Height = new StyleDimension(48f, 0f);
+		Width = Height = new StyleDimension(52 * scale, 0f);
 	}
+
+	public override void OnInitialize() => icon = ModContent.Request<Texture2D>("SpiritReforged/Common/UI/BackpackInterface/BackpackIcon");
 
 	private void HandleItemSlotLogic()
 	{
-		Item inv = _itemArray[_itemIndex];
+		var invItem = _itemArray[_itemIndex];
 
-		if (IsMouseHovering && CanClickItem(inv))
+		if (IsMouseHovering)
 		{
-			// The vanity slot breaks when favorite is hovered over; this stops that code from running.
-			// A little ugly, but better than an IL edit.
-			var oldKey = Main.FavoriteKey;
-			Main.FavoriteKey = (Keys)(-1);
-
 			Main.LocalPlayer.mouseInterface = true;
-			ItemSlot.OverrideHover(ref inv, _itemSlotContext);
-			ItemSlot.LeftClick(ref inv, _itemSlotContext);
-			ItemSlot.RightClick(ref inv, _itemSlotContext);
-			ItemSlot.MouseHover(ref inv, _itemSlotContext);
-			_itemArray[_itemIndex] = inv;
+			ItemSlot.OverrideHover(ref invItem, context);
+			ItemSlot.MouseHover(ref invItem, context);
+			
+			if (CanClickItem(invItem) && (Main.mouseLeft && Main.mouseLeftRelease || Main.mouseRight && Main.mouseRightRelease))
+			{
+				ItemSlot.LeftClick(ref invItem, context);
+				ItemSlot.RightClick(ref invItem, context);
+				
+				_itemArray[_itemIndex] = invItem;
+				var mPlayer = Main.LocalPlayer.GetModPlayer<BackpackPlayer>();
 
-			Main.FavoriteKey = oldKey;
+				if (_isVanity)
+					mPlayer.VanityBackpack = !invItem.IsAir ? invItem : null;
+				else
+					mPlayer.Backpack = !invItem.IsAir ? invItem : null;
+			}
 
-			if (_isVanity)
-				Main.LocalPlayer.GetModPlayer<BackpackPlayer>().VanityBackpack = !inv.IsAir ? inv : null;
-			else
-				Main.LocalPlayer.GetModPlayer<BackpackPlayer>().Backpack = !inv.IsAir ? inv : null;
-
-			if (inv.IsAir)
+			if (invItem.IsAir)
 			{
 				Main.mouseText = true;
 				Main.hoverItemName = Language.GetTextValue("Mods.SpiritReforged.SlotContexts.Backpack");
@@ -70,13 +74,74 @@ public class BackpackUISlot : UIElement
 		if (Main.EquipPage != 2)
 			return;
 
-		HandleItemSlotLogic();
+		base.DrawSelf(spriteBatch);
+
 		Item inv = _itemArray[_itemIndex];
 		float oldScale = Main.inventoryScale;
-		Main.inventoryScale = 0.85f;
-		Vector2 position = GetDimensions().Center() + new Vector2(52f, 52f) * -0.5f * Main.inventoryScale;
-		ItemSlot.Draw(spriteBatch, ref inv, _itemSlotContext, position);
+		Main.inventoryScale = scale;
+
+		ItemSlot.Draw(spriteBatch, ref inv, context, GetDimensions().ToRectangle().TopLeft());
+
+		if (inv.IsAir) //Draw slot icons when empty
+		{
+			Texture2D texture;
+			Rectangle source;
+
+			if (_isVanity)
+			{
+				texture = TextureAssets.Extra[54].Value;
+				source = texture.Frame(3, 6, 2, 0, -2, -2);
+			}
+			else
+			{
+				texture = icon.Value;
+				source = texture.Frame();
+			}
+
+			spriteBatch.Draw(texture, GetDimensions().Center(), source, Color.White * .35f, 0, source.Size() / 2, Main.inventoryScale, SpriteEffects.None, 0);
+		}
+
+		if (!DrawVisibility(spriteBatch))
+			HandleItemSlotLogic();
+
 		Main.inventoryScale = oldScale;
 	}
-}
 
+	/// <returns> Whether an interaction occured. </returns>
+	private bool DrawVisibility(SpriteBatch spriteBatch)
+	{
+		if (_isVanity)
+			return false;
+
+		var mPlayer = Main.LocalPlayer.GetModPlayer<BackpackPlayer>();
+		var visTexture = (mPlayer.backpackVisible ? TextureAssets.InventoryTickOn : TextureAssets.InventoryTickOff).Value;
+
+		var point = new Point((int)(GetDimensions().X + 34), (int)GetDimensions().Y - 2);
+		var area = new Rectangle(point.X, point.Y, visTexture.Width, visTexture.Height);
+		
+		spriteBatch.Draw(visTexture, area.Center(), null, Color.White * .8f, 0, visTexture.Size() / 2, 1, SpriteEffects.None, 0);
+
+		if (area.Contains(Main.MouseScreen.ToPoint()) && !PlayerInput.IgnoreMouseInterface)
+		{
+			Main.HoverItem = new Item();
+			Main.hoverItemName = Lang.inter[59].Value;
+
+			Main.LocalPlayer.mouseInterface = true;
+			if (Main.mouseLeft && Main.mouseLeftRelease)
+			{
+				mPlayer.backpackVisible = !mPlayer.backpackVisible;
+				SoundEngine.PlaySound(SoundID.MenuTick);
+
+				if (Main.netMode == NetmodeID.MultiplayerClient)
+					NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, Main.LocalPlayer.whoAmI);
+			}
+
+			Main.HoverItem = new Item();
+			Main.hoverItemName = Lang.inter[mPlayer.backpackVisible ? 59 : 60].Value;
+
+			return true;
+		}
+
+		return false;
+	}
+}
