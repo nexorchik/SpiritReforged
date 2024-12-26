@@ -3,6 +3,7 @@ using SpiritReforged.Common.PlayerCommon;
 
 namespace SpiritReforged.Content.Ocean.Items.Pearl;
 
+[AutoloadEquip(EquipType.Neck)]
 public class PearlString : AccessoryItem
 {
 	public override void SetDefaults()
