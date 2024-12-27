@@ -93,7 +93,12 @@ public class BackpackUISlot : UIElement
 	internal static bool CanClickItem(Item currentItem)
 	{
 		if (!currentItem.IsAir && currentItem.ModItem is BackpackItem backpack && backpack.items.Any(x => !x.IsAir))
+		{
+			if (currentItem.TryGetGlobalItem(out BackpackAnimation anim))
+				anim.StartAnimation();
+
 			return false;
+		}
 
 		var plr = Main.LocalPlayer;
 		return plr.HeldItem.ModItem is BackpackItem || plr.HeldItem.IsAir || Main.mouseItem.IsAir;
