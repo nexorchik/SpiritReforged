@@ -5,19 +5,16 @@ namespace SpiritReforged.Common.ItemCommon.Backpacks;
 
 internal abstract class BackpackItem : ModItem
 {
-	protected override bool CloneNewInstances => true;
+	public Item[] items;
 
-	/// <summary>
-	/// How many slots this backpack has.
-	/// </summary>
+	/// <summary> How many slots this backpack has. </summary>
 	protected abstract int SlotCap { get; }
-
-	public Item[] Items = [];
+	protected override bool CloneNewInstances => true;
 
 	public override ModItem Clone(Item newEntity)
 	{
 		ModItem clone = base.Clone(newEntity);
-		(clone as BackpackItem).Items = Items;
+		(clone as BackpackItem).items = items;
 		return clone;
 	}
 
@@ -25,40 +22,49 @@ internal abstract class BackpackItem : ModItem
 	{
 		Defaults();
 
-		Items = new Item[SlotCap];
+		if (items is null)
+		{
+			items = new Item[SlotCap];
 
-		for (int i = 0; i < SlotCap; i++)
-			Items[i] = BackpackUIState.AirItem;
+			for (int i = 0; i < SlotCap; i++)
+				items[i] = new Item();
+		}
 	}
 
 	public virtual void Defaults() { }
+	public override bool CanRightClick() => true;
+	public override bool ConsumeItem(Player player) => false; //Prevent RightClick from destroying the item
 
-	public override bool OnPickup(Player player)
+	public override void RightClick(Player player) //Attempt to swap this backpack into the backpack slot
 	{
-		player.GetModPlayer<BackpackPlayer>().Backpack = Item;
-		BackpackUISystem.SetBackpack();
-		return true;
+		if (!BackpackUISlot.CanClickItem(player.GetModPlayer<BackpackPlayer>().backpack))
+			return;
+
+		int oldType = player.GetModPlayer<BackpackPlayer>().backpack.type;
+
+		player.GetModPlayer<BackpackPlayer>().backpack = Item.Clone();
+		Item.SetDefaults(oldType);
 	}
 
 	public override void SaveData(TagCompound tag)
 	{
-		for (int i = 0; i < Items.Length; i++)
+		for (int i = 0; i < items.Length; i++)
 		{
-			if (Items[i] is not null)
-				tag.Add("item" + i, Items[i]);
+			if (items[i] is not null && !items[i].IsAir) //Don't bother saving air
+				tag.Add("item" + i, ItemIO.Save(items[i]));
 		}
 	}
 
 	public override void LoadData(TagCompound tag)
 	{
-		Items = new Item[SlotCap];
+		items = new Item[SlotCap];
 
-		for (int i = 0; i < Items.Length; i++)
+		for (int i = 0; i < items.Length; i++)
 		{
-			if (Items[i] is not null && tag.TryGet("item" + i, out TagCompound itemTag))
-				Items[i] = ItemIO.Load(itemTag);
+			if (tag.TryGet("item" + i, out TagCompound itemTag)) //All entries of 'items' are currently null. Avoid a null check, or we won't get our data
+				items[i] = ItemIO.Load(itemTag);
 			else
-				Items[i] = BackpackUIState.AirItem;
+				items[i] = new Item();
 		}
 	}
 }

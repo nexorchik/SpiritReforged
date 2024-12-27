@@ -13,81 +13,37 @@ public class BackpackUISlot : UIElement
 
 	private static Asset<Texture2D> icon;
 
-	private readonly Item[] _itemArray;
-	private readonly int _itemIndex;
-	private readonly bool _isVanity;
+	private readonly bool isVanity;
 
-	public BackpackUISlot(Item[] itemArray, int itemIndex, bool isVanity)
+	public BackpackUISlot(bool isVanity)
 	{
-		_itemArray = itemArray;
-		_itemIndex = itemIndex;
-		_isVanity = isVanity;
-
+		this.isVanity = isVanity;
 		Width = Height = new StyleDimension(52 * scale, 0f);
 	}
 
 	public override void OnInitialize() => icon = ModContent.Request<Texture2D>("SpiritReforged/Common/UI/BackpackInterface/BackpackIcon");
 
-	private void HandleItemSlotLogic()
-	{
-		var invItem = _itemArray[_itemIndex];
-
-		if (IsMouseHovering)
-		{
-			Main.LocalPlayer.mouseInterface = true;
-			ItemSlot.OverrideHover(ref invItem, context);
-			ItemSlot.MouseHover(ref invItem, context);
-			
-			if (CanClickItem(invItem) && (Main.mouseLeft && Main.mouseLeftRelease || Main.mouseRight && Main.mouseRightRelease))
-			{
-				ItemSlot.LeftClick(ref invItem, context);
-				ItemSlot.RightClick(ref invItem, context);
-				
-				_itemArray[_itemIndex] = invItem;
-				var mPlayer = Main.LocalPlayer.GetModPlayer<BackpackPlayer>();
-
-				if (_isVanity)
-					mPlayer.VanityBackpack = !invItem.IsAir ? invItem : null;
-				else
-					mPlayer.Backpack = !invItem.IsAir ? invItem : null;
-			}
-
-			if (invItem.IsAir)
-			{
-				Main.mouseText = true;
-				Main.hoverItemName = Language.GetTextValue("Mods.SpiritReforged.SlotContexts.Backpack");
-			}
-		}
-	}
-
-	private static bool CanClickItem(Item currentItem)
-	{
-		if (!currentItem.IsAir && currentItem.ModItem is BackpackItem backpack && backpack.Items.Any(x => !x.IsAir))
-			return false;
-
-		Player plr = Main.LocalPlayer;
-		return plr.HeldItem.ModItem is BackpackItem || plr.HeldItem.IsAir || Main.mouseItem.IsAir;
-	}
-
 	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
-		if (Main.EquipPage != 2)
+		var mPlayer = Main.LocalPlayer.GetModPlayer<BackpackPlayer>();
+		var item = isVanity ? mPlayer.vanityBackpack : mPlayer.backpack; //Bind the player's backpack item
+
+		if (Main.EquipPage != 2 || item is null)
 			return;
 
 		base.DrawSelf(spriteBatch);
 
-		Item inv = _itemArray[_itemIndex];
 		float oldScale = Main.inventoryScale;
 		Main.inventoryScale = scale;
 
-		ItemSlot.Draw(spriteBatch, ref inv, context, GetDimensions().ToRectangle().TopLeft());
+		ItemSlot.Draw(spriteBatch, ref item, context, GetDimensions().ToRectangle().TopLeft());
 
-		if (inv.IsAir) //Draw slot icons when empty
+		if (item.IsAir) //Draw slot icons when empty
 		{
 			Texture2D texture;
 			Rectangle source;
 
-			if (_isVanity)
+			if (isVanity)
 			{
 				texture = TextureAssets.Extra[54].Value;
 				source = texture.Frame(3, 6, 2, 0, -2, -2);
@@ -102,19 +58,55 @@ public class BackpackUISlot : UIElement
 		}
 
 		if (!DrawVisibility(spriteBatch))
-			HandleItemSlotLogic();
+			HandleItemSlotLogic(ref item);
 
 		Main.inventoryScale = oldScale;
+
+		if (isVanity) //Release the results
+			mPlayer.vanityBackpack = item;
+		else
+			mPlayer.backpack = item;
+	}
+
+	private void HandleItemSlotLogic(ref Item item)
+	{
+		if (!IsMouseHovering)
+			return;
+
+		Main.LocalPlayer.mouseInterface = true;
+		ItemSlot.OverrideHover(ref item, context);
+		ItemSlot.MouseHover(ref item, context);
+
+		if (Main.mouseLeft && Main.mouseLeftRelease && CanClickItem(item))
+		{
+			ItemSlot.LeftClick(ref item, context);
+			ItemSlot.RightClick(ref item, context);
+		}
+
+		if (item.IsAir)
+		{
+			Main.mouseText = true;
+			Main.hoverItemName = Language.GetTextValue("Mods.SpiritReforged.SlotContexts.Backpack");
+		}
+	}
+
+	internal static bool CanClickItem(Item currentItem)
+	{
+		if (!currentItem.IsAir && currentItem.ModItem is BackpackItem backpack && backpack.items.Any(x => !x.IsAir))
+			return false;
+
+		var plr = Main.LocalPlayer;
+		return plr.HeldItem.ModItem is BackpackItem || plr.HeldItem.IsAir || Main.mouseItem.IsAir;
 	}
 
 	/// <returns> Whether an interaction occured. </returns>
 	private bool DrawVisibility(SpriteBatch spriteBatch)
 	{
-		if (_isVanity)
+		if (isVanity)
 			return false;
 
 		var mPlayer = Main.LocalPlayer.GetModPlayer<BackpackPlayer>();
-		var visTexture = (mPlayer.backpackVisible ? TextureAssets.InventoryTickOn : TextureAssets.InventoryTickOff).Value;
+		var visTexture = (mPlayer.packVisible ? TextureAssets.InventoryTickOn : TextureAssets.InventoryTickOff).Value;
 
 		var point = new Point((int)(GetDimensions().X + 34), (int)GetDimensions().Y - 2);
 		var area = new Rectangle(point.X, point.Y, visTexture.Width, visTexture.Height);
@@ -129,7 +121,7 @@ public class BackpackUISlot : UIElement
 			Main.LocalPlayer.mouseInterface = true;
 			if (Main.mouseLeft && Main.mouseLeftRelease)
 			{
-				mPlayer.backpackVisible = !mPlayer.backpackVisible;
+				mPlayer.packVisible = !mPlayer.packVisible;
 				SoundEngine.PlaySound(SoundID.MenuTick);
 
 				if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -137,7 +129,7 @@ public class BackpackUISlot : UIElement
 			}
 
 			Main.HoverItem = new Item();
-			Main.hoverItemName = Lang.inter[mPlayer.backpackVisible ? 59 : 60].Value;
+			Main.hoverItemName = Lang.inter[mPlayer.packVisible ? 59 : 60].Value;
 
 			return true;
 		}

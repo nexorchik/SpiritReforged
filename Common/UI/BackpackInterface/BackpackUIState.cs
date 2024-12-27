@@ -1,95 +1,106 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
+using SpiritReforged.Common.UI.System;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
 namespace SpiritReforged.Common.UI.BackpackInterface;
 
-internal class BackpackUIState : UIState
+internal class BackpackUIState : AutoUIState
 {
-	public static Item AirItem
-	{
-		get
-		{
-			var item = new Item();
-			item.TurnToAir();
-			return item;
-		}
-	}
-
-	private BackpackUISlot _slotItem;
-	private BackpackUISlot _vanityItem;
-
-	internal Item HeldBackpack => _backSlots[0];
-	internal BackpackItem HeldModBackpack => _backSlots[0].ModItem as BackpackItem;
-	internal Item VanityBackpack => _backSlots[1];
-	internal BackpackItem VanityModBackpack => _backSlots[1].ModItem as BackpackItem;
-	internal bool HasBackpack => HeldBackpack.ModItem is BackpackItem;
-	internal bool HasVanityBackpack => VanityBackpack.ModItem is BackpackItem;
-
-	private readonly Item[] _backSlots = [AirItem, AirItem];
-
-	private bool _lastHasBackpack = false;
-	private bool _setBackpack = false;
-	private bool _lastVanityBackpack = false;
-
-	public void SetBackpack(Item item) => _backSlots[0] = item;
-	public void SetVanityBackpack(Item item) => _backSlots[1] = item;
+	private BackpackUISlot functionalSlot, vanitySlot;
+	private bool hadBackpack;
+	private int lastMapStyle;
 
 	public override void OnInitialize()
 	{
-		Width = StyleDimension.Fill;
-		Height = StyleDimension.Fill;
+		Width = Height = StyleDimension.Fill;
 
-		_slotItem = new BackpackUISlot(_backSlots, 0, false)
-		{
-			Left = new StyleDimension(-186, 1),
-			Top = new StyleDimension(430, 0)
-		};
+		functionalSlot = new BackpackUISlot(false);
+		Append(functionalSlot);
 
-		Append(_slotItem);
+		vanitySlot = new BackpackUISlot(true);
+		Append(vanitySlot);
 
-		_vanityItem = new BackpackUISlot(_backSlots, 1, true)
-		{
-			Left = new StyleDimension(_slotItem.Left.Pixels - 48, 1),
-			Top = _slotItem.Top
-		};
+		SetPositions();
 
-		Append(_vanityItem);
+		On_Main.DrawInventory += TryOpenUI;
+	}
+
+	private void TryOpenUI(On_Main.orig_DrawInventory orig, Main self)
+	{
+		orig(self);
+
+		if (Main.playerInventory && UISystem.GetState<BackpackUIState>().UserInterface.CurrentState is null)
+			UISystem.SetActive<BackpackUIState>();
 	}
 
 	public override void Update(GameTime gameTime)
 	{
 		if (!Main.playerInventory)
 		{
-			_setBackpack = false;
+			hadBackpack = false; //Force the storage list to reload when the UI closes
+			SetStorageSlots(true);
+
+			UISystem.SetInactive<BackpackUIState>(); //Close the UI
 			return;
 		}
 
-		if (!_setBackpack && Main.LocalPlayer is not null)
-		{
-			Item backpack = Main.LocalPlayer.GetModPlayer<BackpackPlayer>().Backpack;
+		bool hasBackpack = BackpackPlayer.TryGetBackpack(Main.LocalPlayer, out var _);
 
-			if (backpack is not null)
-				SetBackpack(backpack);
+		if (hasBackpack && !hadBackpack)
+			SetStorageSlots(false);
+		else if (!hasBackpack && hadBackpack)
+			SetStorageSlots(true);
 
-			Item vanity = Main.LocalPlayer.GetModPlayer<BackpackPlayer>().VanityBackpack;
+		hadBackpack = hasBackpack;
 
-			if (vanity is not null)
-				SetBackpack(vanity);
+		if (Main.mapStyle != lastMapStyle)
+			SetPositions();
 
-			_setBackpack = true;
-		}
+		lastMapStyle = Main.mapStyle;
 
 		base.Update(gameTime);
+	}
 
-		if (!_lastHasBackpack && HasBackpack)
+	private void SetPositions()
+	{
+		if (Main.mapStyle == 1) //Standard minimap display
+		{
+			functionalSlot.Left = new StyleDimension(-186, 1);
+			functionalSlot.Top = new StyleDimension(430, 0);
+
+			vanitySlot.Left = new StyleDimension(functionalSlot.Left.Pixels - 48, 1);
+			vanitySlot.Top = functionalSlot.Top;
+		}
+		else
+		{
+			functionalSlot.Left = new StyleDimension(-186, 1);
+			functionalSlot.Top = new StyleDimension(174, 0);
+
+			vanitySlot.Left = new StyleDimension(functionalSlot.Left.Pixels - 48, 1);
+			vanitySlot.Top = functionalSlot.Top;
+		}
+	}
+
+	private void SetStorageSlots(bool clear)
+	{
+		if (clear)
+		{
+			List<UIElement> removals = [];
+
+			foreach (var item in Children)
+				if (item is UIItemSlot or UIText)
+					removals.Add(item);
+
+			foreach (var item in removals)
+				RemoveChild(item);
+		}
+		else
 		{
 			const int BaseX = 570;
+			int xOff = 0, yOff = 0;
 
-			int xOff = 0;
-			int yOff = 0;
-
-			Append(new UIText("Pack", 0.725f, false)
+			Append(new UIText(Language.GetTextValue("Mods.SpiritReforged.SlotContexts.Backpack"), 0.725f, false)
 			{
 				Left = new StyleDimension(BaseX, 0),
 				Top = new StyleDimension(86, 0),
@@ -99,9 +110,12 @@ internal class BackpackUIState : UIState
 				ShadowColor = Color.Transparent
 			});
 
-			for (int i = 0; i < HeldModBackpack.Items.Length; ++i)
+			var mPlayer = Main.LocalPlayer.GetModPlayer<BackpackPlayer>();
+			var items = (mPlayer.backpack.ModItem as BackpackItem).items;
+
+			for (int i = 0; i < items.Length; ++i) //Add backpack storage slots
 			{
-				var newSlot = new UIItemSlot(HeldModBackpack.Items, i, ItemSlot.Context.ChestItem)
+				var newSlot = new UIItemSlot(items, i, ItemSlot.Context.ChestItem)
 				{
 					Left = new StyleDimension(BaseX + xOff * 32, 0),
 					Top = new StyleDimension(105 + yOff * 33, 0),
@@ -120,27 +134,15 @@ internal class BackpackUIState : UIState
 				Append(newSlot);
 			}
 		}
-
-		if (_lastHasBackpack && !HasBackpack)
-		{
-			List<UIElement> removals = [];
-
-			foreach (var item in Children)
-				if (item is UIItemSlot or UIText)
-					removals.Add(item);
-
-			foreach (var item in removals)
-				RemoveChild(item);
-		}
-
-		_lastHasBackpack = HasBackpack;
 	}
 
 	protected override void DrawChildren(SpriteBatch spriteBatch)
 	{
 		float lastScale = Main.inventoryScale;
-		Main.inventoryScale = 0.6f;
+		Main.inventoryScale = 0.6f; //Scale down storage slots
+
 		base.DrawChildren(spriteBatch);
+
 		Main.inventoryScale = lastScale;
 	}
 }
