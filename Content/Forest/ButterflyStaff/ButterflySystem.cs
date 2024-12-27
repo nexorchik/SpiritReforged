@@ -1,4 +1,5 @@
-﻿using Terraria.ModLoader.IO;
+﻿using System.IO;
+using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Forest.ButterflyStaff;
 
@@ -33,5 +34,27 @@ internal class ButterflySystem : ModSystem
 			if (zone != default)
 				butterflyZones.Add(zone);
 		}
+	}
+
+	public override void NetSend(BinaryWriter writer)
+	{
+		writer.Write((short)butterflyZones.Count);
+
+		foreach (var zone in butterflyZones)
+		{
+			writer.Write((short)zone.Location.X);
+			writer.Write((short)zone.Location.Y);
+			writer.Write((short)zone.Width);
+			writer.Write((short)zone.Height);
+		}
+	}
+
+	public override void NetReceive(BinaryReader reader)
+	{
+		butterflyZones.Clear();
+		short count = reader.ReadInt16();
+
+		for (int i = 0; i < count; ++i)
+			butterflyZones.Add(new(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16()));
 	}
 }

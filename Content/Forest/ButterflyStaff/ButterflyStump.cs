@@ -53,7 +53,10 @@ public class ButterflyStump : ModTile
 		var thisZone = system.butterflyZones.Where(x => x.Contains(new Point(i, j))).FirstOrDefault();
 
 		if (thisZone != default)
+		{
 			system.butterflyZones.Remove(thisZone); //Remove the zone associated with this stump if it is destroyed
+			NetMessage.SendData(MessageID.WorldData); // and sync it
+		}
 	}
 
 	public override void MouseOver(int i, int j)
