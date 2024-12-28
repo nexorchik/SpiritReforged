@@ -18,19 +18,23 @@ internal class PearlDiscovery : Discovery
 	{
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Discoveries");
 
-		retry:
-		int x = WorldGen.genRand.NextBool() ? WorldGen.genRand.Next(GenVars.rightBeachStart, Main.maxTilesX) : WorldGen.genRand.Next(0, GenVars.leftBeachEnd);
-		int y = (int)(Main.worldSurface * 0.35); //Sky height
+		while (true)
+		{
+			int x = WorldGen.genRand.NextBool() ? WorldGen.genRand.Next(GenVars.rightBeachStart, Main.maxTilesX) : WorldGen.genRand.Next(0, GenVars.leftBeachEnd);
+			int y = (int)(Main.worldSurface * 0.35); //Sky height
 
-		int type = ModContent.TileType<PearlStringTile>();
+			int type = ModContent.TileType<PearlStringTile>();
 
-		WorldMethods.FindGround(x, ref y);
-		if (Main.tile[x, y - 1].LiquidAmount == 255)
-			goto retry;
+			WorldMethods.FindGround(x, ref y);
+			if (Main.tile[x, y - 1].LiquidAmount == 255)
+				continue;
 
-		WorldGen.PlaceTile(x, y - 1, type);
+			WorldGen.PlaceTile(x, y - 1, type);
 
-		if (Main.tile[x, y - 1].TileType != type)
-			goto retry;
+			if (Main.tile[x, y - 1].TileType != type)
+				continue;
+
+			break;
+		}
 	}
 }
