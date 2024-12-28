@@ -8,17 +8,17 @@ namespace SpiritReforged.Common.UI.BackpackInterface;
 
 public class BackpackUISlot : UIElement
 {
-	public const int context = ItemSlot.Context.ChestItem;
-	public const float scale = .85f;
+	public const int Context = ItemSlot.Context.ChestItem;
+	public const float Scale = .85f;
 
 	private static Asset<Texture2D> icon;
 
-	private readonly bool isVanity;
+	private readonly bool _isVanity;
 
 	public BackpackUISlot(bool isVanity)
 	{
-		this.isVanity = isVanity;
-		Width = Height = new StyleDimension(52 * scale, 0f);
+		_isVanity = isVanity;
+		Width = Height = new StyleDimension(52 * Scale, 0f);
 	}
 
 	public override void OnInitialize() => icon = ModContent.Request<Texture2D>("SpiritReforged/Common/UI/BackpackInterface/BackpackIcon");
@@ -26,7 +26,7 @@ public class BackpackUISlot : UIElement
 	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
 		var mPlayer = Main.LocalPlayer.GetModPlayer<BackpackPlayer>();
-		var item = isVanity ? mPlayer.vanityBackpack : mPlayer.backpack; //Bind the player's backpack item
+		var item = _isVanity ? mPlayer.vanityBackpack : mPlayer.backpack; //Bind the player's backpack item
 
 		if (Main.EquipPage != 2 || item is null)
 			return;
@@ -34,16 +34,16 @@ public class BackpackUISlot : UIElement
 		base.DrawSelf(spriteBatch);
 
 		float oldScale = Main.inventoryScale;
-		Main.inventoryScale = scale;
+		Main.inventoryScale = Scale;
 
-		ItemSlot.Draw(spriteBatch, ref item, context, GetDimensions().ToRectangle().TopLeft());
+		ItemSlot.Draw(spriteBatch, ref item, Context, GetDimensions().ToRectangle().TopLeft());
 
 		if (item.IsAir) //Draw slot icons when empty
 		{
 			Texture2D texture;
 			Rectangle source;
 
-			if (isVanity)
+			if (_isVanity)
 			{
 				texture = TextureAssets.Extra[54].Value;
 				source = texture.Frame(3, 6, 2, 0, -2, -2);
@@ -62,7 +62,7 @@ public class BackpackUISlot : UIElement
 
 		Main.inventoryScale = oldScale;
 
-		if (isVanity) //Release the results
+		if (_isVanity) //Release the results
 			mPlayer.vanityBackpack = item;
 		else
 			mPlayer.backpack = item;
@@ -74,13 +74,13 @@ public class BackpackUISlot : UIElement
 			return;
 
 		Main.LocalPlayer.mouseInterface = true;
-		ItemSlot.OverrideHover(ref item, context);
-		ItemSlot.MouseHover(ref item, context);
+		ItemSlot.OverrideHover(ref item, Context);
+		ItemSlot.MouseHover(ref item, Context);
 
 		if (Main.mouseLeft && Main.mouseLeftRelease && CanClickItem(item))
 		{
-			ItemSlot.LeftClick(ref item, context);
-			ItemSlot.RightClick(ref item, context);
+			ItemSlot.LeftClick(ref item, Context);
+			ItemSlot.RightClick(ref item, Context);
 		}
 
 		if (item.IsAir)
@@ -107,7 +107,7 @@ public class BackpackUISlot : UIElement
 	/// <returns> Whether an interaction occured. </returns>
 	private bool DrawVisibility(SpriteBatch spriteBatch)
 	{
-		if (isVanity)
+		if (_isVanity)
 			return false;
 
 		var mPlayer = Main.LocalPlayer.GetModPlayer<BackpackPlayer>();
@@ -130,7 +130,7 @@ public class BackpackUISlot : UIElement
 				SoundEngine.PlaySound(SoundID.MenuTick);
 
 				if (Main.netMode == NetmodeID.MultiplayerClient)
-					NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, Main.LocalPlayer.whoAmI);
+					NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, Main.myPlayer);
 			}
 
 			Main.HoverItem = new Item();

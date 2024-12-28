@@ -4,11 +4,12 @@ namespace SpiritReforged.Common.ItemCommon.Backpacks;
 
 internal class BackpackPlayer : ModPlayer
 {
-	public Item backpack = new(), vanityBackpack = new();
+	public Item backpack = new();
+	public Item vanityBackpack = new();
 	public bool packVisible = true;
 
-	private int lastSelectedEquipPage = 0;
-	private bool hadBackpack = false;
+	private int _lastSelectedEquipPage = 0;
+	private bool _hadBackpack = false;
 
 	internal static bool TryGetBackpack(Player player, out BackpackItem backpack)
 	{
@@ -26,17 +27,17 @@ internal class BackpackPlayer : ModPlayer
 	{
 		if (Player.HeldItem.ModItem is BackpackItem) //Open the equip menu when a backpack is picked up
 		{
-			if (!hadBackpack)
-				lastSelectedEquipPage = Main.EquipPageSelected;
+			if (!_hadBackpack)
+				_lastSelectedEquipPage = Main.EquipPageSelected;
 
 			Main.EquipPageSelected = 2;
 		}
-		else if (hadBackpack)
+		else if (_hadBackpack)
 		{
-			Main.EquipPageSelected = lastSelectedEquipPage;
+			Main.EquipPageSelected = _lastSelectedEquipPage;
 		}
 
-		hadBackpack = Player.HeldItem.ModItem is BackpackItem;
+		_hadBackpack = Player.HeldItem.ModItem is BackpackItem;
 	}
 
 	public override void FrameEffects() //This way, players can be seen wearing backpacks in the selection screen

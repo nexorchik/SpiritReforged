@@ -7,9 +7,11 @@ namespace SpiritReforged.Common.UI.BackpackInterface;
 
 internal class BackpackUIState : AutoUIState
 {
-	private BackpackUISlot functionalSlot, vanitySlot;
-	private bool hadBackpack;
-	private int lastMapStyle;
+	private BackpackUISlot functionalSlot;
+	private BackpackUISlot vanitySlot;
+
+	private bool _hadBackpack;
+	private int _lastMapStyle;
 
 	public override void OnInitialize()
 	{
@@ -38,7 +40,7 @@ internal class BackpackUIState : AutoUIState
 	{
 		if (!Main.playerInventory)
 		{
-			hadBackpack = false; //Force the storage list to reload when the UI closes
+			_hadBackpack = false; //Force the storage list to reload when the UI closes
 			SetStorageSlots(true);
 
 			UISystem.SetInactive<BackpackUIState>(); //Close the UI
@@ -47,17 +49,17 @@ internal class BackpackUIState : AutoUIState
 
 		bool hasBackpack = BackpackPlayer.TryGetBackpack(Main.LocalPlayer, out var _);
 
-		if (hasBackpack && !hadBackpack)
+		if (hasBackpack && !_hadBackpack)
 			SetStorageSlots(false);
-		else if (!hasBackpack && hadBackpack)
+		else if (!hasBackpack && _hadBackpack)
 			SetStorageSlots(true);
 
-		hadBackpack = hasBackpack;
+		_hadBackpack = hasBackpack;
 
-		if (Main.mapStyle != lastMapStyle)
+		if (Main.mapStyle != _lastMapStyle)
 			SetPositions();
 
-		lastMapStyle = Main.mapStyle;
+		_lastMapStyle = Main.mapStyle;
 
 		base.Update(gameTime);
 	}

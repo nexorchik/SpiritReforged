@@ -5,11 +5,12 @@ namespace SpiritReforged.Common.ItemCommon.Backpacks;
 
 internal abstract class BackpackItem : ModItem
 {
+	protected override bool CloneNewInstances => true;
+
 	public Item[] items;
 
 	/// <summary> How many slots this backpack has. </summary>
 	protected abstract int SlotCap { get; }
-	protected override bool CloneNewInstances => true;
 
 	public override ModItem Clone(Item newEntity)
 	{
