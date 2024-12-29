@@ -67,11 +67,20 @@ internal static class BaobabGen
 				=> CreateChunk((int)position.X, (int)position.Y, ModContent.TileType<LivingBaobab>(), 2), false);
 
 			ShapeData data = new();
-			WorldUtils.Gen(points.Last().ToPoint(), new Shapes.Mound(WorldGen.genRand.Next(7, 13), WorldGen.genRand.Next(4, 6)),
+			int halfWidth = WorldGen.genRand.Next(7, 13);
+			var last = points.Last().ToPoint();
+
+			WorldUtils.Gen(last, new Shapes.Mound(halfWidth, WorldGen.genRand.Next(4, 6)),
 				Actions.Chain(new Modifiers.SkipTiles((ushort)ModContent.TileType<LivingBaobab>()), new Modifiers.Blotches(2, 0.1), 
 				new Actions.SetTile((ushort)ModContent.TileType<LivingBaobabLeaf>()).Output(data), new Actions.PlaceWall((ushort)ModContent.WallType<LivingBaobabLeafWall>()))); //Add a canopy
 
 			WorldUtils.Gen(points.Last().ToPoint(), new ModShapes.InnerOutline(data, false), Actions.Chain(new Actions.ClearWall()));
+
+			for (int b = last.X - halfWidth; b < last.X + halfWidth; b++) //Randomly generate baobab fruit below canopies
+			{
+				if (WorldGen.genRand.NextBool(4))
+					WorldGen.PlaceObject(b, last.Y + 1, ModContent.TileType<Items.BaobabFruit.BaobabFruitTile>(), true, WorldGen.genRand.Next(2));
+			}
 		}
 
 		static Point MoveOut(float angle, Vector2 origin)
