@@ -1112,3 +1112,13 @@ PearlString: {
 		'You feel lucky'
 		'''
 }
+
+DrywoodChandelierItem: {
+	DisplayName: Drywood Chandelier
+	Tooltip: ""
+}
+
+DriftwoodLanternItem: {
+	DisplayName: Driftwood Lantern
+	Tooltip: ""
+}
