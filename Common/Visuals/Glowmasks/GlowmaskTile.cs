@@ -1,15 +1,16 @@
 ﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using SpiritReforged.Common.TileCommon;
 using System.Linq;
 using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Common.Visuals.Glowmasks;
 
-internal class GlowmaskTile : ILoadable
+internal class GlowmaskTile : GlobalTile
 {
 	public static Dictionary<int, GlowmaskInfo> TileIdToGlowmask = [];
 
-	public void Load(Mod mod) => IL_TileDrawing.GetTileDrawData += InjectGlowmaskData;
+	public override void Load() => IL_TileDrawing.GetTileDrawData += InjectGlowmaskData;
 
 	private void InjectGlowmaskData(ILContext il)
 	{
@@ -39,23 +40,40 @@ internal class GlowmaskTile : ILoadable
 		c.EmitDelegate(ModifyData);
 	}
 
+	//Modify GetTileDrawData to include our own data, which is more versatile than DrawEffects. Useful for when things like wind-affected tiles and vines are drawn using vanilla methods
 	private void ModifyData(int typeCache, int i, int j, ref Texture2D glowTexture, ref Color glowColor, ref Rectangle glowSourceRect)
 	{
 		if (TileIdToGlowmask.TryGetValue(typeCache, out GlowmaskInfo value) && value.DrawAutomatically)
 		{
-			glowTexture = TileIdToGlowmask[typeCache].Glowmask.Value;
-			glowColor = TileIdToGlowmask[typeCache].GetDrawColor(new Point(i, j));
-
 			var tile = Main.tile[i, j];
-			int addFrameX = 0;
-			int addFrameY = 0;
 
-			TileLoader.SetAnimationFrame(typeCache, i, j, ref addFrameX, ref addFrameY);
-			var source = new Rectangle(tile.TileFrameX, tile.TileFrameY + addFrameY, 16, 16);
+			if (tile.Slope == SlopeType.Solid && !tile.IsHalfBlock) //This method can't draw slopes
+			{
+				glowTexture = TileIdToGlowmask[typeCache].Glowmask.Value;
+				glowColor = TileIdToGlowmask[typeCache].GetDrawColor(new Point(i, j));
 
-			glowSourceRect = source;
+				int addFrameX = 0;
+				int addFrameY = 0;
+
+				TileLoader.SetAnimationFrame(typeCache, i, j, ref addFrameX, ref addFrameY);
+				var source = new Rectangle(tile.TileFrameX, tile.TileFrameY + addFrameY, 16, 16);
+
+				glowSourceRect = source;
+			}
 		}
 	}
 
-	public void Unload() { }
+	public override void PostDraw(int i, int j, int type, SpriteBatch spriteBatch)
+	{
+		if (TileIdToGlowmask.TryGetValue(type, out var glow) && glow.DrawAutomatically)
+		{
+			var tile = Main.tile[i, j];
+
+			if (tile.Slope != SlopeType.Solid || tile.IsHalfBlock) //This method can draw slopes
+			{
+				var pos = TileExtensions.DrawPosition(i, j);
+				TileExtensions.DrawSloped(i, j, glow.Glowmask.Value, glow.GetDrawColor(new Point(i, j)), Vector2.Zero);
+			}
+		}
+	}
 }

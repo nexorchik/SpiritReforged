@@ -1,6 +1,4 @@
-﻿using SpiritReforged.Content.Savanna.Items.BaobabFruit;
-
-namespace SpiritReforged.Common.TileCommon;
+﻿namespace SpiritReforged.Common.TileCommon;
 
 public static class TileExtensions
 {
@@ -40,7 +38,7 @@ public static class TileExtensions
 			Rectangle frame;
 			Vector2 drawPos;
 
-			if (b == SlopeType.SlopeDownLeft || b == SlopeType.SlopeDownRight)
+			if (b is SlopeType.SlopeDownLeft or SlopeType.SlopeDownRight)
 			{
 				int length;
 				int height2;
