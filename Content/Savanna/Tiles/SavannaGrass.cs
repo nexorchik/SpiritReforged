@@ -37,6 +37,9 @@ public class SavannaGrass : ModTile
 	{
 		if (SpreadHelper.Spread(i, j, Type, 4, DirtType) && Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None); //Try spread grass
+
+		if (Main.rand.NextBool(30)) //Grow vines
+			TileExtensions.GrowVine(i, j + 1, ModContent.TileType<SavannaVine>());
 	}
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)

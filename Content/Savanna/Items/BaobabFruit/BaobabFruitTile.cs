@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Content.Savanna.Tiles;
+﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Content.Savanna.Tiles;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Items.BaobabFruit;
@@ -8,36 +9,21 @@ public class BaobabFruitTile : ModTile
 	/// <summary> Grows a baobab vine from the given coordinates including one-time framing logic. </summary>
 	internal static void GrowVine(int i, int j, int length = 1)
 	{
-		const int maxVineLength = 5;
-
 		int type = ModContent.TileType<BaobabFruitTile>();
 
 		for (int l = 0; l < length; l++)
 		{
-			for (int x = 0; x < maxVineLength; x++)
+			if (TileExtensions.GrowVine(i, j, type, 5, false))
 			{
-				if (Main.tile[i, j].HasTile && Main.tile[i, j].TileType == type)
-					j++; //Move to the next non-baobab tile below
+				var above = Main.tile[i, j - 1];
+
+				if (above.TileType == type)
+					above.TileFrameY = 18;
 			}
-
-			WorldGen.PlaceObject(i, j, ModContent.TileType<BaobabFruitTile>(), true, Main.rand.Next(2));
-
-			if (Main.tile[i, j].TileType != type)
-				break; //Tile placement failed
-
-			var above = Main.tile[i, j - 1];
-			if (above.TileType == type)
-			{
-				above.TileFrameY = 18;
-
-				if (Main.netMode != NetmodeID.SinglePlayer)
-					NetMessage.SendTileSquare(-1, i, j - 1, 1, 2);
-			}
-			else if (Main.netMode != NetmodeID.SinglePlayer)
-				NetMessage.SendTileSquare(-1, i, j, 1, 1);
-
-			j++; //Only applicable if length is greater than 1
 		}
+
+		if (Main.netMode != NetmodeID.SinglePlayer)
+			NetMessage.SendTileSquare(-1, i, j, 1, length);
 	}
 
 	public override void SetStaticDefaults()
@@ -48,6 +34,7 @@ public class BaobabFruitTile : ModTile
 		Main.tileLavaDeath[Type] = true;
 
 		TileID.Sets.VineThreads[Type] = true;
+		TileID.Sets.ReplaceTileBreakDown[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.AnchorBottom = AnchorData.Empty;
