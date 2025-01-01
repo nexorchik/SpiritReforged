@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.WorldGeneration;
+using SpiritReforged.Content.Savanna.Items.BaobabFruit;
 using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Savanna.Walls;
 using System.Linq;
@@ -79,7 +80,7 @@ internal static class BaobabGen
 			for (int b = last.X - halfWidth; b < last.X + halfWidth; b++) //Randomly generate baobab fruit below canopies
 			{
 				if (WorldGen.genRand.NextBool(4))
-					WorldGen.PlaceObject(b, last.Y + 1, ModContent.TileType<Items.BaobabFruit.BaobabFruitTile>(), true, WorldGen.genRand.Next(2));
+					BaobabFruitTile.GrowVine(b, last.Y + 1, WorldGen.genRand.Next(2, 5));
 			}
 		}
 

@@ -109,7 +109,7 @@ public class BaobabFruitProj : ModProjectile
 	public override bool PreDraw(ref Color lightColor)
 	{
 		var texture = TextureAssets.Projectile[Type].Value;
-		var frame = texture.Frame(2, 2, Style, 1, -2, -2);
+		var frame = texture.Frame(2, 2, Style, 0, -2, -2);
 
 		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(0, Projectile.gfxOffY), frame,
 			Projectile.GetAlpha(lightColor), Projectile.rotation, frame.Size() / 2, Projectile.scale, SpriteEffects.None);

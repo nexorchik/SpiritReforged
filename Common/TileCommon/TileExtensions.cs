@@ -38,7 +38,7 @@ public static class TileExtensions
 			Rectangle frame;
 			Vector2 drawPos;
 
-			if (b == SlopeType.SlopeDownLeft || b == SlopeType.SlopeDownRight)
+			if (b is SlopeType.SlopeDownLeft or SlopeType.SlopeDownRight)
 			{
 				int length;
 				int height2;
@@ -105,5 +105,34 @@ public static class TileExtensions
 			return;
 
 		(i, j) = (i - tile.TileFrameX % data.CoordinateFullWidth / 18, j - tile.TileFrameY % data.CoordinateFullHeight / 18);
+	}
+
+	/// <summary> Tries to place or extend a vine at the given coordinates. </summary>
+	/// <param name="i"> The tile's X coordinate. </param>
+	/// <param name="j"> The tile's Y coordinate. </param>
+	/// <param name="type"> The tile's type. </param>
+	/// <param name="maxLength"> The maximum length this vine can grow. Does NOT instantly grow a vine of the given length. </param>
+	/// /// <param name="sync"> Whether the tile changes should be automatically synced. </param>
+	/// <returns> Whether the tile was successfully placed. </returns>
+	public static bool GrowVine(int i, int j, int type, int maxLength = 15, bool sync = true)
+	{
+		while (Main.tile[i, j - 1].HasTile && Main.tile[i, j - 1].TileType == type)
+			j--; //Move to the top of the vine
+
+		for (int x = 0; x < maxLength; x++)
+		{
+			if (Main.tile[i, j].HasTile && Main.tile[i, j].TileType == type)
+				j++; //Move to the next available tile below
+		}
+
+		WorldGen.PlaceObject(i, j, type, true);
+
+		if (Main.tile[i, j].TileType != type)
+			return false; //Tile placement failed
+
+		if (Main.netMode != NetmodeID.SinglePlayer && sync)
+			NetMessage.SendTileSquare(-1, i, j, 1, 1);
+
+		return true;
 	}
 }

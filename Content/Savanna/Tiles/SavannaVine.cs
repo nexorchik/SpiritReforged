@@ -1,13 +1,10 @@
-﻿using SpiritReforged.Common.Visuals.Glowmasks;
+﻿namespace SpiritReforged.Content.Savanna.Tiles;
 
-namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
-
-[AutoloadGlowmask("Method:Content.Forest.Stargrass.Tiles.StargrassTile Glow")] //Use Stargrass' glow
-public class StargrassVine : ModTile
+public class SavannaVine : ModTile
 {
 	public override void SetStaticDefaults()
 	{
-		Main.tileBlockLight[Type] = false;
+		Main.tileBlockLight[Type] = true;
 		Main.tileCut[Type] = true;
 		Main.tileNoFail[Type] = true;
 		Main.tileLavaDeath[Type] = true;
@@ -18,7 +15,7 @@ public class StargrassVine : ModTile
 
 		AddMapEntry(new Color(24, 135, 28));
 
-		DustType = DustID.Grass;
+		DustType = DustID.JunglePlants;
 		HitSound = SoundID.Grass;
 	}
 
