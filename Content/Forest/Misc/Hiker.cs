@@ -1,35 +1,24 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
-using SpiritReforged.Common.ItemCommon.Pins;
-using SpiritReforged.Common.MapCommon;
-using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.NPCCommon;
-using SpiritReforged.Common.WorldGeneration;
+using SpiritReforged.Content.Savanna.Items.BaobabFruit;
 using SpiritReforged.Content.Savanna.Items.Gar;
 using Terraria.DataStructures;
 using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Forest.Misc;
 
-internal class Hiker : PlayerContainerNPC, INPCButtons
+internal class Hiker : ModNPC, INPCButtons
 {
-	/// <summary>
-	/// Stores all information for the hiker to pass properly between clones.
-	/// </summary>
+	/// <summary> Stores all information for the hiker to pass properly between clones. </summary>
 	private class HikerInfo
 	{
-		/// <summary>
-		/// If the hiker has a bundle to sell.
-		/// </summary>
+		/// <summary> If the hiker has a bundle to sell. </summary>
 		public bool hasBundle = true;
 
-		/// <summary>
-		/// If the hiker has been fed, and now gives away the bundle for free.
-		/// </summary>
+		/// <summary> If the hiker has been fed, and now gives away the bundle for free. </summary>
 		public bool priceOff = false;
 
-		/// <summary>
-		/// If the hiker has a pin to put on your map.
-		/// </summary>
+		/// <summary> If the hiker has a pin to put on your map. </summary>
 		public bool hasPin = true;
 	}
 
@@ -56,6 +45,9 @@ internal class Hiker : PlayerContainerNPC, INPCButtons
 		set => NPC.ai[3] = value ? 0 : 1;
 	}
 
+	private static Asset<Texture2D> stickTexture;
+	private static Profiles.StackedNPCProfile npcProfile;
+
 	private HikerInfo _info = new();
 
 	public override ModNPC Clone(NPC newEntity)
@@ -68,31 +60,32 @@ internal class Hiker : PlayerContainerNPC, INPCButtons
 
 	public override void SetStaticDefaults()
 	{
+		Main.npcFrameCount[Type] = 25;
+
 		NPCID.Sets.ActsLikeTownNPC[Type] = true;
 		NPCID.Sets.NoTownNPCHappiness[Type] = true;
+		NPCID.Sets.ExtraFramesCount[Type] = 9;
+		NPCID.Sets.AttackFrameCount[Type] = 4;
+		NPCID.Sets.DangerDetectRange[Type] = 500;
+		NPCID.Sets.PrettySafe[Type] = 50;
+		NPCID.Sets.AttackType[Type] = 3;
+		NPCID.Sets.AttackTime[Type] = 20;
+		NPCID.Sets.HatOffsetY[Type] = 2;
+		NPCID.Sets.AttackAverageChance[Type] = 30;
+
+		stickTexture = ModContent.Request<Texture2D>(Texture + "Stick");
+		npcProfile = new Profiles.StackedNPCProfile(new Profiles.DefaultNPCProfile(Texture, NPCHeadLoader.GetHeadSlot(HeadTexture), Texture + "_Party"));
 	}
 
-	public override void Defaults()
+	public override void SetDefaults()
 	{
 		NPC.CloneDefaults(NPCID.SkeletonMerchant);
 		NPC.townNPC = true;
 		NPC.Size = new Vector2(30, 40);
 
-		_info = new();
-	}
+		AnimationType = NPCID.Guide;
 
-	protected override void PreDrawPlayer()
-	{
-		_drawDummy.head = ArmorIDs.Head.ArchaeologistsHat;
-		_drawDummy.body = ArmorIDs.Body.ArchaeologistsJacket;
-		_drawDummy.legs = ArmorIDs.Legs.ArchaeologistsPants;
-		_drawDummy.back = EquipLoader.GetEquipSlot(Mod, "LeatherBackpack", EquipType.Back);
-		_drawDummy.front = EquipLoader.GetEquipSlot(Mod, "LeatherBackpack", EquipType.Front);
-		_drawDummy.hair = 2;
-		_drawDummy.eyeColor = Color.Blue;
-		_drawDummy.hairColor = new Color(63, 42, 33);
-		_drawDummy.pantsColor = Color.Brown;
-		_drawDummy.skinColor = new Color(206, 143, 76);
+		_info = new();
 	}
 
 	public override List<string> SetNPCNameList()
@@ -113,7 +106,7 @@ internal class Hiker : PlayerContainerNPC, INPCButtons
 			button = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Buttons.Supplies") + (_info.priceOff ? "" : $"([c/AAAAAA:{silver}])");
 		}
 		else
-			button = "";
+			button = string.Empty;
 
 		//button2 = !PointOfInterestSystem.HasAnyInterests() || !_info.hasPin ? "" : Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Buttons.Map");
 	}
@@ -127,11 +120,11 @@ internal class Hiker : PlayerContainerNPC, INPCButtons
 			if (Main.LocalPlayer.CanAfford(cost) && Main.LocalPlayer.PayCurrency(cost) && _info.hasBundle)
 				SpawnBundle();
 		}
-		else
-			MapFunctionality();
+		//else
+		//	MapFunctionality();
 	}
 
-	private void MapFunctionality()
+	/*private void MapFunctionality()
 	{
 		var item = new Item();
 		PinItem pin = Main.rand.Next([.. ModContent.GetContent<PinItem>()]);
@@ -170,7 +163,7 @@ internal class Hiker : PlayerContainerNPC, INPCButtons
 			RevealMap.DrawMap(point.X, point.Y, Radius);
 
 		_info.hasPin = false;
-	}
+	}*/
 
 	private void SpawnBundle()
 	{
@@ -243,5 +236,41 @@ internal class Hiker : PlayerContainerNPC, INPCButtons
 			Hungry = false;
 			_info.priceOff = true;
 		}
+	}
+
+	public override void HitEffect(NPC.HitInfo hit)
+	{
+		if (Main.dedServ)
+			return;
+
+		if (NPC.life <= 0)
+		{
+			for (int i = 1; i < 6; i++)
+			{
+				int goreType = Mod.Find<ModGore>(nameof(DevourerOfSoil) + i).Type;
+				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity, goreType);
+			}
+		}
+
+		for (int d = 0; d < 8; d++)
+			Dust.NewDustPerfect(Main.rand.NextVector2FromRectangle(NPC.getRect()), DustID.Blood, 
+				Main.rand.NextVector2Unit() * 1.5f, 0, default, Main.rand.NextFloat(1f, 1.5f));
+	}
+
+	public override ITownNPCProfile TownNPCProfile() => npcProfile;
+
+	public override void TownNPCAttackStrength(ref int damage, ref float knockback)
+	{
+		damage = 15;
+		knockback = 3f;
+	}
+
+	public override void TownNPCAttackSwing(ref int itemWidth, ref int itemHeight) => itemWidth = itemHeight = 30;
+
+	public override void DrawTownAttackSwing(ref Texture2D item, ref Rectangle itemFrame, ref int itemSize, ref float scale, ref Vector2 offset)
+	{
+		item = stickTexture.Value;
+		itemFrame = stickTexture.Frame();
+		itemSize = 30;
 	}
 }

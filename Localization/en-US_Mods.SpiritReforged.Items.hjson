@@ -857,3 +857,8 @@ PinYellow: {
 	DisplayName: Pin Yellow
 	Tooltip: ""
 }
+
+PinHive: {
+	DisplayName: Pin Hive
+	Tooltip: ""
+}
