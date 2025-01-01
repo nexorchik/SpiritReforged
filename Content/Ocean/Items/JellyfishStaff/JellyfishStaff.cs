@@ -8,7 +8,11 @@ namespace SpiritReforged.Content.Ocean.Items.JellyfishStaff;
 [AutoloadGlowmask("255, 255, 255")]
 public class JellyfishStaff : ModItem
 {
-	public override void SetStaticDefaults() => NPCLootDatabase.AddLoot(new(NPCLootDatabase.MatchId(NPCID.PinkJellyfish), ItemDropRule.Common(Type, 20)));
+	public override void SetStaticDefaults()
+	{
+		NPCLootDatabase.AddLoot(new(NPCLootDatabase.MatchId(NPCID.PinkJellyfish), ItemDropRule.Common(Type, 100)));
+		NPCLootDatabase.AddLoot(new(NPCLootDatabase.MatchId(NPCID.BlueJellyfish), ItemDropRule.Common(Type, 500)));
+	}
 
 	public override void SetDefaults()
 	{
