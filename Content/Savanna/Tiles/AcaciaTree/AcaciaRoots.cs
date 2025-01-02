@@ -13,6 +13,9 @@ public class AcaciaRootsLarge : ModTile
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
 		Main.tileLavaDeath[Type] = true;
+		Main.tileNoFail[Type] = true;
+
+		TileID.Sets.BreakableWhenPlacing[Type] = true;
 
 		SetObjectData();
 
