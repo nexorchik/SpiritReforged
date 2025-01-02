@@ -1,9 +1,7 @@
-﻿using SpiritReforged.Common.TileCommon;
-using Terraria.DataStructures;
+﻿using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
-[DrawOrder(DrawOrderAttribute.Layer.Solid, DrawOrderAttribute.Layer.Default)]
 public class TermiteMoundLarge : ModTile
 {
 	public override string Texture => base.Texture.Replace("Large", string.Empty);
@@ -12,6 +10,9 @@ public class TermiteMoundLarge : ModTile
 	{
 		Main.tileSolid[Type] = false;
 		Main.tileFrameImportant[Type] = true;
+		Main.tileNoFail[Type] = true;
+
+		TileID.Sets.BreakableWhenPlacing[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3);
 		TileObjectData.newTile.Height = 5;
@@ -56,30 +57,16 @@ public class TermiteMoundLarge : ModTile
 		var tile = Framing.GetTileSafely(i, j);
 		var texture = TextureAssets.Tile[tile.TileType].Value;
 
-		if (DrawOrderHandler.order == DrawOrderAttribute.Layer.Default)
-		{
-			var frame = new Point(tile.TileFrameX + 18 * frameXOffset, tile.TileFrameY + 18 * frameYOffset);
-			var source = new Rectangle(frame.X, frame.Y, 16, 16);
+		var frame = new Point(tile.TileFrameX + 18 * frameXOffset, tile.TileFrameY + 18 * frameYOffset);
+		var source = new Rectangle(frame.X, frame.Y, 16, 16);
 
-			var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
-			var position = new Vector2(i, j) * 16 - Main.screenPosition + zero;
+		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + zero + new Vector2(0, 2);
 
-			spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-		}
-		else if (tile.TileFrameY == 0)
-		{
-			var data = TileObjectData.GetTileData(tile);
-
-			var frame = new Point(tile.TileFrameX + frameXOffset * 18, 18 * 5);
-			var source = new Rectangle(frame.X, frame.Y, 16, 16);
-			var position = new Vector2(i, j + data.Height) * 16 - Main.screenPosition;
-
-			spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j + data.Height), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-		}
+		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 	}
 }
 
-[DrawOrder(DrawOrderAttribute.Layer.Solid, DrawOrderAttribute.Layer.Default)]
 public class TermiteMoundMedium : ModTile
 {
 	public override string Texture => base.Texture.Replace("Medium", string.Empty);
@@ -88,6 +75,9 @@ public class TermiteMoundMedium : ModTile
 	{
 		Main.tileSolid[Type] = false;
 		Main.tileFrameImportant[Type] = true;
+		Main.tileNoFail[Type] = true;
+
+		TileID.Sets.BreakableWhenPlacing[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
 		TileObjectData.newTile.Height = 4;
@@ -128,7 +118,6 @@ public class TermiteMoundMedium : ModTile
 	}
 }
 
-[DrawOrder(DrawOrderAttribute.Layer.Solid, DrawOrderAttribute.Layer.Default)]
 public class TermiteMoundSmall : ModTile
 {
 	public override string Texture => base.Texture.Replace("Small", string.Empty);
@@ -137,6 +126,9 @@ public class TermiteMoundSmall : ModTile
 	{
 		Main.tileSolid[Type] = false;
 		Main.tileFrameImportant[Type] = true;
+		Main.tileNoFail[Type] = true;
+
+		TileID.Sets.BreakableWhenPlacing[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);
 		TileObjectData.newTile.CoordinateHeights = [16];

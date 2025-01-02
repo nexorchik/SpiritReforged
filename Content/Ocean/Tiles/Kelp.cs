@@ -49,7 +49,7 @@ public class Kelp2x3 : ModTile, IDrawPreview
 	protected static Vector3 GetGlowColor(int x)
 	{
 		Color[] selections = [new Color(110, 150, 138), Color.LightSeaGreen, new Color(100, 220, 110), new Color(240, 240, 180), Color.LightSkyBlue, Color.Teal, Color.PowderBlue];
-		int seed = (int)((1f + (float)Math.Sin(SpiritReforgedSystem.GetWorldSeed())) * selections.Length) % selections.Length;
+		int seed = (int)((1f + (float)Math.Sin(Main.ActiveWorldFileData.Seed)) * selections.Length) % selections.Length;
 
 		var unit = selections[seed];
 

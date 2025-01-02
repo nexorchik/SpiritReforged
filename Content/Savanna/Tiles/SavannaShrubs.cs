@@ -11,7 +11,9 @@ public class SavannaShrubs : ModTile
 		Main.tileMergeDirt[Type] = false;
 		Main.tileBlockLight[Type] = false;
 		Main.tileFrameImportant[Type] = true;
+		Main.tileNoFail[Type] = true;
 
+		TileID.Sets.BreakableWhenPlacing[Type] = true;
 		TileID.Sets.SwaysInWindBasic[Type] = true;
 
 		const int height = 44;

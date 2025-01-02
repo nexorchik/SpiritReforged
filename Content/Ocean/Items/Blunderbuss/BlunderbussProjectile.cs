@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
+using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Ocean.Items.Blunderbuss;
 
@@ -66,4 +68,7 @@ internal class BlunderbussProjectile : GlobalProjectile
 
 		return (brightest == default) ? Color.Goldenrod : brightest;
 	}
+
+	public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter) => binaryWriter.Write(firedFromBlunderbuss);
+	public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader) => firedFromBlunderbuss = binaryReader.ReadBoolean();
 }
