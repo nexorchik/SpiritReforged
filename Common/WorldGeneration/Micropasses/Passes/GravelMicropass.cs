@@ -18,18 +18,18 @@ internal class GravelMicropass : Micropass
 
 	public override void Run(GenerationProgress progress, GameConfiguration config)
 	{
-		const int maxFails = 300;
+		const int maxFails = 1000;
 
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Gravel");
 
-		int count = 0;
+		int count = 0, fails = 0;
 		int maxCount = 8 + 2 * WorldGen.GetWorldSize(); //The maximum number of gravel patches which can generate in a world
 		int distance = WorldGen.oceanDistance;
 
 		int waterTopLeft = 0, waterTopRight = 0;
 		GetWaterTop(ref waterTopLeft, ref waterTopRight);
 
-		for (int f = 0; f < maxFails; f++)
+		while (count < maxCount && fails < maxFails)
 		{
 			int minY = waterTopLeft;
 
@@ -42,11 +42,14 @@ internal class GravelMicropass : Micropass
 
 			int y = WorldGen.genRand.Next(minY + 20, (int)WorldGen.oceanLevel);
 
-			if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.Sand && !Main.tile[x, y - 1].HasTile 
+			if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.Sand && !Main.tile[x, y - 1].HasTile
 				&& Main.tile[x, y - 1].LiquidType == LiquidID.Water && Main.tile[x, y - 1].LiquidAmount > 0)
 			{
 				if (!TileObject.CanPlace(x, y - 1, ModContent.TileType<HydrothermalVent>(), 0, 1, out _, true))
+				{
+					fails++;
 					continue;
+				}
 
 				if (WorldGen.genRand.NextBool(5)) //Generate a platform
 				{
@@ -70,7 +73,7 @@ internal class GravelMicropass : Micropass
 					Main.rand.Next(TileObjectData.GetTileData(ModContent.TileType<HydrothermalVent>(), 0).RandomStyleRange));
 
 				MoveDown(x, ref y, ModContent.TileType<Gravel>()); //This is the lowest we move y directly
-				WorldGen.OreRunner(x, y, WorldGen.genRand.Next(5, 10), 
+				WorldGen.OreRunner(x, y, WorldGen.genRand.Next(5, 10),
 					WorldGen.genRand.Next(10, 15), (ushort)ModContent.TileType<Gravel>()); //Initial gravel patch
 
 				if (WorldGen.genRand.NextBool()) //Generate small protrusions (rocks)
@@ -89,7 +92,7 @@ internal class GravelMicropass : Micropass
 					int offY = y;
 
 					MoveDown(offX, ref offY, ModContent.TileType<Gravel>());
-					WorldGen.OreRunner(offX, offY, WorldGen.genRand.Next(3, 8), 
+					WorldGen.OreRunner(offX, offY, WorldGen.genRand.Next(3, 8),
 						WorldGen.genRand.Next(6, 13), (ushort)ModContent.TileType<Gravel>());
 				}
 
@@ -109,9 +112,7 @@ internal class GravelMicropass : Micropass
 						i--; //Try again
 				}
 
-				f--; //Decrease fails
-				if (++count >= maxCount)
-					break;
+				count++;
 			}
 		}
 
