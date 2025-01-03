@@ -1,4 +1,6 @@
-﻿namespace SpiritReforged.Common.TileCommon;
+﻿using SpiritReforged.Common.WorldGeneration;
+
+namespace SpiritReforged.Common.TileCommon;
 
 public static class TileExtensions
 {
@@ -134,5 +136,24 @@ public static class TileExtensions
 			NetMessage.SendTileSquare(-1, i, j, 1, 1);
 
 		return true;
+	}
+
+	/// <summary> Checks if the tile at i, j is a chest, and returns what kind of chest it is if so. </summary>
+	/// <param name="i">X position.</param>
+	/// <param name="j">Y position.</param>
+	/// <param name="type">The type of the chest, if any.</param>
+	/// <returns>If the tile is a chest or not.</returns>
+	public static bool TryGetChestID(int i, int j, out VanillaChestID type)
+	{
+		Tile tile = Main.tile[i, j];
+		type = VanillaChestID.Wood;
+
+		if (tile.HasTile && tile.TileType == TileID.Containers && tile.TileFrameX % 36 == 0 && tile.TileFrameY == 0)
+		{
+			type = (VanillaChestID)(tile.TileFrameX / 36);
+			return true;
+		}
+
+		return false;
 	}
 }

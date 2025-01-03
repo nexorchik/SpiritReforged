@@ -170,9 +170,9 @@ internal class Hiker : ModNPC, INPCButtons
 		var newItem = new Item(ModContent.ItemType<LeatherBackpack>());
 		var backpack = newItem.ModItem as BackpackItem;
 		
-		for (int i = 0; i < backpack.Items.Length; ++i)
+		for (int i = 0; i < backpack.items.Length; ++i)
 		{
-			Item item = backpack.Items[i];
+			Item item = backpack.items[i];
 			(int type, Range stackRange) = ItemPool.Get();
 			item.SetDefaults(type);
 			item.stack = Main.rand.Next(stackRange.Start.Value, stackRange.End.Value + 1);

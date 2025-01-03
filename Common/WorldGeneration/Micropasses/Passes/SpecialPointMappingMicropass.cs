@@ -1,10 +1,9 @@
-﻿using SpiritReforged.Common.WorldGeneration;
-using SpiritReforged.Common.WorldGeneration.Microtones;
+﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Savanna.Tiles;
 using Terraria.IO;
 using Terraria.WorldBuilding;
 
-namespace SpiritMod.World.Micropasses;
+namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
 
 internal class SpecialPointMappingMicropass : Micropass
 {
@@ -24,7 +23,7 @@ internal class SpecialPointMappingMicropass : Micropass
 			{
 				Tile tile = Main.tile[i, j];
 
-				if (ChestTools.TryGetChestID(i, j, out VanillaChestID chestType))
+				if (TileExtensions.TryGetChestID(i, j, out VanillaChestID chestType))
 				{
 					if (chestType == VanillaChestID.Sky)
 						PointOfInterestSystem.AddPoint(new(i, j), InterestType.FloatingIsland);
