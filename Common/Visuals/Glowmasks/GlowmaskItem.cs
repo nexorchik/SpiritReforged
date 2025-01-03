@@ -38,7 +38,7 @@ internal class GlowmaskItem : GlobalItem
 			if (player.JustDroppedAnItem || !ItemIdToGlowmask.TryGetValue(player.HeldItem.type, out GlowmaskInfo glow))
 				return;
 
-			if (player.heldProj >= 0 && drawInfo.shadow == 0f && !drawInfo.heldProjOverHand)
+			if (player.heldProj >= 0 && drawInfo.shadow == 0f && drawInfo.heldProjOverHand)
 				drawInfo.projectileDrawPosition = drawInfo.DrawDataCache.Count;
 
 			Item heldItem = drawInfo.heldItem;

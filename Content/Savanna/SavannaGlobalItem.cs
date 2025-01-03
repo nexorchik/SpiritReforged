@@ -1,22 +1,7 @@
-﻿using SpiritReforged.Content.Savanna.NPCs.Gar;
-
-namespace SpiritReforged.Content.Savanna;
+﻿namespace SpiritReforged.Content.Savanna;
 
 public class SavannaGlobalItem : GlobalItem
 {
-	public override bool? UseItem(Item item, Player player)
-	{
-		if (player.GetModPlayer<SavannaPlayer>().quenchPotion)
-		{
-			if (item.useStyle == ItemUseStyleID.DrinkLiquid)
-			{
-				if (!player.HasBuff(item.buffType))
-					item.buffTime = (int)(item.buffTime * 1.25f);
-			}
-		}	
-
-		return null;
-	}
 	public override void SetDefaults(Item item)
 	{
 		if (item.type == Mod.Find<ModItem>("GoldGarItem").Type)
@@ -42,14 +27,15 @@ public class SavannaGlobalItem : GlobalItem
 			item.value = Item.sellPrice(0, 0, 0, 95);
 			item.bait = 9;
 		}
+
+		if (item.type == Mod.Find<ModItem>("SparrowItem").Type)
+			item.value = Item.sellPrice(0, 0, 5, 0);
 	}
-	public override void AddRecipes()
-	{
-		Recipe recipe = Recipe.Create(ItemID.HunterPotion, 1);
-		recipe.AddIngredient(ItemID.BottledWater)
+
+	public override void AddRecipes() => Recipe.Create(ItemID.HunterPotion, 1)
+			.AddIngredient(ItemID.BottledWater)
 			.AddIngredient(ItemID.Blinkroot)
 			.AddIngredient(Mod.Find<ModItem>("GarItem").Type)
 			.AddTile(TileID.Bottles)
 			.Register();
-	}
 }

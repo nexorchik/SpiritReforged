@@ -4,10 +4,16 @@ namespace SpiritReforged.Content.Ocean;
 
 public class OceanPlayer : ModPlayer
 {
+	public bool nearLure;
+
+	public override void ResetEffects() => nearLure = false;
+
 	public override void CatchFish(FishingAttempt attempt, ref int itemDrop, ref int npcSpawn, ref AdvancedPopupRequest sonar, ref Vector2 sonarPosition)
 	{
 		if (Player.ZoneBeach && attempt.veryrare && Main.rand.NextBool(15))
 			itemDrop = ModContent.ItemType<Items.SunkenTreasure>();
+		if (Player.ZoneBeach && attempt.rare && Main.rand.NextBool(30))
+			itemDrop = ModContent.ItemType<Items.Lifesaver.Lifesaver>();
 	}
 
 	/// <summary>

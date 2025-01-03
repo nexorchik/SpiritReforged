@@ -3,11 +3,11 @@ using Terraria.Graphics.Effects;
 
 namespace SpiritReforged.Content.Savanna.DustStorm;
 
-public class DuststormScene : ModSceneEffect
+public class DustStormScene : ModSceneEffect
 {
 	private bool wasDustStorm;
 
-	public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh;
+	public override SceneEffectPriority Priority => SceneEffectPriority.Environment;
 	public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Music/Duststorm");
 
 	public override bool IsSceneEffectActive(Player player) => player.GetModPlayer<DustStormPlayer>().ZoneDustStorm || wasDustStorm;
@@ -34,8 +34,8 @@ public class DuststormScene : ModSceneEffect
 				Overlays.Scene.Activate(sandstorm, center); //Might have no effect?
 			}
 
-			if (!player.ZoneSandstorm)
-				Sandstorm.Severity = MathHelper.Max(Sandstorm.Severity - .01f, intensity); //Transition into a calmer severity if necessary
+			Sandstorm.Severity = MathHelper.Max(Sandstorm.Severity - .01f, intensity); //Transition into a calmer severity if necessary
+			player.ZoneSandstorm = false;
 		}
 
 		if (!mPlayer.ZoneDustStorm && wasDustStorm && Filters.Scene[sandstorm].IsActive() && !player.ZoneSandstorm)

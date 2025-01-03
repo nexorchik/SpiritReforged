@@ -18,11 +18,6 @@ RawFish: {
 	Tooltip: "'Can be eaten...maybe cook it first?'"
 }
 
-SulfurDeposit: {
-	DisplayName: Sulfur Deposit
-	Tooltip: "'Highly explosive!'"
-}
-
 SunkenTreasure: {
 	DisplayName: Sunken Treasure
 	Tooltip:
@@ -92,16 +87,6 @@ TubeWormItem: {
 	Tooltip: ""
 }
 
-BaskingShark: {
-	DisplayName: Basking Shark
-	Tooltip: Converts bullets into chum chunks
-}
-
-BubbleMine: {
-	DisplayName: Bubble Mine
-	Tooltip: Right-click to make bubble mines detonate
-}
-
 CascadeChestplate: {
 	DisplayName: Cascade Chestplate
 	Tooltip: 50% knockback resistance
@@ -117,11 +102,6 @@ CascadeLeggings: {
 	Tooltip: 15% increased movement in water
 }
 
-CoralCatcher: {
-	DisplayName: Coral Catcher
-	Tooltip: Detects hooked fish
-}
-
 DeepCascadeShard: {
 	DisplayName: Deep Cascade Shard
 	Tooltip: "'Where magma meets seawater'"
@@ -132,18 +112,13 @@ JellyfishStaff: {
 	Tooltip: Summons a tiny jellyfish to fight for you!
 }
 
-MantarayHuntingHarpoon: {
-	DisplayName: Manta Harpoon
+Lifesaver: {
+	DisplayName: Lifesaver
 	Tooltip:
 		'''
 		Summons a rideable manta ray mount
 		The manta Ray is incapable of movement on land
 		'''
-}
-
-ReefWrath: {
-	DisplayName: Reef Wrath
-	Tooltip: Conjures harmful coral spires along the ground
 }
 
 ClawCannon: {
@@ -156,9 +131,9 @@ IridescentScale: {
 	Tooltip: "'Glints beautifully under the water'"
 }
 
-PendantOfTheOcean: {
-	DisplayName: Pendant of the Ocean
-	Tooltip: Double tap {0} to gain unhindered movement underwater for a short time
+OceanPendant: {
+	DisplayName: Seafarer's Pendant
+	Tooltip: Grants unhindered movement underwater
 }
 
 ReefSpear: {
@@ -187,7 +162,7 @@ GarItem: {
 }
 
 SavannaDirtItem: {
-	DisplayName: Savanna Dirt
+	DisplayName: Coarse Dirt
 	Tooltip: ""
 }
 
@@ -367,16 +342,6 @@ DriftwoodLeggings: {
 	Tooltip: ""
 }
 
-DriftwoodChairItem: {
-	DisplayName: Driftwood Chair
-	Tooltip: ""
-}
-
-DriftwoodDoorItem: {
-	DisplayName: Driftwood Door
-	Tooltip: ""
-}
-
 DriftwoodPlatformItem: {
 	DisplayName: Driftwood Platform
 	Tooltip: ""
@@ -387,18 +352,8 @@ DriftwoodSword: {
 	Tooltip: ""
 }
 
-DriftwoodTableItem: {
-	DisplayName: Driftwood Table
-	Tooltip: ""
-}
-
 DriftwoodWallItem: {
 	DisplayName: Driftwood Wall
-	Tooltip: ""
-}
-
-DriftwoodWorkbenchItem: {
-	DisplayName: Driftwood Workbench
 	Tooltip: ""
 }
 
@@ -546,6 +501,7 @@ PoolNoodle: {
 		'''
 		3 summon tag damage
 		{$CommonItemTooltip.Whips}
+		Struck enemies may release bubbly explosions when hit by summons
 		'''
 }
 
@@ -713,6 +669,11 @@ SafariVest: {
 	Tooltip: ""
 }
 
+SunStaff: {
+	DisplayName: Sunrise Scepter
+	Tooltip: Casts the light of the sun down in front of you
+}
+
 SavannaMusicBoxItem: {
 	DisplayName: Music Box (Savanna)
 	Tooltip: ""
@@ -813,6 +774,96 @@ DrywoodDoorItem: {
 	Tooltip: ""
 }
 
+DriftwoodBarrelItem: {
+	DisplayName: Driftwood Barrel
+	Tooltip: ""
+}
+
+DriftwoodBathtubItem: {
+	DisplayName: Driftwood Bathtub
+	Tooltip: ""
+}
+
+DriftwoodBedItem: {
+	DisplayName: Driftwood Bed
+	Tooltip: ""
+}
+
+DriftwoodBenchItem: {
+	DisplayName: Driftwood Bench
+	Tooltip: ""
+}
+
+DriftwoodBookcaseItem: {
+	DisplayName: Driftwood Bookcase
+	Tooltip: ""
+}
+
+DriftwoodCandelabraItem: {
+	DisplayName: Driftwood Candelabra
+	Tooltip: ""
+}
+
+DriftwoodCandleItem: {
+	DisplayName: Driftwood Candle
+	Tooltip: ""
+}
+
+DriftwoodChairItem: {
+	DisplayName: Driftwood Chair
+	Tooltip: ""
+}
+
+DriftwoodChandelierItem: {
+	DisplayName: Driftwood Chandelier
+	Tooltip: ""
+}
+
+DriftwoodClockItem: {
+	DisplayName: Driftwood Clock
+	Tooltip: ""
+}
+
+DriftwoodDoorItem: {
+	DisplayName: Driftwood Door
+	Tooltip: ""
+}
+
+DriftwoodDresserItem: {
+	DisplayName: Driftwood Dresser
+	Tooltip: ""
+}
+
+DriftwoodLampItem: {
+	DisplayName: Driftwood Lamp
+	Tooltip: ""
+}
+
+DriftwoodPianoItem: {
+	DisplayName: Driftwood Piano
+	Tooltip: ""
+}
+
+DriftwoodSinkItem: {
+	DisplayName: Driftwood Sink
+	Tooltip: ""
+}
+
+DriftwoodTableItem: {
+	DisplayName: Driftwood Table
+	Tooltip: ""
+}
+
+DriftwoodToiletItem: {
+	DisplayName: Driftwood Toilet
+	Tooltip: ""
+}
+
+DriftwoodWorkBenchItem: {
+	DisplayName: Driftwood Work Bench
+	Tooltip: ""
+}
+
 HerosMemorialStatueItem: {
 	DisplayName: A Hero's Memorial
 	Tooltip: Live on forever
@@ -836,6 +887,240 @@ StrongWindsItem: {
 WaningSunItem: {
 	DisplayName: Waning Sun
 	Tooltip: "'E. Sibellius'"
+}
+
+ScarecrowItem: {
+	DisplayName: Scarecrow
+	Tooltip: ""
+}
+
+BotanistBody: {
+	DisplayName: Botanist Apron
+	Tooltip: ""
+}
+
+BotanistHat: {
+	DisplayName: Sunflower Strawhat
+	Tooltip: Keeps you happy
+}
+
+BotanistLegs: {
+	DisplayName: Botanist Joggers
+	Tooltip: 10% increased move speed
+}
+
+BeachTowel: {
+	DisplayName: Beach Towel
+	Tooltip: "'It keeps you dry, but make sure you don't jump in the water with it on!'"
+}
+
+BikiniBottom: {
+	DisplayName: Bikini Bottom
+	Tooltip: "'Who needs armor anyways when you can run free in the sun!'"
+}
+
+BikiniTop: {
+	DisplayName: Bikini Top
+	Tooltip: "'Despite what one may expect, it really doesn't provide any sort of defense.'"
+}
+
+SwimmingTrunks: {
+	DisplayName: Swimming Trunks
+	Tooltip: "'They don't provide much in the way of defense, but they're undeniably stylish.'"
+}
+
+TintedGlasses: {
+	DisplayName: Tinted Glasses
+	Tooltip: "'They help sell the look, so it's best to keep them on even when it's dark.'"
+}
+
+WheatgrassSeedPouch: {
+	DisplayName: Wheatgrass Seed Pouch
+	Tooltip:
+		'''
+		Throws a spread of seeds which grow wheatgrass on grass
+		'Shakes and swishes in your hand'
+		'''
+}
+
+RoyalKhopesh: {
+	DisplayName: Royal Khopesh
+	Tooltip: ""
+}
+
+SavannaSandstormMusicBoxItem: {
+	Tooltip: ""
+	DisplayName: Music Box (Duststorm)
+}
+
+FishLure: {
+	DisplayName: Fish Lure
+	Tooltip:
+		'''
+		{$ItemTooltip.CoralTorch}
+		Attracts schools of fish to nearby waters
+		'''
+}
+
+DrywoodPlatformItem: {
+	DisplayName: Drywood Platform
+	Tooltip: ""
+}
+
+SavannaDirtWallItem: {
+	DisplayName: Coarse Dirt Wall
+	Tooltip: ""
+}
+
+GravelItem: {
+	DisplayName: Gravel
+	Tooltip: ""
+}
+
+MagmastoneItem: {
+	DisplayName: Magmastone
+	Tooltip: ""
+}
+
+HardmodeSavannaCrate: {
+	DisplayName: Safari Crate
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+SavannaCrate: {
+	DisplayName: Grassland Crate
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+MineralSlag: {
+	DisplayName: Mineral Slag
+	Tooltip: Can be used at the Extractinator
+}
+
+HyenaBannerItem.DisplayName: Hyena Banner
+OstrichBannerItem.DisplayName: Ostrich Banner
+
+SavannaCampfireItem: {
+	DisplayName: Savanna Campfire
+	Tooltip: "{$ItemTooltip.Campfire}"
+}
+
+SavannaFountainItem: {
+	DisplayName: Savanna Water Fountain
+	Tooltip: ""
+}
+
+DrywoodFenceItem: {
+	DisplayName: Drywood Fence
+	Tooltip: ""
+}
+
+DrywoodWallItem: {
+	DisplayName: Drywood Wall
+	Tooltip: ""
+}
+
+ZiplineGun: {
+	Tooltip:
+		'''
+		Use left or right click to latch each side of the rail to tiles
+		Rails carry players swiftly in either direction
+		Tethers can be removed when hovered over or replaced by firing
+		'''
+	DisplayName: Rail-gun
+}
+
+FrostbiteItem: {
+	DisplayName: Frostbite
+	Tooltip: Creates a slow-moving blizzard that follows your cursor
+}
+
+RogueCrest: {
+	DisplayName: Rogue's Crest
+	Tooltip:
+		'''
+		Summons a rusted sword to fight for you
+		This sword does not take up minion slots
+		'''
+}
+
+GildedScarab: {
+	DisplayName: Gilded Scarab
+	Tooltip:
+		'''
+		Getting hit provides a temporary buff to defense
+		This shield provides more defense based on the damage taken
+		'''
+}
+
+SparrowItem: {
+	DisplayName: Sparrow
+	Tooltip: ""
+}
+
+Blunderbuss: {
+	DisplayName: Blunderbuss
+	Tooltip: Fires a wide spread of bullets
+}
+
+SafekeeperRing: {
+	DisplayName: Safekeeper's Ring
+	Tooltip:
+		'''
+		Slightly increases damage dealt against undead
+		'It gives off an eerie light'
+		'''
+}
+
+PeevedTumblerBannerItem.DisplayName: Peeved Tumbler Banner
+
+LeatherHood: {
+	DisplayName: Marksman's Hood
+	Tooltip: Increases critical strike chance by 5%
+}
+
+LeatherLegs: {
+	DisplayName: Marksman's Boots
+	Tooltip: ""
+}
+
+LeatherPlate: {
+	DisplayName: Marksman's Plate
+	Tooltip: ""
+}
+
+ExplorerTreads: {
+	DisplayName: Explorer's Treads
+	Tooltip:
+		'''
+		+5% Movement speed for every 10% missing health
+		50% chance to avoid traps and hazards
+		'Makes exploring temples like a walk in the park'
+		'''
+}
+
+CactusStaff: {
+	DisplayName: Cactus Staff
+	Tooltip: Summons cactus walls to protect you
+}
+
+PearlString: {
+	DisplayName: Pearl String
+	Tooltip:
+		'''
+		Slain enemies drop more coins
+		'You feel lucky'
+		'''
+}
+
+DrywoodChandelierItem: {
+	DisplayName: Drywood Chandelier
+	Tooltip: ""
+}
+
+DriftwoodLanternItem: {
+	DisplayName: Driftwood Lantern
+	Tooltip: ""
 }
 
 PinBlue: {

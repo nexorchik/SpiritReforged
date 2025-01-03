@@ -15,7 +15,7 @@ public class CascadeChestplate : ModItem
 	public override void AddRecipes()
 	{
 		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<SulfurDeposit>(), 14);
+		recipe.AddIngredient(ModContent.ItemType<MineralSlag>(), 14);
 		recipe.AddTile(TileID.Anvils);
 		recipe.Register();
 	}

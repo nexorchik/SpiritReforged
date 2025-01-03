@@ -1,7 +1,7 @@
 ﻿using Terraria.GameContent.Generation;
 using Terraria.WorldBuilding;
 
-namespace SpiritReforged.Common.WorldGeneration.Microtones;
+namespace SpiritReforged.Common.WorldGeneration.Micropasses;
 
 internal class MicropassSystem : ModSystem
 {

@@ -11,12 +11,14 @@ global using Terraria.Enums;
 global using Terraria.ObjectData;
 global using System.Collections.Generic;
 global using NPCUtils;
+
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.BuffCommon;
 
 namespace SpiritReforged;
 
-public class SpiritReforgedMod : Mod
+public partial class SpiritReforgedMod : Mod
 {
 	public static SpiritReforgedMod Instance => ModContent.GetInstance<SpiritReforgedMod>();
 
@@ -26,7 +28,7 @@ public class SpiritReforgedMod : Mod
 	{
 		NPCUtils.NPCUtils.AutoloadModBannersAndCritters(this);
 		NPCUtils.NPCUtils.TryLoadBestiaryHelper();
-		Common.Misc.AutoloadMinionDictionary.AddBuffs(Code);
+		AutoloadMinionDictionary.AddBuffs(Code);
 		
 		TrailDetours.Initialize();
 
@@ -40,7 +42,7 @@ public class SpiritReforgedMod : Mod
 	{
 		NPCUtils.NPCUtils.UnloadMod(this);
 		NPCUtils.NPCUtils.UnloadBestiaryHelper();
-		Common.Misc.AutoloadMinionDictionary.Unload();
+		AutoloadMinionDictionary.Unload();
 		AssetLoader.Unload();
 		TrailDetours.Unload();
 

@@ -34,5 +34,8 @@
     <Reference Include="NPCUtils">
       <HintPath>lib\NPCUtils.dll</HintPath>
     </Reference>
+    <Reference Include="StructureHelper">
+      <HintPath>lib\StructureHelper.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

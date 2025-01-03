@@ -18,6 +18,11 @@ public class SquarePrimitive : IPrimitiveShape
 
 	public float Rotation { get; set; }
 
+	/// <summary>
+	/// Modifies the shape of the square into a parallelogram. Represents the maximum horizontal distance from the top of the square's position
+	/// </summary>
+	public float BottomPosOffset { get; set; }
+
 	public void PrimitiveStructure(out VertexPositionColorTexture[] vertices, out short[] indeces)
 	{
 		var vertexList = new List<VertexPositionColorTexture>();
@@ -33,13 +38,22 @@ public class SquarePrimitive : IPrimitiveShape
 		}
 
 		for (int x = 1; x >= -1; x -= 2) //Set corners on the left and right
+		{
 			for (int y = -1; y <= 1; y += 2) //Set corners on the top and bottom
 			{
+				Vector2 offset = y == -1 ? new Vector2(BottomPosOffset, 0) : new Vector2(0);
+				offset = offset.RotatedBy(Rotation);
+
 				Vector2 cornerPos = Position - new Vector2(x * Length / 2, y * Height / 2).RotatedBy(Rotation);
+				cornerPos += offset;
+
 				AddVertexIndex(cornerPos, new Vector2((x + 1) / 2, (y + 1) / 2));
 			}
+		}
 
 		vertices = [.. vertexList];
 		indeces = [.. indexList];
 	}
+
+	public void SetTopPosition(Vector2 topPosition) => Position = topPosition + new Vector2(0, Height / 2).RotatedBy(Rotation);
 }

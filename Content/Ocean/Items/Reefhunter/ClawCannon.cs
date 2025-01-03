@@ -18,14 +18,14 @@ public class ClawCannon : ModItem
 		Item.useTime = Item.useAnimation = 30;
 		Item.useStyle = ItemUseStyleID.Shoot;
 		Item.knockBack = 4;
-		Item.value = Item.sellPrice(0, 0, 5, 0);
+		Item.value = Item.sellPrice(0, 0, 14, 0);
 		Item.rare = ItemRarityID.Blue;
 		Item.crit = 6;
 		Item.autoReuse = true;
 		Item.noMelee = true;
 		Item.DamageType = DamageClass.Ranged;
 		Item.shootSpeed = 15f;
-		Item.UseSound = SoundID.Item20;
+		Item.UseSound = SoundID.Item85;
 		Item.shoot = ModContent.ProjectileType<Cannonbubble>();
 	}
 
@@ -33,7 +33,7 @@ public class ClawCannon : ModItem
 	{
 		if (!Main.dedServ)
 		{
-			SoundEngine.PlaySound(SoundID.Item85, position);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/Woosh_1") with { PitchVariance = 0.4f, Pitch = -1.5f, Volume = 1.2f, MaxInstances = 3 }, player.Center);
 
 			PulseCircle[] pulseCircles =
 			[
@@ -60,7 +60,7 @@ public class ClawCannon : ModItem
 	{
 		var recipe = CreateRecipe();
 		recipe.AddIngredient(ModContent.ItemType<IridescentScale>(), 6);
-		recipe.AddIngredient(ModContent.ItemType<SulfurDeposit>(), 14);
+		recipe.AddIngredient(ModContent.ItemType<MineralSlag>(), 14);
 		recipe.AddTile(TileID.Anvils);
 		recipe.Register();
 	}

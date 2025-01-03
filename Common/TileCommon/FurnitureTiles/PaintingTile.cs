@@ -3,13 +3,13 @@ using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
-public abstract class PaintingTile : FurnitureTile, IAutoloadTileItem
+public abstract class PaintingTile : FurnitureTile
 {
 	public virtual int TileHeight => 2;
 
 	public virtual int TileWidth => 2;
 
-	public virtual void SetItemDefaults(ModItem item) => item.Item.value = Item.buyPrice(gold: 2);
+	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.buyPrice(gold: 2);
 
 	public override void StaticDefaults()
 	{
@@ -31,5 +31,6 @@ public abstract class PaintingTile : FurnitureTile, IAutoloadTileItem
 		DustType = DustID.WoodFurniture;
 		AddMapEntry(new Color(23, 23, 23), Language.GetText("MapObject.Painting"));
 	}
+
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 3 : 10;
 }

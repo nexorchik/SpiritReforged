@@ -7,6 +7,17 @@ public abstract class ToiletTile : FurnitureTile
 {
 	private static bool WithinRange(int i, int j, Player player) => player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance);
 
+	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 30);
+
+	public override void AddItemRecipes(ModItem item)
+	{
+		if (CoreMaterial != ItemID.None)
+			item.CreateRecipe()
+			.AddIngredient(CoreMaterial, 6)
+			.AddTile(TileID.Sawmill)
+			.Register();
+	}
+
 	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
@@ -54,7 +65,7 @@ public abstract class ToiletTile : FurnitureTile
 		if (WithinRange(i, j, player))
 		{
 			player.noThrow = 2;
-			player.cursorItemIconID = MyItemDrop;
+			player.cursorItemIconID = ModItem.Type;
 			player.cursorItemIconEnabled = true;
 
 			if (Framing.GetTileSafely(i, j).TileFrameX / 18 < 1)

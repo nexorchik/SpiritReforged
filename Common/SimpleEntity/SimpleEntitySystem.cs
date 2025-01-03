@@ -15,10 +15,10 @@ public class SimpleEntitySystem : ModSystem
 	/// <summary> Entities that exist in the world. </summary>
 	internal static SimpleEntity[] entities;
 
-	internal const int maxEntities = 100;
+	internal const int maxEntities = 200;
 	private static int nextIndex;
 
-	public static Entity NewEntity(int type, Vector2 position)
+	public static SimpleEntity NewEntity(int type, Vector2 position)
 	{
 		var entity = templates[type].Clone();
 		entity.active = true;
@@ -90,6 +90,8 @@ public class SimpleEntitySystem : ModSystem
 	{
 		for (int i = 0; i < maxEntities; i++)
 			entities[i] = null; //Unload all of our entities with the world
+
+		nextIndex = 0;
 	}
 
 	private const string commonKey = "simpleEntities";

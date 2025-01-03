@@ -84,12 +84,25 @@ SavannaSandSlime: {
 
 PeevedTumbler: {
 	DisplayName: Peeved Tumbler
-	Entry: ""
+	Entry: Life isn't easy in the Savanna...but it's also not too bad. Hey, you'd be annoyed if you had sand in your eyes too.
+}
+
+Sparrow: {
+	Entry: Much like its forest cousin, the world-famous Bird, Sparrows are simple. They fly about, picking at termites and enjoying the Savanna air.
+	DisplayName: Sparrow
 }
 
 TridentZombie.DisplayName: "{$NPCName.Zombie}"
 SafariZombie.DisplayName: Safari Zombie
 TumbleZombie.DisplayName: Tumble Zombie
+Hyena.DisplayName: Hyena
+Ostrich.DisplayName: Ostrich
+ButterflyCritter.DisplayName: Ethereal Butterfly
+
+SavannaJungleSlime: {
+	DisplayName: Jungle Slime
+	Entry: It's gobbled up some flowers! Almost too cute to kill...
+}
 
 Hiker: {
 	DisplayName: Hiker

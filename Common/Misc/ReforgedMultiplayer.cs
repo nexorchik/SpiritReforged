@@ -3,6 +3,7 @@ using SpiritReforged.Common.MapCommon;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.SimpleEntity;
 using SpiritReforged.Common.WorldGeneration;
+using SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 using System.IO;
 using Terraria.DataStructures;
 
@@ -12,7 +13,7 @@ public static class ReforgedMultiplayer
 {
 	public enum MessageType : byte
 	{
-		SendVentPoint,
+		SendVentEruption,
 		SpawnTrail,
 		SpawnSimpleEntity,
 		KillSimpleEntity,
@@ -30,19 +31,11 @@ public static class ReforgedMultiplayer
 
 		switch (id)
 		{
-			case MessageType.SendVentPoint:
-				int i = reader.ReadInt32();
-				int j = reader.ReadInt32();
+			case MessageType.SendVentEruption: //Normally should only be recieved by clients
+				short i = reader.ReadInt16();
+				short j = reader.ReadInt16();
 
-				if (Main.netMode == NetmodeID.Server)
-				{
-					ModPacket packet = SpiritReforgedMod.Instance.GetPacket(MessageType.SendVentPoint, 2);
-					packet.Write(i);
-					packet.Write(j);
-					packet.Send(ignoreClient: whoAmI); //Relay to other clients
-				}
-
-				Content.Ocean.Tiles.VentSystem.VentPoints.Add(new Point16(i, j));
+				HydrothermalVent.Erupt(i, j);
 				break;
 
 			case MessageType.SpawnTrail:

@@ -1,17 +1,11 @@
-using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.FurnitureTiles;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles.Furniture;
 
-public class DrywoodChair : ChairTile, IAutoloadTileItem
+public class DrywoodChair : ChairTile
 {
-	public void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 30);
-
-	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
-		.AddIngredient<Items.Drywood.Drywood>(4)
-		.AddTile(TileID.WorkBenches)
-		.Register();
+	public override int CoreMaterial => ModContent.ItemType<Items.Drywood.Drywood>();
 
 	public override void StaticDefaults()
 	{
@@ -37,7 +31,6 @@ public class DrywoodChair : ChairTile, IAutoloadTileItem
 		TileObjectData.addAlternate(1);
 		TileObjectData.addTile(Type);
 
-		RegisterItemDrop(Mod.Find<ModItem>(Name + "Item").Type);
 		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsChair);
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Chair"));
 		AdjTiles = [TileID.Chairs];

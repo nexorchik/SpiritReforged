@@ -3,6 +3,7 @@ using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.Trail_Components;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
+using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
@@ -71,6 +72,9 @@ public class UrchinSpike : ModProjectile, ITrailProjectile
 
 		if (!Main.dedServ)
 			AssetLoader.VertexTrailManager.TryEndTrail(Projectile, 12);
+
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_LightPop") with { PitchVariance = 0.4f, Volume = 1.1f, MaxInstances = 12}, Projectile.Center);
+
 	}
 
 	public override bool PreDraw(ref Color lightColor)

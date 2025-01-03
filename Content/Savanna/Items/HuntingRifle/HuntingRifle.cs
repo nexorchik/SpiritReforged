@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -101,7 +102,9 @@ public class HuntingRifle : ModItem
 		float mult = 1f;
 		if (player.velocity == Vector2.Zero)
 		{
-			ParticleHandler.SpawnParticle(new SmokeParticle(position + unit * fxDistance, unit * -.2f, Color.LightSlateGray, .5f, unit.ToRotation(), 30));
+			ParticleHandler.SpawnParticle(new SmokeParticle(position + unit * fxDistance, unit * -.2f, 
+				Lighting.GetColor(position.ToTileCoordinates(), Color.LightSlateGray), .5f, unit.ToRotation(), 30));
+
 			//Grant a damage bonus (+25%) when standing still. Additional bonuses are applied in HunterGlobalProjectile
 			mult = 1.25f;
 		}
@@ -110,9 +113,11 @@ public class HuntingRifle : ModItem
 		Projectile.NewProjectile(source, position, unit, ModContent.ProjectileType<HuntingRifleProj>(), 0, 0, player.whoAmI);
 
 		//Spawn a damaging projectile
-		var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, (int)(damage * mult), knockback, player.whoAmI);
-		if (projectile.TryGetGlobalProjectile(out HunterGlobalProjectile hunter))
-			hunter.hasDistanceMultiplier = true;
+		PreNewProjectile.New(source, position, velocity, type, (int)(damage * mult), knockback, player.whoAmI, preSpawnAction: (Projectile projectile) =>
+		{
+			if (projectile.TryGetGlobalProjectile(out HunterGlobalProjectile hunter))
+				hunter.hasDistanceMultiplier = true;
+		});
 
 		return false;
     }
@@ -169,7 +174,7 @@ public class HuntingRifleProj : ModProjectile
 			holdDistance -= MathHelper.Clamp(((float)Projectile.timeLeft - (halfTime - 8)) / (halfTime - (halfTime - 8)), 0, 1) * 2f;
 		}
 
-		Projectile.Center = owner.Center + Projectile.velocity * holdDistance;
+		Projectile.Center = owner.MountedCenter + Projectile.velocity * holdDistance;
         Projectile.spriteDirection = Projectile.direction = (Projectile.velocity.X > 0) ? 1 : -1;
         Projectile.rotation = Projectile.velocity.ToRotation() + GetFeedback() * .15f * -owner.direction;
 

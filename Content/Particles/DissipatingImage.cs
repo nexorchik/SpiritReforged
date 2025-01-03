@@ -7,12 +7,16 @@ namespace SpiritReforged.Content.Particles;
 
 public class DissipatingImage : Particle
 {
+	public bool UseLightColor { get; set; }
+
 	private readonly string _texture;
 	private readonly float _maxDistortion;
-	private float _opacity;
-	public bool UseLightColor;
 	private readonly Vector2 _noiseStretch = new (1);
 	private readonly Vector2 _texExponent = new(2, 1);
+
+	private float _opacity;
+
+	internal float _scaleMod = 1;
 
 	public DissipatingImage(Vector2 position, Color color, float rotation, float scale, float maxDistortion, string texture, int maxTime)
 	{
@@ -40,6 +44,7 @@ public class DissipatingImage : Particle
 	{
 		_opacity = EaseFunction.EaseQuadOut.Ease(Progress);
 		_opacity = (float)Math.Sin(_opacity * MathHelper.Pi);
+		_scaleMod = 1 + Progress / 2;
 	}
 
 	public override ParticleLayer DrawLayer => ParticleLayer.AboveProjectile;
@@ -69,12 +74,11 @@ public class DissipatingImage : Particle
 			if (UseLightColor)
 				lightColor = Lighting.GetColor(Position.ToTileCoordinates().X, Position.ToTileCoordinates().Y);
 
-			float scaleMod = 1 + (Progress / 2);
 			var square = new SquarePrimitive
 			{
 				Color = lightColor * _opacity,
-				Height = Scale * value.Height * scaleMod,
-				Length = Scale * value.Width * scaleMod,
+				Height = Scale * value.Height * _scaleMod,
+				Length = Scale * value.Width * _scaleMod,
 				Position = Position - Main.screenPosition,
 				Rotation = Rotation,
 			};

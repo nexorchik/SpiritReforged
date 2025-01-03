@@ -2,29 +2,32 @@ namespace SpiritReforged.Content.Ocean.Boids;
 
 internal class Boid
 {
-	private readonly List<BoidObject> Objects = [];
+	protected readonly List<BoidObject> Objects = [];
 
 	public int[] TextureLookup { get; }
 
 	public readonly float flockScale;
 	public readonly float maxFish;
+	public readonly float spawnWeight;
 
 	private const int SimulationDistance = 2500;
 
 	/// <param name="lookup"> The indexes of <see cref="BoidManager.FishTextures"/> this boid uses. </param>
-	public Boid(int[] lookup, float scale = 1, float maxFlockSize = 60)
+	public Boid(int[] lookup, float scale = 1, float maxFlockSize = 60, float spawnWeight = 1)
 	{
 		TextureLookup = lookup;
 		flockScale = scale;
 		maxFish = maxFlockSize;
+		this.spawnWeight = spawnWeight;
 	}
 
 	/// <param name="lookup"> The index of <see cref="BoidManager.FishTextures"/> this boid uses. </param>
-	public Boid(int lookup, float scale = 1, float maxFlockSize = 60)
+	public Boid(int lookup, float scale = 1, float maxFlockSize = 60, float spawnWeight = 1)
 	{
 		TextureLookup = [lookup];
 		flockScale = scale;
 		maxFish = maxFlockSize;
+		this.spawnWeight = spawnWeight;
 	}
 
 	internal void Populate(Vector2 position, int amount, float spread)

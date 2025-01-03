@@ -1,4 +1,5 @@
 using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Content.Savanna.Items.HuntingRifle;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
@@ -7,7 +8,11 @@ public class SafariZombie : ReplaceNPC
 	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie,
 		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
 
-	public override void StaticDefaults() => Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
+	public override void StaticDefaults()
+	{
+		Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
+		NPCID.Sets.Zombies[Type] = true;
+	}
 
 	public override void SetDefaults()
 	{
@@ -51,6 +56,7 @@ public class SafariZombie : ReplaceNPC
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
+		npcLoot.AddCommon(ModContent.ItemType<HuntingRifle>(), 300);
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
 		npcLoot.AddOneFromOptions(75, ModContent.ItemType<Items.Vanity.SafariHat>(), 

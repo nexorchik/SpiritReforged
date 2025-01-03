@@ -1,5 +1,7 @@
 ﻿using SpiritReforged.Common.Particle;
 
+namespace SpiritReforged;
+
 public class SpiritReforgedSystem : ModSystem
 {
 	public override void PreUpdateItems()

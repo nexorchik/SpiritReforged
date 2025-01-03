@@ -24,10 +24,14 @@ public class SavannaSandSlime : ModNPC
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		for (int k = 0; k < 20; k++)
-			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.SandSpray, 2.5f * hit.HitDirection, -2.5f, 0, Color.White, 0.78f);
+			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Sand, 2.5f * hit.HitDirection, -2.5f, 0, default, 0.78f);
 	}
 
-	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon(ItemID.Gel, 1, 1, 3);
+	public override void ModifyNPCLoot(NPCLoot npcLoot)
+	{
+		npcLoot.AddCommon(ItemID.Gel, 1, 1, 3);
+		npcLoot.AddCommon(ItemID.SlimeStaff, 10000);
+	}
 
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{

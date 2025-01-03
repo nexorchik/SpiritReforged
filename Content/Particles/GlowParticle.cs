@@ -16,6 +16,8 @@ public class GlowParticle : Particle
 	public override ParticleDrawType DrawType => ParticleDrawType.Custom;
 	private readonly Vector2[] oldPositions = [];
 
+	private ParticleLayer _drawLayer = ParticleLayer.BelowProjectile;
+
 	public GlowParticle(Vector2 position, Vector2 velocity, Color startColor, Color endColor, float scale, int maxTime, int maxTrailLength = 1, Action<Particle> extraUpdateAction = null)
 	{
 		Position = position;
@@ -74,5 +76,13 @@ public class GlowParticle : Particle
 			float easeModifier = EaseFunction.EaseQuadOut.Ease(1 - progress);
 			Draw(tex, oldPositions[i], easeModifier * 0.25f, easeModifier);
 		}
+	}
+
+	public override ParticleLayer DrawLayer => _drawLayer;
+
+	public GlowParticle OverrideDrawLayer(ParticleLayer newLayer)
+	{
+		_drawLayer = newLayer;
+		return this;
 	}
 }

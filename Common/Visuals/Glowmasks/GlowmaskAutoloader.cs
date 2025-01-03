@@ -20,14 +20,14 @@ internal class GlowmaskAutoloader : ModSystem
 			if (typeof(ModNPC).IsAssignableFrom(type))
 			{
 				int id = (int)npcGetId.MakeGenericMethod(type).Invoke(null, null);
-				if(TryGetGlowmask(ModContent.GetModNPC(id).Texture, out var glowMask))
+				if (TryGetGlowmask(ModContent.GetModNPC(id).Texture, out var glowMask))
 					GlowmaskNPC.NpcIdToGlowmask.Add(id, new(glowMask, color, autoDraw));
 			}
 
 			else if (typeof(ModTile).IsAssignableFrom(type))
 			{
 				int id = (int)tileGetId.MakeGenericMethod(type).Invoke(null, null);
-				if(TryGetGlowmask(ModContent.GetModTile(id).Texture, out var glowMask))
+				if (TryGetGlowmask(ModContent.GetModTile(id).Texture, out var glowMask))
 					GlowmaskTile.TileIdToGlowmask.Add(id, new(glowMask, color, autoDraw));
 			}
 
