@@ -58,8 +58,7 @@ internal class PinMapLayer : ModMapLayer
 			heldPin = null;
 			placedPin = true;
 
-			if (Main.netMode != NetmodeID.Server)
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/MapPin") with { PitchVariance = 0.3f });
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/MapPin") with { PitchVariance = 0.3f });
 		}
 
 		var drawOffset = new Vector2(0, heldOffset); //Hover above the cursor slightly when held

@@ -111,7 +111,6 @@ Hiker: {
 		Feed: Feed
 		Supplies: Supplies
 		Silver: 20 silver
-		Map: Map
 	}
 
 	Dialogue: {
@@ -138,7 +137,23 @@ Hiker: {
 			3: Sometimes I pass by a faerie, and they guide me to gold or platinum. I always act excited, but I don't have a pickaxe.
 			4: You always carry a little extra supplies if you're smart. I've got just a little too much...for a small fee, I won't!
 		}
+	}
 
+	Name: {
+		0: Gary
+		1: Shawn
+		2: Geo
+		3: Geoff
+		4: Rocky
+		5: Porter
+	}
+}
+
+Cartographer: {
+	DisplayName: Cartographer
+	Buttons.Map: Map
+
+	Dialogue: {
 		Map: {
 			FloatingIsland: {
 				0: Happy to share! Here's a little pin on this floating island I found. How'd I get there? Well, let's just say harpies can carry you WAY farther than you'd expect.
@@ -194,14 +209,5 @@ Hiker: {
 				2: Ah...nope...there it is. I'll keep it short this time. Stingers hurt. Be prepared.
 			}
 		}
-	}
-
-	Name: {
-		0: Gary
-		1: Shawn
-		2: Geo
-		3: Geoff
-		4: Rocky
-		5: Porter
 	}
 }

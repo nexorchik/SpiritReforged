@@ -4,6 +4,7 @@ public enum InterestType : byte
 {
 	FloatingIsland,
 	EnchantedSword,
+	ButterflyShrine,
 	Shimmer,
 	Savanna,
 	Hive,

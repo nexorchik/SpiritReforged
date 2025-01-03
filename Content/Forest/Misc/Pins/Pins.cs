@@ -31,3 +31,21 @@ public class PinHive : PinItem
 	public override string PinName => "Hive";
 	public override Color TextColor => Color.Honeydew;
 }
+
+public class PinButterfly : PinItem
+{
+	public override string PinName => "ButterflyShrine";
+	public override Color TextColor => Color.HotPink;
+}
+
+public class PinFaeling : PinItem
+{
+	public override string PinName => "Shimmer";
+	public override Color TextColor => Color.MediumPurple;
+}
+
+public class PinSavanna : PinItem
+{
+	public override string PinName => "Savanna";
+	public override Color TextColor => Color.YellowGreen;
+}

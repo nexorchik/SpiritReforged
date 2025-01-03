@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Content.Forest.ButterflyStaff;
 using SpiritReforged.Content.Savanna.Tiles;
 using Terraria.IO;
 using Terraria.WorldBuilding;
@@ -38,7 +39,9 @@ internal class SpecialPointMappingMicropass : Micropass
 						PointOfInterestSystem.AddPoint(new(i, j), InterestType.Savanna);
 					else if (tile.TileType == TileID.LargePiles2 && tile.TileFrameX == 920 && tile.TileFrameY == 0)
 						PointOfInterestSystem.AddPoint(new(i, j), InterestType.EnchantedSword);
-				}
+                    else if (tile.TileType == ModContent.TileType<ButterflyStump>() && tile.TileFrameX == 0 && tile.TileFrameY == 0)
+						PointOfInterestSystem.AddPoint(new(i, j), InterestType.ButterflyShrine);
+                }
 			}
 		}
 

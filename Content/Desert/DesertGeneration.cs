@@ -1,5 +1,4 @@
-﻿using SpiritReforged.Content.Desert.GildedScarab;
-using SpiritReforged.Common.Misc;
+﻿using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.WorldGeneration;
 
 namespace SpiritReforged.Content.Desert;

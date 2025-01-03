@@ -1124,26 +1124,41 @@ DriftwoodLanternItem: {
 }
 
 PinBlue: {
-	DisplayName: Pin Blue
+	DisplayName: Blue Pin
 	Tooltip: ""
 }
 
 PinGreen: {
-	DisplayName: Pin Green
+	DisplayName: Green Pin
 	Tooltip: ""
 }
 
 PinRed: {
-	DisplayName: Pin Red
+	DisplayName: Red Pin
 	Tooltip: ""
 }
 
 PinYellow: {
-	DisplayName: Pin Yellow
+	DisplayName: Yellow Pin
 	Tooltip: ""
 }
 
 PinHive: {
-	DisplayName: Pin Hive
+	DisplayName: Hive Pin
+	Tooltip: ""
+}
+
+PinButterfly: {
+	DisplayName: Butterfly Pin
+	Tooltip: ""
+}
+
+PinFaeling: {
+	DisplayName: Faeling Pin
+	Tooltip: ""
+}
+
+PinSavanna: {
+	DisplayName: Savanna Pin
 	Tooltip: ""
 }

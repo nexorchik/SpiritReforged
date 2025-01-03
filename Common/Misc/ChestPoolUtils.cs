@@ -41,6 +41,11 @@ public static class ChestPoolUtils
 			itemIndex++;
 		}
 	}
+
+	/// <summary>
+	/// Method to greatly reduce the amount of effort needed to make a chest pool. <br />
+	/// Input the chest's pool as a list of structs representing the item pool for each slot, stack for that pool, and chance to be added.
+	/// </summary>
 	public static void PlaceChestItems(List<ChestInfo> list, Chest chest, int startIndex = 0)
 	{
 		int itemIndex = startIndex;
@@ -116,10 +121,6 @@ public static class ChestPoolUtils
 		}
 	}
 
-	/// <summary>
-	/// Method to greatly reduce the amount of effort needed to make a chest pool. <br />
-	/// Input the chest's pool as a list of structs representing the item pool for each slot, stack for that pool, and chance to be added.
-	/// </summary>
 	public static void AddToVanillaChest(List<ChestInfo> list, int chestFrame, int index = 0, ushort tileType = TileID.Containers)
 	{
 		chestFrame *= 36;
@@ -139,7 +140,6 @@ public static class ChestPoolUtils
 			Chest chest = Main.chest[chestIndex];
 			if (chest != null && Main.tile[chest.x, chest.y].TileType == tileType && Main.tile[chest.x, chest.y].TileFrameX == chestFrame)
 				PlaceChestItems(item.ToList(), chest, index);
-
 		}
 	}
 }
