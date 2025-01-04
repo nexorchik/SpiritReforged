@@ -2,6 +2,7 @@ using SpiritReforged.Common.ItemCommon.Pins;
 using SpiritReforged.Common.MapCommon;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.WorldGeneration;
+using SpiritReforged.Content.Forest.Misc.Pins;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Misc;
@@ -55,12 +56,6 @@ internal class Cartographer : ModNPC
 	{
 		const int Radius = 60;
 
-		var item = new Item();
-		PinItem pin = Main.rand.Next([.. ModContent.GetContent<PinItem>()]);
-		item.SetDefaults(pin.Type);
-
-		Main.LocalPlayer.QuickSpawnItem(new EntitySource_Gift(NPC), item);
-
 		InterestType type;
 
 		do 
@@ -68,12 +63,16 @@ internal class Cartographer : ModNPC
 			type = (InterestType)Main.rand.Next((int)InterestType.Count);
 		} while (!PointOfInterestSystem.HasInterestType(type));
 
+		var item = new Item(GetPinType(type));
+
+		Main.LocalPlayer.QuickSpawnItem(new EntitySource_Gift(NPC), item);
+
 		Point16 point = PointOfInterestSystem.GetPoint(type);
-		PinSystem.Place(pin.PinName, point.ToVector2());
+		PinSystem.Place(item.ModItem.Name, point.ToVector2());
 		PointOfInterestSystem.RemovePoint(point, type);
 
 		Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.Cartographer.Dialogue.Map." + type + "." + Main.rand.Next(3));
-		Main.npcChatCornerItem = pin.Type;
+		Main.npcChatCornerItem = item.type;
 
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 		{
@@ -90,6 +89,23 @@ internal class Cartographer : ModNPC
 			RevealMap.DrawMap(point.X, point.Y, Radius);
 
 		_hasPin = false;
+
+		static int GetPinType(InterestType interest)
+		{
+			int type = interest switch
+			{
+				InterestType.FloatingIsland => ModContent.ItemType<PinSky>(),
+				InterestType.EnchantedSword => ModContent.ItemType<PinSword>(),
+				InterestType.ButterflyShrine => ModContent.ItemType<PinButterfly>(),
+				InterestType.Shimmer => ModContent.ItemType<PinFaeling>(),
+				InterestType.Savanna => ModContent.ItemType<PinSavanna>(),
+				InterestType.Hive => ModContent.ItemType<PinHive>(),
+				InterestType.Curiosity => ModContent.ItemType<PinCuriosity>(),
+				_ => Main.rand.Next([.. ModContent.GetContent<PinItem>()]).Type //Random
+			};
+
+			return type;
+		}
 	}
 
 	public override void HitEffect(NPC.HitInfo hit)

@@ -2,28 +2,11 @@ using Terraria.Audio;
 
 namespace SpiritReforged.Common.ItemCommon.Pins;
 
-/// <summary>
-/// Abstract class for a map pin.
-/// Contains all the code needed for a map pin item to place, move, or remove map pins.
-/// ColorName is the most important: it defines which map pin the item is associated with
-/// </summary>
+/// <summary> Abstract class for a map pin. Contains all the code needed for a map pin item to place, move, or remove map pins.  </summary>
 public abstract class PinItem : ModItem
 {
-	/// <summary>
-	/// The name of this pin's color (capitalized, single word, please)
-	/// Affects both the visible name and where it expects the item/map texture to be
-	/// </summary>
-	public abstract string PinName { get; }
-
-	/// <summary>
-	/// The color of this map pin's placement text
-	/// </summary>
+	/// <summary> The color of this map pin's placement text. </summary> //Currently unused
 	public abstract Color TextColor { get; }
-
-	/// <summary>
-	/// How the pin's name appears in the tooltip description (formats to lowercase by default)
-	/// </summary>
-	public virtual string DescName => PinName.ToLower();
 
 	public override string Texture => base.Texture + "Item";
 
@@ -32,7 +15,7 @@ public abstract class PinItem : ModItem
 		Item.ResearchUnlockCount = 1;
 
 		PinMapLayer.Textures ??= [];
-		PinMapLayer.Textures.Add(PinName, ModContent.Request<Texture2D>(base.Texture + "Map"));
+		PinMapLayer.Textures.Add(Name, ModContent.Request<Texture2D>(base.Texture + "Map"));
 	}
 
 	public override void SetDefaults()
@@ -60,12 +43,12 @@ public abstract class PinItem : ModItem
 		if (player.altFunctionUse != 2)
 		{
 			text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Pinned");
-			PinSystem.Place(PinName, player.Center / 16);
+			PinSystem.Place(Name, player.Center / 16);
 		}
 		else
 		{
 			text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Unpinned");
-			PinSystem.Remove(PinName);
+			PinSystem.Remove(Name);
 		}
 
 		CombatText.NewText(

@@ -1,5 +1,9 @@
 ﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Content.Forest.Botanist.Tiles;
 using SpiritReforged.Content.Forest.ButterflyStaff;
+using SpiritReforged.Content.Forest.Safekeeper;
+using SpiritReforged.Content.Ocean.Items.Blunderbuss;
+using SpiritReforged.Content.Ocean.Items.Pearl;
 using SpiritReforged.Content.Savanna.Tiles;
 using Terraria.IO;
 using Terraria.WorldBuilding;
@@ -41,6 +45,14 @@ internal class SpecialPointMappingMicropass : Micropass
 						PointOfInterestSystem.AddPoint(new(i, j), InterestType.EnchantedSword);
                     else if (tile.TileType == ModContent.TileType<ButterflyStump>() && tile.TileFrameX == 0 && tile.TileFrameY == 0)
 						PointOfInterestSystem.AddPoint(new(i, j), InterestType.ButterflyShrine);
+					else
+					{
+						HashSet<int> curiosityTypes = [ModContent.TileType<BlunderbussTile>(), ModContent.TileType<PearlStringTile>(), 
+							ModContent.TileType<SkeletonHand>(), ModContent.TileType<Scarecrow>()];
+
+						if (curiosityTypes.Contains(tile.TileType) && TileObjectData.IsTopLeft(i, j))
+							PointOfInterestSystem.AddPoint(new(i, j), InterestType.Curiosity);
+					}
                 }
 			}
 		}

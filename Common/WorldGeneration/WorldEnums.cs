@@ -8,7 +8,8 @@ public enum InterestType : byte
 	Shimmer,
 	Savanna,
 	Hive,
-	Count,
+	Curiosity,
+	Count
 }
 
 public enum VanillaChestID : byte

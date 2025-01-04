@@ -1162,3 +1162,18 @@ PinSavanna: {
 	DisplayName: Savanna Pin
 	Tooltip: ""
 }
+
+PinCuriosity: {
+	DisplayName: Curiosity Pin
+	Tooltip: ""
+}
+
+PinSky: {
+	DisplayName: Sky Pin
+	Tooltip: ""
+}
+
+PinSword: {
+	DisplayName: Sword Pin
+	Tooltip: ""
+}
