@@ -56,7 +56,13 @@ public class SafariZombie : ReplaceNPC
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
-		npcLoot.AddCommon(ModContent.ItemType<HuntingRifle>(), 300);
+		// drop both at the same time
+		if (Main.rand.NextBool(100))
+		{
+			npcLoot.AddCommon(ModContent.ItemType<HuntingRifle>());
+			npcLoot.AddCommon(ItemID.MusketBall, 1, 25, 45);
+		}
+
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
 		npcLoot.AddOneFromOptions(75, ModContent.ItemType<Items.Vanity.SafariHat>(), 
