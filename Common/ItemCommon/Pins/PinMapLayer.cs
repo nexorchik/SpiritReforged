@@ -9,63 +9,91 @@ internal class PinMapLayer : ModMapLayer
 {
 	public static Dictionary<string, Asset<Texture2D>> Textures = null;
 
-	private string heldPin = null;
-	private float heldOffset;
+	private string _heldPinName;
+	private float _heldOffset;
+
+	/// <summary> Holds a pin of the given name on the cursor. </summary>
+	/// <returns> Whether a pin of the given name exists. </returns>
+	public static bool HoldPin(string name)
+	{
+		var pins = ModContent.GetInstance<PinSystem>().pins;
+
+		if (pins.ContainsKey(name))
+		{
+			ModContent.GetInstance<PinMapLayer>()._heldPinName = name;
+			return true;
+		}
+		else
+			return false;
+	}
 
 	public override void Draw(ref MapOverlayDrawContext context, ref string text)
 	{
 		var pins = ModContent.GetInstance<PinSystem>().pins;
-		bool placedPin = false;
-
-		if (heldPin != null)
-			HoldPin(ref placedPin);
 
 		foreach (var pair in pins)
 		{
-			var pos = pins.Get<Vector2>(pair.Key);
-			float scale = 1f + (heldPin == pair.Key ? heldOffset * .05f : 0);
+			string name = pair.Key;
+			var position = pins.Get<Vector2>(name);
 
-			if (context.Draw(Textures[pair.Key].Value, pos, Color.White, new SpriteFrame(1, 1, 0, 0), scale, scale, Alignment.Center).IsMouseOver)
-			{
-				if (!Main.mapFullscreen)
-					continue;
-
-				if (Main.mouseLeft && Main.mouseLeftRelease && !placedPin)
-					heldPin = pair.Key;
-
-				if (Main.mouseRight && Main.mouseRightRelease)
-				{
-					PinSystem.Remove(pair.Key);
-					continue;
-				}
-
-				if (heldPin == null)
-					text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Move");
-			}
+			DrawPin(ref context, ref text, name, position);
 		}
 	}
 
-	private void HoldPin(ref bool placedPin)
+	private void DrawPin(ref MapOverlayDrawContext context, ref string text, string name, Vector2 position)
 	{
-		float heldOffsetMax = 4f;
-		string heldPinValue = heldPin;
+		float scale = 1;
+		UpdatePin(name, ref position, ref scale, ref text); //Adjusts position and scale of held pins
 
-		heldOffset = MathHelper.Lerp(heldOffset, heldOffsetMax, 0.2f);
-
-		if (Main.mouseLeft && Main.mouseLeftRelease || !Main.mapFullscreen) //Drop the pin
+		if (context.Draw(Textures[name].Value, position, Color.White, new SpriteFrame(1, 1, 0, 0), scale, scale, Alignment.Center).IsMouseOver)
 		{
-			heldOffset = 0;
-			heldPin = null;
-			placedPin = true;
+			if (!Main.mapFullscreen)
+				return;
 
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/MapPin") with { PitchVariance = 0.3f });
+			UpdatePin(name, ref position, ref scale, ref text, true);
+		}
+	}
+
+	private void UpdatePin(string name, ref Vector2 position, ref float scale, ref string text, bool hovering = false)
+	{
+		bool holdingThisPin = _heldPinName == name;
+
+		if (holdingThisPin)
+		{
+			position = GetCursor();
+			_heldOffset = MathHelper.Min(_heldOffset + .1f, 1);
+			scale = 1 + _heldOffset * .15f;
 		}
 
-		var drawOffset = new Vector2(0, heldOffset); //Hover above the cursor slightly when held
-		Vector2 cursorPos = Main.MouseScreen - Main.ScreenSize.ToVector2() / 2;
-		cursorPos = (cursorPos - drawOffset) * (1 / Main.mapFullscreenScale) + Main.mapFullscreenPos;
+		if (hovering)
+		{
+			if (!holdingThisPin)
+				text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Move");
 
-		if (placedPin)
-			PinSystem.Place(heldPinValue, cursorPos);
+			if (Main.mouseLeft && Main.mouseLeftRelease)
+			{
+				if (holdingThisPin)
+				{
+					_heldPinName = string.Empty;
+					_heldOffset = 0;
+					PinSystem.Place(name, GetCursor());
+
+					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/MapPin") with { PitchVariance = 0.3f });
+				}
+				else
+					_heldPinName = name;
+			}
+
+			if (Main.mouseRight)
+				PinSystem.Remove(name);
+		}
+
+		Vector2 GetCursor()
+		{
+			var cursorPos = Main.MouseScreen - Main.ScreenSize.ToVector2() / 2;
+			cursorPos = (cursorPos - new Vector2(0, _heldOffset * 5)) * (1 / Main.mapFullscreenScale) + Main.mapFullscreenPos;
+
+			return cursorPos;
+		}
 	}
 }

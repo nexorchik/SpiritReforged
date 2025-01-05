@@ -7,6 +7,8 @@ namespace SpiritReforged.Common.ItemCommon.Pins;
 /// <summary> Stores the pins for the world, and gives helper methods to place and remove them. </summary>
 public class PinSystem : ModSystem
 {
+	public static readonly Dictionary<string, Item> ItemByName = []; //Pin items by internal name
+
 	public TagCompound pins = [];
 
 	/// <summary> Places the pin of <paramref name="heldPinValue"/> type at the given coordinates. </summary>

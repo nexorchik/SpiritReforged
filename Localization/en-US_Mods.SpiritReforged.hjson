@@ -238,8 +238,8 @@ Conditions.InSavanna: In Savanna
 
 Misc: {
 	Pins: {
-		Pinned: Pinned
-		Unpinned: Pin Removed
 		Move: Move Pin
+		Obtained: You already own this pin
+		UseItem: Right click to unlock
 	}
 }

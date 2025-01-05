@@ -16,47 +16,29 @@ public abstract class PinItem : ModItem
 
 		PinMapLayer.Textures ??= [];
 		PinMapLayer.Textures.Add(Name, ModContent.Request<Texture2D>(base.Texture + "Map"));
+		PinSystem.ItemByName.Add(Name, Item);
 	}
 
 	public override void SetDefaults()
 	{
-		Item.width = 32;
-		Item.height = 32;
-		Item.useTime = 25;
-		Item.useAnimation = 25;
-		Item.useStyle = ItemUseStyleID.HoldUp;
-		Item.noMelee = true;
-		Item.knockBack = 5;
+		Item.width = Item.height = 32;
 		Item.value = Item.buyPrice(silver: 50);
 		Item.rare = ItemRarityID.Green;
-		Item.autoReuse = false;
-		Item.shootSpeed = 0f;
 	}
 
-	public override bool AltFunctionUse(Player player) => true;
+	public override bool CanRightClick() => !PinPlayer.Obtained(Main.LocalPlayer, Name);
 
-	public override bool? UseItem(Player player)
+	public override void RightClick(Player player)
 	{
-		SoundEngine.PlaySound(SoundID.Dig, player.Center);
-		string text;
+		player.GetModPlayer<PinPlayer>().unlockedPins.Add(Name);
+		SoundEngine.PlaySound(SoundID.Grab, player.Center);
+	}
 
-		if (player.altFunctionUse != 2)
-		{
-			text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Pinned");
-			PinSystem.Place(Name, player.Center / 16);
-		}
+	public override void ModifyTooltips(List<TooltipLine> tooltips)
+	{
+		if (PinPlayer.Obtained(Main.LocalPlayer, Name))
+			tooltips.Add(new TooltipLine(Mod, "Obtained", Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Obtained")) { OverrideColor = Color.Orange });
 		else
-		{
-			text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Unpinned");
-			PinSystem.Remove(Name);
-		}
-
-		CombatText.NewText(
-			new Rectangle((int)player.position.X, (int)player.position.Y - 10, player.width, player.height),
-			TextColor,
-			text
-		);
-
-		return true;
+			tooltips.Add(new TooltipLine(Mod, "UseItem", Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.UseItem")));
 	}
 }
