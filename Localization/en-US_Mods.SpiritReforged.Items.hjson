@@ -1122,3 +1122,8 @@ DriftwoodLanternItem: {
 	DisplayName: Driftwood Lantern
 	Tooltip: ""
 }
+
+DriftwoodFenceItem: {
+	DisplayName: Driftwood Fence
+	Tooltip: ""
+}
