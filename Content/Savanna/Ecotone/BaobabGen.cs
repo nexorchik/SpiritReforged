@@ -42,7 +42,7 @@ internal static class BaobabGen
 		WorldGen.PlaceTile(opening.Center.X - 1, opening.Bottom - 1, ModContent.TileType<BaobabPod>(), true);
 
 		WorldUtils.Gen(new Point(x - width / 2, y), new Shapes.Rectangle(width, 3),
-			Actions.Chain(new Modifiers.IsEmpty(), new Actions.SetTile((ushort)ModContent.TileType<SavannaDirt>()))); //Dirt packing
+			Actions.Chain(new Modifiers.IsNotSolid(), new Actions.SetTile((ushort)ModContent.TileType<SavannaDirt>()))); //Dirt packing
 	}
 
 	private static void CreateRoots(int x, int y, int width)
