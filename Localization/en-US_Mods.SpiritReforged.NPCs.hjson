@@ -208,6 +208,9 @@ Cartographer: {
 				1: There you go! Um...I'll be real. Sometimes, you get the idea of getting a bunch of honey and selling it. I found some...did I ever GET any? No. Keep it hike, not business.
 				2: Ah...nope...there it is. I'll keep it short this time. Stingers hurt. Be prepared.
 			}
+
+			Curiosity.0: There have been rumors that some secret treasure is buried here! It could just be a rumor, but the joy is in the journey, right?
+			FirstPin: Oh! And remember, you can always access your pin collection from the bottom of your map screen.
 		}
 	}
 }

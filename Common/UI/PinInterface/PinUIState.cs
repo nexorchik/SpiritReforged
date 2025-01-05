@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.ItemCommon.Pins;
 using SpiritReforged.Common.UI.System;
+using SpiritReforged.Common.Visuals;
 using Terraria.GameInput;
 using Terraria.UI;
 
@@ -87,7 +88,7 @@ internal class PinUIState : AutoUIState
 			int count = 0;
 			foreach (string name in PinSystem.ItemByName.Keys)
 			{
-				Append(new PinUISlot(name, PinPlayer.Obtained(Main.LocalPlayer, name))
+				Append(new PinUISlot(name)
 				{
 					Left = new StyleDimension(openButton.Left.Pixels + 32 + count * 32, 0),
 					Top = new StyleDimension(openButton.Top.Pixels + 2, openButton.Top.Percent)
@@ -104,21 +105,36 @@ internal class PinUIState : AutoUIState
 	{
 		base.DrawSelf(spriteBatch);
 
+		bool hasNewPin = Main.LocalPlayer.GetModPlayer<PinPlayer>().newPins.Count != 0;
 		if (openButton.IsMouseHovering)
 		{
 			Main.LocalPlayer.mouseInterface = true;
-
 			DrawButton(Color.White, 1);
 		}
 		else
 		{
-			DrawButton(Color.White * .5f, 0);
+			DrawButton(hasNewPin ? Color.White : Color.White * .5f, 0);
 		}
 
 		void DrawButton(Color color, int frame)
 		{
 			var position = openButton.GetDimensions().Center() - new Vector2(buttonTexture.Width() / 2, buttonTexture.Height() / 4);
 			var source = buttonTexture.Frame(1, 2, 0, frame, sizeOffsetY: -2);
+
+			if (hasNewPin)
+			{
+				float lerp = (float)Math.Sin(Main.timeForVisualEffects / 20f);
+				var glowPos = openButton.GetDimensions().Center() + new Vector2(0, 4);
+
+				spriteBatch.Draw(AssetLoader.LoadedTextures["Bloom"], glowPos, null, 
+					(Color.White with { A = 0 }) * (.5f - lerp * .025f), 0, AssetLoader.LoadedTextures["Bloom"].Size() / 2, .25f - lerp * .025f, default, 0);
+
+				spriteBatch.Draw(AssetLoader.LoadedTextures["GodrayCircle"], glowPos, null,
+					(Color.Orange with { A = 0 }) * (.5f - lerp * .025f), (float)Main.timeForVisualEffects / 120, AssetLoader.LoadedTextures["GodrayCircle"].Size() / 2, .1f - lerp * .01f, default, 0);
+
+				DrawGodray.DrawGodrays(Main.spriteBatch, glowPos, Color.Goldenrod with { A = 0 }, 22, 10, 5);
+				DrawGodray.DrawGodrays(Main.spriteBatch, glowPos, Color.White with { A = 0 }, 16, 5, 5);
+			}
 
 			spriteBatch.Draw(buttonTexture.Value, position, source, color);
 		}

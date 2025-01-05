@@ -45,7 +45,7 @@ internal class PinMapLayer : ModMapLayer
 		float scale = 1;
 		UpdatePin(name, ref position, ref scale, ref text); //Adjusts position and scale of held pins
 
-		if (context.Draw(Textures[name].Value, position, Color.White, new SpriteFrame(1, 1, 0, 0), scale, scale, Alignment.Center).IsMouseOver)
+		if (context.Draw(Textures[name].Value, position, Color.White, new SpriteFrame(1, 1, 0, 0), scale, scale, Alignment.Bottom).IsMouseOver)
 		{
 			if (!Main.mapFullscreen)
 				return;
@@ -63,29 +63,31 @@ internal class PinMapLayer : ModMapLayer
 			position = GetCursor();
 			_heldOffset = MathHelper.Min(_heldOffset + .1f, 1);
 			scale = 1 + _heldOffset * .15f;
-		}
 
-		if (hovering)
+			if (Main.mouseLeft && Main.mouseLeftRelease) //Pick up
+			{
+				_heldPinName = string.Empty;
+				_heldOffset = 0;
+				PinSystem.Place(name, GetCursor());
+
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/MapPin") with { PitchVariance = 0.3f });
+			}
+		}
+		else if (hovering)
 		{
-			if (!holdingThisPin)
-				text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Move");
+			text = Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Move");
 
 			if (Main.mouseLeft && Main.mouseLeftRelease)
 			{
-				if (holdingThisPin)
-				{
-					_heldPinName = string.Empty;
-					_heldOffset = 0;
-					PinSystem.Place(name, GetCursor());
-
-					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/MapPin") with { PitchVariance = 0.3f });
-				}
-				else
-					_heldPinName = name;
+				_heldPinName = name;
+				SoundEngine.PlaySound(SoundID.Grab);
 			}
 
 			if (Main.mouseRight)
+			{
 				PinSystem.Remove(name);
+				SoundEngine.PlaySound(SoundID.Grab);
+			}
 		}
 
 		Vector2 GetCursor()

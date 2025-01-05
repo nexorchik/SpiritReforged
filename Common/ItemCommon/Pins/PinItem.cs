@@ -26,19 +26,23 @@ public abstract class PinItem : ModItem
 		Item.rare = ItemRarityID.Green;
 	}
 
-	public override bool CanRightClick() => !PinPlayer.Obtained(Main.LocalPlayer, Name);
+	public override bool CanRightClick() => !Main.LocalPlayer.PinUnlocked(Name);
 
 	public override void RightClick(Player player)
 	{
-		player.GetModPlayer<PinPlayer>().unlockedPins.Add(Name);
+		player.UnlockPin(Name);
 		SoundEngine.PlaySound(SoundID.Grab, player.Center);
 	}
 
 	public override void ModifyTooltips(List<TooltipLine> tooltips)
 	{
-		if (PinPlayer.Obtained(Main.LocalPlayer, Name))
-			tooltips.Add(new TooltipLine(Mod, "Obtained", Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Obtained")) { OverrideColor = Color.Orange });
+		int index = tooltips.FindIndex(tooltip => tooltip.Name.Contains("Tooltip"));
+		if (index == -1) //Insert in the tooltip line, above sell value
+			return;
+
+		if (Main.LocalPlayer.PinUnlocked(Name))
+			tooltips.Insert(index, new TooltipLine(Mod, "Obtained", Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.Obtained")) { OverrideColor = Color.Orange });
 		else
-			tooltips.Add(new TooltipLine(Mod, "UseItem", Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.UseItem")));
+			tooltips.Insert(index, new TooltipLine(Mod, "UseItem", Language.GetTextValue("Mods.SpiritReforged.Misc.Pins.UseItem")));
 	}
 }

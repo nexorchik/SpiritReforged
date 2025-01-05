@@ -1,10 +1,13 @@
 ﻿using SpiritReforged.Common.ItemCommon.Pins;
+using Terraria.Audio;
 using Terraria.UI;
 
 namespace SpiritReforged.Common.UI.PinInterface;
 
 public class PinUISlot : UIElement
 {
+	public bool Highlighted { get; private set; }
+
 	private static Asset<Texture2D> shadowTexture;
 
 	public const int Context = ItemSlot.Context.ChestItem;
@@ -16,10 +19,11 @@ public class PinUISlot : UIElement
 	private float _offset;
 	private float _fadein;
 
-	public PinUISlot(string name, bool unlocked)
+	public PinUISlot(string name)
 	{
+		_unlocked = Main.LocalPlayer.PinUnlocked(name);
+		Highlighted = Main.LocalPlayer.GetModPlayer<PinPlayer>().newPins.Contains(name);
 		_name = name;
-		_unlocked = unlocked;
 
 		Width = Height = new StyleDimension(52 * .5f * Scale, 0f);
 
@@ -42,6 +46,10 @@ public class PinUISlot : UIElement
 		{
 			DrawOutline(item);
 			ItemSlot.DrawItemIcon(item, Context, spriteBatch, center - new Vector2(0, _offset * 3f) + fadeOffset, Scale, 32f, Color.White * opacity);
+
+			if (Highlighted)
+				spriteBatch.Draw(TextureAssets.QuicksIcon.Value, GetDimensions().Position(), null, Main.MouseTextColorReal, 0, 
+					TextureAssets.QuicksIcon.Size() / 2, Main.mouseTextColor / 255f, SpriteEffects.None, 0);
 		}
 
 		if (_unlocked)
@@ -75,10 +83,20 @@ public class PinUISlot : UIElement
 			return;
 		}
 
+		if (_offset == 0) //Just started hovering
+			SoundEngine.PlaySound(SoundID.MenuTick);
+
+		if (Highlighted)
+		{
+			Highlighted = false;
+			Main.LocalPlayer.GetModPlayer<PinPlayer>().newPins.Remove(_name);
+		}
+
 		if (Main.mouseLeft && Main.mouseLeftRelease)
 		{
 			PinSystem.Place(_name, Vector2.Zero);
 			PinMapLayer.HoldPin(_name);
+			SoundEngine.PlaySound(SoundID.Grab);
 		}
 
 		Main.LocalPlayer.mouseInterface = true;

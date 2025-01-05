@@ -240,6 +240,6 @@ Misc: {
 	Pins: {
 		Move: Move Pin
 		Obtained: You already own this pin
-		UseItem: Right click to unlock
+		UseItem: Right click to add this pin to your collection
 	}
 }

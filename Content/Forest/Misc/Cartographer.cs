@@ -50,7 +50,7 @@ internal class Cartographer : ModNPC
 			MapFunctionality();
 	}
 
-	public override void AddShops() { }
+	public override void AddShops() => new NPCShop(Type).Add<PinRed>().Add<PinYellow>().Add<PinGreen>().Add<PinBlue>().Register();
 
 	private void MapFunctionality()
 	{
@@ -64,14 +64,23 @@ internal class Cartographer : ModNPC
 		} while (!PointOfInterestSystem.HasInterestType(type));
 
 		var item = new Item(GetPinType(type));
+		string pinName = item.ModItem.Name;
+		bool firstPin = Main.LocalPlayer.GetModPlayer<PinPlayer>().unlockedPins.Count == 0;
 
-		Main.LocalPlayer.QuickSpawnItem(new EntitySource_Gift(NPC), item);
+		if (Main.LocalPlayer.PinUnlocked(pinName))
+			Main.LocalPlayer.QuickSpawnItem(new EntitySource_Gift(NPC), item); //If the pin is already unlocked, give the player an item copy
+		else
+			Main.LocalPlayer.UnlockPin(pinName);
 
 		Point16 point = PointOfInterestSystem.GetPoint(type);
-		PinSystem.Place(item.ModItem.Name, point.ToVector2());
+		PinSystem.Place(pinName, point.ToVector2());
 		PointOfInterestSystem.RemovePoint(point, type);
 
-		Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.Cartographer.Dialogue.Map." + type + "." + Main.rand.Next(3));
+		string text = Language.GetTextValue("Mods.SpiritReforged.NPCs.Cartographer.Dialogue.Map." + type + "." + Main.rand.Next(3));
+		if (firstPin)
+			text += " " + Language.GetTextValue("Mods.SpiritReforged.NPCs.Cartographer.Dialogue.Map.FirstPin");
+
+		Main.npcChatText = text;
 		Main.npcChatCornerItem = item.type;
 
 		if (Main.netMode == NetmodeID.MultiplayerClient)
