@@ -41,12 +41,13 @@ public class SkeletonHand : ModTile
 		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, data.CoordinateFullHeight);
 		var position = new Vector2(i, j) * 16 - new Vector2((source.Width - 16) / 2, source.Height - 16 - 4);
 
-		float mult = MathHelper.Clamp(1f - Main.LocalPlayer.Distance(new Vector2(i, j) * 16) / 100f, 0, 1);
+		float lerp = (float)Math.Sin(Main.timeForVisualEffects / 50f) * .25f;
+		float mult = MathHelper.Clamp(1f - Main.LocalPlayer.Distance(new Vector2(i, j) * 16) / 150f, 0, 1);
 
 		spriteBatch.Draw(glowTexture.Value, position - Main.screenPosition + zero, 
-			source, Color.White * mult, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+			source, Color.White * (mult + lerp), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
-		if (!Main.gamePaused && mult > 0 && Main.rand.NextBool(5))
+		if (!Main.gamePaused && mult > .15f && Main.rand.NextBool(5))
 		{
 			int style = TileObjectData.GetTileStyle(Main.tile[i, j]);
 			var dustPos = position + glowPoints[style].ToVector2() + Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f);

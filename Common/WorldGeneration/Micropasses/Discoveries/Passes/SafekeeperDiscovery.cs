@@ -18,21 +18,26 @@ internal class SafekeeperDiscovery : Discovery
 	{
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Discoveries");
 
-		retry:
-		int x = WorldGen.genRand.Next(GenVars.leftBeachEnd, GenVars.rightBeachStart);
-		int y = (int)(Main.worldSurface * 0.35); //Sky height
+		while (true)
+		{
+			int x = WorldGen.genRand.Next(GenVars.leftBeachEnd, GenVars.rightBeachStart);
+			int y = (int)(Main.worldSurface * 0.35); //Sky height
 
-		WorldMethods.FindGround(x, ref y);
-		if (Main.tile[x, y].TileType != TileID.Grass || Main.tile[x, y - 1].LiquidAmount == 255 || !WorldMethods.AreaClear(x - 1, y - 2, 3, 2))
-			goto retry;
+			WorldMethods.FindGround(x, ref y);
+			if (Main.tile[x, y].TileType != TileID.Grass || Main.tile[x, y - 1].LiquidAmount == 255 || !WorldMethods.AreaClear(x - 1, y - 2, 3, 2))
+				continue;
 
-		WorldGen.PlaceTile(x, y - 1, TileID.Tombstones, true, true, style: WorldGen.genRand.Next(5));
-		if (Main.tile[x, y - 1].TileType != TileID.Tombstones)
-			goto retry;
+			WorldGen.PlaceTile(x, y - 1, TileID.Tombstones, true, true, style: WorldGen.genRand.Next(5));
+			if (Main.tile[x, y - 1].TileType != TileID.Tombstones)
+				continue;
 
-		WorldGen.PlaceTile(x - 1, y, TileID.Dirt, true, true);
-		WorldGen.PlaceTile(x - 1, y - 1, ModContent.TileType<SkeletonHand>(), true, true, style: WorldGen.genRand.Next(3));
+			Sign.TextSign(Sign.ReadSign(x, y - 1), Language.GetTextValue("SpiritReforged.Misc.GraveText"));
 
-		GenVars.structures.AddProtectedStructure(new Rectangle(x - 1, y - 2, 3, 3));
+			WorldGen.PlaceTile(x - 1, y, TileID.Grass, true, true);
+			WorldGen.PlaceTile(x - 1, y - 1, ModContent.TileType<SkeletonHand>(), true, true, style: WorldGen.genRand.Next(3));
+
+			GenVars.structures.AddProtectedStructure(new Rectangle(x - 1, y - 2, 3, 3));
+			break;
+		}
 	}
 }
