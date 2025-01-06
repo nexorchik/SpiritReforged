@@ -9,7 +9,11 @@ namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
 public class AcaciaTree : CustomTree
 {
-	private const int numStyles = 4;
+	private const int NumStyles = 4;
+
+	public static IEnumerable<TreetopPlatform> Platforms => SimpleEntitySystem.entities.Where(x => x is TreetopPlatform).Cast<TreetopPlatform>();
+
+	public override int TreeHeight => WorldGen.genRand.Next(8, 16);
 
 	/// <summary> How much acacia tree tops sway in the wind. Used by the client for drawing and platform logic. </summary>
 	public static float GetSway(int i, int j, double factor = 0)
@@ -19,9 +23,6 @@ public class AcaciaTree : CustomTree
 
 		return Main.instance.TilesRenderer.GetWindCycle(i, j, factor) * .4f;
 	}
-	public static IEnumerable<TreetopPlatform> Platforms => SimpleEntitySystem.entities.Where(x => x is TreetopPlatform).Cast<TreetopPlatform>();
-
-	public override int TreeHeight => WorldGen.genRand.Next(8, 16);
 
 	public override void PostSetStaticDefaults()
 	{
@@ -83,7 +84,7 @@ public class AcaciaTree : CustomTree
 			const int framesX = 2;
 			const int framesY = 3;
 
-			int frameX = (TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) / numStyles == framesX) ? 1 : 0;
+			int frameX = (TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) / NumStyles == framesX) ? 1 : 0;
 			int frameY = Framing.GetTileSafely(i, j).TileFrameX / frameSize % framesY;
 
 			var source = branchesTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
@@ -97,9 +98,9 @@ public class AcaciaTree : CustomTree
 
 	public override void AddDrawPoints(int i, int j, SpriteBatch spriteBatch)
 	{
-		if (IsTreeTop(i, j) && TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) % numStyles < 2)
+		if (IsTreeTop(i, j) && TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) % NumStyles < 2)
 			treeDrawPoints.Add(new Point16(i, j));
-		else if (TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) / numStyles > 0)
+		else if (TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) / NumStyles > 0)
 			treeDrawPoints.Add(new Point16(i, j));
 	}
 
@@ -139,9 +140,9 @@ public class AcaciaTree : CustomTree
 			if (h > 2 && WorldGen.genRand.NextBool(5)) //Select branched segments by exceding the normal style limit
 			{
 				if (WorldGen.genRand.NextBool())
-					style += numStyles; //Left branch
+					style += NumStyles; //Left branch
 				else
-					style += numStyles * 2; //Right branch
+					style += NumStyles * 2; //Right branch
 			}
 
 			WorldGen.PlaceTile(i, j - h, Type, true);
@@ -152,4 +153,16 @@ public class AcaciaTree : CustomTree
 		if (Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j + 1 - height, 1, height, TileChangeType.None);
 	}
+}
+
+public class CorruptAcaciaTree : AcaciaTree
+{
+}
+
+public class CrimsonAcaciaTree : AcaciaTree
+{
+}
+
+public class HallowAcaciaTree : AcaciaTree
+{
 }
