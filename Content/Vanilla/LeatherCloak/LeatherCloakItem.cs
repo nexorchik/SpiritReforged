@@ -19,12 +19,10 @@ internal class LeatherCloakItem : AccessoryItem
 		if (player.ZoneDesert)
 			player.buffImmune[BuffID.WindPushed] = true;
 	}
-	public override void AddRecipes()
-	{
-		Recipe recipe1 = CreateRecipe(1);
-		recipe1.AddIngredient(ItemID.Leather, 6);
-		recipe1.AddIngredient(ItemID.Silk, 5);
-		recipe1.AddTile(TileID.Loom);
-		recipe1.Register();
-	}
+
+	public override void AddRecipes() => CreateRecipe()
+			.AddIngredient(ItemID.Leather, 6)
+			.AddIngredient(ItemID.Silk, 5)
+			.AddTile(TileID.WorkBenches)
+			.Register();
 }
