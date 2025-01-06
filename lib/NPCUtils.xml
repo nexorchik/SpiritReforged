@@ -169,9 +169,6 @@
             <param name="j"><inheritdoc/></param>
             <param name="closer"><inheritdoc/></param>
         </member>
-        <member name="M:NPCUtils.BaseBannerTile.SetSpriteEffects(System.Int32,System.Int32,Microsoft.Xna.Framework.Graphics.SpriteEffects@)">
-            <inheritdoc/>
-        </member>
         <member name="M:NPCUtils.BaseBannerTile.PreDraw(System.Int32,System.Int32,Microsoft.Xna.Framework.Graphics.SpriteBatch)">
             <summary>
             Draws tile sway.
