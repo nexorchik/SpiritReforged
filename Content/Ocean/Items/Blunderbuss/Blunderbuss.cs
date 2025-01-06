@@ -1,4 +1,5 @@
-﻿using Terraria.Audio;
+﻿using SpiritReforged.Common.ProjectileCommon;
+using Terraria.Audio;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean.Items.Blunderbuss;
@@ -47,18 +48,18 @@ public class Blunderbuss : ModItem
 
 		for (int i = 0; i < 5; i++)
 		{
-			var shot = Projectile.NewProjectileDirect(source, position, velocity.RotatedByRandom(spread) * Main.rand.NextFloat(1f - speedVariance, 1f + speedVariance), type, damage, knockback, player.whoAmI);
-
-			if (shot.TryGetGlobalProjectile(out BlunderbussProjectile bProj))
+			PreNewProjectile.New(source, position, velocity.RotatedByRandom(spread) * Main.rand.NextFloat(1f - speedVariance, 1f + speedVariance), type, damage, knockback, player.whoAmI, preSpawnAction: (Projectile projectile) =>
 			{
-				bProj.firedFromBlunderbuss = true;
-				shot.scale = Main.rand.NextFloat(.25f, 1f);
-				shot.timeLeft = BlunderbussProjectile.timeLeftMax; //Shorten lifespan
-				shot.netUpdate = true; //Sync all changes made after NewProjectileDirect was called
+				if (projectile.TryGetGlobalProjectile(out BlunderbussProjectile bProj))
+				{
+					bProj.firedFromBlunderbuss = true;
+					projectile.scale = Main.rand.NextFloat(.25f, 1f);
+					projectile.timeLeft = BlunderbussProjectile.timeLeftMax; //Shorten lifespan
 
-				for (int d = 0; d < 3; d++)
-					Dust.NewDustPerfect(position + unit * fxDistance, DustID.Torch, shot.velocity * Main.rand.NextFloat(.5f, 1.5f)).noGravity = true;
-			}
+					for (int d = 0; d < 3; d++)
+						Dust.NewDustPerfect(position + unit * fxDistance, DustID.Torch, projectile.velocity * Main.rand.NextFloat(.5f, 1.5f)).noGravity = true;
+				}
+			});
 		}
 
 		return false;

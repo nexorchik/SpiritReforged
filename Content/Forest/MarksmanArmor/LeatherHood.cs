@@ -34,14 +34,11 @@ public class LeatherHood : ModItem
 			player.armorEffectDrawOutlinesForbidden = true;
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ItemID.Leather, 6);
-		recipe.AddIngredient(ItemID.IronBar, 2);
-		recipe.AddTile(TileID.Anvils);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe()
+		.AddIngredient(ItemID.Leather, 6)
+		.AddIngredient(ItemID.IronBar, 2)
+		.AddTile(TileID.Anvils)
+		.Register();
 
 	/// <summary>
 	/// The following is code adapted from vanilla from the Eye of Yoraiz0r. Did my best to celanup + comment

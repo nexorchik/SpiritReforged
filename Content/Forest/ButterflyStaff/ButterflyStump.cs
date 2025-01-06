@@ -1,20 +1,19 @@
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.Visuals.Glowmasks;
+using System.Linq;
 using Terraria.DataStructures;
-using Terraria.GameContent.Drawing;
 using Terraria.GameContent.ObjectInteractions;
 
 namespace SpiritReforged.Content.Forest.ButterflyStaff;
 
+[AutoloadGlowmask("100,100,100,0")]
 public class ButterflyStump : ModTile
 {
-	private static Asset<Texture2D> glowTexture;
 	private const int FrameHeight = 18 * 4;
 
 	private static int ItemType => ModContent.ItemType<ButterflyStaff>();
 	private static bool HasItem(int i, int j) => Framing.GetTileSafely(i, j).TileFrameY < FrameHeight;
 	private static bool TopHalf(int i, int j) => Framing.GetTileSafely(i, j).TileFrameY % FrameHeight < 18 * 2;
-
-	public override void Load() => glowTexture = ModContent.Request<Texture2D>(Texture + "_Glow");
 
 	public override void SetStaticDefaults()
 	{
@@ -46,6 +45,18 @@ public class ButterflyStump : ModTile
 	public override bool CanKillTile(int i, int j, ref bool blockDamaged) => !TopHalf(i, j) || HasItem(i, j);
 	public override bool CanDrop(int i, int j) => HasItem(i, j);
 
+	public override void KillMultiTile(int i, int j, int frameX, int frameY)
+	{
+		var system = ModContent.GetInstance<ButterflySystem>();
+		var thisZone = system.butterflyZones.Where(x => x.Contains(new Point(i, j))).FirstOrDefault();
+
+		if (thisZone != default)
+		{
+			system.butterflyZones.Remove(thisZone); //Remove the zone associated with this stump if it is destroyed
+			NetMessage.SendData(MessageID.WorldData); // and sync it
+		}
+	}
+
 	public override void MouseOver(int i, int j)
 	{
 		if (!HasItem(i, j))
@@ -73,6 +84,8 @@ public class ButterflyStump : ModTile
 			int item = Item.NewItem(null, new Vector2(i + 1, j) * 16, ItemType);
 			if (Main.netMode != NetmodeID.SinglePlayer)
 				NetMessage.SendData(MessageID.SyncItem, number: item);
+
+			NPC.NewNPCDirect(null, (i + 1) * 16, (j + 1) * 16, ModContent.NPCType<ButterflyCritter>()).netUpdate = true;
 
 			return true;
 		}
@@ -104,25 +117,5 @@ public class ButterflyStump : ModTile
 
 		var color = new Vector3(255, 125, 255) * .001f;
 		(r, g, b) = (color.X, color.Y, color.Z);
-	}
-
-	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
-	{
-		var tile = Main.tile[i, j];
-		if (!TileDrawing.IsVisible(tile))
-			return;
-
-		if (HasItem(i, j))
-		{
-			var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
-			int addFrameX = 0, addFrameY = 0;
-
-			TileLoader.SetAnimationFrame(Type, i, j, ref addFrameX, ref addFrameY);
-
-			var source = new Rectangle(tile.TileFrameX, tile.TileFrameY + addFrameY, 16, 16);
-			var position = new Vector2(i, j) * 16 - Main.screenPosition + zero + new Vector2(0, 2);
-
-			spriteBatch.Draw(glowTexture.Value, position, source, (Color.White with { A = 0 }) * .2f, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-		}
 	}
 }

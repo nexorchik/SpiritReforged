@@ -11,6 +11,9 @@ public class SavannaRockLarge : ModTile
 		Main.tileMergeDirt[Type] = false;
 		Main.tileBlockLight[Type] = false;
 		Main.tileFrameImportant[Type] = true;
+		Main.tileNoFail[Type] = true;
+
+		TileID.Sets.BreakableWhenPlacing[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
@@ -56,6 +59,9 @@ public class SavannaRockSmall : ModTile
 		Main.tileMergeDirt[Type] = false;
 		Main.tileBlockLight[Type] = false;
 		Main.tileFrameImportant[Type] = true;
+		Main.tileNoFail[Type] = true;
+
+		TileID.Sets.BreakableWhenPlacing[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);
 		TileObjectData.newTile.CoordinateHeights = [18];

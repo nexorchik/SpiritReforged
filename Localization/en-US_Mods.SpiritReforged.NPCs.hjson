@@ -47,17 +47,17 @@ OceanSlime: {
 
 DiverZombie: {
 	Entry: Who knew those oxygen tanks needed to have actual oxygen in them?
-	DisplayName: Diver Zombie
+	DisplayName: Zombie
 }
 
 KelpZombie: {
 	Entry: Fish fear me, women fear me, men fear me, children fear me, for I am the undead.
-	DisplayName: Kelp Zombie
+	DisplayName: Zombie
 }
 
 SailorZombie: {
 	Entry: Despite their current status, they used to run this really nice luxury cruiser you should check out sometime.
-	DisplayName: Sailor Zombie
+	DisplayName: Zombie
 }
 
 Killifish: {
@@ -93,10 +93,11 @@ Sparrow: {
 }
 
 TridentZombie.DisplayName: "{$NPCName.Zombie}"
-SafariZombie.DisplayName: Safari Zombie
-TumbleZombie.DisplayName: Tumble Zombie
+SafariZombie.DisplayName: Zombie
+TumbleZombie.DisplayName: Zombie
 Hyena.DisplayName: Hyena
 Ostrich.DisplayName: Ostrich
+ButterflyCritter.DisplayName: Ethereal Butterfly
 
 SavannaJungleSlime: {
 	DisplayName: Jungle Slime

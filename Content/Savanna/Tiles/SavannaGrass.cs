@@ -37,6 +37,23 @@ public class SavannaGrass : ModTile
 	{
 		if (SpreadHelper.Spread(i, j, Type, 4, DirtType) && Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None); //Try spread grass
+
+		if (Main.rand.NextBool(30)) //Grow vines
+			TileExtensions.GrowVine(i, j + 1, ModContent.TileType<SavannaVine>());
+
+		var above = Framing.GetTileSafely(i, j - 1);
+
+		if (Main.rand.NextBool(90) && !above.HasTile && above.LiquidAmount < 80) //The majority of elephant grass generation happens in that class
+		{
+			if (WorldGen.PlaceObject(i, j, ModContent.TileType<ElephantGrassShort>(), true, style: Main.rand.Next(3)))
+				NetMessage.SendTileSquare(-1, i, j - 1, 1, 2, TileChangeType.None);
+		}
+
+		if (Main.rand.NextBool(120) && !above.HasTile && above.LiquidAmount < 80 && !WorldGen.PlayerLOS(i, j)) //Place small termite nests
+		{
+			if (WorldGen.PlaceObject(i, j, ModContent.TileType<TermiteMoundSmall>(), true, style: Main.rand.Next(3)))
+				NetMessage.SendTileSquare(-1, i, j - 2, 1, 3, TileChangeType.None);
+		}
 	}
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)

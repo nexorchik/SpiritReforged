@@ -46,7 +46,7 @@ public class AcaciaSapling : ModTile
 
 	public override void RandomUpdate(int i, int j)
 	{
-		if (WorldGen.genRand.NextBool(20))
+		if (Main.rand.NextBool(8))
 			CustomTree.GrowTree<AcaciaTree>(i, j);
 	}
 

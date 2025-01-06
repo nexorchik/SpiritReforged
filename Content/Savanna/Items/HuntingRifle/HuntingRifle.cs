@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -112,9 +113,11 @@ public class HuntingRifle : ModItem
 		Projectile.NewProjectile(source, position, unit, ModContent.ProjectileType<HuntingRifleProj>(), 0, 0, player.whoAmI);
 
 		//Spawn a damaging projectile
-		var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, (int)(damage * mult), knockback, player.whoAmI);
-		if (projectile.TryGetGlobalProjectile(out HunterGlobalProjectile hunter))
-			hunter.hasDistanceMultiplier = true;
+		PreNewProjectile.New(source, position, velocity, type, (int)(damage * mult), knockback, player.whoAmI, preSpawnAction: (Projectile projectile) =>
+		{
+			if (projectile.TryGetGlobalProjectile(out HunterGlobalProjectile hunter))
+				hunter.hasDistanceMultiplier = true;
+		});
 
 		return false;
     }

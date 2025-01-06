@@ -14,12 +14,9 @@ public class LeatherPlate : ModItem
 		Item.defense = 2;
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ItemID.Leather, 8);
-		recipe.AddIngredient(ItemID.IronBar, 4);
-		recipe.AddTile(TileID.Anvils);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe()
+		.AddIngredient(ItemID.Leather, 8)
+		.AddIngredient(ItemID.IronBar, 4)
+		.AddTile(TileID.Anvils)
+		.Register();
 }

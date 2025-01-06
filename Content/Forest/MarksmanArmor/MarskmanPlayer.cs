@@ -1,17 +1,16 @@
-﻿using SpiritReforged.Common.Easing;
-using SpiritReforged.Common.Misc;
+﻿using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
-using Terraria;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Forest.MarksmanArmor;
 
 internal class MarksmanPlayer : ModPlayer
 {
-	public bool active = false;
 	public bool Concentrated => concentratedCooldown <= 0;
-	public int concentratedCooldown = 360;
+	private int concentratedCooldown = 360;
+
+	public bool active = false;
 
 	public override void ResetEffects() => active = false;
 
@@ -63,14 +62,12 @@ internal class MarksmanPlayer : ModPlayer
 			concentratedCooldown = 360;
 		}
 	}
+
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) 
 	{
-		if (Concentrated)
-			ConcentratedCrit(target, ref modifiers);
-	}
+		if (!Concentrated)
+			return;
 
-	public void ConcentratedCrit(NPC target, ref NPC.HitModifiers modifiers)
-	{
 		SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundMiss with { PitchVariance = .5f }, target.Center);
 		SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact with { Pitch = .5f }, target.Center);
 		SoundEngine.PlaySound(SoundID.DD2_LightningBugZap with { Pitch = -.5f, Volume = .8f }, target.Center);

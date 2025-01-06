@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
+using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Ocean.Items.Blunderbuss;
 
@@ -18,6 +20,9 @@ internal class BlunderbussProjectile : GlobalProjectile
 
 		if (!firedFromBlunderbuss)
 			return true;
+
+		Main.instance.LoadProjectile(873); //Ensure these textures are loaded before drawing
+		Main.instance.LoadProjectile(686);
 
 		var defaultTexture = TextureAssets.Projectile[projectile.type].Value;
 		float time = MathHelper.Min((float)projectile.timeLeft / timeLeftMax, 1f);
@@ -62,5 +67,21 @@ internal class BlunderbussProjectile : GlobalProjectile
 		var brightest = data.OrderBy(x => x.ToVector3().Length()).FirstOrDefault();
 
 		return (brightest == default) ? Color.Goldenrod : brightest;
+	}
+
+	public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter)
+	{
+		binaryWriter.Write(firedFromBlunderbuss);
+
+		if (firedFromBlunderbuss) //Scale isn't synced automatically
+			binaryWriter.Write(projectile.scale);
+	}
+
+	public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader)
+	{
+		firedFromBlunderbuss = binaryReader.ReadBoolean();
+
+		if (firedFromBlunderbuss)
+			projectile.scale = binaryReader.ReadSingle();
 	}
 }
