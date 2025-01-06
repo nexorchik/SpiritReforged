@@ -1,9 +1,11 @@
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.Corruption;
 using System.Linq;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
-public class SavannaGrass : ModTile
+public class SavannaGrass : ModTile, IConvertibleTile
 {
 	protected virtual int DirtType => ModContent.TileType<SavannaDirt>();
 	protected virtual Color MapColor => new(104, 156, 70);
@@ -16,8 +18,8 @@ public class SavannaGrass : ModTile
 		Main.tileBlockLight[Type] = true;
 		Main.tileNoFail[Type] = true;
 
-		Main.tileMerge[DirtType][Type] = true;
-		Main.tileMerge[Type][DirtType] = true;
+		this.Merge(DirtType, ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaGrassCorrupt>(), ModContent.TileType<SavannaGrassHallow>(), 
+			ModContent.TileType<SavannaGrassCrimson>());
 
 		TileID.Sets.Grass[Type] = true;
 		TileID.Sets.NeedsGrassFramingDirt[Type] = DirtType;
@@ -85,10 +87,37 @@ public class SavannaGrass : ModTile
 			}
 		}
 	}
+
+	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
+	{
+		if (type == ConversionType.Purify)
+			return false;
+
+		Tile tile = Main.tile[i, j];
+
+		tile.TileType = (ushort)(type switch
+		{
+			ConversionType.Hallow => ModContent.TileType<SavannaGrassHallow>(),
+			ConversionType.Crimson => ModContent.TileType<SavannaGrassCrimson>(),
+			ConversionType.Corrupt => ModContent.TileType<SavannaGrassCorrupt>(),
+			_ => Type,
+		});
+
+		TileCorruptor.Convert(new EntitySource_TileUpdate(i, j), type, i, j - 1);
+		return true;
+	}
 }
 
 public class SavannaGrassCorrupt : SavannaGrass
 {
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		TileID.Sets.Corrupt[Type] = true;
+		TileID.Sets.AddCorruptionTile(Type, 1);
+	}
+
 	protected override Color MapColor => new(109, 106, 174);
 }
 
@@ -99,5 +128,13 @@ public class SavannaGrassHallow : SavannaGrass
 
 public class SavannaGrassCrimson : SavannaGrass
 {
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		TileID.Sets.AddCorruptionTile(Type, 1);
+		TileID.Sets.Corrupt[Type] = true;
+	}
+
 	protected override Color MapColor => new(183, 69, 68);
 }

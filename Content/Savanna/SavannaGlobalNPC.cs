@@ -36,7 +36,6 @@ public class SavannaGlobalNPC : GlobalNPC
 
 			shop.Add(Mod.Find<ModItem>(nameof(WaningSun) + "Item").Type, Condition.MoonPhaseFirstQuarter, SpiritConditions.InSavanna);
 			shop.Add(Mod.Find<ModItem>(nameof(WaningSun) + "Item").Type, Condition.MoonPhaseWaxingGibbous, SpiritConditions.InSavanna);
-
 		}
 	}
 

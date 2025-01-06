@@ -135,4 +135,13 @@ public static class TileExtensions
 
 		return true;
 	}
+
+	public static void Merge(this ModTile tile, params int[] otherIds)
+	{
+		foreach (int id in otherIds)
+		{
+			Main.tileMerge[tile.Type][id] = true;
+			Main.tileMerge[id][tile.Type] = true;
+		}
+	}
 }

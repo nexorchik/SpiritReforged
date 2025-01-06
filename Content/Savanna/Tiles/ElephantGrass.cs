@@ -1,19 +1,19 @@
 ﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.TileSway;
 using System.Linq;
+using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
 [DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
-public class ElephantGrass : ModTile, ISwayInWind
+public class ElephantGrass : ModTile, ISwayInWind, IConvertibleTile
 {
-	public static bool IsElephantGrass(int i, int j)
-	{
-		int type = Framing.GetTileSafely(i, j).TileType;
-		return TileLoader.GetTile(type) is ElephantGrass;
-	}
+	protected virtual int[] TileAnchors => [ModContent.TileType<SavannaGrass>()];
+
+	protected bool IsElephantGrass(int i, int j) => Framing.GetTileSafely(i, j).TileType == Type;
 
 	public override void SetStaticDefaults()
 	{
@@ -28,7 +28,7 @@ public class ElephantGrass : ModTile, ISwayInWind
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 18];
 		TileObjectData.newTile.Origin = new(0, 2);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 1, 0);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
+		TileObjectData.newTile.AnchorValidTiles = TileAnchors;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 5;
 		TileObjectData.addTile(Type);
@@ -99,6 +99,80 @@ public class ElephantGrass : ModTile, ISwayInWind
 			rotation = 0f;
 
 		return rotation + TileSwayHelper.GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 20, 3f, 1, true);
+	}
+
+	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
+	{
+		if (source is EntitySource_Parent { Entity: Projectile })
+			return false;
+
+		j -= Main.tile[i, j].TileFrameY / 18;
+
+		int id = Main.tile[i, j].TileType;
+		int convertType = -1;
+
+		if (id == ModContent.TileType<ElephantGrass>())
+		{
+			if (type == ConversionType.Purify)
+				return false;
+
+			convertType = type switch
+			{
+				ConversionType.Corrupt => ModContent.TileType<ElephantGrassCorrupt>(),
+				ConversionType.Crimson => ModContent.TileType<ElephantGrassCrimson>(),
+				ConversionType.Hallow => ModContent.TileType<ElephantGrassHallow>(),
+				_ => id,
+			};
+		}
+		else if (type == ConversionType.Purify)
+			convertType = ModContent.TileType<ElephantGrass>();
+		else if (id == ModContent.TileType<ElephantGrassCorrupt>())
+		{
+			if (type == ConversionType.Corrupt)
+				return false;
+
+			convertType = type switch
+			{
+				ConversionType.Crimson => ModContent.TileType<ElephantGrassCrimson>(),
+				ConversionType.Hallow => ModContent.TileType<ElephantGrassHallow>(),
+				_ => id,
+			};
+		}
+		else if (id == ModContent.TileType<ElephantGrassCrimson>())
+		{
+			if (type == ConversionType.Crimson)
+				return false;
+
+			convertType = type switch
+			{
+				ConversionType.Corrupt => ModContent.TileType<ElephantGrassCorrupt>(),
+				ConversionType.Hallow => ModContent.TileType<ElephantGrassHallow>(),
+				_ => id,
+			};
+		}
+		else if (id == ModContent.TileType<ElephantGrassHallow>())
+		{
+			if (type == ConversionType.Hallow)
+				return false;
+
+			convertType = type switch
+			{
+				ConversionType.Crimson => ModContent.TileType<ElephantGrassCrimson>(),
+				ConversionType.Hallow => ModContent.TileType<ElephantGrassHallow>(),
+				_ => id,
+			};
+		}
+
+		if (convertType == -1)
+			throw new Exception("How did this happen? Invalid ElephantGrass conversion type.");
+
+		for (int y = j; y < j + 3; ++y)
+		{
+			Tile tile = Main.tile[i, y];
+			tile.TileType = (ushort)convertType;
+		}
+
+		return false;
 	}
 }
 
@@ -186,4 +260,19 @@ public class ElephantGrassShort : ElephantGrass
 
 		spriteBatch.Draw(TextureAssets.Tile[Type].Value, drawPos + offset + new Vector2(clusterOffX, 0), source, Lighting.GetColor(i, j).MultiplyRGB(Color.Goldenrod), rotation * .5f, origin, 1, effects, 0f);
 	}
+}
+
+public class ElephantGrassCorrupt : ElephantGrass
+{
+	protected override int[] TileAnchors => [ModContent.TileType<SavannaGrassCorrupt>()];
+}
+
+public class ElephantGrassCrimson : ElephantGrass
+{
+	protected override int[] TileAnchors => [ModContent.TileType<SavannaGrassCrimson>()];
+}
+
+public class ElephantGrassHallow : ElephantGrass
+{
+	protected override int[] TileAnchors => [ModContent.TileType<SavannaGrassHallow>()];
 }
