@@ -1177,3 +1177,8 @@ PinSword: {
 	DisplayName: Sword Pin
 	Tooltip: ""
 }
+
+TornMapPiece: {
+	DisplayName: Torn Map Piece
+	Tooltip: Reveals the surrounding map
+}

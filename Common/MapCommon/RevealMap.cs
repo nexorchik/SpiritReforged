@@ -1,6 +1,4 @@
 ﻿using SpiritReforged.Common.Misc;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using Terraria.Map;
 
@@ -13,7 +11,28 @@ internal class RevealMap
 		DrawMap,
 	}
 
-	public static void DrawMap(int x, int y, int radius)
+	/// <summary> Reveals the map around the given tile coordinates and handles syncing automatically. </summary>
+	/// <param name="x"> The X coordinate. </param>
+	/// <param name="y"> The Y coordinate. </param>
+	/// <param name="radius"> The radius to reveal. </param>
+	public static void DoReveal(int x, int y, int radius)
+	{
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+		{
+			NetMessage.SendData(MessageID.TileSection, -1, -1, null, x - radius, y - radius, radius * 2, radius * 2);
+
+			ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.RevealMap, 4);
+			packet.Write((byte)RevealMap.MapSyncId.DrawMap);
+			packet.Write(x);
+			packet.Write(y);
+			packet.Write((short)60);
+			packet.Send();
+		}
+		else
+			DrawMap(x, y, radius);
+	}
+
+	private static void DrawMap(int x, int y, int radius)
 	{
 		var tile = MapHelper.CreateMapTile(x, y, 255);
 

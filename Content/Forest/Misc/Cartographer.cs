@@ -1,6 +1,6 @@
 using SpiritReforged.Common.ItemCommon.Pins;
 using SpiritReforged.Common.MapCommon;
-using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Forest.Misc.Pins;
 using Terraria.DataStructures;
@@ -60,7 +60,7 @@ internal class Cartographer : ModNPC
 			MapFunctionality();
 	}
 
-	public override void AddShops() => new NPCShop(Type).Add<PinRed>().Add<PinYellow>().Add<PinGreen>().Add<PinBlue>().Register();
+	public override void AddShops() => new NPCShop(Type).Add<PinRed>().Add<PinYellow>().Add<PinGreen>().Add<PinBlue>().AddLimited(ModContent.ItemType<TornMapPiece>(), 3).Register();
 
 	private void MapFunctionality()
 	{
@@ -93,19 +93,7 @@ internal class Cartographer : ModNPC
 		Main.npcChatText = text;
 		Main.npcChatCornerItem = item.type;
 
-		if (Main.netMode == NetmodeID.MultiplayerClient)
-		{
-			NetMessage.SendData(MessageID.TileSection, -1, -1, null, point.X - Radius, point.Y - Radius, Radius * 2, Radius * 2);
-
-			ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.RevealMap, 4);
-			packet.Write((byte)RevealMap.MapSyncId.DrawMap);
-			packet.Write(point.X);
-			packet.Write(point.Y);
-			packet.Write((short)60);
-			packet.Send();
-		}
-		else
-			RevealMap.DrawMap(point.X, point.Y, Radius);
+		RevealMap.DoReveal(point.X, point.Y, Radius);
 
 		_hasPin = false;
 
