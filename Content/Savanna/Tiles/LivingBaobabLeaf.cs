@@ -20,7 +20,7 @@ internal class LivingBaobabLeaf : ModTile
 
 	public override void RandomUpdate(int i, int j)
 	{
-		if (Main.rand.NextBool(30)) //Randomly grow hanging baobab fruit
+		if (Main.rand.NextBool(50)) //Randomly grow hanging baobab fruit
 			BaobabFruitTile.GrowVine(i, j + 1);
 	}
 }

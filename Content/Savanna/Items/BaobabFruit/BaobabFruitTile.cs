@@ -64,13 +64,10 @@ public class BaobabFruitTile : ModTile
 			return false;
 		}
 
-		if (resetFrame)
-		{
-			if (below.HasTile && below.TileType == Type)
-				tile.TileFrameY = 18;
-			else
-				tile.TileFrameY = 0;
-		}
+		if (below.HasTile && below.TileType == Type)
+			tile.TileFrameY = 18;
+		else
+			tile.TileFrameY = 0;
 
 		return false; //True results in the tile being invisible in most cases
 	}

@@ -80,10 +80,13 @@ internal static class BaobabGen
 
 			WorldUtils.Gen(points.Last().ToPoint(), new ModShapes.InnerOutline(data, false), Actions.Chain(new Actions.ClearWall()));
 
-			for (int b = last.X - halfWidth; b < last.X + halfWidth; b++) //Randomly generate baobab fruit below canopies
+			if (i is 0 or (branches - 1))
 			{
-				if (WorldGen.genRand.NextBool(4))
-					BaobabFruitTile.GrowVine(b, last.Y + 1, WorldGen.genRand.Next(2, 5));
+				for (int b = last.X - halfWidth; b < last.X + halfWidth; b++) //Randomly generate baobab fruit below canopies
+				{
+					if (WorldGen.genRand.NextBool(4))
+						BaobabFruitTile.GrowVine(b, last.Y + 1, WorldGen.genRand.Next(2, 5));
+				}
 			}
 		}
 
