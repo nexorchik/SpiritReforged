@@ -104,51 +104,6 @@ SavannaJungleSlime: {
 	Entry: It's gobbled up some flowers! Almost too cute to kill...
 }
 
-Hiker: {
-	DisplayName: Hiker
-
-	Buttons: {
-		Feed: Feed
-		Supplies: Supplies
-		Silver: 20 silver
-	}
-
-	Dialogue: {
-		Hungry: {
-			Asking: {
-				0: Hey. Long hike, forgot to grab a snack. Looks like you got some {0} I could have. Mind if I partake?
-				1: You ever leave the house and THEN realize you're hungry? I wish I didn't. Could you spare me a {0}?
-				2: Uphills really take it out of you. A snack would be appreciated, stranger.
-				3: After a grueling two hours without a snack, I'm on my last legs. Could you spare one of your {0}?
-			}
-
-			Thanks: {
-				0: Thanks. I can always count on strangers giving me food. Take some supplies, on the house!
-				1: Ah, that hits the spot. I've still got some supplies if you'd like to trade it. Or just be kind, I don't mind.
-				2: Hey, thank you so much. Take some of my stuff for free if you want.
-				3: Nothing quite hits like a meal after a long hike. Prices are off, take a pack. Free!
-			}
-		}
-
-		Idle: {
-			0: Nothing quite like a long hike down into caves. Up until the cobwebs cover the walls, it's a joy.
-			1: My old pal used to grab Blinkroot to explore instead of using torches. "Safer", he said. Odd guy.
-			2: You ever use pins? They're really useful. Just keep them point-down in your bag...I've messed up one too many times.
-			3: Sometimes I pass by a faerie, and they guide me to gold or platinum. I always act excited, but I don't have a pickaxe.
-			4: You always carry a little extra supplies if you're smart. I've got just a little too much...for a small fee, I won't!
-		}
-	}
-
-	Name: {
-		0: Gary
-		1: Shawn
-		2: Geo
-		3: Geoff
-		4: Rocky
-		5: Porter
-	}
-}
-
 Cartographer: {
 	DisplayName: Cartographer
 	Buttons.Map: Map
