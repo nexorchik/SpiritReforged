@@ -23,17 +23,27 @@ internal class Cartographer : ModNPC
 
 	public override void SetStaticDefaults()
 	{
-		Main.npcFrameCount[Type] = 1;
+		Main.npcFrameCount[Type] = 25;
 
 		NPCID.Sets.ActsLikeTownNPC[Type] = true;
 		NPCID.Sets.NoTownNPCHappiness[Type] = true;
+		NPCID.Sets.ExtraFramesCount[Type] = 9;
+		NPCID.Sets.AttackFrameCount[Type] = 4;
+		NPCID.Sets.DangerDetectRange[Type] = 600;
+		NPCID.Sets.AttackType[Type] = -1;
+		NPCID.Sets.AttackTime[Type] = 20;
+		NPCID.Sets.HatOffsetY[Type] = 2;
 	}
 
 	public override void SetDefaults()
 	{
 		NPC.CloneDefaults(NPCID.SkeletonMerchant);
+		NPC.HitSound = SoundID.NPCHit1;
+		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.townNPC = true;
 		NPC.Size = new Vector2(30, 40);
+
+		AnimationType = NPCID.Guide;
 	}
 
 	public override void SetChatButtons(ref string button, ref string button2)
@@ -121,6 +131,15 @@ internal class Cartographer : ModNPC
 	{
 		if (Main.dedServ)
 			return;
+
+		if (NPC.life <= 0)
+		{
+			for (int i = 1; i < 7; i++)
+			{
+				int goreType = Mod.Find<ModGore>(nameof(Cartographer) + i).Type;
+				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity, goreType);
+			}
+		}
 
 		for (int d = 0; d < 8; d++)
 			Dust.NewDustPerfect(Main.rand.NextVector2FromRectangle(NPC.getRect()), DustID.Blood,

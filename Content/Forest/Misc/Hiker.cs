@@ -1,6 +1,5 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
 using SpiritReforged.Common.NPCCommon;
-using SpiritReforged.Content.Savanna.Items.BaobabFruit;
 using SpiritReforged.Content.Savanna.Items.Gar;
 using Terraria.DataStructures;
 using Terraria.Utilities;
@@ -80,6 +79,8 @@ internal class Hiker : ModNPC, INPCButtons
 	public override void SetDefaults()
 	{
 		NPC.CloneDefaults(NPCID.SkeletonMerchant);
+		NPC.HitSound = SoundID.NPCHit1;
+		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.townNPC = true;
 		NPC.Size = new Vector2(30, 40);
 
@@ -247,7 +248,7 @@ internal class Hiker : ModNPC, INPCButtons
 		{
 			for (int i = 1; i < 6; i++)
 			{
-				int goreType = Mod.Find<ModGore>(nameof(DevourerOfSoil) + i).Type;
+				int goreType = Mod.Find<ModGore>(nameof(Hiker) + i).Type;
 				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity, goreType);
 			}
 		}
