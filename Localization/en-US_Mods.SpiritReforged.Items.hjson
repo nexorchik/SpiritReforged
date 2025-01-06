@@ -1099,14 +1099,13 @@ ExplorerTreads: {
 		'''
 }
 
-
-LeatherCloak: {
+LeatherCloakItem: {
 	DisplayName: Leather Cloak
-	Tooltip: 
-	'''
-	Immunity to mighty wind from sandstorms
-	Increases movement speed and run acceleration
-	'''
+	Tooltip:
+		'''
+		Immunity to mighty wind from sandstorms
+		Increases movement speed by 5% and run acceleration by 15%
+		'''
 }
 
 CactusStaff: {

@@ -1,10 +1,9 @@
 ﻿using SpiritReforged.Common.ItemCommon;
-using SpiritReforged.Common.PlayerCommon;
-using SpiritReforged.Content.Desert.GildedScarab;
 
 namespace SpiritReforged.Content.Vanilla.LeatherCloak;
 
-internal class LeatherCloak : AccessoryItem
+[AutoloadEquip(EquipType.Front)]
+internal class LeatherCloakItem : AccessoryItem
 {
 	public override void SetDefaults()
 	{
@@ -20,16 +19,12 @@ internal class LeatherCloak : AccessoryItem
 		if (player.ZoneDesert)
 			player.buffImmune[BuffID.WindPushed] = true;
 	}
-	private class LeatherCloakPlayer : ModPlayer
+	public override void AddRecipes()
 	{
-		public override void PostUpdateRunSpeeds()
-		{
-			if (Player.HasAccessory<LeatherCloak>())
-			{
-				Player.runAcceleration *= 1.15f;
-				Player.maxRunSpeed += 0.1f;
-				Player.accRunSpeed += 0.05f;
-			}
-		}
+		Recipe recipe1 = CreateRecipe(1);
+		recipe1.AddIngredient(ItemID.Leather, 6);
+		recipe1.AddIngredient(ItemID.Silk, 5);
+		recipe1.AddTile(TileID.Loom);
+		recipe1.Register();
 	}
 }
