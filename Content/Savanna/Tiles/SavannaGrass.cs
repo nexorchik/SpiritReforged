@@ -20,6 +20,7 @@ public class SavannaGrass : ModTile
 		TileID.Sets.Grass[Type] = true;
 		TileID.Sets.NeedsGrassFramingDirt[Type] = DirtType;
 		TileID.Sets.CanBeDugByShovel[Type] = true;
+		RegisterItemDrop(DirtType);
 
 		AddMapEntry(new Color(104, 156, 70));
 

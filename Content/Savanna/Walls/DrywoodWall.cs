@@ -9,12 +9,12 @@ public class DrywoodWall : ModWall, IAutoloadWallItem
 		var mod = SpiritReforgedMod.Instance; //Mod is null here, so get the instance manually
 
 		item.CreateRecipe(4)
-			.AddIngredient(mod.Find<ModItem>("DrywoodWallItem").Type)
+			.AddIngredient(mod.Find<ModItem>("Drywood").Type)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 
 		//Allow wall items to be crafted back into base materials
-		Recipe.Create(mod.Find<ModItem>("DrywoodWallItem").Type)
+		Recipe.Create(mod.Find<ModItem>("Drywood").Type)
 			.AddIngredient(item.Type, 4)
 			.AddTile(TileID.WorkBenches)
 			.Register();
