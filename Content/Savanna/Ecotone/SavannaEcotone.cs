@@ -185,6 +185,7 @@ internal class SavannaEcotone : EcotoneBase
 		}
 
 		SavannaArea = new Rectangle(startX, topBottomY.X, endX - startX, topBottomY.Y - topBottomY.X);
+		StopLava.AddArea(SavannaArea);
 
 		if (WorldGen.genRand.NextBool()) //Start watering hole gen
 		{
