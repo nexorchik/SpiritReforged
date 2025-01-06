@@ -48,9 +48,9 @@ public class SavannaGlobalNPC : GlobalNPC
 
 			if (!Main.dayTime)
 			{
-				pool[NPCID.DoctorBones] = .005f;
-				pool[NPCID.Zombie] = .28f;
-				pool[NPCID.DemonEye] = .17f;
+				pool[NPCID.DoctorBones] = .007f;
+				pool[NPCID.Zombie] = .36f;
+				pool[NPCID.DemonEye] = .23f;
 			}
 			else if (!spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm)
 			{
