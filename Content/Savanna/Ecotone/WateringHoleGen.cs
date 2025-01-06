@@ -1,5 +1,7 @@
-﻿using SpiritReforged.Common.WorldGeneration;
+﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Savanna.Tiles;
+using Terraria.WorldBuilding;
 
 namespace SpiritReforged.Content.Savanna.Ecotone;
 
@@ -62,12 +64,26 @@ internal static class WateringHoleGen
 					}
 
 					if (holeDepth < 8 && WorldGen.genRand.NextBool())
-						ClaySplotch(x, y + 1);
+						SolidSplotch(x, y + 1, TileID.ClayBlock);
+
+					if (holeDepth < 10 && WorldGen.genRand.NextBool())
+					{
+						SolidSplotch(x, y + 1, TileID.Sand);
+						GrowCatTail(x, y);
+					}
 				}
 			}
 		}
 
 		return true;
+	}
+
+	private static void GrowCatTail(int i, int j)
+	{
+		WorldGen.PlaceCatTail(i, j);
+
+		for (int y = 0; y < 8; y++)
+			WorldGen.GrowCatTail(i, j);
 	}
 
 	private static Rectangle DigHole(int i, int j, int width, int depth)
@@ -116,7 +132,7 @@ internal static class WateringHoleGen
 		return false;
 	}
 
-	private static void ClaySplotch(int i, int j)
+	private static void SolidSplotch(int i, int j, ushort type)
 	{
 		i -= 1;
 
@@ -127,7 +143,7 @@ internal static class WateringHoleGen
 				var t = Main.tile[x, y];
 
 				if (WorldGen.SolidOrSlopedTile(t))
-					t.TileType = TileID.ClayBlock;
+					t.TileType = type;
 			}
 		}
 	}
