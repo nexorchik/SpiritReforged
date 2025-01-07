@@ -25,14 +25,14 @@ namespace SpiritReforged.Content.Forest.ArcaneNecklace
 
 		public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
 		{
-			if (player.HasAccessory<ArcaneNecklaceItem>() && player.HeldItem.DamageType == DamageClass.Magic && player.statMana < player.statManaMax2)
+			if ((player.HasAccessory<ArcaneNecklaceGold>() || player.HasAccessory<ArcaneNecklacePlatinum>()) && player.HeldItem.DamageType == DamageClass.Magic && player.statMana < player.statManaMax2)
 				DropStar(npc);
 		}
 
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
 		{
 			Player player = Main.player[projectile.owner];
-			if (player.HasAccessory<ArcaneNecklaceItem>() && projectile.CountsAsClass(DamageClass.Magic) && player.statMana < player.statManaMax2)
+			if ((player.HasAccessory<ArcaneNecklaceGold>() || player.HasAccessory<ArcaneNecklacePlatinum>()) && projectile.CountsAsClass(DamageClass.Magic) && player.statMana < player.statManaMax2)
 				DropStar(npc);
 		}
 	}
