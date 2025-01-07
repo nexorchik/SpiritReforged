@@ -60,7 +60,7 @@ internal class Cartographer : ModNPC
 			MapFunctionality();
 	}
 
-	public override void AddShops() => new NPCShop(Type).Add<PinRed>().Add<PinYellow>().Add<PinGreen>().Add<PinBlue>().AddLimited(ModContent.ItemType<TornMapPiece>(), 3).Register();
+	public override void AddShops() => new NPCShop(Type).Add<PinRed>().Add<PinYellow>().Add<PinGreen>().Add<PinBlue>().AddLimited<TornMapPiece>(3).Register();
 
 	private void MapFunctionality()
 	{
@@ -93,7 +93,7 @@ internal class Cartographer : ModNPC
 		Main.npcChatText = text;
 		Main.npcChatCornerItem = item.type;
 
-		RevealMap.DoReveal(point.X, point.Y, Radius);
+		RevealMap.Reveal(point.X, point.Y, Radius);
 
 		_hasPin = false;
 

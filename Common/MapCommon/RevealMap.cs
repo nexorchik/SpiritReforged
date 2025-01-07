@@ -4,6 +4,7 @@ using Terraria.Map;
 
 namespace SpiritReforged.Common.MapCommon;
 
+/// <summary> Used by the Cartographer to reveal points of interest on the map. </summary>
 internal class RevealMap
 {
 	public enum MapSyncId : byte
@@ -15,17 +16,17 @@ internal class RevealMap
 	/// <param name="x"> The X coordinate. </param>
 	/// <param name="y"> The Y coordinate. </param>
 	/// <param name="radius"> The radius to reveal. </param>
-	public static void DoReveal(int x, int y, int radius)
+	public static void Reveal(int x, int y, int radius)
 	{
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 		{
 			NetMessage.SendData(MessageID.TileSection, -1, -1, null, x - radius, y - radius, radius * 2, radius * 2);
 
 			ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.RevealMap, 4);
-			packet.Write((byte)RevealMap.MapSyncId.DrawMap);
+			packet.Write((byte)MapSyncId.DrawMap);
 			packet.Write(x);
 			packet.Write(y);
-			packet.Write((short)60);
+			packet.Write((short)radius);
 			packet.Send();
 		}
 		else
@@ -40,6 +41,9 @@ internal class RevealMap
 		{
 			for (int j = y - radius / 2; j <= y + radius / 2; ++j)
 			{
+				if (!WorldGen.InWorld(i, j))
+					continue;
+
 				float dist = 1 - Vector2.Distance(new Vector2(x, y), new Vector2(i, j)) / (radius * 0.5f);
 				byte light = WorldGen.SolidTile(i, j) ? (byte)(255 * Math.Max(dist, 0)) : (byte)0;
 
