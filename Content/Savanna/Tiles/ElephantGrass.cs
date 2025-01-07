@@ -101,76 +101,25 @@ public class ElephantGrass : ModTile, ISwayInWind, IConvertibleTile
 		return rotation + TileSwayHelper.GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 20, 3f, 1, true);
 	}
 
-	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
+	public virtual bool Convert(IEntitySource source, ConversionType type, int i, int j)
 	{
 		if (source is EntitySource_Parent { Entity: Projectile })
 			return false;
 
 		j -= Main.tile[i, j].TileFrameY / 18;
-
 		int id = Main.tile[i, j].TileType;
-		int convertType = -1;
 
-		if (id == ModContent.TileType<ElephantGrass>())
+		if (TileCorruptor.GetConversionType<ElephantGrass, ElephantGrassCorrupt, ElephantGrassCrimson, ElephantGrassHallow>(id, type, out int conversionType))
 		{
-			if (type == ConversionType.Purify)
-				return false;
-
-			convertType = type switch
+			for (int y = j; y < j + 3; ++y)
 			{
-				ConversionType.Corrupt => ModContent.TileType<ElephantGrassCorrupt>(),
-				ConversionType.Crimson => ModContent.TileType<ElephantGrassCrimson>(),
-				ConversionType.Hallow => ModContent.TileType<ElephantGrassHallow>(),
-				_ => id,
-			};
-		}
-		else if (type == ConversionType.Purify)
-			convertType = ModContent.TileType<ElephantGrass>();
-		else if (id == ModContent.TileType<ElephantGrassCorrupt>())
-		{
-			if (type == ConversionType.Corrupt)
-				return false;
-
-			convertType = type switch
-			{
-				ConversionType.Crimson => ModContent.TileType<ElephantGrassCrimson>(),
-				ConversionType.Hallow => ModContent.TileType<ElephantGrassHallow>(),
-				_ => id,
-			};
-		}
-		else if (id == ModContent.TileType<ElephantGrassCrimson>())
-		{
-			if (type == ConversionType.Crimson)
-				return false;
-
-			convertType = type switch
-			{
-				ConversionType.Corrupt => ModContent.TileType<ElephantGrassCorrupt>(),
-				ConversionType.Hallow => ModContent.TileType<ElephantGrassHallow>(),
-				_ => id,
-			};
-		}
-		else if (id == ModContent.TileType<ElephantGrassHallow>())
-		{
-			if (type == ConversionType.Hallow)
-				return false;
-
-			convertType = type switch
-			{
-				ConversionType.Crimson => ModContent.TileType<ElephantGrassCrimson>(),
-				ConversionType.Hallow => ModContent.TileType<ElephantGrassHallow>(),
-				_ => id,
-			};
+				Tile tile = Main.tile[i, y];
+				tile.TileType = (ushort)conversionType;
+			}
 		}
 
-		if (convertType == -1)
-			throw new Exception("How did this happen? Invalid ElephantGrass conversion type.");
-
-		for (int y = j; y < j + 3; ++y)
-		{
-			Tile tile = Main.tile[i, y];
-			tile.TileType = (ushort)convertType;
-		}
+		if (Main.netMode == NetmodeID.Server)
+			NetMessage.SendTileSquare(-1, i, j, 1, 3);
 
 		return false;
 	}
@@ -259,6 +208,29 @@ public class ElephantGrassShort : ElephantGrass
 		var effects = (i * (tile.TileFrameX / 18) % 2 == 1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
 		spriteBatch.Draw(TextureAssets.Tile[Type].Value, drawPos + offset + new Vector2(clusterOffX, 0), source, Lighting.GetColor(i, j).MultiplyRGB(Color.Goldenrod), rotation * .5f, origin, 1, effects, 0f);
+	}
+
+	public override bool Convert(IEntitySource source, ConversionType type, int i, int j)
+	{
+		if (source is EntitySource_Parent { Entity: Projectile })
+			return false;
+
+		j -= Main.tile[i, j].TileFrameY / 18;
+		int id = Main.tile[i, j].TileType;
+
+		if (TileCorruptor.GetConversionType<ElephantGrassShort, ElephantGrassCorrupt, ElephantGrassCrimson, ElephantGrassHallow>(id, type, out int conversionType))
+		{
+			for (int y = j; y < j + 3; ++y)
+			{
+				Tile tile = Main.tile[i, y];
+				tile.TileType = (ushort)conversionType;
+			}
+		}
+
+		if (Main.netMode == NetmodeID.Server)
+			NetMessage.SendTileSquare(-1, i, j, 1, 3);
+
+		return false;
 	}
 }
 

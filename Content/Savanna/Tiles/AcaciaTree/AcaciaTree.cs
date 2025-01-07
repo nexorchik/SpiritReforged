@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.SimpleEntity;
+using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.CustomTree;
 using SpiritReforged.Common.TileCommon.TileSway;
 using System.Linq;
@@ -7,7 +8,7 @@ using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
-public class AcaciaTree : CustomTree
+public class AcaciaTree : CustomTree, IConvertibleTile
 {
 	private const int NumStyles = 4;
 
@@ -72,27 +73,27 @@ public class AcaciaTree : CustomTree
 		{
 			const int framesY = 2;
 
-			int frameY = Framing.GetTileSafely(i, j).TileFrameX / frameSize % framesY;
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
 
-			var source = topsTexture.Frame(1, framesY, 0, frameY, sizeOffsetY: -2);
+			var source = TopTexture.Frame(1, framesY, 0, frameY, sizeOffsetY: -2);
 			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
 
-			spriteBatch.Draw(topsTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
-		else if (branchesTexture != null) //Draw branches
+		else //Draw branches
 		{
 			const int framesX = 2;
 			const int framesY = 3;
 
 			int frameX = (TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) / NumStyles == framesX) ? 1 : 0;
-			int frameY = Framing.GetTileSafely(i, j).TileFrameX / frameSize % framesY;
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
 
-			var source = branchesTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
+			var source = BranchTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
 			var origin = new Vector2(frameX == 0 ? source.Width : 0, 44);
 
 			position.X += 6 * (frameX == 0 ? -1 : 1); //Directional offset
 
-			spriteBatch.Draw(branchesTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(BranchTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
 	}
 
@@ -146,12 +147,31 @@ public class AcaciaTree : CustomTree
 			}
 
 			WorldGen.PlaceTile(i, j - h, Type, true);
-			Framing.GetTileSafely(i, j - h).TileFrameX = (short)(style * frameSize * 3 + WorldGen.genRand.Next(3) * frameSize);
+			Framing.GetTileSafely(i, j - h).TileFrameX = (short)(style * FrameSize * 3 + WorldGen.genRand.Next(3) * FrameSize);
 			Framing.GetTileSafely(i, j - h).TileFrameY = TreeHelper.GetPalmOffset(j, variance, height, ref xOff);
 		}
 
 		if (Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j + 1 - height, 1, height, TileChangeType.None);
+	}
+
+	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
+	{
+		if (source is EntitySource_Parent { Entity: Projectile })
+			return false;
+
+		int id = Main.tile[i, j].TileType;
+
+		if (TileCorruptor.GetConversionType<AcaciaTree, CorruptAcaciaTree, CrimsonAcaciaTree, HallowAcaciaTree>(id, type, out int conversionType))
+		{
+			Tile tile = Main.tile[i, j];
+			tile.TileType = (ushort)conversionType;
+		}
+
+		if (Main.tile[i, j - 1].TileType == id)
+			TileCorruptor.Convert(new EntitySource_TileUpdate(i, j), type, i, j - 1);
+
+		return true;
 	}
 }
 

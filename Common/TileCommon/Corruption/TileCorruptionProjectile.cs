@@ -19,9 +19,9 @@ internal class TileCorruptionProjectile : GlobalProjectile
 		int height = (int)(projectile.height / 16f);
 		var pos = projectile.position.ToTileCoordinates16();
 
-		for (int i = pos.X; i < pos.X + width; ++i)
+		for (int i = pos.X - 1; i < pos.X + width + 1; ++i)
 		{
-			for (int j = pos.Y; j < pos.Y + height; ++j)
+			for (int j = pos.Y - 1; j < pos.Y + height + 1; ++j)
 			{
 				if (!WorldGen.InWorld(i, j, 5))
 					continue;

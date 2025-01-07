@@ -10,9 +10,15 @@ namespace SpiritReforged.Common.TileCommon.CustomTree;
 /// <summary> Follows palm tree logic by default. </summary>
 public abstract class CustomTree : ModTile
 {
-	internal Asset<Texture2D> topsTexture, branchesTexture;
+	protected const int FrameSize = 22;
 
-	protected const int frameSize = 22;
+	// Textures are set as lookups, keyed by type - this means we can have one static instance (bypassing instancing issues) while keeping data easy to access
+	internal readonly static Dictionary<int, Asset<Texture2D>> branchesTextureByType = [];
+	internal readonly static Dictionary<int, Asset<Texture2D>> topsTextureByType = [];
+
+	public Asset<Texture2D> TopTexture => topsTextureByType[Type];
+	public Asset<Texture2D> BranchTexture => branchesTextureByType[Type];
+
 	protected readonly HashSet<Point16> treeDrawPoints = [];
 	private readonly HashSet<Point16> treeShakes = [];
 
@@ -24,14 +30,6 @@ public abstract class CustomTree : ModTile
 
 	public override void Load()
 	{
-		if (!Main.dedServ)
-		{
-			if (ModContent.RequestIfExists(Texture + "_Tops", out Asset<Texture2D> tops))
-				topsTexture = tops;
-			if (ModContent.RequestIfExists(Texture + "_Branches", out Asset<Texture2D> branches))
-				branchesTexture = branches;
-		}
-
 		On_TileDrawing.DrawTrees += (On_TileDrawing.orig_DrawTrees orig, TileDrawing self) =>
 		{
 			orig(self);
@@ -50,6 +48,15 @@ public abstract class CustomTree : ModTile
 
 	public override void SetStaticDefaults()
 	{
+		if (!Main.dedServ)
+		{
+			if (ModContent.RequestIfExists(Texture + "_Tops", out Asset<Texture2D> tops))
+				topsTextureByType.Add(Type, tops);
+
+			if (ModContent.RequestIfExists(Texture + "_Branches", out Asset<Texture2D> branches))
+				branchesTextureByType.Add(Type, branches);
+		}
+
 		Main.tileSolid[Type] = false;
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
@@ -57,8 +64,8 @@ public abstract class CustomTree : ModTile
 		Main.tileAxe[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
-		TileObjectData.newTile.CoordinateWidth = frameSize - 2;
-		TileObjectData.newTile.CoordinateHeights = [frameSize - 2];
+		TileObjectData.newTile.CoordinateWidth = FrameSize - 2;
+		TileObjectData.newTile.CoordinateHeights = [FrameSize - 2];
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.newTile.StyleMultiplier = 3;
 		TileObjectData.newTile.StyleWrapLimit = 3 * 4;
@@ -121,7 +128,7 @@ public abstract class CustomTree : ModTile
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
 		if (!fail) //Switch to the 'chopped' frame
-			Framing.GetTileSafely(i, j + 1).TileFrameX = (short)(WorldGen.genRand.Next(9, 12) * frameSize);
+			Framing.GetTileSafely(i, j + 1).TileFrameX = (short)(WorldGen.genRand.Next(9, 12) * FrameSize);
 		else
 			ShakeTree(i, j);
 	}
@@ -134,10 +141,10 @@ public abstract class CustomTree : ModTile
 
 		if (IsTreeTop(i, j))
 		{
-			var source = topsTexture.Frame(3, sizeOffsetX: -2, sizeOffsetY: -2);
+			var source = TopTexture.Frame(3, sizeOffsetX: -2, sizeOffsetY: -2);
 			var origin = source.Bottom();
 
-			spriteBatch.Draw(topsTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
 	}
 
@@ -153,7 +160,7 @@ public abstract class CustomTree : ModTile
 		var tile = Framing.GetTileSafely(i, j);
 		var texture = TextureAssets.Tile[Type].Value;
 
-		var source = new Rectangle(tile.TileFrameX % (frameSize * 12), 0, frameSize - 2, frameSize - 2);
+		var source = new Rectangle(tile.TileFrameX % (FrameSize * 12), 0, FrameSize - 2, FrameSize - 2);
 		var offset = Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1 ? Vector2.Zero : Vector2.One * 12;
 		var position = (new Vector2(i, j) + offset) * 16 - Main.screenPosition + TreeHelper.GetPalmTreeOffset(i, j);
 
@@ -210,7 +217,7 @@ public abstract class CustomTree : ModTile
 				frameX = WorldGen.genRand.Next(4, 7);
 
 			WorldGen.PlaceTile(i, j - h, Type, true);
-			Framing.GetTileSafely(i, j - h).TileFrameX = (short)(frameX * frameSize);
+			Framing.GetTileSafely(i, j - h).TileFrameX = (short)(frameX * FrameSize);
 			Framing.GetTileSafely(i, j - h).TileFrameY = TreeHelper.GetPalmOffset(j, variance, height, ref xOff);
 		}
 

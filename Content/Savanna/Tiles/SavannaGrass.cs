@@ -94,6 +94,7 @@ public class SavannaGrass : ModTile, IConvertibleTile
 			return false;
 
 		Tile tile = Main.tile[i, j];
+		int oldId = tile.TileType;
 
 		tile.TileType = (ushort)(type switch
 		{
@@ -103,8 +104,13 @@ public class SavannaGrass : ModTile, IConvertibleTile
 			_ => Type,
 		});
 
-		TileCorruptor.Convert(new EntitySource_TileUpdate(i, j), type, i, j - 1);
-		return true;
+		if (oldId != tile.TileType)
+		{
+			TileCorruptor.Convert(new EntitySource_TileUpdate(i, j), type, i, j - 1);
+			return true;
+		}
+
+		return false;
 	}
 }
 
