@@ -1,8 +1,4 @@
 using SpiritReforged.Common.ItemCommon;
-using SpiritReforged.Content.Ocean.Items.PoolNoodle;
-using System.IO;
-using Terraria.DataStructures;
-using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Forest.ArcaneNecklace;
 
