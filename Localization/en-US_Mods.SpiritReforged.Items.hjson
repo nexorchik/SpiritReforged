@@ -1136,3 +1136,8 @@ DriftwoodFenceItem: {
 	DisplayName: Driftwood Fence
 	Tooltip: ""
 }
+
+ArcaneNecklace: {
+	DisplayName: Arcane Necklace
+	Tooltip: ""
+}
