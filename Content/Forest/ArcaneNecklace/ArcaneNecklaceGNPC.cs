@@ -1,10 +1,7 @@
 ﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Content.Particles;
-using Steamworks;
-using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Forest.ArcaneNecklace
 {
@@ -14,12 +11,14 @@ namespace SpiritReforged.Content.Forest.ArcaneNecklace
 		{
 			if (Main.rand.NextBool(15) && target.type != NPCID.TargetDummy)
 			{
-				SoundEngine.PlaySound(SoundID.Item9 with { Pitch = -.75f, Volume = .25f }, target.Center);
-				SoundEngine.PlaySound(SoundID.DD2_LightningBugZap with { Pitch = 1.5f, Volume = 1f }, target.Center);
+				SoundEngine.PlaySound(SoundID.Item9 with { Pitch = -.35f, Volume = .35f }, target.Center);
+				SoundEngine.PlaySound(SoundID.DD2_LightningBugZap with { Pitch = .75f, Volume = 1f }, target.Center);
 
-				for (int i = 0; i < 8; i++)
-					ParticleHandler.SpawnParticle(new GlowParticle(target.Center, Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(1f, 2f), new Color(74, 110, 255), Main.rand.NextFloat(0.3f, 0.5f), Main.rand.Next(30, 50), 12, delegate (Particle p) { p.Velocity.Y -= 0.05f; }));
-
+				for (int i = 0; i < 4; i++)
+				{
+					ParticleHandler.SpawnParticle(new GlowParticle(target.Center, Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(1f, 2f), new Color(74, 110, 255), Main.rand.NextFloat(0.3f, 0.5f), Main.rand.Next(30, 50), 12, delegate (Particle p) { p.Velocity.Y *= -1f; }));
+					ParticleHandler.SpawnParticle(new GlowParticle(target.Center, Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(1f, 2f), new Color(74, 110, 255), Main.rand.NextFloat(0.1f, 0.3f), Main.rand.Next(30, 50), 12, delegate (Particle p) { p.Velocity.Y -= .05f; }));
+				}
 				target.DropItemInstanced(target.position, target.Size, ItemID.Star);
 			}
 		}
