@@ -173,4 +173,12 @@ public class HydrothermalVent : ModTile
 			}
 		}
 	}
+
+	public override bool RightClick(int i, int j)
+	{
+		TileExtensions.GetTopLeft(ref i, ref j);
+		Erupt(i, j);
+
+		return true;
+	}
 }

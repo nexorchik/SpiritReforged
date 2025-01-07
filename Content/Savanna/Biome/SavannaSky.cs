@@ -65,8 +65,5 @@ public class SavannaSky : AutoloadedSky
 	}
 
 	public override Color OnTileColor(Color inColor) => Color.Lerp(inColor, SavannaColor(), 0.2f * FadeOpacity);
-
-//	public override float GetCloudAlpha() => 0f;
-
 	internal override bool ActivationCondition(Player p) => !p.ZoneSkyHeight && p.InModBiome<SavannaBiome>();
 }
