@@ -11,8 +11,8 @@ namespace SpiritReforged.Content.Forest.ArcaneNecklace
 		{
 			if (Main.rand.NextBool(15) && target.type != NPCID.TargetDummy)
 			{
-				SoundEngine.PlaySound(SoundID.Item9 with { Pitch = -.35f, Volume = .35f }, target.Center);
-				SoundEngine.PlaySound(SoundID.DD2_LightningBugZap with { Pitch = .75f, Volume = 1f }, target.Center);
+				SoundEngine.PlaySound(SoundID.Item9 with { PitchRange = (-0.5f, -0.1f), Volume = .35f }, target.Center);
+				SoundEngine.PlaySound(SoundID.DD2_LightningBugZap with { PitchRange = (0.65f, 0.8f), Volume = 1f }, target.Center);
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -26,7 +26,7 @@ namespace SpiritReforged.Content.Forest.ArcaneNecklace
 
 		public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
 		{
-			if ((player.HasAccessory<ArcaneNecklaceGold>() || player.HasAccessory<ArcaneNecklacePlatinum>()) && item.DamageType == DamageClass.Magic && player.statMana < player.statManaMax2)
+			if ((player.HasAccessory<ArcaneNecklaceGold>() || player.HasAccessory<ArcaneNecklacePlatinum>()) && item.CountsAsClass(DamageClass.Magic) && player.statMana < player.statManaMax2)
 				DropStar(npc);
 		}
 

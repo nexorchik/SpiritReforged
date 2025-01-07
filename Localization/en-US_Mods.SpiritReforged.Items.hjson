@@ -1147,10 +1147,6 @@ ArcaneNecklaceGold: {
 }
 
 ArcaneNecklacePlatinum: {
-	DisplayName: Arcane Necklace
-	Tooltip:
-		'''
-		Increases maximum mana by 20
-		Hit enemies may drop mana stars
-		'''
+	DisplayName: "{$ArcaneNecklaceGold.DisplayName}"
+	Tooltip: "{$ArcaneNecklaceGold.Tooltip}"
 }
