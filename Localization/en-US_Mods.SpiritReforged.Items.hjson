@@ -1137,7 +1137,11 @@ DriftwoodFenceItem: {
 	Tooltip: ""
 }
 
-ArcaneNecklace: {
+ArcaneNecklaceItem: {
 	DisplayName: Arcane Necklace
-	Tooltip: ""
+	Tooltip:
+	'''
+	Increases maximum mana by 20
+	Hit enemies may drop mana stars
+	'''
 }
