@@ -6,7 +6,6 @@ using SpiritReforged.Content.Particles;
 using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Items.Food;
 using SpiritReforged.Content.Vanilla.Items.Food;
-using System.Linq;
 using Terraria.Audio;
 using Terraria.Utilities;
 
@@ -16,18 +15,6 @@ namespace SpiritReforged.Content.Savanna.NPCs;
 [AutoloadBanner]
 public class Ostrich : ModNPC
 {
-	private static readonly int[] endFrames = [3, 7, 5, 8, 9, 6, 6];
-	private const float runSpeed = 4f;
-	private const int drownTimeMax = 60 * 5;
-	private const int noCollideTimeMax = 10;
-
-	private bool OnTransitionFrame => (int)NPC.frameCounter == endFrames[AIState] - 1;
-	private bool Charging => Math.Abs(NPC.velocity.X) > runSpeed;
-	private bool chargeSound = false;
-
-	private float frameRate = .2f;
-	private int drownTime;
-
 	private enum State : byte
 	{
 		Stopped,
@@ -39,15 +26,27 @@ public class Ostrich : ModNPC
 		MunchEnd
 	}
 
+	private static readonly int[] endFrames = [3, 7, 5, 8, 9, 6, 6];
+	private const int drownTimeMax = 300;
+	private const float runSpeed = 4f;
+	private const int noCollideTimeMax = 10;
+
+	private bool Charging => Math.Abs(NPC.velocity.X) > runSpeed;
+	private bool OnTransitionFrame => (int)NPC.frameCounter == endFrames[AIState] - 1;
+
 	public int AIState { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
 	public ref float Counter => ref NPC.ai[1];
+	public ref float TargetSpeed => ref NPC.ai[2]; //Stores a direction to lerp to over time
 	public ref float NoCollideTime => ref NPC.localAI[0]; //Counts how long the NPC hasn't been grounded for
+
+	private float frameRate = .2f;
+	private int drownTime;
+	private int oldX; //Tracks the last horizontal jump coordinate so the NPC doesn't constantly jump in the same place
+	private bool wasCharging;
 
 	public override void SetStaticDefaults()
 	{
-		NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
-		SavannaGlobalNPC.savannaFaunaTypes.Add(Type);
-
+		NPC.SetNPCTargets(ModContent.NPCType<Hyena>());
 		Main.npcFrameCount[Type] = 9; //Rows
 	}
 
@@ -71,6 +70,9 @@ public class Ostrich : ModNPC
 		NPC.TargetClosest(false);
 		var target = Main.player[NPC.target];
 
+		TrySwim();
+		TryJump();
+
 		switch (AIState)
 		{
 			case (int)State.Stopped:
@@ -82,7 +84,7 @@ public class Ostrich : ModNPC
 				else if (Main.rand.NextBool(50) && Main.netMode != NetmodeID.MultiplayerClient)
 				{
 					var action = new WeightedRandom<State>();
-					action.Add(State.Running, 1.2f);
+					action.Add(State.Running, 1.75f);
 
 					if (!NPC.wet && Collision.SolidCollision(NPC.Bottom + new Vector2(50 * NPC.direction, 0), 4, 4)) //Is there solid collision at the head position?
 						action.Add(State.MunchStart);
@@ -101,28 +103,36 @@ public class Ostrich : ModNPC
 			case (int)State.Running:
 
 				const float runSpeed = 4f;
-				frameRate = MathHelper.Clamp(Math.Abs(NPC.velocity.X) / runSpeed, .5f, 1f) * .25f;
+				frameRate = Math.Min(Math.Abs(NPC.velocity.X) / 6.5f, .25f);
 
-				TryJump();
-
-				if (ShouldRunAway(16 * 28, 2.5f) && !Charging) //Prioritize running from the player
+				if (!Charging && ShouldRunAway(16 * 28, 2.5f)) //Prioritize running from the player
 					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .1f);
-				else if (Counter % 160 == 159 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity == Vector2.Zero)
+				else //Wander and charging behaviour
 				{
-					if (NPC.velocity.X == 0)
+					if (Counter % 160 == 159 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity == Vector2.Zero)
 					{
-						if (Main.netMode != NetmodeID.MultiplayerClient)
+						if (NPC.velocity.X == 0)
 						{
-							NPC.velocity.X = Main.rand.NextFloat(1.25f, 1.5f) * (Main.rand.NextBool() ? -1 : 1); //Wander
-							NPC.netUpdate = true;
+							if (Main.netMode != NetmodeID.MultiplayerClient)
+							{
+								TargetSpeed = Main.rand.NextFloat(1.25f, 1.5f) * (Main.rand.NextBool() ? -1 : 1);
+								NPC.netUpdate = true;
+							}
 						}
+						else
+							TargetSpeed = 0;
 					}
-					else
-						ChangeState(State.Stopped);
-				}
 
-				if (Math.Abs(NPC.velocity.X) < 1)
-					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction, .03f);
+					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, TargetSpeed, .03f);
+
+					if (wasCharging && NPC.collideX) //Bounce
+						NPC.velocity.X = -NPC.velocity.X;
+
+					if (Math.Abs(NPC.velocity.X) < .25f && Counter > 10) //Give me some time to accelerate before being able to stop
+						ChangeState(State.Stopped);
+					else
+						ChangeState(State.Running);
+				}
 
 				break;
 
@@ -143,7 +153,10 @@ public class Ostrich : ModNPC
 				else if (OnTransitionFrame && Counter % 30 == 0 && Main.rand.NextBool(3))
 				{
 					if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(4) || Counter > 600)
+					{
 						ChangeState(State.MunchEnd, true);
+						frameRate = .15f;
+					}
 					else
 						NPC.frameCounter = 0; //Randomly restart the animation
 				}
@@ -168,62 +181,75 @@ public class Ostrich : ModNPC
 			}
 		}
 
-		if (NPC.wet && Collision.WetCollision(NPC.position, NPC.width, NPC.height / 3))
-		{
-			if (++drownTime > drownTimeMax)
-			{
-				NPC.velocity *= .99f;
-				if (Main.rand.NextBool(8))
-					Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.BreatheBubble);
-
-				if (drownTime % 3 == 0 && --NPC.life <= 0)
-				{
-					SoundEngine.PlaySound(NPC.DeathSound, NPC.Center);
-					HitEffect(new NPC.HitInfo());
-				}
-			}
-			else
-				NPC.velocity.Y = Math.Max(NPC.velocity.Y - .75f, -3f);
-		}
-		else if (!NPC.wet)
-			drownTime = 0;
-
 		if (!Collision.SolidCollision(NPC.position, NPC.width, NPC.height + 2))
 			NoCollideTime++;
 		else
 			NoCollideTime = 0;
 
-		if (Charging && !chargeSound && Counter != 0)
+		if (Charging)
 		{
-			SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown with { Volume = .5f, PitchVariance = .5f, MaxInstances = 0 }, NPC.Center);
-			chargeSound = true;
+			if (!wasCharging && Counter != 0)
+				SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown with { Volume = .5f, PitchVariance = .5f }, NPC.Center);
+
+			if (Counter % 15 == 0)
+				ParticleHandler.SpawnParticle(new OstrichImpact(
+					NPC,
+					NPC.Center,
+					Vector2.Zero,
+					270,
+					100f,
+					(Math.Sign(NPC.velocity.X) == 1) ? MathHelper.Pi : 0,
+					30,
+					.6f));
 		}
 
-		if (Charging && Counter % 15 == 0)
-			ParticleHandler.SpawnParticle(new OstrichImpact(
-				NPC,
-				NPC.Center,
-				Vector2.Zero,
-				270,
-				100f,
-				(Math.Sign(NPC.velocity.X) == 1) ? MathHelper.Pi : 0,
-				30,
-				.6f));
-
-		if (NPC.velocity.X < 0)
+		if (NPC.velocity.X < 0) //Set direction
 			NPC.direction = NPC.spriteDirection = -1;
 		else if (NPC.velocity.X > 0)
 			NPC.direction = NPC.spriteDirection = 1;
 
 		Counter++;
+		wasCharging = Charging;
 
 		bool ShouldRunAway(int distance, float limit = 4f) => NPC.Distance(target.Center) < distance && target.velocity.Length() > limit;
+
 		void TryJump(float height = 6.5f)
 		{
 			Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
 
 			if (NPC.collideX && NPC.velocity == Vector2.Zero) //Jump
-				NPC.velocity.Y = -height;
+			{
+				if ((int)NPC.Center.X == oldX)
+					TargetSpeed = -NPC.direction;
+				else
+				{
+					oldX = (int)NPC.Center.X;
+					NPC.velocity.Y = -height;
+				}
+			}
+		}
+
+		void TrySwim()
+		{
+			if (NPC.wet && Collision.WetCollision(NPC.position, NPC.width, NPC.height / 3))
+			{
+				if (++drownTime > drownTimeMax)
+				{
+					NPC.velocity *= .99f;
+					if (Main.rand.NextBool(8))
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.BreatheBubble);
+
+					if (drownTime % 3 == 0 && --NPC.life <= 0)
+					{
+						SoundEngine.PlaySound(NPC.DeathSound, NPC.Center);
+						HitEffect(new NPC.HitInfo());
+					}
+				}
+				else
+					NPC.velocity.Y = Math.Max(NPC.velocity.Y - .75f, -3f);
+			}
+			else if (!NPC.wet)
+				drownTime = 0;
 		}
 	}
 
@@ -235,7 +261,6 @@ public class Ostrich : ModNPC
 		NPC.frameCounter = 0;
 		frameRate = .2f;
 		Counter = 0;
-		chargeSound = false;
 		AIState = (int)toState;
 
 		if (sync && Main.dedServ)
@@ -243,17 +268,14 @@ public class Ostrich : ModNPC
 	}
 
 	public override bool CanHitPlayer(Player target, ref int cooldownSlot) => Charging;
-
 	public override bool CanHitNPC(NPC target) => Charging;
-
-	public override bool CanBeHitByNPC(NPC attacker) => SavannaGlobalNPC.savannaFaunaTypes.Contains(attacker.type) && attacker.type != Type;
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		bool dead = NPC.life <= 0;
 
-		SoundEngine.PlaySound(SoundID.NPCHit11 with { PitchVariance = .5f, MaxInstances = 0, Pitch = -.25f }, NPC.Center);
-		SoundEngine.PlaySound(SoundID.Grass with { Volume = .45f, PitchVariance = .5f, MaxInstances = 0 }, NPC.Center);
+		SoundEngine.PlaySound(SoundID.NPCHit11 with { PitchVariance = .5f, Pitch = -.25f, MaxInstances = 2 }, NPC.Center);
+		SoundEngine.PlaySound(SoundID.Grass with { Volume = .45f, PitchVariance = .5f, MaxInstances = 2 }, NPC.Center);
 
 		for (int i = 0; i < (dead ? 30 : 4); i++)
 		{
@@ -269,14 +291,24 @@ public class Ostrich : ModNPC
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Ostrich_Death") with { Volume = .75f, PitchVariance = .5f, Pitch = -.5f, MaxInstances = 0 }, NPC.Center);
 		}
 
-		const int scareDistance = 16 * 20;
-		var pack = Main.npc.Where(x => x.active && x.type == Type 
-			&& (x.whoAmI == NPC.whoAmI || x.Distance(NPC.Center) < scareDistance)); //All NPC instances of this type, including this one
+		ScareNearby(hit);
+	}
 
-		foreach (var npc in pack) //Scare nearby Ostriches
+	private void ScareNearby(NPC.HitInfo hit)
+	{
+		const int scareRange = 16 * 20;
+
+		foreach (var other in Main.ActiveNPCs)
 		{
-			(npc.ModNPC as Ostrich).ChangeState(State.Running);
-			npc.velocity.X = hit.HitDirection * (runSpeed + 1);
+			if (other.type == Type && other.Distance(NPC.Center) <= scareRange && other.ModNPC is Ostrich ostrich)
+			{
+				ostrich.ChangeState(State.Running);
+
+				if (!wasCharging) //Continue to charge in the same direction when struck
+					ostrich.TargetSpeed = hit.HitDirection * (runSpeed + 1);
+				else
+					ostrich.TargetSpeed = other.direction * (runSpeed + 1);
+			}
 		}
 	}
 
@@ -320,6 +352,7 @@ public class Ostrich : ModNPC
 
 		return 0;
 	}
+
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
 		npcLoot.AddCommon<RawMeat>(3);
