@@ -233,7 +233,8 @@ public class Hyena : ModNPC
 
 		void Separate(int distance = 32)
 		{
-			var nearest = Main.npc.OrderBy(x => x.Distance(NPC.Center)).Where(x => x.active && x.whoAmI != NPC.whoAmI && x.type == Type && x.Distance(NPC.Center) < distance).FirstOrDefault();
+			var nearest = Main.npc.OrderBy(x => x.Distance(NPC.Center)).Where(x => x != Main.npc[Main.maxNPCs] 
+				&& x.active && x.whoAmI != NPC.whoAmI && x.type == Type && x.Distance(NPC.Center) < distance).FirstOrDefault();
 
 			if (nearest != default)
 			{
