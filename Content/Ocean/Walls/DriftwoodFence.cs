@@ -25,6 +25,7 @@ public class DriftwoodFence : ModWall, IAutoloadWallItem
 	{
 		WallID.Sets.AllowsPlantsToGrow[Type] = true;
 		Main.wallHouse[Type] = true;
+		Main.wallLight[Type] = true;
 		DustType = DustID.BorealWood;
 	}
 
