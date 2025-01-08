@@ -32,6 +32,7 @@ public class Hyena : ModNPC
 
 	private bool dealDamage; //Whether this NPC can deal damage
 	private bool isAngry; //Similar to dealDamage but is reset differently
+	private int oldX; //Tracks the last horizontal jump coordinate so the NPC doesn't constantly jump in the same place
 	private int drownTime;
 	private TargetSearchFlag focus = TargetSearchFlag.All; //Which target types should be focused when searching
 
@@ -162,8 +163,12 @@ public class Hyena : ModNPC
 			}
 			else if (AnimationState == (int)State.Trotting)
 			{
+				if (Math.Abs(NPC.velocity.X) < .1f)
+					ChangeAnimationState(State.TrotEnd);
+				else
+					ChangeAnimationState(State.Trotting, true);
+
 				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * 3f, .05f); //Run from the target
-				ChangeAnimationState(State.Trotting, true);
 			}
 			else if (NPC.Distance(target.Center) > spotDistance)
 			{
@@ -195,7 +200,9 @@ public class Hyena : ModNPC
 
 				if (target.Velocity.Length() > 3f && NPC.Distance(target.Center) < spotDistance - 16)
 				{
-					ChangeAnimationState(State.Trotting); //Begin to run from the target
+					if ((int)NPC.Center.X != oldX)
+						ChangeAnimationState(State.Trotting); //Begin to run from the target
+
 					focus = (target.Type is NPCTargetType.NPC) ? TargetSearchFlag.NPCs : TargetSearchFlag.Players; //Strictly remember the nearest target until reset
 				}
 			}
@@ -213,7 +220,15 @@ public class Hyena : ModNPC
 			Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
 
 			if (NPC.collideX && (NPC.velocity == Vector2.Zero || swimming))
-				NPC.velocity.Y = -height;
+			{
+				if ((int)NPC.Center.X == oldX)
+					TargetSpeed = -NPC.direction;
+				else
+				{
+					oldX = (int)NPC.Center.X;
+					NPC.velocity.Y = -height;
+				}
+			}
 		}
 
 		void Separate(int distance = 32)

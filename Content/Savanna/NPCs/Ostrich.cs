@@ -40,6 +40,7 @@ public class Ostrich : ModNPC
 
 	private float frameRate = .2f;
 	private int drownTime;
+	private int oldX; //Tracks the last horizontal jump coordinate so the NPC doesn't constantly jump in the same place
 	private bool wasCharging;
 
 	public override void SetStaticDefaults()
@@ -81,7 +82,7 @@ public class Ostrich : ModNPC
 				else if (Main.rand.NextBool(50) && Main.netMode != NetmodeID.MultiplayerClient)
 				{
 					var action = new WeightedRandom<State>();
-					action.Add(State.Running, 1.5f);
+					action.Add(State.Running, 1.75f);
 
 					if (!NPC.wet && Collision.SolidCollision(NPC.Bottom + new Vector2(50 * NPC.direction, 0), 4, 4)) //Is there solid collision at the head position?
 						action.Add(State.MunchStart);
@@ -100,14 +101,12 @@ public class Ostrich : ModNPC
 			case (int)State.Running:
 
 				const float runSpeed = 4f;
-				frameRate = Math.Min(Math.Abs(NPC.velocity.X) / 6f, .25f);
+				frameRate = Math.Min(Math.Abs(NPC.velocity.X) / 6.5f, .25f);
 
 				if (!Charging && ShouldRunAway(16 * 28, 2.5f)) //Prioritize running from the player
 					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .1f);
 				else //Wander and charging behaviour
 				{
-					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, TargetSpeed, .03f);
-
 					if (Counter % 160 == 159 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity == Vector2.Zero)
 					{
 						if (NPC.velocity.X == 0)
@@ -122,7 +121,12 @@ public class Ostrich : ModNPC
 							TargetSpeed = 0;
 					}
 
-					if (Math.Abs(NPC.velocity.X) < .25f && TargetSpeed == 0)
+					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, TargetSpeed, .03f);
+
+					if (wasCharging && NPC.collideX) //Bounce
+						NPC.velocity.X = -NPC.velocity.X;
+
+					if (Math.Abs(NPC.velocity.X) < .25f && Counter > 10) //Give me some time to accelerate before being able to stop
 						ChangeState(State.Stopped);
 					else
 						ChangeState(State.Running);
@@ -212,7 +216,15 @@ public class Ostrich : ModNPC
 			Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
 
 			if (NPC.collideX && NPC.velocity == Vector2.Zero) //Jump
-				NPC.velocity.Y = -height;
+			{
+				if ((int)NPC.Center.X == oldX)
+					TargetSpeed = -NPC.direction;
+				else
+				{
+					oldX = (int)NPC.Center.X;
+					NPC.velocity.Y = -height;
+				}
+			}
 		}
 
 		void TrySwim()
