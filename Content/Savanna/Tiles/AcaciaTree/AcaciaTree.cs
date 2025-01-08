@@ -31,7 +31,7 @@ public class AcaciaTree : CustomTree
 		DustType = DustID.WoodFurniture;
 	}
 
-	public override bool IsTreeTop(int i, int j) => Main.tile[i, j - 1].TileType != Type && Main.tile[i, j].TileFrameX <= frameSize * 5;
+	public override bool IsTreeTop(int i, int j) => Main.tile[i, j - 1].TileType != Type && Main.tile[i, j].TileType == Type && Main.tile[i, j].TileFrameX <= frameSize * 5;
 
 	public override void NearbyEffects(int i, int j, bool closer) //Spawn platforms
 	{
