@@ -11,6 +11,7 @@ public class TileSwayGlobalTile : GlobalTile
 
 		var tile = Framing.GetTileSafely(i, j);
 		var data = TileObjectData.GetTileData(tile);
+
 		var frame = new Point(tile.TileFrameX % data.CoordinateFullWidth / 18, tile.TileFrameY % data.CoordinateFullHeight / 18);
 
 		float WindCycle() => wind.SetWindSway(new Point16(i - frame.X, j - frame.Y));

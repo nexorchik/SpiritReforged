@@ -90,9 +90,6 @@ public class SavannaGrass : ModTile, IConvertibleTile
 
 	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
 	{
-		if (type == ConversionType.Purify)
-			return false;
-
 		Tile tile = Main.tile[i, j];
 		int oldId = tile.TileType;
 
@@ -101,7 +98,7 @@ public class SavannaGrass : ModTile, IConvertibleTile
 			ConversionType.Hallow => ModContent.TileType<SavannaGrassHallow>(),
 			ConversionType.Crimson => ModContent.TileType<SavannaGrassCrimson>(),
 			ConversionType.Corrupt => ModContent.TileType<SavannaGrassCorrupt>(),
-			_ => Type,
+			_ => ModContent.TileType<SavannaGrass>(),
 		});
 
 		if (oldId != tile.TileType)
@@ -116,31 +113,39 @@ public class SavannaGrass : ModTile, IConvertibleTile
 
 public class SavannaGrassCorrupt : SavannaGrass
 {
+	protected override Color MapColor => new(109, 106, 174);
+
 	public override void SetStaticDefaults()
 	{
 		base.SetStaticDefaults();
 
 		TileID.Sets.Corrupt[Type] = true;
-		TileID.Sets.AddCorruptionTile(Type, 1);
+		TileID.Sets.AddCorruptionTile(Type, 10);
 	}
-
-	protected override Color MapColor => new(109, 106, 174);
 }
 
 public class SavannaGrassHallow : SavannaGrass
 {
 	protected override Color MapColor => new(78, 193, 227);
-}
 
-public class SavannaGrassCrimson : SavannaGrass
-{
 	public override void SetStaticDefaults()
 	{
 		base.SetStaticDefaults();
 
-		TileID.Sets.AddCorruptionTile(Type, 1);
+		TileID.Sets.Crimson[Type] = true;
+		TileID.Sets.AddCrimsonTile(Type, 10);
+	}
+}
+
+public class SavannaGrassCrimson : SavannaGrass
+{
+	protected override Color MapColor => new(183, 69, 68);
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		TileID.Sets.AddCorruptionTile(Type, 10);
 		TileID.Sets.Corrupt[Type] = true;
 	}
-
-	protected override Color MapColor => new(183, 69, 68);
 }
