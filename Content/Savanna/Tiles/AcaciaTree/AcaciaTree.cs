@@ -44,6 +44,15 @@ public class AcaciaTree : CustomTree
 		}
 	}
 
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		foreach (var item in base.GetItemDrops(i, j))
+		{
+			item.stack *= 2;
+			yield return item;
+		}
+	}
+
 	protected override void OnShakeTree(int i, int j)
 	{
 		var drop = new WeightedRandom<int>();
