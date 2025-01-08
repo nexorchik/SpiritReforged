@@ -6,6 +6,7 @@ using SpiritReforged.Content.Particles;
 using SpiritReforged.Content.Savanna.Items.Food;
 using SpiritReforged.Content.Vanilla.Items.Food;
 using System.Linq;
+using Terraria;
 using Terraria.Audio;
 using Terraria.Utilities;
 
@@ -44,9 +45,7 @@ public class Ostrich : ModNPC
 
 	public override void SetStaticDefaults()
 	{
-		NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
-		SavannaGlobalNPC.savannaFaunaTypes.Add(Type);
-
+		NPC.SetNPCTargets(ModContent.NPCType<Hyena>());
 		Main.npcFrameCount[Type] = 9; //Rows
 	}
 
@@ -241,10 +240,7 @@ public class Ostrich : ModNPC
 	}
 
 	public override bool CanHitPlayer(Player target, ref int cooldownSlot) => Charging;
-
 	public override bool CanHitNPC(NPC target) => Charging;
-
-	public override bool CanBeHitByNPC(NPC attacker) => SavannaGlobalNPC.savannaFaunaTypes.Contains(attacker.type) && attacker.type != Type;
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
@@ -267,14 +263,20 @@ public class Ostrich : ModNPC
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Ostrich_Death") with { Volume = .75f, PitchVariance = .5f, Pitch = -.5f, MaxInstances = 0 }, NPC.Center);
 		}
 
-		const int scareDistance = 16 * 20;
-		var pack = Main.npc.Where(x => x.active && x.type == Type 
-			&& (x.whoAmI == NPC.whoAmI || x.Distance(NPC.Center) < scareDistance)); //All NPC instances of this type, including this one
+		ScareNearby(hit);
+	}
 
-		foreach (var npc in pack) //Scare nearby Ostriches
+	private void ScareNearby(NPC.HitInfo hit)
+	{
+		const int scareRange = 16 * 20;
+
+		foreach (var other in Main.ActiveNPCs)
 		{
-			(npc.ModNPC as Ostrich).ChangeState(State.Running);
-			npc.velocity.X = hit.HitDirection * (runSpeed + 1);
+			if (other.type == Type && other.Distance(NPC.Center) <= scareRange && other.ModNPC is Ostrich ostrich)
+			{
+				ostrich.ChangeState(State.Running);
+				other.velocity.X = hit.HitDirection * (runSpeed + 1);
+			}
 		}
 	}
 
@@ -318,6 +320,7 @@ public class Ostrich : ModNPC
 
 		return 0;
 	}
+
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
 		npcLoot.AddCommon<RawMeat>(3);
