@@ -1,4 +1,5 @@
 using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Items.HuntingRifle;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
@@ -30,6 +31,7 @@ public class SafariZombie : ReplaceNPC
 		AnimationType = NPCID.Zombie;
 		Banner = Item.NPCtoBanner(NPCID.Zombie);
 		BannerItem = Item.BannerToItem(Banner);
+		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
 
 	public override void HitEffect(NPC.HitInfo hit)

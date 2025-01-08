@@ -3,6 +3,7 @@ using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Items.Food;
 using SpiritReforged.Content.Vanilla.Items.Food;
 using System.Linq;
@@ -62,6 +63,7 @@ public class Ostrich : ModNPC
 		NPC.knockBackResist = .45f;
 		NPC.direction = 1; //Don't start at 0
 		AIType = -1;
+		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
 
 	public override void AI()

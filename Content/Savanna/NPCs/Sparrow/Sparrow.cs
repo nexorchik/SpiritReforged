@@ -1,5 +1,4 @@
 using SpiritReforged.Content.Savanna.Biome;
-using SpiritReforged.Content.Savanna.DustStorm;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Sparrow;

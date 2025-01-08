@@ -1,4 +1,5 @@
 using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Vanilla.Items.Food;
 using System.Linq;
 using Terraria.Audio;
@@ -70,6 +71,7 @@ public class Hyena : ModNPC
 		NPC.knockBackResist = .45f;
 		NPC.direction = 1; //Don't start at 0
 		AIType = -1;
+		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
 
 	public override void AI()
