@@ -24,14 +24,16 @@ public class Hyena : ModNPC
 	private static readonly int[] endFrames = [4, 2, 5, 5, 5, 13, 7];
 	private const int drownTimeMax = 300;
 
-	private bool OnTransitionFrame => (int)NPC.frameCounter >= endFrames[AnimationState];
-	public int AnimationState { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
-	public ref float Counter => ref NPC.ai[1];
-	public ref float TargetSpeed => ref NPC.ai[2];
+	private bool OnTransitionFrame => (int)NPC.frameCounter >= endFrames[AnimationState]; //Used to determine whether an animation is complete and can be looped or exited
 
-	private bool dealDamage;
+	public int AnimationState { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; } //What animation is currently being played
+	public ref float Counter => ref NPC.ai[1]; //Used to change behaviour at intervals
+	public ref float TargetSpeed => ref NPC.ai[2]; //Stores a direction to lerp to over time
+
+	private bool dealDamage; //Whether this NPC can deal damage
+	private bool isAngry; //Similar to dealDamage but is reset differently
 	private int drownTime;
-	private TargetSearchFlag whitelist = TargetSearchFlag.All;
+	private TargetSearchFlag focus = TargetSearchFlag.All; //Which target types should be focused when searching
 
 	public override void SetStaticDefaults()
 	{
@@ -56,32 +58,61 @@ public class Hyena : ModNPC
 	public override void AI()
 	{
 		dealDamage = false;
-		int searchDist = (whitelist is TargetSearchFlag.All) ? 350 : 450;
-		var search = NPC.FindTarget(whitelist, SearchFilters.OnlyPlayersInCertainDistance(NPC.Center, searchDist), AdvancedTargetingHelper.NPCsByDistanceAndType(NPC, searchDist));
+		int searchDist = (focus is TargetSearchFlag.All) ? 350 : 450;
+		var search = NPC.FindTarget(focus, SearchFilters.OnlyPlayersInCertainDistance(NPC.Center, searchDist), AdvancedTargetingHelper.NPCsByDistanceAndType(NPC, searchDist));
 		bool wounded = NPC.life < NPC.lifeMax * .25f;
 
 		TrySwim();
 		TryJump();
-		Separate();
 
-		if (!search.FoundTarget || wounded) //Idle
+		if (wounded)
 		{
-			whitelist = TargetSearchFlag.All;
-			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, TargetSpeed, .025f);
-
-			if (Counter % 250 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-			{
-				TargetSpeed = Main.rand.NextFromList(-1, 0, 1) * Main.rand.NextFloat(.8f, 1.5f) * (wounded ? .5f : 1f);
-				NPC.netUpdate = true;
-			}
+			if (search.FoundTarget)
+				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - NPC.GetTargetData().Center.X) * 1.25f, .05f);
+			else
+				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction, .05f);
 
 			if (Math.Abs(NPC.velocity.X) < .1f)
 				ChangeAnimationState(State.TrotEnd);
 			else
 				ChangeAnimationState(State.Walking, true);
 
-			if (wounded && Main.rand.NextBool(8))
+			if (Main.rand.NextBool(8))
 				Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood);
+		}
+		else if (!search.FoundTarget) //Idle
+		{
+			focus = TargetSearchFlag.All;
+			isAngry = false;
+			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, TargetSpeed, .025f);
+
+			if (AnimationState == (int)State.Laugh)
+			{
+				if (OnTransitionFrame)
+				{
+					ChangeAnimationState(State.TrotEnd);
+					NPC.frameCounter = endFrames[AnimationState];
+				}
+			}
+			else
+			{
+				if (Counter % 250 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+				{
+					TargetSpeed = Main.rand.NextFromList(-1, 0, 1) * Main.rand.NextFloat(.8f, 1.5f);
+					NPC.netUpdate = true;
+				}
+
+				if (!wounded && AnimationState == (int)State.TrotEnd && Main.rand.NextBool(200)) //Randomly laugh when still and not wounded; not synced
+				{
+					ChangeAnimationState(State.Laugh);
+					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 3 }, NPC.Center);
+				}
+
+				if (Math.Abs(NPC.velocity.X) < .1f)
+					ChangeAnimationState(State.TrotEnd);
+				else
+					ChangeAnimationState(State.Walking, true);
+			}
 		}
 		else //Targeting
 		{
@@ -89,6 +120,7 @@ public class Hyena : ModNPC
 
 			TargetSpeed = 0;
 			var target = NPC.GetTargetData();
+			Separate();
 
 			if (TryChaseTarget(search))
 			{
@@ -144,7 +176,10 @@ public class Hyena : ModNPC
 				}
 
 				if (target.Velocity.Length() > 3f && NPC.Distance(target.Center) < spotDistance - 16)
+				{
 					ChangeAnimationState(State.Trotting); //Begin to run from the target
+					focus = (target.Type is NPCTargetType.NPC) ? TargetSearchFlag.NPCs : TargetSearchFlag.Players; //Strictly remember the nearest target until reset
+				}
 			}
 		}
 
@@ -202,12 +237,12 @@ public class Hyena : ModNPC
 
 	private bool TryChaseTarget(TargetSearchResults search)
 	{
-		if (NPC.HasPlayerTarget && (Main.player[NPC.target].statLife < Main.player[NPC.target].statLifeMax2 * .25f || whitelist is TargetSearchFlag.Players))
+		if (NPC.HasPlayerTarget && (Main.player[NPC.target].statLife < Main.player[NPC.target].statLifeMax2 * .25f || focus is TargetSearchFlag.Players && isAngry))
 		{
 			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(Main.player[NPC.target].Center.X - NPC.Center.X) * 4.8f, .1f); //Chase the player target
 			return true;
 		}
-		else if (search.FoundNPC && (search.NearestNPC.life < search.NearestNPC.lifeMax * .25f || whitelist is TargetSearchFlag.NPCs))
+		else if (search.FoundNPC && (search.NearestNPC.life < search.NearestNPC.lifeMax * .25f || focus is TargetSearchFlag.NPCs && isAngry))
 		{
 			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(search.NearestNPC.Center.X - NPC.Center.X) * 4.8f, .1f); //Chase the npc target
 			return true;
@@ -275,7 +310,10 @@ public class Hyena : ModNPC
 		foreach (var other in Main.ActiveNPCs)
 		{
 			if (other.type == Type && other.Distance(NPC.Center) <= aggroRange && other.ModNPC is Hyena hyena)
-				hyena.whitelist = flag;
+			{
+				hyena.focus = flag;
+				hyena.isAngry = true;
+			}
 		}
 	}
 
@@ -284,8 +322,10 @@ public class Hyena : ModNPC
 		NPC.frame.Width = 72; //frameHeight = 48
 		NPC.frame.X = NPC.frame.Width * AnimationState;
 
-		if (AnimationState == (int)State.Walking)
-			NPC.frameCounter += Math.Min(Math.Abs(NPC.velocity.X) / 5f, .2f);
+		if (!NPC.wet && NPC.velocity.Y != 0 && NPC.frameCounter == 0) //Jump frame
+			NPC.frame.X = NPC.frame.Width * 2;
+		else if (AnimationState == (int)State.Walking)
+			NPC.frameCounter += Math.Min(Math.Abs(NPC.velocity.X) / 5f, .2f); //Rate depends on movement speed
 		else
 			NPC.frameCounter += .2f;
 
