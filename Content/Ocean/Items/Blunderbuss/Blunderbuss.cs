@@ -68,15 +68,6 @@ public class Blunderbuss : ModItem
 
 public class BlunderbussProj : ModProjectile
 {
-    public float GetFeedback()
-	{
-		var owner = Main.player[Projectile.owner];
-		const int feedbackLength = 12; //For how long the gun receives shot feedback
-
-		return MathHelper.Clamp(((float)owner.itemTime 
-			- (owner.itemTimeMax - feedbackLength)) / (owner.itemTimeMax - (owner.itemTimeMax - feedbackLength)), 0, 1);
-	}
-
     public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.Blunderbuss.DisplayName");
 	public override string Texture => base.Texture.Replace("Proj", string.Empty);
 
@@ -123,7 +114,7 @@ public class BlunderbussProj : ModProjectile
 			}
 		}
 
-		Projectile.Center = owner.MountedCenter + Projectile.velocity * holdDistance;
+		Projectile.Center = owner.RotatedRelativePoint(owner.MountedCenter + Projectile.velocity * holdDistance);
         Projectile.spriteDirection = Projectile.direction = (Projectile.velocity.X > 0) ? 1 : -1;
         Projectile.rotation = Projectile.velocity.ToRotation() + (float)(Math.Sin(GetFeedback() * 4f) * .25f) * -owner.direction;
 
@@ -132,12 +123,20 @@ public class BlunderbussProj : ModProjectile
 		owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - 1.57f);
 	}
 
-    public override bool PreDraw(ref Color lightColor)
+	public float GetFeedback()
+	{
+		var owner = Main.player[Projectile.owner];
+		const int feedbackLength = 12; //For how long the gun receives shot feedback
+
+		return MathHelper.Clamp(((float)owner.itemTime
+			- (owner.itemTimeMax - feedbackLength)) / (owner.itemTimeMax - (owner.itemTimeMax - feedbackLength)), 0, 1);
+	}
+
+	public override bool PreDraw(ref Color lightColor)
     {
 		var texture = TextureAssets.Projectile[Type].Value;
-
 		var randomizer = Main.gamePaused ? Vector2.Zero : Main.rand.NextVector2Unit();
-		var pos = Projectile.Center - Main.screenPosition + new Vector2(0, Projectile.gfxOffY) + randomizer * GetFeedback() * 1.5f;
+		var pos = Projectile.Center - Main.screenPosition + randomizer * GetFeedback() * 1.5f;
 		var effects = (Projectile.spriteDirection == -1) ? SpriteEffects.FlipVertically : SpriteEffects.None;
 
         Main.EntitySpriteDraw(texture, pos, null, Projectile.GetAlpha(lightColor),
@@ -150,9 +149,7 @@ public class BlunderbussProj : ModProjectile
     private void DrawMuzzleFlash()
     {
         var texture = ModContent.Request<Texture2D>(Texture + "_Flash").Value;
-		var pos = Projectile.Center - Main.screenPosition + new Vector2(0, Projectile.gfxOffY) 
-			+ (Vector2.UnitX * (TextureAssets.Projectile[Type].Width() - Projectile.width / 2 - 4)).RotatedBy(Projectile.velocity.ToRotation());
-
+		var pos = Projectile.Center - Main.screenPosition + (Vector2.UnitX * (TextureAssets.Projectile[Type].Width() - Projectile.width / 2 - 4)).RotatedBy(Projectile.velocity.ToRotation());
 		int frame = (int)((Main.player[Projectile.owner].itemTimeMax - Projectile.timeLeft) / 2f);
 		var source = texture.Frame(1, 6, 0, frame, 0, -2);
 
