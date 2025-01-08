@@ -62,7 +62,7 @@ public class Hyena : ModNPC
 		var search = NPC.FindTarget(focus, SearchFilters.OnlyPlayersInCertainDistance(NPC.Center, searchDist), AdvancedTargetingHelper.NPCsByDistanceAndType(NPC, searchDist));
 		bool wounded = NPC.life < NPC.lifeMax * .25f;
 
-		TrySwim();
+		bool swimming = TrySwim();
 		TryJump();
 
 		if (wounded)
@@ -96,22 +96,40 @@ public class Hyena : ModNPC
 			}
 			else
 			{
-				if (Counter % 250 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+				if (swimming)
 				{
-					TargetSpeed = Main.rand.NextFromList(-1, 0, 1) * Main.rand.NextFloat(.8f, 1.5f);
-					NPC.netUpdate = true;
-				}
+					if (drownTime == drownTimeMax / 2)
+						TargetSpeed = -TargetSpeed; //Turn around because I've been swimming for too long
 
-				if (!wounded && AnimationState == (int)State.TrotEnd && Main.rand.NextBool(200)) //Randomly laugh when still and not wounded; not synced
-				{
-					ChangeAnimationState(State.Laugh);
-					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 3 }, NPC.Center);
-				}
+					if (TargetSpeed == 0)
+						TargetSpeed = NPC.direction * 1.75f;
 
-				if (Math.Abs(NPC.velocity.X) < .1f)
-					ChangeAnimationState(State.TrotEnd);
+					ChangeAnimationState(State.Trotting, true);
+				}
 				else
-					ChangeAnimationState(State.Walking, true);
+				{
+					if (Counter % 250 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+					{
+						float oldTargetSpeed = TargetSpeed;
+						TargetSpeed = Main.rand.NextFromList(-1, 0, 1) * Main.rand.NextFloat(.8f, 1.5f);
+
+						if (TargetSpeed != oldTargetSpeed)
+							NPC.netUpdate = true;
+					}
+
+					if (Math.Abs(NPC.velocity.X) < .1f)
+					{
+						if (Main.rand.NextBool(400)) //Randomly laugh when still; not synced
+						{
+							ChangeAnimationState(State.Laugh);
+							SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 2 }, NPC.Center);
+						}
+						else
+							ChangeAnimationState(State.TrotEnd);
+					}
+					else
+						ChangeAnimationState(State.Walking, true);
+				}
 			}
 		}
 		else //Targeting
@@ -168,10 +186,10 @@ public class Hyena : ModNPC
 				{
 					ChangeAnimationState(State.TrotEnd);
 
-					if (Main.rand.NextBool(150)) //Randomly laugh; not synced
+					if (!swimming && Main.rand.NextBool(150)) //Randomly laugh; not synced
 					{
 						ChangeAnimationState(State.Laugh);
-						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 3 }, NPC.Center);
+						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 2 }, NPC.Center);
 					}
 				}
 
@@ -194,7 +212,7 @@ public class Hyena : ModNPC
 		{
 			Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
 
-			if (NPC.collideX && NPC.velocity == Vector2.Zero)
+			if (NPC.collideX && (NPC.velocity == Vector2.Zero || swimming))
 				NPC.velocity.Y = -height;
 		}
 
@@ -211,7 +229,7 @@ public class Hyena : ModNPC
 			}
 		}
 
-		void TrySwim()
+		bool TrySwim() //Contains logic for floating and drowning
 		{
 			if (NPC.wet && Collision.WetCollision(NPC.position, NPC.width, NPC.height / 2))
 			{
@@ -232,6 +250,8 @@ public class Hyena : ModNPC
 			}
 			else if (!NPC.wet)
 				drownTime = 0;
+
+			return NPC.wet;
 		}
 	}
 
@@ -239,12 +259,12 @@ public class Hyena : ModNPC
 	{
 		if (NPC.HasPlayerTarget && (Main.player[NPC.target].statLife < Main.player[NPC.target].statLifeMax2 * .25f || focus is TargetSearchFlag.Players && isAngry))
 		{
-			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(Main.player[NPC.target].Center.X - NPC.Center.X) * 4.8f, .1f); //Chase the player target
+			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(Main.player[NPC.target].Center.X - NPC.Center.X) * 4.8f, .05f); //Chase the player target
 			return true;
 		}
 		else if (search.FoundNPC && (search.NearestNPC.life < search.NearestNPC.lifeMax * .25f || focus is TargetSearchFlag.NPCs && isAngry))
 		{
-			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(search.NearestNPC.Center.X - NPC.Center.X) * 4.8f, .1f); //Chase the npc target
+			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(search.NearestNPC.Center.X - NPC.Center.X) * 4.8f, .05f); //Chase the npc target
 			return true;
 		}
 
@@ -286,7 +306,7 @@ public class Hyena : ModNPC
 				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Hyena_Death") with { Volume = .75f, Pitch = .2f, MaxInstances = 0 }, NPC.Center);
 			}
 
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/Hyena_Hit") with { Volume = .75f, Pitch = -.05f, PitchVariance = .4f, MaxInstances = 0 }, NPC.Center);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/Hyena_Hit") with { Volume = .75f, Pitch = -.05f, PitchVariance = .4f, MaxInstances = 2 }, NPC.Center);
 		}
 
 		AggroNearby();
@@ -322,8 +342,8 @@ public class Hyena : ModNPC
 		NPC.frame.Width = 72; //frameHeight = 48
 		NPC.frame.X = NPC.frame.Width * AnimationState;
 
-		if (!NPC.wet && NPC.velocity.Y != 0 && NPC.frameCounter == 0) //Jump frame
-			NPC.frame.X = NPC.frame.Width * 2;
+		if (!NPC.wet && NPC.velocity.Y != 0 && NPC.frameCounter == 0)
+			NPC.frame.X = NPC.frame.Width * 2; //Jump frame
 		else if (AnimationState == (int)State.Walking)
 			NPC.frameCounter += Math.Min(Math.Abs(NPC.velocity.X) / 5f, .2f); //Rate depends on movement speed
 		else

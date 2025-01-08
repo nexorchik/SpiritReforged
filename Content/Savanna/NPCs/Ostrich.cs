@@ -26,7 +26,7 @@ public class Ostrich : ModNPC
 	}
 
 	private static readonly int[] endFrames = [3, 7, 5, 8, 9, 6, 6];
-	private const int drownTimeMax = 60 * 5;
+	private const int drownTimeMax = 300;
 	private const float runSpeed = 4f;
 	private const int noCollideTimeMax = 10;
 
@@ -260,8 +260,8 @@ public class Ostrich : ModNPC
 	{
 		bool dead = NPC.life <= 0;
 
-		SoundEngine.PlaySound(SoundID.NPCHit11 with { PitchVariance = .5f, Pitch = -.25f }, NPC.Center);
-		SoundEngine.PlaySound(SoundID.Grass with { Volume = .45f, PitchVariance = .5f }, NPC.Center);
+		SoundEngine.PlaySound(SoundID.NPCHit11 with { PitchVariance = .5f, Pitch = -.25f, MaxInstances = 2 }, NPC.Center);
+		SoundEngine.PlaySound(SoundID.Grass with { Volume = .45f, PitchVariance = .5f, MaxInstances = 2 }, NPC.Center);
 
 		for (int i = 0; i < (dead ? 30 : 4); i++)
 		{
@@ -274,7 +274,7 @@ public class Ostrich : ModNPC
 			for (int i = 1; i < 6; i++)
 				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity * Main.rand.NextFloat(), Mod.Find<ModGore>("Ostrich" + i).Type);
 
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Ostrich_Death") with { Volume = .75f, PitchVariance = .5f, Pitch = -.5f }, NPC.Center);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Ostrich_Death") with { Volume = .75f, PitchVariance = .5f, Pitch = -.5f, MaxInstances = 0 }, NPC.Center);
 		}
 
 		ScareNearby(hit);
