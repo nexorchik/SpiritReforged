@@ -1,6 +1,6 @@
 ﻿using SpiritReforged.Common.ItemCommon;
 
-namespace SpiritReforged.Content.Vanilla.LeatherCloak;
+namespace SpiritReforged.Content.Vanilla.Leather.LeatherCloak;
 
 [AutoloadEquip(EquipType.Front)]
 internal class LeatherCloakItem : AccessoryItem

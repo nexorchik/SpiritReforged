@@ -1,6 +1,6 @@
 ﻿using SpiritReforged.Common.PlayerCommon;
 
-namespace SpiritReforged.Content.Vanilla.LeatherCloak;
+namespace SpiritReforged.Content.Vanilla.Leather.LeatherCloak;
 
 internal class LeatherCloakPlayer : ModPlayer
 {

@@ -1,4 +1,4 @@
-namespace SpiritReforged.Content.Forest.MarksmanArmor;
+namespace SpiritReforged.Content.Vanilla.Leather.MarksmanArmor;
 
 [AutoloadEquip(EquipType.Body)]
 public class LeatherPlate : ModItem
