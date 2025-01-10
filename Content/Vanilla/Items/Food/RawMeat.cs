@@ -13,6 +13,8 @@ public class RawMeat : FoodItem
 	{
 		if (!Main.dedServ)
 			WorldTexture = ModContent.Request<Texture2D>(Texture + "_World");
+
+		ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<RawFish>();
 	}
 
 	public override void Defaults() => Item.buffTime = 2 * 60 * 60;

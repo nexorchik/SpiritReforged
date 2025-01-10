@@ -36,6 +36,9 @@ public abstract class FoodItem : ModItem
 		Item.buffTime = 5 * 60 * 60;
 		Item.buffType = BuffID.WellFed;
 
+		if (FruitItemsSet.Contains(Type))
+			ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.Ambrosia;
+
 		Defaults();
 	}
 

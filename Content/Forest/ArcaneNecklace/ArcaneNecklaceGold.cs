@@ -1,5 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Content.Ocean.Items.PoolNoodle;
+using SpiritReforged.Content.Vanilla.Items.Food;
 using System.IO;
 using Terraria.DataStructures;
 using Terraria.ModLoader.IO;
@@ -9,6 +10,8 @@ namespace SpiritReforged.Content.Forest.ArcaneNecklace;
 [AutoloadEquip(EquipType.Neck)]
 public class ArcaneNecklaceGold : AccessoryItem
 {
+	public override void SetStaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<ArcaneNecklacePlatinum>();
+
 	public override void SetDefaults()
 	{
 		Item.width = 26;

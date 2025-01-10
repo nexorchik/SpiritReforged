@@ -6,6 +6,8 @@ public class RawFish : FoodItem
 {
 	internal override Point Size => new(34, 22);
 
+	public override void StaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<RawMeat>();
+
 	public override bool CanUseItem(Player player)
 	{
 		player.AddBuff(BuffID.Poisoned, 600);
