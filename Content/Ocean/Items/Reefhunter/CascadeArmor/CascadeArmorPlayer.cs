@@ -119,6 +119,8 @@ public class CascadeArmorPlayer : ModPlayer
 	{
 		if (bubbleStrength > 0f)
 		{
+			ModContent.GetInstance<CascadeCombatText>().resistanceValue = MaxResist * bubbleStrength;
+
 			damage *= 1 - MaxResist * bubbleStrength;
 			PopBubble();
 		}
@@ -128,14 +130,13 @@ public class CascadeArmorPlayer : ModPlayer
 	{
 		int radius = (int)(120 * bubbleStrength);
 
-		for (int i = 0; i < Main.maxNPCs; ++i)
+		foreach (var npc in Main.ActiveNPCs)
 		{
-			NPC npc = Main.npc[i];
-			if (npc.active && npc.CanBeChasedBy() && npc.DistanceSQ(Player.Center) < radius * radius)
+			if (npc.CanBeChasedBy() && npc.DistanceSQ(Player.Center) < radius * radius)
 				npc.SimpleStrikeNPC(1, Player.Center.X < npc.Center.X ? 1 : -1, false, 3f * bubbleStrength);
 		}
 
-		if(!Main.dedServ)
+		if (!Main.dedServ)
 		{
 			ParticleHandler.SpawnParticle(new BubblePop(Player.Center, GetBaseBubbleScale, 0.8f * bubbleVisual, 35));
 			SoundEngine.PlaySound(SoundID.Item54 with { PitchVariance = 0.2f }, Player.Center);
@@ -163,5 +164,5 @@ public class CascadeArmorPlayer : ModPlayer
 		}
 	}
 
-	private float GetBaseBubbleScale => Common.Easing.EaseFunction.EaseCubicOut.Ease(bubbleVisual) * (1 + (float) Math.Sin(Main.time* MathHelper.TwoPi / 120) / 30);
+	private float GetBaseBubbleScale => Common.Easing.EaseFunction.EaseCubicOut.Ease(bubbleVisual) * (1 + (float) Math.Sin(Main.time * MathHelper.TwoPi / 120) / 30);
 }
