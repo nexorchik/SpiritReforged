@@ -8,6 +8,7 @@ using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Content.Ocean.Items.PoolNoodle;
+using SpiritReforged.Content.Ocean.Items.Vanity;
 
 namespace SpiritReforged.Content.Ocean;
 
@@ -525,7 +526,11 @@ public class OceanGeneration : ModSystem
 	}
 
 	// this could be moved to a separate file, let me know! - Yuyu
-	public override void PostWorldGen() => ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<PoolNoodle>() }, 1, 0.33f), ChestPoolUtils.waterChests, 1);
+	public override void PostWorldGen()
+	{
+		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<PoolNoodle>() }, 1, 0.33f), ChestPoolUtils.waterChests, 1);
+		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<BeachTowel>(), ModContent.ItemType<BikiniBottom>(), ModContent.ItemType<BikiniTop>(), ModContent.ItemType<SwimmingTrunks>(), ModContent.ItemType<TintedGlasses>() }, 2, 0.33f), ChestPoolUtils.waterChests, 1);
+	}
 
 	public enum OceanShape
 	{
