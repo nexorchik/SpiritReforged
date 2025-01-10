@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Content.Forest.ArcaneNecklace;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
@@ -22,7 +23,10 @@ public class Blunderbuss : ModItem
         Item.shoot = ProjectileID.Bullet;
         Item.useAmmo = AmmoID.Bullet;
         Item.shootSpeed = 10f;
-    }
+
+		if (NPC.downedBoss3)
+			ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.QuadBarrelShotgun;
+	}
 
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
