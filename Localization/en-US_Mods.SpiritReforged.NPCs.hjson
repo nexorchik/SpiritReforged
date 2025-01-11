@@ -108,7 +108,21 @@ Cartographer: {
 	DisplayName: Cartographer
 	Buttons.Map: Map
 
+	Names: {
+		0: Soleana
+		1: Kyra
+		2: Jesse
+		3: '''"Clumsy"'''
+		4: Wynn
+		5: Nessa
+	}
+
 	Dialogue: {
+		0: Mapping's tough work. Sometimes you lose your place, and...wait.
+		1: Say, you got any nice, hardy paper on you? I've plum run out.
+		2: Gosh...dropping a pin on the ground is a bad time. Especially the brown ones.
+		3: Hey, do you have a map? Mind if I take a look? Better be well kept!
+
 		Map: {
 			FloatingIsland: {
 				0: Happy to share! Here's a little pin on this floating island I found. How'd I get there? Well, let's just say harpies can carry you WAY farther than you'd expect.
@@ -118,7 +132,7 @@ Cartographer: {
 
 			EnchantedSword: {
 				0: Anytime. So I was traipsing down a few narrow tunnels a while ago, and I found this glowy sword hilt in a stone. Can't imagine there was a functional blade, so I just left it.
-				1: Right on! Here's this spot. Looks unassuming, but I'm assuming the blue sword down there was cool. Pack was full of mushrooms and 3 different mining helmets, so I kept on moving.
+				1: Right on! Here's this spot. Looks unassuming, but I'm assuming the blue sword down there was cool. Pack was full of rare mushrooms and about 30 pounds of map, so I kept on moving.
 				2: Here you are! Don't remember when, but this sword was embedded into the stone. Like that one legend...King Arthur? I don't know. I don't mess with strange weapons; maybe you do?
 			}
 
@@ -164,8 +178,41 @@ Cartographer: {
 				2: Ah...nope...there it is. I'll keep it short this time. Stingers hurt. Be prepared.
 			}
 
-			Curiosity.0: There have been rumors that some secret treasure is buried here! It could just be a rumor, but the joy is in the journey, right?
-			FirstPin: Oh! And remember, you can always access your pin collection from the bottom of your map screen.
+			Curiosity: {
+				0:
+					'''
+					Here you are. So I go walking a lot, y'know, exploring and seeing if anything needs studying. Well, what do I know about anything when the dirt kisses my face as I fall. 
+					There's a something on the ground over here. Couldn't tell you waht it is, I was way too furious to see.
+					'''
+				1:
+					'''
+					I think it was...here? Close enough. You see a lot of things when exploring as I have. Sometimes, you see something that's worth checking out.
+					So what do you think I do when it shines or glows? I run. I run so fast.
+					'''
+				2:
+					'''
+					There we go. I'm a mapper, right. I map. You see a spot where you're like, man, this is a good spot to map.
+					Well, turns out a magic item was right on that spot. I knew it was too good to be true. No perfectly mapped out area is worth an ancient curse.
+					'''
+			}
+
+			ButterflyShrine: {
+				0:
+					'''
+					I think...here? Ish? I was walking up on the surface right, a nice breeze flowing through my map and making my ink run a little.
+					Anyway! I slip a bit on a little hole in the ground, and I see some shimmering lights way down below. No way I'll ever go down there, but you might.
+					'''
+
+				1:
+					'''
+					There it goes. I don't know how to preface this, but sometimes you just don't pay attention and a small hole gives you big issues.
+					So I drop down a bit, not long enough to hurt the body but more than long enough for the ego, and I land on these little purple butterflies. What?
+					'''
+
+				2: I've fallen down a few holes in my day. Sometimes, you have the werewithal to look where you're stepping. Sometimes, those holes glow purple. Keep on walking.
+			}
+
+			FirstPin: Oh! And remember, you can always access your pin collection from the bottom of your map. Just be careful with the maps!
 		}
 	}
 }

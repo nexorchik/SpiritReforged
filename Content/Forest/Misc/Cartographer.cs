@@ -46,6 +46,18 @@ internal class Cartographer : ModNPC
 		AnimationType = NPCID.Guide;
 	}
 
+	public override string GetChat() => Language.GetTextValue("Mods.SpiritReforged.NPCs.Cartographer.Dialogue." + Main.rand.Next(4));
+
+	public override List<string> SetNPCNameList()
+	{
+		List<string> names = [];
+
+		for (int i = 0; i < 6; ++i)
+			names.Add(Language.GetTextValue("Mods.SpiritReforged.NPCs.Cartographer.Names." + i));
+
+		return names;
+	}
+
 	public override void SetChatButtons(ref string button, ref string button2)
 	{
 		button = Language.GetTextValue("LegacyInterface.28");
