@@ -83,9 +83,10 @@ public class BoidManager : ModSystem
 			fishflock.Update();
 
 		var player = Main.LocalPlayer;
-		int spawnRate = player.GetModPlayer<OceanPlayer>().nearLure ? 24 : 40;
+		bool nearLure = player.GetModPlayer<OceanPlayer>().nearLure;
+		int spawnRate = nearLure ? 30 : 40;
 
-		if (player.ZoneBeach && Main.GameUpdateCount % spawnRate == 0)
+		if ((player.ZoneBeach || nearLure) && Main.GameUpdateCount % spawnRate == 0)
 		{
 			var weightedBoid = new WeightedRandom<Boid>();
 			for (int i = 0; i < boids.Count; i++)
