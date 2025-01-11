@@ -1,6 +1,7 @@
 ﻿using Terraria.Graphics.Capture;
 
 namespace SpiritReforged.Content.Savanna.Biome;
+
 public class SavannaBiome : ModBiome
 {
 	public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh;
