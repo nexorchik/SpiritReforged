@@ -82,10 +82,10 @@ public class BoidManager : ModSystem
 		foreach (Boid fishflock in boids)
 			fishflock.Update();
 
-		Player player = Main.LocalPlayer;
-		const int spawnRate = 40;
+		var player = Main.LocalPlayer;
+		int spawnRate = player.GetModPlayer<OceanPlayer>().nearLure ? 24 : 40;
 
-		if (player.ZoneBeach && Main.GameUpdateCount % spawnRate == spawnRate - 1 || Main.GameUpdateCount % spawnRate > spawnRate - 3 && player.GetModPlayer<OceanPlayer>().nearLure)
+		if (player.ZoneBeach && Main.GameUpdateCount % spawnRate == 0)
 		{
 			var weightedBoid = new WeightedRandom<Boid>();
 			for (int i = 0; i < boids.Count; i++)

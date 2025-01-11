@@ -1,17 +1,12 @@
-﻿using Terraria.Graphics.Capture;
+﻿namespace SpiritReforged.Content.Savanna.Biome;
 
-namespace SpiritReforged.Content.Savanna.Biome;
 public class SavannaBiome : ModBiome
 {
 	public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh;
 	public override int Music => (Main.LocalPlayer.townNPCs > 2f) ? -1 : MusicLoader.GetMusicSlot(Mod, "Assets/Music/Savanna");
 	public override ModWaterStyle WaterStyle => ModContent.GetInstance<SavannaWaterStyle>();
-	public override CaptureBiome.TileColorStyle TileColorStyle => CaptureBiome.TileColorStyle.Normal;
-
 	public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle => ModContent.GetInstance<SavannaBGStyle>();
-	public override string BestiaryIcon => base.BestiaryIcon;
 	public override string BackgroundPath => MapBackground;
-	public override Color? BackgroundColor => base.BackgroundColor;
 	public override string MapBackground => "SpiritReforged/Assets/Textures/Backgrounds/SavannaMapBG";
 
 	public override bool IsBiomeActive(Player player)

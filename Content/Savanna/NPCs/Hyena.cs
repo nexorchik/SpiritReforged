@@ -75,10 +75,7 @@ public class Hyena : ModNPC
 			else
 				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction, .05f);
 
-			if (Math.Abs(NPC.velocity.X) < .1f)
-				ChangeAnimationState(State.TrotEnd);
-			else
-				ChangeAnimationState(State.Walking, true);
+			SetPace();
 
 			if (Main.rand.NextBool(8))
 				Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood);
@@ -89,7 +86,7 @@ public class Hyena : ModNPC
 			isAngry = false;
 			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, TargetSpeed, .025f);
 
-			if (AnimationState == (int)State.Laugh)
+			if (AnimationState == (int)State.Laugh && Math.Abs(NPC.velocity.X) < .1f)
 			{
 				if (OnTransitionFrame)
 				{
@@ -120,18 +117,13 @@ public class Hyena : ModNPC
 							NPC.netUpdate = true;
 					}
 
-					if (Math.Abs(NPC.velocity.X) < .1f)
+					SetPace();
+
+					if (AnimationState == (int)State.TrotEnd && Main.rand.NextBool(400)) //Randomly laugh when still; not synced
 					{
-						if (Main.rand.NextBool(400)) //Randomly laugh when still; not synced
-						{
-							ChangeAnimationState(State.Laugh);
-							SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 2 }, NPC.Center);
-						}
-						else
-							ChangeAnimationState(State.TrotEnd);
+						ChangeAnimationState(State.Laugh);
+						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 2 }, NPC.Center);
 					}
-					else
-						ChangeAnimationState(State.Walking, true);
 				}
 			}
 		}
@@ -271,6 +263,16 @@ public class Hyena : ModNPC
 
 			return NPC.wet;
 		}
+
+		void SetPace()
+		{
+			if (Math.Abs(NPC.velocity.X) < .1f)
+				ChangeAnimationState(State.TrotEnd);
+			else if (Math.Abs(NPC.velocity.X) < 1.9f)
+				ChangeAnimationState(State.Walking, true);
+			else
+				ChangeAnimationState(State.Trotting, true);
+		}
 	}
 
 	private bool TryChaseTarget(TargetSearchResults search)
@@ -327,6 +329,7 @@ public class Hyena : ModNPC
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/Hyena_Hit") with { Volume = .75f, Pitch = -.05f, PitchVariance = .4f, MaxInstances = 2 }, NPC.Center);
 		}
 
+		TargetSpeed = hit.HitDirection * 3;
 		AggroNearby();
 	}
 

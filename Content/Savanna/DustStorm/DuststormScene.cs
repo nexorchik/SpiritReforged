@@ -30,7 +30,10 @@ public class DustStormScene : ModSceneEffect
 				var center = player.Center;
 
 				SkyManager.Instance.Activate(sandstorm, center);
-				Filters.Scene.Activate(sandstorm, center);
+
+				if (!Main.raining)
+					Filters.Scene.Activate(sandstorm, center); //Prevents rain when active
+
 				Overlays.Scene.Activate(sandstorm, center); //Might have no effect?
 			}
 
