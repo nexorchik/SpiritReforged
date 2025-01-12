@@ -1,4 +1,3 @@
-using SpiritReforged.Common.UI.BackpackInterface;
 using System.Linq;
 using Terraria.UI;
 
@@ -26,7 +25,13 @@ public class UISystem : ModSystem
 		}
 	}
 
-    public override void UpdateUI(GameTime gameTime)
+	public override void Unload()
+	{
+		foreach (var state in UIStates)
+			state.Unload(Mod);
+	}
+
+	public override void UpdateUI(GameTime gameTime)
     {
         foreach (var state in UIStates)
             state.UserInterface?.Update(gameTime);

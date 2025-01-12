@@ -30,6 +30,8 @@ internal class PinUIState : AutoUIState
 		Main.OnPostFullscreenMapDraw += ForceDraw;
 	}
 
+	public override void Unload(Mod mod) => Main.OnPostFullscreenMapDraw -= ForceDraw;
+
 	private void ToggleList(UIMouseEvent evt, UIElement listeningElement) => SetStorageSlots(!(_listActive = !_listActive));
 
 	private void ForceDraw(Vector2 arg1, float arg2) //By default, UI doesn't draw when the fullscreen map is open
