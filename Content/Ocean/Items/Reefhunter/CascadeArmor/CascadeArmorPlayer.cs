@@ -6,9 +6,13 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 
 public class CascadeArmorPlayer : ModPlayer
 {
+	private float GetBaseBubbleScale => Common.Easing.EaseFunction.EaseCubicOut.Ease(bubbleVisual) * (1 + (float)Math.Sin(Main.time * MathHelper.TwoPi / 120) / 30);
+
 	private static Asset<Texture2D> ShieldTexture, OutlineTexture;
 
 	public const float MaxResist = .20f;
+
+	private float _lastResisted;
 
 	internal float bubbleStrength = 0;
 	internal int bubbleCooldown = 120;
@@ -49,6 +53,12 @@ public class CascadeArmorPlayer : ModPlayer
 	{
 		if (modifiers.DamageSource.SourceOtherIndex is 2 or 3)
 			TryPopBubble(ref modifiers.FinalDamage);
+	}
+
+	public override void PostHurt(Player.HurtInfo info)
+	{
+		if (setActive)
+			ModContent.GetInstance<ResistanceTextHandler>().ApplyText(info.Damage, _lastResisted);
 	}
 
 	public override void PostUpdate()
@@ -117,9 +127,11 @@ public class CascadeArmorPlayer : ModPlayer
 
 	private void TryPopBubble(ref StatModifier damage)
 	{
+		_lastResisted = MaxResist * bubbleStrength;
+
 		if (bubbleStrength > 0f)
 		{
-			damage *= 1 - MaxResist * bubbleStrength;
+			damage *= 1 - _lastResisted;
 			PopBubble();
 		}
 	}
@@ -128,14 +140,13 @@ public class CascadeArmorPlayer : ModPlayer
 	{
 		int radius = (int)(120 * bubbleStrength);
 
-		for (int i = 0; i < Main.maxNPCs; ++i)
+		foreach (var npc in Main.ActiveNPCs)
 		{
-			NPC npc = Main.npc[i];
-			if (npc.active && npc.CanBeChasedBy() && npc.DistanceSQ(Player.Center) < radius * radius)
+			if (npc.CanBeChasedBy() && npc.DistanceSQ(Player.Center) < radius * radius)
 				npc.SimpleStrikeNPC(1, Player.Center.X < npc.Center.X ? 1 : -1, false, 3f * bubbleStrength);
 		}
 
-		if(!Main.dedServ)
+		if (!Main.dedServ)
 		{
 			ParticleHandler.SpawnParticle(new BubblePop(Player.Center, GetBaseBubbleScale, 0.8f * bubbleVisual, 35));
 			SoundEngine.PlaySound(SoundID.Item54 with { PitchVariance = 0.2f }, Player.Center);
@@ -162,6 +173,4 @@ public class CascadeArmorPlayer : ModPlayer
 			sB.Draw(texture, drawPos, null, lightColor * bubbleVisual * opacity, 0f, texture.Size() / 2f, bubbleSquish * GetBaseBubbleScale, SpriteEffects.None, 0);
 		}
 	}
-
-	private float GetBaseBubbleScale => Common.Easing.EaseFunction.EaseCubicOut.Ease(bubbleVisual) * (1 + (float) Math.Sin(Main.time* MathHelper.TwoPi / 120) / 30);
 }
