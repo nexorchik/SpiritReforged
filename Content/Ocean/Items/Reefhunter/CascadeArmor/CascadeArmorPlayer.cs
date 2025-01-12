@@ -6,6 +6,8 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 
 public class CascadeArmorPlayer : ModPlayer
 {
+	private float GetBaseBubbleScale => Common.Easing.EaseFunction.EaseCubicOut.Ease(bubbleVisual) * (1 + (float)Math.Sin(Main.time * MathHelper.TwoPi / 120) / 30);
+
 	private static Asset<Texture2D> ShieldTexture, OutlineTexture;
 
 	public const float MaxResist = .20f;
@@ -171,6 +173,4 @@ public class CascadeArmorPlayer : ModPlayer
 			sB.Draw(texture, drawPos, null, lightColor * bubbleVisual * opacity, 0f, texture.Size() / 2f, bubbleSquish * GetBaseBubbleScale, SpriteEffects.None, 0);
 		}
 	}
-
-	private float GetBaseBubbleScale => Common.Easing.EaseFunction.EaseCubicOut.Ease(bubbleVisual) * (1 + (float) Math.Sin(Main.time * MathHelper.TwoPi / 120) / 30);
 }
