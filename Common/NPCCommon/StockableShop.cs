@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using SpiritReforged.Common.Misc;
+using System.Linq;
 
 namespace SpiritReforged.Common.NPCCommon;
 
 internal class StockableShopPlayer : ModPlayer
 {
-	private bool _wasDayTime;
+	public override void Load() => TimeUtils.JustTurnedDay += Reset;
+	
+	private void Reset() => StockableShop.ResetAllStock();
 
 	public override void PostBuyItem(NPC vendor, Item[] shopInventory, Item item)
 	{
@@ -18,14 +21,6 @@ internal class StockableShopPlayer : ModPlayer
 			return item.GetStock() != 0;
 
 		return true;
-	}
-
-	public override void PostUpdate()
-	{
-		if (Main.dayTime && !_wasDayTime)
-			StockableShop.ResetAllStock(); //Just turned day
-
-		_wasDayTime = Main.dayTime;
 	}
 }
 

@@ -3,6 +3,7 @@ using SpiritReforged.Common.MapCommon;
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Forest.Misc.Pins;
+using SpiritReforged.Content.Savanna.Biome;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Misc;
@@ -40,12 +41,12 @@ internal class Cartographer : ModNPC
 		NPC.CloneDefaults(NPCID.SkeletonMerchant);
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
-		NPC.townNPC = true;
 		NPC.Size = new Vector2(30, 40);
 
 		AnimationType = NPCID.Guide;
 	}
 
+	public override bool CanChat() => true;
 	public override string GetChat() => Language.GetTextValue("Mods.SpiritReforged.NPCs.Cartographer.Dialogue." + Main.rand.Next(4));
 
 	public override List<string> SetNPCNameList()
@@ -100,7 +101,7 @@ internal class Cartographer : ModNPC
 
 		string text = Language.GetTextValue("Mods.SpiritReforged.NPCs.Cartographer.Dialogue.Map." + type + "." + Main.rand.Next(3));
 		if (firstPin)
-			text += " " + Language.GetTextValue("Mods.SpiritReforged.NPCs.Cartographer.Dialogue.Map.FirstPin");
+			text += " " + Language.GetTextValue("Mods.SpiritReforged.NPCs.Cartographer.Dialogue.Map.FirstPin"); //Append "first pin" dialogue at the end
 
 		Main.npcChatText = text;
 		Main.npcChatCornerItem = item.type;
@@ -145,4 +146,22 @@ internal class Cartographer : ModNPC
 			Dust.NewDustPerfect(Main.rand.NextVector2FromRectangle(NPC.getRect()), DustID.Blood,
 				Main.rand.NextVector2Unit() * 1.5f, 0, default, Main.rand.NextFloat(1f, 1.5f));
 	}
+
+	public override float SpawnChance(NPCSpawnInfo spawnInfo)
+	{
+		if (ModContent.GetInstance<WorldNPCFlags>().cartographerSpawned || spawnInfo.Invasion || spawnInfo.Water)
+			return 0; //Never spawn during an invasion, in water or if already spawned that day
+
+		if (spawnInfo.SpawnTileY > Main.worldSurface && spawnInfo.SpawnTileY < Main.UnderworldLayer)
+			return .00018f; //Rarely spawn in caves above underworld height
+
+		if ((spawnInfo.Player.InModBiome<SavannaBiome>() || spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneJungle || OuterThirds(spawnInfo.SpawnTileX) && spawnInfo.Player.InZonePurity() && !spawnInfo.Player.ZoneSkyHeight) && Main.dayTime)
+			return .0019f; //Spawn most commonly in the Savanna, Desert, Jungle, and outer thirds of the Forest during the day
+
+		return 0;
+
+		static bool OuterThirds(int x) => x < Main.maxTilesX / 3 || x > Main.maxTilesX - Main.maxTilesY / 3;
+	}
+
+	public override void OnSpawn(IEntitySource source) => ModContent.GetInstance<WorldNPCFlags>().cartographerSpawned = true;
 }
