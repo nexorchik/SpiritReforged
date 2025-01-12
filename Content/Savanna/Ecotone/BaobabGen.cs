@@ -31,15 +31,18 @@ internal static class BaobabGen
 		var opening = new Rectangle(x - openingSize.X / 2, y - openingSize.Y - 1, openingSize.X, openingSize.Y);
 
 		WorldUtils.Gen(new Point(x - width / 2, y - preCurveHeight), new Shapes.Rectangle(width, preCurveHeight), 
-			Actions.Chain(new Actions.SetTile((ushort)ModContent.TileType<LivingBaobab>())));
+			Actions.Chain(new Actions.SetTile((ushort)ModContent.TileType<LivingBaobab>()))); //Rectangle body
 
 		WorldUtils.Gen(new Point(x - openingSize.X / 2, y - openingSize.Y - 1), new Shapes.Rectangle(openingSize.X, openingSize.Y), 
-			Actions.Chain(new Actions.ClearTile(), new Actions.PlaceWall((ushort)ModContent.WallType<LivingBaobabWall>())));
+			Actions.Chain(new Actions.ClearTile(), new Actions.PlaceWall((ushort)ModContent.WallType<LivingBaobabWall>()))); //Opening
 
 		for (int i = 0; i < 2; i++) //Curved top
 			WorldUtils.Gen(new Point(x - 1 + i, y - preCurveHeight - 1), new Shapes.Mound(width / 2, curveHeight), Actions.Chain(new Actions.SetTile((ushort)ModContent.TileType<LivingBaobab>())));
 
 		WorldGen.PlaceTile(opening.Center.X - 1, opening.Bottom - 1, ModContent.TileType<BaobabPod>(), true);
+
+		WorldUtils.Gen(new Point(x - width / 2, y), new Shapes.Rectangle(width, 3),
+			Actions.Chain(new Modifiers.IsNotSolid(), new Actions.SetTile((ushort)ModContent.TileType<SavannaDirt>()))); //Dirt packing
 	}
 
 	private static void CreateRoots(int x, int y, int width)
@@ -77,10 +80,13 @@ internal static class BaobabGen
 
 			WorldUtils.Gen(points.Last().ToPoint(), new ModShapes.InnerOutline(data, false), Actions.Chain(new Actions.ClearWall()));
 
-			for (int b = last.X - halfWidth; b < last.X + halfWidth; b++) //Randomly generate baobab fruit below canopies
+			if (i is 0 or (branches - 1))
 			{
-				if (WorldGen.genRand.NextBool(4))
-					BaobabFruitTile.GrowVine(b, last.Y + 1, WorldGen.genRand.Next(2, 5));
+				for (int b = last.X - halfWidth; b < last.X + halfWidth; b++) //Randomly generate baobab fruit below canopies
+				{
+					if (WorldGen.genRand.NextBool(4))
+						BaobabFruitTile.GrowVine(b, last.Y + 1, WorldGen.genRand.Next(2, 5));
+				}
 			}
 		}
 

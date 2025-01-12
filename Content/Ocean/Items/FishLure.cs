@@ -97,7 +97,8 @@ public class FishLureEntity : SimpleEntity
 		//Proximity check
 		var player = Main.LocalPlayer;
 		var distance = new Vector2(Math.Abs(player.Center.X - Center.X), Math.Abs(player.Center.Y - Center.Y));
-		if (distance.X < Main.buffScanAreaWidth / 2 && distance.Y < Main.buffScanAreaHeight / 2)
+
+		if (distance.X < Main.buffScanAreaWidth * 8 && distance.Y < Main.buffScanAreaHeight * 8)
 			player.GetModPlayer<OceanPlayer>().nearLure = true;
 
 		//Pickaxe check

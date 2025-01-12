@@ -1,8 +1,15 @@
-﻿namespace SpiritReforged.Content.Ocean.Items;
+﻿using SpiritReforged.Common.NPCCommon;
+using Terraria.GameContent.ItemDropRules;
+
+namespace SpiritReforged.Content.Ocean.Items;
 
 public class PirateKey : ModItem
 {
-	public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
+	public override void SetStaticDefaults()
+	{
+		Item.ResearchUnlockCount = 1;
+		NPCLootDatabase.AddLoot(new(NPCLootDatabase.MatchId(NPCID.PirateShip), ItemDropRule.Common(Type)));
+	}
 
 	public override void SetDefaults()
 	{

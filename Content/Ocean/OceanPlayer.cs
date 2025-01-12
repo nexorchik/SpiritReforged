@@ -4,8 +4,13 @@ namespace SpiritReforged.Content.Ocean;
 
 public class OceanPlayer : ModPlayer
 {
+	/// <summary> Whether the player is present in the ocean, and not in the depths. </summary>
+	public bool ZoneOcean => Player.ZoneBeach && (!Player.GetModPlayer<OceanPlayer>().Submerged(35) || NotInDepths(Player));
+	/// <summary> Whether the player is present in the deep ocean. </summary>
+	public bool ZoneDeepOcean => Player.ZoneBeach && Player.GetModPlayer<OceanPlayer>().Submerged(30) && NotInDepths(Player);
 	public bool nearLure;
 
+	private static bool NotInDepths(Player plr) => !ModLoader.TryGetMod("ThoriumMod", out Mod thor) || thor.Call("GetZoneAquaticDepths", plr) is bool depths && !depths;
 	public override void ResetEffects() => nearLure = false;
 
 	public override void CatchFish(FishingAttempt attempt, ref int itemDrop, ref int npcSpawn, ref AdvancedPopupRequest sonar, ref Vector2 sonarPosition)

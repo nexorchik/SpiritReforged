@@ -114,18 +114,36 @@ public static class TileExtensions
 	/// <param name="j"> The tile's Y coordinate. </param>
 	/// <param name="type"> The tile's type. </param>
 	/// <param name="maxLength"> The maximum length this vine can grow. Does NOT instantly grow a vine of the given length. </param>
-	/// /// <param name="sync"> Whether the tile changes should be automatically synced. </param>
+	/// <param name="reversed"> Whether this vine grows from the ground up. </param>
+	/// <param name="sync"> Whether the tile changes should be automatically synced. </param>
 	/// <returns> Whether the tile was successfully placed. </returns>
-	public static bool GrowVine(int i, int j, int type, int maxLength = 15, bool sync = true)
+	public static bool GrowVine(int i, int j, int type, int maxLength = 15, bool reversed = false, bool sync = true)
 	{
-		while (Main.tile[i, j - 1].HasTile && Main.tile[i, j - 1].TileType == type)
-			j--; //Move to the top of the vine
-
-		for (int x = 0; x < maxLength; x++)
+		if (reversed)
 		{
-			if (Main.tile[i, j].HasTile && Main.tile[i, j].TileType == type)
-				j++; //Move to the next available tile below
+			while (Main.tile[i, j + 1].HasTile && Main.tile[i, j + 1].TileType == type)
+				j++; //Move to the bottom of the vine
+
+			for (int x = 0; x < maxLength; x++)
+			{
+				if (Main.tile[i, j].HasTile && Main.tile[i, j].TileType == type)
+					j--; //Move to the next available tile above
+			}
 		}
+		else
+		{
+			while (Main.tile[i, j - 1].HasTile && Main.tile[i, j - 1].TileType == type)
+				j--; //Move to the top of the vine
+
+			for (int x = 0; x < maxLength; x++)
+			{
+				if (Main.tile[i, j].HasTile && Main.tile[i, j].TileType == type)
+					j++; //Move to the next available tile below
+			}
+		}
+
+		if (Main.tile[i, j].TileType == type)
+			return false; //The tile already exists; we've hit the max length
 
 		WorldGen.PlaceObject(i, j, type, true);
 

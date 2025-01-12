@@ -244,4 +244,5 @@ Misc: {
 	}
 
 	NoStock: Out of stock
+	GraveText: The text is old and faded; you can't quite make out what it says.
 }

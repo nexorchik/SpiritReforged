@@ -1,4 +1,4 @@
-﻿namespace SpiritReforged.Content.Ocean;
+﻿namespace SpiritReforged.Content.Ocean.Biome;
 
 internal class DeepOceanBackgroundStyle : ModSurfaceBackgroundStyle
 {

@@ -11,19 +11,21 @@ internal class BackpackUIState : AutoUIState
 	private BackpackUISlot vanitySlot;
 
 	private bool _hadBackpack;
-	private int _lastMapStyle;
+	private int _lastAdjustY;
 
 	public override void OnInitialize()
 	{
 		Width = Height = StyleDimension.Fill;
 
 		functionalSlot = new BackpackUISlot(false);
+		functionalSlot.Left = new StyleDimension(-186, 1);
 		Append(functionalSlot);
 
 		vanitySlot = new BackpackUISlot(true);
+		vanitySlot.Left = new StyleDimension(functionalSlot.Left.Pixels - 48, 1);
 		Append(vanitySlot);
 
-		SetPositions();
+		SetVariablePositions();
 
 		On_Main.DrawInventory += TryOpenUI;
 	}
@@ -56,33 +58,16 @@ internal class BackpackUIState : AutoUIState
 
 		_hadBackpack = hasBackpack;
 
-		if (Main.mapStyle != _lastMapStyle)
-			SetPositions();
+		int adjustY = UIHelper.AdjustY;
+		if (adjustY != _lastAdjustY)
+			SetVariablePositions();
 
-		_lastMapStyle = Main.mapStyle;
+		_lastAdjustY = adjustY;
 
 		base.Update(gameTime);
 	}
 
-	private void SetPositions()
-	{
-		if (Main.mapStyle == 1) //Standard minimap display
-		{
-			functionalSlot.Left = new StyleDimension(-186, 1);
-			functionalSlot.Top = new StyleDimension(430, 0);
-
-			vanitySlot.Left = new StyleDimension(functionalSlot.Left.Pixels - 48, 1);
-			vanitySlot.Top = functionalSlot.Top;
-		}
-		else
-		{
-			functionalSlot.Left = new StyleDimension(-186, 1);
-			functionalSlot.Top = new StyleDimension(174, 0);
-
-			vanitySlot.Left = new StyleDimension(functionalSlot.Left.Pixels - 48, 1);
-			vanitySlot.Top = functionalSlot.Top;
-		}
-	}
+	private void SetVariablePositions() => functionalSlot.Top = vanitySlot.Top = new StyleDimension(UIHelper.AdjustY + 174, 0);
 
 	private void SetStorageSlots(bool clear)
 	{

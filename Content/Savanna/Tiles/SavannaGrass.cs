@@ -21,6 +21,7 @@ public class SavannaGrass : ModTile
 		TileID.Sets.NeedsGrassFramingDirt[Type] = DirtType;
 		TileID.Sets.CanBeDugByShovel[Type] = true;
 
+		RegisterItemDrop(DirtType);
 		AddMapEntry(new Color(104, 156, 70));
 
 		var data = TileObjectData.GetTileData(TileID.Sunflower, 0);
@@ -63,6 +64,12 @@ public class SavannaGrass : ModTile
 			fail = true;
 			Framing.GetTileSafely(i, j).TileType = (ushort)DirtType;
 		}
+	}
+
+	public override bool CanReplace(int i, int j, int tileTypeBeingPlaced)
+	{
+		Framing.GetTileSafely(i, j).TileType = (ushort)DirtType;
+		return true;
 	}
 
 	public override void FloorVisuals(Player player)

@@ -89,7 +89,7 @@ public class HuntingRifle : ModItem
         var unit = Vector2.Normalize(velocity);
 		float fxDistance = 45;
 
-		SoundEngine.PlaySound(SoundID.Item100 with { Volume = .5f, PitchVariance = .2f, Pitch = 1f }, position);
+		SoundEngine.PlaySound(SoundID.Item100 with { Volume = .6f, PitchVariance = .2f, Pitch = 1f }, position);
 		ParticleHandler.SpawnParticle(new StarParticle(position + unit * (fxDistance - 8), Vector2.Zero, Color.Goldenrod, .5f, 2, 0));
 
 		for (int i = 0; i < 10; i++)
@@ -116,7 +116,10 @@ public class HuntingRifle : ModItem
 		PreNewProjectile.New(source, position, velocity, type, (int)(damage * mult), knockback, player.whoAmI, preSpawnAction: (Projectile projectile) =>
 		{
 			if (projectile.TryGetGlobalProjectile(out HunterGlobalProjectile hunter))
-				hunter.hasDistanceMultiplier = true;
+			{
+				hunter.firedFromHuntingRifle = true;
+				projectile.extraUpdates = Math.Max(projectile.extraUpdates, 3);
+			}
 		});
 
 		return false;
@@ -125,17 +128,7 @@ public class HuntingRifle : ModItem
 
 public class HuntingRifleProj : ModProjectile
 {
-    public float GetFeedback()
-	{
-		var owner = Main.player[Projectile.owner];
-		const int feedbackLength = 5; //For how long the gun receives shot feedback
-
-		return MathHelper.Clamp(((float)owner.itemTime 
-			- (owner.itemTimeMax - feedbackLength)) / (owner.itemTimeMax - (owner.itemTimeMax - feedbackLength)), 0, 1);
-	}
-
     public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.HuntingRifle.DisplayName");
-
 	public override string Texture => base.Texture.Replace("Proj", string.Empty);
 
 	public override void SetDefaults()
@@ -167,14 +160,16 @@ public class HuntingRifleProj : ModProjectile
 		{
 			var velocity = (new Vector2(-owner.direction, -owner.gravDir) * Main.rand.NextFloat(8f, 12f)).RotateRandom(.2f);
 			Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<Dusts.ShellDust>(), velocity).scale = 1; //Scale is slightly randomized otherwise
+
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/Ring") with { PitchVariance = .25f, Pitch = -.6f, Volume = .6f }, Projectile.Center);
 		}
 		else if (Projectile.timeLeft < halfTime)
 		{
 			armStretch = Player.CompositeArmStretchAmount.Quarter;
-			holdDistance -= MathHelper.Clamp(((float)Projectile.timeLeft - (halfTime - 8)) / (halfTime - (halfTime - 8)), 0, 1) * 2f;
+			holdDistance -= MathHelper.Clamp(((float)Projectile.timeLeft - (halfTime - 8)) / (halfTime - (halfTime - 8)), 0, 1) * 3f;
 		}
 
-		Projectile.Center = owner.MountedCenter + Projectile.velocity * holdDistance;
+		Projectile.Center = owner.RotatedRelativePoint(owner.MountedCenter + Projectile.velocity * holdDistance);
         Projectile.spriteDirection = Projectile.direction = (Projectile.velocity.X > 0) ? 1 : -1;
         Projectile.rotation = Projectile.velocity.ToRotation() + GetFeedback() * .15f * -owner.direction;
 
@@ -183,16 +178,24 @@ public class HuntingRifleProj : ModProjectile
 		owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - 1.57f + 1f * owner.direction);
 	}
 
-    public override bool PreDraw(ref Color lightColor)
+	public float GetFeedback()
+	{
+		var owner = Main.player[Projectile.owner];
+		const int feedbackLength = 5; //For how long the gun receives shot feedback
+
+		return MathHelper.Clamp(((float)owner.itemTime
+			- (owner.itemTimeMax - feedbackLength)) / (owner.itemTimeMax - (owner.itemTimeMax - feedbackLength)), 0, 1);
+	}
+
+	public override bool PreDraw(ref Color lightColor)
     {
 		var texture = TextureAssets.Projectile[Type].Value;
 
 		var randomizer = Main.gamePaused ? Vector2.Zero : Main.rand.NextVector2Unit();
-		var pos = Projectile.Center - Main.screenPosition + new Vector2(0, Projectile.gfxOffY) + randomizer * GetFeedback() * 1.5f;
+		var pos = Projectile.Center - Main.screenPosition + randomizer * GetFeedback() * 1.5f;
 		var effects = (Projectile.spriteDirection == -1) ? SpriteEffects.FlipVertically : SpriteEffects.None;
 
-        Main.EntitySpriteDraw(texture, pos, null, Projectile.GetAlpha(lightColor),
-            Projectile.rotation, texture.Frame().Left(), Projectile.scale, effects);
+        Main.EntitySpriteDraw(texture, pos, null, Projectile.GetAlpha(lightColor), Projectile.rotation, texture.Frame().Left(), Projectile.scale, effects);
         if (Projectile.timeLeft >= Main.player[Projectile.owner].itemTimeMax - 2)
             DrawMuzzleFlash();
         return false;
@@ -200,19 +203,15 @@ public class HuntingRifleProj : ModProjectile
 
     private void DrawMuzzleFlash()
     {
-        Texture2D texture = ModContent.Request<Texture2D>(Texture + "_Flash").Value;
-        Vector2 pos = Projectile.Center - Main.screenPosition + new Vector2(0, Projectile.gfxOffY) 
-			+ (Vector2.UnitX * (TextureAssets.Projectile[Type].Width() - Projectile.width / 2)).RotatedBy(Projectile.velocity.ToRotation());
-
+        var texture = ModContent.Request<Texture2D>(Texture + "_Flash").Value;
+        var pos = Projectile.Center - Main.screenPosition + (Vector2.UnitX * (TextureAssets.Projectile[Type].Width() - Projectile.width / 2)).RotatedBy(Projectile.velocity.ToRotation());
         float unit = Main.rand.NextFloat(.5f);
-        Vector2 scale = new Vector2(1 + unit, 1 - unit) * Projectile.scale;
+        var scale = new Vector2(1 + unit, 1 - unit) * Projectile.scale;
 
         Main.EntitySpriteDraw(texture, pos, null, Projectile.GetAlpha(Color.White with { A = 150 }), Projectile.velocity.ToRotation(), texture.Frame().Left(), scale, SpriteEffects.None);
 	}
 
     public override bool? CanDamage() => false;
-
     public override bool? CanCutTiles() => false;
-
     public override bool ShouldUpdatePosition() => false;
 }

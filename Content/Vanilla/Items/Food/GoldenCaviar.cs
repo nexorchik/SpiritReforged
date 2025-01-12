@@ -5,6 +5,8 @@ public class GoldenCaviar : FoodItem
 {
 	internal override Point Size => new(30, 34);
 
+	public override void StaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.GoldenDelight;
+
 	public override void Defaults()
 	{
 		Item.buffType = BuffID.WellFed3;

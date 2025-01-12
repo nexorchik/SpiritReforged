@@ -1,6 +1,6 @@
 using Terraria.Graphics.Shaders;
 
-namespace SpiritReforged.Content.Forest.MarksmanArmor;
+namespace SpiritReforged.Content.Vanilla.Leather.MarksmanArmor;
 
 [AutoloadEquip(EquipType.Head)]
 public class LeatherHood : ModItem
@@ -68,7 +68,7 @@ public class LeatherHood : ModItem
 		// Adjustments: Player sprite is rotated
 		Vector2 spinningpoint1 = new Vector2(3 * player.direction - (player.direction == 1 ? 1 : 0), -11.5f * player.gravDir) + Vector2.UnitY * player.gfxOffY + player.Size / 2f + Main.OffsetsPlayerHeadgear[index];
 		Vector2 spinningpoint2 = new Vector2(3 * player.shadowDirection[1] - (player.direction == 1 ? 1 : 0), -11.5f * player.gravDir) + player.Size / 2f + Main.OffsetsPlayerHeadgear[index];
-		
+
 		if (player.fullRotation != 0.0)
 		{
 			spinningpoint1 = spinningpoint1.RotatedBy(player.fullRotation, player.fullRotationOrigin);
@@ -96,7 +96,7 @@ public class LeatherHood : ModItem
 		var dustOffset = new Vector2(player.direction == 1 ? 2f : -2f, -2f);
 
 		// make trail
-		for (float dist = 1f; dist <= (float)totalDist; ++dist)
+		for (float dist = 1f; dist <= totalDist; ++dist)
 		{
 			Dust dust = Main.dust[Dust.NewDust(player.Center, 0, 0, DustID.GoldCoin, 0.0f, 0.0f, 0, new Color(), .6f)];
 			dust.position = Vector2.Lerp(end, start, dist / totalDist) + dustOffset;

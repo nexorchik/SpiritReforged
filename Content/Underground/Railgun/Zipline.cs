@@ -58,6 +58,8 @@ public class Zipline : ModProjectile
 
 				Projectile.netUpdate = true;
 
+				SoundEngine.PlaySound(SoundID.Item52, Projectile.Center);
+
 				if (!Main.dedServ)
 					ParticleHandler.SpawnParticle(new PulseCircle(Projectile.Center, Right ? Color.Orange : Color.Cyan, 0.25f, 60, 20));
 				for (int i = 0; i < 12; i++)
@@ -105,6 +107,9 @@ public class Zipline : ModProjectile
 						var snapshot = Vector2.Lerp(Projectile.Center, Projectile.Center + direction, (float)i / loopLength);
 						if (playerRect.Contains(snapshot.ToPoint())) //A valid player is found
 						{
+							if (player.velocity.X != 0f)
+								SoundEngine.PlaySound(SoundID.Item55, player.Center);
+
 							player.GetModPlayer<ZiplinePlayer>().directionUnit = Vector2.Normalize(direction);
 
 							float progress = (float)i / loopLength;

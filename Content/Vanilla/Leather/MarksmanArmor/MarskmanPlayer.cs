@@ -3,7 +3,7 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 
-namespace SpiritReforged.Content.Forest.MarksmanArmor;
+namespace SpiritReforged.Content.Vanilla.Leather.MarksmanArmor;
 
 internal class MarksmanPlayer : ModPlayer
 {
@@ -29,15 +29,12 @@ internal class MarksmanPlayer : ModPlayer
 
 			}
 
-			concentratedCooldown -= (Player.velocity.X == 0f) ? 2 : 1;
+			concentratedCooldown -= Player.velocity.X == 0f ? 2 : 1;
 		}
 		else
-		{
 			concentratedCooldown = 420;
-		}
 
 		if (Concentrated)
-		{
 			if (Main.rand.NextBool(12))
 			{
 				var rect = Player.getRect();
@@ -46,7 +43,6 @@ internal class MarksmanPlayer : ModPlayer
 
 				ParticleHandler.SpawnParticle(new GlowParticle(position, Vector2.UnitY * -Main.rand.NextFloat(.5f), newCol, Main.rand.NextFloat(.2f, .3f), 80, 12));
 			}
-		}
 	}
 
 	public override void OnHurt(Player.HurtInfo info)
@@ -63,7 +59,7 @@ internal class MarksmanPlayer : ModPlayer
 		}
 	}
 
-	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) 
+	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 	{
 		if (!Concentrated)
 			return;

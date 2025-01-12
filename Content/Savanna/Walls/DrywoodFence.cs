@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.WallCommon;
+using SpiritReforged.Content.Savanna.Items.Drywood;
 
 namespace SpiritReforged.Content.Savanna.Walls;
 
@@ -9,7 +10,7 @@ public class DrywoodFence : ModWall, IAutoloadWallItem
 		var mod = SpiritReforgedMod.Instance; //Mod is null here, so get the instance manually
 
 		item.CreateRecipe(4)
-			.AddIngredient(mod.Find<ModItem>("DrywoodFenceItem").Type)
+			.AddIngredient(ModContent.ItemType<Drywood>())
 			.AddTile(TileID.WorkBenches)
 			.Register();
 
@@ -24,6 +25,7 @@ public class DrywoodFence : ModWall, IAutoloadWallItem
 	{
 		WallID.Sets.AllowsPlantsToGrow[Type] = true;
 		Main.wallHouse[Type] = true;
+		Main.wallLight[Type] = true;
 		DustType = DustID.WoodFurniture;
 	}
 
