@@ -117,10 +117,10 @@ public class CascadeArmorPlayer : ModPlayer
 
 	private void TryPopBubble(ref StatModifier damage)
 	{
+		ModContent.GetInstance<CascadeCombatText>().resistanceValue = MaxResist * bubbleStrength;
+
 		if (bubbleStrength > 0f)
 		{
-			ModContent.GetInstance<CascadeCombatText>().resistanceValue = MaxResist * bubbleStrength;
-
 			damage *= 1 - MaxResist * bubbleStrength;
 			PopBubble();
 		}

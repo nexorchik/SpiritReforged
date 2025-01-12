@@ -4,12 +4,12 @@ using SpiritReforged.Common.Misc;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 
-public class CascadeCombatText : ILoadable
+internal class CascadeCombatText : ILoadable
 {
-	private CombatText _cText;
+	private int _cIndex = -1;
 	private float _damage;
 
-	public float resistanceValue; //Store Cascade resistance bonus before it disappears
+	public float resistanceValue; //Store the Cascade resistance bonus before it disappears
 
 	public void Load(Mod mod)
 	{
@@ -24,14 +24,14 @@ public class CascadeCombatText : ILoadable
 
 		c.GotoNext(MoveType.After, x => x.MatchCall<CombatText>("NewText"));
 		c.Emit(OpCodes.Ldloc_S, (byte)4);
-		c.EmitDelegate(HandleText);
+		c.EmitDelegate(SetText);
 	}
 
-	private int HandleText(int index, float damage)
+	private int SetText(int index, float damage)
 	{
-		if (Main.LocalPlayer.GetModPlayer<CascadeArmorPlayer>().setActive)
+		if (Main.LocalPlayer.GetModPlayer<CascadeArmorPlayer>().setActive && resistanceValue != 0)
 		{
-			_cText = Main.combatText[index];
+			_cIndex = index;
 			_damage = damage;
 		}
 
@@ -45,47 +45,58 @@ public class CascadeCombatText : ILoadable
 		c.GotoNext(x => x.MatchLdsfld<Main>("hideUI"));
 
 		c.GotoNext(MoveType.After, x => x.MatchCall("ReLogic.Graphics.DynamicSpriteFontExtensionMethods", "DrawString")); //Reversed gravity
+		c.Emit(OpCodes.Ldloc_S, (byte)35);
 		c.EmitDelegate(DrawResistance);
 
 		c.GotoNext(MoveType.After, x => x.MatchCall("ReLogic.Graphics.DynamicSpriteFontExtensionMethods", "DrawString")); //Normal gravity
+		c.Emit(OpCodes.Ldloc_S, (byte)35);
 		c.EmitDelegate(DrawResistance);
 	}
 
-	private void DrawResistance()
+	private void DrawResistance(int index)
 	{
 		const int timeMax = 10;
 
-		if (!TextActive())
+		if (index != _cIndex || !TextActive())
 			return;
 
 		int resistanceDamage = (int)(_damage * resistanceValue);
 		if (resistanceDamage == 0)
 			return;
 
-		int time = Math.Clamp(_cText.lifeTime - 35, 0, timeMax);
+		var shield = TextureAssets.Extra[58].Value;
+
+		var cText = Main.combatText[_cIndex];
+		int time = Math.Clamp(cText.lifeTime - 35, 0, timeMax);
 		float span = 1f - (float)time / timeMax;
 
 		string text = resistanceDamage.ToString();
 		var font = FontAssets.CombatText[0].Value;
 		var origin = font.MeasureString(text) / 2;
-		var position = _cText.position - Main.screenPosition + origin - new Vector2(span * 18);
+		var position = cText.position - Main.screenPosition + origin - new Vector2(span * 18);
+
+		if (Main.LocalPlayer.gravDir == -1)
+		{
+			float posY = Main.screenHeight - (cText.position.Y - Main.screenPosition.Y);
+			position = new Vector2(cText.position.X - Main.screenPosition.X, posY) + origin - new Vector2(span * 18);
+		}
 
 		if (time < timeMax)
 		{
-			Main.spriteBatch.Draw(TextureAssets.Extra[58].Value, position, null, Color.Cyan.Additive() * _cText.alpha, _cText.rotation, TextureAssets.Extra[58].Size() / 2, _cText.scale * .8f * span, default, 0);
-			Main.spriteBatch.Draw(TextureAssets.Extra[58].Value, position, null, Color.White * _cText.alpha, _cText.rotation, TextureAssets.Extra[58].Size() / 2, _cText.scale * .75f * span, default, 0);
+			Main.spriteBatch.Draw(shield, position, null, Color.Cyan.Additive() * cText.alpha, cText.rotation, shield.Size() / 2, cText.scale * .8f * span, default, 0);
+			Main.spriteBatch.Draw(shield, position, null, Color.White * cText.alpha, cText.rotation, shield.Size() / 2, cText.scale * .75f * span, default, 0);
 			
-			Utils.DrawBorderStringFourWay(Main.spriteBatch, font, text, position.X, position.Y, GetColor(1f) * span * _cText.alpha, GetColor(.25f) * span * _cText.alpha, origin, _cText.scale);
+			Utils.DrawBorderStringFourWay(Main.spriteBatch, font, text, position.X, position.Y, GetColor(1f) * span * cText.alpha, GetColor(.25f) * span * cText.alpha, origin, cText.scale);
 		}
 		else
 		{
-			_cText.alpha = 0; //Turn the default text invisible
-			Utils.DrawBorderStringFourWay(Main.spriteBatch, font, ((int)(_damage + resistanceDamage)).ToString(), position.X, position.Y, GetColor(.85f), GetColor(.25f), origin, _cText.scale);
+			cText.alpha = 0; //Turn the default text invisible
+			Utils.DrawBorderStringFourWay(Main.spriteBatch, font, ((int)(_damage + resistanceDamage)).ToString(), position.X, position.Y, GetColor(.85f), GetColor(.25f), origin, cText.scale);
 		}
 
 		Color GetColor(float dark)
 		{
-			float num3 = _cText.scale / CombatText.TargetScale;
+			float num3 = cText.scale / CombatText.TargetScale;
 
 			var baseColor = Color.Cyan;
 			return new Color((int)(baseColor.R * dark), (int)(baseColor.G * dark), (int)(baseColor.B * dark), baseColor.A) * num3;
@@ -100,9 +111,9 @@ public class CascadeCombatText : ILoadable
 
 	private bool TextActive()
 	{
-		if (_cText is null || !_cText.active || resistanceValue == 0)
+		if (_cIndex == -1 || !Main.combatText[_cIndex].active || resistanceValue == 0)
 		{
-			_cText = null;
+			_cIndex = -1;
 			resistanceValue = 0;
 			return false;
 		}
