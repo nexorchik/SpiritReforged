@@ -10,6 +10,8 @@ public class CascadeArmorPlayer : ModPlayer
 
 	public const float MaxResist = .20f;
 
+	private float _lastResisted;
+
 	internal float bubbleStrength = 0;
 	internal int bubbleCooldown = 120;
 	internal bool setActive = false;
@@ -49,6 +51,12 @@ public class CascadeArmorPlayer : ModPlayer
 	{
 		if (modifiers.DamageSource.SourceOtherIndex is 2 or 3)
 			TryPopBubble(ref modifiers.FinalDamage);
+	}
+
+	public override void PostHurt(Player.HurtInfo info)
+	{
+		if (setActive)
+			ModContent.GetInstance<ResistanceTextHandler>().ApplyText(info.Damage, _lastResisted);
 	}
 
 	public override void PostUpdate()
@@ -117,11 +125,11 @@ public class CascadeArmorPlayer : ModPlayer
 
 	private void TryPopBubble(ref StatModifier damage)
 	{
-		ModContent.GetInstance<CascadeCombatText>().resistanceValue = MaxResist * bubbleStrength;
+		_lastResisted = MaxResist * bubbleStrength;
 
 		if (bubbleStrength > 0f)
 		{
-			damage *= 1 - MaxResist * bubbleStrength;
+			damage *= 1 - _lastResisted;
 			PopBubble();
 		}
 	}
