@@ -2,14 +2,14 @@
 
 namespace SpiritReforged.Common.TileCommon.TileSway;
 
-/// <summary> Helps draw a tile affected by wind - rotates around tile origin. </summary>
+/// <summary>Helps draw a tile affected by wind - rotates around tile origin.</summary>
 public interface ISwayInWind
 {
-	/// <summary> Add natural wind cycle and grid wind push math here. Called once per multitile. </summary>
-	/// <param name="topLeft"> The top left tile in the multitile. </param>
-	public float SetWindSway(Point16 topLeft)
+	/// <summary>Add natural wind cycle and grid wind push math here. Called once per multitile.</summary>
+	/// <param name="topLeft">The top left tile in the multitile.</param>
+	/// <param name="noStyleForData">Ignores the style parameter for the <see cref="TileObjectData.GetTileData(int, int, int)"/> call if true.</param>
+	public float SetWindSway(Point16 topLeft, TileObjectData data)
 	{
-		var data = TileObjectData.GetTileData(Framing.GetTileSafely(topLeft));
 		float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, TileSwaySystem.Instance.SunflowerWindCounter);
 
 		if (!WorldGen.InAPlaceWithWind(topLeft.X, topLeft.Y, data.Width, data.Height))

@@ -24,7 +24,7 @@ public abstract class CustomTree : ModTile
 
 	public bool IsTreeTop(int i, int j, bool checkBroken = false)
 	{
-		bool clear = Framing.GetTileSafely(i, j - 1).TileType != Type;
+		bool clear = ModContent.GetModTile(Framing.GetTileSafely(i, j - 1).TileType) is not CustomTree;
 		return checkBroken ? clear && treeDrawPoints.Contains(new Point16(i, j)) : clear;
 	}
 

@@ -9,14 +9,6 @@ public class SavannaFoliage : ModTile, IConvertibleTile
 	protected virtual Color MapColor => new(50, 92, 19);
 	protected virtual int Dust => DustID.Grass;
 
-	public override void Load() => On_Gore.NewGore_IEntitySource_Vector2_Vector2_int_float += E;
-
-	private int E(On_Gore.orig_NewGore_IEntitySource_Vector2_Vector2_int_float orig, IEntitySource source, Vector2 Position, Vector2 Velocity, int Type, float Scale)
-	{
-		Main.NewText(Type);
-		return orig(source, Position, Velocity, Type, Scale);
-	}
-
 	public override void SetStaticDefaults()
 	{
 		const int TileHeight = 30;

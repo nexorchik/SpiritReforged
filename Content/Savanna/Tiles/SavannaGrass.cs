@@ -120,7 +120,7 @@ public class SavannaGrassCorrupt : SavannaGrass
 		base.SetStaticDefaults();
 
 		TileID.Sets.Corrupt[Type] = true;
-		TileID.Sets.AddCorruptionTile(Type, 10);
+		TileID.Sets.AddCorruptionTile(Type, 20);
 	}
 }
 
@@ -133,7 +133,7 @@ public class SavannaGrassHallow : SavannaGrass
 		base.SetStaticDefaults();
 
 		TileID.Sets.Crimson[Type] = true;
-		TileID.Sets.AddCrimsonTile(Type, 10);
+		TileID.Sets.AddCrimsonTile(Type, 20);
 	}
 }
 
@@ -145,7 +145,7 @@ public class SavannaGrassCrimson : SavannaGrass
 	{
 		base.SetStaticDefaults();
 
-		TileID.Sets.AddCorruptionTile(Type, 10);
-		TileID.Sets.Corrupt[Type] = true;
+		TileID.Sets.AddCrimsonTile(Type, 20);
+		TileID.Sets.Crimson[Type] = true;
 	}
 }

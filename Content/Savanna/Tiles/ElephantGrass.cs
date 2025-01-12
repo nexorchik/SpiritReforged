@@ -52,7 +52,7 @@ public class ElephantGrass : ModTile, ISwayInWind, IConvertibleTile
 	public virtual void DrawFront(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
+		var data = tile.SafelyGetData();
 
 		int clusterOffX = -2 + (tile.TileFrameX / 18 + i) * 2 % 4;
 		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
@@ -65,7 +65,7 @@ public class ElephantGrass : ModTile, ISwayInWind, IConvertibleTile
 	public virtual void DrawBack(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
+		var data = tile.SafelyGetData();
 
 		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
 
@@ -142,7 +142,7 @@ public class ElephantGrassShort : ElephantGrass
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
 		TileObjectData.newTile.Origin = new(0, 1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 1, 0);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
+		TileObjectData.newTile.AnchorValidTiles = TileAnchors;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.addTile(Type);
@@ -155,7 +155,7 @@ public class ElephantGrassShort : ElephantGrass
 	public override void RandomUpdate(int i, int j)
 	{
 		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(Type, 0);
+		var data = tile.SafelyGetData();
 
 		if (tile.TileFrameY != (data.Height - 1) * 18)
 			return;
@@ -201,7 +201,7 @@ public class ElephantGrassShort : ElephantGrass
 	public override void DrawBack(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
+		var data = tile.SafelyGetData();
 
 		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
 
@@ -218,8 +218,20 @@ public class ElephantGrassShort : ElephantGrass
 		if (source is EntitySource_Parent { Entity: Projectile })
 			return false;
 
-		j -= Main.tile[i, j].TileFrameY / 18;
+		if (Main.tile[i, j].TileType == 0)
+		{
+			int iwqier = 0;
+		}
+
+		int offset = Main.tile[i, j].TileFrameY / 18;
+		j -= offset;
+
 		int id = Main.tile[i, j].TileType;
+
+		if (id == 0)
+		{
+			int iwqier = 0;
+		}
 
 		if (TileCorruptor.GetConversionType<ElephantGrassShort, ElephantGrassShortCorrupt, ElephantGrassShortCrimson, ElephantGrassShortHallow>(id, type, out int newId))
 		{

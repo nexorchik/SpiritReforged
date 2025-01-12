@@ -144,4 +144,11 @@ public static class TileExtensions
 			Main.tileMerge[id][tile.Type] = true;
 		}
 	}
+
+	public static TileObjectData SafelyGetData(this Tile tile)
+	{
+		var data = TileObjectData.GetTileData(tile);
+		data ??= TileObjectData.GetTileData(tile.TileType, 0);
+		return data;
+	}
 }

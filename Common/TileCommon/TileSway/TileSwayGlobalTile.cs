@@ -10,14 +10,18 @@ public class TileSwayGlobalTile : GlobalTile
 			return true;
 
 		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
+		var data = TileObjectData.GetTileData(tile.TileType, 0);
+
+		if (!tile.HasTile || tile.TileType != type)
+			return true;
 
 		var frame = new Point(tile.TileFrameX % data.CoordinateFullWidth / 18, tile.TileFrameY % data.CoordinateFullHeight / 18);
 
-		float WindCycle() => wind.SetWindSway(new Point16(i - frame.X, j - frame.Y));
+		float WindCycle() => wind.SetWindSway(new Point16(i - frame.X, j - frame.Y), data);
 
 		float rotation;
 		int tileOriginY = (data.Origin.Y == 0 && data.Height > 1) ? data.Origin.Y : data.Origin.Y + 1;
+
 		if (tileOriginY == 0)
 		{
 			float swing = 1f - (1f - (float)(frame.Y + 1) / data.Height) + .5f;

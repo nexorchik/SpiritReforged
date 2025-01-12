@@ -16,6 +16,8 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 	public override int TreeHeight => WorldGen.genRand.Next(8, 16);
 
+	protected virtual int ValidAnchor => ModContent.TileType<SavannaGrass>();
+
 	/// <summary> How much acacia tree tops sway in the wind. Used by the client for drawing and platform logic. </summary>
 	public static float GetSway(int i, int j, double factor = 0)
 	{
@@ -27,7 +29,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 	public override void PostSetStaticDefaults()
 	{
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
+		TileObjectData.newTile.AnchorValidTiles = [ValidAnchor];
 
 		AddMapEntry(new Color(120, 80, 75));
 		RegisterItemDrop(ModContent.ItemType<Items.Drywood.Drywood>());
@@ -177,12 +179,15 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 public class CorruptAcaciaTree : AcaciaTree
 {
+	protected override int ValidAnchor => ModContent.TileType<SavannaGrassCorrupt>();
 }
 
 public class CrimsonAcaciaTree : AcaciaTree
 {
+	protected override int ValidAnchor => ModContent.TileType<SavannaGrassCrimson>();
 }
 
 public class HallowAcaciaTree : AcaciaTree
 {
+	protected override int ValidAnchor => ModContent.TileType<SavannaGrassHallow>();
 }
