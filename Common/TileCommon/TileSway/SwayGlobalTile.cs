@@ -7,26 +7,28 @@ internal class SwayGlobalTile : GlobalTile
 {
 	public override bool PreDraw(int i, int j, int type, SpriteBatch spriteBatch)
 	{
-		if (Main.LightingEveryFrame && TileSwaySystem.DoesSway(type))
+		if (Main.LightingEveryFrame && TileSwaySystem.DoesSway(type, out int counter))
 		{
-			if (TileObjectData.IsTopLeft(i, j)) //IsTopLeft also prevents invalid object data
+			var cType = (TileCounterType)counter;
+
+			if (cType is TileCounterType.Vine)
+				Main.instance.TilesRenderer.CrawlToTopOfVineAndAddSpecialPoint(j, i);
+			else if (cType is TileCounterType.ReverseVine)
+				Main.instance.TilesRenderer.CrawlToBottomOfReverseVineAndAddSpecialPoint(j, i);
+			else if (TileObjectData.IsTopLeft(i, j)) //IsTopLeft also prevents invalid object data
 			{
-				if (TileSwaySystem.TryGetCounter(type, out var counter))
+				if (counter == -1)
+					DrawCustomSway(i, j, spriteBatch);
+				else
 				{
-					if (counter is TileCounterType.MultiTileGrass) //Automatically add required points
+					if (cType is TileCounterType.MultiTileGrass)
 					{
 						var origin = TileObjectData.GetTileData(Main.tile[i, j]).Origin;
-						Main.instance.TilesRenderer.AddSpecialPoint(i + origin.X, j + origin.Y, counter);
+						Main.instance.TilesRenderer.AddSpecialPoint(i + origin.X, j + origin.Y, cType);
 					}
-					else if (counter is TileCounterType.MultiTileVine)
-						Main.instance.TilesRenderer.AddSpecialPoint(i, j, counter);
-					else if (counter is TileCounterType.Vine)
-						Main.instance.TilesRenderer.CrawlToTopOfVineAndAddSpecialPoint(j, i);
-					else if (counter is TileCounterType.ReverseVine)
-						Main.instance.TilesRenderer.CrawlToBottomOfReverseVineAndAddSpecialPoint(j, i);
+					else if (cType is TileCounterType.MultiTileVine)
+						Main.instance.TilesRenderer.AddSpecialPoint(i, j, cType);
 				}
-				else
-					DrawCustomSway(i, j, spriteBatch);
 			}
 
 			return false;

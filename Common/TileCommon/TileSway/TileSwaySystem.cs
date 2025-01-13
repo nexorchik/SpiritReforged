@@ -13,17 +13,16 @@ internal class TileSwaySystem : ModSystem
 	public double GrassWindCounter { get; private set; }
 	public double SunflowerWindCounter { get; private set; }
 
-	public static bool DoesSway(int type) => tileSwayTypes.ContainsKey(type);
-	public static bool TryGetCounter(int type, out TileCounterType counter)
+	public static bool DoesSway(int type, out int counter)
 	{
-		if (tileSwayTypes[type] == -1)
+		if (tileSwayTypes.TryGetValue(type, out int value))
 		{
-			counter = 0;
-			return false;
+			counter = value;
+			return true;
 		}
 
-		counter = (TileCounterType)tileSwayTypes[type];
-		return true;
+		counter = -1;
+		return false;
 	}
 
 	public override void Load() => Instance = this;

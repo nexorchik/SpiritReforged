@@ -17,6 +17,7 @@ public class StargrassVine : ModTile, ISwayTile
 		Main.tileLavaDeath[Type] = true;
 
 		TileID.Sets.IsVine[Type] = true;
+		TileID.Sets.VineThreads[Type] = true;
 		TileID.Sets.ReplaceTileBreakDown[Type] = true;
 
 		AddMapEntry(new Color(24, 135, 28));
@@ -26,12 +27,4 @@ public class StargrassVine : ModTile, ISwayTile
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
-
-	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
-	{
-		if (Main.LightingEveryFrame)
-			Main.instance.TilesRenderer.CrawlToTopOfVineAndAddSpecialPoint(j, i);
-
-		return false;
-	}
 }

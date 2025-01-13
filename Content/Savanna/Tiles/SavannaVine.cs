@@ -15,6 +15,7 @@ public class SavannaVine : ModTile, ISwayTile
 		Main.tileLavaDeath[Type] = true;
 
 		TileID.Sets.IsVine[Type] = true;
+		TileID.Sets.VineThreads[Type] = true;
 		TileID.Sets.ReplaceTileBreakDown[Type] = true;
 
 		AddMapEntry(new Color(24, 135, 28));

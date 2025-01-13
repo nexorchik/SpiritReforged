@@ -106,7 +106,7 @@ internal class DrawOrderSystem : ModSystem
 
 			if (tag is not null)
 				drawOrderTypes.Add(tile.Type, tag.Layers);
-			else if (tile is ISwayTile) //If no layers are defined for this ISwayTile, automatically add a sway drawing valid layer
+			else if (tile is ISwayTile sway && sway.Style == -1) //If no layers are defined for this ISwayTile, automatically add a valid layer for sway drawing
 				drawOrderTypes.Add(tile.Type, [Layer.NonSolid]);
 		}
 	}
