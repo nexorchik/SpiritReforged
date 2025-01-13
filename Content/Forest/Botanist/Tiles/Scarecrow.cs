@@ -10,7 +10,7 @@ using Terraria.ModLoader.IO;
 namespace SpiritReforged.Content.Forest.Botanist.Tiles;
 
 [DrawOrder(DrawOrderAttribute.Layer.NonSolid)]
-public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
+public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 {
 	private static bool IsTop(int i, int j, out ScarecrowTileEntity entity)
 	{
@@ -75,7 +75,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
 		player.cursorItemIconID = (entity.Hat is null) ? Mod.Find<ModItem>(Name + "Item").Type : entity.Hat.type;
 	}
 
-	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
+	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
 		var data = TileObjectData.GetTileData(tile);
@@ -85,7 +85,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
 
 		spriteBatch.Draw(TextureAssets.Tile[Type].Value, drawPos + offset, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0f);
 
-		if (tile.TileFrameY == 0 && tile.TileFrameX == 0)
+		if (TileObjectData.IsTopLeft(i, j))
 		{
 			var entity = ScarecrowTileEntity.GetMe(i, j);
 			if (entity != null)
@@ -96,9 +96,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
 		}
 	}
 
-	public void ModifyRotation(int i, int j, ref float rotation) => rotation *= .5f;
-
-	public float SetWindSway(Point16 topLeft)
+	public float Physics(Point16 topLeft)
 	{
 		var data = TileObjectData.GetTileData(Framing.GetTileSafely(topLeft));
 		float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, TileSwaySystem.Instance.TreeWindCounter);
@@ -106,7 +104,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
 		if (!WorldGen.InAPlaceWithWind(topLeft.X, topLeft.Y, data.Width, data.Height))
 			rotation = 0f;
 
-		return rotation + TileSwayHelper.GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 20, 3f, 1, true);
+		return (rotation + TileSwayHelper.GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 20, 3f, 1, true)) * .5f;
 	}
 }
 

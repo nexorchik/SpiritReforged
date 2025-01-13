@@ -6,7 +6,7 @@ namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
 [AutoloadGlowmask("255,165,0", false)]
 [DrawOrder(DrawOrderAttribute.Layer.NonSolid)]
-public abstract class ChandelierTile : FurnitureTile, ISwayInWind
+public abstract class ChandelierTile : FurnitureTile, ISwayTile
 {
 	public virtual bool BlurGlowmask => true;
 
@@ -61,7 +61,7 @@ public abstract class ChandelierTile : FurnitureTile, ISwayInWind
 			(r, g, b) = (color.R / 255f, color.G / 255f, color.B / 255f);
 	}
 
-	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
+	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
 		var data = TileObjectData.GetTileData(tile);

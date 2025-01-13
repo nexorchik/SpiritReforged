@@ -1,7 +1,12 @@
-﻿namespace SpiritReforged.Content.Savanna.Tiles;
+﻿using SpiritReforged.Common.TileCommon.TileSway;
+using static Terraria.GameContent.Drawing.TileDrawing;
 
-public class SavannaVine : ModTile
+namespace SpiritReforged.Content.Savanna.Tiles;
+
+public class SavannaVine : ModTile, ISwayTile
 {
+	public int Style => (int)TileCounterType.Vine;
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileBlockLight[Type] = true;
@@ -10,7 +15,6 @@ public class SavannaVine : ModTile
 		Main.tileLavaDeath[Type] = true;
 
 		TileID.Sets.IsVine[Type] = true;
-		TileID.Sets.VineThreads[Type] = true;
 		TileID.Sets.ReplaceTileBreakDown[Type] = true;
 
 		AddMapEntry(new Color(24, 135, 28));
@@ -20,12 +24,4 @@ public class SavannaVine : ModTile
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
-
-	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
-	{
-		if (Main.LightingEveryFrame)
-			Main.instance.TilesRenderer.CrawlToTopOfVineAndAddSpecialPoint(j, i);
-
-		return false;
-	}
 }
