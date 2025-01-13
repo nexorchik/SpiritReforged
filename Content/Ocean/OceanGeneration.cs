@@ -196,7 +196,7 @@ public class OceanGeneration : ModSystem
 				}
 
 				//Kelp multitiles
-				int kelpChance = tilesFromInnerEdge < 100 ? 40 : 20; //Higher on first slope, then less common
+				int kelpChance = tilesFromInnerEdge < 100 ? 50 : 22; //Higher on first slope, then less common
 				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance))
 				{
 					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Kelp2x3>(), true);
@@ -528,8 +528,8 @@ public class OceanGeneration : ModSystem
 	// this could be moved to a separate file, let me know! - Yuyu
 	public override void PostWorldGen()
 	{
-		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<PoolNoodle>() }, 1, 0.33f), (int)VanillaChestID.Water, 1);
-		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<BeachTowel>(), ModContent.ItemType<BikiniBottom>(), ModContent.ItemType<BikiniTop>(), ModContent.ItemType<SwimmingTrunks>(), ModContent.ItemType<TintedGlasses>() }, 2, 0.33f), (int)VanillaChestID.Water, 1);
+		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<PoolNoodle>() }, 1, 0.33f), ChestPoolUtils.waterChests, 1);
+		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<BeachTowel>(), ModContent.ItemType<BikiniBottom>(), ModContent.ItemType<BikiniTop>(), ModContent.ItemType<SwimmingTrunks>(), ModContent.ItemType<TintedGlasses>() }, 1, 0.33f), (int)VanillaChestID.Water, 1);
 	}
 
 	public enum OceanShape
