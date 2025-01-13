@@ -84,16 +84,6 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, data.CoordinateHeights[tile.TileFrameY / 18]);
 
 		spriteBatch.Draw(TextureAssets.Tile[Type].Value, drawPos + offset, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0f);
-
-		if (TileObjectData.IsTopLeft(i, j))
-		{
-			var entity = ScarecrowTileEntity.GetMe(i, j);
-			if (entity != null)
-			{
-				entity.rotation = rotation;
-				entity.visualPosition = new Vector2(i, j) * 16 + dataOffset + offset;
-			}
-		}
 	}
 
 	public float Physics(Point16 topLeft)
@@ -113,8 +103,6 @@ public class ScarecrowTileEntity : ModTileEntity
 	public Item Hat { get; private set; } = null;
 
 	private readonly Player dummy;
-	public float rotation;
-	public Vector2 visualPosition;
 
 	public static ScarecrowTileEntity GetMe(int i, int j)
 	{
@@ -164,6 +152,14 @@ public class ScarecrowTileEntity : ModTileEntity
 
 		//The base of the scarecrow
 		var origin = new Vector2(8, 16 * 3);
+		float rotation = 0;
+
+		if (TileLoader.GetTile(ModContent.TileType<Scarecrow>()) is ISwayTile sway)
+			rotation = sway.Physics(Position) * .12f;
+
+		var position = new Vector2(Position.X * 16, Position.Y * 16) + new Vector2(-3, 32f * Math.Max(rotation, 0) - 6);
+		if (Math.Abs(rotation) > .015f)
+			position.Y++;
 
 		dummy.direction = 1;
 		dummy.Male = true;
@@ -176,7 +172,7 @@ public class ScarecrowTileEntity : ModTileEntity
 		dummy.UpdateDyes();
 		dummy.DisplayDollUpdate();
 		dummy.PlayerFrame();
-		dummy.position = visualPosition + new Vector2(4, -50 + rotation * 20);
+		dummy.position = position;
 		dummy.fullRotation = rotation;
 		dummy.fullRotationOrigin = origin;
 
