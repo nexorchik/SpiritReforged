@@ -1,3 +1,4 @@
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.ProjectileCommon;
 using Terraria.Audio;
@@ -9,8 +10,6 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 	private bool Trailing => Projectile.velocity.Length() >= ProjectileID.Sets.TrailCacheLength[Type] && AiState == Attacking;
 
 	private bool animate = false;
-
-	//private AnimePrimTrail trail;
 
 	private const int Returning = 0;
 	private const int Attacking = 1;
@@ -60,16 +59,12 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 			}
 		}
 
-		/*
-		if (AiTimer <= attackCooldown - 5 && trail != null && !trail.Destroyed)
-			trail.Destroyed = true;*/
-
 		AiTimer = Math.Max(0, AiTimer - 1);
 	}
 
 	public override void IdleMovement(Player player)
 	{
-		Vector2 desiredPos = player.Center + new Vector2(0, -60 + (float)Math.Sin(Main.GameUpdateCount / 30f) * 5);
+		Vector2 desiredPos = player.RotatedRelativePoint(player.MountedCenter + new Vector2(0, -60 + (float)Math.Sin(Main.GameUpdateCount / 30f) * 5));
 
 		AiTimer = 0;
 
@@ -78,7 +73,6 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 		if (AiState != LockedToPlayer && Projectile.Distance(desiredPos) > 25)
 		{
 			Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(desiredPos) * 6, 0.1f);
-
 			AiState = Returning;
 		}
 		else
@@ -113,12 +107,23 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 
 				for (int i = 0; i < 10; i++)
 				{
-					Dust dust = Dust.NewDustPerfect(Projectile.Center + Projectile.velocity * Main.rand.NextFloat(0.5f, 1.0f) + Main.rand.NextVector2Unit() * Main.rand.NextFloat(0.0f, 4.0f), DustID.SilverFlame, Projectile.velocity * Main.rand.NextFloat(0.1f, 0.5f), 100, default, 2f);
+					var position = Projectile.Center + Projectile.velocity * Main.rand.NextFloat(0, 5f) + Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f);
+
+					var dust = Dust.NewDustPerfect(position, DustID.SilverFlame, Projectile.velocity * Main.rand.NextFloat(.1f, .5f), 100, Color.White, Main.rand.NextFloat(.5f, 1f));
 					dust.noGravity = true;
-					dust.fadeIn = 1.2f;
+					dust.noLightEmittence = true;
 				}
 
 				Projectile.netUpdate = true;
+
+				for (int i = 0; i < 3; i++)
+				{
+					var position = Projectile.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f);
+					var scale = new Vector2(Main.rand.NextFloat(.2f, .5f), Main.rand.NextFloat(3, 6));
+					var color = Lighting.GetColor(Projectile.Center.ToTileCoordinates()).MultiplyRGB(Color.Lerp(Color.White, Color.SaddleBrown, Main.rand.NextFloat(.5f))) * 2;
+
+					ParticleHandler.SpawnParticle(new Particles.ImpactLine(position, Projectile.velocity * .1f, color, scale, 8, Projectile));
+				}
 			}
 
 			animate = true;
