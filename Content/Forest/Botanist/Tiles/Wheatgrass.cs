@@ -1,11 +1,9 @@
-﻿using SpiritReforged.Common.TileCommon;
-using SpiritReforged.Common.TileCommon.TileSway;
+﻿using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Forest.Stargrass.Tiles;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Botanist.Tiles;
 
-[DrawOrder(DrawOrderAttribute.Layer.NonSolid)]
 public class Wheatgrass : ModTile, ISwayTile
 {
 	public override void SetStaticDefaults()

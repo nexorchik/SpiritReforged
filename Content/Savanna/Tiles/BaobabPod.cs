@@ -5,7 +5,6 @@ using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
-[DrawOrder(DrawOrderAttribute.Layer.NonSolid)]
 public class BaobabPod : ModTile, ISwayTile
 {
 	private static readonly Dictionary<Point16, float> hitData = []; //Stores the modified rotation of the tile at these coordinates

@@ -82,7 +82,7 @@ public class ElephantGrass : ModTile, ISwayTile
 
 	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
-		if (DrawOrderHandler.order == DrawOrderAttribute.Layer.OverPlayers)
+		if (DrawOrderSystem.Order == DrawOrderAttribute.Layer.OverPlayers)
 			DrawFront(i, j, spriteBatch, offset, rotation, origin);
 		else
 			DrawBack(i, j, spriteBatch, offset, rotation, origin);

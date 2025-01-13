@@ -9,7 +9,6 @@ using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Forest.Botanist.Tiles;
 
-[DrawOrder(DrawOrderAttribute.Layer.NonSolid)]
 public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 {
 	private static bool IsTop(int i, int j, out ScarecrowTileEntity entity)
