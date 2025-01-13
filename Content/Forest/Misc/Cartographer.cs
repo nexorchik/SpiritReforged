@@ -16,10 +16,9 @@ internal class Cartographer : ModNPC
 
 	public override ModNPC Clone(NPC newEntity)
 	{
-		var newNPC = base.Clone(newEntity);
-		var cartographer = newNPC as Cartographer;
+		var cartographer = base.Clone(newEntity) as Cartographer;
 		cartographer._hasPin = _hasPin;
-		return newNPC;
+		return cartographer;
 	}
 
 	public override void SetStaticDefaults()

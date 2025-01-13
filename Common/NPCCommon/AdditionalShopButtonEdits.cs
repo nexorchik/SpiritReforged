@@ -1,8 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json.Linq;
-using static System.Net.Mime.MediaTypeNames;
-using Stubble.Core.Imported;
-using Terraria.UI.Chat;
+﻿using Terraria.UI.Chat;
 
 namespace SpiritReforged.Common.NPCCommon;
 
@@ -28,7 +24,7 @@ internal class AdditionalShopButtonEdits : ModSystem
 
 		NPC npc = Main.LocalPlayer.TalkNPC;
 
-		if (npc is not null && npc.ModNPC is not null && ModContent.GetModNPC(npc.type) is INPCButtons npcButtons)
+		if (npc is not null && ModContent.GetModNPC(npc.type) is INPCButtons npcButtons)
 		{
 			ButtonText[] buttonStrings = npcButtons.AddButtons();
 			float adjX = 0;
