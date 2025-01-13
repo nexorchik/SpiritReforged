@@ -1150,3 +1150,63 @@ ArcaneNecklacePlatinum: {
 	DisplayName: "{$ArcaneNecklaceGold.DisplayName}"
 	Tooltip: "{$ArcaneNecklaceGold.Tooltip}"
 }
+
+PinBlue: {
+	DisplayName: Blue Pin
+	Tooltip: ""
+}
+
+PinGreen: {
+	DisplayName: Green Pin
+	Tooltip: ""
+}
+
+PinRed: {
+	DisplayName: Red Pin
+	Tooltip: ""
+}
+
+PinYellow: {
+	DisplayName: Yellow Pin
+	Tooltip: ""
+}
+
+PinHive: {
+	DisplayName: Hive Pin
+	Tooltip: ""
+}
+
+PinButterfly: {
+	DisplayName: Butterfly Pin
+	Tooltip: ""
+}
+
+PinFaeling: {
+	DisplayName: Faeling Pin
+	Tooltip: ""
+}
+
+PinSavanna: {
+	DisplayName: Savanna Pin
+	Tooltip: ""
+}
+
+PinCuriosity: {
+	DisplayName: Curiosity Pin
+	Tooltip: ""
+}
+
+PinSky: {
+	DisplayName: Sky Pin
+	Tooltip: ""
+}
+
+PinSword: {
+	DisplayName: Sword Pin
+	Tooltip: ""
+}
+
+TornMapPiece: {
+	DisplayName: Torn Map Piece
+	Tooltip: Reveals the surrounding map
+}
