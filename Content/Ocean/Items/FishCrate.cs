@@ -31,7 +31,6 @@ public class FishCrate : FloatingItem
 	public override void ModifyItemLoot(ItemLoot itemLoot)
 	{
 		itemLoot.AddCommon<Vanilla.Items.Food.RawFish>(2);
-		itemLoot.AddCommon(Mod.Find<ModItem>("FloaterItem").Type, 4);
 		itemLoot.Add(DropRules.LootPoolDrop.SameStack(3, 4, 1, 1, 1, ItemID.Shrimp, ItemID.Salmon, ItemID.Bass, ItemID.RedSnapper, ItemID.Trout));
 		itemLoot.Add(DropRules.LootPoolDrop.SameStack(1, 2, 1, 4, 1, ItemID.Damselfish, ItemID.DoubleCod, ItemID.ArmoredCavefish, ItemID.FrostMinnow));
 		itemLoot.AddOneFromOptions(27, ItemID.ReaverShark, ItemID.Swordfish, ItemID.SawtoothShark);

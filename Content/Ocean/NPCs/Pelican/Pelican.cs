@@ -9,7 +9,7 @@ using Terraria.GameContent.UI;
 using System.Linq;
 using Terraria.Audio;
 
-namespace SpiritReforged.Content.Ocean.NPCs;
+namespace SpiritReforged.Content.Ocean.NPCs.Pelican;
 
 [AutoloadCritter]
 public class Pelican : ModNPC
@@ -129,7 +129,6 @@ public class Pelican : ModNPC
 			bool veryCloseGround = false;
 
 			for (int y = tileY; y < tileY + ScanCheck; y++)
-			{
 				if (Main.tile[tileX, y].HasUnactuatedTile && Main.tileSolid[Main.tile[tileX, y].TileType] || Main.tile[tileX, y].LiquidAmount > 0)
 				{
 					if (y < tileY + 5)
@@ -138,7 +137,6 @@ public class Pelican : ModNPC
 					closeGround = false;
 					break;
 				}
-			}
 
 			NPC.velocity.Y += closeGround ? .15f : -.15f;
 			if (veryCloseGround)
@@ -217,10 +215,10 @@ public class Pelican : ModNPC
 		}
 
 		Counter++;
-		NPC.noGravity = AIState is (int)State.Swim or(int)State.Fly or (int)State.Startle;
+		NPC.noGravity = AIState is (int)State.Swim or (int)State.Fly or (int)State.Startle;
 
 		if (NPC.velocity.X != 0)
-			NPC.spriteDirection = NPC.direction = ((NPC.velocity.X > 0) ? 1 : -1) * ((AIState == (int)State.Startle) ? -1 : 1);
+			NPC.spriteDirection = NPC.direction = (NPC.velocity.X > 0 ? 1 : -1) * (AIState == (int)State.Startle ? -1 : 1);
 	}
 
 	private void ChangeState(State toState)
@@ -273,7 +271,7 @@ public class Pelican : ModNPC
 		var texture = TextureAssets.Npc[Type].Value;
 		var source = NPC.frame with { Width = NPC.frame.Width - 2, Height = NPC.frame.Height - 2 }; //Remove padding
 		var position = NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY);
-		var effects = (NPC.spriteDirection == 1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+		var effects = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 		var color = NPC.GetAlpha(NPC.GetNPCColorTintedByBuffs(drawColor));
 
 		Main.EntitySpriteDraw(texture, position, source, color, NPC.rotation, source.Size() / 2, NPC.scale, effects);
@@ -289,17 +287,17 @@ public class Pelican : ModNPC
 
 		var item = ContentSamples.ItemsByType[heldItemType];
 		var value = TextureAssets.Item[item.type].Value;
-		var frame = (Main.itemAnimations[item.type] == null) ? value.Frame() : Main.itemAnimations[item.type].GetFrame(value);
+		var frame = Main.itemAnimations[item.type] == null ? value.Frame() : Main.itemAnimations[item.type].GetFrame(value);
 		frame.Height /= 2;
 
 		const float SizeLimit = 20;
 		float scale = item.scale;
 
 		if (frame.Width > SizeLimit || frame.Height > SizeLimit)
-			scale = (frame.Width <= frame.Height) ? (SizeLimit / frame.Height) : (SizeLimit / frame.Width);
+			scale = frame.Width <= frame.Height ? SizeLimit / frame.Height : SizeLimit / frame.Width;
 
 		int[] bobFrames = [1, 2, 5, 6]; //Extra vertical displacement on these frames
-		float offY = (AIState == (int)State.Swim) ? -4 : (bobFrames.Contains((int)NPC.frameCounter) ? -10 : -8);
+		float offY = AIState == (int)State.Swim ? -4 : bobFrames.Contains((int)NPC.frameCounter) ? -10 : -8;
 		var pos = NPC.Center + new Vector2(14 * NPC.spriteDirection, offY + NPC.gfxOffY) - screenPos;
 
 		var color = Lighting.GetColor(NPC.Center.ToTileCoordinates());
@@ -307,7 +305,7 @@ public class Pelican : ModNPC
 		ItemSlot.GetItemLight(ref color, ref modScale, item);
 		scale *= modScale;
 
-		var effects = (NPC.spriteDirection == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+		var effects = NPC.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 		spriteBatch.Draw(value, pos, frame, color, MathHelper.Pi, frame.Size() / 2f, scale, effects, 0f);
 
 		if (item.color != default)

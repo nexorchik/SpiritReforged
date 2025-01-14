@@ -1,7 +1,7 @@
 using Terraria.GameContent.Bestiary;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Ocean.NPCs;
+namespace SpiritReforged.Content.Ocean.NPCs.SandPiper;
 
 [AutoloadCritter]
 public class SandPiper : ModNPC
@@ -73,7 +73,6 @@ public class SandPiper : ModNPC
 				NPC.netUpdate = true;
 
 				if (WalkState == 0)
-				{
 					if (!NPC.wet && Main.rand.NextBool(3))
 					{
 						State = STATE_PECK;
@@ -81,7 +80,6 @@ public class SandPiper : ModNPC
 					}
 					else
 						WalkState = Main.rand.NextFloat(-1.8f, 1.8f);
-				}
 				else
 					WalkState = 0;
 			}
@@ -214,17 +212,15 @@ public class SandPiper : ModNPC
 			NPC.velocity.Y = MathHelper.Clamp(NPC.velocity.Y, -4.5f, 4);
 		}
 		else if (State == STATE_PECK) //Pecking behaviour
-		{
 			if (--Timer <= 0)
 			{
 				State = STATE_WALK;
 				Timer = 30;
 				WalkState = 0;
 			}
-		}
 
 		if (WalkState != 0)
-			NPC.spriteDirection = NPC.direction = (NPC.velocity.X > 0) ? 1 : -1;
+			NPC.spriteDirection = NPC.direction = NPC.velocity.X > 0 ? 1 : -1;
 	}
 
 	public override void FindFrame(int frameHeight)
@@ -234,9 +230,7 @@ public class SandPiper : ModNPC
 			Timer = 120;
 
 			if (State == STATE_PECK)
-			{
 				State = STATE_WALK;
-			}
 			else if (Main.rand.NextBool(3))
 			{
 				State = STATE_PECK;
@@ -273,12 +267,10 @@ public class SandPiper : ModNPC
 		NPC.frame.Width = 22;
 
 		if (State != STATE_PECK)
-		{
 			if (State == 0 && NPC.velocity.X == 0)
 				NPC.frameCounter = 0;
 			else
 				NPC.frameCounter += MathHelper.Min(Math.Abs(NPC.velocity.X), 1) * 0.15f; //Move speed influences our animation speed slightly
-		}
 		else
 			NPC.frameCounter += 0.15f;
 
