@@ -63,7 +63,7 @@ public class Hyena : ModNPC
 	public override void AI()
 	{
 		dealDamage = false;
-		int searchDist = focus is TargetSearchFlag.All ? 350 : 450;
+		int searchDist = (focus is TargetSearchFlag.All) ? 350 : 450;
 		var search = NPC.FindTarget(focus, SearchFilters.OnlyPlayersInCertainDistance(NPC.Center, searchDist), AdvancedTargetingHelper.NPCsByDistanceAndType(NPC, searchDist));
 		bool wounded = NPC.life < NPC.lifeMax * .25f;
 
@@ -95,39 +95,43 @@ public class Hyena : ModNPC
 			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, TargetSpeed, .025f);
 
 			if (AnimationState == (int)State.Laugh && Math.Abs(NPC.velocity.X) < .1f)
+			{
 				if (OnTransitionFrame)
 				{
 					ChangeAnimationState(State.TrotEnd);
 					NPC.frameCounter = endFrames[AnimationState];
 				}
-			else
-				if (swimming)
-			{
-				if (drownTime == drownTimeMax / 2)
-					TargetSpeed = -TargetSpeed; //Turn around because I've been swimming for too long
-
-				if (TargetSpeed == 0)
-					TargetSpeed = NPC.direction * 1.75f;
-
-				ChangeAnimationState(State.Trotting, true);
 			}
 			else
 			{
-				if (Counter % 250 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+				if (swimming)
 				{
-					float oldTargetSpeed = TargetSpeed;
-					TargetSpeed = Main.rand.NextFromList(-1, 0, 1) * Main.rand.NextFloat(.8f, 1.5f);
+					if (drownTime == drownTimeMax / 2)
+						TargetSpeed = -TargetSpeed; //Turn around because I've been swimming for too long
 
-					if (TargetSpeed != oldTargetSpeed)
-						NPC.netUpdate = true;
+					if (TargetSpeed == 0)
+						TargetSpeed = NPC.direction * 1.75f;
+
+					ChangeAnimationState(State.Trotting, true);
 				}
-
-				SetPace();
-
-				if (AnimationState == (int)State.TrotEnd && Main.rand.NextBool(400)) //Randomly laugh when still; not synced
+				else
 				{
-					ChangeAnimationState(State.Laugh);
-					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 2 }, NPC.Center);
+					if (Counter % 250 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+					{
+						float oldTargetSpeed = TargetSpeed;
+						TargetSpeed = Main.rand.NextFromList(-1, 0, 1) * Main.rand.NextFloat(.8f, 1.5f);
+
+						if (TargetSpeed != oldTargetSpeed)
+							NPC.netUpdate = true;
+					}
+
+					SetPace();
+
+					if (AnimationState == (int)State.TrotEnd && Main.rand.NextBool(400)) //Randomly laugh when still; not synced
+					{
+						ChangeAnimationState(State.Laugh);
+						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 2 }, NPC.Center);
+					}
 				}
 			}
 		}
@@ -142,8 +146,10 @@ public class Hyena : ModNPC
 			if (TryChaseTarget(search))
 			{
 				if (AnimationState == (int)State.BarkingAngry)
+				{
 					if (OnTransitionFrame)
 						ChangeAnimationState(State.TrottingAngry);
+				}
 				else
 				{
 					ChangeAnimationState(State.TrottingAngry, true);
@@ -176,11 +182,13 @@ public class Hyena : ModNPC
 				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, 0, .1f);
 
 				if (AnimationState == (int)State.Laugh)
+				{
 					if (OnTransitionFrame)
 					{
 						ChangeAnimationState(State.TrotEnd);
 						NPC.frameCounter = endFrames[AnimationState];
 					}
+				}
 				else
 				{
 					ChangeAnimationState(State.TrotEnd);
@@ -197,7 +205,7 @@ public class Hyena : ModNPC
 					if ((int)NPC.Center.X != oldX)
 						ChangeAnimationState(State.Trotting); //Begin to run from the target
 
-					focus = target.Type is NPCTargetType.NPC ? TargetSearchFlag.NPCs : TargetSearchFlag.Players; //Strictly remember the nearest target until reset
+					focus = (target.Type is NPCTargetType.NPC) ? TargetSearchFlag.NPCs : TargetSearchFlag.Players; //Strictly remember the nearest target until reset
 				}
 			}
 		}
@@ -214,6 +222,7 @@ public class Hyena : ModNPC
 			Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
 
 			if (NPC.collideX && (NPC.velocity == Vector2.Zero || swimming))
+			{
 				if ((int)NPC.Center.X == oldX)
 					TargetSpeed = -NPC.direction;
 				else
@@ -221,6 +230,7 @@ public class Hyena : ModNPC
 					oldX = (int)NPC.Center.X;
 					NPC.velocity.Y = -height;
 				}
+			}
 		}
 
 		void Separate(int distance = 32)
@@ -240,6 +250,7 @@ public class Hyena : ModNPC
 		bool TrySwim() //Contains logic for floating and drowning
 		{
 			if (NPC.wet && Collision.WetCollision(NPC.position, NPC.width, NPC.height / 2))
+			{
 				if (++drownTime > drownTimeMax) //Drown
 				{
 					NPC.velocity *= .99f;
@@ -254,6 +265,7 @@ public class Hyena : ModNPC
 				}
 				else
 					NPC.velocity.Y = Math.Max(NPC.velocity.Y - .75f, -1.5f);
+			}
 			else if (!NPC.wet)
 				drownTime = 0;
 
@@ -309,8 +321,10 @@ public class Hyena : ModNPC
 		{
 			bool dead = NPC.life <= 0;
 			for (int i = 0; i < (dead ? 20 : 3); i++)
+			{
 				Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Blood, Scale: Main.rand.NextFloat(.8f, 2f))
 					.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f);
+			}
 
 			if (dead)
 			{
@@ -343,11 +357,13 @@ public class Hyena : ModNPC
 			return;
 
 		foreach (var other in Main.ActiveNPCs)
+		{
 			if (other.type == Type && other.Distance(NPC.Center) <= aggroRange && other.ModNPC is Hyena hyena)
 			{
 				hyena.focus = flag;
 				hyena.isAngry = true;
 			}
+		}
 	}
 
 	public override void FindFrame(int frameHeight)
@@ -371,7 +387,7 @@ public class Hyena : ModNPC
 		var source = NPC.frame with { Width = NPC.frame.Width - 2, Height = NPC.frame.Height - 2 }; //Remove padding
 		var position = NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY - (source.Height - NPC.height) / 2 + 4);
 
-		var effects = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+		var effects = (NPC.spriteDirection == 1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 		var color = NPC.GetAlpha(NPC.GetNPCColorTintedByBuffs(drawColor));
 
 		Main.EntitySpriteDraw(texture, position, source, color, NPC.rotation, source.Size() / 2, NPC.scale, effects);
