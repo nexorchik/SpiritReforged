@@ -1,16 +1,15 @@
-﻿using SpiritReforged.Content.Underground.Railgun;
-using SpiritReforged.Common.Misc;
+﻿using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.WorldGeneration;
-using SpiritReforged.Content.Forest.Misc;
-using SpiritReforged.Content.Underground.ExplorerTreads;
+using SpiritReforged.Content.Ocean.Items.PoolNoodle;
+using SpiritReforged.Content.Ocean.Items.Vanity;
 
-namespace SpiritReforged.Content.Underground;
+namespace SpiritReforged.Content.Ocean;
 
-public class UndergroundChestLoot : ModSystem
+public class OceanChestLoot : ModSystem
 {
 	public override void PostWorldGen()
 	{
-		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<ZiplineGun>(), ModContent.ItemType<ExplorerTreadsItem>() }, 1, 0.25f), (int)VanillaChestID.Gold, 1);
-		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<TornMapPiece>() }, 2, 0.22f), (int)VanillaChestID.Gold, Main.rand.Next(1, 3));
+		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<PoolNoodle>() }, 1, 0.33f), (int)VanillaChestID.Water, 1);
+		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<BeachTowel>(), ModContent.ItemType<BikiniBottom>(), ModContent.ItemType<BikiniTop>(), ModContent.ItemType<SwimmingTrunks>(), ModContent.ItemType<TintedGlasses>() }, 1, 0.33f), (int)VanillaChestID.Water, 1);
 	}
 }

@@ -6,7 +6,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 using Terraria.Utilities;
 
-namespace SpiritReforged.Content.Savanna.NPCs;
+namespace SpiritReforged.Content.Savanna.NPCs.PeevedTumbler;
 
 [AutoloadBanner]
 public class PeevedTumbler : ModNPC
@@ -74,10 +74,8 @@ public class PeevedTumbler : ModNPC
 		else
 		{
 			if ((int)NPC.velocity.X == 0)
-			{
 				if (NPC.velocity.Y == 0 && ++Counter % 60 == 0)
 					NPC.velocity.Y = -5; //Jump over tall terrain if stuck
-			}
 			else
 				Counter = 0;
 
@@ -111,7 +109,7 @@ public class PeevedTumbler : ModNPC
 
 		if (Main.netMode != NetmodeID.MultiplayerClient && dead && heldItemType != ItemID.None)
 		{
-			int stack = (heldItemType == ModContent.ItemType<Items.Drywood.Drywood>()) ? Main.rand.Next(5, 11) : 1;
+			int stack = heldItemType == ModContent.ItemType<Items.Drywood.Drywood>() ? Main.rand.Next(5, 11) : 1;
 			Item.NewItem(NPC.GetSource_Death(), NPC.getRect(), heldItemType, stack);
 		}
 
@@ -146,12 +144,12 @@ public class PeevedTumbler : ModNPC
 			Main.EntitySpriteDraw(texture, position, null, color * .25f * (1f - (float)i / NPC.oldPos.Length), NPC.oldRot[i], texture.Size() / 2, NPC.scale, SpriteEffects.None, 0);
 		}
 		//Draw eye
-		for (int i = 0; i < 2; i++) 
+		for (int i = 0; i < 2; i++)
 		{
-			var eyeColor = NPC.GetAlpha((i == 0) ? new Color(249, 140, 0) : new Color(192, 86, 0));
+			var eyeColor = NPC.GetAlpha(i == 0 ? new Color(249, 140, 0) : new Color(192, 86, 0));
 			int offsetX = i * -2;
 
-			Main.EntitySpriteDraw(TextureAssets.MagicPixel.Value, NPC.Center - screenPos + new Vector2(offsetX, NPC.gfxOffY), 
+			Main.EntitySpriteDraw(TextureAssets.MagicPixel.Value, NPC.Center - screenPos + new Vector2(offsetX, NPC.gfxOffY),
 				new Rectangle(0, 0, 2, 2), eyeColor, 0, new Vector2(.5f), NPC.scale, SpriteEffects.None, 0);
 		}
 
@@ -165,7 +163,7 @@ public class PeevedTumbler : ModNPC
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
 		bool zoneDustStorm = spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm;
-		if (spawnInfo.Player.InModBiome<Biome.SavannaBiome>() && !spawnInfo.PlayerInTown && zoneDustStorm && !spawnInfo.Water)
+		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.PlayerInTown && zoneDustStorm && !spawnInfo.Water)
 			return .16f;
 
 		return 0;
