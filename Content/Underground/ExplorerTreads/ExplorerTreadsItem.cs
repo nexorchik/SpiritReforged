@@ -5,7 +5,7 @@ using Terraria.DataStructures;
 namespace SpiritReforged.Content.Underground.ExplorerTreads;
 
 [AutoloadEquip(EquipType.Shoes)]
-public class ExplorerTreads : AccessoryItem
+public class ExplorerTreadsItem : AccessoryItem
 {
 	public override void SetDefaults()
 	{

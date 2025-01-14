@@ -1089,7 +1089,7 @@ LeatherPlate: {
 	Tooltip: ""
 }
 
-ExplorerTreads: {
+ExplorerTreadsItem: {
 	DisplayName: Explorer's Treads
 	Tooltip:
 		'''

@@ -525,13 +525,6 @@ public class OceanGeneration : ModSystem
 		}
 	}
 
-	// this could be moved to a separate file, let me know! - Yuyu
-	public override void PostWorldGen()
-	{
-		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<PoolNoodle>() }, 1, 0.33f), (int)VanillaChestID.Water, 1);
-		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<BeachTowel>(), ModContent.ItemType<BikiniBottom>(), ModContent.ItemType<BikiniTop>(), ModContent.ItemType<SwimmingTrunks>(), ModContent.ItemType<TintedGlasses>() }, 1, 0.33f), (int)VanillaChestID.Water, 1);
-	}
-
 	public enum OceanShape
 	{
 		Default = 0, //vanilla worldgen
