@@ -1,4 +1,4 @@
-using SpiritReforged.Content.Vanilla.Items.Food;
+using SpiritReforged.Content.Vanilla.Food;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Gar;
 

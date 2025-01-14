@@ -1,7 +1,7 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Content.Ocean.Items;
 
-namespace SpiritReforged.Content.Vanilla.Items.Food;
+namespace SpiritReforged.Content.Vanilla.Food;
 public class Nigiri : FoodItem
 {
 	internal override Point Size => new(44, 28);

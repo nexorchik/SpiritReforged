@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Content.Savanna.Tiles;
-using SpiritReforged.Content.Vanilla.Items.Food;
 
 namespace SpiritReforged.Content.Savanna.Items.Drywood;
 

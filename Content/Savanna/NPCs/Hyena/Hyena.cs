@@ -1,7 +1,7 @@
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Savanna.Biome;
-using SpiritReforged.Content.Vanilla.Items.Food;
+using SpiritReforged.Content.Vanilla.Food;
 using System.Linq;
 using Terraria.Audio;
 using static Terraria.Utilities.NPCUtils;

@@ -5,7 +5,7 @@ using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Items.Food;
-using SpiritReforged.Content.Vanilla.Items.Food;
+using SpiritReforged.Content.Vanilla.Food;
 using Terraria.Audio;
 using Terraria.Utilities;
 

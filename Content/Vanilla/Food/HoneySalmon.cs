@@ -1,6 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 
-namespace SpiritReforged.Content.Vanilla.Items.Food;
+namespace SpiritReforged.Content.Vanilla.Food;
 
 public class HoneySalmon : FoodItem
 {

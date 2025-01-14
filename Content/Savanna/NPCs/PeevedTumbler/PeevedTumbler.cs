@@ -1,5 +1,4 @@
 using SpiritReforged.Content.Savanna.Biome;
-using SpiritReforged.Content.Vanilla.Items.Food;
 using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;

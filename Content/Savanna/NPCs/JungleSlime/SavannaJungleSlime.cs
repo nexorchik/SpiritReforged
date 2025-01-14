@@ -1,6 +1,4 @@
 using SpiritReforged.Content.Savanna.Biome;
-using SpiritReforged.Content.Savanna.DustStorm;
-using SpiritReforged.Content.Vanilla.Items.Food;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.JungleSlime;
@@ -12,7 +10,7 @@ public class SavannaJungleSlime : ModNPC
 	public override void SetDefaults()
 	{
 		NPC.CloneDefaults(NPCID.SandSlime);
-		NPC.color = Color.White * .8f;
+		NPC.color = Color.White * .5f;
 
 		AIType = NPCID.JungleSlime;
 		AnimationType = NPCID.BlueSlime;
