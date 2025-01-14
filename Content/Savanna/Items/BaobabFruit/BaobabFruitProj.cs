@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using SpiritReforged.Common.SimpleEntity;
+using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Utilities;
@@ -48,28 +49,19 @@ public class BaobabFruitProj : ModProjectile
 
 	public override void OnKill(int timeLeft)
 	{
-		void SpawnItem(int type)
+		switch (drop)
 		{
-			int id = Item.NewItem(Projectile.GetSource_Death(), Projectile.Center, type);
+			case DropType.Fruit:
+				SpawnItem(ModContent.ItemType<BaobabFruit>());
+				break;
 
-			if (Main.dedServ)
-				NetMessage.SendData(MessageID.SyncItem, number: id);
-		}
+			case DropType.Acorn:
+				SpawnItem(ItemID.Acorn);
+				break;
 
-		if (Main.netMode != NetmodeID.MultiplayerClient)
-		{
-			switch (drop)
-			{
-				case DropType.Fruit:
-					SpawnItem(ModContent.ItemType<BaobabFruit>());
-					break;
-				case DropType.Acorn:
-					SpawnItem(ItemID.Acorn);
-					break;
-				case DropType.Worm:
-					NPC.NewNPC(Projectile.GetSource_Death(), (int)Projectile.Center.X, (int)Projectile.Center.Y + 16, ModContent.NPCType<DevourerOfSoil>());
-					break;
-			}
+			case DropType.Worm:
+				SimpleEntitySystem.NewEntity(SimpleEntitySystem.types[typeof(DevourerOfSoil)], Projectile.Center + new Vector2(0, 16));
+				break;
 		}
 
 		if (!Main.dedServ)
@@ -92,6 +84,17 @@ public class BaobabFruitProj : ModProjectile
 			if (drop == DropType.Worm)
 				SoundEngine.PlaySound(SoundID.Roar, Projectile.Center);
 		}
+
+		void SpawnItem(int type)
+		{
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				int id = Item.NewItem(Projectile.GetSource_Death(), Projectile.Center, type);
+
+				if (Main.dedServ)
+					NetMessage.SendData(MessageID.SyncItem, number: id);
+			}
+		}
 	}
 
 	public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
@@ -101,9 +104,7 @@ public class BaobabFruitProj : ModProjectile
 	}
 
 	public override bool? CanCutTiles() => false;
-
 	public override void SendExtraAI(BinaryWriter writer) => writer.Write((byte)drop);
-
 	public override void ReceiveExtraAI(BinaryReader reader) => drop = (DropType)reader.Read();
 
 	public override bool PreDraw(ref Color lightColor)
