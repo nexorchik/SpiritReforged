@@ -27,7 +27,7 @@ internal class SavannaEcotone : EcotoneBase
 
 	private bool PreventSmallPiles(On_WorldGen.orig_PlaceSmallPile orig, int i, int j, int X, int Y, ushort type)
 	{
-		if (WorldGen.generatingWorld && type == TileID.SmallPiles && SavannaArea.Contains(new Point(i, j)))
+		if (WorldGen.generatingWorld && type == TileID.SmallPiles && (SavannaArea.Contains(new Point(i, j)) || OnBaobab(i, j)))
 			return false; //Skips orig
 
 		return orig(i, j, X, Y, type);
@@ -35,7 +35,7 @@ internal class SavannaEcotone : EcotoneBase
 
 	private bool PreventLargePiles(On_WorldGen.orig_PlaceTile orig, int i, int j, int Type, bool mute, bool forced, int plr, int style)
 	{
-		if (WorldGen.generatingWorld && Type == TileID.LargePiles && SavannaArea.Contains(new Point(i, j)))
+		if (WorldGen.generatingWorld && Type == TileID.LargePiles && (SavannaArea.Contains(new Point(i, j)) || OnBaobab(i, j)))
 			return false; //Skips orig
 
 		return orig(i, j, Type, mute, forced, plr, style);
@@ -60,18 +60,15 @@ internal class SavannaEcotone : EcotoneBase
 	public override void AddTasks(List<GenPass> tasks, List<EcotoneSurfaceMapping.EcotoneEntry> entries)
 	{
 		SavannaArea = Rectangle.Empty; //Initialize here in case the player decides to generate multiple worlds in one session
-		WateringHoleGen.Area = Rectangle.Empty;
 
 		int pyramidIndex = tasks.FindIndex(x => x.Name == "Pyramids");
 		int grassIndex = tasks.FindIndex(x => x.Name == "Spreading Grass") + 2;
-		int pilesIndex = tasks.FindIndex(x => x.Name == "Piles") + 3;
 
-		if (pyramidIndex == -1 || grassIndex == -1 || pilesIndex == -1)
+		if (pyramidIndex == -1 || grassIndex == -1)
 			return;
 
 		tasks.Insert(pyramidIndex, new PassLegacy("Savanna", BaseGeneration(entries)));
 		tasks.Insert(grassIndex, new PassLegacy("Populate Savanna", PopulateSavanna));
-		tasks.Insert(pilesIndex, new PassLegacy("Grow Baobab", GrowBaobab));
 	}
 
 	private static WorldGenLegacyMethod BaseGeneration(List<EcotoneSurfaceMapping.EcotoneEntry> entries) => (progress, _) =>
@@ -187,20 +184,6 @@ internal class SavannaEcotone : EcotoneBase
 		SavannaArea = new Rectangle(startX, topBottomY.X, endX - startX, topBottomY.Y - topBottomY.X);
 		StopLava.AddArea(SavannaArea);
 
-		if (WorldGen.genRand.NextBool()) //Start watering hole gen
-		{
-			if (IterateGen(200, HoleGen, out int i, out int j, "Savanna Watering Hole"))
-				WateringHoleGen.GenerateWateringHole(i, j);
-
-			static bool HoleGen(int i, int j)
-			{
-				HashSet<int> soft = [TileID.Dirt, TileID.CorruptGrass, TileID.CrimsonGrass, TileID.Sand, ModContent.TileType<SavannaDirt>(), ModContent.TileType<SavannaGrass>()];
-				return soft.Contains(Main.tile[i, j].TileType);
-			}
-		}
-
-		return;
-
 		static ushort GetSandType(int x, int y)
 		{
 			int off = 0;
@@ -244,7 +227,43 @@ internal class SavannaEcotone : EcotoneBase
 		HashSet<int> treeSpacing = [];
 		HashSet<Point16> grassTop = [];
 
-		WateringHoleGen.AddWaterAndClay();
+		var baobabArea = Rectangle.Empty;
+		bool genWateringHole = false;
+		bool genBaobabTree = false;
+
+		if (SavannaArea.Width > 150 && Main.rand.NextBool(3)) //Choose objects to gen
+			genWateringHole = genBaobabTree = true;
+		else if (SavannaArea.Width > 50)
+		{
+			if (Main.rand.NextBool())
+				genWateringHole = true;
+			else
+				genBaobabTree = true;
+		}
+
+		if (genWateringHole)
+		{
+			if (IterateGen(200, HoleGen, out int i, out int j, "Watering Hole"))
+				WateringHoleGen.GenerateWateringHole(i, j);
+
+			static bool HoleGen(int i, int j)
+			{
+				HashSet<int> soft = [TileID.Dirt, TileID.CorruptGrass, TileID.CrimsonGrass, TileID.Sand, ModContent.TileType<SavannaDirt>()];
+				return soft.Contains(Main.tile[i, j].TileType);
+			}
+		}
+
+		if (genBaobabTree)
+		{
+			if (IterateGen(50, BaobabTreeGen, out int i, out int j, "Great Baobab"))
+			{
+				baobabArea = BaobabGen.GenerateBaobab(i, j);
+				baobabArea.Inflate(40, 20);
+			}
+
+			static bool BaobabTreeGen(int i, int j) => Main.tile[i, j].TileType == ModContent.TileType<SavannaDirt>() && Main.tile[i, j - 1].LiquidAmount < 50;
+		}
+
 		GrowStones();
 
 		for (int i = SavannaArea.Left; i < SavannaArea.Right; ++i)
@@ -289,7 +308,7 @@ internal class SavannaEcotone : EcotoneBase
 			int treeDistance = Math.Abs(i - treeSpacing.OrderBy(x => Math.Abs(i - x)).FirstOrDefault());
 			if (treeDistance > minimumTreeSpace)
 			{
-				if (WorldGen.genRand.NextBool(treeOdds) && GrowTree(i, j))
+				if (WorldGen.genRand.NextBool(treeOdds) && !baobabArea.Contains(i, j) && GrowTree(i, j))
 				{
 					treeSpacing.Add(i);
 					treeOdds = chanceMax;
@@ -299,21 +318,6 @@ internal class SavannaEcotone : EcotoneBase
 					treeOdds = Math.Max(treeOdds - 1, 2); //Decrease the odds every time a tree fails to generate
 				}
 			}
-		}
-	}
-
-	private void GrowBaobab(GenerationProgress progress, GameConfiguration configuration)
-	{
-		if (SavannaArea.IsEmpty)
-			return;
-
-		if (WateringHoleGen.Area.IsEmpty || WorldGen.genRand.NextBool(3) && SavannaArea.Width > 150)
-		{
-			if (IterateGen(50, BaobabTreeGen, out int i, out int j, "Great Baobab"))
-				BaobabGen.GenerateBaobab(i, j);
-
-			static bool BaobabTreeGen(int i, int j)
-				=> Main.tile[i, j].TileType == ModContent.TileType<SavannaGrass>() && Main.tile[i, j - 1].LiquidAmount < 50;
 		}
 	}
 
@@ -461,6 +465,12 @@ internal class SavannaEcotone : EcotoneBase
 
 			return false;
 		}
+	}
+
+	private static bool OnBaobab(int i, int j)
+	{
+		int belowType = Main.tile[i, j + 1].TileType;
+		return belowType == ModContent.TileType<LivingBaobab>() || belowType == ModContent.TileType<LivingBaobabLeaf>();
 	}
 
 	private static float GetBaseLerpFactorForX(int startX, int endX, int xOffsetForFactor, int x)
