@@ -1,4 +1,5 @@
 using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Vanilla.Items.Food;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace SpiritReforged.Content.Savanna.NPCs;
 
 [SpawnPack(2, 3)]
 [AutoloadBanner]
+[AutoloadGlowmask("255,255,255", false)]
 public class Hyena : ModNPC
 {
 	private enum State : byte
@@ -67,6 +69,12 @@ public class Hyena : ModNPC
 
 		bool swimming = TrySwim();
 		TryJump();
+
+		if (!wounded && Main.bloodMoon) //Permanently hate players during blood moons
+		{
+			isAngry = true;
+			focus = TargetSearchFlag.Players;
+		}
 
 		if (wounded)
 		{
@@ -279,12 +287,12 @@ public class Hyena : ModNPC
 	{
 		if (NPC.HasPlayerTarget && (Main.player[NPC.target].statLife < Main.player[NPC.target].statLifeMax2 * .25f || focus is TargetSearchFlag.Players && isAngry))
 		{
-			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(Main.player[NPC.target].Center.X - NPC.Center.X) * 4.8f, .05f); //Chase the player target
+			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(Main.player[NPC.target].Center.X - NPC.Center.X) * 4.8f, .03f); //Chase the player target
 			return true;
 		}
 		else if (search.FoundNPC && (search.NearestNPC.life < search.NearestNPC.lifeMax * .25f || focus is TargetSearchFlag.NPCs && isAngry))
 		{
-			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(search.NearestNPC.Center.X - NPC.Center.X) * 4.8f, .05f); //Chase the npc target
+			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(search.NearestNPC.Center.X - NPC.Center.X) * 4.8f, .03f); //Chase the npc target
 			return true;
 		}
 
@@ -384,12 +392,15 @@ public class Hyena : ModNPC
 
 		Main.EntitySpriteDraw(texture, position, source, color, NPC.rotation, source.Size() / 2, NPC.scale, effects);
 
+		if (isAngry && Main.bloodMoon)
+			Main.EntitySpriteDraw(GlowmaskNPC.NpcIdToGlowmask[Type].Glowmask.Value, position, source, NPC.GetAlpha(Color.Red), NPC.rotation, source.Size() / 2, NPC.scale, effects);
+
 		return false;
 	}
 
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
-		if (spawnInfo.Player.InModBiome<Biome.SavannaBiome>() && !spawnInfo.Water)
+		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Water)
 			return .22f;
 
 		return 0;

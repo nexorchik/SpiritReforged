@@ -42,7 +42,17 @@ public class SavannaGlobalNPC : GlobalNPC
 	{
 		if (spawnInfo.Player.InModBiome<Biome.SavannaBiome>() && !spawnInfo.Invasion)
 		{
-			pool.Remove(0); //Remove all vanilla spawns
+			if (!Main.bloodMoon)
+				pool.Remove(0); //Remove all vanilla spawns
+
+			if (Main.raining)
+			{
+				if (!Main.dayTime)
+					pool[NPCID.ZombieRaincoat] = .15f;
+
+				pool[NPCID.FlyingFish] = Main.dayTime ? .25f : .18f;
+				pool[NPCID.UmbrellaSlime] = Main.dayTime ? .17f : .08f;
+			}
 
 			if (!Main.dayTime)
 			{
