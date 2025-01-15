@@ -36,7 +36,7 @@ public class ButterflyCritter : ModNPC
 		AIType = NPCID.Firefly;
 	}
 
-	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Surface");
 
 	public override bool PreAI()
 	{
