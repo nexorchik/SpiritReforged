@@ -34,7 +34,7 @@ internal class BackpackUIState : AutoUIState
 	{
 		orig(self);
 
-		if (Main.playerInventory && UISystem.GetState<BackpackUIState>().UserInterface.CurrentState is null)
+		if (Main.playerInventory)
 			UISystem.SetActive<BackpackUIState>();
 	}
 

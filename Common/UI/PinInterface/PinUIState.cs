@@ -36,8 +36,7 @@ internal class PinUIState : AutoUIState
 
 	private void ForceDraw(Vector2 arg1, float arg2) //By default, UI doesn't draw when the fullscreen map is open
 	{
-		if (UISystem.GetState<PinUIState>().UserInterface.CurrentState is null)
-			UISystem.SetActive<PinUIState>();
+		UISystem.SetActive<PinUIState>();
 
 		int oldMouseX = Main.mouseX;
 		int oldMouseY = Main.mouseY;
@@ -46,7 +45,7 @@ internal class PinUIState : AutoUIState
 
 		Main.spriteBatch.Begin(default, default, default, default, default, default, Main.UIScaleMatrix);
 
-		if (UISystem.GetState<PinUIState>().UserInterface.CurrentState is not null)
+		if (UISystem.IsActive<PinUIState>())
 		{
 			UserInterface.CurrentState.Update(new GameTime());
 			UserInterface.CurrentState.Draw(Main.spriteBatch);
