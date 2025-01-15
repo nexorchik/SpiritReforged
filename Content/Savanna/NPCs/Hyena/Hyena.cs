@@ -4,6 +4,7 @@ using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Vanilla.Food;
 using System.Linq;
 using Terraria.Audio;
+using Terraria.GameContent.Bestiary;
 using static Terraria.Utilities.NPCUtils;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Hyena;
@@ -59,6 +60,8 @@ public class Hyena : ModNPC
 		AIType = -1;
 		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
+
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
 	public override void AI()
 	{

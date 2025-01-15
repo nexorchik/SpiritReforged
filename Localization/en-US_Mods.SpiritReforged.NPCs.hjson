@@ -90,11 +90,30 @@ Sparrow: {
 	DisplayName: Sparrow
 }
 
-SafariZombie.DisplayName: "{$NPCName.Zombie}"
-TumbleZombie.DisplayName: "{$NPCName.Zombie}"
-Hyena.DisplayName: Hyena
-Ostrich.DisplayName: Ostrich
-ButterflyCritter.DisplayName: Ethereal Butterfly
+SafariZombie: {
+	DisplayName: "{$NPCName.Zombie}"
+	Entry: On the bright side, if you're already undead, snakes can't do anything to you.
+}
+
+TumbleZombie: {
+	DisplayName: "{$NPCName.Zombie}"
+	Entry: Under the undead facade, under all that blood and branch and bile, there lies a heartwarming story of a Tumbler and a Zombie becoming friends in the most unlikely of situations.
+}
+
+Hyena: {
+	DisplayName: Hyena
+	Entry: A mischevious sort, the Hyena hunt in packs, aiming for weak wildlife. With Terrarians, however, they run rather than confront.
+}
+
+Ostrich: {
+	DisplayName: Ostrich
+	Entry: While not one to take flight, the Ostrich enjoys deceptively fast land speeds regardless. Thankfully, they use that to scrounge for worms instead of for you.
+}
+
+ButterflyCritter: {
+	DisplayName: Ethereal Butterfly
+	Entry: Perhaps, just perhaps, if you look up, these are among the stars as well. They flit here and there, a dance as ephemeral as their bodies.
+}
 
 SavannaJungleSlime: {
 	DisplayName: Jungle Slime
@@ -210,4 +229,6 @@ Cartographer: {
 			FirstPin: Oh! And remember, you can always access your pin collection from the bottom of your map. Just be careful with the maps!
 		}
 	}
+
+	Entry: A peculiar mix of passionate explorer and abysmally clumsy, the Cartographer goes to places that...well, almost no one's explored. Sometimes, it's about being safe, not novel.
 }
