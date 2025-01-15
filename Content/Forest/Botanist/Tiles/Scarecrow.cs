@@ -33,14 +33,20 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, 1, 0);
 		var entity = ModContent.GetInstance<ScarecrowTileEntity>();
 		TileObjectData.newTile.HookPostPlaceMyPlayer = new PlacementHook(entity.Hook_AfterPlacement, -1, 0, false);
+		TileObjectData.newTile.Direction = TileObjectDirection.PlaceLeft;
+		TileObjectData.newTile.StyleHorizontal = true;
+
+		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
+		TileObjectData.newAlternate.Direction = TileObjectDirection.PlaceRight;
+		TileObjectData.addAlternate(1);
 		TileObjectData.addTile(Type);
 
+		RegisterItemDrop(Mod.Find<ModItem>(Name + "Item").Type); //Register for all alternative styles
 		AddMapEntry(new Color(21, 92, 19));
 		DustType = DustID.Hay;
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
-
 	public override void KillMultiTile(int i, int j, int frameX, int frameY) => ModContent.GetInstance<ScarecrowTileEntity>().Kill(i, j);
 
 	public override IEnumerable<Item> GetItemDrops(int i, int j)
@@ -49,7 +55,12 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 
 		var entity = ScarecrowTileEntity.GetMe(i, j);
 		if (entity is not null && entity.Hat is not null)
-			drops = drops.Concat([entity.Hat.Clone()]);
+		{
+			if (drops is null) //Don't concat if drops are null
+				drops = [entity.Hat.Clone()];
+			else
+				drops = drops.Concat([entity.Hat.Clone()]);
+		}
 
 		return drops;
 	}
@@ -152,15 +163,19 @@ public class ScarecrowTileEntity : ModTileEntity
 		//The base of the scarecrow
 		var origin = new Vector2(8, 16 * 3);
 		float rotation = 0;
+		int direction = -1;
 
 		if (TileLoader.GetTile(ModContent.TileType<Scarecrow>()) is ISwayTile sway)
 			rotation = sway.Physics(Position) * .12f;
 
-		var position = new Vector2(Position.X * 16, Position.Y * 16) + new Vector2(-3, 32f * Math.Max(rotation, 0) - 6);
-		if (Math.Abs(rotation) > .015f)
+		if (TileObjectData.GetTileStyle(Framing.GetTileSafely(Position)) == 1)
+			direction = 1;
+
+		var position = new Vector2(Position.X * 16, Position.Y * 16) + new Vector2((direction == -1) ? -1 : -3, 32f * Math.Max(rotation, 0) - 6);
+		if (Math.Abs(rotation) > .012f)
 			position.Y++;
 
-		dummy.direction = 1;
+		dummy.direction = direction;
 		dummy.Male = true;
 		dummy.isDisplayDollOrInanimate = true;
 		dummy.isHatRackDoll = true;
@@ -245,9 +260,7 @@ public class ScarecrowTileEntity : ModTileEntity
 	}
 
 	public override void OnNetPlace() => NetMessage.SendData(MessageID.TileEntitySharing, number: ID, number2: Position.X, number3: Position.Y);
-
 	public override void NetSend(BinaryWriter writer) => ItemIO.Send(Hat, writer);
-
 	public override void NetReceive(BinaryReader reader) => Hat = ItemIO.Receive(reader);
 
 	public override void SaveData(TagCompound tag)
