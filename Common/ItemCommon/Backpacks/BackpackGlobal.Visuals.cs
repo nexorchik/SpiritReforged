@@ -2,8 +2,8 @@
 
 namespace SpiritReforged.Common.ItemCommon.Backpacks;
 
-/// <summary> Controls backpack animations when attempting to move them. </summary>
-internal class BackpackAnimation : GlobalItem
+/// <summary> Controls backpack animations when attempting to move them, and inventory visuals when full. </summary>
+internal partial class BackpackGlobal : GlobalItem
 {
 	public override bool InstancePerEntity => true;
 

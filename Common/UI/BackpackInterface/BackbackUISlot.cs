@@ -94,7 +94,7 @@ public class BackpackUISlot : UIElement
 	{
 		if (!currentItem.IsAir && currentItem.ModItem is BackpackItem backpack && backpack.items.Any(x => !x.IsAir))
 		{
-			if (currentItem.TryGetGlobalItem(out BackpackAnimation anim))
+			if (currentItem.TryGetGlobalItem(out BackpackGlobal anim))
 				anim.StartAnimation();
 
 			return false;
