@@ -13,15 +13,19 @@ internal class TileSwaySystem : ModSystem
 	public double GrassWindCounter { get; private set; }
 	public double SunflowerWindCounter { get; private set; }
 
-	public static bool DoesSway(int type, out int counter)
+	/// <summary> Checks whether this tile type is an <see cref="ISwayTile"/> and outputs the counter corresponding to <see cref="ISwayTile.Style"/>. </summary>
+	/// <param name="type"> The tile type. </param>
+	/// <param name="counter"> The counter type. </param>
+	/// <returns> Whether this tile sways (implements ISwayTile) </returns>
+	public static bool DoesSway(int type, out TileCounterType counter)
 	{
 		if (tileSwayTypes.TryGetValue(type, out int value))
 		{
-			counter = value;
+			counter = (TileCounterType)value;
 			return true;
 		}
 
-		counter = -1;
+		counter = (TileCounterType)(-1);
 		return false;
 	}
 
