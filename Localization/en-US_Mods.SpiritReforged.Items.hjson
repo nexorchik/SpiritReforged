@@ -1210,3 +1210,8 @@ TornMapPiece: {
 	DisplayName: Torn Map Piece
 	Tooltip: Reveals the surrounding map
 }
+
+SavannaPylonItem: {
+	DisplayName: Savanna Pylon
+	Tooltip: "{$CommonItemTooltip.TeleportationPylon}"
+}

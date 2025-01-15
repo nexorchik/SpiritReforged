@@ -2,7 +2,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.ObjectInteractions;
 
-namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
+namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
 public abstract class DresserTile : FurnitureTile
 {

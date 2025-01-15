@@ -1,9 +1,9 @@
-﻿using Terraria.DataStructures;
+using Terraria.DataStructures;
 using Terraria.GameContent.ObjectInteractions;
 
-namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
+namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
-public abstract class ChairTile : FurnitureTile
+public abstract class ToiletTile : FurnitureTile
 {
 	private static bool WithinRange(int i, int j, Player player) => player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance);
 
@@ -13,8 +13,8 @@ public abstract class ChairTile : FurnitureTile
 	{
 		if (CoreMaterial != ItemID.None)
 			item.CreateRecipe()
-			.AddIngredient(CoreMaterial, 4)
-			.AddTile(TileID.WorkBenches)
+			.AddIngredient(CoreMaterial, 6)
+			.AddTile(TileID.Sawmill)
 			.Register();
 	}
 
@@ -22,7 +22,6 @@ public abstract class ChairTile : FurnitureTile
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
-		Main.tileLighted[Type] = true;
 		Main.tileLavaDeath[Type] = true;
 
 		TileID.Sets.HasOutlines[Type] = true;
@@ -35,15 +34,13 @@ public abstract class ChairTile : FurnitureTile
 		TileObjectData.newTile.Origin = new Point16(0, 1);
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
 		TileObjectData.newTile.Direction = TileObjectDirection.PlaceLeft;
-
 		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
 		TileObjectData.newAlternate.Direction = TileObjectDirection.PlaceRight;
 		TileObjectData.addAlternate(1);
 		TileObjectData.addTile(Type);
 
-		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsChair);
-		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Chair"));
-		AdjTiles = [TileID.Chairs];
+		AddMapEntry(new Color(100, 100, 60), Language.GetText("MapObject.Toilet"));
+		AdjTiles = [TileID.Toilets];
 		DustType = -1;
 	}
 
@@ -71,10 +68,29 @@ public abstract class ChairTile : FurnitureTile
 			player.cursorItemIconID = ModItem.Type;
 			player.cursorItemIconEnabled = true;
 
-			if (Framing.GetTileSafely(i, j).TileFrameX / TileObjectData.GetTileData(Type, 0).CoordinateFullWidth < 1)
+			if (Framing.GetTileSafely(i, j).TileFrameX / 18 < 1)
 				player.cursorItemIconReversed = true;
 		}
 	}
 
-	public override void ModifySittingTargetInfo(int i, int j, ref TileRestingInfo info) => info.TargetDirection = (Framing.GetTileSafely(i, j).TileFrameX == 0) ? -1 : 1;
+	public override void ModifySittingTargetInfo(int i, int j, ref TileRestingInfo info)
+	{
+		info.TargetDirection = (Framing.GetTileSafely(i, j).TileFrameX == 0) ? -1 : 1;
+		info.ExtraInfo.IsAToilet = true;
+	}
+
+	public override void HitWire(int i, int j)
+	{
+		var tile = Framing.GetTileSafely(i, j);
+		j -= tile.TileFrameY % (18 * 2) / 18;
+
+		Wiring.SkipWire(i, j);
+		Wiring.SkipWire(i, j + 1);
+
+		if (Wiring.CheckMech(i, j, 60))
+		{
+			var position = new Vector2(i, j) * 16 + new Vector2(8, 12);
+			Projectile.NewProjectile(Wiring.GetProjectileSource(i, j), position, Vector2.Zero, ProjectileID.ToiletEffect, 0, 0, Main.myPlayer);
+		}
+	}
 }

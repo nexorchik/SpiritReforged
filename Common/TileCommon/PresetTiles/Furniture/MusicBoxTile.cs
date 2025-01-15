@@ -2,7 +2,7 @@
 using Terraria.GameContent.Drawing;
 using Terraria.Utilities;
 
-namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
+namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
 //Though this is technically a furniture helper, don't use FurnitureTile because it autoloads an item
 public abstract class MusicBoxTile : ModTile

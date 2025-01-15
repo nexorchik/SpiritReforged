@@ -1,4 +1,4 @@
-using SpiritReforged.Common.TileCommon.FurnitureTiles;
+using SpiritReforged.Common.TileCommon.PresetTiles;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles.Furniture;
