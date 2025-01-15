@@ -3,13 +3,6 @@ Crinoid: {
 	Entry: These curious critters are closely related to starfish. They feed off of whatever sinks down to the bottom of the sea.
 }
 
-Floater: {
-	DisplayName: Luminous Floater
-	Entry: Below the waves of the elusive glowing ocean, lies hundreds of small, glowing jellyfish, dancing among the luminescent tide.
-}
-
-FloaterGroup.DisplayName: Luminous Floater Group
-
 Pelican: {
 	DisplayName: Pelican
 	Entry: A large sea bird with a special beak to hold its prey. Startling it could cause the bird to drop what it's caught, but that would be mean.
@@ -60,6 +53,11 @@ SailorZombie: {
 	DisplayName: Zombie
 }
 
+TridentZombie: {
+	Entry: Their trident clearly didn't do them much good in life. It's still quite pointy, so watch out.
+	DisplayName: Zombie
+}
+
 Killifish: {
 	DisplayName: Killifish
 	Entry: True to their name, Killifish are known for their one defining trait, getting killed. Their gorgeous, iridescent scales are there too.
@@ -92,7 +90,6 @@ Sparrow: {
 	DisplayName: Sparrow
 }
 
-TridentZombie.DisplayName: "{$NPCName.Zombie}"
 SafariZombie.DisplayName: "{$NPCName.Zombie}"
 TumbleZombie.DisplayName: "{$NPCName.Zombie}"
 Hyena.DisplayName: Hyena
