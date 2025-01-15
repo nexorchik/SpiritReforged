@@ -20,7 +20,7 @@ public class SavannaJungleSlime : ModNPC
 		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
 
-	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Sandstorm");
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Jungle");
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
