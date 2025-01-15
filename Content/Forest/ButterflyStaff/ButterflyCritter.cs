@@ -1,4 +1,5 @@
 using Terraria.Audio;
+using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Forest.ButterflyStaff;
 
@@ -34,6 +35,8 @@ public class ButterflyCritter : ModNPC
 
 		AIType = NPCID.Firefly;
 	}
+
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
 	public override bool PreAI()
 	{

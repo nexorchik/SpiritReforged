@@ -7,6 +7,7 @@ using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Items.Food;
 using SpiritReforged.Content.Vanilla.Food;
 using Terraria.Audio;
+using Terraria.GameContent.Bestiary;
 using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Ostrich;
@@ -64,6 +65,8 @@ public class Ostrich : ModNPC
 		AIType = -1;
 		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
+
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
 	public override void AI()
 	{
