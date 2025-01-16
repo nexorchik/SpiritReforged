@@ -31,7 +31,7 @@ internal class SafekeeperDiscovery : Discovery
 			if (Main.tile[x, y - 1].TileType != TileID.Tombstones)
 				continue;
 
-			Sign.TextSign(Sign.ReadSign(x, y - 1), Language.GetTextValue("SpiritReforged.Misc.GraveText"));
+			Sign.TextSign(Sign.ReadSign(x, y - 1), Language.GetTextValue("Mods.SpiritReforged.Misc.GraveText"));
 
 			WorldGen.PlaceTile(x - 1, y, TileID.Grass, true, true);
 			WorldGen.PlaceTile(x - 1, y - 1, ModContent.TileType<SkeletonHand>(), true, true, style: WorldGen.genRand.Next(3));
