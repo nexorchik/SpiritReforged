@@ -6,9 +6,10 @@ namespace SpiritReforged.Common.Visuals.CustomText;
 
 internal class CustomTextHandler : ILoadable
 {
-	public bool HasTag => !string.IsNullOrEmpty(_currentTag);
+	public bool HasTag => _currentTag is not null;
 
 	private static readonly HashSet<CustomText> customText = [];
+	private bool _wasSignHover;
 	private string _currentTag;
 
 	public void Load(Mod mod)
@@ -33,7 +34,11 @@ internal class CustomTextHandler : ILoadable
 			if (sign != null)
 			{
 				string oldText = sign.text;
-				_currentTag = VerifyTag(oldText);
+
+				if (!_wasSignHover)
+					VerifyTag(oldText);
+
+				_wasSignHover = true;
 
 				if (HasTag)
 				{
@@ -47,21 +52,67 @@ internal class CustomTextHandler : ILoadable
 			}
 		}
 
+		_wasSignHover = false;
 		orig(self);
 	}
 
-	private static string VerifyTag(string signText)
+	/// <summary> Verifies whether the given text contains any <see cref="CustomText.Key"/>s and assigns <see cref="_currentTag"/>. <para/>
+	/// Additionally parses parameter data corresponding to the current <see cref="customText"/>. </summary>
+	/// <param name="signText"> The sign text. </param>
+	private void VerifyTag(string signText)
 	{
+		const char close = '>';
+		const char paramsIndicator = ':';
+
 		foreach (var sig in customText)
 		{
-			string key = sig.Key;
+			string key = $"<{sig.Key}";
 			int length = Math.Min(key.Length, signText.Length);
 
-			if (signText.IndexOf(key, 0, length) == 0)
-				return key;
+			if (signText.IndexOf(key, 0, length) == 0 && signText.Contains(close))
+			{
+				int startIndex = signText.IndexOf(paramsIndicator);
+
+				if (startIndex == -1) //No parameter indicator
+				{
+					_currentTag = key + close;
+					GetText(_currentTag)?.ParseParams(null);
+				}
+				else //Appears to have parameters; try to parse them
+				{
+					string paramsText = string.Empty;
+					for (int i = startIndex + 1; i < signText.Length; i++)
+					{
+						if (signText[i] == close)
+							break;
+
+						paramsText += signText[i];
+					}
+
+					string currentTag = key + paramsIndicator + paramsText + close;
+					if (GetText(currentTag)?.ParseParams(paramsText) is true) //Whether parsing was actually successful according to this CustomText
+						_currentTag = currentTag;
+					else
+						_currentTag = null;
+				}
+
+				return;
+			}
 		}
 
-		return null;
+		_currentTag = null;
+	}
+
+	private static CustomText GetText(string tag)
+	{
+		try
+		{
+			return customText.Where(x => tag.Contains(x.Key)).First();
+		}
+		catch
+		{
+			return null;
+		}
 	}
 
 	private void ModifySignHover(ILContext il)
@@ -85,7 +136,7 @@ internal class CustomTextHandler : ILoadable
 	{
 		if (HasTag)
 		{
-			string[] array = Utils.WordwrapString(Main.sign[Main.signHover].text, FontAssets.MouseText.Value, 460, 10, out int lineAmount);
+			string[] array = Utils.WordwrapString(Main.sign[Main.signHover].text, FontAssets.MouseText.Value, 460, 10, out int lineAmount); //Abbreviated vanilla code
 			lineAmount++;
 
 			Main.spriteBatch.End();
@@ -114,8 +165,7 @@ internal class CustomTextHandler : ILoadable
 
 			vector = Vector2.Min(vector, new Vector2(screenSize.X - width, screenSize.Y - 30 * lineAmount));
 			var rectangle = new Rectangle((int)vector.X - 10, (int)vector.Y - 5, (int)width + 20, 30 * lineAmount + 7);
-
-			customText.Where(x => x.Key == _currentTag).FirstOrDefault().Draw(rectangle, array, lineAmount); //Draw our custom text
+			GetText(_currentTag)?.Draw(rectangle, array, lineAmount); //Draw our custom text
 
 			Main.mouseText = true;
 			return false;
@@ -147,7 +197,7 @@ internal class CustomTextHandler : ILoadable
 	private void VerifyEditTag(On_Sign.orig_TextSign orig, int i, string text)
 	{
 		orig(i, text);
-		_currentTag = VerifyTag(text);
+		VerifyTag(text);
 	}
 
 	public void Unload() { }

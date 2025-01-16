@@ -7,6 +7,11 @@ internal abstract class CustomText
 	/// <summary> The beginning text key required for <see cref="Draw"/> to be called. </summary>
 	public abstract string Key { get; }
 
+	/// <summary> Enables optional customization based on the given string. </summary>
+	/// <param name="parameters"> The text provided after <see cref="Key"/> and separated by ':'. Can be parsed in any way to change how the text behaves. </param>
+	/// <returns> Whether the parameters were successfully parsed. </returns>
+	public virtual bool ParseParams(string parameters) => false;
+
 	public virtual void Draw(Rectangle panel, string[] text, int numLines)
 	{
 		var color = Main.MouseTextColorReal;
