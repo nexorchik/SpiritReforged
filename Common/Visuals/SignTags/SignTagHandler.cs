@@ -4,11 +4,11 @@ using Terraria.GameInput;
 
 namespace SpiritReforged.Common.Visuals.CustomText;
 
-internal class CustomTextHandler : ILoadable
+internal class SignTagHandler : ILoadable
 {
 	public bool HasTag => _currentTag is not null;
 
-	private static readonly HashSet<CustomText> customText = [];
+	private static readonly HashSet<SignTag> customTags = [];
 	private bool _wasSignHover;
 	private string _currentTag;
 
@@ -16,8 +16,8 @@ internal class CustomTextHandler : ILoadable
 	{
 		foreach (var type in GetType().Assembly.GetTypes())
 		{
-			if (type.IsSubclassOf(typeof(CustomText)) && !type.IsAbstract)
-				customText.Add((CustomText)Activator.CreateInstance(type));
+			if (type.IsSubclassOf(typeof(SignTag)) && !type.IsAbstract)
+				customTags.Add((SignTag)Activator.CreateInstance(type));
 		}
 
 		On_Main.DrawMouseOver += TrackSignText;
@@ -42,7 +42,10 @@ internal class CustomTextHandler : ILoadable
 
 				if (HasTag)
 				{
-					sign.text = sign.text.Remove(0, _currentTag.Length); //Remove the special tag before drawing
+					if (sign.text.Length >= _currentTag.Length)
+						sign.text = sign.text.Remove(0, _currentTag.Length); //Remove the special tag before drawing
+					else
+						_currentTag = null; //The current tag is somehow invalid
 
 					orig(self);
 
@@ -56,15 +59,27 @@ internal class CustomTextHandler : ILoadable
 		orig(self);
 	}
 
-	/// <summary> Verifies whether the given text contains any <see cref="CustomText.Key"/>s and assigns <see cref="_currentTag"/>. <para/>
-	/// Additionally parses parameter data corresponding to the current <see cref="customText"/>. </summary>
+	private static SignTag GetText(string tag)
+	{
+		try
+		{
+			return customTags.Where(x => tag.Contains(x.Key)).First();
+		}
+		catch
+		{
+			return null;
+		}
+	}
+
+	/// <summary> Verifies whether the given text contains any <see cref="SignTag.Key"/>s and assigns <see cref="_currentTag"/>. <para/>
+	/// Additionally parses parameter data corresponding to the current <see cref="customTags"/>. </summary>
 	/// <param name="signText"> The sign text. </param>
 	private void VerifyTag(string signText)
 	{
 		const char close = '>';
 		const char paramsIndicator = ':';
 
-		foreach (var sig in customText)
+		foreach (var sig in customTags)
 		{
 			string key = $"<{sig.Key}";
 			int length = Math.Min(key.Length, signText.Length);
@@ -76,7 +91,7 @@ internal class CustomTextHandler : ILoadable
 				if (startIndex == -1) //No parameter indicator
 				{
 					_currentTag = key + close;
-					GetText(_currentTag)?.ParseParams(null);
+					GetText(_currentTag)?.AddParameters(null);
 				}
 				else //Appears to have parameters; try to parse them
 				{
@@ -90,7 +105,7 @@ internal class CustomTextHandler : ILoadable
 					}
 
 					string currentTag = key + paramsIndicator + paramsText + close;
-					if (GetText(currentTag)?.ParseParams(paramsText) is true) //Whether parsing was actually successful according to this CustomText
+					if (GetText(currentTag)?.AddParameters(paramsText) is true) //Whether parsing was actually successful according to this CustomText
 						_currentTag = currentTag;
 					else
 						_currentTag = null;
@@ -101,18 +116,6 @@ internal class CustomTextHandler : ILoadable
 		}
 
 		_currentTag = null;
-	}
-
-	private static CustomText GetText(string tag)
-	{
-		try
-		{
-			return customText.Where(x => tag.Contains(x.Key)).First();
-		}
-		catch
-		{
-			return null;
-		}
 	}
 
 	private void ModifySignHover(ILContext il)
@@ -130,13 +133,13 @@ internal class CustomTextHandler : ILoadable
 		c.EmitBrfalse(label);
 	}
 
-	/// <summary> Calculates custom sign text drawing and passes the data into the <see cref="customText"/> corresponding to <see cref="_currentTag"/>. </summary>
+	/// <summary> Calculates custom sign text drawing and passes the data into the <see cref="customTags"/> corresponding to <see cref="_currentTag"/>. </summary>
 	/// <returns> Whether to draw normal sign text. </returns>
 	private bool CheckHasTag()
 	{
-		if (HasTag)
+		if (HasTag) //Abbreviated vanilla code
 		{
-			string[] array = Utils.WordwrapString(Main.sign[Main.signHover].text, FontAssets.MouseText.Value, 460, 10, out int lineAmount); //Abbreviated vanilla code
+			string[] array = Utils.WordwrapString(Main.sign[Main.signHover].text, FontAssets.MouseText.Value, 460, 10, out int lineAmount);
 			lineAmount++;
 
 			Main.spriteBatch.End();

@@ -2,25 +2,21 @@
 
 namespace SpiritReforged.Common.Visuals.CustomText;
 
-internal class ColorfulText : CustomText
+internal class ColorfulTag : SignTag
 {
 	private Color _color;
 
 	public override string Key => "colorful";
 
-	public override bool ParseParams(string parameters)
+	protected override void Reset() => _color = default;
+
+	protected override bool ParseParams(string[] parameters)
 	{
-		_color = default;
-
-		if (parameters is null)
-			return false;
-
-		string[] values = parameters.Split(',');
 		Color color = new();
 
-		for (int i = 0; i < values.Length; i++)
+		for (int i = 0; i < parameters.Length; i++)
 		{
-			if (!int.TryParse(values[i], out int type))
+			if (!int.TryParse(parameters[i], out int type))
 				return false;
 
 			if (i == 0)
@@ -28,9 +24,9 @@ internal class ColorfulText : CustomText
 			else if (i == 1)
 				color.G = (byte)type;
 			else if (i == 2)
-				color.B = (byte)type; //Doesn't modify Color.A
+				color.B = (byte)type;
 			else
-				break;
+				break; //Doesn't modify Color.A
 		}
 
 		_color = color;

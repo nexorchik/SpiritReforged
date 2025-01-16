@@ -1,25 +1,24 @@
 ﻿namespace SpiritReforged.Common.Visuals.CustomText;
 
-internal class WavyText : CustomText
+internal class WavyTag : SignTag
 {
 	private int _strength, _length;
 
 	public override string Key => "wavy";
 
-	public override bool ParseParams(string parameters)
+	protected override void Reset()
 	{
 		_strength = 12;
 		_length = 200;
+	}
 
-		if (parameters is null)
-			return false;
-
-		string[] values = parameters.Split(',');
+	protected override bool ParseParams(string[] parameters)
+	{
 		int strength = 0, length = 0;
 
-		for (int i = 0; i < values.Length; i++)
+		for (int i = 0; i < parameters.Length; i++)
 		{
-			if (!int.TryParse(values[i], out int type))
+			if (!int.TryParse(parameters[i], out int type))
 				return false;
 
 			if (i == 0)
@@ -53,7 +52,7 @@ internal class WavyText : CustomText
 		effect.Parameters["strength"].SetValue(.001f * _strength);
 		effect.Parameters["length"].SetValue(.001f * _length);
 
-		effect.CurrentTechnique.Passes[0].Apply();
+		effect.CurrentTechnique.Passes[0].Apply(); //Restarting the spritebatch is unecessary here
 
 		for (int line = 0; line < numLines; line++)
 			Utils.DrawBorderStringFourWay(Main.spriteBatch, FontAssets.MouseText.Value, text[line], textPosition.X, textPosition.Y + line * 30, color, Color.Black, Vector2.Zero);
