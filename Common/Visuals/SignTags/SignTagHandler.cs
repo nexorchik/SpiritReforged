@@ -1,14 +1,15 @@
 ﻿using MonoMod.Cil;
-using System.Linq;
 using Terraria.GameInput;
 
 namespace SpiritReforged.Common.Visuals.CustomText;
 
 internal class SignTagHandler : ILoadable
 {
+	private delegate void TagAction(SignTag tag);
+
 	public bool HasTag => _currentTag is not null;
 
-	private static readonly HashSet<SignTag> customTags = [];
+	private static readonly HashSet<SignTag> loadedTags = [];
 	private bool _wasSignHover;
 	private string _currentTag;
 
@@ -17,13 +18,14 @@ internal class SignTagHandler : ILoadable
 		foreach (var type in GetType().Assembly.GetTypes())
 		{
 			if (type.IsSubclassOf(typeof(SignTag)) && !type.IsAbstract)
-				customTags.Add((SignTag)Activator.CreateInstance(type));
+				loadedTags.Add((SignTag)Activator.CreateInstance(type));
 		}
 
 		On_Main.DrawMouseOver += TrackSignText;
 		IL_Main.DrawMouseOver += ModifySignHover;
 		On_Main.TextDisplayCache.PrepareCache += ModifySignMenu;
 		On_Sign.TextSign += VerifyEditTag;
+		On_Main.DrawInterface += ResetSignHover;
 	}
 
 	private void TrackSignText(On_Main.orig_DrawMouseOver orig, Main self)
@@ -35,10 +37,8 @@ internal class SignTagHandler : ILoadable
 			{
 				string oldText = sign.text;
 
-				if (!_wasSignHover)
-					VerifyTag(oldText);
-
-				_wasSignHover = true;
+				if (!_wasSignHover || Main.LocalPlayer.sign != -1)
+					VerifyTags(oldText);
 
 				if (HasTag)
 				{
@@ -55,67 +55,95 @@ internal class SignTagHandler : ILoadable
 			}
 		}
 
-		_wasSignHover = false;
 		orig(self);
 	}
 
-	private static SignTag GetText(string tag)
+	private static void GetText(string tag, TagAction action)
 	{
-		try
+		foreach (var loaded in loadedTags)
 		{
-			return customTags.Where(x => tag.Contains(x.Key)).First();
-		}
-		catch
-		{
-			return null;
+			if (tag.Contains(loaded.Key))
+				action?.Invoke(loaded);
 		}
 	}
 
 	/// <summary> Verifies whether the given text contains any <see cref="SignTag.Key"/>s and assigns <see cref="_currentTag"/>. <para/>
-	/// Additionally parses parameter data corresponding to the current <see cref="customTags"/>. </summary>
+	/// Additionally parses parameter data corresponding to the current <see cref="loadedTags"/>. </summary>
 	/// <param name="signText"> The sign text. </param>
-	private void VerifyTag(string signText)
+	private void VerifyTags(string signText)
 	{
 		const char close = '>';
 		const char paramsIndicator = ':';
 
-		foreach (var sig in customTags)
+		_currentTag = null; //Reset
+
+		while (true)
 		{
-			string key = $"<{sig.Key}";
-			int length = Math.Min(key.Length, signText.Length);
+			int fails = 0;
 
-			if (signText.IndexOf(key, 0, length) == 0 && signText.Contains(close))
+			foreach (var sig in loadedTags)
 			{
-				int startIndex = signText.IndexOf(paramsIndicator);
+				string key = $"<{sig.Key}";
+				int length = Math.Min(key.Length, signText.Length);
 
-				if (startIndex == -1) //No parameter indicator
+				if (StartIndex() < signText.Length - length && signText.IndexOf(key, StartIndex(), length) == StartIndex())
 				{
-					_currentTag = key + close;
-					GetText(_currentTag)?.AddParameters(null);
-				}
-				else //Appears to have parameters; try to parse them
-				{
-					string paramsText = string.Empty;
-					for (int i = startIndex + 1; i < signText.Length; i++)
+					string addTo = ProcessTag(key);
+
+					if (addTo is not null && (_currentTag + addTo).Length < signText.Length)
 					{
-						if (signText[i] == close)
-							break;
-
-						paramsText += signText[i];
+						_currentTag += addTo;
+						break; //Return to the previous loop and search for another tag
 					}
-
-					string currentTag = key + paramsIndicator + paramsText + close;
-					if (GetText(currentTag)?.AddParameters(paramsText) is true) //Whether parsing was actually successful according to this CustomText
-						_currentTag = currentTag;
-					else
-						_currentTag = null;
 				}
 
-				return;
+				fails++;
 			}
+
+			if (fails == loadedTags.Count)
+				break;
 		}
 
-		_currentTag = null;
+		string ProcessTag(string key)
+		{
+			int paramStartIndex = StartIndex() + key.Length;
+			string innerTag = null;
+
+			if (signText[paramStartIndex] != paramsIndicator) //No parameter indicator
+			{
+				innerTag = key + close;
+				if (signText.IndexOf(innerTag, StartIndex()) == -1) //Check for 'close'
+					return null;
+
+				GetText(innerTag, delegate (SignTag tag) { tag.AddParameters(null); });
+			}
+			else //Appears to have parameters; try to parse them
+			{
+				string paramsText = string.Empty;
+				for (int i = paramStartIndex + 1; i < signText.Length; i++)
+				{
+					if (signText[i] == close)
+						break;
+					paramsText += signText[i];
+				}
+
+				innerTag = key + paramsIndicator + paramsText + close;
+
+				bool isNull = false;
+				GetText(innerTag, delegate (SignTag tag)
+				{
+					if (tag.AddParameters(paramsText) is not true)
+						isNull = true;
+				});
+
+				if (isNull)
+					return null;
+			}
+
+			return innerTag;
+		}
+
+		int StartIndex() => _currentTag?.Length ?? 0;
 	}
 
 	private void ModifySignHover(ILContext il)
@@ -133,7 +161,7 @@ internal class SignTagHandler : ILoadable
 		c.EmitBrfalse(label);
 	}
 
-	/// <summary> Calculates custom sign text drawing and passes the data into the <see cref="customTags"/> corresponding to <see cref="_currentTag"/>. </summary>
+	/// <summary> Calculates custom sign text drawing and passes the data into the <see cref="loadedTags"/> corresponding to <see cref="_currentTag"/>. </summary>
 	/// <returns> Whether to draw normal sign text. </returns>
 	private bool CheckHasTag()
 	{
@@ -168,7 +196,27 @@ internal class SignTagHandler : ILoadable
 
 			vector = Vector2.Min(vector, new Vector2(screenSize.X - width, screenSize.Y - 30 * lineAmount));
 			var rectangle = new Rectangle((int)vector.X - 10, (int)vector.Y - 5, (int)width + 20, 30 * lineAmount + 7);
-			GetText(_currentTag)?.Draw(rectangle, array, lineAmount); //Draw our custom text
+			var color = Main.MouseTextColorReal;
+
+			if (Main.SettingsEnabled_OpaqueBoxBehindTooltips)
+			{
+				color = Color.Lerp(color, Color.White, 1);
+				Utils.DrawInvBG(Main.spriteBatch, rectangle, new Color(23, 25, 81, 255) * 0.925f * 0.85f);
+			}
+
+			bool skipDraw = false;
+			GetText(_currentTag, delegate (SignTag tag)
+			{
+				if (tag.Draw(rectangle, array, lineAmount, ref color) == true)
+					skipDraw = true;
+			});
+
+			if (!skipDraw)
+			{
+				var textPosition = new Vector2(rectangle.X + 10, rectangle.Y + 5);
+				for (int line = 0; line < lineAmount; line++)
+					Utils.DrawBorderStringFourWay(Main.spriteBatch, FontAssets.MouseText.Value, array[line], textPosition.X, textPosition.Y + line * 30, color, Color.Black, Vector2.Zero);
+			}
 
 			Main.mouseText = true;
 			return false;
@@ -184,10 +232,12 @@ internal class SignTagHandler : ILoadable
 	/// <param name="baseColor"> The color of the text. </param>
 	private void ModifySignMenu(On_Main.TextDisplayCache.orig_PrepareCache orig, object self, string text, Color baseColor)
 	{
-		if (HasTag && !Main.editSign)
+		if (HasTag && !Main.editSign && Main.LocalPlayer.sign != -1)
 		{
-			string oldText = text;
-			text = oldText.Remove(0, Math.Min(_currentTag.Length, oldText.Length));
+			if (_wasSignHover)
+				VerifyTags(text);
+
+			text = text.Remove(0, Math.Min(_currentTag.Length, text.Length));
 		}
 
 		orig(self, text, baseColor);
@@ -200,7 +250,13 @@ internal class SignTagHandler : ILoadable
 	private void VerifyEditTag(On_Sign.orig_TextSign orig, int i, string text)
 	{
 		orig(i, text);
-		VerifyTag(text);
+		VerifyTags(text);
+	}
+
+	private void ResetSignHover(On_Main.orig_DrawInterface orig, Main self, GameTime gameTime)
+	{
+		orig(self, gameTime);
+		_wasSignHover = Main.signHover != -1;
 	}
 
 	public void Unload() { }
