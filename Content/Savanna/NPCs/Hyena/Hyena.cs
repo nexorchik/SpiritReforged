@@ -25,7 +25,7 @@ public class Hyena : ModNPC
 		Walking
 	}
 
-	private static readonly int[] endFrames = [4, 2, 5, 5, 5, 13, 7];
+	private static readonly int[] endFrames = [4, 2, 5, 5, 5, 13, 8];
 	private const int drownTimeMax = 300;
 
 	private bool OnTransitionFrame => (int)NPC.frameCounter >= endFrames[AnimationState]; //Used to determine whether an animation is complete and can be looped or exited
