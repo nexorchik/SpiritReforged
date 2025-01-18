@@ -23,8 +23,8 @@ public class UIScrollingImage : UIElement
 	{
 		_timer += ScrollSpeed;
 
-		Vector2 pos = GetDimensions().Position();
-		spriteBatch.Draw(Scrolling.Value, pos, new Rectangle((int)_timer, 0, 80, 80), Color.White);
+		Vector2 pos = GetDimensions().Position().Floor();
+		spriteBatch.Draw(Scrolling.Value, pos + new Vector2(2, 2), new Rectangle((int)_timer, 0, 76, 76), Color.White);
 		spriteBatch.Draw(Border.Value, pos, Color.White);
 	}
 }

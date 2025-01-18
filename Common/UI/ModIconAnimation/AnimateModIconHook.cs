@@ -36,7 +36,7 @@ internal class AnimateModIconHook : ILoadable
 			element.RemoveChild(icon);
 
 			var tex = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("icon_animated", AssetRequestMode.ImmediateLoad);
-			var scroll = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("icon_animatedscroll", AssetRequestMode.ImmediateLoad);
+			var scroll = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("icon_scroll", AssetRequestMode.ImmediateLoad);
 
 			element.Append(new UIScrollingImage(tex, scroll, 0.3f));
 		}
