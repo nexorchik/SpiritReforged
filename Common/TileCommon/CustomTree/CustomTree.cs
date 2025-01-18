@@ -13,7 +13,6 @@ public abstract class CustomTree : ModTile
 	/// <summary> Controls growth height without the need to override <see cref="GenerateTree"/>. </summary>
 	public virtual int TreeHeight => WorldGen.genRand.Next(10, 21);
 
-	internal Asset<Texture2D> topsTexture, branchesTexture;
 	protected const int FrameSize = 22;
 	internal static readonly FastNoiseLite noise = new();
 
@@ -41,8 +40,10 @@ public abstract class CustomTree : ModTile
 			On_TileDrawing.DrawTrees += (On_TileDrawing.orig_DrawTrees orig, TileDrawing self) =>
 			{
 				orig(self);
+
 				foreach (Point16 p in drawPoints)
-					DrawTreeFoliage(p.X, p.Y, Main.spriteBatch);
+					if (Type == Main.tile[p].TileType)
+						DrawTreeFoliage(p.X, p.Y, Main.spriteBatch);
 
 				if (Main.drawToScreen)
 					drawPoints.Clear();
@@ -160,7 +161,7 @@ public abstract class CustomTree : ModTile
 		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeHelper.GetPalmTreeOffset(i, j);
 		float rotation = Main.instance.TilesRenderer.GetWindCycle(i, j, TileSwaySystem.Instance.TreeWindCounter) * .1f;
 
-		if (IsTreeTop(i, j) && topsTexture != null) //Draw tops
+		if (IsTreeTop(i, j) && TopTexture != null) //Draw tops
 		{
 			var source = TopTexture.Frame(3, sizeOffsetX: -2, sizeOffsetY: -2);
 			var origin = source.Bottom();
