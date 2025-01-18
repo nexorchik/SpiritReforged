@@ -1,4 +1,4 @@
-using SpiritReforged.Content.Vanilla.Items.Food;
+using SpiritReforged.Content.Vanilla.Food;
 using System.IO;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;

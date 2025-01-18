@@ -1,4 +1,4 @@
-using SpiritReforged.Content.Vanilla.Items.Food;
+using SpiritReforged.Content.Vanilla.Food;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Killifish;

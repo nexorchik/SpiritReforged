@@ -82,10 +82,11 @@ public class BoidManager : ModSystem
 		foreach (Boid fishflock in boids)
 			fishflock.Update();
 
-		Player player = Main.LocalPlayer;
-		const int spawnRate = 40;
+		var player = Main.LocalPlayer;
+		bool nearLure = player.GetModPlayer<OceanPlayer>().nearLure;
+		int spawnRate = nearLure ? 32 : 40;
 
-		if (player.ZoneBeach && Main.GameUpdateCount % spawnRate == spawnRate - 1 || Main.GameUpdateCount % spawnRate > spawnRate - 3 && player.GetModPlayer<OceanPlayer>().nearLure)
+		if ((player.ZoneBeach || nearLure) && Main.GameUpdateCount % spawnRate == 0)
 		{
 			var weightedBoid = new WeightedRandom<Boid>();
 			for (int i = 0; i < boids.Count; i++)
@@ -95,11 +96,10 @@ public class BoidManager : ModSystem
 			}
 
 			const int fluff = 1000;
-			var spawnPos = player.Center + new Vector2((Main.screenWidth / 2 + fluff) * Main.rand.NextFloat(-1f, 1f), 
-				(Main.screenHeight / 2 + fluff) * Main.rand.NextFloat(-1f, 1f));
+			var spawnPos = player.Center + new Vector2((Main.screenWidth / 2 + fluff) * Main.rand.NextFloat(-1f, 1f), (Main.screenHeight / 2 + fluff) * Main.rand.NextFloat(-1f, 1f));
 
-			//Don't spawn on-screen
-			if (new Rectangle((int)Main.screenPosition.X, (int)Main.screenPosition.Y, Main.screenWidth, Main.screenHeight).Contains(spawnPos.ToPoint()))
+			//Don't spawn on-screen unless spawned by a lure
+			if (!nearLure && new Rectangle((int)Main.screenPosition.X, (int)Main.screenPosition.Y, Main.screenWidth, Main.screenHeight).Contains(spawnPos.ToPoint()))
 				return;
 
 			var tilePos = spawnPos.ToTileCoordinates();

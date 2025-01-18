@@ -9,7 +9,7 @@ using Terraria.DataStructures;
 namespace SpiritReforged.Content.Savanna.Tiles;
 
 [DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
-public class ElephantGrass : ModTile, ISwayInWind, IConvertibleTile
+public class ElephantGrass : ModTile, ISwayTile, IConvertibleTile
 {
 	protected virtual int[] TileAnchors => [ModContent.TileType<SavannaGrass>()];
 	protected virtual Color MapColor => new(104, 156, 70);
@@ -82,25 +82,23 @@ public class ElephantGrass : ModTile, ISwayInWind, IConvertibleTile
 		}
 	}
 
-	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
+	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
-		if (DrawOrderHandler.order == DrawOrderAttribute.Layer.OverPlayers)
+		if (DrawOrderSystem.Order == DrawOrderAttribute.Layer.OverPlayers)
 			DrawFront(i, j, spriteBatch, offset, rotation, origin);
 		else
 			DrawBack(i, j, spriteBatch, offset, rotation, origin);
 	}
 
-	public void ModifyRotation(int i, int j, ref float rotation) => rotation *= 1.9f;
-
-	public float SetWindSway(Point16 topLeft)
+	public float Physics(Point16 topLeft)
 	{
 		var data = TileObjectData.GetTileData(Framing.GetTileSafely(topLeft));
-		float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, TileSwaySystem.Instance.GrassWindCounter * 2.25f);
+		float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, ModContent.GetInstance<TileSwaySystem>().GrassWindCounter * 2.25f);
 
 		if (!WorldGen.InAPlaceWithWind(topLeft.X, topLeft.Y, data.Width, data.Height))
 			rotation = 0f;
 
-		return rotation + TileSwayHelper.GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 20, 3f, 1, true);
+		return (rotation + TileSwayHelper.GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 20, 3f, 1, true)) * 1.9f;
 	}
 
 	public virtual bool Convert(IEntitySource source, ConversionType type, int i, int j)

@@ -1,10 +1,14 @@
-﻿using SpiritReforged.Common.Visuals.Glowmasks;
+﻿using SpiritReforged.Common.TileCommon.TileSway;
+using SpiritReforged.Common.Visuals.Glowmasks;
+using static Terraria.GameContent.Drawing.TileDrawing;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
 
 [AutoloadGlowmask("Method:Content.Forest.Stargrass.Tiles.StargrassTile Glow")] //Use Stargrass' glow
-public class StargrassVine : ModTile
+public class StargrassVine : ModTile, ISwayTile
 {
+	public int Style => (int)TileCounterType.Vine;
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileBlockLight[Type] = false;
@@ -23,12 +27,4 @@ public class StargrassVine : ModTile
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
-
-	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
-	{
-		if (Main.LightingEveryFrame)
-			Main.instance.TilesRenderer.CrawlToTopOfVineAndAddSpecialPoint(j, i);
-
-		return false;
-	}
 }

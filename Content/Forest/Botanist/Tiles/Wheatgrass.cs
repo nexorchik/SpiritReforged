@@ -1,12 +1,10 @@
-﻿using SpiritReforged.Common.TileCommon;
-using SpiritReforged.Common.TileCommon.TileSway;
+﻿using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Forest.Stargrass.Tiles;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Botanist.Tiles;
 
-[DrawOrder(DrawOrderAttribute.Layer.NonSolid)]
-public class Wheatgrass : ModTile, ISwayInWind
+public class Wheatgrass : ModTile, ISwayTile
 {
 	public override void SetStaticDefaults()
 	{
@@ -36,7 +34,7 @@ public class Wheatgrass : ModTile, ISwayInWind
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 
-	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
+	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
 		var texture = TextureAssets.Tile[Type].Value;
@@ -58,5 +56,14 @@ public class Wheatgrass : ModTile, ISwayInWind
 		}
 	}
 
-	public void ModifyRotation(int i, int j, ref float rotation) => rotation *= 1.5f;
+	public float Physics(Point16 topLeft)
+	{
+		var data = TileObjectData.GetTileData(Framing.GetTileSafely(topLeft));
+		float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, TileSwaySystem.Instance.SunflowerWindCounter);
+
+		if (!WorldGen.InAPlaceWithWind(topLeft.X, topLeft.Y, data.Width, data.Height))
+			rotation = 0f;
+
+		return (rotation + TileSwayHelper.GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 30, 2f, 1, true)) * 1.5f;
+	}
 }

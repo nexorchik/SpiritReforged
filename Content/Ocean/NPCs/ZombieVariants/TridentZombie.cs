@@ -5,14 +5,14 @@ namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
 
 public class TridentZombie : ReplaceNPC
 {
+	float frameCounter;
+
 	public override int[] TypesToReplace => [NPCID.ArmedZombie, NPCID.ArmedZombieCenx];
 
 	public override void StaticDefaults()
 	{
 		Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.ArmedZombie];
 
-		var drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers() { Hide = true };
-		NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifiers);
 		NPCID.Sets.Zombies[Type] = true;
 	}
 
@@ -48,6 +48,17 @@ public class TridentZombie : ReplaceNPC
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("KelpZombie1").Type, 1f);
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("KelpZombie2").Type, 1f);
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("KelpZombie3").Type, 1f);
+		}
+	}
+
+	public override void FindFrame(int frameHeight)
+	{
+		if (NPC.IsABestiaryIconDummy)
+		{
+			frameCounter += .1f;
+			frameCounter %= Main.npcFrameCount[Type];
+
+			NPC.frame.Y = frameHeight * (int)frameCounter;
 		}
 	}
 

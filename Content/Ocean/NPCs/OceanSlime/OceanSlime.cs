@@ -1,12 +1,12 @@
 using Mono.Cecil;
 using SpiritReforged.Common.NPCCommon;
-using SpiritReforged.Content.Vanilla.Items.Food;
+using SpiritReforged.Content.Vanilla.Food;
 using System.IO;
 using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Ocean.NPCs.OceanSlime;
- 
+
 public class OceanSlime : ModNPC
 {
 	public override void SetStaticDefaults()

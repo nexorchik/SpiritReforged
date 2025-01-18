@@ -1,4 +1,6 @@
-﻿namespace SpiritReforged.Common.TileCommon;
+﻿using SpiritReforged.Common.WorldGeneration;
+
+namespace SpiritReforged.Common.TileCommon;
 
 public static class TileExtensions
 {
@@ -112,18 +114,36 @@ public static class TileExtensions
 	/// <param name="j"> The tile's Y coordinate. </param>
 	/// <param name="type"> The tile's type. </param>
 	/// <param name="maxLength"> The maximum length this vine can grow. Does NOT instantly grow a vine of the given length. </param>
-	/// /// <param name="sync"> Whether the tile changes should be automatically synced. </param>
+	/// <param name="reversed"> Whether this vine grows from the ground up. </param>
+	/// <param name="sync"> Whether the tile changes should be automatically synced. </param>
 	/// <returns> Whether the tile was successfully placed. </returns>
-	public static bool GrowVine(int i, int j, int type, int maxLength = 15, bool sync = true)
+	public static bool GrowVine(int i, int j, int type, int maxLength = 15, bool reversed = false, bool sync = true)
 	{
-		while (Main.tile[i, j - 1].HasTile && Main.tile[i, j - 1].TileType == type)
-			j--; //Move to the top of the vine
-
-		for (int x = 0; x < maxLength; x++)
+		if (reversed)
 		{
-			if (Main.tile[i, j].HasTile && Main.tile[i, j].TileType == type)
-				j++; //Move to the next available tile below
+			while (Main.tile[i, j + 1].HasTile && Main.tile[i, j + 1].TileType == type)
+				j++; //Move to the bottom of the vine
+
+			for (int x = 0; x < maxLength; x++)
+			{
+				if (Main.tile[i, j].HasTile && Main.tile[i, j].TileType == type)
+					j--; //Move to the next available tile above
+			}
 		}
+		else
+		{
+			while (Main.tile[i, j - 1].HasTile && Main.tile[i, j - 1].TileType == type)
+				j--; //Move to the top of the vine
+
+			for (int x = 0; x < maxLength; x++)
+			{
+				if (Main.tile[i, j].HasTile && Main.tile[i, j].TileType == type)
+					j++; //Move to the next available tile below
+			}
+		}
+
+		if (Main.tile[i, j].TileType == type)
+			return false; //The tile already exists; we've hit the max length
 
 		WorldGen.PlaceObject(i, j, type, true);
 
@@ -136,19 +156,22 @@ public static class TileExtensions
 		return true;
 	}
 
-	public static void Merge(this ModTile tile, params int[] otherIds)
+	/// <summary> Checks if the tile at i, j is a chest, and returns what kind of chest it is if so. </summary>
+	/// <param name="i">X position.</param>
+	/// <param name="j">Y position.</param>
+	/// <param name="type">The type of the chest, if any.</param>
+	/// <returns>If the tile is a chest or not.</returns>
+	public static bool TryGetChestID(int i, int j, out VanillaChestID type)
 	{
-		foreach (int id in otherIds)
-		{
-			Main.tileMerge[tile.Type][id] = true;
-			Main.tileMerge[id][tile.Type] = true;
-		}
-	}
+		Tile tile = Main.tile[i, j];
+		type = VanillaChestID.Wood;
 
-	public static TileObjectData SafelyGetData(this Tile tile)
-	{
-		var data = TileObjectData.GetTileData(tile);
-		data ??= TileObjectData.GetTileData(tile.TileType, 0);
-		return data;
+		if (tile.HasTile && tile.TileType == TileID.Containers && tile.TileFrameX % 36 == 0 && tile.TileFrameY == 0)
+		{
+			type = (VanillaChestID)(tile.TileFrameX / 36);
+			return true;
+		}
+
+		return false;
 	}
 }

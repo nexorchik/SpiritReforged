@@ -31,7 +31,7 @@ public class Coral3x3 : ModTile, IDrawPreview
 		TileObjectData.newTile.Origin = new Point16(1, 2);
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 16];
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, TileObjectData.newTile.Width, 0);
-		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand];
+		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand, TileID.Pearlsand];
 		TileObjectData.newTile.RandomStyleRange = 1;
 		TileObjectData.addTile(Type);
 	}
@@ -110,7 +110,7 @@ public class Coral2x2 : Coral3x3
 		TileObjectData.newTile.Origin = new Point16(0, 1);
 		TileObjectData.newTile.CoordinateHeights = [16, 16];
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, TileObjectData.newTile.Width, 0);
-		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand];
+		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand, TileID.Pearlsand];
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.addTile(Type);
 	}
@@ -150,7 +150,7 @@ public class Coral1x2 : Coral3x3
 		TileObjectData.newTile.Origin = new Point16(0, 1);
 		TileObjectData.newTile.CoordinateHeights = [16, 16];
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, TileObjectData.newTile.Width, 0);
-		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand];
+		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand, TileID.Pearlsand];
 		TileObjectData.newTile.RandomStyleRange = 1;
 		TileObjectData.addTile(Type);
 	}

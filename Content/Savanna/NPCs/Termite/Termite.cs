@@ -1,3 +1,4 @@
+using SpiritReforged.Content.Savanna.Biome;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
@@ -31,6 +32,7 @@ public class Termite : ModNPC
 		NPC.noGravity = false;
 		AIType = NPCID.Grubby;
 		NPC.dontTakeDamageFromHostiles = false;
+		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
 
 	public override void HitEffect(NPC.HitInfo hit)

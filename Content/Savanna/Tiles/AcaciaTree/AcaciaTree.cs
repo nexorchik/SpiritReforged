@@ -10,7 +10,7 @@ namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
 public class AcaciaTree : CustomTree, IConvertibleTile
 {
-	private const int NumStyles = 4;
+	private const int numStyles = 4;
 
 	public static IEnumerable<TreetopPlatform> Platforms => SimpleEntitySystem.entities.Where(x => x is TreetopPlatform).Cast<TreetopPlatform>();
 
@@ -27,7 +27,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		return Main.instance.TilesRenderer.GetWindCycle(i, j, factor) * .4f;
 	}
 
-	public override void PostSetStaticDefaults()
+	public override void PreAddTileObjectData()
 	{
 		TileObjectData.newTile.AnchorValidTiles = [ValidAnchor];
 
@@ -36,14 +36,25 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		DustType = DustID.WoodFurniture;
 	}
 
+	public override bool IsTreeTop(int i, int j) => Main.tile[i, j - 1].TileType != Type && Main.tile[i, j].TileType == Type && Main.tile[i, j].TileFrameX <= frameSize * 5;
+
 	public override void NearbyEffects(int i, int j, bool closer) //Spawn platforms
 	{
 		var pt = new Point16(i, j);
-		if (IsTreeTop(i, j, true) && !Platforms.Where(x => x.TreePosition == pt).Any())
+		if (IsTreeTop(i, j) && !Platforms.Where(x => x.TreePosition == pt).Any())
 		{
 			int type = SimpleEntitySystem.types[typeof(TreetopPlatform)];
 			//Spawn our entity at direct tile coordinates where it can reposition itself after updating
 			SimpleEntitySystem.NewEntity(type, pt.ToVector2());
+		}
+	}
+
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		foreach (var item in base.GetItemDrops(i, j))
+		{
+			item.stack *= 2;
+			yield return item;
 		}
 	}
 
@@ -71,13 +82,12 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeHelper.GetPalmTreeOffset(i, j);
 		float rotation = GetSway(i, j) * .08f;
 
-		if (Framing.GetTileSafely(i, j).TileType == Type && Framing.GetTileSafely(i, j - 1).TileType != Type) //Draw treetops
+		if (IsTreeTop(i, j)) //Draw treetops
 		{
 			const int framesY = 2;
 
-			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
-
-			var source = TopTexture.Frame(1, framesY, 0, frameY, sizeOffsetY: -2);
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / frameSize % framesY;
+			var source = topsTexture.Frame(1, framesY, 0, frameY, sizeOffsetY: -2);
 			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
 
 			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
@@ -135,22 +145,16 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 		for (int h = 0; h < height; h++)
 		{
-			int style = 0;
-
-			if (WorldGen.genRand.NextBool(6)) //Select rare segments
-				style = 1;
-
-			if (h > 2 && WorldGen.genRand.NextBool(5)) //Select branched segments by exceding the normal style limit
-			{
-				if (WorldGen.genRand.NextBool())
-					style += NumStyles; //Left branch
-				else
-					style += NumStyles * 2; //Right branch
-			}
+			int style = WorldGen.genRand.NextBool(6) ? 1 : 0; //Rare segments
 
 			WorldGen.PlaceTile(i, j - h, Type, true);
-			Framing.GetTileSafely(i, j - h).TileFrameX = (short)(style * FrameSize * 3 + WorldGen.genRand.Next(3) * FrameSize);
-			Framing.GetTileSafely(i, j - h).TileFrameY = TreeHelper.GetPalmOffset(j, variance, height, ref xOff);
+			var tile = Framing.GetTileSafely(i, j - h);
+
+			if (tile.HasTile && tile.TileType == Type)
+			{
+				Framing.GetTileSafely(i, j - h).TileFrameX = (short)(style * frameSize * 3 + WorldGen.genRand.Next(3) * frameSize);
+				Framing.GetTileSafely(i, j - h).TileFrameY = TreeHelper.GetPalmOffset(j, variance, height, ref xOff);
+			}
 		}
 
 		if (Main.netMode != NetmodeID.SinglePlayer)

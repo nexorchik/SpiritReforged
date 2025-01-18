@@ -18,7 +18,10 @@ public class UndeadNPC : GlobalNPC
 		NPCID.RustyArmoredBonesAxe, NPCID.RustyArmoredBonesFlail, NPCID.RustyArmoredBonesSword, NPCID.RustyArmoredBonesSwordNoArmor, NPCID.Necromancer, 
 		NPCID.NecromancerArmored, NPCID.SkeletonSniper, NPCID.SkeletonCommando, NPCID.RuneWizard, NPCID.Tim, NPCID.BoneLee, NPCID.AngryBones, NPCID.AngryBonesBig, 
 		NPCID.AngryBonesBigHelmet, NPCID.AngryBonesBigMuscle, NPCID.UndeadMiner, NPCID.UndeadViking, NPCID.BoneSerpentBody, NPCID.BoneSerpentHead, NPCID.BoneSerpentTail, 
-		NPCID.DemonEye, NPCID.DemonEyeOwl, NPCID.DemonEyeSpaceship, NPCID.ServantofCthulhu, NPCID.EyeofCthulhu, NPCID.SkeletronHand, NPCID.SkeletronHead];
+		NPCID.DemonEye, NPCID.DemonEyeOwl, NPCID.DemonEyeSpaceship, NPCID.ServantofCthulhu, NPCID.EyeofCthulhu, NPCID.SkeletronHand, NPCID.SkeletronHead, 
+		NPCID.PossessedArmor, NPCID.Paladin, NPCID.DarkCaster, NPCID.RaggedCaster, NPCID.DiabolistRed, NPCID.DiabolistWhite, NPCID.Eyezor, NPCID.CursedSkull, 
+		NPCID.GiantCursedSkull, NPCID.Frankenstein, NPCID.DD2SkeletonT1, NPCID.DD2SkeletonT3, NPCID.Poltergeist, NPCID.Wraith, NPCID.FloatyGross, NPCID.Mummy, 
+		NPCID.BloodMummy, NPCID.DarkMummy, NPCID.LightMummy];
 
 	private static readonly HashSet<NPC> toDraw = [];
 	private static bool trackingGore;

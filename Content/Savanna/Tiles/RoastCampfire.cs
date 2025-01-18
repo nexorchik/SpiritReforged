@@ -1,5 +1,5 @@
 using SpiritReforged.Common.TileCommon;
-using SpiritReforged.Content.Vanilla.Items.Food;
+using SpiritReforged.Content.Vanilla.Food;
 using System.Linq;
 using Terraria.Audio;
 using Terraria.GameContent.Drawing;

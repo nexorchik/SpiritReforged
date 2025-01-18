@@ -1,18 +1,33 @@
-using SpiritReforged.Common.TileCommon;
-using SpiritReforged.Common.TileCommon.TileSway;
-using SpiritReforged.Common.WorldGeneration;
+using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.GameContent.Metadata;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
 
+[AutoloadGlowmask("Method:Content.Forest.Stargrass.Tiles.StargrassFlowers Glow")]
 public class StargrassFlowers : ModTile
 {
+	public static Color Glow(object obj)
+	{
+		const float MinBrightness = 0.4f;
+		const float MaxDist = 140 * 140;
+
+		var pos = (Point)obj;
+		float dist = Main.player[Player.FindClosest(new Vector2(pos.X, pos.Y) * 16, 16, 16)].DistanceSQ(new Vector2(pos.X, pos.Y) * 16 + new Vector2(8));
+		float strength = MinBrightness;
+
+		if (dist < MaxDist)
+			strength = MathHelper.Lerp(MinBrightness, 1f, 1 - dist / MaxDist);
+
+		return StargrassTile.Glow(pos) * strength;
+	}
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileCut[Type] = true;
 		Main.tileSolid[Type] = false;
 		Main.tileLighted[Type] = true;
+		TileID.Sets.SwaysInWindBasic[Type] = true;
 
 		DustType = DustID.Grass;
 		HitSound = SoundID.Grass;
@@ -48,25 +63,5 @@ public class StargrassFlowers : ModTile
 		int frame = Main.tile[i, j].TileFrameX / 18;
 		if (frame >= 6)
 			(r, g, b) = (0.025f, 0.1f, 0.25f);
-	}
-
-	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
-	{
-		TileSwaySystem.DrawGrassSway(spriteBatch, TextureAssets.Tile[Type].Value, i, j, Lighting.GetColor(i, j));
-		return false;
-	}
-
-	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
-	{
-		const float MinBrightness = 0.4f;
-		const float MaxDist = 140 * 140;
-
-		float dist = Main.player[Player.FindClosest(new Vector2(i, j) * 16, 16, 16)].DistanceSQ(new Vector2(i, j) * 16 + new Vector2(8));
-		float strength = MinBrightness;
-
-		if (dist < MaxDist)
-			strength = MathHelper.Lerp(MinBrightness, 1f, 1 - dist / MaxDist);
-
-		TileSwaySystem.DrawGrassSway(spriteBatch, Texture + "_Glow", i, j, StargrassTile.Glow(new Point(i, j)) * strength);
 	}
 }

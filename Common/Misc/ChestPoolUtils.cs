@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using static SpiritReforged.Common.Misc.ChestPoolUtils;
 
 namespace SpiritReforged.Common.Misc;
 
@@ -9,44 +8,14 @@ public static class ChestPoolUtils
 	/// Struct containing information related to chest item pools. <br />
 	/// Inputting an int[] for Items results in one of the items from that array being picked for that slot randomly, while inputting an int or short directly adds the corresponding item.
 	/// </summary>
-	public struct ChestInfo
+	public struct ChestInfo(object Items, int Stack = 1, float Chance = 1)
 	{
-		public object Items;
-		public int Stack;
-		public float Chance;
+		public object Items = Items;
+		public int Stack = Stack;
+		public float Chance = Chance;
 
-		public ChestInfo(object Items, int Stack = 1, float Chance = 1)
-		{
-			this.Items = Items;
-			this.Stack = Stack;
-			this.Chance = Chance;
-		}
-
-		public List<ChestInfo> ToList() => new List<ChestInfo> { this };
+		public readonly List<ChestInfo> ToList() => [this];
 	}
-
-	/// <summary>
-	/// Method to greatly reduce the amount of effort needed to make a chest pool. <br />
-	/// Input the chest's pool as a list of structs representing the item pool for each slot, stack for that pool, and chance to be added.
-	/// </summary>
-
-	//Vanilla Chest IDs for TileID.Containers
-	public const int woodChests = 0;
-	public const int goldChests = 1;
-	public const int lockedgoldChests = 2;
-	public const int ivyChests = 10;
-	public const int snowChests = 11;
-	public const int skyChests = 13;
-	public const int livingWoodChests = 12;
-	public const int spiderChests = 15;
-	public const int waterChests = 17;
-	public const int dynastyChests = 28;
-
-	/// <summary>
-	/// Vanilla Chest IDs for TileID.Containers2
-	/// To use these, override the default argument for tileType with TileID.Containers2
-	/// </summary>
-	public const int sandstoneChests = 11;
 
 	// Helper method for adding items to chests
 	private static void AddItemsToChest(IEnumerable<ChestInfo> list, Chest chest, int itemIndex)
@@ -72,6 +41,11 @@ public static class ChestPoolUtils
 			itemIndex++;
 		}
 	}
+
+	/// <summary>
+	/// Method to greatly reduce the amount of effort needed to make a chest pool. <br />
+	/// Input the chest's pool as a list of structs representing the item pool for each slot, stack for that pool, and chance to be added.
+	/// </summary>
 	public static void PlaceChestItems(List<ChestInfo> list, Chest chest, int startIndex = 0)
 	{
 		int itemIndex = startIndex;
@@ -166,7 +140,6 @@ public static class ChestPoolUtils
 			Chest chest = Main.chest[chestIndex];
 			if (chest != null && Main.tile[chest.x, chest.y].TileType == tileType && Main.tile[chest.x, chest.y].TileFrameX == chestFrame)
 				PlaceChestItems(item.ToList(), chest, index);
-
 		}
 	}
 }

@@ -8,8 +8,6 @@ namespace SpiritReforged.Content.Savanna;
 
 public class SavannaGlobalNPC : GlobalNPC
 {
-	internal static HashSet<int> savannaFaunaTypes = [];
-
 	public override void ModifyActiveShop(NPC npc, string shopName, Item[] items)
 	{
 		if (npc.type == NPCID.Dryad && Main.LocalPlayer.InModBiome<Biome.SavannaBiome>())
@@ -43,13 +41,23 @@ public class SavannaGlobalNPC : GlobalNPC
 	{
 		if (spawnInfo.Player.InModBiome<Biome.SavannaBiome>() && !spawnInfo.Invasion)
 		{
-			pool.Remove(0); //Remove all vanilla spawns
+			if (!Main.bloodMoon)
+				pool.Remove(0); //Remove all vanilla spawns
+
+			if (Main.raining)
+			{
+				if (!Main.dayTime)
+					pool[NPCID.ZombieRaincoat] = .15f;
+
+				pool[NPCID.FlyingFish] = Main.dayTime ? .25f : .18f;
+				pool[NPCID.UmbrellaSlime] = Main.dayTime ? .17f : .08f;
+			}
 
 			if (!Main.dayTime)
 			{
-				pool[NPCID.DoctorBones] = .005f;
-				pool[NPCID.Zombie] = .28f;
-				pool[NPCID.DemonEye] = .17f;
+				pool[NPCID.DoctorBones] = .007f;
+				pool[NPCID.Zombie] = .36f;
+				pool[NPCID.DemonEye] = .23f;
 			}
 			else if (!spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm)
 			{

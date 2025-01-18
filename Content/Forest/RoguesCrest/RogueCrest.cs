@@ -5,11 +5,11 @@ namespace SpiritReforged.Content.Forest.RoguesCrest;
 [AutoloadEquip(EquipType.Neck)]
 public class RogueCrest : MinionAccessory
 {
-	public override MinionAccessoryData Data => new MinionAccessoryData(ModContent.ProjectileType<RogueKnifeMinion>(), 5);
+	public override MinionAccessoryData Data => new MinionAccessoryData(ModContent.ProjectileType<RogueKnifeMinion>(), 6);
 
 	public override void SetDefaults()
 	{
-		Item.damage = 5;
+		Item.damage = 6;
 		Item.DamageType = DamageClass.Summon;
 		Item.knockBack = .5f;
 		Item.width = 48;

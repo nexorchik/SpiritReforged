@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.WallCommon;
+using SpiritReforged.Content.Savanna.Items.Drywood;
 
 namespace SpiritReforged.Content.Savanna.Walls;
 
@@ -6,15 +7,13 @@ public class DrywoodWall : ModWall, IAutoloadWallItem
 {
 	public void AddItemRecipes(ModItem item)
 	{
-		var mod = SpiritReforgedMod.Instance; //Mod is null here, so get the instance manually
-
 		item.CreateRecipe(4)
-			.AddIngredient(mod.Find<ModItem>("DrywoodWallItem").Type)
+			.AddIngredient(ModContent.ItemType<Drywood>())
 			.AddTile(TileID.WorkBenches)
 			.Register();
 
 		//Allow wall items to be crafted back into base materials
-		Recipe.Create(mod.Find<ModItem>("DrywoodWallItem").Type)
+		Recipe.Create(ModContent.ItemType<Drywood>())
 			.AddIngredient(item.Type, 4)
 			.AddTile(TileID.WorkBenches)
 			.Register();

@@ -26,10 +26,7 @@ public class HydrothermalVentPlume : ModProjectile
 				Item.NewItem(Projectile.GetSource_FromAI(), Projectile.Center, ModContent.ItemType<MineralSlagPickup>());
 		}
 
-		if (Main.rand.NextBool(10))
-			ForegroundEmber();
-
-		if (Main.rand.NextBool(12)) //Small embers
+		if (Main.rand.NextBool(12))
 			ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center + new Vector2(Main.rand.NextFloat(-1f, 1f) * 4, 0),
 				(Projectile.velocity * Main.rand.NextFloat(.25f)).RotatedByRandom(.4f), Color.OrangeRed, Main.rand.NextFloat(.1f, .4f), 190, 8, delegate (Particle p)
 				{
@@ -52,25 +49,6 @@ public class HydrothermalVentPlume : ModProjectile
 		dust2.position = new Vector2(Projectile.Center.X, Projectile.Center.Y + Projectile.height * -0.5f);
 		dust2.noGravity = true;
 		dust2.fadeIn = 1.5f;
-	}
-
-	private void ForegroundEmber()
-	{
-		var startPos = new Vector2(Projectile.Center.X - Main.screenWidth / 2 + Main.rand.Next(Main.screenWidth), Main.screenPosition.Y);
-
-		if (!Collision.WetCollision(startPos, 2, 2))
-			return;
-
-		var p = new FireParticleScreen();
-		p.Position = startPos;
-		p.OriginalScreenPosition = Main.screenPosition;
-		p.Velocity = new Vector2(0, Main.rand.NextFloat(.75f, 2));
-		p.Rotation = Main.rand.NextFloat(MathHelper.PiOver4);
-		p.Scale = Main.rand.NextFloat(0.25f, 0.35f);
-		p.ParallaxStrength = (float)Math.Pow(p.Scale, 3);
-		p.MaxTime = 360;
-
-		ParticleHandler.SpawnParticle(p);
 	}
 
 	public override bool ShouldUpdatePosition() => false;

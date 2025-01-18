@@ -10,14 +10,20 @@ namespace SpiritReforged.Content.Savanna.Ecotone;
 
 internal static class BaobabGen
 {
-	public static void GenerateBaobab(int x, int y)
+	/// <summary> Generates a baobab tree at the given tile coordinates. </summary>
+	/// <param name="i"> The X tile coordinate. </param>
+	/// <param name="j"> The Y tile coordinate. </param>
+	/// <returns> The area of the BODY of the baobab tree. </returns>
+	public static Rectangle GenerateBaobab(int i, int j)
 	{
 		const int width = 16;
 		int height = WorldGen.genRand.Next(27, 31);
 
-		CreateBase(x, y, width, height);
-		CreateRoots(x, y, width);
-		CreateBranches(x, y - height + 4);
+		CreateBase(i, j, width, height);
+		CreateRoots(i, j, width);
+		CreateBranches(i, j - height + 4);
+
+		return new Rectangle(i, j, width, height);
 	}
 
 	private static void CreateBase(int x, int y, int width, int height)
@@ -80,10 +86,13 @@ internal static class BaobabGen
 
 			WorldUtils.Gen(points.Last().ToPoint(), new ModShapes.InnerOutline(data, false), Actions.Chain(new Actions.ClearWall()));
 
-			for (int b = last.X - halfWidth; b < last.X + halfWidth; b++) //Randomly generate baobab fruit below canopies
+			if (i is 0 or (branches - 1))
 			{
-				if (WorldGen.genRand.NextBool(4))
-					BaobabFruitTile.GrowVine(b, last.Y + 1, WorldGen.genRand.Next(2, 5));
+				for (int b = last.X - halfWidth; b < last.X + halfWidth; b++) //Randomly generate baobab fruit below canopies
+				{
+					if (WorldGen.genRand.NextBool(4))
+						BaobabFruitTile.GrowVine(b, last.Y + 1, WorldGen.genRand.Next(2, 5));
+				}
 			}
 		}
 

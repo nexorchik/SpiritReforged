@@ -39,7 +39,7 @@ public class Kelp2x3 : ModTile, IDrawPreview
 		TileObjectData.newTile.Origin = new Point16(1, 2);
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 16];
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, TileObjectData.newTile.Width, 0);
-		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand];
+		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand, TileID.Pearlsand];
 		TileObjectData.newTile.RandomStyleRange = 1;
 		TileObjectData.addTile(Type);
 	}
@@ -142,7 +142,7 @@ public class Kelp2x2 : Kelp2x3
 		TileObjectData.newTile.Origin = new Point16(1, 1);
 		TileObjectData.newTile.CoordinateHeights = [16, 16];
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, TileObjectData.newTile.Width, 0);
-		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand];
+		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand, TileID.Pearlsand];
 		TileObjectData.newTile.RandomStyleRange = 1;
 		TileObjectData.addTile(Type);
 	}
@@ -186,7 +186,7 @@ public class Kelp1x2 : Kelp2x3
 		TileObjectData.newTile.Origin = new Point16(0, 1);
 		TileObjectData.newTile.CoordinateHeights = [16, 16];
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, TileObjectData.newTile.Width, 0);
-		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand];
+		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand, TileID.Pearlsand];
 		TileObjectData.newTile.RandomStyleRange = 1;
 		TileObjectData.addTile(Type);
 	}

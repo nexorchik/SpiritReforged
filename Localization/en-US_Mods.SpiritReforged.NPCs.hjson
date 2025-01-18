@@ -3,13 +3,6 @@ Crinoid: {
 	Entry: These curious critters are closely related to starfish. They feed off of whatever sinks down to the bottom of the sea.
 }
 
-Floater: {
-	DisplayName: Luminous Floater
-	Entry: Below the waves of the elusive glowing ocean, lies hundreds of small, glowing jellyfish, dancing among the luminescent tide.
-}
-
-FloaterGroup.DisplayName: Luminous Floater Group
-
 Pelican: {
 	DisplayName: Pelican
 	Entry: A large sea bird with a special beak to hold its prey. Startling it could cause the bird to drop what it's caught, but that would be mean.
@@ -60,6 +53,11 @@ SailorZombie: {
 	DisplayName: Zombie
 }
 
+TridentZombie: {
+	Entry: Their trident clearly didn't do them much good in life. It's still quite pointy, so watch out.
+	DisplayName: Zombie
+}
+
 Killifish: {
 	DisplayName: Killifish
 	Entry: True to their name, Killifish are known for their one defining trait, getting killed. Their gorgeous, iridescent scales are there too.
@@ -92,14 +90,206 @@ Sparrow: {
 	DisplayName: Sparrow
 }
 
-TridentZombie.DisplayName: "{$NPCName.Zombie}"
-SafariZombie.DisplayName: Zombie
-TumbleZombie.DisplayName: Zombie
-Hyena.DisplayName: Hyena
-Ostrich.DisplayName: Ostrich
-ButterflyCritter.DisplayName: Ethereal Butterfly
+SafariZombie: {
+	DisplayName: "{$NPCName.Zombie}"
+	Entry: On the bright side, if you're already undead, snakes can't do anything to you.
+}
+
+TumbleZombie: {
+	DisplayName: "{$NPCName.Zombie}"
+	Entry: Under the undead facade, under all that blood and branch and bile, there lies a heartwarming story of a Tumbler and a Zombie becoming friends in the most unlikely of situations.
+}
+
+Hyena: {
+	DisplayName: Hyena
+	Entry: A mischevious sort, the Hyena hunt in packs, aiming for weak wildlife. With Terrarians, however, they run rather than confront.
+}
+
+Ostrich: {
+	DisplayName: Ostrich
+	Entry: While not one to take flight, the Ostrich enjoys deceptively fast land speeds regardless. Thankfully, they use that to scrounge for worms instead of for you.
+}
+
+ButterflyCritter: {
+	DisplayName: Ethereal Butterfly
+	Entry: Perhaps, just perhaps, if you look up, these are among the stars as well. They flit here and there, a dance as ephemeral as their bodies.
+}
 
 SavannaJungleSlime: {
 	DisplayName: Jungle Slime
 	Entry: It's gobbled up some flowers! Almost too cute to kill...
+}
+
+Cartographer: {
+	DisplayName: Cartographer
+	Buttons.Map: Map
+
+	Names: {
+		0: Soleana
+		1: Kyra
+		2: Jesse
+		3: '''"Clumsy"'''
+		4: Wynn
+		5: Nessa
+	}
+
+	Dialogue: {
+		0: Mapping's tough work. Sometimes you lose your place, and...wait.
+		1: Say, you got any nice, hardy paper on you? I've plum run out.
+		2: Gosh...dropping a pin on the ground is a bad time. Especially the brown ones.
+		3: Hey, do you have a map? Mind if I take a look? Better be well kept!
+
+		Map: {
+			FloatingIsland: {
+				0: Happy to share! Here's a little pin on this floating island I found. How'd I get there? Well, let's just say harpies can carry you WAY farther than you'd expect.
+				1: Oh, of course! Got up to some mischief a while back, got way up there. Found a chest. Couldn't take anything, I was preoccupied thinking of how to get down.
+				2: Happy to. Checked out an island in the sky a few weeks ago, it was cool but the neighbours were annoying! Hope you find something there that I couldn't.
+			}
+
+			EnchantedSword: {
+				0: Anytime. So I was traipsing down a few narrow tunnels a while ago, and I found this glowy sword hilt in a stone. Can't imagine there was a functional blade, so I just left it.
+				1: Right on! Here's this spot. Looks unassuming, but I'm assuming the blue sword down there was cool. Pack was full of rare mushrooms and about 30 pounds of map, so I kept on moving.
+				2: Here you are! Don't remember when, but this sword was embedded into the stone. Like that one legend...King Arthur? I don't know. I don't mess with strange weapons; maybe you do?
+			}
+
+			Shimmer: {
+				0:
+					'''
+					Where was it...there it is. Walking, relaxing, the usual hike down a dangerous, completely dark cave. On the horizon? A brilliant, beautiful glow. Truly gorgeous.
+					You know what that means in nature? Stay away. So I did.
+					'''
+				1:
+					'''
+					Um...there we go. Tripped a while back, hit my head. Woke up, and it looks like some weird little fairy things took me to this crazy place. 
+					I don't remember much after that but abject panic.
+					'''
+				2:
+					'''
+					Here it is. You ever seen water? Imagine that but it glows like the night sky, an out-of-this world purple. 
+					Don't recommend drinking it, it makes your body feel fake. I don't know how to explain it. Trust me on this one.
+					'''
+			}
+
+			Savanna: {
+				0:
+					'''
+					Pin's on the house, per usual. I was walking up top, smelling the flowers and visiously punching trees to get apples. After punching a couple of trees, 
+					I look up. Somehow, a whole prairie snuck up on me. I went back to punching trees after a few moments.
+					'''
+				1:
+					'''
+					There it is. You ever walk and stare at the ground? You shouldn't. But a bit ago when I did, I saw the grass slowly go from a nice vibrant green to a sickly green. 
+					I look up; the largest grass I've ever seen. Thick as hell, too. So what'd I do? Well...I walked away. WAY too much work to walk in.
+					'''
+				2:
+					'''
+					Of course! So a bit ago I was seeing how quickly I could run from jungle bats, right, and boom. The humidity DROPS. A savanna sprawls out in front of me. What a sight!
+					And, if you care, I can run real quick if needed.
+					'''
+			}
+
+			Hive: {
+				0: Pin goes...here. On the low, I don't recommend that jungle place. It's ROUGH. But when you see one of those big hives, there's honey nearby. And that's a treat worth many stings.
+				1: There you go! Um...I'll be real. Sometimes, you get the idea of getting a bunch of honey and selling it. I found some...did I ever GET any? No. Keep it hike, not business.
+				2: Ah...nope...there it is. I'll keep it short this time. Stingers hurt. Be prepared.
+			}
+
+			Curiosity: {
+				0:
+					'''
+					Here you are. So I go walking a lot, y'know, exploring and seeing if anything needs studying. Well, what do I know about anything when the dirt kisses my face as I fall. 
+					There's a something on the ground over here. Couldn't tell you waht it is, I was way too furious to see.
+					'''
+				1:
+					'''
+					I think it was...here? Close enough. You see a lot of things when exploring as I have. Sometimes, you see something that's worth checking out.
+					So what do you think I do when it shines or glows? I run. I run so fast.
+					'''
+				2:
+					'''
+					There we go. I'm a mapper, right. I map. You see a spot where you're like, man, this is a good spot to map.
+					Well, turns out a magic item was right on that spot. I knew it was too good to be true. No perfectly mapped out area is worth an ancient curse.
+					'''
+			}
+
+			ButterflyShrine: {
+				0:
+					'''
+					I think...here? Ish? I was walking up on the surface right, a nice breeze flowing through my map and making my ink run a little.
+					Anyway! I slip a bit on a little hole in the ground, and I see some shimmering lights way down below. No way I'll ever go down there, but you might.
+					'''
+				1:
+					'''
+					There it goes. I don't know how to preface this, but sometimes you just don't pay attention and a small hole gives you big issues.
+					So I drop down a bit, not long enough to hurt the body but more than long enough for the ego, and I land on these little purple butterflies. What?
+					'''
+				2: I've fallen down a few holes in my day. Sometimes, you have the werewithal to look where you're stepping. Sometimes, those holes glow purple. Keep on walking.
+			}
+
+			FirstPin: Oh! And remember, you can always access your pin collection from the bottom of your map. Just be careful with the maps!
+		}
+	}
+
+	Entry: A peculiar mix of passionate explorer and abysmally clumsy, the Cartographer goes to places that...well, almost no one's explored. Sometimes, it's about being safe, not novel.
+}
+
+Hiker: {
+	DisplayName: Hiker
+
+	Buttons: {
+		Feed: Feed
+		Supplies: Supplies
+		Silver: 20 silver
+	}
+
+	Dialogue: {
+		Hungry: {
+			Asking: {
+				0: Hey. Long hike, forgot to grab a snack. Looks like you got some {0} I could have. Mind if I partake?
+				1: You ever leave the house and THEN realize you're hungry? I wish I didn't. Could you spare me a {0}?
+				2: Uphills really take it out of you. A snack would be appreciated, stranger...maybe some {0}?
+				3: After a grueling forty-five minutes without a snack, I'm on my last legs. Could you spare one of your {0}?
+			}
+
+			Thanks: {
+				0: Thanks. I can always count on strangers giving me food. Take some supplies, on the house!
+				1: Ah, that hits the spot. I've still got some supplies if you'd like to trade it. Or just be kind, I don't mind.
+				2: Hey, thank you so much. Take some of my stuff for free if you want.
+				3: Nothing quite hits like a meal after a long hike. Prices are off, take a pack. Free!
+			}
+		}
+
+		Idle: {
+			0: Nothing quite like a long hike down into caves. Up until the cobwebs cover the walls, it's a joy. After that point, it's a little less of a joy.
+			1: My old pal used to grab Blinkroot to explore instead of using torches. "Safer", he said. Odd guy. Wonder what happened to him.
+			2: You ever use pins? They're really useful. And old friend carried them around everywhere...last I saw she was "learning how to get on those floating islands." Tough job, huh?
+			3: Sometimes I pass by a faerie, and they guide me to gold or platinum. I always act excited, but I don't have a pickaxe. I hope they appreciate it.
+			4: You always carry a little extra supplies if you're smart. I've got just a little too much...for a small fee, I won't! Bahaha!
+		}
+
+		Purchase: {
+			0: Hey, thanks for lightening my pockets! Not by much, coin isn't light, but it's lighter nontheless!
+			1: Hm? Oh, bahaha! People keep asking me this: "Where do you keep entire bags full of stuff?" Where do YOU keep all of your stuff, huh?
+			2: Nothing as quaint as a nice trade on a nice hike with a nice stranger. Cheers!
+			3: Enjoy the extra space! I've heard if you put a bunch of Angel Statues - yes entire statues - in your bag, something crazy happens.
+			4: Thanks for the trade! I would say smell the flowers, but you shouldn't smell all of the flowers you pass by. So...hey, smell the good flowers. Keeps you alive. Literally.
+		}
+
+		FailPurchase: {
+			0: Sorry, you'll need a little more coin before we can trade. Unless some spare food is burning a hole in your pockets...? Haha, just kidding. Maybe?
+			1: Alas, my supplies stay with me. Come back with a little more coin. It'll be worth your time! And it'll save me some carry.
+			2: No can do, partner. I am not here to barter, I'm here to hike! And to repent for a little overpreparedness...I mean...business work. Working business.
+		}
+	}
+
+	Name: {
+		0: Gary
+		1: Shawn
+		2: Geo
+		3: Geoff
+		4: Rocky
+		5: Porter
+	}
+
+	Entry: Jovial, easy going, deceptively strong - the Hiker knows his way around just about everywhere. The Jungle? Piece of cake. Deserts? Underground Tundra? Slide away. Space? Don't know how...but he'll get up there.
 }

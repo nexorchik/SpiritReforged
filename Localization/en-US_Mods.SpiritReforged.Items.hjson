@@ -1,3 +1,9 @@
+CommonTooltips.Backpack:
+	'''
+	Holds 4 items
+	You must empty this before taking it off
+	'''
+
 Kelp: {
 	DisplayName: Kelp
 	Tooltip: Must be planted in water
@@ -564,8 +570,7 @@ LeatherBackpack: {
 	DisplayName: Leather Backpack
 	Tooltip:
 		'''
-		Holds 4 items
-		You must empty this before taking it off
+		{$CommonTooltips.Backpack}
 		'Comfortable, practical, and still dashing'
 		'''
 }
@@ -1089,13 +1094,22 @@ LeatherPlate: {
 	Tooltip: ""
 }
 
-ExplorerTreads: {
+ExplorerTreadsItem: {
 	DisplayName: Explorer's Treads
 	Tooltip:
 		'''
 		+5% Movement speed for every 10% missing health
 		50% chance to avoid traps and hazards
 		'Makes exploring temples like a walk in the park'
+		'''
+}
+
+LeatherCloakItem: {
+	DisplayName: Leather Cloak
+	Tooltip:
+		'''
+		Immunity to mighty wind from sandstorms
+		Increases movement speed by 5% and run acceleration by 15%
 		'''
 }
 
@@ -1126,4 +1140,123 @@ DriftwoodLanternItem: {
 DriftwoodFenceItem: {
 	DisplayName: Driftwood Fence
 	Tooltip: ""
+}
+
+ArcaneNecklaceGold: {
+	DisplayName: Arcane Necklace
+	Tooltip:
+		'''
+		Increases maximum mana by 20
+		Hit enemies may drop mana stars
+		'''
+}
+
+ArcaneNecklacePlatinum: {
+	DisplayName: "{$ArcaneNecklaceGold.DisplayName}"
+	Tooltip: "{$ArcaneNecklaceGold.Tooltip}"
+}
+
+PinBlue: {
+	DisplayName: Blue Pin
+	Tooltip: ""
+}
+
+PinGreen: {
+	DisplayName: Green Pin
+	Tooltip: ""
+}
+
+PinRed: {
+	DisplayName: Red Pin
+	Tooltip: ""
+}
+
+PinYellow: {
+	DisplayName: Yellow Pin
+	Tooltip: ""
+}
+
+PinHive: {
+	DisplayName: Hive Pin
+	Tooltip: ""
+}
+
+PinButterfly: {
+	DisplayName: Butterfly Pin
+	Tooltip: ""
+}
+
+PinFaeling: {
+	DisplayName: Faeling Pin
+	Tooltip: ""
+}
+
+PinSavanna: {
+	DisplayName: Savanna Pin
+	Tooltip: ""
+}
+
+PinCuriosity: {
+	DisplayName: Curiosity Pin
+	Tooltip: ""
+}
+
+PinSky: {
+	DisplayName: Sky Pin
+	Tooltip: ""
+}
+
+PinSword: {
+	DisplayName: Sword Pin
+	Tooltip: ""
+}
+
+TornMapPiece: {
+	DisplayName: Torn Map Piece
+	Tooltip: Reveals the surrounding map
+}
+
+FashionableBackpack: {
+	DisplayName: Fashionable Backpack
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		'Sleek, modern, but none the less effective'
+		'''
+}
+
+HikingBackpack: {
+	DisplayName: Hiking Backpack
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		'Utilitarian, durable, and most of all, comfortable'
+		'''
+}
+
+Minipack: {
+	DisplayName: Minipack
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		'Small, light, and super compact'
+		'''
+}
+
+PinkPack: {
+	DisplayName: Pink Pack
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		'The best color, useful, and great visibility at a distance'
+		'''
+}
+
+PouchPack: {
+	DisplayName: Pouch Pack
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		'Simple, comfy, and prone to spills'
+		'''
 }
