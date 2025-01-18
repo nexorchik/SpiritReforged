@@ -174,4 +174,25 @@ public static class TileExtensions
 
 		return false;
 	}
+
+	/// <summary>
+	/// Quickly retrieves a given tile's data.
+	/// </summary>
+	/// <param name="tile">The tile to get data from.</param>
+	/// <returns>The tile data.</returns>
+	public static TileObjectData SafelyGetData(this Tile tile) => TileObjectData.GetTileData(tile);
+
+	/// <summary>
+	/// Mutually merges the given tile with all of the ids in <paramref name="otherIds"/>.
+	/// </summary>
+	/// <param name="tile">The tile to merge with.</param>
+	/// <param name="otherIds">All other tiles to merge with.</param>
+	public static void Merge(this ModTile tile, params int[] otherIds)
+	{
+		foreach (int id in otherIds)
+		{
+			Main.tileMerge[tile.Type][id] = true;
+			Main.tileMerge[id][tile.Type] = true;
+		}
+	}
 }

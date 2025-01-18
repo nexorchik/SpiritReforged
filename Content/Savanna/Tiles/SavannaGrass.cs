@@ -1,11 +1,15 @@
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.Corruption;
 using System.Linq;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
-public class SavannaGrass : ModTile
+public class SavannaGrass : ModTile, IConvertibleTile
 {
-	private static int DirtType => ModContent.TileType<SavannaDirt>();
+	protected virtual int DirtType => ModContent.TileType<SavannaDirt>();
+	protected virtual Color MapColor => new(104, 156, 70);
+	protected virtual int Foliage => ModContent.TileType<SavannaFoliage>();
 
 	public override void SetStaticDefaults()
 	{
@@ -14,15 +18,15 @@ public class SavannaGrass : ModTile
 		Main.tileBlockLight[Type] = true;
 		Main.tileNoFail[Type] = true;
 
-		Main.tileMerge[DirtType][Type] = true;
-		Main.tileMerge[Type][DirtType] = true;
+		this.Merge(DirtType, ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaGrassCorrupt>(), ModContent.TileType<SavannaGrassHallow>(), 
+			ModContent.TileType<SavannaGrassCrimson>());
 
 		TileID.Sets.Grass[Type] = true;
 		TileID.Sets.NeedsGrassFramingDirt[Type] = DirtType;
 		TileID.Sets.CanBeDugByShovel[Type] = true;
 
 		RegisterItemDrop(DirtType);
-		AddMapEntry(new Color(104, 156, 70));
+		AddMapEntry(MapColor);
 
 		var data = TileObjectData.GetTileData(TileID.Sunflower, 0);
 		data.AnchorValidTiles = data.AnchorValidTiles.Concat([Type]).ToArray(); //Allow sunflowers to be planted on this tile
@@ -39,6 +43,11 @@ public class SavannaGrass : ModTile
 		if (SpreadHelper.Spread(i, j, Type, 4, DirtType) && Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None); //Try spread grass
 
+		GrowFoliage(i, j);
+	}
+
+	protected virtual void GrowFoliage(int i, int j)
+	{
 		if (Main.rand.NextBool(30)) //Grow vines
 			TileExtensions.GrowVine(i, j + 1, ModContent.TileType<SavannaVine>());
 
@@ -80,9 +89,70 @@ public class SavannaGrass : ModTile
 
 			if (!Main.tile[pos.X, pos.Y].HasTile)
 			{
-				WorldGen.PlaceTile(pos.X, pos.Y, ModContent.TileType<SavannaFoliage>(), true, style: Main.rand.Next(5));
+				WorldGen.PlaceTile(pos.X, pos.Y, Foliage, true, style: Main.rand.Next(5));
 				NetMessage.SendTileSquare(-1, pos.X, pos.Y);
 			}
 		}
+	}
+
+	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
+	{
+		Tile tile = Main.tile[i, j];
+		int oldId = tile.TileType;
+
+		tile.TileType = (ushort)(type switch
+		{
+			ConversionType.Hallow => ModContent.TileType<SavannaGrassHallow>(),
+			ConversionType.Crimson => ModContent.TileType<SavannaGrassCrimson>(),
+			ConversionType.Corrupt => ModContent.TileType<SavannaGrassCorrupt>(),
+			_ => ModContent.TileType<SavannaGrass>(),
+		});
+
+		if (oldId != tile.TileType)
+		{
+			TileCorruptor.Convert(new EntitySource_TileUpdate(i, j), type, i, j - 1);
+			return true;
+		}
+
+		return false;
+	}
+}
+
+public class SavannaGrassCorrupt : SavannaGrass
+{
+	protected override Color MapColor => new(109, 106, 174);
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		TileID.Sets.Corrupt[Type] = true;
+		TileID.Sets.AddCorruptionTile(Type, 20);
+	}
+}
+
+public class SavannaGrassHallow : SavannaGrass
+{
+	protected override Color MapColor => new(78, 193, 227);
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		TileID.Sets.Hallow[Type] = true;
+		TileID.Sets.HallowBiome[Type] = 20;
+	}
+}
+
+public class SavannaGrassCrimson : SavannaGrass
+{
+	protected override Color MapColor => new(183, 69, 68);
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		TileID.Sets.AddCrimsonTile(Type, 20);
+		TileID.Sets.Crimson[Type] = true;
 	}
 }

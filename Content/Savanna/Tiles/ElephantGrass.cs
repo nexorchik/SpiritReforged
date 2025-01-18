@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.TileSway;
 using System.Linq;
 using Terraria.Audio;
@@ -7,13 +8,14 @@ using Terraria.DataStructures;
 namespace SpiritReforged.Content.Savanna.Tiles;
 
 [DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
-public class ElephantGrass : ModTile, ISwayTile
+public class ElephantGrass : ModTile, ISwayTile, IConvertibleTile
 {
-	public static bool IsElephantGrass(int i, int j)
-	{
-		int type = Framing.GetTileSafely(i, j).TileType;
-		return TileLoader.GetTile(type) is ElephantGrass;
-	}
+	protected virtual int[] TileAnchors => [ModContent.TileType<SavannaGrass>()];
+	protected virtual Color MapColor => new(104, 156, 70);
+	protected virtual int Dust => DustID.JungleGrass;
+	protected virtual Color LerpColor => Color.Goldenrod;
+
+	protected bool IsElephantGrass(int i, int j) => Framing.GetTileSafely(i, j).TileType == Type;
 
 	public override void SetStaticDefaults()
 	{
@@ -28,13 +30,13 @@ public class ElephantGrass : ModTile, ISwayTile
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 18];
 		TileObjectData.newTile.Origin = new(0, 2);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 1, 0);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
+		TileObjectData.newTile.AnchorValidTiles = TileAnchors;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 5;
 		TileObjectData.addTile(Type);
 
-		AddMapEntry(new Color(104, 156, 70));
-		DustType = DustID.JunglePlants;
+		AddMapEntry(MapColor);
+		DustType = Dust;
 		HitSound = SoundID.Grass;
 	}
 
@@ -50,7 +52,7 @@ public class ElephantGrass : ModTile, ISwayTile
 	public virtual void DrawFront(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
+		var data = tile.SafelyGetData();
 
 		int clusterOffX = -2 + (tile.TileFrameX / 18 + i) * 2 % 4;
 		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
@@ -63,7 +65,7 @@ public class ElephantGrass : ModTile, ISwayTile
 	public virtual void DrawBack(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
+		var data = tile.SafelyGetData();
 
 		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
 
@@ -74,7 +76,7 @@ public class ElephantGrass : ModTile, ISwayTile
 
 			var source = new Rectangle((tile.TileFrameX / 18 + i + x) % data.RandomStyleRange * 18, tile.TileFrameY, 16, data.CoordinateHeights[tile.TileFrameY / 18]);
 			var effects = (i + x * (tile.TileFrameX / 18) % 2 == 1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-			var color = Color.Lerp(Color.White, Color.Goldenrod, .9f + (float)Math.Sin(i / 10f) * .1f);
+			var color = Color.Lerp(Color.White, LerpColor, .9f + (float)Math.Sin(i / 10f) * .1f);
 
 			spriteBatch.Draw(TextureAssets.Tile[Type].Value, drawPos + offset + new Vector2(clusterOffX, 0), source, Lighting.GetColor(i, j).MultiplyRGB(color), rotation * .5f + rotationOff, origin, 1, effects, 0f);
 		}
@@ -98,8 +100,32 @@ public class ElephantGrass : ModTile, ISwayTile
 
 		return (rotation + TileSwayHelper.GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 20, 3f, 1, true)) * 1.9f;
 	}
+
+	public virtual bool Convert(IEntitySource source, ConversionType type, int i, int j)
+	{
+		if (source is EntitySource_Parent { Entity: Projectile })
+			return false;
+
+		j -= Main.tile[i, j].TileFrameY / 18;
+		int id = Main.tile[i, j].TileType;
+
+		if (TileCorruptor.GetConversionType<ElephantGrass, ElephantGrassCorrupt, ElephantGrassCrimson, ElephantGrassHallow>(id, type, out int conversionType))
+		{
+			for (int y = j; y < j + 3; ++y)
+			{
+				Tile tile = Main.tile[i, y];
+				tile.TileType = (ushort)conversionType;
+			}
+		}
+
+		if (Main.netMode == NetmodeID.Server)
+			NetMessage.SendTileSquare(-1, i, j, 1, 3);
+
+		return false;
+	}
 }
 
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
 public class ElephantGrassShort : ElephantGrass
 {
 	public override void SetStaticDefaults()
@@ -115,20 +141,20 @@ public class ElephantGrassShort : ElephantGrass
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
 		TileObjectData.newTile.Origin = new(0, 1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 1, 0);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
+		TileObjectData.newTile.AnchorValidTiles = TileAnchors;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.addTile(Type);
 
-		AddMapEntry(new Color(104, 156, 70));
-		DustType = DustID.JunglePlants;
+		AddMapEntry(MapColor);
+		DustType = Dust;
 		HitSound = SoundID.Grass;
 	}
 
 	public override void RandomUpdate(int i, int j)
 	{
 		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(Type, 0);
+		var data = tile.SafelyGetData();
 
 		if (tile.TileFrameY != (data.Height - 1) * 18)
 			return;
@@ -174,7 +200,7 @@ public class ElephantGrassShort : ElephantGrass
 	public override void DrawBack(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
+		var data = tile.SafelyGetData();
 
 		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
 
@@ -182,6 +208,129 @@ public class ElephantGrassShort : ElephantGrass
 		var source = new Rectangle((tile.TileFrameX + 18) % (data.RandomStyleRange * 18), tile.TileFrameY, 16, data.CoordinateHeights[tile.TileFrameY / 18]);
 		var effects = (i * (tile.TileFrameX / 18) % 2 == 1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-		spriteBatch.Draw(TextureAssets.Tile[Type].Value, drawPos + offset + new Vector2(clusterOffX, 0), source, Lighting.GetColor(i, j).MultiplyRGB(Color.Goldenrod), rotation * .5f, origin, 1, effects, 0f);
+		spriteBatch.Draw(TextureAssets.Tile[Type].Value, drawPos + offset + new Vector2(clusterOffX, 0), source, Lighting.GetColor(i, j).MultiplyRGB(LerpColor), 
+			rotation * .5f, origin, 1, effects, 0f);
+	}
+
+	public override bool Convert(IEntitySource source, ConversionType type, int i, int j)
+	{
+		if (source is EntitySource_Parent { Entity: Projectile })
+			return false;
+
+		j -= Main.tile[i, j].TileFrameY / 18;
+		int id = Main.tile[i, j].TileType;
+
+		if (TileCorruptor.GetConversionType<ElephantGrassShort, ElephantGrassShortCorrupt, ElephantGrassShortCrimson, ElephantGrassShortHallow>(id, type, out int newId))
+		{
+			for (int y = j; y < j + 2; ++y)
+			{
+				Tile tile = Main.tile[i, y];
+				tile.TileType = (ushort)newId;
+			}
+		}
+
+		if (Main.netMode == NetmodeID.Server)
+			NetMessage.SendTileSquare(-1, i, j, 1, 3);
+
+		return false;
+	}
+}
+
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
+public class ElephantGrassCorrupt : ElephantGrass
+{
+	protected override int[] TileAnchors => [ModContent.TileType<SavannaGrassCorrupt>()];
+	protected override Color MapColor => new(109, 106, 174);
+	protected override int Dust => DustID.Corruption;
+	protected override Color LerpColor => Color.Gray;
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		TileID.Sets.AddCorruptionTile(Type);
+		TileID.Sets.Corrupt[Type] = true;
+	}
+}
+
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
+public class ElephantGrassCrimson : ElephantGrass
+{
+	protected override int[] TileAnchors => [ModContent.TileType<SavannaGrassCrimson>()];
+	protected override Color MapColor => new(183, 69, 68);
+	protected override int Dust => DustID.CrimsonPlants;
+	protected override Color LerpColor => Color.Gray;
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		TileID.Sets.AddCrimsonTile(Type);
+		TileID.Sets.Crimson[Type] = true;
+	}
+}
+
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
+public class ElephantGrassHallow : ElephantGrass
+{
+	protected override int[] TileAnchors => [ModContent.TileType<SavannaGrassHallow>()];
+	protected override Color MapColor => new(78, 193, 227);
+	protected override int Dust => DustID.HallowedPlants;
+	protected override Color LerpColor => Color.Gray;
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		TileID.Sets.Hallow[Type] = true;
+		TileID.Sets.HallowBiome[Type] = 1;
+	}
+}
+
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
+public class ElephantGrassShortCorrupt : ElephantGrassShort
+{
+	protected override int[] TileAnchors => [ModContent.TileType<SavannaGrassCorrupt>()];
+	protected override Color MapColor => new(109, 106, 174);
+	protected override int Dust => DustID.Corruption;
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		TileID.Sets.AddCorruptionTile(Type);
+		TileID.Sets.Corrupt[Type] = true;
+	}
+}
+
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
+public class ElephantGrassShortCrimson : ElephantGrassShort
+{
+	protected override int[] TileAnchors => [ModContent.TileType<SavannaGrassCrimson>()];
+	protected override Color MapColor => new(183, 69, 68);
+	protected override int Dust => DustID.CrimsonPlants;
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		TileID.Sets.AddCrimsonTile(Type);
+		TileID.Sets.Crimson[Type] = true;
+	}
+}
+
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
+public class ElephantGrassShortHallow : ElephantGrassShort
+{
+	protected override int[] TileAnchors => [ModContent.TileType<SavannaGrassHallow>()];
+	protected override Color MapColor => new(78, 193, 227);
+	protected override int Dust => DustID.HallowedPlants;
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		TileID.Sets.Hallow[Type] = true;
+		TileID.Sets.HallowBiome[Type] = 1;
 	}
 }
