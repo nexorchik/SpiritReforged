@@ -69,7 +69,7 @@ internal class BackpackUIState : AutoUIState
 
 	private void SetVariablePositions() => functionalSlot.Top = vanitySlot.Top = new StyleDimension(UIHelper.AdjustY + 174, 0);
 
-	private void SetStorageSlots(bool clear)
+	internal void SetStorageSlots(bool clear)
 	{
 		if (clear)
 		{

@@ -31,7 +31,7 @@ internal class HikerNPC : ModNPC
 	{
 		get
 		{
-			WeightedRandom<(int, Range)> pool = new();
+			WeightedRandom<(int, Range)> pool = new(Main.rand);
 			pool.Add((ItemID.Glowstick, 6..12), 1);
 			pool.Add((ItemID.Rope, 25..35), 1);
 			pool.Add((ItemID.SwiftnessPotion, 1..3), 0.8f);
@@ -146,7 +146,15 @@ internal class HikerNPC : ModNPC
 
 	private void SpawnBundle()
 	{
-		var newItem = new Item(ModContent.ItemType<LeatherBackpack>());
+		var newItem = new Item(Main.rand.Next(5) switch
+		{
+			0 => ModContent.ItemType<FashionableBackpack>(),
+			1 => ModContent.ItemType<HikingBackpack>(),
+			2 => ModContent.ItemType<Minipack>(),
+			3 => ModContent.ItemType<PinkPack>(),
+			_ => ModContent.ItemType<PouchPack>()
+		});
+
 		var backpack = newItem.ModItem as BackpackItem;
 
 		for (int i = 0; i < backpack.items.Length; ++i)
