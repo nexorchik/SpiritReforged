@@ -16,7 +16,9 @@ public abstract class CustomTree : ModTile
 	protected const int FrameSize = 22;
 	internal static readonly FastNoiseLite noise = new();
 
-	protected const int frameSize = 22;
+	protected readonly HashSet<Point16> drawPoints = [];
+	private readonly HashSet<Point16> treeShakes = [];
+
 	// Textures are set as lookups, keyed by type - this means we can have one static instance (bypassing instancing issues) while keeping data easy to access
 	internal readonly static Dictionary<int, Asset<Texture2D>> branchesTextureByType = [];
 	internal readonly static Dictionary<int, Asset<Texture2D>> topsTextureByType = [];
@@ -24,30 +26,24 @@ public abstract class CustomTree : ModTile
 	public Asset<Texture2D> TopTexture => topsTextureByType[Type];
 	public Asset<Texture2D> BranchTexture => branchesTextureByType[Type];
 
-	protected readonly HashSet<Point16> drawPoints = [];
-
-	private readonly HashSet<Point16> treeShakes = [];
-
-	public bool IsTreeTop(int i, int j, bool checkBroken = false)
-	{
-		bool clear = ModContent.GetModTile(Framing.GetTileSafely(i, j - 1).TileType) is not CustomTree;
-		return checkBroken ? clear && drawPoints.Contains(new Point16(i, j)) : clear;
-	}
-
 	public override void Load()
 	{
-		if (!Main.dedServ)
-			On_TileDrawing.DrawTrees += (On_TileDrawing.orig_DrawTrees orig, TileDrawing self) =>
-			{
-				orig(self);
+		if (Main.dedServ)
+			return;
 
-				foreach (Point16 p in drawPoints)
-					if (Type == Main.tile[p].TileType)
-						DrawTreeFoliage(p.X, p.Y, Main.spriteBatch);
+		On_TileDrawing.DrawTrees += DrawAllFoliage;
+		On_TileDrawing.PreDrawTiles += ResetPoints;
+	}
 
-				if (Main.drawToScreen)
-					drawPoints.Clear();
-			};
+	private void DrawAllFoliage(On_TileDrawing.orig_DrawTrees orig, TileDrawing self)
+	{
+		orig(self);
+
+		foreach (Point16 p in drawPoints)
+		{
+			if (Main.tile[p.X, p.Y].TileType == Type) //Points aren't cleared before this type becomes invalidated after PreDraw, so double check
+				DrawTreeFoliage(p.X, p.Y, Main.spriteBatch);
+		}
 	}
 
 	private void ResetPoints(On_TileDrawing.orig_PreDrawTiles orig, TileDrawing self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets)
@@ -233,7 +229,7 @@ public abstract class CustomTree : ModTile
 
 			if (tile.HasTile && tile.TileType == Type)
 			{
-				tile.TileFrameX = (short)(frameX * frameSize);
+				tile.TileFrameX = (short)(frameX * FrameSize);
 				tile.TileFrameY = TreeHelper.GetPalmOffset(j, variance, height, ref xOff);
 			}
 		}

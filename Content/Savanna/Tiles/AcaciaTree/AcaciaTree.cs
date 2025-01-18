@@ -34,8 +34,8 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		DustType = DustID.WoodFurniture;
 	}
 
-	public override bool IsTreeTop(int i, int j) => Main.tile[i, j - 1].TileType != Type 
-		&& ModContent.GetModTile(Main.tile[i, j].TileType) is AcaciaTree && Main.tile[i, j].TileFrameX <= frameSize * 5;
+	public override bool IsTreeTop(int i, int j) => Main.tile[i, j - 1].TileType != Type && ModContent.GetModTile(Main.tile[i, j].TileType) is AcaciaTree 
+		&& Main.tile[i, j].TileFrameX <= FrameSize * 5;
 
 	public override void NearbyEffects(int i, int j, bool closer) //Spawn platforms
 	{
@@ -82,17 +82,11 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeHelper.GetPalmTreeOffset(i, j);
 		float rotation = GetSway(i, j) * .08f;
 
-		var screen = new Rectangle((int)Main.screenPosition.X, (int)Main.screenPosition.Y, Main.screenWidth, Main.screenHeight);
-		screen.Inflate(1400, 1400);
-
-		if (screen.Contains(position.ToPoint()))
-			return;
-
 		if (IsTreeTop(i, j)) //Draw treetops
 		{
 			const int framesY = 2;
 
-			int frameY = Framing.GetTileSafely(i, j).TileFrameX / frameSize % framesY;
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
 			var source = TopTexture.Frame(1, framesY, 0, frameY, sizeOffsetY: -2);
 			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
 
@@ -149,7 +143,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 			if (tile.HasTile && tile.TileType == Type)
 			{
-				Framing.GetTileSafely(i, j - h).TileFrameX = (short)(style * frameSize * 3 + WorldGen.genRand.Next(3) * frameSize);
+				Framing.GetTileSafely(i, j - h).TileFrameX = (short)(style * FrameSize * 3 + WorldGen.genRand.Next(3) * FrameSize);
 				Framing.GetTileSafely(i, j - h).TileFrameY = TreeHelper.GetPalmOffset(j, variance, height, ref xOff);
 			}
 		}
