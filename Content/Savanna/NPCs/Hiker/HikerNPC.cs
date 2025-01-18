@@ -4,10 +4,12 @@ using SpiritReforged.Common.ItemCommon.Backpacks;
 using SpiritReforged.Content.Forest.Backpacks;
 using SpiritReforged.Content.Savanna.Items.Gar;
 using Terraria.Utilities;
+using SpiritReforged.Content.Savanna.Biome;
+using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Hiker;
 
-internal class HikerNPC : ModNPC, INPCButtons
+internal class HikerNPC : ModNPC
 {
 	/// <summary>
 	/// Stores all information for the hiker to pass properly between clones.
@@ -41,12 +43,6 @@ internal class HikerNPC : ModNPC, INPCButtons
 	}
 
 	protected override bool CloneNewInstances => true;
-
-	public bool Hungry
-	{
-		get => NPC.ai[3] == 0;
-		set => NPC.ai[3] = value ? 0 : 1;
-	}
 
 	private HikerInfo _info = new();
 
@@ -83,16 +79,19 @@ internal class HikerNPC : ModNPC, INPCButtons
 
 		AIType = NPCID.Guide;
 		AnimationType = NPCID.Guide;
+		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 
 		_info = new();
 	}
+
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
 	public override List<string> SetNPCNameList()
 	{
 		List<string> nameList = [];
 
 		for (int i = 0; i < 6; i++)
-			nameList.Add(Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Name." + i));
+			nameList.Add(Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Name." + i));
 
 		return nameList;
 	}
@@ -101,11 +100,14 @@ internal class HikerNPC : ModNPC, INPCButtons
 	{
 		if (_info.hasBundle)
 		{
-			string silver = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Buttons.Silver");
-			button = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Buttons.Supplies") + (_info.priceOff ? "" : $"([c/AAAAAA:{silver}])");
+			string silver = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Buttons.Silver");
+			button = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Buttons.Supplies") + (_info.priceOff ? "" : $"([c/AAAAAA:{silver}])");
 		}
 		else
 			button = "";
+
+		if (_info.hasBundle && !_info.priceOff && PlayerHasFood(out int _))
+			button2 = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Buttons.Feed");
 	}
 
 	public override void OnChatButtonClicked(bool firstButton, ref string shopName)
@@ -118,10 +120,27 @@ internal class HikerNPC : ModNPC, INPCButtons
 			{
 				SpawnBundle();
 
-				Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Dialogue.Purchase." + Main.rand.Next(5));
+				Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Dialogue.Purchase." + Main.rand.Next(5));
 			}
 			else
-				Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Dialogue.FailPurchase." + Main.rand.Next(3));
+				Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Dialogue.FailPurchase." + Main.rand.Next(3));
+		}
+		else if (PlayerHasFood(out int id))
+		{
+			Main.LocalPlayer.ConsumeItem(id);
+			Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Dialogue.Hungry.Thanks." + Main.rand.Next(4));
+
+			AdvancedPopupRequest request = new()
+			{
+				Color = Color.Red,
+				DurationInFrames = 120,
+				Text = $"-1 {Lang.GetItemNameValue(id)}",
+				Velocity = new Vector2(0, -16)
+			};
+
+			PopupText.NewText(request, Main.LocalPlayer.Center);
+
+			_info.priceOff = true;
 		}
 	}
 
@@ -144,10 +163,10 @@ internal class HikerNPC : ModNPC, INPCButtons
 
 	public override string GetChat()
 	{
-		if (Hungry && !_info.priceOff && PlayerHasFood(out int type))
-			return Language.GetText("Mods.SpiritReforged.NPCs.Hiker.Dialogue.Hungry.Asking." + Main.rand.Next(4)).WithFormatArgs($"[i:{type}]").Value;
+		if (!_info.priceOff && PlayerHasFood(out int type))
+			return Language.GetText("Mods.SpiritReforged.NPCs.HikerNPC.Dialogue.Hungry.Asking." + Main.rand.Next(4)).WithFormatArgs($"[i:{type}]").Value;
 
-		return Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Dialogue.Idle." + Main.rand.Next(5));
+		return Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Dialogue.Idle." + Main.rand.Next(5));
 	}
 
 	private static bool PlayerHasFood(out int itemId)
@@ -171,7 +190,7 @@ internal class HikerNPC : ModNPC, INPCButtons
 	public ButtonText[] AddButtons()
 	{
 		if (_info.hasBundle && !_info.priceOff && PlayerHasFood(out _))
-			return [new ButtonText("Feed", Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Buttons.Feed"))];
+			return [new ButtonText("Feed", Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Buttons.Feed"))];
 
 		return [];
 	}
@@ -181,7 +200,7 @@ internal class HikerNPC : ModNPC, INPCButtons
 		if (button.Name == "Feed" && PlayerHasFood(out int id))
 		{
 			Main.LocalPlayer.ConsumeItem(id);
-			Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Dialogue.Hungry.Thanks." + Main.rand.Next(4));
+			Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Dialogue.Hungry.Thanks." + Main.rand.Next(4));
 
 			AdvancedPopupRequest request = new()
 			{
@@ -193,7 +212,6 @@ internal class HikerNPC : ModNPC, INPCButtons
 
 			PopupText.NewText(request, Main.LocalPlayer.Center);
 
-			Hungry = false;
 			_info.priceOff = true;
 		}
 	}
@@ -201,7 +219,7 @@ internal class HikerNPC : ModNPC, INPCButtons
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
-			for (int i = 0; i < 6; ++i)
+			for (int i = 0; i < 5; ++i)
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Hiker_" + i).Type, 1f);
 	}
 }

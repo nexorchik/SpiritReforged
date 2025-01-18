@@ -233,7 +233,7 @@ Cartographer: {
 	Entry: A peculiar mix of passionate explorer and abysmally clumsy, the Cartographer goes to places that...well, almost no one's explored. Sometimes, it's about being safe, not novel.
 }
 
-Hiker: {
+HikerNPC: {
 	DisplayName: Hiker
 
 	Buttons: {
@@ -293,5 +293,3 @@ Hiker: {
 
 	Entry: Jovial, easy going, deceptively strong - the Hiker knows his way around just about everywhere. The Jungle? Piece of cake. Deserts? Underground Tundra? Slide away. Space? Don't know how...but he'll get up there.
 }
-
-HikerNPC.DisplayName: Hiker N P C
