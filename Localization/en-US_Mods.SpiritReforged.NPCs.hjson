@@ -232,3 +232,66 @@ Cartographer: {
 
 	Entry: A peculiar mix of passionate explorer and abysmally clumsy, the Cartographer goes to places that...well, almost no one's explored. Sometimes, it's about being safe, not novel.
 }
+
+Hiker: {
+	DisplayName: Hiker
+
+	Buttons: {
+		Feed: Feed
+		Supplies: Supplies
+		Silver: 20 silver
+	}
+
+	Dialogue: {
+		Hungry: {
+			Asking: {
+				0: Hey. Long hike, forgot to grab a snack. Looks like you got some {0} I could have. Mind if I partake?
+				1: You ever leave the house and THEN realize you're hungry? I wish I didn't. Could you spare me a {0}?
+				2: Uphills really take it out of you. A snack would be appreciated, stranger...maybe some {0}?
+				3: After a grueling forty-five minutes without a snack, I'm on my last legs. Could you spare one of your {0}?
+			}
+
+			Thanks: {
+				0: Thanks. I can always count on strangers giving me food. Take some supplies, on the house!
+				1: Ah, that hits the spot. I've still got some supplies if you'd like to trade it. Or just be kind, I don't mind.
+				2: Hey, thank you so much. Take some of my stuff for free if you want.
+				3: Nothing quite hits like a meal after a long hike. Prices are off, take a pack. Free!
+			}
+		}
+
+		Idle: {
+			0: Nothing quite like a long hike down into caves. Up until the cobwebs cover the walls, it's a joy. After that point, it's a little less of a joy.
+			1: My old pal used to grab Blinkroot to explore instead of using torches. "Safer", he said. Odd guy. Wonder what happened to him.
+			2: You ever use pins? They're really useful. And old friend carried them around everywhere...last I saw she was "learning how to get on those floating islands." Tough job, huh?
+			3: Sometimes I pass by a faerie, and they guide me to gold or platinum. I always act excited, but I don't have a pickaxe. I hope they appreciate it.
+			4: You always carry a little extra supplies if you're smart. I've got just a little too much...for a small fee, I won't! Bahaha!
+		}
+
+		Purchase: {
+			0: Hey, thanks for lightening my pockets! Not by much, coin isn't light, but it's lighter nontheless!
+			1: Hm? Oh, bahaha! People keep asking me this: "Where do you keep entire bags full of stuff?" Where do YOU keep all of your stuff, huh?
+			2: Nothing as quaint as a nice trade on a nice hike with a nice stranger. Cheers!
+			3: Enjoy the extra space! I've heard if you put a bunch of Angel Statues - yes entire statues - in your bag, something crazy happens.
+			4: Thanks for the trade! I would say smell the flowers, but you shouldn't smell all of the flowers you pass by. So...hey, smell the good flowers. Keeps you alive. Literally.
+		}
+
+		FailPurchase: {
+			0: Sorry, you'll need a little more coin before we can trade. Unless some spare food is burning a hole in your pockets...? Haha, just kidding. Maybe?
+			1: Alas, my supplies stay with me. Come back with a little more coin. It'll be worth your time! And it'll save me some carry.
+			2: No can do, partner. I am not here to barter, I'm here to hike! And to repent for a little overpreparedness...I mean...business work. Working business.
+		}
+	}
+
+	Name: {
+		0: Gary
+		1: Shawn
+		2: Geo
+		3: Geoff
+		4: Rocky
+		5: Porter
+	}
+
+	Entry: Jovial, easy going, deceptively strong - the Hiker knows his way around just about everywhere. The Jungle? Piece of cake. Deserts? Underground Tundra? Slide away. Space? Don't know how...but he'll get up there.
+}
+
+HikerNPC.DisplayName: Hiker N P C
