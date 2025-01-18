@@ -4,12 +4,11 @@ using SpiritReforged.Common.ItemCommon.Backpacks;
 using SpiritReforged.Content.Forest.Backpacks;
 using SpiritReforged.Content.Savanna.Items.Gar;
 using Terraria.Utilities;
-using SpiritReforged.Content.Savanna.Biome;
 using Terraria.GameContent.Bestiary;
 
-namespace SpiritReforged.Content.Savanna.NPCs.Hiker;
+namespace SpiritReforged.Content.Forest.Misc;
 
-internal class HikerNPC : ModNPC
+internal class Hiker : ModNPC
 {
 	/// <summary>
 	/// Stores all information for the hiker to pass properly between clones.
@@ -44,47 +43,51 @@ internal class HikerNPC : ModNPC
 
 	protected override bool CloneNewInstances => true;
 
+	private static Asset<Texture2D> stickTexture;
+	private static Profiles.StackedNPCProfile npcProfile;
+
 	private HikerInfo _info = new();
 
 	public override ModNPC Clone(NPC newEntity)
 	{
 		var newNPC = base.Clone(newEntity);
-		var hiker = newNPC as HikerNPC;
+		var hiker = newNPC as Hiker;
 		hiker._info = _info;
 		return newNPC;
 	}
 
 	public override void SetStaticDefaults()
 	{
-		NPCID.Sets.ActsLikeTownNPC[Type] = true;
-		NPCID.Sets.NoTownNPCHappiness[Type] = true;
+		Main.npcFrameCount[Type] = 25;
 
-		Main.npcFrameCount[Type] = 24;
 		NPCID.Sets.ActsLikeTownNPC[Type] = true;
 		NPCID.Sets.NoTownNPCHappiness[Type] = true;
 		NPCID.Sets.ExtraFramesCount[Type] = 9;
 		NPCID.Sets.AttackFrameCount[Type] = 4;
-		NPCID.Sets.DangerDetectRange[Type] = 600;
-		NPCID.Sets.AttackType[Type] = -1;
+		NPCID.Sets.DangerDetectRange[Type] = 500;
+		NPCID.Sets.PrettySafe[Type] = 50;
+		NPCID.Sets.AttackType[Type] = 3;
 		NPCID.Sets.AttackTime[Type] = 20;
 		NPCID.Sets.HatOffsetY[Type] = 2;
+		NPCID.Sets.AttackAverageChance[Type] = 30;
+
+		stickTexture = ModContent.Request<Texture2D>(Texture + "Stick");
+		npcProfile = new Profiles.StackedNPCProfile(new Profiles.DefaultNPCProfile(Texture, NPCHeadLoader.GetHeadSlot(HeadTexture), Texture + "_Party"));
 	}
 
 	public override void SetDefaults()
 	{
 		NPC.CloneDefaults(NPCID.SkeletonMerchant);
-		NPC.townNPC = true;
+		NPC.HitSound = SoundID.NPCHit1;
+		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.Size = new Vector2(30, 40);
-		NPC.aiStyle = NPCAIStyleID.Passive;
 
-		AIType = NPCID.Guide;
 		AnimationType = NPCID.Guide;
-		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 
 		_info = new();
 	}
 
-	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Surface");
 
 	public override List<string> SetNPCNameList()
 	{
@@ -169,6 +172,7 @@ internal class HikerNPC : ModNPC
 		_info.hasBundle = false;
 	}
 
+	public override bool CanChat() => true;
 	public override string GetChat()
 	{
 		if (!_info.priceOff && PlayerHasFood(out int type))
@@ -226,8 +230,37 @@ internal class HikerNPC : ModNPC
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
-		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
-			for (int i = 0; i < 5; ++i)
-				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Hiker_" + i).Type, 1f);
+		if (Main.dedServ)
+			return;
+
+		if (NPC.life <= 0)
+		{
+			for (int i = 1; i < 6; i++)
+			{
+				int goreType = Mod.Find<ModGore>(nameof(Hiker) + i).Type;
+				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity, goreType);
+			}
+		}
+
+		for (int d = 0; d < 8; d++)
+			Dust.NewDustPerfect(Main.rand.NextVector2FromRectangle(NPC.getRect()), DustID.Blood,
+				Main.rand.NextVector2Unit() * 1.5f, 0, default, Main.rand.NextFloat(1f, 1.5f));
+	}
+
+	public override ITownNPCProfile TownNPCProfile() => npcProfile;
+
+	public override void TownNPCAttackStrength(ref int damage, ref float knockback)
+	{
+		damage = 15;
+		knockback = 3f;
+	}
+
+	public override void TownNPCAttackSwing(ref int itemWidth, ref int itemHeight) => itemWidth = itemHeight = 30;
+
+	public override void DrawTownAttackSwing(ref Texture2D item, ref Rectangle itemFrame, ref int itemSize, ref float scale, ref Vector2 offset)
+	{
+		item = stickTexture.Value;
+		itemFrame = stickTexture.Frame();
+		itemSize = 30;
 	}
 }
