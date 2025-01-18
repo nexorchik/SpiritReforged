@@ -9,7 +9,7 @@ using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Forest.Misc;
 
-internal class Cartographer : ModNPC
+public class Cartographer : ModNPC
 {
 	protected override bool CloneNewInstances => true;
 

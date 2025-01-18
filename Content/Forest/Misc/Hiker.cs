@@ -8,7 +8,7 @@ using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Forest.Misc;
 
-internal class Hiker : ModNPC
+public class Hiker : ModNPC
 {
 	/// <summary>
 	/// Stores all information for the hiker to pass properly between clones.
@@ -94,7 +94,7 @@ internal class Hiker : ModNPC
 		List<string> nameList = [];
 
 		for (int i = 0; i < 6; i++)
-			nameList.Add(Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Name." + i));
+			nameList.Add(Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Name." + i));
 
 		return nameList;
 	}
@@ -103,14 +103,14 @@ internal class Hiker : ModNPC
 	{
 		if (_info.hasBundle)
 		{
-			string silver = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Buttons.Silver");
-			button = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Buttons.Supplies") + (_info.priceOff ? "" : $"([c/AAAAAA:{silver}])");
+			string silver = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Buttons.Silver");
+			button = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Buttons.Supplies") + (_info.priceOff ? "" : $"([c/AAAAAA:{silver}])");
 		}
 		else
 			button = "";
 
 		if (_info.hasBundle && !_info.priceOff && PlayerHasFood(out int _))
-			button2 = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Buttons.Feed");
+			button2 = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Buttons.Feed");
 	}
 
 	public override void OnChatButtonClicked(bool firstButton, ref string shopName)
@@ -123,15 +123,15 @@ internal class Hiker : ModNPC
 			{
 				SpawnBundle();
 
-				Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Dialogue.Purchase." + Main.rand.Next(5));
+				Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Dialogue.Purchase." + Main.rand.Next(5));
 			}
 			else
-				Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Dialogue.FailPurchase." + Main.rand.Next(3));
+				Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Dialogue.FailPurchase." + Main.rand.Next(3));
 		}
 		else if (PlayerHasFood(out int id))
 		{
 			Main.LocalPlayer.ConsumeItem(id);
-			Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Dialogue.Hungry.Thanks." + Main.rand.Next(4));
+			Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Dialogue.Hungry.Thanks." + Main.rand.Next(4));
 
 			AdvancedPopupRequest request = new()
 			{
@@ -176,9 +176,9 @@ internal class Hiker : ModNPC
 	public override string GetChat()
 	{
 		if (!_info.priceOff && PlayerHasFood(out int type))
-			return Language.GetText("Mods.SpiritReforged.NPCs.HikerNPC.Dialogue.Hungry.Asking." + Main.rand.Next(4)).WithFormatArgs($"[i:{type}]").Value;
+			return Language.GetText("Mods.SpiritReforged.NPCs.Hiker.Dialogue.Hungry.Asking." + Main.rand.Next(4)).WithFormatArgs($"[i:{type}]").Value;
 
-		return Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Dialogue.Idle." + Main.rand.Next(5));
+		return Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Dialogue.Idle." + Main.rand.Next(5));
 	}
 
 	private static bool PlayerHasFood(out int itemId)
@@ -202,7 +202,7 @@ internal class Hiker : ModNPC
 	public ButtonText[] AddButtons()
 	{
 		if (_info.hasBundle && !_info.priceOff && PlayerHasFood(out _))
-			return [new ButtonText("Feed", Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Buttons.Feed"))];
+			return [new ButtonText("Feed", Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Buttons.Feed"))];
 
 		return [];
 	}
@@ -212,7 +212,7 @@ internal class Hiker : ModNPC
 		if (button.Name == "Feed" && PlayerHasFood(out int id))
 		{
 			Main.LocalPlayer.ConsumeItem(id);
-			Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.HikerNPC.Dialogue.Hungry.Thanks." + Main.rand.Next(4));
+			Main.npcChatText = Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Dialogue.Hungry.Thanks." + Main.rand.Next(4));
 
 			AdvancedPopupRequest request = new()
 			{
@@ -263,4 +263,19 @@ internal class Hiker : ModNPC
 		itemFrame = stickTexture.Frame();
 		itemSize = 30;
 	}
+
+	public override float SpawnChance(NPCSpawnInfo spawnInfo)
+	{
+		if (ModContent.GetInstance<WorldNPCFlags>().hikerSpawned || spawnInfo.Invasion || spawnInfo.Water)
+			return 0; //Never spawn during an invasion, in water or if already spawned that day
+
+		if ((spawnInfo.Player.ZoneSnow || InnerThirds(spawnInfo.SpawnTileX) && spawnInfo.Player.InZonePurity() && !spawnInfo.Player.ZoneSkyHeight) && Main.dayTime)
+			return .0019f; //Spawn most commonly in the Snow and inner thirds of the Forest during the day
+
+		return 0;
+
+		static bool InnerThirds(int x) => x > Main.maxTilesX / 3 && x < Main.maxTilesX - Main.maxTilesY / 3;
+	}
+
+	public override void OnSpawn(IEntitySource source) => ModContent.GetInstance<WorldNPCFlags>().cartographerSpawned = true;
 }
