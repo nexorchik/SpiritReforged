@@ -1,10 +1,8 @@
-CommonTooltips: {
-	Backpack: 
-		'''
-		Holds 4 items
-		You must empty this before taking it off
-		'''
-}
+CommonTooltips.Backpack:
+	'''
+	Holds 4 items
+	You must empty this before taking it off
+	'''
 
 Kelp: {
 	DisplayName: Kelp
@@ -1220,7 +1218,7 @@ TornMapPiece: {
 
 FashionableBackpack: {
 	DisplayName: Fashionable Backpack
-	Tooltip: 
+	Tooltip:
 		'''
 		{$CommonTooltips.Backpack}
 		'Sleek, modern, but none the less effective'
@@ -1238,7 +1236,7 @@ HikingBackpack: {
 
 Minipack: {
 	DisplayName: Minipack
-	Tooltip: 
+	Tooltip:
 		'''
 		{$CommonTooltips.Backpack}
 		'Small, light, and super compact'
@@ -1247,7 +1245,7 @@ Minipack: {
 
 PinkPack: {
 	DisplayName: Pink Pack
-	Tooltip: 
+	Tooltip:
 		'''
 		{$CommonTooltips.Backpack}
 		'The best color, useful, and great visibility at a distance'
