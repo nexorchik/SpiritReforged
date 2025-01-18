@@ -171,7 +171,11 @@ public abstract class CustomTree : ModTile
 		DrawTreeBody(i, j, spriteBatch);
 
 		if (IsTreeTop(i, j) || (int)Noise(new Vector2(i, j)) == 0)
+		{
+			var offset = Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1 ? Vector2.Zero : Vector2.One * 12;
+			spriteBatch.Draw(TextureAssets.MagicPixel.Value, (new Vector2(i, j) + offset) * 16 - Main.screenPosition, new Rectangle(0, 0, 16, 16), Color.Red * .5f, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
 			drawPoints.Add(new Point16(i, j));
+		}
 
 		return false;
 	}

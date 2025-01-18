@@ -10,8 +10,6 @@ namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
 public class AcaciaTree : CustomTree, IConvertibleTile
 {
-	private const int NumStyles = 4;
-
 	public static IEnumerable<TreetopPlatform> Platforms => SimpleEntitySystem.entities.Where(x => x is TreetopPlatform).Cast<TreetopPlatform>();
 
 	public override int TreeHeight => WorldGen.genRand.Next(8, 16);
@@ -94,15 +92,16 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		}
 		else //Draw branches
 		{
+			const int numStyles = 4;
 			const int framesX = 2;
 			const int framesY = 3;
 
-			int frameX = (TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) / NumStyles == framesX) ? 1 : 0;
+			int frameX = (TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) / numStyles == framesX) ? 1 : 0;
 			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
 			var source = BranchTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
 			var origin = new Vector2(frameX == 0 ? source.Width : 0, 44);
 
-			position.X += 6 * (frameX == 0 ? -1 : 1); //Directional offset
+			position += new Vector2(6 * ((frameX == 0) ? -1 : 1), 8); //Directional offset
 
 			spriteBatch.Draw(BranchTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
