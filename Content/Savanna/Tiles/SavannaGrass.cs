@@ -139,8 +139,8 @@ public class SavannaGrassHallow : SavannaGrass
 	{
 		base.SetStaticDefaults();
 
-		TileID.Sets.Crimson[Type] = true;
-		TileID.Sets.AddCrimsonTile(Type, 20);
+		TileID.Sets.Hallow[Type] = true;
+		TileID.Sets.HallowBiome[Type] = 20;
 	}
 }
 
