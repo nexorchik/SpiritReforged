@@ -1,8 +1,7 @@
 ﻿using MonoMod.RuntimeDetour;
+using SpiritReforged.Common.UI.Misc;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using Terraria.GameContent.UI.Elements;
-using Terraria.ModLoader.UI;
 using Terraria.UI;
 
 namespace SpiritReforged.Common.UI.ModIconAnimation;
@@ -35,12 +34,11 @@ internal class AnimateModIconHook : ILoadable
 
 			var element = self as UIElement;
 			element.RemoveChild(icon);
+
 			var tex = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("icon_animated", AssetRequestMode.ImmediateLoad);
-			element.Append(new UIAnimatedImage(tex, 80, 80, 0, 0, 1, 4, 0)
-			{
-				FrameCount = 4,
-				TicksPerFrame = 8,
-			});
+			var scroll = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("icon_scroll", AssetRequestMode.ImmediateLoad);
+
+			element.Append(new UIScrollingImage(tex, scroll, 0.3f));
 		}
 	}
 
