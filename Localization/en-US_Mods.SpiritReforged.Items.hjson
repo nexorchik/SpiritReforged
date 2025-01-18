@@ -1269,3 +1269,8 @@ DyeCrateItem: {
 		'It smells...surprisingly pleasant!'
 		'''
 }
+
+SavannaNightMusicBoxItem: {
+	DisplayName: Music Box (Savanna Night)
+	Tooltip: ""
+}
