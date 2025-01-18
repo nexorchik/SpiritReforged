@@ -1,4 +1,6 @@
-﻿namespace SpiritReforged.Content.Savanna.Biome;
+﻿using Terraria.Graphics.Capture;
+
+namespace SpiritReforged.Content.Savanna.Biome;
 
 public class SavannaBiome : ModBiome
 {
@@ -7,7 +9,8 @@ public class SavannaBiome : ModBiome
 	public override ModWaterStyle WaterStyle => ModContent.GetInstance<SavannaWaterStyle>();
 	public override CaptureBiome.TileColorStyle TileColorStyle => CaptureBiome.TileColorStyle.Normal;
 
-	public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle => ModContent.GetInstance<SavannaBGStyle>();
+	public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle 
+		=> Main.LocalPlayer.ZoneHallow ? ModContent.GetInstance<HallowSavannaBGStyle>() : ModContent.GetInstance<SavannaBGStyle>();
 	public override string BestiaryIcon => base.BestiaryIcon;
 	public override string BackgroundPath => MapBackground;
 	public override string MapBackground => "SpiritReforged/Assets/Textures/Backgrounds/SavannaMapBG";

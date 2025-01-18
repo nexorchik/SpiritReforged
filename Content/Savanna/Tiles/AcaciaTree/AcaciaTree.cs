@@ -10,12 +10,11 @@ namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
 public class AcaciaTree : CustomTree, IConvertibleTile
 {
-	private const int numStyles = 4;
+	private const int NumStyles = 4;
 
 	public static IEnumerable<TreetopPlatform> Platforms => SimpleEntitySystem.entities.Where(x => x is TreetopPlatform).Cast<TreetopPlatform>();
 
 	public override int TreeHeight => WorldGen.genRand.Next(8, 16);
-
 	protected virtual int ValidAnchor => ModContent.TileType<SavannaGrass>();
 
 	/// <summary> How much acacia tree tops sway in the wind. Used by the client for drawing and platform logic. </summary>
@@ -26,7 +25,6 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 		return Main.instance.TilesRenderer.GetWindCycle(i, j, factor) * .4f;
 	}
-
 	public override void PreAddTileObjectData()
 	{
 		TileObjectData.newTile.AnchorValidTiles = [ValidAnchor];
@@ -99,7 +97,6 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 			int frameX = (TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) / NumStyles == framesX) ? 1 : 0;
 			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
-
 			var source = BranchTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
 			var origin = new Vector2(frameX == 0 ? source.Width : 0, 44);
 
@@ -107,14 +104,6 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 			spriteBatch.Draw(BranchTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
-	}
-
-	public override void AddDrawPoints(int i, int j, SpriteBatch spriteBatch)
-	{
-		if (IsTreeTop(i, j) && TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) % NumStyles < 2)
-			treeDrawPoints.Add(new Point16(i, j));
-		else if (TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) / NumStyles > 0)
-			treeDrawPoints.Add(new Point16(i, j));
 	}
 
 	protected override void OnGrowEffects(int i, int j, int height)

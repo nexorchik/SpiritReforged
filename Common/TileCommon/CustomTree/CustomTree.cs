@@ -25,25 +25,28 @@ public abstract class CustomTree : ModTile
 	public Asset<Texture2D> TopTexture => topsTextureByType[Type];
 	public Asset<Texture2D> BranchTexture => branchesTextureByType[Type];
 
-	protected readonly HashSet<Point16> treeDrawPoints = [];
+	protected readonly HashSet<Point16> drawPoints = [];
 
-	public bool IsTreeTop(int i, int j, bool checkBroken = false)
+	private readonly HashSet<Point16> treeShakes = [];
+
 	public bool IsTreeTop(int i, int j, bool checkBroken = false)
 	{
 		bool clear = ModContent.GetModTile(Framing.GetTileSafely(i, j - 1).TileType) is not CustomTree;
-		return checkBroken ? clear && treeDrawPoints.Contains(new Point16(i, j)) : clear;
+		return checkBroken ? clear && drawPoints.Contains(new Point16(i, j)) : clear;
 	}
 
+	public override void Load()
 	{
 		if (!Main.dedServ)
-		On_TileDrawing.DrawTrees += (On_TileDrawing.orig_DrawTrees orig, TileDrawing self) =>
-		{
-			orig(self);
-		foreach (Point16 p in drawPoints)
-			DrawTreeFoliage(p.X, p.Y, Main.spriteBatch);
+			On_TileDrawing.DrawTrees += (On_TileDrawing.orig_DrawTrees orig, TileDrawing self) =>
+			{
+				orig(self);
+				foreach (Point16 p in drawPoints)
+					DrawTreeFoliage(p.X, p.Y, Main.spriteBatch);
 
-		if (Main.drawToScreen)
-			drawPoints.Clear();
+				if (Main.drawToScreen)
+					drawPoints.Clear();
+			};
 	}
 
 	private void ResetPoints(On_TileDrawing.orig_PreDrawTiles orig, TileDrawing self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets)
@@ -225,7 +228,7 @@ public abstract class CustomTree : ModTile
 				frameX = WorldGen.genRand.Next(4, 7);
 
 			WorldGen.PlaceTile(i, j - h, Type, true);
-			Framing.GetTileSafely(i, j - h).TileFrameX = (short)(frameX * frameSize);
+			var tile = Framing.GetTileSafely(i, j - h);
 
 			if (tile.HasTile && tile.TileType == Type)
 			{
