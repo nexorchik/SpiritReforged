@@ -277,5 +277,5 @@ public class Hiker : ModNPC
 		static bool InnerThirds(int x) => x > Main.maxTilesX / 3 && x < Main.maxTilesX - Main.maxTilesY / 3;
 	}
 
-	public override void OnSpawn(IEntitySource source) => ModContent.GetInstance<WorldNPCFlags>().cartographerSpawned = true;
+	public override void OnSpawn(IEntitySource source) => ModContent.GetInstance<WorldNPCFlags>().hikerSpawned = true;
 }
