@@ -35,7 +35,7 @@ public class TumbleZombie : ReplaceNPC
 		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
 
-	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "NightTime");
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{

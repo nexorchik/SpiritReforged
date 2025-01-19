@@ -6,7 +6,7 @@ using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
-public class HideZombie1 : ReplaceNPC
+public class HideZombieBig : ReplaceNPC
 {
 	float frameCounter;
 
@@ -38,7 +38,7 @@ public class HideZombie1 : ReplaceNPC
 		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
 
-	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "NightTime");
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{

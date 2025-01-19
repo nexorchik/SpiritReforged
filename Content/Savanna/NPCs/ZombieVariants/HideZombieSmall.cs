@@ -6,7 +6,7 @@ using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
-public class HideZombie2 : HideZombie1
+public class HideZombieSmall : HideZombieBig
 {
 	public override void SetDefaults()
 	{
