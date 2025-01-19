@@ -79,10 +79,10 @@ public class TermiteMoundMedium : ModTile
 
 		TileID.Sets.BreakableWhenPlacing[Type] = true;
 
-		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
+		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3);
 		TileObjectData.newTile.Height = 4;
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 16];
-		TileObjectData.newTile.Origin = new(1, 3);
+		TileObjectData.newTile.Origin = new(2, 3);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 3, 0);
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaDirt>()];
 		TileObjectData.newTile.StyleHorizontal = true;

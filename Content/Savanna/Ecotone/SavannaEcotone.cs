@@ -241,6 +241,8 @@ internal class SavannaEcotone : EcotoneBase
 				genBaobabTree = true;
 		}
 
+		GrowStones();
+
 		if (genWateringHole)
 		{
 			if (IterateGen(200, HoleGen, out int i, out int j, "Watering Hole"))
@@ -264,12 +266,10 @@ internal class SavannaEcotone : EcotoneBase
 			static bool BaobabTreeGen(int i, int j) => Main.tile[i, j].TileType == ModContent.TileType<SavannaDirt>() && Main.tile[i, j - 1].LiquidAmount < 50;
 		}
 
-		GrowStones();
-
 		for (int i = SavannaArea.Left; i < SavannaArea.Right; ++i)
 			for (int j = SavannaArea.Top - 1; j < SavannaArea.Bottom; ++j)
 			{
-				OpenFlags flags = OpenTools.GetOpenings(i, j);
+				OpenFlags flags = OpenTools.GetOpenings(i, j, onlySolid: true);
 				var tile = Main.tile[i, j];
 
 				if (flags == OpenFlags.None)
@@ -292,7 +292,7 @@ internal class SavannaEcotone : EcotoneBase
 				}
 
 				if (WorldGen.genRand.NextBool(120)) //Rare bones
-					WorldGen.PlaceTile(i - 1, j, TileID.LargePiles2, true, style: WorldGen.genRand.Next(52, 55));
+					WorldGen.PlaceTile(i, j, TileID.LargePiles2, true, style: WorldGen.genRand.Next(52, 55));
 			}
 
 		if (WorldGen.genRand.NextBool(3))
@@ -314,9 +314,7 @@ internal class SavannaEcotone : EcotoneBase
 					treeOdds = chanceMax;
 				}
 				else
-				{
 					treeOdds = Math.Max(treeOdds - 1, 2); //Decrease the odds every time a tree fails to generate
-				}
 			}
 		}
 	}
@@ -329,13 +327,13 @@ internal class SavannaEcotone : EcotoneBase
 		if (WorldGen.genRand.NextBool(9)) //Foliage patch
 			CreatePatch(WorldGen.genRand.Next(6, 13), 2, ModContent.TileType<SavannaFoliage>());
 
-		if (WorldGen.genRand.NextBool(50)) //Termite mound
+		if (WorldGen.genRand.NextBool(40)) //Termite mound
 		{
 			int type = WorldGen.genRand.NextFromList(ModContent.TileType<TermiteMoundSmall>(),
 				ModContent.TileType<TermiteMoundMedium>(), ModContent.TileType<TermiteMoundLarge>());
 			int style = WorldGen.genRand.Next(TileObjectData.GetTileData(type, 0).RandomStyleRange);
 
-			WorldGen.PlaceTile(i, j - 1, type, true, style: style);
+			WorldGen.PlaceTile(i, j, type, true, true, style: style);
 		}
 
 		void CreatePatch(int size, int chance, params int[] types)

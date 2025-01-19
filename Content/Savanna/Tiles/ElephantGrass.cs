@@ -1,7 +1,6 @@
 ﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.TileSway;
-using System.Linq;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
@@ -14,8 +13,6 @@ public class ElephantGrass : ModTile, ISwayTile, IConvertibleTile
 	protected virtual Color MapColor => new(104, 156, 70);
 	protected virtual int Dust => DustID.JungleGrass;
 	protected virtual Color LerpColor => Color.Goldenrod;
-
-	protected bool IsElephantGrass(int i, int j) => Framing.GetTileSafely(i, j).TileType == Type;
 
 	public override void SetStaticDefaults()
 	{
@@ -151,49 +148,40 @@ public class ElephantGrassShort : ElephantGrass
 		HitSound = SoundID.Grass;
 	}
 
-	public override void RandomUpdate(int i, int j)
+	public override void RandomUpdate(int i, int j) //Grow up; spreading happens in SavannaGrass.RandomUpdate
 	{
-		var tile = Framing.GetTileSafely(i, j);
-		var data = tile.SafelyGetData();
-
-		if (tile.TileFrameY != (data.Height - 1) * 18)
+		if (!(IsBase() && Main.rand.NextBool()))
 			return;
 
-		if (Main.rand.NextBool(2)) //Grow up
+		if (!Framing.GetTileSafely(i, j - 2).HasTile && GrassSurrounding())
 		{
-			if (!Framing.GetTileSafely(i, j - 2).HasTile && IsElephantGrass(i - 1, j) && IsElephantGrass(i + 1, j))
-			{
-				for (int y = 0; y < 2; y++)
-					Framing.GetTileSafely(i, j - 1).HasTile = false; //Deactivate all tiles in this multitile
+			for (int y = 0; y < 2; y++)
+				Framing.GetTileSafely(i, j - y).ClearTile();
 
-				NetMessage.SendTileSquare(-1, i, j - 1, 1, 2);
-
-				int type = ModContent.TileType<ElephantGrass>();
-				int style = Main.rand.Next(data.RandomStyleRange);
-
-				WorldGen.PlaceObject(i, j, type, true, style);
-				NetMessage.SendObjectPlacement(-1, i, j, type, style, 0, -1, -1);
-			}
+			if (WorldGen.PlaceTile(i, j, ModContent.TileType<ElephantGrass>(), true, style: Main.rand.Next(5)))
+				NetMessage.SendTileSquare(-1, i, j - 2, 1, 3);
 		}
 
-		if (Main.rand.NextBool(8)) //Spread
+		bool IsBase()
 		{
-			int[] anchors = data.AnchorValidTiles;
-			
-			for (int d = 0; d < 2; d++)
-			{
-				int dir = (d == 0) ? -1 : 1; //Check directly left and right
+			var tile = Main.tile[i, j];
 
-				if (anchors.Contains(Framing.GetTileSafely(i + dir, j + 1).TileType) && Framing.GetTileSafely(i + dir, j - 1).LiquidAmount < 80 && 
-					!Framing.GetTileSafely(i + dir, j + 1).TopSlope && !Framing.GetTileSafely(i + dir, j - 1).HasTile && !Framing.GetTileSafely(i + dir, j - 2).HasTile)
-				{
-					int style = Main.rand.Next(data.RandomStyleRange);
-					WorldGen.PlaceObject(i, j, Type, true, style);
-					NetMessage.SendObjectPlacement(-1, i, j, Type, style, 0, -1, -1);
+			if (!tile.HasTile)
+				return false;
 
-					break;
-				}
-			}
+			var tileData = TileObjectData.GetTileData(tile);
+			if (tileData == null)
+				return false;
+
+			int partFrameX = tile.TileFrameX % tileData.CoordinateFullWidth;
+			int partFrameY = tile.TileFrameY % tileData.CoordinateFullHeight;
+			return partFrameX == 0 && partFrameY == 18;
+		}
+
+		bool GrassSurrounding()
+		{
+			HashSet<int> types = [ModContent.TileType<ElephantGrassShort>(), ModContent.TileType<ElephantGrass>()];
+			return types.Contains(Framing.GetTileSafely(i - 1, j).TileType) && types.Contains(Framing.GetTileSafely(i + 1, j).TileType);
 		}
 	}
 
