@@ -293,3 +293,13 @@ Hiker: {
 
 	Entry: Jovial, easy going, deceptively strong - the Hiker knows his way around just about everywhere. The Jungle? Piece of cake. Deserts? Underground Tundra? Slide away. Space? Don't know how...but he'll get up there.
 }
+
+HideZombieBig: {
+	DisplayName: "{$NPCName.Zombie}"
+	Entry: Hyenas have to hide from hide zombies or have their hides hijacked.
+}
+
+HideZombieSmall: {
+	DisplayName: "{$NPCName.Zombie}"
+	Entry: Their outfit is all the vogue in latest undead fashion.
+}
