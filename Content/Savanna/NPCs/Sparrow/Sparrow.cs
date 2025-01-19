@@ -6,7 +6,11 @@ namespace SpiritReforged.Content.Savanna.NPCs.Sparrow;
 [AutoloadCritter]
 public class Sparrow : ModNPC
 {
-	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 5;
+	public override void SetStaticDefaults()
+	{
+		Main.npcFrameCount[Type] = 5;
+		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Shimmerfly;
+	}
 
 	public override void SetDefaults()
 	{

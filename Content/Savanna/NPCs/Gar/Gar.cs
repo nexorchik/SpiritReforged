@@ -24,6 +24,7 @@ public class Gar : ModNPC
 		Main.npcFrameCount[NPC.type] = 12;
 		Main.npcCatchable[NPC.type] = true;
 		NPCID.Sets.CountsAsCritter[Type] = true;
+		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Shimmerfly;
 	}
 
 	public override void SetDefaults()

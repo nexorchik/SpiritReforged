@@ -46,6 +46,7 @@ public class Pelican : ModNPC
 
 		Main.npcFrameCount[Type] = 8; //Rows
 		NPCID.Sets.CountsAsCritter[Type] = true;
+		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Shimmerfly;
 	}
 
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)

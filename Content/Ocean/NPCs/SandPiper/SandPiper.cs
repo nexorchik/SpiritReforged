@@ -1,8 +1,10 @@
 using Terraria.GameContent.Bestiary;
 using Terraria.DataStructures;
+using SpiritReforged.Common.NPCCommon;
 
 namespace SpiritReforged.Content.Ocean.NPCs.SandPiper;
 
+[SpawnPack(3, 5)]
 [AutoloadCritter]
 public class SandPiper : ModNPC
 {
@@ -14,7 +16,11 @@ public class SandPiper : ModNPC
 	private ref float Timer => ref NPC.ai[1];
 	private ref float WalkState => ref NPC.ai[2];
 
-	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 4;
+	public override void SetStaticDefaults()
+	{
+		Main.npcFrameCount[Type] = 4;
+		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Shimmerfly;
+	}
 
 	public override void SetDefaults()
 	{

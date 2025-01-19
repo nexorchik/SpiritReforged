@@ -21,6 +21,7 @@ public class Killifish : ModNPC
 		Main.npcFrameCount[Type] = 9;
 		Main.npcCatchable[Type] = true;
 		NPCID.Sets.CountsAsCritter[Type] = true;
+		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Shimmerfly;
 	}
 
 	public override void SetDefaults()
