@@ -9,8 +9,7 @@ using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Forest.Botanist.Tiles;
 
-[DrawOrder(DrawOrderAttribute.Layer.NonSolid)]
-public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
+public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 {
 	private static bool IsTop(int i, int j, out ScarecrowTileEntity entity)
 	{
@@ -34,14 +33,20 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, 1, 0);
 		var entity = ModContent.GetInstance<ScarecrowTileEntity>();
 		TileObjectData.newTile.HookPostPlaceMyPlayer = new PlacementHook(entity.Hook_AfterPlacement, -1, 0, false);
+		TileObjectData.newTile.Direction = TileObjectDirection.PlaceLeft;
+		TileObjectData.newTile.StyleHorizontal = true;
+
+		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
+		TileObjectData.newAlternate.Direction = TileObjectDirection.PlaceRight;
+		TileObjectData.addAlternate(1);
 		TileObjectData.addTile(Type);
 
+		RegisterItemDrop(Mod.Find<ModItem>(Name + "Item").Type); //Register for all alternative styles
 		AddMapEntry(new Color(21, 92, 19));
 		DustType = DustID.Hay;
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
-
 	public override void KillMultiTile(int i, int j, int frameX, int frameY) => ModContent.GetInstance<ScarecrowTileEntity>().Kill(i, j);
 
 	public override IEnumerable<Item> GetItemDrops(int i, int j)
@@ -50,7 +55,12 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
 
 		var entity = ScarecrowTileEntity.GetMe(i, j);
 		if (entity is not null && entity.Hat is not null)
-			drops = drops.Concat([entity.Hat.Clone()]);
+		{
+			if (drops is null) //Don't concat if drops are null
+				drops = [entity.Hat.Clone()];
+			else
+				drops = drops.Concat([entity.Hat.Clone()]);
+		}
 
 		return drops;
 	}
@@ -75,7 +85,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
 		player.cursorItemIconID = (entity.Hat is null) ? Mod.Find<ModItem>(Name + "Item").Type : entity.Hat.type;
 	}
 
-	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
+	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
 		var data = TileObjectData.GetTileData(tile);
@@ -84,21 +94,9 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
 		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, data.CoordinateHeights[tile.TileFrameY / 18]);
 
 		spriteBatch.Draw(TextureAssets.Tile[Type].Value, drawPos + offset, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0f);
-
-		if (tile.TileFrameY == 0 && tile.TileFrameX == 0)
-		{
-			var entity = ScarecrowTileEntity.GetMe(i, j);
-			if (entity != null)
-			{
-				entity.rotation = rotation;
-				entity.visualPosition = new Vector2(i, j) * 16 + dataOffset + offset;
-			}
-		}
 	}
 
-	public void ModifyRotation(int i, int j, ref float rotation) => rotation *= .5f;
-
-	public float SetWindSway(Point16 topLeft)
+	public float Physics(Point16 topLeft)
 	{
 		var data = TileObjectData.GetTileData(Framing.GetTileSafely(topLeft));
 		float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, TileSwaySystem.Instance.TreeWindCounter);
@@ -106,7 +104,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayInWind
 		if (!WorldGen.InAPlaceWithWind(topLeft.X, topLeft.Y, data.Width, data.Height))
 			rotation = 0f;
 
-		return rotation + TileSwayHelper.GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 20, 3f, 1, true);
+		return (rotation + TileSwayHelper.GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 20, 3f, 1, true)) * .5f;
 	}
 }
 
@@ -115,8 +113,6 @@ public class ScarecrowTileEntity : ModTileEntity
 	public Item Hat { get; private set; } = null;
 
 	private readonly Player dummy;
-	public float rotation;
-	public Vector2 visualPosition;
 
 	public static ScarecrowTileEntity GetMe(int i, int j)
 	{
@@ -166,8 +162,20 @@ public class ScarecrowTileEntity : ModTileEntity
 
 		//The base of the scarecrow
 		var origin = new Vector2(8, 16 * 3);
+		float rotation = 0;
+		int direction = -1;
 
-		dummy.direction = 1;
+		if (TileLoader.GetTile(ModContent.TileType<Scarecrow>()) is ISwayTile sway)
+			rotation = sway.Physics(Position) * .12f;
+
+		if (TileObjectData.GetTileStyle(Framing.GetTileSafely(Position)) == 1)
+			direction = 1;
+
+		var position = new Vector2(Position.X * 16, Position.Y * 16) + new Vector2((direction == -1) ? -1 : -3, 32f * Math.Max(rotation, 0) - 6);
+		if (Math.Abs(rotation) > .012f)
+			position.Y++;
+
+		dummy.direction = direction;
 		dummy.Male = true;
 		dummy.isDisplayDollOrInanimate = true;
 		dummy.isHatRackDoll = true;
@@ -178,7 +186,7 @@ public class ScarecrowTileEntity : ModTileEntity
 		dummy.UpdateDyes();
 		dummy.DisplayDollUpdate();
 		dummy.PlayerFrame();
-		dummy.position = visualPosition + new Vector2(4, -50 + rotation * 20);
+		dummy.position = position;
 		dummy.fullRotation = rotation;
 		dummy.fullRotationOrigin = origin;
 
@@ -252,9 +260,7 @@ public class ScarecrowTileEntity : ModTileEntity
 	}
 
 	public override void OnNetPlace() => NetMessage.SendData(MessageID.TileEntitySharing, number: ID, number2: Position.X, number3: Position.Y);
-
 	public override void NetSend(BinaryWriter writer) => ItemIO.Send(Hat, writer);
-
 	public override void NetReceive(BinaryReader reader) => Hat = ItemIO.Receive(reader);
 
 	public override void SaveData(TagCompound tag)

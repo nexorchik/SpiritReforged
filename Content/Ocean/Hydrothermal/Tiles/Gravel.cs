@@ -26,6 +26,33 @@ public class Gravel : ModTile, IAutoloadTileItem
 		MineResist = .5f;
 	}
 
+	public override void RandomUpdate(int i, int j)
+	{
+		int type = ModContent.TileType<HydrothermalVent>();
+		var data = TileObjectData.GetTileData(type, 0);
+
+		if (Main.rand.NextBool(55) && !WorldGen.PlayerLOS(i, j) && Submerged())
+		{
+			if (WorldGen.PlaceTile(i, j - 1, type, true, style: Main.rand.Next(data.RandomStyleRange)))
+				NetMessage.SendTileSquare(-1, i, j - data.Height, data.Width, data.Height, TileChangeType.None);
+		}
+
+		bool Submerged()
+		{
+			for (int x = 0; x < data.Width; x++)
+			{
+				for (int y = 0; y < data.Height; y++)
+				{
+					var tile = Framing.GetTileSafely(i + x, j - y);
+					if (tile.LiquidType != LiquidID.Water || tile.LiquidAmount < 255)
+						return false;
+				}
+			}
+
+			return true;
+		}
+	}
+
 	public override void ModifyFrameMerge(int i, int j, ref int up, ref int down, ref int left, ref int right, ref int upLeft, ref int upRight, ref int downLeft, ref int downRight)
 	{
 		static void Disallow(ref int side)

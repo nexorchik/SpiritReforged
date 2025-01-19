@@ -102,37 +102,34 @@ public class HydrothermalVent : ModTile
 		AddMapEntry(new Color(64, 54, 66), CreateMapEntryName());
 	}
 
-	public override void NearbyEffects(int i, int j, bool closer)
+	public override void NearbyEffects(int i, int j, bool closer) //Client effects
 	{
+		if (!TileObjectData.IsTopLeft(i, j) || Main.gamePaused)
+			return;
+
 		var t = Framing.GetTileSafely(i, j);
 		int fullWidth = TileObjectData.GetTileData(t).CoordinateFullWidth;
+		var position = new Vector2(i, j) * 16 + tops[t.TileFrameX / fullWidth].ToVector2();
 
-		if (t.TileFrameX % fullWidth == 0 && t.TileFrameY == 0) //Client effects
+		if (Main.rand.NextBool(5)) //Passive smoke effects
 		{
-			if (Main.gamePaused)
-				return;
+			var velocity = new Vector2(0, -Main.rand.NextFloat(2f, 2.5f));
 
-			var position = new Vector2(i, j) * 16 + tops[t.TileFrameX / fullWidth].ToVector2();
-			if (Main.rand.NextBool(5)) //Passive smoke effects
-			{
-				var velocity = new Vector2(0, -Main.rand.NextFloat(2f, 2.5f));
-
-				ParticleHandler.SpawnParticle(new DissipatingSmoke(position, velocity,
-					new Color(40, 40, 50), Color.SlateGray, Main.rand.NextFloat(.005f, .06f), 150)
-				{ squash = true });
-			}
-
-			if (Main.rand.NextBool()) //Passive ash effects
-			{
-				float range = Main.rand.NextFloat();
-				var velocity = new Vector2(0, -Main.rand.NextFloat(range * 8f)).RotatedByRandom((1f - range) * 1.5f);
-
-				var dust = Dust.NewDustPerfect(position, DustID.Ash, velocity, Alpha: 180);
-				dust.noGravity = true;
-			}
-
-			BubbleSoundPlayer.StartSound(new Vector2(i, j) * 16);
+			ParticleHandler.SpawnParticle(new DissipatingSmoke(position, velocity,
+				new Color(40, 40, 50), Color.SlateGray, Main.rand.NextFloat(.005f, .06f), 150)
+			{ squash = true });
 		}
+
+		if (Main.rand.NextBool()) //Passive ash effects
+		{
+			float range = Main.rand.NextFloat();
+			var velocity = new Vector2(0, -Main.rand.NextFloat(range * 8f)).RotatedByRandom((1f - range) * 1.5f);
+
+			var dust = Dust.NewDustPerfect(position, DustID.Ash, velocity, Alpha: 180);
+			dust.noGravity = true;
+		}
+
+		BubbleSoundPlayer.StartSound(new Vector2(i, j) * 16);
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;

@@ -13,20 +13,23 @@ public abstract class CustomTree : ModTile
 	/// <summary> Controls growth height without the need to override <see cref="GenerateTree"/>. </summary>
 	public virtual int TreeHeight => WorldGen.genRand.Next(10, 21);
 
-	internal Asset<Texture2D> topsTexture, branchesTexture;
+	protected const int FrameSize = 22;
 	internal static readonly FastNoiseLite noise = new();
 
-	protected const int frameSize = 22; //Frame size common for trees
-
-	private readonly HashSet<Point16> drawPoints = [];
+	protected readonly HashSet<Point16> drawPoints = [];
 	private readonly HashSet<Point16> treeShakes = [];
+
+	// Textures are set as lookups, keyed by type - this means we can have one static instance (bypassing instancing issues) while keeping data easy to access
+	internal readonly static Dictionary<int, Asset<Texture2D>> branchesTextureByType = [];
+	internal readonly static Dictionary<int, Asset<Texture2D>> topsTextureByType = [];
+
+	public Asset<Texture2D> TopTexture => topsTextureByType[Type];
+	public Asset<Texture2D> BranchTexture => branchesTextureByType[Type];
 
 	public override void Load()
 	{
-		if (ModContent.RequestIfExists(Texture + "_Tops", out Asset<Texture2D> tops))
-			topsTexture = tops;
-		if (ModContent.RequestIfExists(Texture + "_Branches", out Asset<Texture2D> branches))
-			branchesTexture = branches;
+		if (Main.dedServ)
+			return;
 
 		On_TileDrawing.DrawTrees += DrawAllFoliage;
 		On_TileDrawing.PreDrawTiles += ResetPoints;
@@ -37,10 +40,10 @@ public abstract class CustomTree : ModTile
 		orig(self);
 
 		foreach (Point16 p in drawPoints)
-			DrawTreeFoliage(p.X, p.Y, Main.spriteBatch);
-
-		if (Main.drawToScreen)
-			drawPoints.Clear();
+		{
+			if (Main.tile[p.X, p.Y].TileType == Type) //Points aren't cleared before this type becomes invalidated after PreDraw, so double check
+				DrawTreeFoliage(p.X, p.Y, Main.spriteBatch);
+		}
 	}
 
 	private void ResetPoints(On_TileDrawing.orig_PreDrawTiles orig, TileDrawing self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets)
@@ -53,6 +56,17 @@ public abstract class CustomTree : ModTile
 
 	public override void SetStaticDefaults()
 	{
+		if (!Main.dedServ)
+		{
+			if (ModContent.RequestIfExists(Texture + "_Tops", out Asset<Texture2D> tops))
+				topsTextureByType.Add(Type, tops);
+
+			if (ModContent.RequestIfExists(Texture + "_Branches", out Asset<Texture2D> branches))
+				branchesTextureByType.Add(Type, branches);
+
+			noise.SetFrequency(2f);
+		}
+
 		Main.tileSolid[Type] = false;
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
@@ -60,8 +74,8 @@ public abstract class CustomTree : ModTile
 		Main.tileAxe[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
-		TileObjectData.newTile.CoordinateWidth = frameSize - 2;
-		TileObjectData.newTile.CoordinateHeights = [frameSize - 2];
+		TileObjectData.newTile.CoordinateWidth = FrameSize - 2;
+		TileObjectData.newTile.CoordinateHeights = [FrameSize - 2];
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.newTile.StyleMultiplier = 3;
 		TileObjectData.newTile.StyleWrapLimit = 3 * 4;
@@ -83,11 +97,7 @@ public abstract class CustomTree : ModTile
 	public virtual void PreAddTileObjectData() { }
 
 	/// <summary> Used for pseudo random logic, like branch positions, based on <see cref="noise"/>. </summary>
-	protected virtual float Noise(Vector2 position)
-	{
-		position *= 8;
-		return noise.GetNoise(position.X, position.Y) * 12;
-	}
+	protected virtual float Noise(Vector2 position) => noise.GetNoise(position.X, position.Y) * 12;
 
 	/// <returns> Whether the given tile has a treetop. </returns>
 	public virtual bool IsTreeTop(int i, int j) => Framing.GetTileSafely(i, j - 1).TileType != Type;
@@ -134,7 +144,7 @@ public abstract class CustomTree : ModTile
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
 		if (!fail) //Switch to the 'chopped' frame
-			Framing.GetTileSafely(i, j + 1).TileFrameX = (short)(WorldGen.genRand.Next(9, 12) * frameSize);
+			Framing.GetTileSafely(i, j + 1).TileFrameX = (short)(WorldGen.genRand.Next(9, 12) * FrameSize);
 		else
 			ShakeTree(i, j);
 	}
@@ -145,12 +155,12 @@ public abstract class CustomTree : ModTile
 		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeHelper.GetPalmTreeOffset(i, j);
 		float rotation = Main.instance.TilesRenderer.GetWindCycle(i, j, TileSwaySystem.Instance.TreeWindCounter) * .1f;
 
-		if (IsTreeTop(i, j) && topsTexture != null) //Draw tops
+		if (IsTreeTop(i, j) && TopTexture != null) //Draw tops
 		{
-			var source = topsTexture.Frame(3, sizeOffsetX: -2, sizeOffsetY: -2);
+			var source = TopTexture.Frame(3, sizeOffsetX: -2, sizeOffsetY: -2);
 			var origin = source.Bottom();
 
-			spriteBatch.Draw(topsTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
 	}
 
@@ -169,7 +179,7 @@ public abstract class CustomTree : ModTile
 		var tile = Framing.GetTileSafely(i, j);
 		var texture = TextureAssets.Tile[Type].Value;
 
-		var source = new Rectangle(tile.TileFrameX % (frameSize * 12), 0, frameSize - 2, frameSize - 2);
+		var source = new Rectangle(tile.TileFrameX % (FrameSize * 12), 0, FrameSize - 2, FrameSize - 2);
 		var offset = Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1 ? Vector2.Zero : Vector2.One * 12;
 		var position = (new Vector2(i, j) + offset) * 16 - Main.screenPosition + TreeHelper.GetPalmTreeOffset(i, j);
 
@@ -217,7 +227,7 @@ public abstract class CustomTree : ModTile
 
 			if (tile.HasTile && tile.TileType == Type)
 			{
-				tile.TileFrameX = (short)(frameX * frameSize);
+				tile.TileFrameX = (short)(frameX * FrameSize);
 				tile.TileFrameY = TreeHelper.GetPalmOffset(j, variance, height, ref xOff);
 			}
 		}

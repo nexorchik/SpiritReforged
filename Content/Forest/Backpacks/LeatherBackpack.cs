@@ -1,6 +1,6 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
 
-namespace SpiritReforged.Content.Forest.Misc;
+namespace SpiritReforged.Content.Forest.Backpacks;
 
 [AutoloadEquip(EquipType.Back, EquipType.Front)]
 internal class LeatherBackpack : BackpackItem

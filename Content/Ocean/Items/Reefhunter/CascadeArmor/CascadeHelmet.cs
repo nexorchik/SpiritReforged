@@ -1,5 +1,3 @@
-using SpiritReforged.Content.Ocean.Items.Reefhunter;
-
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 
 [AutoloadEquip(EquipType.Head)]
@@ -23,12 +21,5 @@ public class CascadeHelmet : ModItem
 	}
 
 	public override void UpdateEquip(Player player) => player.gills = true;
-
-	public override void AddRecipes()
-	{
-		var recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<MineralSlag>(), 12);
-		recipe.AddTile(TileID.WorkBenches);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<MineralSlag>(), 12).AddTile(TileID.Anvils).Register();
 }

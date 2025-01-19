@@ -1,5 +1,4 @@
 using SpiritReforged.Common.SimpleEntity;
-using Terraria.Audio;
 using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Content.Ocean.Items.Buoys;
@@ -42,6 +41,7 @@ public class BigBuoyEntity : SmallBuoyEntity
 	private static Asset<Texture2D> GlowTexture;
 
 	public override Texture2D Glowmask => GlowTexture.Value;
+	protected override int ItemType => ModContent.ItemType<BigBuoy>();
 
 	public override void Load()
 	{
@@ -51,13 +51,5 @@ public class BigBuoyEntity : SmallBuoyEntity
 		saveMe = true;
 		width = 46;
 		height = 120;
-	}
-
-	public override void OnKill()
-	{
-		if (Main.netMode != NetmodeID.MultiplayerClient)
-			Item.NewItem(GetSource_Death(), Hitbox, ModContent.ItemType<BigBuoy>());
-
-		SoundEngine.PlaySound(SoundID.Dig, Center);
 	}
 }

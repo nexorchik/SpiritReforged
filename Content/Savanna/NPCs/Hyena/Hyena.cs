@@ -4,6 +4,7 @@ using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Vanilla.Food;
 using System.Linq;
 using Terraria.Audio;
+using Terraria.GameContent.Bestiary;
 using static Terraria.Utilities.NPCUtils;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Hyena;
@@ -24,7 +25,7 @@ public class Hyena : ModNPC
 		Walking
 	}
 
-	private static readonly int[] endFrames = [4, 2, 5, 5, 5, 13, 7];
+	private static readonly int[] endFrames = [4, 2, 5, 5, 5, 13, 8];
 	private const int drownTimeMax = 300;
 
 	private bool OnTransitionFrame => (int)NPC.frameCounter >= endFrames[AnimationState]; //Used to determine whether an animation is complete and can be looped or exited
@@ -59,6 +60,8 @@ public class Hyena : ModNPC
 		AIType = -1;
 		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
+
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
 	public override void AI()
 	{

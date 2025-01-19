@@ -25,6 +25,7 @@ public abstract class MusicBoxTile : ModTile
 		TileObjectData.newTile.LavaDeath = false;
 		TileObjectData.addTile(Type);
 
+		RegisterItemDrop(Mod.Find<ModItem>(Name + "Item").Type); //Register this drop for all styles
 		AddMapEntry(new Color(200, 200, 200), Language.GetText("ItemName.MusicBox"));
 		DustType = -1;
 	}

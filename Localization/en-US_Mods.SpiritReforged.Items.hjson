@@ -1,3 +1,9 @@
+CommonTooltips.Backpack:
+	'''
+	Holds 4 items
+	You must empty this before taking it off
+	'''
+
 Kelp: {
 	DisplayName: Kelp
 	Tooltip: Must be planted in water
@@ -564,8 +570,7 @@ LeatherBackpack: {
 	DisplayName: Leather Backpack
 	Tooltip:
 		'''
-		Holds 4 items
-		You must empty this before taking it off
+		{$CommonTooltips.Backpack}
 		'Comfortable, practical, and still dashing'
 		'''
 }
@@ -1209,6 +1214,65 @@ PinSword: {
 TornMapPiece: {
 	DisplayName: Torn Map Piece
 	Tooltip: Reveals the surrounding map
+}
+
+FashionableBackpack: {
+	DisplayName: Fashionable Backpack
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		'Sleek, modern, but none the less effective'
+		'''
+}
+
+HikingBackpack: {
+	DisplayName: Hiking Backpack
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		'Utilitarian, durable, and most of all, comfortable'
+		'''
+}
+
+Minipack: {
+	DisplayName: Minipack
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		'Small, light, and super compact'
+		'''
+}
+
+PinkPack: {
+	DisplayName: Pink Pack
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		'The best color, useful, and great visibility at a distance'
+		'''
+}
+
+PouchPack: {
+	DisplayName: Pouch Pack
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		'Simple, comfy, and prone to spills'
+		'''
+}
+
+DyeCrateItem: {
+	DisplayName: Dye Crate
+	Tooltip:
+		'''
+		{$CommonItemTooltip.RightClickToOpen}
+		'It smells...surprisingly pleasant!'
+		'''
+}
+
+SavannaNightMusicBoxItem: {
+	DisplayName: Music Box (Savanna Night)
+	Tooltip: ""
 }
 
 SavannaPylonItem: {

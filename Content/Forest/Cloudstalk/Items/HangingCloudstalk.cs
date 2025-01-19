@@ -1,6 +1,6 @@
-using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.TileSway;
 using Terraria.DataStructures;
+using static Terraria.GameContent.Drawing.TileDrawing;
 
 namespace SpiritReforged.Content.Forest.Cloudstalk.Items;
 
@@ -23,9 +23,10 @@ public class HangingCloudstalk : ModItem
 	}
 }
 
-[DrawOrder(DrawOrderAttribute.Layer.NonSolid)]
-public class HangingCloudstalkTile : ModTile, ISwayInWind
+public class HangingCloudstalkTile : ModTile, ISwayTile
 {
+	public int Style => (int)TileCounterType.MultiTileVine;
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileTable[Type] = true;
@@ -55,22 +56,4 @@ public class HangingCloudstalkTile : ModTile, ISwayInWind
 	}
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.2f, 0.2f, 0.4f);
-
-	public void ModifyRotation(int i, int j, ref float rotation)
-	{
-		var tile = Framing.GetTileSafely(i, j);
-		if (tile.TileFrameY == 0)
-			rotation *= .5f;
-	}
-
-	public float SetWindSway(Point16 topLeft)
-	{
-		var data = TileObjectData.GetTileData(Framing.GetTileSafely(topLeft));
-		float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, TileSwaySystem.Instance.SunflowerWindCounter);
-
-		if (!WorldGen.InAPlaceWithWind(topLeft.X, topLeft.Y, data.Width, data.Height))
-			rotation = 0f;
-
-		return rotation + TileSwayHelper.GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 50, 1.15f, 3, true);
-	}
 }

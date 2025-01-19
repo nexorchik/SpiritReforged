@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.UI.BackpackInterface;
+using SpiritReforged.Common.UI.System;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Common.ItemCommon.Backpacks;
@@ -45,6 +46,8 @@ internal abstract class BackpackItem : ModItem
 
 		player.GetModPlayer<BackpackPlayer>().backpack = Item.Clone();
 		Item.SetDefaults(oldType);
+
+		UISystem.GetState<BackpackUIState>().SetStorageSlots(true);
 	}
 
 	public override void SaveData(TagCompound tag)

@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.SimpleEntity;
+using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.CustomTree;
 using SpiritReforged.Common.TileCommon.TileSway;
 using System.Linq;
@@ -7,11 +8,12 @@ using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
-public class AcaciaTree : CustomTree
+public class AcaciaTree : CustomTree, IConvertibleTile
 {
-	public override int TreeHeight => WorldGen.genRand.Next(8, 16);
+	public static IEnumerable<TreetopPlatform> Platforms => SimpleEntitySystem.entities.Where(x => x is TreetopPlatform).Cast<TreetopPlatform>();
 
-	internal static IEnumerable<TreetopPlatform> Platforms => SimpleEntitySystem.entities.Where(x => x is TreetopPlatform).Cast<TreetopPlatform>();
+	public override int TreeHeight => WorldGen.genRand.Next(8, 16);
+	protected virtual int ValidAnchor => ModContent.TileType<SavannaGrass>();
 
 	/// <summary> How much acacia tree tops sway in the wind. Used by the client for drawing and platform logic. </summary>
 	public static float GetSway(int i, int j, double factor = 0)
@@ -21,21 +23,22 @@ public class AcaciaTree : CustomTree
 
 		return Main.instance.TilesRenderer.GetWindCycle(i, j, factor) * .4f;
 	}
-
 	public override void PreAddTileObjectData()
 	{
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
+		TileObjectData.newTile.AnchorValidTiles = [ValidAnchor];
 
 		AddMapEntry(new Color(120, 80, 75));
 		RegisterItemDrop(ModContent.ItemType<Items.Drywood.Drywood>());
 		DustType = DustID.WoodFurniture;
 	}
 
-	public override bool IsTreeTop(int i, int j) => Main.tile[i, j - 1].TileType != Type && Main.tile[i, j].TileType == Type && Main.tile[i, j].TileFrameX <= frameSize * 5;
+	public override bool IsTreeTop(int i, int j) => Main.tile[i, j - 1].TileType != Type && ModContent.GetModTile(Main.tile[i, j].TileType) is AcaciaTree 
+		&& Main.tile[i, j].TileFrameX <= FrameSize * 5;
 
 	public override void NearbyEffects(int i, int j, bool closer) //Spawn platforms
 	{
 		var pt = new Point16(i, j);
+
 		if (IsTreeTop(i, j) && !Platforms.Where(x => x.TreePosition == pt).Any())
 		{
 			int type = SimpleEntitySystem.types[typeof(TreetopPlatform)];
@@ -81,11 +84,11 @@ public class AcaciaTree : CustomTree
 		{
 			const int framesY = 2;
 
-			int frameY = Framing.GetTileSafely(i, j).TileFrameX / frameSize % framesY;
-			var source = topsTexture.Frame(1, framesY, 0, frameY, sizeOffsetY: -2);
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
+			var source = TopTexture.Frame(1, framesY, 0, frameY, sizeOffsetY: -2);
 			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
 
-			spriteBatch.Draw(topsTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
 		else //Draw branches
 		{
@@ -93,13 +96,13 @@ public class AcaciaTree : CustomTree
 			const int framesY = 3;
 
 			int frameX = (Noise(new Vector2(i, j)) > 0) ? 1 : 0;
-			int frameY = Framing.GetTileSafely(i, j).TileFrameX / frameSize % framesY;
-			var source = branchesTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
+			var source = BranchTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
 			var origin = new Vector2(frameX == 0 ? source.Width : 0, 44);
 
-			position.X += 6 * (frameX == 0 ? -1 : 1); //Directional offset
+			position += new Vector2(6 * ((frameX == 0) ? -1 : 1), 8); //Directional offset
 
-			spriteBatch.Draw(branchesTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(BranchTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
 	}
 
@@ -138,7 +141,7 @@ public class AcaciaTree : CustomTree
 
 			if (tile.HasTile && tile.TileType == Type)
 			{
-				Framing.GetTileSafely(i, j - h).TileFrameX = (short)(style * frameSize * 3 + WorldGen.genRand.Next(3) * frameSize);
+				Framing.GetTileSafely(i, j - h).TileFrameX = (short)(style * FrameSize * 3 + WorldGen.genRand.Next(3) * FrameSize);
 				Framing.GetTileSafely(i, j - h).TileFrameY = TreeHelper.GetPalmOffset(j, variance, height, ref xOff);
 			}
 		}
@@ -146,4 +149,38 @@ public class AcaciaTree : CustomTree
 		if (Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j + 1 - height, 1, height, TileChangeType.None);
 	}
+
+	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
+	{
+		if (source is EntitySource_Parent { Entity: Projectile })
+			return false;
+
+		int id = Main.tile[i, j].TileType;
+
+		if (TileCorruptor.GetConversionType<AcaciaTree, CorruptAcaciaTree, CrimsonAcaciaTree, HallowAcaciaTree>(id, type, out int conversionType))
+		{
+			Tile tile = Main.tile[i, j];
+			tile.TileType = (ushort)conversionType;
+		}
+
+		if (Main.tile[i, j - 1].TileType == id)
+			TileCorruptor.Convert(new EntitySource_TileUpdate(i, j), type, i, j - 1);
+
+		return true;
+	}
+}
+
+public class CorruptAcaciaTree : AcaciaTree
+{
+	protected override int ValidAnchor => ModContent.TileType<SavannaGrassCorrupt>();
+}
+
+public class CrimsonAcaciaTree : AcaciaTree
+{
+	protected override int ValidAnchor => ModContent.TileType<SavannaGrassCrimson>();
+}
+
+public class HallowAcaciaTree : AcaciaTree
+{
+	protected override int ValidAnchor => ModContent.TileType<SavannaGrassHallow>();
 }

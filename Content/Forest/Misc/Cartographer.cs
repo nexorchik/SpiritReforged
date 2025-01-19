@@ -5,10 +5,11 @@ using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Forest.Misc.Pins;
 using SpiritReforged.Content.Savanna.Biome;
 using Terraria.DataStructures;
+using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Forest.Misc;
 
-internal class Cartographer : ModNPC
+public class Cartographer : ModNPC
 {
 	protected override bool CloneNewInstances => true;
 
@@ -44,6 +45,8 @@ internal class Cartographer : ModNPC
 
 		AnimationType = NPCID.Guide;
 	}
+
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Surface");
 
 	public override bool CanChat() => true;
 	public override string GetChat() => Language.GetTextValue("Mods.SpiritReforged.NPCs.Cartographer.Dialogue." + Main.rand.Next(4));

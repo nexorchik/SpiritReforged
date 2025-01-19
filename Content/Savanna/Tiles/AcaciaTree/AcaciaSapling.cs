@@ -6,12 +6,15 @@ namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
 public class AcaciaSapling : ModTile
 {
+	protected virtual int[] AnchorTiles => [ModContent.TileType<SavannaGrass>()];
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
 		Main.tileLavaDeath[Type] = true;
 
+		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
 		TileObjectData.newTile.Width = 1;
 		TileObjectData.newTile.Height = 2;
 		TileObjectData.newTile.Origin = new Point16(0, 1);
@@ -20,7 +23,7 @@ public class AcaciaSapling : ModTile
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
 		TileObjectData.newTile.CoordinateWidth = 16;
 		TileObjectData.newTile.CoordinatePadding = 2;
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
+		TileObjectData.newTile.AnchorValidTiles = AnchorTiles;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.DrawFlipHorizontal = true;
 		TileObjectData.newTile.WaterPlacement = LiquidPlacement.NotAllowed;
@@ -54,5 +57,38 @@ public class AcaciaSapling : ModTile
 	{
 		if (i % 2 == 0)
 			effects = SpriteEffects.FlipHorizontally;
+	}
+}
+
+public class CorruptAcaciaSapling : AcaciaSapling
+{
+	protected override int[] AnchorTiles => [ModContent.TileType<SavannaGrassCorrupt>()];
+
+	public override void RandomUpdate(int i, int j)
+	{
+		if (WorldGen.genRand.NextBool(20))
+			CustomTree.GrowTree<CorruptAcaciaTree>(i, j);
+	}
+}
+
+public class CrimsonAcaciaSapling : AcaciaSapling
+{
+	protected override int[] AnchorTiles => [ModContent.TileType<SavannaGrassCrimson>()];
+
+	public override void RandomUpdate(int i, int j)
+	{
+		if (WorldGen.genRand.NextBool(20))
+			CustomTree.GrowTree<CrimsonAcaciaTree>(i, j);
+	}
+}
+
+public class HallowedAcaciaSapling : AcaciaSapling
+{
+	protected override int[] AnchorTiles => [ModContent.TileType<SavannaGrassHallow>()];
+
+	public override void RandomUpdate(int i, int j)
+	{
+		if (WorldGen.genRand.NextBool(20))
+			CustomTree.GrowTree<HallowAcaciaTree>(i, j);
 	}
 }

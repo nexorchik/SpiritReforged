@@ -6,7 +6,13 @@ namespace SpiritReforged.Common.NPCCommon;
 internal class AdvancedTargetingNPC : GlobalNPC
 {
 	public override bool CanBeHitByNPC(NPC npc, NPC attacker) => true;
-	public override bool CanHitNPC(NPC npc, NPC target) => npc.SupportsNPCTargets && AdvancedTargetingHelper.TargetLookup.TryGetValue(npc.type, out int[] targets) && targets.Contains(target.type);
+	public override bool CanHitNPC(NPC npc, NPC target)
+	{
+		if (npc.SupportsNPCTargets && AdvancedTargetingHelper.TargetLookup.TryGetValue(npc.type, out int[] targets))
+			return targets.Contains(target.type);
+
+		return true;
+	}
 }
 
 internal static class AdvancedTargetingHelper
