@@ -1,10 +1,7 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using SpiritReforged.Common.PrimitiveRendering;
-using SpiritReforged.Common.SimpleEntity;
+﻿using SpiritReforged.Common.SimpleEntity;
 using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.CustomTree;
 using SpiritReforged.Common.TileCommon.TileSway;
-using SpiritReforged.Common.Visuals;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.Utilities;
@@ -15,17 +12,8 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 {
 	public static IEnumerable<TreetopPlatform> Platforms => SimpleEntitySystem.entities.Where(x => x is TreetopPlatform).Cast<TreetopPlatform>();
 
-	private static Asset<Effect> ShadeEffect = null;
-
 	public override int TreeHeight => WorldGen.genRand.Next(8, 16);
 	protected virtual int ValidAnchor => ModContent.TileType<SavannaGrass>();
-
-	public override void Load() 
-	{
-		base.Load();
-
-		ShadeEffect = ModContent.Request<Effect>("SpiritReforged/Assets/Shaders/ShadowFade");
-	}
 
 	/// <summary> How much acacia tree tops sway in the wind. Used by the client for drawing and platform logic. </summary>
 	public static float GetSway(int i, int j, double factor = 0)
@@ -147,7 +135,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
             new(botLeft + new Vector3(310, 0, 0), color, new Vector2(1, 1)),
 		];
 
-		Effect effect = ShadeEffect.Value;
+		Effect effect = AssetLoader.LoadedShaders["ShadowFade"];
 		var projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 		Matrix view = Main.GameViewMatrix.TransformationMatrix;
 		Matrix renderMatrix = view * projection;
