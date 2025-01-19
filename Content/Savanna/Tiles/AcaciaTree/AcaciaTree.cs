@@ -100,7 +100,8 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 			var source = TopTexture.Frame(1, framesY, 0, frameY, sizeOffsetY: -2);
 			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
 			
-			DrawGodrays(spriteBatch, position, rotation, i + j);
+			if (Main.dayTime)
+				DrawGodrays(spriteBatch, position, rotation, i + j);
 
 			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
@@ -123,40 +124,41 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 	private static void DrawGodrays(SpriteBatch spriteBatch, Vector2 position, float rotation, int seed)
 	{
-		UnifiedRandom random = new(seed);
-		//int count = random.Next(35, 50);
-		//int range = 210;
+		float x = MathHelper.Lerp(200, -140, (float)(Main.time / Main.dayLength));
+		float opacity = 1f;
 
-		//for (int i = 0; i < count; ++i)
-		//{
-		//	float x = MathHelper.Lerp(-90, 120, i / (float)count) + random.NextFloat(range / (float)count);
-		//	Vector2 pos = position + new Vector2(x, 0).RotatedBy(rotation) - new Vector2(0, 80);
-		//	DrawGodray.DrawGodrayStraight(spriteBatch, pos, new Color(20, 25, 20) * random.NextFloat(0.1f, 0.35f), random.NextFloat(130, 200), random.NextFloat(25, 60), 0.5f);
-		//}
+		if (Main.time < 6000)
+			opacity *= (float)(Main.time / 6000f);
+		else if (Main.time > Main.dayLength - 6000)
+			opacity *= 1 - (float)((Main.dayLength - Main.time) / 6000f);
 
-		const float Width = 210;
-
-		Vector3 topLeft = new Vector3(position, 0) + new Vector3(-90, -80, 0);
-		Vector3 botLeft = new Vector3(position, 0) + new Vector3(-90, 20, 0);
-		Color color = Color.Black;
+		Vector3 topLeft = new Vector3(position, 0) + new Vector3(new Vector2(-160, 0).RotatedBy(rotation) - new Vector2(0, 106), 0);
+		Vector3 topRight = new Vector3(position, 0) + new Vector3(new Vector2(150, 0).RotatedBy(rotation) - new Vector2(0, 106), 0);
+		Vector3 botLeft = new Vector3(position, 0) + new Vector3(-160 + x, 40, 0);
+		Color color = Color.White;
 
 		short[] indices = [0, 1, 2, 1, 3, 2];
+
 		VertexPositionColorTexture[] vertices =
 		[
 			new(topLeft, color, new Vector2(0, 0)),
-            new(topLeft + Vector3.UnitX * Width, color, new Vector2(1, 0)),
+            new(topRight, color, new Vector2(1, 0)),
             new(botLeft, color, new Vector2(0, 1)),
-            new(botLeft + Vector3.UnitX * Width, color, new Vector2(1, 1)),
+            new(botLeft + new Vector3(310, 0, 0), color, new Vector2(1, 1)),
 		];
 
 		Effect effect = ShadeEffect.Value;
-		ShaderHelpers.GetWorldViewProjection(out Matrix view, out Matrix projection);
+		var projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+		Matrix view = Main.GameViewMatrix.TransformationMatrix;
+		Matrix renderMatrix = view * projection;
 
 		foreach (EffectPass pass in effect.CurrentTechnique.Passes)
 		{
-			effect.Parameters["baseShadowColor"].SetValue(Color.Black.ToVector4());
-			effect.Parameters["noiseScroll"].SetValue(Main.GameUpdateCount * 0.2f);
-			effect.Parameters["uWorldViewProjection"].SetValue(projection);
+			effect.Parameters["baseShadowColor"].SetValue(Color.Black.ToVector4() * 0.75f);
+			effect.Parameters["adjustColor"].SetValue(new Color(0.08f, 0.24f, 0.46f).ToVector4() * 0.7f);
+			effect.Parameters["noiseScroll"].SetValue(Main.GameUpdateCount * 0.0015f);
+			effect.Parameters["noiseStretch"].SetValue(1);
+			effect.Parameters["uWorldViewProjection"].SetValue(renderMatrix);
 			effect.Parameters["noiseTexture"].SetValue(ModContent.Request<Texture2D>("SpiritReforged/Assets/Textures/vnoise", AssetRequestMode.ImmediateLoad).Value);
 			pass.Apply();
 
