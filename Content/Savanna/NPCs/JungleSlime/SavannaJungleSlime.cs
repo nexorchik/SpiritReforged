@@ -41,6 +41,6 @@ public class SavannaJungleSlime : ModNPC
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
 		var player = spawnInfo.Player;
-		return player.InModBiome<SavannaBiome>() && player.ZoneJungle ? 0.1f : 0;
+		return player.InModBiome<SavannaBiome>() && player.ZoneJungle && Main.dayTime ? 0.1f : 0;
 	}
 }

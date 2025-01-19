@@ -1,12 +1,15 @@
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Items.HuntingRifle;
+using System.IO;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
-public class TumbleZombie : ReplaceNPC
+public class HideZombieBig : ReplaceNPC
 {
+	float frameCounter;
+
 	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie,
 		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
 
@@ -14,16 +17,15 @@ public class TumbleZombie : ReplaceNPC
 	{
 		Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
 		NPCID.Sets.Zombies[Type] = true;
-		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Skeleton;
 	}
 
 	public override void SetDefaults()
 	{
 		NPC.width = 28;
-		NPC.height = 42;
-		NPC.damage = 14;
-		NPC.defense = 4;
-		NPC.lifeMax = 42;
+		NPC.height = 50;
+		NPC.damage = 10;
+		NPC.defense = 7;
+		NPC.lifeMax = 51;
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath2;
 		NPC.value = 50f;
@@ -41,26 +43,15 @@ public class TumbleZombie : ReplaceNPC
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		for (int k = 0; k < 20; k++)
-		{
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, 2.5f * hit.HitDirection, -2.5f, 0, Color.White, 0.78f);
-		}
 
 		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
 		{
-			for (int i = 1; i < 4; ++i)
-				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("TumbleZombie" + i).Type, 1f);
-
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, 3, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>(GetType().Name).Type, 1f);
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, 4, 1f);
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, 5, 1f);
-
 		}
-
-		if (Main.rand.NextBool(30))
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, 385, Main.rand.NextFloat(.25f, .4f));
 	}
-
-	float frameCounter;
 
 	public override void FindFrame(int frameHeight)
 	{
@@ -74,10 +65,9 @@ public class TumbleZombie : ReplaceNPC
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
+		npcLoot.AddCommon(ItemID.Leather, 2, 1, 2);
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
-		npcLoot.AddCommon(ModContent.ItemType<Items.WrithingSticks.WrithingSticks>(), 800);
-		npcLoot.AddCommon(ModContent.ItemType<HuntingRifle>(), 300);
 
 	}
 
