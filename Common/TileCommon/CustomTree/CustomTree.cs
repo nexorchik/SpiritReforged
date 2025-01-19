@@ -63,6 +63,8 @@ public abstract class CustomTree : ModTile
 
 			if (ModContent.RequestIfExists(Texture + "_Branches", out Asset<Texture2D> branches))
 				branchesTextureByType.Add(Type, branches);
+
+			noise.SetFrequency(2f);
 		}
 
 		Main.tileSolid[Type] = false;
@@ -95,11 +97,7 @@ public abstract class CustomTree : ModTile
 	public virtual void PreAddTileObjectData() { }
 
 	/// <summary> Used for pseudo random logic, like branch positions, based on <see cref="noise"/>. </summary>
-	protected virtual float Noise(Vector2 position)
-	{
-		position *= 8;
-		return noise.GetNoise(position.X, position.Y) * 12;
-	}
+	protected virtual float Noise(Vector2 position) => noise.GetNoise(position.X, position.Y) * 12;
 
 	/// <returns> Whether the given tile has a treetop. </returns>
 	public virtual bool IsTreeTop(int i, int j) => Framing.GetTileSafely(i, j - 1).TileType != Type;

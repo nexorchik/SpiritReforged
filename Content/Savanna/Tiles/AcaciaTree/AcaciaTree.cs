@@ -92,11 +92,10 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		}
 		else //Draw branches
 		{
-			const int numStyles = 4;
 			const int framesX = 2;
 			const int framesY = 3;
 
-			int frameX = (TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) / numStyles == framesX) ? 1 : 0;
+			int frameX = (Noise(new Vector2(i, j)) > 0) ? 1 : 0;
 			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
 			var source = BranchTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
 			var origin = new Vector2(frameX == 0 ? source.Width : 0, 44);
