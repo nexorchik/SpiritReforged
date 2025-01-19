@@ -13,10 +13,4 @@ internal class PouchPack : BackpackItem
 		Item.value = Item.buyPrice(0, 0, 5, 0);
 		Item.rare = ItemRarityID.Blue;
 	}
-
-	public override void AddRecipes() => CreateRecipe()
-		.AddIngredient(ItemID.Leather, 10)
-		.AddIngredient(ItemID.IronBar)
-		.AddTile(TileID.WorkBenches)
-		.Register();
 }
