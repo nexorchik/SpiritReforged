@@ -154,7 +154,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 		foreach (EffectPass pass in effect.CurrentTechnique.Passes)
 		{
-			effect.Parameters["baseShadowColor"].SetValue(Color.Black.ToVector4() * 0.75f);
+			effect.Parameters["baseShadowColor"].SetValue(Color.Black.ToVector4() * 0.65f);
 			effect.Parameters["adjustColor"].SetValue(new Color(0.08f, 0.24f, 0.46f).ToVector4() * 0.7f);
 			effect.Parameters["noiseScroll"].SetValue(Main.GameUpdateCount * 0.0015f);
 			effect.Parameters["noiseStretch"].SetValue(1);
