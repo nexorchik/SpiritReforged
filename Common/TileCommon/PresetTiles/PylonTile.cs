@@ -68,7 +68,7 @@ public abstract class PylonTile : ModPylon, IAutoloadTileItem
 	public override void SpecialDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		var color = Color.White;
-		DefaultDrawPylonCrystal(spriteBatch, i, j, crystalTexture, crystalHighlightTexture, new Vector2(0f, -12f), color * .1f, color, 6, frameCount);
+		DefaultDrawPylonCrystal(spriteBatch, i, j, crystalTexture, crystalHighlightTexture, new Vector2(0f, -12f), color * .1f, color, 4, frameCount);
 	}
 
 	public override void DrawMapIcon(ref MapOverlayDrawContext context, ref string mouseOverText, TeleportPylonInfo pylonInfo, bool isNearPylon, Color drawColor, float deselectedScale, float selectedScale)
