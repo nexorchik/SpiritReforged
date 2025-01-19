@@ -1,7 +1,10 @@
-﻿using SpiritReforged.Common.SimpleEntity;
+﻿using Microsoft.Xna.Framework.Graphics;
+using SpiritReforged.Common.PrimitiveRendering;
+using SpiritReforged.Common.SimpleEntity;
 using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.CustomTree;
 using SpiritReforged.Common.TileCommon.TileSway;
+using SpiritReforged.Common.Visuals;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.Utilities;
@@ -12,8 +15,17 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 {
 	public static IEnumerable<TreetopPlatform> Platforms => SimpleEntitySystem.entities.Where(x => x is TreetopPlatform).Cast<TreetopPlatform>();
 
+	private static Asset<Effect> ShadeEffect = null;
+
 	public override int TreeHeight => WorldGen.genRand.Next(8, 16);
 	protected virtual int ValidAnchor => ModContent.TileType<SavannaGrass>();
+
+	public override void Load() 
+	{
+		base.Load();
+
+		ShadeEffect = ModContent.Request<Effect>("SpiritReforged/Assets/Shaders/ShadowFade");
+	}
 
 	/// <summary> How much acacia tree tops sway in the wind. Used by the client for drawing and platform logic. </summary>
 	public static float GetSway(int i, int j, double factor = 0)
@@ -87,6 +99,8 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
 			var source = TopTexture.Frame(1, framesY, 0, frameY, sizeOffsetY: -2);
 			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
+			
+			DrawGodrays(spriteBatch, position, rotation, i + j);
 
 			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
@@ -104,6 +118,49 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 			position += new Vector2(6 * ((frameX == 0) ? -1 : 1), 8); //Directional offset
 
 			spriteBatch.Draw(BranchTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+		}
+	}
+
+	private static void DrawGodrays(SpriteBatch spriteBatch, Vector2 position, float rotation, int seed)
+	{
+		UnifiedRandom random = new(seed);
+		//int count = random.Next(35, 50);
+		//int range = 210;
+
+		//for (int i = 0; i < count; ++i)
+		//{
+		//	float x = MathHelper.Lerp(-90, 120, i / (float)count) + random.NextFloat(range / (float)count);
+		//	Vector2 pos = position + new Vector2(x, 0).RotatedBy(rotation) - new Vector2(0, 80);
+		//	DrawGodray.DrawGodrayStraight(spriteBatch, pos, new Color(20, 25, 20) * random.NextFloat(0.1f, 0.35f), random.NextFloat(130, 200), random.NextFloat(25, 60), 0.5f);
+		//}
+
+		const float Width = 210;
+
+		Vector3 topLeft = new Vector3(position, 0) + new Vector3(-90, -80, 0);
+		Vector3 botLeft = new Vector3(position, 0) + new Vector3(-90, 20, 0);
+		Color color = Color.Black;
+
+		short[] indices = [0, 1, 2, 1, 3, 2];
+		VertexPositionColorTexture[] vertices =
+		[
+			new(topLeft, color, new Vector2(0, 0)),
+            new(topLeft + Vector3.UnitX * Width, color, new Vector2(1, 0)),
+            new(botLeft, color, new Vector2(0, 1)),
+            new(botLeft + Vector3.UnitX * Width, color, new Vector2(1, 1)),
+		];
+
+		Effect effect = ShadeEffect.Value;
+		ShaderHelpers.GetWorldViewProjection(out Matrix view, out Matrix projection);
+
+		foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+		{
+			effect.Parameters["baseShadowColor"].SetValue(Color.Black.ToVector4());
+			effect.Parameters["noiseScroll"].SetValue(Main.GameUpdateCount * 0.2f);
+			effect.Parameters["uWorldViewProjection"].SetValue(projection);
+			effect.Parameters["noiseTexture"].SetValue(ModContent.Request<Texture2D>("SpiritReforged/Assets/Textures/vnoise", AssetRequestMode.ImmediateLoad).Value);
+			pass.Apply();
+
+			Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2);
 		}
 	}
 
