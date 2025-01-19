@@ -301,5 +301,5 @@ HideZombieBig: {
 
 HideZombieSmall: {
 	DisplayName: "{$NPCName.Zombie}"
-	Entry: "{$HideZombieBig.Entry}"
+	Entry: Their outfit is all the vogue in latest undead fashion.
 }
