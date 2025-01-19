@@ -12,11 +12,5 @@ public class CascadeChestplate : ModItem
 		Item.defense = 4;
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<MineralSlag>(), 14);
-		recipe.AddTile(TileID.Anvils);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<MineralSlag>(), 14).AddTile(TileID.Anvils).Register();
 }

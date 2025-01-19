@@ -1,10 +1,13 @@
-﻿using SpiritReforged.Content.Savanna.Items;
+﻿using SpiritReforged.Common.TileCommon.Corruption;
+using SpiritReforged.Content.Savanna.Items;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
-public class SavannaShrubs : ModTile
+public class SavannaShrubs : ModTile, IConvertibleTile
 {
+	protected virtual int[] Anchors => [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaDirt>(), TileID.Sand];
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = false;
@@ -22,7 +25,7 @@ public class SavannaShrubs : ModTile
 		TileObjectData.newTile.CoordinateHeights = [height];
 		TileObjectData.newTile.DrawYOffset = -(height - 18 - 4); //4 pixels are reserved for the tile space below
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 1, 0);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaDirt>(), TileID.Sand];
+		TileObjectData.newTile.AnchorValidTiles = Anchors;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 11;
 		TileObjectData.addTile(Type);
@@ -33,6 +36,37 @@ public class SavannaShrubs : ModTile
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
+
+	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
+	{
+		Tile tile = Main.tile[i, j];
+		int oldId = tile.TileType;
+
+		tile.TileType = (ushort)(type switch
+		{
+			ConversionType.Hallow => ModContent.TileType<SavannaShrubsHallow>(),
+			ConversionType.Crimson => ModContent.TileType<SavannaShrubsCrimson>(),
+			ConversionType.Corrupt => ModContent.TileType<SavannaShrubsCorrupt>(),
+			_ => ModContent.TileType<SavannaShrubs>(),
+		});
+
+		return oldId != tile.TileType;
+	}
+}
+
+public class SavannaShrubsCorrupt : SavannaShrubs
+{
+	protected override int[] Anchors => [ModContent.TileType<SavannaGrassCorrupt>(), TileID.Ebonsand];
+}
+
+public class SavannaShrubsCrimson : SavannaShrubs
+{
+	protected override int[] Anchors => [ModContent.TileType<SavannaGrassCrimson>(), TileID.Crimsand];
+}
+
+public class SavannaShrubsHallow : SavannaShrubs
+{
+	protected override int[] Anchors => [ModContent.TileType<SavannaGrassHallow>(), TileID.Pearlsand];
 }
 
 public class SavannaShrubsRubble : SavannaShrubs

@@ -1260,3 +1260,17 @@ PouchPack: {
 		'Simple, comfy, and prone to spills'
 		'''
 }
+
+DyeCrateItem: {
+	DisplayName: Dye Crate
+	Tooltip:
+		'''
+		{$CommonItemTooltip.RightClickToOpen}
+		'It smells...surprisingly pleasant!'
+		'''
+}
+
+SavannaNightMusicBoxItem: {
+	DisplayName: Music Box (Savanna Night)
+	Tooltip: ""
+}
