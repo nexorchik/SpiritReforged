@@ -141,10 +141,10 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 		foreach (EffectPass pass in effect.CurrentTechnique.Passes)
 		{
-			effect.Parameters["baseShadowColor"].SetValue(Color.Black.ToVector4() * 0.65f);
-			effect.Parameters["adjustColor"].SetValue(new Color(0.08f, 0.24f, 0.46f).ToVector4() * 0.7f);
+			effect.Parameters["baseShadowColor"].SetValue(Color.Black.ToVector4() * 0.325f);
+			effect.Parameters["adjustColor"].SetValue(Color.MidnightBlue.ToVector4() * 0.5f);
 			effect.Parameters["noiseScroll"].SetValue(Main.GameUpdateCount * 0.0015f);
-			effect.Parameters["noiseStretch"].SetValue(1);
+			effect.Parameters["noiseStretch"].SetValue(3);
 			effect.Parameters["uWorldViewProjection"].SetValue(renderMatrix);
 			effect.Parameters["noiseTexture"].SetValue(ModContent.Request<Texture2D>("SpiritReforged/Assets/Textures/vnoise", AssetRequestMode.ImmediateLoad).Value);
 			pass.Apply();
