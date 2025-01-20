@@ -89,7 +89,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
 			
 			if (Main.dayTime)
-				DrawGodrays(spriteBatch, position, rotation, i + j);
+				DrawGodrays(position, rotation);
 
 			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
@@ -109,15 +109,15 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		}
 	}
 
-	private static void DrawGodrays(SpriteBatch spriteBatch, Vector2 position, float rotation, int seed)
+	private static void DrawGodrays(Vector2 position, float rotation)
 	{
 		float x = MathHelper.Lerp(200, -140, (float)(Main.time / Main.dayLength));
-		float opacity = 1f;
+		/*float opacity = 1f;
 
 		if (Main.time < 6000)
 			opacity *= (float)(Main.time / 6000f);
 		else if (Main.time > Main.dayLength - 6000)
-			opacity *= 1 - (float)((Main.dayLength - Main.time) / 6000f);
+			opacity *= 1 - (float)((Main.dayLength - Main.time) / 6000f);*/
 
 		Vector3 topLeft = new Vector3(position, 0) + new Vector3(new Vector2(-160, 0).RotatedBy(rotation) - new Vector2(0, 106), 0);
 		Vector3 topRight = new Vector3(position, 0) + new Vector3(new Vector2(150, 0).RotatedBy(rotation) - new Vector2(0, 106), 0);
@@ -146,7 +146,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 			effect.Parameters["noiseScroll"].SetValue(Main.GameUpdateCount * 0.0015f);
 			effect.Parameters["noiseStretch"].SetValue(3);
 			effect.Parameters["uWorldViewProjection"].SetValue(renderMatrix);
-			effect.Parameters["noiseTexture"].SetValue(ModContent.Request<Texture2D>("SpiritReforged/Assets/Textures/vnoise", AssetRequestMode.ImmediateLoad).Value);
+			effect.Parameters["noiseTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"]);
 			pass.Apply();
 
 			Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2);
