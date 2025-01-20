@@ -11,9 +11,9 @@ internal class GlowmaskItem : GlobalItem
 	{
 		if (ItemIdToGlowmask.TryGetValue(item.type, out var glow) && glow.DrawAutomatically)
 		{
-			Vector2 pos = item.Center - Main.screenPosition;
+			Vector2 pos = item.Center - Main.screenPosition + new Vector2(0, 1);
 			Main.GetItemDrawFrame(item.type, out _, out Rectangle frame);
-			Main.EntitySpriteDraw(glow.Glowmask.Value, pos, frame, glow.GetDrawColor(item), 0f, frame.Size() / 2f, scale, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(glow.Glowmask.Value, pos, frame, glow.GetDrawColor(item), rotation, frame.Size() / 2f, scale, SpriteEffects.None, 0);
 		}
 	}
 
