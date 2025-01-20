@@ -1,10 +1,17 @@
 ﻿using SpiritReforged.Common.ItemCommon;
+using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Jungle.Misc.DyeCrate;
 
 internal class DyeCrateItem : ModItem
 {
-	public override void SetStaticDefaults() => Item.ResearchUnlockCount = 10;
+	public override void SetStaticDefaults()
+	{
+		Item.ResearchUnlockCount = 10;
+
+		CrateDatabase.AddCrateRule(ItemID.JungleFishingCrate, ItemDropRule.Common(Type, 3));
+		CrateDatabase.AddCrateRule(ItemID.JungleFishingCrateHard, ItemDropRule.Common(Type, 2));
+	}
 
 	public override void SetDefaults()
 	{

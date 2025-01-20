@@ -1,11 +1,18 @@
 using SpiritReforged.Common.ItemCommon;
+using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Forest.ArcaneNecklace;
 
 [AutoloadEquip(EquipType.Neck)]
 public class ArcaneNecklaceGold : AccessoryItem
 {
-	public override void SetStaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<ArcaneNecklacePlatinum>();
+	public override void SetStaticDefaults()
+	{
+		ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<ArcaneNecklacePlatinum>();
+
+		CrateDatabase.AddCrateRule(ItemID.WoodenCrate, ItemDropRule.OneFromOptions(8, Type, ModContent.ItemType<ArcaneNecklacePlatinum>()));
+		CrateDatabase.AddCrateRule(ItemID.WoodenCrateHard, ItemDropRule.OneFromOptions(8, Type, ModContent.ItemType<ArcaneNecklacePlatinum>()));
+	}
 
 	public override void SetDefaults()
 	{
