@@ -1,10 +1,20 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.WorldGeneration;
 using Terraria.Audio;
+using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Forest.Misc;
 
 public class TornMapPiece : ModItem
 {
+	public override void SetStaticDefaults()
+	{
+		Item.ResearchUnlockCount = 3;
+
+		CrateDatabase.AddCrateRule(ItemID.WoodenCrate, ItemDropRule.Common(Type, 5));
+		CrateDatabase.AddCrateRule(ItemID.WoodenCrateHard, ItemDropRule.Common(Type, 5));
+	}
+
 	public override void SetDefaults()
 	{
 		Item.width = Item.height = 28;
