@@ -5,9 +5,6 @@ namespace SpiritReforged.Common.ItemCommon.Pins;
 /// <summary> Abstract class for a map pin. Contains all the code needed for a map pin item to place, move, or remove map pins.  </summary>
 public abstract class PinItem : ModItem
 {
-	/// <summary> The color of this map pin's placement text. </summary> //Currently unused
-	public abstract Color TextColor { get; }
-
 	public override string Texture => base.Texture + "Item";
 
 	public override void SetStaticDefaults()

@@ -2,57 +2,24 @@
 
 namespace SpiritReforged.Content.Forest.Misc.Pins;
 
-public class PinRed : PinItem
-{
-	public override Color TextColor => Color.IndianRed;
-}
+public class PinRed : PinItem { }
 
-public class PinGreen : PinItem
-{
-	public override Color TextColor => Color.Lime;
-}
+public class PinGreen : PinItem { }
 
-public class PinBlue : PinItem
-{
-	public override Color TextColor => Color.DeepSkyBlue;
-}
+public class PinBlue : PinItem { }
 
-public class PinYellow : PinItem
-{
-	public override Color TextColor => Color.Gold;
-}
+public class PinYellow : PinItem { }
 
-public class PinHive : PinItem
-{
-	public override Color TextColor => Color.Honeydew;
-}
+public class PinHive : PinItem { }
 
-public class PinButterfly : PinItem
-{
-	public override Color TextColor => Color.HotPink;
-}
+public class PinButterfly : PinItem { }
 
-public class PinFaeling : PinItem
-{
-	public override Color TextColor => Color.MediumPurple;
-}
+public class PinFaeling : PinItem { }
 
-public class PinSavanna : PinItem
-{
-	public override Color TextColor => Color.YellowGreen;
-}
+public class PinSavanna : PinItem { }
 
-public class PinSky : PinItem
-{
-	public override Color TextColor => Color.Yellow;
-}
+public class PinSky : PinItem { }
 
-public class PinSword : PinItem
-{
-	public override Color TextColor => Color.LightBlue;
-}
+public class PinSword : PinItem { }
 
-public class PinCuriosity : PinItem
-{
-	public override Color TextColor => Color.White;
-}
+public class PinCuriosity : PinItem { }
