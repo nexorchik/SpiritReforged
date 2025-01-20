@@ -5,6 +5,7 @@ using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 using SpiritReforged.Content.Savanna.Walls;
 using System.Linq;
+using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Generation;
 using Terraria.IO;
@@ -322,12 +323,12 @@ internal class SavannaEcotone : EcotoneBase
 	private static void GrowStuffOnGrass(int i, int j)
 	{
 		if (WorldGen.genRand.NextBool(13)) //Elephant grass patch
-			CreatePatch(WorldGen.genRand.Next(5, 11), 0, ModContent.TileType<ElephantGrass>(), ModContent.TileType<ElephantGrassShort>());
+			CreatePatch(WorldGen.genRand.Next(5, 11), 0, WorldGen.genRand.Next([0, 5]), ModContent.TileType<ElephantGrass>());
 
 		if (WorldGen.genRand.NextBool(9)) //Foliage patch
-			CreatePatch(WorldGen.genRand.Next(6, 13), 2, ModContent.TileType<SavannaFoliage>());
+			CreatePatch(WorldGen.genRand.Next(6, 13), 2, types: ModContent.TileType<SavannaFoliage>());
 
-		if (WorldGen.genRand.NextBool(40)) //Termite mound
+		if (WorldGen.genRand.NextBool(45)) //Termite mound
 		{
 			int type = WorldGen.genRand.NextFromList(ModContent.TileType<TermiteMoundSmall>(),
 				ModContent.TileType<TermiteMoundMedium>(), ModContent.TileType<TermiteMoundLarge>());
@@ -336,7 +337,7 @@ internal class SavannaEcotone : EcotoneBase
 			WorldGen.PlaceTile(i, j, type, true, true, style: style);
 		}
 
-		void CreatePatch(int size, int chance, params int[] types)
+		void CreatePatch(int size, int chance, int alt = 0, params int[] types)
 		{
 			for (int x = i - size / 2; x < i + size / 2; x++)
 			{
@@ -347,9 +348,9 @@ internal class SavannaEcotone : EcotoneBase
 				WorldMethods.FindGround(x, ref y);
 
 				int type = types[WorldGen.genRand.Next(types.Length)];
-				int styleRange = TileObjectData.GetTileData(type, 0).RandomStyleRange;
+				int style = alt + WorldGen.genRand.Next(TileObjectData.GetTileData(type, alt).RandomStyleRange);
 
-				WorldGen.PlaceTile(x, y - 1, type, true, style: WorldGen.genRand.Next(styleRange));
+				WorldGen.PlaceTile(x, y - 1, type, true, style: WorldGen.genRand.Next(style));
 			}
 		}
 	}
