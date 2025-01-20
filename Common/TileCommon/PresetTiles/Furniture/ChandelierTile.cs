@@ -2,7 +2,7 @@ using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
+namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
 [AutoloadGlowmask("255,165,0", false)]
 public abstract class ChandelierTile : FurnitureTile, ISwayTile

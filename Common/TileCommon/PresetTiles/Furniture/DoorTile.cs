@@ -2,7 +2,7 @@ using SpiritReforged.Common.TileCommon.DrawPreviewHook;
 using Terraria.DataStructures;
 using Terraria.GameContent.ObjectInteractions;
 
-namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
+namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
 public abstract class DoorTile : FurnitureTile, IDrawPreview
 {

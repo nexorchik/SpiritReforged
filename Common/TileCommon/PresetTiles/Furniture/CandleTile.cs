@@ -1,20 +1,19 @@
 ﻿using SpiritReforged.Common.Visuals.Glowmasks;
-using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 
-namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
+namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
-[AutoloadGlowmask("255,165,0", false)]
-public abstract class CandelabraTile : FurnitureTile
+[AutoloadGlowmask("191,124,0", false)]
+public abstract class CandleTile : FurnitureTile
 {
-	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(silver: 3);
+	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 30);
 
 	public override void AddItemRecipes(ModItem item)
 	{
 		if (CoreMaterial != ItemID.None)
 			item.CreateRecipe()
-			.AddIngredient(CoreMaterial, 5)
-			.AddIngredient(ItemID.Torch, 5)
+			.AddIngredient(CoreMaterial, 4)
+			.AddIngredient(ItemID.Torch)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
@@ -26,45 +25,43 @@ public abstract class CandelabraTile : FurnitureTile
 		Main.tileLighted[Type] = true;
 		Main.tileLavaDeath[Type] = true;
 
-		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
-		TileObjectData.newTile.Origin = new Point16(1, 1);
-		TileObjectData.newTile.CoordinateHeights = [16, 18];
+		TileObjectData.newTile.CopyFrom(TileObjectData.StyleOnTable1x1);
 		TileObjectData.addTile(Type);
 
 		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
-		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Candelabra"));
-		AdjTiles = [TileID.Candelabras];
+		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Candle"));
+		AdjTiles = [TileID.Candles];
 		DustType = -1;
+	}
+
+	public override bool RightClick(int i, int j)
+	{
+		HitWire(i, j);
+		return true;
+	}
+
+	public override void MouseOver(int i, int j)
+	{
+		Player Player = Main.LocalPlayer;
+		Player.noThrow = 2;
+		Player.cursorItemIconEnabled = true;
+		Player.cursorItemIconID = ModItem.Type;
 	}
 
 	public override void HitWire(int i, int j)
 	{
-		var data = TileObjectData.GetTileData(Type, 0);
-		int width = data.CoordinateFullWidth;
+		var tile = Framing.GetTileSafely(i, j);
+		tile.TileFrameX = (short)((tile.TileFrameX == 0) ? 18 : 0);
 
-		//Move to the multitile's top left
-		(i, j) = (i - Framing.GetTileSafely(i, j).TileFrameY / 18, j - Framing.GetTileSafely(i, j).TileFrameX % width / 18);
-
-		for (int y = 0; y < 2; y++)
-		{
-			for (int x = 0; x < 2; x++)
-			{
-				var tile = Framing.GetTileSafely(i + x, j + y);
-				tile.TileFrameX += (short)((tile.TileFrameX < width) ? width : -width);
-
-				Wiring.SkipWire(i + x, j + y);
-			}
-		}
-
-		NetMessage.SendTileSquare(-1, i, j, data.Width, data.Height);
+		NetMessage.SendTileSquare(-1, i, j);
 	}
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 	{
 		var tile = Framing.GetTileSafely(i, j);
-		var color = Color.Orange;
+		var color = Color.Orange * .75f;
 
-		if (tile.TileFrameX == 18 && tile.TileFrameY == 0)
+		if (tile.TileFrameX < 18)
 			(r, g, b) = (color.R / 255f, color.G / 255f, color.B / 255f);
 	}
 

@@ -1,6 +1,6 @@
 ﻿using Terraria.DataStructures;
 
-namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
+namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
 public abstract class BathtubTile : FurnitureTile
 {
