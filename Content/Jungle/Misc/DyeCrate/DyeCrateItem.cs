@@ -1,10 +1,17 @@
 ﻿using SpiritReforged.Common.ItemCommon;
+using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Jungle.Misc.DyeCrate;
 
-internal class DyeCrateItem : ModItem
+public class DyeCrateItem : ModItem
 {
-	public override void SetStaticDefaults() => Item.ResearchUnlockCount = 10;
+	public override void SetStaticDefaults()
+	{
+		Item.ResearchUnlockCount = 10;
+
+		CrateDatabase.AddCrateRule(ItemID.JungleFishingCrate, ItemDropRule.Common(Type, 3));
+		CrateDatabase.AddCrateRule(ItemID.JungleFishingCrateHard, ItemDropRule.Common(Type, 2));
+	}
 
 	public override void SetDefaults()
 	{
@@ -17,14 +24,14 @@ internal class DyeCrateItem : ModItem
 	public override void ModifyItemLoot(ItemLoot itemLoot)
 	{
 		Range[] ranges = [2..5, 1..3, 1..3, 1..3, 1..3, 1..3, 1..3, 1..3, 1..3, 1..3, 1..3, 1..3];
-		int[] ids = [ItemID.BlueBerries, ItemID.CyanHusk, ItemID.RedHusk, ItemID.VioletHusk,
+		int[] idsCommon = [ItemID.BlueBerries, ItemID.CyanHusk, ItemID.RedHusk, ItemID.VioletHusk,
 			ItemID.GreenMushroom, ItemID.LimeKelp, ItemID.OrangeBloodroot, ItemID.PinkPricklyPear, ItemID.PurpleMucos, ItemID.SkyBlueFlower, ItemID.TealMushroom,
 			ItemID.YellowMarigold];
 
-		itemLoot.Add(new DropRules.LootPoolDrop(ranges, 4, 1, 1, ids));
+		itemLoot.Add(new DropRules.LootPoolDrop(ranges, 4, 1, 1, idsCommon));
 
 		Range[] strangePlantRanges = [1..3, 1..3, 1..3, 1..3];
-		int[] strangePlants = [ItemID.StrangePlant1, ItemID.StrangePlant2, ItemID.StrangePlant3, ItemID.StrangePlant4];
-		itemLoot.Add(new DropRules.LootPoolDrop(strangePlantRanges, 1, 10, 1, ids));
+		int[] idsStrange = [ItemID.StrangePlant1, ItemID.StrangePlant2, ItemID.StrangePlant3, ItemID.StrangePlant4];
+		itemLoot.Add(new DropRules.LootPoolDrop(strangePlantRanges, 1, 10, 1, idsStrange));
 	}
 }

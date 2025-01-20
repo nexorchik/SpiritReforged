@@ -87,6 +87,9 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
 			var source = TopTexture.Frame(1, framesY, 0, frameY, sizeOffsetY: -2);
 			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
+			
+			if (Main.dayTime)
+				DrawGodrays(position, rotation);
 
 			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
@@ -103,6 +106,50 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 			position += new Vector2(6 * ((frameX == 0) ? -1 : 1), 8); //Directional offset
 
 			spriteBatch.Draw(BranchTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+		}
+	}
+
+	private static void DrawGodrays(Vector2 position, float rotation)
+	{
+		float x = MathHelper.Lerp(200, -140, (float)(Main.time / Main.dayLength));
+		/*float opacity = 1f;
+
+		if (Main.time < 6000)
+			opacity *= (float)(Main.time / 6000f);
+		else if (Main.time > Main.dayLength - 6000)
+			opacity *= 1 - (float)((Main.dayLength - Main.time) / 6000f);*/
+
+		Vector3 topLeft = new Vector3(position, 0) + new Vector3(new Vector2(-160, 0).RotatedBy(rotation) - new Vector2(0, 106), 0);
+		Vector3 topRight = new Vector3(position, 0) + new Vector3(new Vector2(150, 0).RotatedBy(rotation) - new Vector2(0, 106), 0);
+		Vector3 botLeft = new Vector3(position, 0) + new Vector3(-160 + x, 40, 0);
+		Color color = Color.White;
+
+		short[] indices = [0, 1, 2, 1, 3, 2];
+
+		VertexPositionColorTexture[] vertices =
+		[
+			new(topLeft, color, new Vector2(0, 0)),
+            new(topRight, color, new Vector2(1, 0)),
+            new(botLeft, color, new Vector2(0, 1)),
+            new(botLeft + new Vector3(310, 0, 0), color, new Vector2(1, 1)),
+		];
+
+		Effect effect = AssetLoader.LoadedShaders["ShadowFade"];
+		var projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+		Matrix view = Main.GameViewMatrix.TransformationMatrix;
+		Matrix renderMatrix = view * projection;
+
+		foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+		{
+			effect.Parameters["baseShadowColor"].SetValue(Color.Black.ToVector4() * 0.325f);
+			effect.Parameters["adjustColor"].SetValue(Color.MidnightBlue.ToVector4() * 0.5f);
+			effect.Parameters["noiseScroll"].SetValue(Main.GameUpdateCount * 0.0015f);
+			effect.Parameters["noiseStretch"].SetValue(3);
+			effect.Parameters["uWorldViewProjection"].SetValue(renderMatrix);
+			effect.Parameters["noiseTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"]);
+			pass.Apply();
+
+			Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2);
 		}
 	}
 

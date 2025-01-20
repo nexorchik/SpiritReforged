@@ -9,7 +9,6 @@ public class SavannaGrass : ModTile, IConvertibleTile
 {
 	protected virtual int DirtType => ModContent.TileType<SavannaDirt>();
 	protected virtual Color MapColor => new(104, 156, 70);
-	protected virtual int Foliage => ModContent.TileType<SavannaFoliage>();
 
 	public override void SetStaticDefaults()
 	{
@@ -55,10 +54,10 @@ public class SavannaGrass : ModTile, IConvertibleTile
 
 		if (!above.HasTile && above.LiquidAmount < 80)
 		{
-			int grassChance = GrassSurrounded() ? 6 : 90;
+			int grassChance = GrassAny() ? 6 : 90;
 
 			//Elephant grass generation also happens in that class
-			if (Main.rand.NextBool(grassChance) && WorldGen.PlaceTile(i, j - 1, ModContent.TileType<ElephantGrassShort>(), true, style: Main.rand.Next(3)))
+			if (Main.rand.NextBool(grassChance) && WorldGen.PlaceTile(i, j - 1, ModContent.TileType<ElephantGrass>(), true, style: Main.rand.Next(5, 8)))
 				NetMessage.SendTileSquare(-1, i, j - 2, 1, 2, TileChangeType.None);
 
 			if (!WorldGen.PlayerLOS(i, j))
@@ -72,8 +71,11 @@ public class SavannaGrass : ModTile, IConvertibleTile
 			}
 		}
 
-		bool GrassSurrounded() => Framing.GetTileSafely(i - 1, j - 1).TileType == ModContent.TileType<ElephantGrassShort>() ||
-			Framing.GetTileSafely(i + 1, j - 1).TileType == ModContent.TileType<ElephantGrassShort>();
+		bool GrassAny()
+		{
+			int type = ModContent.TileType<ElephantGrass>();
+			return Framing.GetTileSafely(i - 1, j - 1).TileType == type || Framing.GetTileSafely(i + 1, j - 1).TileType == type;
+		}
 	}
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
@@ -99,7 +101,7 @@ public class SavannaGrass : ModTile, IConvertibleTile
 
 			if (!Main.tile[pos.X, pos.Y].HasTile)
 			{
-				WorldGen.PlaceTile(pos.X, pos.Y, Foliage, true, style: Main.rand.Next(5));
+				WorldGen.PlaceTile(pos.X, pos.Y, ModContent.TileType<SavannaFoliage>(), true, style: Main.rand.Next(5));
 				NetMessage.SendTileSquare(-1, pos.X, pos.Y);
 			}
 		}

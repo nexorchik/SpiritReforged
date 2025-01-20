@@ -47,8 +47,8 @@ internal class PinUIState : AutoUIState
 
 		if (UISystem.IsActive<PinUIState>())
 		{
-			UserInterface.CurrentState.Update(new GameTime());
-			UserInterface.CurrentState.Draw(Main.spriteBatch);
+			UserInterface.CurrentState?.Update(new GameTime());
+			UserInterface.CurrentState?.Draw(Main.spriteBatch);
 		}
 
 		Main.spriteBatch.End();

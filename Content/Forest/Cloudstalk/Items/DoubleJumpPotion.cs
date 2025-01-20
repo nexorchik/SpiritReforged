@@ -1,10 +1,18 @@
-﻿using SpiritReforged.Content.Forest.Cloudstalk.Buffs;
+﻿using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Content.Forest.Cloudstalk.Buffs;
+using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Forest.Cloudstalk.Items;
 
 public class DoubleJumpPotion : ModItem
 {
-	public override void SetStaticDefaults() => Item.ResearchUnlockCount = 20;
+	public override void SetStaticDefaults()
+	{
+		Item.ResearchUnlockCount = 20;
+
+		CrateDatabase.AddCrateRule(ItemID.WoodenCrate, new CommonDrop(Type, 100, 1, 3, 35));
+		CrateDatabase.AddCrateRule(ItemID.WoodenCrateHard, new CommonDrop(Type, 100, 1, 3, 35));
+	}
 
 	public override void SetDefaults()
 	{

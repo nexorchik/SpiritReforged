@@ -1274,3 +1274,8 @@ SavannaNightMusicBoxItem: {
 	DisplayName: Music Box (Savanna Night)
 	Tooltip: ""
 }
+
+SavannaPylonItem: {
+	DisplayName: Savanna Pylon
+	Tooltip: "{$CommonItemTooltip.TeleportationPylon}"
+}

@@ -69,7 +69,7 @@ public class Coral3x3 : ModTile, IDrawPreview
 				(int x, int y) = (op.Coordinates.X + frameX, op.Coordinates.Y + frameY);
 
 				var color = ((op[frameX, frameY] == 1) ? Color.White : Color.Red * .7f) * .5f;
-				var frame = new Point(frameX * 18 + 18 * FrameOffset.X, frameY * 18 + 18 * FrameOffset.Y);
+				var frame = new Point(frameX * 18 + 36 * op.Style + 18 * FrameOffset.X, frameY * 18 + 18 * FrameOffset.Y);
 				var source = new Rectangle(frame.X, frame.Y, 16, 16);
 
 				var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
@@ -128,6 +128,8 @@ public class Coral2x2Rubble : Coral2x2
 	public override void SetStaticDefaults()
 	{
 		base.SetStaticDefaults();
+
+		TileObjectData.GetTileData(Type, 0).RandomStyleRange = 0;
 		FlexibleTileWand.RubblePlacementMedium.AddVariations(ItemID.Coral, Type, 0, 1, 2);
 	}
 

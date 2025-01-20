@@ -17,4 +17,14 @@ public static class DrawGodray
 				new Vector2(ray.Width / 2, 0), rayscale, SpriteEffects.None, 0);
 		}
 	}
+
+	public static void DrawGodrayStraight(SpriteBatch spriteBatch, Vector2 position, Color rayColor, float baseLength, float width, float rotation)
+	{
+		var ray = AssetLoader.LoadedTextures["Ray"];
+		float length = baseLength * (float)(Math.Sin((Main.GlobalTimeWrappedHourly) * 2) / 5 + 1); //Arbitrary sine function to fluctuate length between rays over time
+		var rayscale = new Vector2(width / ray.Width, length / ray.Height);
+
+		spriteBatch.Draw(ray, position, null, rayColor, rotation,
+			new Vector2(ray.Width / 2, 0), rayscale, SpriteEffects.None, 0);
+	}
 }

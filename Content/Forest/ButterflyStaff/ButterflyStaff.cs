@@ -3,7 +3,7 @@ using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.ButterflyStaff;
 
-[AutoloadGlowmask("200,200,200")]
+[AutoloadGlowmask("255,255,255")]
 public class ButterflyStaff : ModItem
 {
 	public override void SetDefaults()

@@ -1,16 +1,14 @@
 ﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.DrawPreviewHook;
+using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean.Tiles;
 
+[AutoloadGlowmask("255,255,255", false)]
 public class Kelp2x3 : ModTile, IDrawPreview
 {
 	public virtual Point FrameOffset => Point.Zero;
-
-	private Asset<Texture2D> glowmask;
-	public override void Load() => glowmask = ModContent.Request<Texture2D>(Texture + "_Glow");
-	public override void Unload() => glowmask = null;
 
 	public override string Texture => base.Texture.Remove(base.Texture.Length - 3, 3); //Remove the size signature
 
@@ -86,7 +84,7 @@ public class Kelp2x3 : ModTile, IDrawPreview
 		var t = Framing.GetTileSafely(i, j);
 		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
 
-		spriteBatch.Draw(glowmask.Value, new Vector2(i * 16, j * 16) - Main.screenPosition + zero, 
+		spriteBatch.Draw(GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value, new Vector2(i * 16, j * 16) - Main.screenPosition + zero, 
 			new Rectangle(t.TileFrameX + 18 * FrameOffset.X, t.TileFrameY + 18 * FrameOffset.Y, 16, 16), new Color(GetGlowColor(0)));
 	}
 

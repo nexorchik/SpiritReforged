@@ -1,9 +1,19 @@
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Jungle.Bamboo.Items;
 
 namespace SpiritReforged.Content.Jungle.Bamboo.Tiles;
 
-public class BambooPot : ModTile
+public class BambooPot : ModTile, IAutoloadTileItem
 {
+	public void SetItemDefaults(ModItem item)
+	{
+		item.Item.value = 50;
+		item.Item.width = item.Item.height = 16;
+	}
+
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+		.AddIngredient(ModContent.ItemType<StrippedBamboo>(), 5).AddTile(TileID.Sawmill).Register();
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
@@ -34,24 +44,6 @@ public class BambooPot : ModTile
 	}
 }
 
-public class BambooPotItem : ModItem
-{
-	public override void SetDefaults()
-	{
-		Item.DefaultToPlaceableTile(ModContent.TileType<BambooPot>());
-		Item.width = Item.height = 16;
-		Item.value = 50;
-	}
-
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<StrippedBamboo>(), 5);
-		recipe.AddTile(TileID.Sawmill);
-		recipe.Register();
-	}
-}
-
 internal class BambooPotGlobalTile : GlobalTile //Hacky solution for modded clay pot tiles not being feasable
 {
 	private static bool IsBambooPot(int i, int j)
@@ -63,7 +55,7 @@ internal class BambooPotGlobalTile : GlobalTile //Hacky solution for modded clay
 	public override bool PreDraw(int i, int j, int type, SpriteBatch spriteBatch)
 	{
 		if (!IsBambooPot(i, j))
-			return base.PreDraw(i, j, type, spriteBatch);
+			return true;
 
 		Tile tile = Framing.GetTileSafely(i, j);
 		Texture2D texture = TextureAssets.Tile[ModContent.TileType<BambooPot>()].Value;
@@ -80,13 +72,10 @@ internal class BambooPotGlobalTile : GlobalTile //Hacky solution for modded clay
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
 		if (!IsBambooPot(i, j))
-		{
-			base.KillTile(i, j, type, ref fail, ref effectOnly, ref noItem);
 			return;
-		}
 
-		Item.NewItem(new Terraria.DataStructures.EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 16, ModContent.ItemType<BambooPotItem>());
+		Item.NewItem(new Terraria.DataStructures.EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 16, Mod.Find<ModItem>("BambooPotItem").Type);
 	}
 
-	public override bool CanDrop(int i, int j, int type) => !IsBambooPot(i, j) && base.CanDrop(i, j, type);
+	public override bool CanDrop(int i, int j, int type) => !IsBambooPot(i, j);
 }

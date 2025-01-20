@@ -1,4 +1,4 @@
-using SpiritReforged.Common.TileCommon.FurnitureTiles;
+using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Jungle.Bamboo.Items;
 using Terraria.DataStructures;
 
