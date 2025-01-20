@@ -66,11 +66,18 @@ public class SkeletonHandRubble : SkeletonHand
 		base.SetStaticDefaults();
 
 		TileObjectData.GetTileData(Type, 0).RandomStyleRange = 0;
-		FlexibleTileWand.RubblePlacementSmall.AddVariations(ItemID.Bone, Type, 0, 1, 2);
+		FlexibleTileWand.RubblePlacementSmall.AddVariations(ModContent.ItemType<SafekeeperRing>(), Type, 0, 1, 2);
 	}
 
-	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		yield return new Item(ItemID.Bone);
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+			return;
+
+		int item = Item.NewItem(null, new Rectangle(i * 16, j * 16, 16, 16), ModContent.ItemType<SafekeeperRing>());
+		if (Main.netMode != NetmodeID.SinglePlayer)
+			NetMessage.SendData(MessageID.SyncItem, number: item);
 	}
+
+	public override bool CanDrop(int i, int j) => false; //Don't drop the default item
 }

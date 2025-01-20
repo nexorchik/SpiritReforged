@@ -11,7 +11,7 @@ public class ButterflyStump : ModTile
 {
 	private const int FrameHeight = 18 * 4;
 
-	private static int ItemType => ModContent.ItemType<ButterflyStaff>();
+	protected static int ItemType => ModContent.ItemType<ButterflyStaff>();
 	private static bool HasItem(int i, int j) => Framing.GetTileSafely(i, j).TileFrameY < FrameHeight;
 	private static bool TopHalf(int i, int j) => Framing.GetTileSafely(i, j).TileFrameY % FrameHeight < 18 * 2;
 
@@ -118,4 +118,29 @@ public class ButterflyStump : ModTile
 		var color = new Vector3(255, 125, 255) * .001f;
 		(r, g, b) = (color.X, color.Y, color.Z);
 	}
+}
+
+public class ButterflyStumpRubble : ButterflyStump
+{
+	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+		FlexibleTileWand.RubblePlacementLarge.AddVariations(ItemType, Type, 0);
+	}
+
+	public override void KillMultiTile(int i, int j, int frameX, int frameY)
+	{
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+			return;
+
+		int item = Item.NewItem(null, new Rectangle(i * 16, j * 16, 32, 64), ItemType);
+		if (Main.netMode != NetmodeID.SinglePlayer)
+			NetMessage.SendData(MessageID.SyncItem, number: item);
+	}
+
+	public override bool CanDrop(int i, int j) => false; //Don't drop the default item
+	public override void MouseOver(int i, int j) { }
+	public override bool RightClick(int i, int j) => false;
 }
