@@ -335,7 +335,7 @@ public class Ostrich : ModNPC
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
 		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Water && Main.dayTime)
-			return .2f;
+			return .3f;
 
 		return 0;
 	}

@@ -41,14 +41,11 @@ public class SavannaGlobalNPC : GlobalNPC
 	{
 		if (spawnInfo.Player.InModBiome<Biome.SavannaBiome>() && !spawnInfo.Invasion)
 		{
-			if (!Main.bloodMoon)
+			if (Main.dayTime)
 				pool.Remove(0); //Remove all vanilla spawns
 
 			if (Main.raining)
 			{
-				if (!Main.dayTime)
-					pool[NPCID.ZombieRaincoat] = .15f;
-
 				pool[NPCID.FlyingFish] = Main.dayTime ? .25f : .18f;
 				pool[NPCID.UmbrellaSlime] = Main.dayTime ? .17f : .08f;
 			}
@@ -56,16 +53,15 @@ public class SavannaGlobalNPC : GlobalNPC
 			if (!Main.dayTime)
 			{
 				pool[NPCID.DoctorBones] = .007f;
-				pool[NPCID.Zombie] = .36f;
-				pool[NPCID.DemonEye] = .23f;
 			}
 			else if (!spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm)
 			{
+				pool[NPCID.Pinky] = .007f;
 				pool[NPCID.Bird] = .05f;
 				pool[ModContent.NPCType<Sparrow>()] = .1f;
 			}
 
-			float odds = spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm ? .22f : .1f;
+			float odds = spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm ? .22f : .12f;
 			pool[NPCID.Vulture] = odds;
 		}
 	}
