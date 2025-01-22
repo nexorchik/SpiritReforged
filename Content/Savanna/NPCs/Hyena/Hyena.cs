@@ -286,6 +286,7 @@ public class Hyena : ModNPC
 		}
 	}
 
+
 	private bool TryChaseTarget(TargetSearchResults search)
 	{
 		if (NPC.HasPlayerTarget && (Main.player[NPC.target].statLife < Main.player[NPC.target].statLifeMax2 * .25f || focus is TargetSearchFlag.Players && isAngry))
@@ -317,6 +318,12 @@ public class Hyena : ModNPC
 
 	public override bool CanHitPlayer(Player target, ref int cooldownSlot) => dealDamage;
 	public override bool CanHitNPC(NPC target) => dealDamage;
+
+	public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+	{
+		if ((Main.expertMode || Main.masterMode) && Main.rand.NextBool(5))
+			target.AddBuff(BuffID.Rabies, 60 * 20);
+	}
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{

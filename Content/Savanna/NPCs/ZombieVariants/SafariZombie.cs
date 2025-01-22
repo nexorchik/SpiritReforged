@@ -7,8 +7,8 @@ namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
 public class SafariZombie : ReplaceNPC
 {
-	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie,
-		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
+	public override int[] TypesToReplace => [NPCID.Zombie,
+		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie];
 
 	public override void StaticDefaults()
 	{
