@@ -49,7 +49,7 @@ internal class BackpackUIState : AutoUIState
 			return;
 		}
 
-		bool hasBackpack = BackpackPlayer.TryGetBackpack(Main.LocalPlayer, out var _);
+		bool hasBackpack = Main.LocalPlayer.GetModPlayer<BackpackPlayer>().backpack.ModItem is BackpackItem;
 
 		if (hasBackpack && !_hadBackpack)
 			SetStorageSlots(false);
@@ -69,20 +69,22 @@ internal class BackpackUIState : AutoUIState
 
 	private void SetVariablePositions() => functionalSlot.Top = vanitySlot.Top = new StyleDimension(UIHelper.AdjustY + 174, 0);
 
+	/// <summary> Adds or removes backpack slots with items according to the currently equipped backpack.<para/>
+	/// This is a snapshot, and must be called again if the <see cref="BackpackPlayer.backpack"/> instance has changed.<br/>
+	/// In most cases, this is handled automatically by the UI state, but not always. </summary>
+	/// <param name="clear"> Whether to remove the backpack storage slots. </param>
 	internal void SetStorageSlots(bool clear)
 	{
-		if (clear)
-		{
-			List<UIElement> removals = [];
+		List<UIElement> removals = [];
 
-			foreach (var item in Children)
-				if (item is UIItemSlot or UIText)
-					removals.Add(item);
+		foreach (var item in Children)
+			if (item is UIItemSlot or UIText)
+				removals.Add(item);
 
-			foreach (var item in removals)
-				RemoveChild(item);
-		}
-		else
+		foreach (var item in removals)
+			RemoveChild(item);
+
+		if (!clear)
 		{
 			const int BaseX = 570;
 			int xOff = 0, yOff = 0;

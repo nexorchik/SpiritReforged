@@ -11,18 +11,6 @@ internal class BackpackPlayer : ModPlayer
 	private int _lastSelectedEquipPage = 0;
 	private bool _hadBackpack = false;
 
-	internal static bool TryGetBackpack(Player player, out BackpackItem backpack)
-	{
-		if (player.GetModPlayer<BackpackPlayer>().backpack.ModItem is BackpackItem tryBackpack)
-		{
-			backpack = tryBackpack;
-			return true;
-		}
-
-		backpack = null;
-		return false;
-	}
-
 	public override void UpdateEquips()
 	{
 		if (Player.HeldItem.ModItem is BackpackItem) //Open the equip menu when a backpack is picked up

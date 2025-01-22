@@ -42,12 +42,13 @@ internal abstract class BackpackItem : ModItem
 		if (!BackpackUISlot.CanClickItem(player.GetModPlayer<BackpackPlayer>().backpack))
 			return;
 
-		int oldType = player.GetModPlayer<BackpackPlayer>().backpack.type;
+		var oldPack = player.GetModPlayer<BackpackPlayer>().backpack;
 
 		player.GetModPlayer<BackpackPlayer>().backpack = Item.Clone();
-		Item.SetDefaults(oldType);
+		Item.SetDefaults(oldPack.type);
 
-		UISystem.GetState<BackpackUIState>().SetStorageSlots(true);
+		if (!oldPack.IsAir) //Refresh the backpack slots manually because BackpackUIState can't detect a change in this case
+			UISystem.GetState<BackpackUIState>().SetStorageSlots(false);
 	}
 
 	public override void SaveData(TagCompound tag)

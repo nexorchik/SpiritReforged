@@ -1282,5 +1282,5 @@ SavannaPylonItem: {
 
 CraneFeather: {
 	DisplayName: Crane Feather
-	Tooltip: "Increases aerial agility"
+	Tooltip: Increases aerial agility
 }
