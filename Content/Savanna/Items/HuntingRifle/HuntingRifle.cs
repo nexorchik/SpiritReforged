@@ -2,6 +2,7 @@
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Content.Savanna.Items.Fishing;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
@@ -65,6 +66,8 @@ public class HuntingRifle : ModItem
 			Main.spriteBatch.Draw(CursorTexture.Value, position, frame, color * cursorOpacity, rotation, origin, scale, SpriteEffects.None, 0f);
 		}
 	}
+
+	public override void SetStaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<WrithingSticks.WrithingSticks>();
 
 	public override void SetDefaults()
     {

@@ -2,6 +2,8 @@ namespace SpiritReforged.Content.Savanna.Items.WrithingSticks;
 
 public class WrithingSticks : ModItem
 {
+	public override void SetStaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<HuntingRifle.HuntingRifle>();
+
 	public override void SetDefaults()
 	{
 		Item.CloneDefaults(ItemID.Fish);

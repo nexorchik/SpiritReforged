@@ -13,6 +13,7 @@ public class OceanSlime : ModNPC
 	{
 		Main.npcFrameCount[NPC.type] = 2;
 		NPCHelper.ImmuneTo(this, BuffID.Poisoned, BuffID.Venom);
+		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.ShimmerSlime;
 	}
 
 	public override void SetDefaults()

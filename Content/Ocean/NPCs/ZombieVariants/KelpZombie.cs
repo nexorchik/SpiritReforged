@@ -12,6 +12,7 @@ public class KelpZombie : ReplaceNPC
 	{
 		Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
 		NPCID.Sets.Zombies[Type] = true;
+		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Skeleton;
 	}
 
 	public override void SetDefaults()

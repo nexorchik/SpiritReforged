@@ -6,7 +6,11 @@ namespace SpiritReforged.Content.Savanna.NPCs.SandSlime;
 
 public class SavannaSandSlime : ModNPC
 {
-	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 3;
+	public override void SetStaticDefaults()
+	{
+		Main.npcFrameCount[Type] = 3;
+		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.ShimmerSlime;
+	}
 
 	public override void SetDefaults()
 	{

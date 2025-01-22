@@ -1,9 +1,12 @@
 using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Content.Savanna.Items.Fishing;
 
 namespace SpiritReforged.Content.Vanilla.Food;
 
 public class CookedMeat : FoodItem
 {
+	public override void StaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<RawMeat>();
+
 	internal override Point Size => new(30, 24);
 
 	public override bool CanUseItem(Player player) => true;

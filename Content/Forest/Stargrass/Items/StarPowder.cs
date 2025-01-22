@@ -1,10 +1,13 @@
 ﻿using SpiritReforged.Content.Forest.Stargrass.Tiles;
+using SpiritReforged.Content.Savanna.Items.Fishing;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Items;
 
 internal class StarPowder : ModItem
 {
+	public override void SetStaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.PurificationPowder;
+
 	public override void SetDefaults()
 	{
 		Item.width = 22;

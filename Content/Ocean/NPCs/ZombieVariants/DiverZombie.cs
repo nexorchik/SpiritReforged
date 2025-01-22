@@ -12,6 +12,7 @@ public class DiverZombie : ReplaceNPC
 	{
 		Main.npcFrameCount[Type] = 4;
 		NPCID.Sets.Zombies[Type] = true;
+		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Skeleton;
 	}
 
 	public override void SetDefaults()
