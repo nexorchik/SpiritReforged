@@ -321,7 +321,7 @@ public class Ostrich : ModNPC
 	{
 		var texture = TextureAssets.Npc[Type].Value;
 		var source = NPC.frame with { Width = NPC.frame.Width - 2, Height = NPC.frame.Height - 2 }; //Remove padding
-		var position = NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY - (source.Height - NPC.height) / 2 + 4);
+		var position = NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY - (source.Height - NPC.height) / 2 + 2);
 		var extraOffset = new Vector2(16 * NPC.spriteDirection, 0);
 
 		var effects = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;

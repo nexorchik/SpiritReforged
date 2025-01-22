@@ -1,4 +1,5 @@
-﻿using Terraria.DataStructures;
+﻿using SpiritReforged.Content.Savanna.Items.Drywood;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
@@ -20,7 +21,8 @@ public class AcaciaRootsLarge : ModTile
 		SetObjectData();
 
 		DustType = DustID.WoodFurniture;
-		AddMapEntry(new Color(87, 61, 51), Language.GetText("Mods.SpiritReforged.Tiles.CoralMapEntry"));
+		RegisterItemDrop(ModContent.ItemType<Drywood>());
+		AddMapEntry(new Color(87, 61, 51));
 	}
 
 	public virtual void SetObjectData()

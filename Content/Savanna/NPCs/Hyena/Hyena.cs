@@ -25,6 +25,7 @@ public class Hyena : ModNPC
 		Walking
 	}
 
+	private static Asset<Texture2D> meatItemTexture;
 	private static readonly int[] endFrames = [4, 2, 5, 5, 5, 13, 8];
 	private const int drownTimeMax = 300;
 
@@ -34,6 +35,7 @@ public class Hyena : ModNPC
 	public ref float Counter => ref NPC.ai[1]; //Used to change behaviour at intervals
 	public ref float TargetSpeed => ref NPC.ai[2]; //Stores a direction to lerp to over time
 
+	private bool holdingMeat; //Whether this NPC is holding raw meat
 	private bool dealDamage; //Whether this NPC can deal damage
 	private bool isAngry; //Similar to dealDamage but is reset differently
 	private int oldX; //Tracks the last horizontal jump coordinate so the NPC doesn't constantly jump in the same place
@@ -44,6 +46,8 @@ public class Hyena : ModNPC
 	{
 		NPC.SetNPCTargets(ModContent.NPCType<Ostrich.Ostrich>());
 		Main.npcFrameCount[Type] = 13; //Rows
+
+		meatItemTexture = ModContent.Request<Texture2D>(Texture + "_MeatItem");
 	}
 
 	public override void SetDefaults()
@@ -119,7 +123,7 @@ public class Hyena : ModNPC
 				}
 				else
 				{
-					if (Counter % 250 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+					if (!FoundPickup() && Counter % 250 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
 					{
 						float oldTargetSpeed = TargetSpeed;
 						TargetSpeed = Main.rand.NextFromList(-1, 0, 1) * Main.rand.NextFloat(.8f, 1.5f);
@@ -130,7 +134,7 @@ public class Hyena : ModNPC
 
 					SetPace();
 
-					if (AnimationState == (int)State.TrotEnd && Main.rand.NextBool(400)) //Randomly laugh when still; not synced
+					if (!holdingMeat && AnimationState == (int)State.TrotEnd && Main.rand.NextBool(400)) //Randomly laugh when still; not synced
 					{
 						ChangeAnimationState(State.Laugh);
 						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 2 }, NPC.Center);
@@ -157,7 +161,7 @@ public class Hyena : ModNPC
 				{
 					ChangeAnimationState(State.TrottingAngry, true);
 
-					if (Main.rand.NextBool(120)) //Randomly bark; not synced
+					if (!holdingMeat && Main.rand.NextBool(120)) //Randomly bark; not synced
 					{
 						ChangeAnimationState(State.BarkingAngry);
 						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Bark") with { Volume = .18f, PitchVariance = .4f }, NPC.Center);
@@ -196,7 +200,7 @@ public class Hyena : ModNPC
 				{
 					ChangeAnimationState(State.TrotEnd);
 
-					if (!swimming && Main.rand.NextBool(150)) //Randomly laugh; not synced
+					if (!holdingMeat && !swimming && Main.rand.NextBool(150)) //Randomly laugh; not synced
 					{
 						ChangeAnimationState(State.Laugh);
 						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 2 }, NPC.Center);
@@ -284,8 +288,38 @@ public class Hyena : ModNPC
 			else
 				ChangeAnimationState(State.Trotting, true);
 		}
-	}
 
+		bool FoundPickup() //Scans for a nearby item pickup and does related logic
+		{
+			const int distance = 16 * 10;
+
+			if (holdingMeat)
+				return false;
+
+			foreach (var item in Main.ActiveItems)
+			{
+				if (item.type == ModContent.ItemType<RawMeat>() && item.Distance(NPC.Center) < distance && Collision.CanHitLine(item.position, item.width, item.height, NPC.position, NPC.width, NPC.height))
+				{
+					if (NPC.getRect().Intersects(item.getRect()))
+					{
+						if (--item.stack <= 0)
+							item.TurnToAir();
+
+						SoundEngine.PlaySound(SoundID.Grab, NPC.Center);
+
+						TargetSpeed = 0;
+						holdingMeat = true;
+					}
+					else
+						TargetSpeed = Math.Sign(item.Center.X - NPC.Center.X) * 1.7f;
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
 
 	private bool TryChaseTarget(TargetSearchResults search)
 	{
@@ -395,7 +429,7 @@ public class Hyena : ModNPC
 	{
 		var texture = TextureAssets.Npc[Type].Value;
 		var source = NPC.frame with { Width = NPC.frame.Width - 2, Height = NPC.frame.Height - 2 }; //Remove padding
-		var position = NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY - (source.Height - NPC.height) / 2 + 4);
+		var position = NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY - (source.Height - NPC.height) / 2 + 2);
 
 		var effects = (NPC.spriteDirection == 1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 		var color = NPC.GetAlpha(NPC.GetNPCColorTintedByBuffs(drawColor));
@@ -404,6 +438,9 @@ public class Hyena : ModNPC
 
 		if (isAngry && Main.bloodMoon)
 			Main.EntitySpriteDraw(GlowmaskNPC.NpcIdToGlowmask[Type].Glowmask.Value, position, source, NPC.GetAlpha(Color.Red), NPC.rotation, source.Size() / 2, NPC.scale, effects);
+
+		if (holdingMeat)
+			Main.EntitySpriteDraw(meatItemTexture.Value, position, source, NPC.GetAlpha(drawColor), NPC.rotation, source.Size() / 2, NPC.scale, effects);
 
 		return false;
 	}
@@ -420,5 +457,16 @@ public class Hyena : ModNPC
 	{
 		npcLoot.AddCommon<RawMeat>(3);
 		npcLoot.AddCommon(ItemID.Leather, 2, 1, 2);
+	}
+
+	public override void OnKill()
+	{
+		if (holdingMeat)
+		{
+			int item = Item.NewItem(NPC.GetSource_Death(), NPC.getRect(), ModContent.ItemType<RawMeat>());
+
+			if (Main.netMode != NetmodeID.SinglePlayer)
+				NetMessage.SendData(MessageID.SyncItem, number: item);
+		}
 	}
 }
