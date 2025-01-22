@@ -75,7 +75,8 @@ public class MineralSlag : ModItem
 	}
 }
 
-public class MineralSlagPickup : MineralSlag //Spawned strictly by Hydrothermal Vents
+/// <summary> Non-functional variant of <see cref="MineralSlag"/> used for visual effects. </summary>
+public class MineralSlagPickup : MineralSlag
 {
 	private const int timeLeftMax = 60 * 60 * 2;
 	private int timeLeft = timeLeftMax;

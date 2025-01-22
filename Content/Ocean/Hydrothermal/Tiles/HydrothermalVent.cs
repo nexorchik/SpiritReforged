@@ -2,6 +2,7 @@
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -11,10 +12,12 @@ namespace SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 
 public class HydrothermalVent : ModTile
 {
+	/// <summary> Cooldowns for all <see cref="HydrothermalVent"/> tiles in the world. Never read on multiplayer clients. </summary>
 	internal static readonly Dictionary<Point16, int> cooldowns = [];
 	internal const int cooldownMax = (int)(Main.dayLength / 5);
 	internal const int eruptDuration = 60 * 10;
 
+	/// <summary> Precise texture top positions for all tile styles, used for visuals. </summary>
 	private static readonly Point[] tops = [new Point(16, 16), new Point(16, 16), new Point(16, 24), new Point(12, 4), new Point(20, 4), new Point(16, 16), new Point(16, 16), new Point(16, 16)];
 
 	public override void Load() => On_Wiring.UpdateMech += UpdateCooldowns;
@@ -25,61 +28,24 @@ public class HydrothermalVent : ModTile
 
 		foreach (var entry in cooldowns)
 		{
-			if (!IsValid(entry.Key.X, entry.Key.Y))
+			var coords = entry.Key;
+
+			if (!IsValid(coords.X, coords.Y))
 			{
-				cooldowns.Remove(new Point16(entry.Key.X, entry.Key.Y));
+				cooldowns.Remove(coords);
 				break;
 			}
 
-			if (cooldowns[entry.Key] > 0)
-				cooldowns[entry.Key]--;
+			if (cooldowns[coords] > 0)
+				cooldowns[coords]--;
 		}
 	}
 
-	public static void Erupt(int i, int j)
-	{
-		var t = Framing.GetTileSafely(i, j);
-		int fullWidth = TileObjectData.GetTileData(t).CoordinateFullWidth;
-		var position = new Vector2(i, j) * 16 + tops[t.TileFrameX / fullWidth].ToVector2();
-
-		if (Main.netMode != NetmodeID.MultiplayerClient)
-			Projectile.NewProjectile(new EntitySource_Wiring(i, j), position, Vector2.UnitY * -4f, ModContent.ProjectileType<HydrothermalVentPlume>(), 5, 0f);
-		if (!Main.dedServ)
-		{
-			for (int k = 0; k <= 20; k++)
-				Dust.NewDustPerfect(position, ModContent.DustType<Dusts.BoneDust>(), new Vector2(0, 6).RotatedByRandom(1) * Main.rand.NextFloat(-1, 1));
-			for (int k = 0; k <= 20; k++)
-				Dust.NewDustPerfect(position, ModContent.DustType<Dusts.FireClubDust>(), new Vector2(0, 6).RotatedByRandom(1) * Main.rand.NextFloat(-1, 1));
-
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/StoneCrack" + Main.rand.Next(1, 3)) { PitchVariance = .6f }, position);
-			SoundEngine.PlaySound(SoundID.Drown with { Pitch = -.5f, PitchVariance = .25f, Volume = 1.5f }, position);
-
-			ParticleHandler.SpawnParticle(new TexturedPulseCircle(position, Color.Orange, 0.75f, 200, 20, "supPerlin",
-				new Vector2(4, 0.75f), EaseFunction.EaseCubicOut).WithSkew(0.75f, MathHelper.Pi - MathHelper.PiOver2));
-
-			ParticleHandler.SpawnParticle(new TexturedPulseCircle(position, Color.White, 0.5f, 200, 20, "supPerlin",
-				new Vector2(4, 0.75f), EaseFunction.EaseCubicOut).WithSkew(0.75f, MathHelper.Pi - MathHelper.PiOver2));
-
-			for (int x = 0; x < 5; x++) //Large initial smoke plume
-			{
-				ParticleHandler.SpawnParticle(new DissipatingSmoke(position + Main.rand.NextVector2Unit() * 25f, -Vector2.UnitY,
-					new Color(40, 40, 50), Color.Black, Main.rand.NextFloat(.05f, .3f), 150));
-			}
-
-			Main.LocalPlayer.SimpleShakeScreen(2, 3, 90, 16 * 10);
-		}
-	}
-
-	private bool IsValid(int i, int j)
-	{
-		var t = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(t);
-
-		if (data is null)
-			return false;
-
-		return Framing.GetTileSafely(i, j).TileType == Type && t.TileFrameX % data.CoordinateFullWidth == 0 && t.TileFrameY == 0;
-	}
+	/// <summary> Checks whether the given position is valid for a <see cref="cooldowns"/> entry to exist. </summary>
+	/// <param name="i"> The X coordinate. </param>
+	/// <param name="j"> The Y Coordinate.</param>
+	/// <returns> Whether the given position is valid. </returns>
+	private bool IsValid(int i, int j) => TileObjectData.IsTopLeft(i, j) && Framing.GetTileSafely(i, j).TileType == Type;
 
 	public override void SetStaticDefaults()
 	{
@@ -99,6 +65,7 @@ public class HydrothermalVent : ModTile
 		TileObjectData.addTile(Type);
 
 		DustType = DustID.Stone;
+		MinPick = 50;
 		AddMapEntry(new Color(64, 54, 66), CreateMapEntryName());
 	}
 
@@ -145,12 +112,19 @@ public class HydrothermalVent : ModTile
 		}
 	}
 
-	public override void RandomUpdate(int i, int j)
+	public override void MouseOver(int i, int j)
 	{
-		if (Main.netMode == NetmodeID.MultiplayerClient)
-			return; //Redundant
+		var player = Main.LocalPlayer;
+		player.noThrow = 2;
+		player.cursorItemIconEnabled = true;
+		player.cursorItemIconID = ModContent.ItemType<MineralSlag>();
+	}
 
-		TileExtensions.GetTopLeft(ref i, ref j); //Allows any tile update (not just the top leftmost) to cause an eruption
+	public override void RandomUpdate(int i, int j) => TryErupt(i, j);
+
+	private bool TryErupt(int i, int j)
+	{
+		TileExtensions.GetTopLeft(ref i, ref j);
 
 		var pt = new Point16(i, j);
 		if (IsValid(i, j) && !cooldowns.ContainsKey(pt))
@@ -161,13 +135,52 @@ public class HydrothermalVent : ModTile
 			Erupt(i, j);
 			cooldowns[pt] = cooldownMax;
 
-			if (Main.netMode != NetmodeID.SinglePlayer) //Sync vent eruption with clients
+			if (Main.netMode != NetmodeID.SinglePlayer) //Sync vent eruption in multiplayer
 			{
 				var packet = SpiritReforgedMod.Instance.GetPacket(MessageType.SendVentEruption, 2);
 				packet.Write((short)i);
 				packet.Write((short)j);
 				packet.Send();
 			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public static void Erupt(int i, int j)
+	{
+		var t = Framing.GetTileSafely(i, j);
+		int fullWidth = TileObjectData.GetTileData(t).CoordinateFullWidth;
+		var position = new Vector2(i, j) * 16 + tops[t.TileFrameX / fullWidth].ToVector2();
+
+		if (Main.netMode != NetmodeID.MultiplayerClient)
+			Projectile.NewProjectile(new EntitySource_Wiring(i, j), position, Vector2.UnitY * -4f, ModContent.ProjectileType<HydrothermalVentPlume>(), 5, 0f);
+
+		if (!Main.dedServ)
+		{
+			for (int k = 0; k <= 20; k++)
+				Dust.NewDustPerfect(position, ModContent.DustType<Dusts.BoneDust>(), new Vector2(0, 6).RotatedByRandom(1) * Main.rand.NextFloat(-1, 1));
+			for (int k = 0; k <= 20; k++)
+				Dust.NewDustPerfect(position, ModContent.DustType<Dusts.FireClubDust>(), new Vector2(0, 6).RotatedByRandom(1) * Main.rand.NextFloat(-1, 1));
+
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/StoneCrack" + Main.rand.Next(1, 3)) { PitchVariance = .6f }, position);
+			SoundEngine.PlaySound(SoundID.Drown with { Pitch = -.5f, PitchVariance = .25f, Volume = 1.5f }, position);
+
+			ParticleHandler.SpawnParticle(new TexturedPulseCircle(position, Color.Yellow, 0.75f, 200, 20, "supPerlin",
+				new Vector2(4, 0.75f), EaseFunction.EaseCubicOut).WithSkew(0.75f, MathHelper.Pi - MathHelper.PiOver2));
+
+			ParticleHandler.SpawnParticle(new TexturedPulseCircle(position, Color.Red, 0.75f, 200, 20, "supPerlin",
+				new Vector2(4, 0.75f), EaseFunction.EaseCubicOut).WithSkew(0.75f, MathHelper.Pi - MathHelper.PiOver2));
+
+			for (int x = 0; x < 5; x++) //Large initial smoke plume
+			{
+				ParticleHandler.SpawnParticle(new DissipatingSmoke(position + Main.rand.NextVector2Unit() * 25f, -Vector2.UnitY,
+					new Color(40, 40, 50), Color.Black, Main.rand.NextFloat(.05f, .3f), 150));
+			}
+
+			Main.LocalPlayer.SimpleShakeScreen(2, 3, 90, 16 * 10);
 		}
 	}
 }
