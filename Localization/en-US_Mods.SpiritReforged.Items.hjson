@@ -1279,3 +1279,8 @@ SavannaPylonItem: {
 	DisplayName: Savanna Pylon
 	Tooltip: "{$CommonItemTooltip.TeleportationPylon}"
 }
+
+CraneFeather: {
+	DisplayName: Crane Feather
+	Tooltip: "Increases aerial agility"
+}
