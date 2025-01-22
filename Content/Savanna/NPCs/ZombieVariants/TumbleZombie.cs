@@ -8,7 +8,7 @@ namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 public class TumbleZombie : ReplaceNPC
 {
 	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie,
-		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
+		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie];
 
 	public override void StaticDefaults()
 	{

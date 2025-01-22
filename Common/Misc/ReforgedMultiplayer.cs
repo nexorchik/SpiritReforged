@@ -35,6 +35,15 @@ public static class ReforgedMultiplayer
 				short i = reader.ReadInt16();
 				short j = reader.ReadInt16();
 
+				if (Main.netMode == NetmodeID.Server)
+				{
+					//If received by the server, send to all clients
+					var packet = SpiritReforgedMod.Instance.GetPacket(MessageType.SendVentEruption, 2);
+					packet.Write(i);
+					packet.Write(j);
+					packet.Send(ignoreClient: whoAmI);
+				}
+
 				HydrothermalVent.Erupt(i, j);
 				break;
 

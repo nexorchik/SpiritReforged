@@ -6,7 +6,7 @@ namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
 public class SailorZombie : ReplaceNPC
 {
 	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie, 
-		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
+		NPCID.PincushionZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
 
 	public override void StaticDefaults()
 	{
