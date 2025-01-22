@@ -8,7 +8,7 @@ using System.Linq;
 namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
 
 [AutoloadGlowmask("Method:Content.Forest.Stargrass.Tiles.StargrassTile Glow")]
-internal class StargrassTile : ModTile
+public class StargrassTile : ModTile
 {
 	public static Color Glow(object obj) 
 	{
@@ -81,13 +81,10 @@ internal class StargrassTile : ModTile
 
 	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
 	{
-		//Surrounded by solid tiles
-		if (WorldGen.SolidOrSlopedTile(i, j - 1) && WorldGen.SolidOrSlopedTile(i, j + 1) && WorldGen.SolidOrSlopedTile(i - 1, j) && WorldGen.SolidOrSlopedTile(i + 1, j) &&
-			WorldGen.SolidOrSlopedTile(i - 1, j - 1) && WorldGen.SolidOrSlopedTile(i + 1, j - 1) && WorldGen.SolidOrSlopedTile(i - 1, j + 1) && WorldGen.SolidOrSlopedTile(i + 1, j + 1))
-		{
+		var flags = OpenTools.GetOpenings(i, j, false, false, true);
+
+		if (flags == OpenFlags.None) //Surrounded by solid tiles
 			Main.tile[i, j].TileType = TileID.Grass;
-			return false;
-		}
 
 		return true;
 	}
@@ -109,10 +106,7 @@ internal class StargrassTile : ModTile
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (!fail)
-		{
-			fail = true;
-			Framing.GetTileSafely(i, j).TileType = TileID.Dirt;
-		}
+		fail = true;
+		Framing.GetTileSafely(i, j).TileType = TileID.Dirt; //Always turn to dirt on the first strike
 	}
 }
