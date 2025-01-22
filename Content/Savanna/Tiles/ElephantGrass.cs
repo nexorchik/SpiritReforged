@@ -11,6 +11,7 @@ public class ElephantGrass : ModTile, IConvertibleTile
 {
 	protected virtual Color SubColor => Color.Goldenrod;
 
+	/// <returns> Whether this <see cref="ElephantGrass"/> tile uses its short alternate style. </returns>
 	public static bool IsShortgrass(int i, int j) => TileObjectData.GetTileStyle(Main.tile[i, j]) > 4;
 
 	public override void SetStaticDefaults()
@@ -42,6 +43,15 @@ public class ElephantGrass : ModTile, IConvertibleTile
 	{
 		AddMapEntry(new(104, 156, 70));
 		DustType = DustID.JungleGrass;
+	}
+
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HeldItem.type == ItemID.Sickle)
+			yield return new Item(ItemID.Hay, Main.rand.Next(3, 7));
+
+		if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HasItem(ItemID.Blowpipe))
+			yield return new Item(ItemID.Seed, Main.rand.Next(1, 3));
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;

@@ -29,7 +29,7 @@ public class Wheatgrass : ModTile, ISwayTile
 	public override IEnumerable<Item> GetItemDrops(int i, int j)
 	{
 		if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HeldItem.type == ItemID.Sickle)
-			yield return new Item(ItemID.Hay);
+			yield return new Item(ItemID.Hay, Main.rand.Next(4, 9));
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
