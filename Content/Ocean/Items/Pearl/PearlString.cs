@@ -1,11 +1,14 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.PlayerCommon;
+using SpiritReforged.Content.Savanna.Items.WrithingSticks;
 
 namespace SpiritReforged.Content.Ocean.Items.Pearl;
 
 [AutoloadEquip(EquipType.Neck)]
 public class PearlString : AccessoryItem
 {
+	public override void SetStaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.WhitePearl;
+
 	public override void SetDefaults()
 	{
 		Item.width = Item.height = 20;

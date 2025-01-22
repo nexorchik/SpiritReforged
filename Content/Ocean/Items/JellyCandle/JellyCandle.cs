@@ -3,12 +3,7 @@ namespace SpiritReforged.Content.Ocean.Items.JellyCandle;
 public class JellyCandle : ModItem
 {
 	//TODO: Bring Back a glowmask system, implement it here
-	public override void SetStaticDefaults()
-	{
-		// DisplayName.SetDefault("Jelly Peace Candle");
-		// Tooltip.SetDefault("Summons a peaceful jellyfish");
-		// SpiritGlowmask.AddGlowMask(Item.type, Texture + "_Glow");
-	}
+	public override void SetStaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.WaterCandle;
 
 	public override void SetDefaults()
 	{
@@ -27,5 +22,4 @@ public class JellyCandle : ModItem
 
 	public override Color? GetAlpha(Color lightColor) => new Color(200, 200, 200, 100);
 
-	//public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => GlowmaskUtils.DrawItemGlowMaskWorld(spriteBatch, Item, ModContent.Request<Texture2D>(Texture + "_Glow").Value, rotation, scale);
 }
