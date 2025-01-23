@@ -12,7 +12,7 @@ using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Ostrich;
 
-[SpawnPack(2, 4)]
+[SpawnPack(3, 6)]
 [AutoloadBanner]
 public class Ostrich : ModNPC
 {
@@ -335,7 +335,7 @@ public class Ostrich : ModNPC
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
 		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Water && Main.dayTime)
-			return .3f;
+			return .31f;
 
 		return 0;
 	}

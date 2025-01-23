@@ -9,7 +9,7 @@ public class Sparrow : ModNPC
 	public override void SetStaticDefaults()
 	{
 		Main.npcFrameCount[Type] = 5;
-		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Shimmerfly;
+		NPCID.Sets.ShimmerTransformToNPC[Type] = NPCID.Shimmerfly;
 	}
 
 	public override void SetDefaults()
@@ -29,5 +29,14 @@ public class Sparrow : ModNPC
 
 		if (NPC.life <= 0 && !Main.dedServ)
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("SparrowGore").Type, 1f);
+	}
+
+	public override float SpawnChance(NPCSpawnInfo spawnInfo)
+	{
+		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm 
+			&& !spawnInfo.Water && Main.dayTime && !spawnInfo.Invasion)
+			return .15f;
+
+		return 0;
 	}
 }

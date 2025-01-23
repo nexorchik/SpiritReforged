@@ -58,7 +58,6 @@ public class SavannaGlobalNPC : GlobalNPC
 			{
 				pool[NPCID.Pinky] = .007f;
 				pool[NPCID.Bird] = .05f;
-				pool[ModContent.NPCType<Sparrow>()] = .1f;
 			}
 
 			float odds = spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm ? .22f : .12f;
