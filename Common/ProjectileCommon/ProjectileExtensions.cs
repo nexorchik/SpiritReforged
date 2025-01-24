@@ -16,6 +16,19 @@ internal static class ProjectileExtensions
 			? projectile.velocity.Y 
 			: -oldVelocity.Y * VelocityKeptRatio);
 
+	/// <summary> Attempt to bounce off of shimmer when in contact. Use this for projectiles with AI styles of 0. </summary>
+	public static void TryShimmerBounce(this Projectile projectile)
+	{
+		if (projectile.shimmerWet && projectile.wetCount == 0)
+		{
+			projectile.velocity.Y = -projectile.velocity.Y;
+
+			projectile.wetCount = 10;
+			projectile.shimmerWet = false;
+			projectile.wet = false;
+		}
+	}
+
 	/// <summary>
 	/// Draws the projectile similar to how vanilla would by default.
 	/// </summary>

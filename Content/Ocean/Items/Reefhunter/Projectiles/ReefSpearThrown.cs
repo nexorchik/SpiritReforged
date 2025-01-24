@@ -29,7 +29,6 @@ public class ReefSpearThrown : ModProjectile
 		Projectile.friendly = true;
 		Projectile.penetrate = -1;
 		Projectile.tileCollide = true;
-		Projectile.ignoreWater = true;
 		Projectile.DamageType = DamageClass.Melee;
 		Projectile.aiStyle = 0;
 	}
@@ -44,6 +43,8 @@ public class ReefSpearThrown : ModProjectile
 			Projectile.velocity.Y += 0.3f;
 			Projectile.rotation = Projectile.velocity.ToRotation();
 			Projectile.tileCollide = Projectile.ai[0]++ > 6;
+
+			Projectile.TryShimmerBounce();
 		}
 		else
 		{
@@ -68,6 +69,7 @@ public class ReefSpearThrown : ModProjectile
 			relativePoint += Projectile.velocity * factor * 0.1f;
 
 			Projectile.Center = npc.Center + relativePoint;
+			Projectile.ignoreWater = true;
 
 			if (Projectile.timeLeft <= 10)
 				Projectile.alpha += 25;

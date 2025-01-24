@@ -12,7 +12,6 @@ public class UrchinSpike : ModProjectile, ITrailProjectile
 {
 	public override void SetStaticDefaults()
 	{
-		// DisplayName.SetDefault("Urchin");
 		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 20;
 		ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
 	}
@@ -40,12 +39,12 @@ public class UrchinSpike : ModProjectile, ITrailProjectile
 
 	public override void AI()
 	{
-		Projectile.alpha = (255 - (int)(Projectile.timeLeft / 60f * 255));
+		Projectile.alpha = 255 - (int)(Projectile.timeLeft / 60f * 255);
 		Projectile.scale = EaseFunction.EaseCircularOut.Ease(Projectile.Opacity);
 		Projectile.velocity *= 0.96f;
+
 		if (!hasTarget)
 			Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-
 		else
 		{
 			NPC npc = Main.npc[(int)Projectile.ai[1]];
@@ -73,7 +72,7 @@ public class UrchinSpike : ModProjectile, ITrailProjectile
 		if (!Main.dedServ)
 			AssetLoader.VertexTrailManager.TryEndTrail(Projectile, 12);
 
-		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_LightPop") with { PitchVariance = 0.4f, Volume = 1.1f, MaxInstances = 12}, Projectile.Center);
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_LightPop") with { PitchVariance = 0.4f, Volume = 1.1f, MaxInstances = 12 }, Projectile.Center);
 
 	}
 

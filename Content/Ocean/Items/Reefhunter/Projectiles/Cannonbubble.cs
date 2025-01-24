@@ -4,7 +4,6 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 using SpiritReforged.Common.ProjectileCommon;
-using SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
@@ -56,12 +55,13 @@ public class Cannonbubble : ModProjectile
 		if (Projectile.wet)
 			Projectile.velocity.Y -= 0.08f;
 
-		for (int i = 0; i < Main.maxProjectiles; i++)
+		foreach (var p in Main.ActiveProjectiles)
 		{
-			Projectile p = Main.projectile[i];
-			if (p.type == Projectile.type && p.active && p != null && p.whoAmI != Projectile.whoAmI && p.Hitbox.Intersects(Projectile.Hitbox))
+			if (p.type == Projectile.type && p.whoAmI != Projectile.whoAmI && p.Hitbox.Intersects(Projectile.Hitbox))
 				BubbleCollision(p);
 		}
+
+		Projectile.TryShimmerBounce();
 	}
 
 	public override bool PreDraw(ref Color lightColor)

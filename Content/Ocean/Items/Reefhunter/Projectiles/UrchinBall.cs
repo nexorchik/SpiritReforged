@@ -95,6 +95,7 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		squishScale = 1 - (float)Math.Sin(MathHelper.Pi * squishScale);
 
 		Projectile.scale *= MathHelper.Lerp(squishScale, 1, 0.85f);
+		Projectile.TryShimmerBounce();
 	}
 
 	private float FlashTimer() => Math.Max(DETONATION_TIME - Projectile.timeLeft, 0) / (float)DETONATION_TIME;
