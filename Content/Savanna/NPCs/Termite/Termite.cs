@@ -117,7 +117,7 @@ public class Termite : ModNPC
 		var tilePos = NPC.Center + new Vector2(offsetX * 16, -16);
 		var tile = Framing.GetTileSafely(tilePos);
 
-		return tile.TileType is TileID.Trees || tile.TileType is TileID.PalmTree;
+		return TileID.Sets.IsShakeable[tile.TileType];
 	}
 
 	public override void FindFrame(int frameHeight)

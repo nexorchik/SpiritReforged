@@ -1,4 +1,6 @@
-﻿using Terraria.DataStructures;
+﻿using SpiritReforged.Common.Particle;
+using Terraria.Audio;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
@@ -24,13 +26,20 @@ public class TermiteMoundLarge : ModTile
 		TileObjectData.addTile(Type);
 
 		AddMapEntry(new Color(100, 92, 50));
-		DustType = DustID.Dirt;
+		DustType = DustID.DesertPot;
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
+		if (!Main.dedServ)
+		{
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/StoneCrack2") { Pitch = .5f, PitchVariance = .4f }, new Vector2(i, j) * 16 + new Vector2(24));
+			for (int x = 0; x < 3; x++)
+				ParticleHandler.SpawnParticle(new Particles.SmokeCloud(new Vector2(i, j) * 16 + new Vector2(24, 70), Vector2.UnitY * -.5f, Color.SandyBrown, .2f, Common.Easing.EaseFunction.EaseQuarticInOut, 120));
+		}
+
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 			return;
 
@@ -51,7 +60,7 @@ public class TermiteMoundLarge : ModTile
 		return false;
 	}
 
-	/// <summary> Helper for drawing all termite nest variants. </summary>
+	/// <summary> Helper for drawing all termite mound variants. </summary>
 	public static void DoDraw(int i, int j, SpriteBatch spriteBatch, int frameXOffset = 0, int frameYOffset = 0)
 	{
 		var tile = Framing.GetTileSafely(i, j);
@@ -90,13 +99,20 @@ public class TermiteMoundMedium : ModTile
 		TileObjectData.addTile(Type);
 
 		AddMapEntry(new Color(100, 92, 50));
-		DustType = DustID.Dirt;
+		DustType = DustID.DesertPot;
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
+		if (!Main.dedServ)
+		{
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/StoneCrack2") { Pitch = .5f, PitchVariance = .4f }, new Vector2(i, j) * 16 + new Vector2(24));
+			for (int x = 0; x < 2; x++)
+				ParticleHandler.SpawnParticle(new Particles.SmokeCloud(new Vector2(i, j) * 16 + new Vector2(24, 54), Vector2.UnitY * -.5f, Color.SandyBrown, .2f, Common.Easing.EaseFunction.EaseQuarticInOut, Main.rand.Next(80, 140)));
+		}
+
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 			return;
 
@@ -140,13 +156,19 @@ public class TermiteMoundSmall : ModTile
 		TileObjectData.addTile(Type);
 
 		AddMapEntry(new Color(100, 92, 50));
-		DustType = DustID.Dirt;
+		DustType = DustID.DesertPot;
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
+		if (!Main.dedServ)
+		{
+			ParticleHandler.SpawnParticle(new Particles.SmokeCloud(new Vector2(i, j) * 16 + new Vector2(16, 16), Vector2.UnitY * -.25f, Color.SandyBrown, .12f, Common.Easing.EaseFunction.EaseQuarticInOut, Main.rand.Next(80, 140)));
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/StoneCrack2") { Pitch = .5f, PitchVariance = .4f }, new Vector2(i, j) * 16 + new Vector2(18));
+		}
+
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 			return;
 
