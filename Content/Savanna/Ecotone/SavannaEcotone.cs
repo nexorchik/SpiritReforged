@@ -182,6 +182,7 @@ internal class SavannaEcotone : EcotoneBase
 		}
 
 		SavannaArea = new Rectangle(startX, topBottomY.X, endX - startX, topBottomY.Y - topBottomY.X);
+		SavannaArea.Inflate(2, 2);
 		StopLava.AddArea(SavannaArea);
 
 		static ushort GetSandType(int x, int y)
@@ -292,7 +293,7 @@ internal class SavannaEcotone : EcotoneBase
 				}
 
 				if (WorldGen.genRand.NextBool(120)) //Rare bones
-					WorldGen.PlaceTile(i, j, TileID.LargePiles2, true, style: WorldGen.genRand.Next(52, 55));
+					WorldGen.PlaceTile(i, j - 1, TileID.LargePiles2, true, style: WorldGen.genRand.Next(52, 55));
 			}
 
 		if (WorldGen.genRand.NextBool(3))
@@ -303,7 +304,7 @@ internal class SavannaEcotone : EcotoneBase
 		{
 			(int i, int j) = (p.X, p.Y - 1);
 
-			GrowStuffOnGrass(i, j);
+			PlaceStuffOnGrass(i, j);
 
 			int treeDistance = Math.Abs(i - treeSpacing.OrderBy(x => Math.Abs(i - x)).FirstOrDefault());
 			if (treeDistance > minimumTreeSpace)
@@ -319,8 +320,14 @@ internal class SavannaEcotone : EcotoneBase
 		}
 	}
 
-	private static void GrowStuffOnGrass(int i, int j)
+	/// <summary> Places tiles on grass. </summary>
+	/// <param name="i"> The grass tile's X coordinate. </param>
+	/// <param name="j"> Above the grass tile's Y coordinate. </param>
+	private static void PlaceStuffOnGrass(int i, int j)
 	{
+		if (WorldGen.genRand.NextBool(8)) //Surface pots
+			WorldGen.PlaceTile(i, j, TileID.Pots, true, true, style: 7);
+
 		if (WorldGen.genRand.NextBool(13)) //Elephant grass patch
 			CreatePatch(WorldGen.genRand.Next(5, 11), 0, WorldGen.genRand.Next([0, 5]), ModContent.TileType<ElephantGrass>());
 

@@ -17,15 +17,14 @@ public class SavannaGrass : ModTile, IConvertibleTile
 		Main.tileBlockLight[Type] = true;
 		Main.tileNoFail[Type] = true;
 
-		this.Merge(DirtType, ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaGrassCorrupt>(), ModContent.TileType<SavannaGrassHallow>(), 
-			ModContent.TileType<SavannaGrassCrimson>());
-
 		TileID.Sets.Grass[Type] = true;
 		TileID.Sets.NeedsGrassFramingDirt[Type] = DirtType;
 		TileID.Sets.CanBeDugByShovel[Type] = true;
 
 		RegisterItemDrop(DirtType);
 		AddMapEntry(MapColor);
+		this.Merge(DirtType, ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaGrassCorrupt>(), 
+			ModContent.TileType<SavannaGrassHallow>(), ModContent.TileType<SavannaGrassCrimson>());
 
 		var data = TileObjectData.GetTileData(TileID.Sunflower, 0);
 		data.AnchorValidTiles = data.AnchorValidTiles.Concat([Type]).ToArray(); //Allow sunflowers to be planted on this tile
@@ -56,9 +55,11 @@ public class SavannaGrass : ModTile, IConvertibleTile
 		{
 			int grassChance = GrassAny() ? 6 : 90;
 
-			//Elephant grass generation also happens in that class
 			if (Main.rand.NextBool(grassChance) && WorldGen.PlaceTile(i, j - 1, ModContent.TileType<ElephantGrass>(), true, style: Main.rand.Next(5, 8)))
 				NetMessage.SendTileSquare(-1, i, j - 2, 1, 2, TileChangeType.None);
+
+			if (Main.rand.NextBool(250) && WorldGen.PlaceTile(i, j - 1, TileID.DyePlants, true, style: 2))
+				NetMessage.SendTileSquare(-1, i, j - 1, TileChangeType.None);
 
 			if (!WorldGen.PlayerLOS(i, j))
 			{
