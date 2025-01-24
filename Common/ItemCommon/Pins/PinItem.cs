@@ -7,6 +7,10 @@ public abstract class PinItem : ModItem
 {
 	public override string Texture => base.Texture + "Item";
 
+	/// <summary>
+	/// <inheritdoc/>
+	/// <para/>Automatically adds required pin data to <see cref="PinMapLayer"/> and <see cref="PinSystem"/> databases.
+	/// </summary>
 	public override void SetStaticDefaults()
 	{
 		Item.ResearchUnlockCount = 1;
@@ -28,7 +32,7 @@ public abstract class PinItem : ModItem
 	public override void RightClick(Player player)
 	{
 		player.UnlockPin(Name);
-		SoundEngine.PlaySound(SoundID.Grab, player.Center);
+		SoundEngine.PlaySound(SoundID.Item92, player.Center);
 	}
 
 	public override void ModifyTooltips(List<TooltipLine> tooltips)
