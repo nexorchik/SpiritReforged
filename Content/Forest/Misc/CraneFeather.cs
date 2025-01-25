@@ -4,8 +4,8 @@ public class CraneFeather : ModItem
 {
 	public override void SetDefaults()
 	{
-		Item.width = 28;
-		Item.height = 28;
+		Item.width = 30;
+		Item.height = 34;
 		Item.value = Item.sellPrice(gold: 2);
 		Item.rare = ItemRarityID.Green;
 		Item.accessory = true;
