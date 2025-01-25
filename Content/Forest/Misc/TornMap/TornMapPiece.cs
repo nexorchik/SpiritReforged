@@ -1,12 +1,49 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.WorldGeneration;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 
-namespace SpiritReforged.Content.Forest.Misc;
+namespace SpiritReforged.Content.Forest.Misc.TornMap;
 
 public class TornMapPiece : ModItem
 {
+	private static Point16 lastMouseWorld;
+
+	public override void Load()
+	{
+		On_Player.PlaceThing_Tiles += StopTilePlace;
+		On_Player.UpdatePlacementPreview += ChangePlaceType;
+	}
+
+	/// <summary> Shuffles the placeable tile type in the preview stage. </summary>
+	/// <param name="orig"></param>
+	/// <param name="self"> The local player. </param>
+	/// <param name="sItem"> The item to be placed. </param>
+	private void ChangePlaceType(On_Player.orig_UpdatePlacementPreview orig, Player self, Item sItem)
+	{
+		if (sItem.type == Type)
+		{
+			var point = (Main.MouseWorld / 16).ToPoint16();
+			if (point != lastMouseWorld) //Shuffle the placeable type when the player hovers over a new tile on the grid
+			{
+				sItem.createTile = Main.rand.NextBool(3) ? ModContent.TileType<TornMapWallSmall>() : ModContent.TileType<TornMapWall>();
+				lastMouseWorld = point;
+			}
+		}
+
+		orig(self, sItem);
+	}
+
+	/// <summary> Prevents tile placement dynamically. </summary>
+	/// <param name="orig"></param>
+	/// <param name="self"> The local player. </param>
+	private void StopTilePlace(On_Player.orig_PlaceThing_Tiles orig, Player self)
+	{
+		if (self.inventory[self.selectedItem].type != Type || !Main.mouseLeft) //Skips orig
+			orig(self);
+	}
+
 	public override void SetStaticDefaults()
 	{
 		Item.ResearchUnlockCount = 3;
@@ -23,15 +60,16 @@ public class TornMapPiece : ModItem
 		Item.rare = ItemRarityID.White;
 		Item.useAnimation = Item.useTime = 30;
 		Item.useStyle = ItemUseStyleID.HoldUp;
-		Item.UseSound = new SoundStyle("SpiritReforged/Assets/SFX/Item/PageFlip") { Pitch = .5f };
 		Item.consumable = true;
+		Item.createTile = ModContent.TileType<TornMapWall>();
 	}
 
+	public override bool AltFunctionUse(Player player) => true;
 	public override bool? UseItem(Player player)
 	{
 		const int Radius = 170;
 
-		if (Main.myPlayer == player.whoAmI && !Main.dedServ)
+		if (Main.myPlayer == player.whoAmI && player.altFunctionUse != 2 && !Main.dedServ)
 		{
 			for (int k = 0; k < 10; k++)
 			{
@@ -45,9 +83,21 @@ public class TornMapPiece : ModItem
 
 			var point = (player.Center / 16).ToPoint16();
 			LightMap(point.X, point.Y, Radius); //Only light up the user's map
+
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/PageFlip") { Pitch = .5f }, player.Center);
+			return true;
 		}
 
-		return true;
+		return null;
+	}
+
+	public override void ModifyTooltips(List<TooltipLine> tooltips)
+	{
+		foreach (var line in tooltips)
+		{
+			if (line.Mod == "Terraria" && line.Name == "Placeable") //Read "Can be placed with right click"
+				line.Text += $" {Language.GetTextValue("Mods.SpiritReforged.Items.CommonTooltips.AltPlace")}";
+		}
 	}
 
 	private static void LightMap(int x, int y, int radius)

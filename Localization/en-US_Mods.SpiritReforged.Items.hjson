@@ -1,8 +1,11 @@
-CommonTooltips.Backpack:
-	'''
-	Holds 4 items
-	You must empty this before taking it off
-	'''
+CommonTooltips: {
+	Backpack:
+		'''
+		Holds 4 items
+		You must empty this before taking it off
+		'''
+	AltPlace: with right click
+}
 
 Kelp: {
 	DisplayName: Kelp

@@ -1,8 +1,8 @@
 ﻿using SpiritReforged.Content.Underground.Railgun;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.WorldGeneration;
-using SpiritReforged.Content.Forest.Misc;
 using SpiritReforged.Content.Underground.ExplorerTreads;
+using SpiritReforged.Content.Forest.Misc.TornMap;
 
 namespace SpiritReforged.Content.Underground;
 

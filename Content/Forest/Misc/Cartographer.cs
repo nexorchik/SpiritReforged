@@ -3,6 +3,7 @@ using SpiritReforged.Common.MapCommon;
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Forest.Misc.Pins;
+using SpiritReforged.Content.Forest.Misc.TornMap;
 using SpiritReforged.Content.Savanna.Biome;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
