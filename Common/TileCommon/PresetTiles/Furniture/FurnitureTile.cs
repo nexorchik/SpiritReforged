@@ -18,6 +18,6 @@ public abstract class FurnitureTile : ModTile, IAutoloadTileItem
 		StaticDefaults();
 	}
 
-	/// <summary> Functions like <see cref="SetStaticDefaults"/>. </summary>
+	/// <inheritdoc cref="ModBlockType.SetStaticDefaults"/>
 	public virtual void StaticDefaults() { }
 }
