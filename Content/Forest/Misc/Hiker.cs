@@ -5,6 +5,7 @@ using SpiritReforged.Content.Forest.Backpacks;
 using SpiritReforged.Content.Savanna.Items.Gar;
 using Terraria.Utilities;
 using Terraria.GameContent.Bestiary;
+using System.Linq;
 
 namespace SpiritReforged.Content.Forest.Misc;
 
@@ -159,13 +160,21 @@ public class Hiker : ModNPC
 		});
 
 		var backpack = newItem.ModItem as BackpackItem;
+		bool checkForDuplicates = ItemPool.elements.Count >= backpack.items.Length; //Only check for duplicates if enough items exist in the pool
 
 		for (int i = 0; i < backpack.items.Length; ++i)
 		{
-			Item item = backpack.items[i];
+			var slot = backpack.items[i];
 			(int type, Range stackRange) = ItemPool.Get();
-			item.SetDefaults(type);
-			item.stack = Main.rand.Next(stackRange.Start.Value, stackRange.End.Value + 1);
+
+			if (checkForDuplicates && backpack.items.Where(x => x.type == type).Any()) //This is a duplicate item type; try again
+			{
+				i--;
+				continue;
+			}
+
+			slot.SetDefaults(type);
+			slot.stack = Main.rand.Next(stackRange.Start.Value, stackRange.End.Value + 1);
 		}
 
 		Main.LocalPlayer.QuickSpawnItem(new EntitySource_Gift(NPC), newItem);

@@ -77,7 +77,7 @@ public class BackpackUISlot : UIElement
 		ItemSlot.OverrideHover(ref item, Context);
 		ItemSlot.MouseHover(ref item, Context);
 
-		if (Main.mouseLeft && Main.mouseLeftRelease && CanClickItem(item))
+		if (Main.mouseLeft && Main.mouseLeftRelease && CanClickItem(item) && CheckVanity())
 		{
 			ItemSlot.LeftClick(ref item, Context);
 			ItemSlot.RightClick(ref item, Context);
@@ -88,6 +88,15 @@ public class BackpackUISlot : UIElement
 			Main.mouseText = true;
 			Main.hoverItemName = Language.GetTextValue("Mods.SpiritReforged.SlotContexts.Backpack");
 		}
+	}
+
+	private bool CheckVanity() //Don't allow backpacks to be placed in the vanity slot when full
+	{
+		if (!_isVanity)
+			return true;
+
+		var plr = Main.LocalPlayer;
+		return !(!plr.HeldItem.IsAir && plr.HeldItem.ModItem is BackpackItem backpack && backpack.items.Any(x => !x.IsAir));
 	}
 
 	internal static bool CanClickItem(Item currentItem)

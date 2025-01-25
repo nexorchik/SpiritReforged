@@ -45,7 +45,7 @@ public abstract class PylonTile : ModPylon, IAutoloadTileItem
 		AddToArray(ref TileID.Sets.CountsAsPylon);
 		DustType = -1;
 
-		SetStaticDefaults(Language.GetText("MapObject.TeleportationPylon"));
+		SetStaticDefaults(ModItem.DisplayName);
 	}
 
 	/// <summary>
