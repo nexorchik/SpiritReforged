@@ -1,0 +1,88 @@
+﻿using Mono.Cecil.Cil;
+using MonoMod.Cil;
+using System.Linq;
+using Terraria.DataStructures;
+
+namespace SpiritReforged.Common.TileCommon.Corruption;
+
+internal class ConversionHandler : ILoadable
+{
+	public void Load(Mod mod)
+	{
+		On_WorldGen.Convert += OnConvert;
+		IL_WorldGen.GERunner += OnHardmodeEvils;
+	}
+
+	private void OnHardmodeEvils(ILContext il)
+	{
+		ILCursor c = new(il);
+
+		var p_good = c.Method.Parameters.Where(x => x.Name == "good").FirstOrDefault();
+
+		c.GotoNext(x => x.Match(OpCodes.Ldarg_S, p_good));
+
+		c.Emit(OpCodes.Ldloc_S, (byte)15);
+		c.Emit(OpCodes.Ldloc_S, (byte)16);
+		c.Emit(OpCodes.Ldarg_S, p_good);
+		c.EmitDelegate(RunnerConversion);
+	}
+
+	/// <summary> Add compatibility for our custom conversion types with hardmode evil gen. </summary>
+	/// <param name="i"> The X tile coordinate. </param>
+	/// <param name="j"> The Y tile coordinate. </param>
+	/// <param name="hallow"> Whether this conversion is hallow or <see cref="WorldGen.crimson"/>. </param>
+	private void RunnerConversion(int i, int j, bool hallow)
+	{
+		var type = hallow ? ConversionType.Hallow : WorldGen.crimson ? ConversionType.Crimson : ConversionType.Corrupt;
+		TileCorruptor.Convert(null, type, i, j);
+	}
+
+	/// <summary> Add compatibility for our custom conversion types when a tile is converted via various means, except for purity. </summary>
+	/// <param name="orig"></param>
+	/// <param name="i"> The X tile coordinate. </param>
+	/// <param name="j"> The Y tile coordinate. </param>
+	/// <param name="conversionType"> The conversion type corresponding to <see cref="BiomeConversionID"/>. </param>
+	/// <param name="size"> The size (in tiles) of the conversion. </param>
+	private void OnConvert(On_WorldGen.orig_Convert orig, int i, int j, int conversionType, int size)
+	{
+		orig(i, j, conversionType, size);
+
+		ConversionType type = conversionType switch //Translate BiomeConversionID
+		{
+			BiomeConversionID.Corruption => ConversionType.Corrupt,
+			BiomeConversionID.Hallow => ConversionType.Hallow,
+			BiomeConversionID.Crimson => ConversionType.Crimson,
+			_ => ConversionType.Purify,
+		};
+
+		ConvertArea(new Point16(i, j), size, type);
+	}
+
+	/// <summary> Converts an area of tiles using the selected <see cref="ConversionType"/>. </summary>
+	/// <param name="point"> The center coordinates of the area to convert. </param>
+	/// <param name="size"> Half the size of the conversion area. </param>
+	/// <param name="type"> The conversion type. </param>
+	public static void ConvertArea(Point16 point, int size, ConversionType type, IEntitySource source = null)
+	{
+		int i = point.X;
+		int j = point.Y;
+
+		for (int x = i - size; x <= i + size; x++)
+		{
+			for (int y = j - size; y <= j + size; y++)
+			{
+				if (!WorldGen.InWorld(i, j, 5))
+					continue;
+
+				int oldType = Main.tile[x, y].TileType;
+
+				if (TileID.Sets.Hallow[oldType] && source is EntitySource_Parent { Entity: Projectile p } && p.type == ProjectileID.PurificationPowder)
+					continue; //Purification powder can't cleanse the hallow
+
+				TileCorruptor.Convert(source, type, x, y);
+			}
+		}
+	}
+
+	public void Unload() { }
+}

@@ -33,8 +33,13 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		DustType = DustID.WoodFurniture;
 	}
 
-	public override bool IsTreeTop(int i, int j) => Main.tile[i, j - 1].TileType != Type && ModContent.GetModTile(Main.tile[i, j].TileType) is AcaciaTree 
-		&& Main.tile[i, j].TileFrameX <= FrameSize * 5;
+	public override bool IsTreeTop(int i, int j)
+	{
+		if (ModContent.GetModTile(Main.tile[i, j].TileType) is not AcaciaTree || ModContent.GetModTile(Main.tile[i, j - 1].TileType) is AcaciaTree)
+			return false;
+
+		return Main.tile[i, j].TileFrameX <= FrameSize * 5;
+	}
 
 	public override void NearbyEffects(int i, int j, bool closer) //Spawn platforms
 	{
@@ -206,34 +211,55 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
 	{
 		if (source is EntitySource_Parent { Entity: Projectile })
-			return false;
+			return false; //Only rely on the anchor tile source (TileUpdate) for conversions
 
-		int id = Main.tile[i, j].TileType;
+		int oldType = Main.tile[i, j].TileType;
+		var tile = Main.tile[i, j];
 
-		if (TileCorruptor.GetConversionType<AcaciaTree, CorruptAcaciaTree, CrimsonAcaciaTree, HallowAcaciaTree>(id, type, out int conversionType))
+		tile.TileType = (ushort)(type switch
 		{
-			Tile tile = Main.tile[i, j];
-			tile.TileType = (ushort)conversionType;
-		}
+			ConversionType.Hallow => ModContent.TileType<AcaciaTreeHallow>(),
+			ConversionType.Crimson => ModContent.TileType<AcaciaTreeCrimson>(),
+			ConversionType.Corrupt => ModContent.TileType<AcaciaTreeCorrupt>(),
+			_ => ModContent.TileType<AcaciaTree>(),
+		});
 
-		if (Main.tile[i, j - 1].TileType == id)
+		if (Main.tile[i, j - 1].TileType == oldType) //Convert the entire tree from the base
 			TileCorruptor.Convert(new EntitySource_TileUpdate(i, j), type, i, j - 1);
 
 		return true;
 	}
 }
 
-public class CorruptAcaciaTree : AcaciaTree
+public class AcaciaTreeCorrupt : AcaciaTree
 {
 	protected override int ValidAnchor => ModContent.TileType<SavannaGrassCorrupt>();
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+		TileID.Sets.Corrupt[Type] = true;
+	}
 }
 
-public class CrimsonAcaciaTree : AcaciaTree
+public class AcaciaTreeCrimson : AcaciaTree
 {
 	protected override int ValidAnchor => ModContent.TileType<SavannaGrassCrimson>();
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+		TileID.Sets.Crimson[Type] = true;
+	}
 }
 
-public class HallowAcaciaTree : AcaciaTree
+public class AcaciaTreeHallow : AcaciaTree
 {
 	protected override int ValidAnchor => ModContent.TileType<SavannaGrassHallow>();
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+		TileID.Sets.Hallow[Type] = true;
+	}
 }

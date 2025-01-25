@@ -4,6 +4,41 @@ namespace SpiritReforged.Common.TileCommon.Corruption;
 
 internal class TileCorruptionGlobalTile : GlobalTile
 {
+	/// <summary>
+	/// <inheritdoc/><para/>
+	/// Automatically converts tiles based on lower types. Useful for things like foliage.
+	/// </summary>
+	public override bool TileFrame(int i, int j, int type, ref bool resetFrame, ref bool noBreak)
+	{
+		int x = i;
+		int y = j;
+
+		TileExtensions.GetTopLeft(ref x, ref y);
+		var data = TileObjectData.GetTileData(Main.tile[x, y]);
+		if (data != null)
+		{
+			y += data.Height;
+			var baseTile = Main.tile[x, y];
+
+			var conversionType = ConversionType.Purify;
+
+			if (TileID.Sets.Corrupt[baseTile.TileType])
+				conversionType = ConversionType.Corrupt;
+			else if (TileID.Sets.Crimson[baseTile.TileType])
+				conversionType = ConversionType.Crimson;
+			else if (TileID.Sets.Hallow[baseTile.TileType])
+				conversionType = ConversionType.Hallow;
+
+			TileCorruptor.Convert(new EntitySource_TileUpdate(i, j), conversionType, i, j);
+		}
+
+		return true;
+	}
+
+	/// <summary>
+	/// <inheritdoc/><para/>
+	/// Handles corruption spread for custom types.
+	/// </summary>
 	public override void RandomUpdate(int i, int j, int type)
 	{
 		if (type < TileID.Count || !WorldGen.AllowedToSpreadInfections)
