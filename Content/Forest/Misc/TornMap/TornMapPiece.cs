@@ -20,9 +20,9 @@ public class TornMapPiece : ModItem
 	/// <param name="orig"></param>
 	/// <param name="self"> The local player. </param>
 	/// <param name="sItem"> The item to be placed. </param>
-	private void ChangePlaceType(On_Player.orig_UpdatePlacementPreview orig, Player self, Item sItem)
+	private static void ChangePlaceType(On_Player.orig_UpdatePlacementPreview orig, Player self, Item sItem)
 	{
-		if (sItem.type == Type)
+		if (sItem.type == ModContent.ItemType<TornMapPiece>())
 		{
 			var point = (Main.MouseWorld / 16).ToPoint16();
 			if (point != lastMouseWorld) //Shuffle the placeable type when the player hovers over a new tile on the grid
@@ -38,9 +38,9 @@ public class TornMapPiece : ModItem
 	/// <summary> Prevents tile placement dynamically. </summary>
 	/// <param name="orig"></param>
 	/// <param name="self"> The local player. </param>
-	private void StopTilePlace(On_Player.orig_PlaceThing_Tiles orig, Player self)
+	private static void StopTilePlace(On_Player.orig_PlaceThing_Tiles orig, Player self)
 	{
-		if (self.inventory[self.selectedItem].type != Type || !Main.mouseLeft) //Skips orig
+		if (self.inventory[self.selectedItem].type != ModContent.ItemType<TornMapPiece>() || !Main.mouseLeft) //Skips orig
 			orig(self);
 	}
 
