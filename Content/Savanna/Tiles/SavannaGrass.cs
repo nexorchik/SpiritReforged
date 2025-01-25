@@ -110,7 +110,7 @@ public class SavannaGrass : ModTile, IConvertibleTile
 
 	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
 	{
-		Tile tile = Main.tile[i, j];
+		var tile = Main.tile[i, j];
 
 		tile.TileType = (ushort)(type switch
 		{
@@ -120,7 +120,7 @@ public class SavannaGrass : ModTile, IConvertibleTile
 			_ => ModContent.TileType<SavannaGrass>(),
 		});
 
-		return false;
+		return true;
 	}
 }
 

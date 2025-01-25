@@ -151,10 +151,14 @@ public class ElephantGrass : ModTile, IConvertibleTile
 			return false;
 
 		var tile = Main.tile[i, j];
-		int id = tile.TileType;
 
-		if (TileCorruptor.GetConversionType<ElephantGrass, ElephantGrassCorrupt, ElephantGrassCrimson, ElephantGrassHallow>(id, type, out int conversionType))
-			tile.TileType = (ushort)conversionType;
+		tile.TileType = (ushort)(type switch
+		{
+			ConversionType.Hallow => ModContent.TileType<ElephantGrassHallow>(),
+			ConversionType.Crimson => ModContent.TileType<ElephantGrassCrimson>(),
+			ConversionType.Corrupt => ModContent.TileType<ElephantGrassCorrupt>(),
+			_ => ModContent.TileType<ElephantGrass>(),
+		});
 
 		return true;
 	}

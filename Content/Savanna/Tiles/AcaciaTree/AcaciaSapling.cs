@@ -60,35 +60,35 @@ public class AcaciaSapling : ModTile
 	}
 }
 
-public class CorruptAcaciaSapling : AcaciaSapling
+public class AcaciaSaplingCorrupt : AcaciaSapling
 {
 	protected override int[] AnchorTiles => [ModContent.TileType<SavannaGrassCorrupt>()];
 
 	public override void RandomUpdate(int i, int j)
 	{
 		if (WorldGen.genRand.NextBool(20))
-			CustomTree.GrowTree<CorruptAcaciaTree>(i, j);
+			CustomTree.GrowTree<AcaciaTreeCorrupt>(i, j);
 	}
 }
 
-public class CrimsonAcaciaSapling : AcaciaSapling
+public class AcaciaSaplingCrimson : AcaciaSapling
 {
 	protected override int[] AnchorTiles => [ModContent.TileType<SavannaGrassCrimson>()];
 
 	public override void RandomUpdate(int i, int j)
 	{
 		if (WorldGen.genRand.NextBool(20))
-			CustomTree.GrowTree<CrimsonAcaciaTree>(i, j);
+			CustomTree.GrowTree<AcaciaTreeCrimson>(i, j);
 	}
 }
 
-public class HallowedAcaciaSapling : AcaciaSapling
+public class AcaciaSaplingHallow : AcaciaSapling
 {
 	protected override int[] AnchorTiles => [ModContent.TileType<SavannaGrassHallow>()];
 
 	public override void RandomUpdate(int i, int j)
 	{
 		if (WorldGen.genRand.NextBool(20))
-			CustomTree.GrowTree<HallowAcaciaTree>(i, j);
+			CustomTree.GrowTree<AcaciaTreeHallow>(i, j);
 	}
 }

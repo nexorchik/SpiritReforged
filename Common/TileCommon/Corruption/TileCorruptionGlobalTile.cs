@@ -6,7 +6,7 @@ internal class TileCorruptionGlobalTile : GlobalTile
 {
 	/// <summary>
 	/// <inheritdoc/><para/>
-	/// Automatically corrupts tiles based on lower types. Useful for things like foliage.
+	/// Automatically converts tiles based on lower types. Useful for things like foliage.
 	/// </summary>
 	public override bool TileFrame(int i, int j, int type, ref bool resetFrame, ref bool noBreak)
 	{
@@ -20,14 +20,16 @@ internal class TileCorruptionGlobalTile : GlobalTile
 			y += data.Height;
 			var baseTile = Main.tile[x, y];
 
+			var conversionType = ConversionType.Purify;
+
 			if (TileID.Sets.Corrupt[baseTile.TileType])
-				TileCorruptor.Convert(new EntitySource_TileUpdate(i, j), ConversionType.Corrupt, i, j);
+				conversionType = ConversionType.Corrupt;
+			else if (TileID.Sets.Crimson[baseTile.TileType])
+				conversionType = ConversionType.Crimson;
+			else if (TileID.Sets.Hallow[baseTile.TileType])
+				conversionType = ConversionType.Hallow;
 
-			if (TileID.Sets.Hallow[baseTile.TileType])
-				TileCorruptor.Convert(new EntitySource_TileUpdate(i, j), ConversionType.Hallow, i, j);
-
-			if (TileID.Sets.Crimson[baseTile.TileType])
-				TileCorruptor.Convert(new EntitySource_TileUpdate(i, j), ConversionType.Crimson, i, j);
+			TileCorruptor.Convert(new EntitySource_TileUpdate(i, j), conversionType, i, j);
 		}
 
 		return true;

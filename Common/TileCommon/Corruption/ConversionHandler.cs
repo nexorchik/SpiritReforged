@@ -1,6 +1,7 @@
 ﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System.Linq;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.TileCommon.Corruption;
 
@@ -36,7 +37,7 @@ internal class ConversionHandler : ILoadable
 		TileCorruptor.Convert(null, type, i, j);
 	}
 
-	/// <summary> Add compatibility for our custom conversion types when a tile is converted via various means, like solutions or using seeds. </summary>
+	/// <summary> Add compatibility for our custom conversion types when a tile is converted via various means, except for purity. </summary>
 	/// <param name="orig"></param>
 	/// <param name="i"> The X tile coordinate. </param>
 	/// <param name="j"> The Y tile coordinate. </param>
@@ -54,9 +55,39 @@ internal class ConversionHandler : ILoadable
 			_ => ConversionType.Purify,
 		};
 
+		ConvertArea(new Point16(i, j), size, type);
+	}
+
+	/// <summary> Converts an area of tiles using the selected <see cref="ConversionType"/>. </summary>
+	/// <param name="point"> The center coordinates of the area to convert. </param>
+	/// <param name="size"> Half the size of the conversion area. </param>
+	/// <param name="type"> The conversion type. </param>
+	public static void ConvertArea(Point16 point, int size, ConversionType type, IEntitySource source = null)
+	{
+		int i = point.X;
+		int j = point.Y;
+
 		for (int x = i - size; x <= i + size; x++)
+		{
 			for (int y = j - size; y <= j + size; y++)
-				TileCorruptor.Convert(null, type, x, y);
+			{
+				if (!WorldGen.InWorld(i, j, 5))
+					continue;
+
+				int oldType = Main.tile[x, y].TileType;
+
+				if (TileID.Sets.Hallow[oldType] && source is EntitySource_Parent { Entity: Projectile p } && p.type == ProjectileID.PurificationPowder)
+					continue; //Purification powder can't cleanse the hallow
+
+				if (TileCorruptor.Convert(source, type, x, y) && oldType != Main.tile[x, y].TileType)
+				{
+					WorldGen.SquareTileFrame(x, y);
+
+					if (Main.netMode == NetmodeID.MultiplayerClient)
+						NetMessage.SendTileSquare(-1, i, j);
+				}
+			}
+		}
 	}
 
 	public void Unload() { }
