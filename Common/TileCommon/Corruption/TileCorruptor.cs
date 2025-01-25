@@ -15,7 +15,17 @@ internal static class TileCorruptor
 		Tile tile = Main.tile[i, j];
 
 		if (tile.HasTile && ModContent.GetModTile(tile.TileType) is IConvertibleTile conv)
-			return conv.Convert(source, type, i, j);
+		{
+			int oldType = Main.tile[i, j].TileType;
+			if (conv.Convert(source, type, i, j))
+			{
+				if (oldType != Main.tile[i, j].TileType)
+					WorldGen.SquareTileFrame(i, j);
+
+				if (Main.netMode == NetmodeID.MultiplayerClient)
+					NetMessage.SendTileSquare(-1, i, j);
+			}
+		}
 
 		return false;
 	}

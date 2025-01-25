@@ -79,13 +79,7 @@ internal class ConversionHandler : ILoadable
 				if (TileID.Sets.Hallow[oldType] && source is EntitySource_Parent { Entity: Projectile p } && p.type == ProjectileID.PurificationPowder)
 					continue; //Purification powder can't cleanse the hallow
 
-				if (TileCorruptor.Convert(source, type, x, y) && oldType != Main.tile[x, y].TileType)
-				{
-					WorldGen.SquareTileFrame(x, y);
-
-					if (Main.netMode == NetmodeID.MultiplayerClient)
-						NetMessage.SendTileSquare(-1, i, j);
-				}
+				TileCorruptor.Convert(source, type, x, y);
 			}
 		}
 	}
