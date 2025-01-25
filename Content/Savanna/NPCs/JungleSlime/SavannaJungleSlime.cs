@@ -14,7 +14,7 @@ public class SavannaJungleSlime : ModNPC
 	public override void SetDefaults()
 	{
 		NPC.CloneDefaults(NPCID.SandSlime);
-		NPC.color = Color.White * .5f;
+		NPC.color = Color.White * .25f;
 
 		AIType = NPCID.JungleSlime;
 		AnimationType = NPCID.BlueSlime;
@@ -24,12 +24,14 @@ public class SavannaJungleSlime : ModNPC
 		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
 
+	public override void AI() => NPC.spriteDirection = -NPC.direction;
+
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Jungle");
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
-		for (int k = 0; k < 20; k++)
-			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.JungleGrass, 2.5f * hit.HitDirection, -2.5f, 0, default, 0.78f);
+		for (int k = 0; k < 10; k++)
+			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.JungleGrass, 2.5f * hit.HitDirection, -2.5f, 0, Color.Yellow * .25f, 0.78f);
 	}
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
