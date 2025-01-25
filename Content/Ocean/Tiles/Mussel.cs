@@ -13,12 +13,6 @@ public class Mussel : ModTile, IAutoloadTileItem
 		item.Item.rare = ItemRarityID.Blue;
 	}
 
-	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
-			.AddIngredient(ItemID.Coral, 2)
-			.AddIngredient(ItemID.Wood, 1)
-			.AddTile(TileID.TinkerersWorkbench)
-			.Register();
-
 	public override void SetStaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;

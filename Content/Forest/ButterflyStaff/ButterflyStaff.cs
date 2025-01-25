@@ -31,14 +31,4 @@ public class ButterflyStaff : ModItem
 		Projectile.NewProjectile(source, position, Main.rand.NextVector2Circular(3, 3), type, damage, knockback, player.whoAmI);
 		return false;
 	}
-
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddRecipeGroup(RecipeGroupID.Butterflies, 1);
-		recipe.AddIngredient(ItemID.FallenStar, 2);
-		recipe.AddRecipeGroup(RecipeGroupID.Wood, 15);
-		recipe.AddTile(TileID.Anvils);
-		recipe.Register();
-	}
 }
