@@ -75,7 +75,7 @@ public class Cartographer : ModNPC
 			MapFunctionality();
 	}
 
-	public override void AddShops() => new NPCShop(Type).Add<PinRed>().Add<PinYellow>().Add<PinGreen>().Add<PinBlue>().AddLimited<TornMapPiece>(3).Register();
+	public override void AddShops() => new NPCShop(Type).Add<PinRed>().Add<PinYellow>().Add<PinGreen>().Add<PinBlue>().AddLimited<TornMapPiece>(3).Add(ItemID.Binoculars).Register();
 
 	private void MapFunctionality()
 	{
