@@ -114,7 +114,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		}
 	}
 
-	private static void TryDrawGodrays(Vector2 position, float rotation)
+	protected static void TryDrawGodrays(Vector2 position, float rotation)
 	{
 		const float startTime = 9.50f;
 		const float endTime = 15f;
@@ -261,5 +261,41 @@ public class AcaciaTreeHallow : AcaciaTree
 	{
 		base.SetStaticDefaults();
 		TileID.Sets.Hallow[Type] = true;
+	}
+
+	public override void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
+	{
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeHelper.GetPalmTreeOffset(i, j);
+		float rotation = GetSway(i, j) * .08f;
+
+		if (IsTreeTop(i, j)) //Draw treetops
+		{
+			const int framesX = 8;
+			const int framesY = 2;
+
+			int frameX = i % 8;
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
+			var source = TopTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
+			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
+
+			TryDrawGodrays(position, rotation);
+
+			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+		}
+		else //Draw branches
+		{
+			const int framesX = 16;
+			const int framesY = 3;
+
+			int frameX = ((Noise(new Vector2(i, j)) > 0) ? 1 : 0) + j % 8 * 2;
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
+			bool flip = frameX % 2 == 0;
+			var source = BranchTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
+			var origin = new Vector2(flip ? source.Width : 0, 44);
+
+			position += new Vector2(6 * (flip ? -1 : 1), 8); //Directional offset
+
+			spriteBatch.Draw(BranchTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+		}
 	}
 }
