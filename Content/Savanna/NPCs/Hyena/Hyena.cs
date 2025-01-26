@@ -447,7 +447,10 @@ public class Hyena : ModNPC
 
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
-		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Water)
+		int x = spawnInfo.SpawnTileX;
+		int y = spawnInfo.SpawnTileY;
+
+		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Water && NPC.IsValidSpawningGroundTile(x, y))
 			return .33f;
 
 		return 0;

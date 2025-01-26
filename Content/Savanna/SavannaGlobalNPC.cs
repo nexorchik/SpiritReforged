@@ -74,8 +74,12 @@ public class SavannaGlobalNPC : GlobalNPC
 			var nearby = Tiles.AcaciaTree.AcaciaTree.Platforms.Where(x => x.Distance(npc.Center) < 16 * 40).OrderBy(x => x.Distance(npc.Center)).FirstOrDefault();
 			if (nearby != default)
 			{
-				npc.Center = nearby.Hitbox.ClosestPointInRect(npc.Center);
-				npc.netUpdate = true;
+				var toPos = nearby.Hitbox.ClosestPointInRect(npc.Center);
+				if (!WorldGen.PlayerLOS((int)(toPos.X / 16), (int)(toPos.Y / 16)))
+				{
+					npc.Center = toPos;
+					npc.netUpdate = true;
+				}
 			}
 		}
 	}
