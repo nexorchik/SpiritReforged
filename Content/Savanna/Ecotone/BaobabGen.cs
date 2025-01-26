@@ -40,7 +40,7 @@ internal static class BaobabGen
 			Actions.Chain(new Actions.SetTile((ushort)ModContent.TileType<LivingBaobab>()))); //Rectangle body
 
 		WorldUtils.Gen(new Point(x - openingSize.X / 2, y - openingSize.Y - 1), new Shapes.Rectangle(openingSize.X, openingSize.Y), 
-			Actions.Chain(new Actions.ClearTile(), new Actions.PlaceWall((ushort)ModContent.WallType<LivingBaobabWall>()))); //Opening
+			Actions.Chain(new Actions.ClearTile(), new Actions.PlaceWall((ushort)ModContent.WallType<LivingBaobabWall>()), new Modifiers.Offset(0, 2), new Actions.SetLiquid())); //Opening
 
 		for (int i = 0; i < 2; i++) //Curved top
 			WorldUtils.Gen(new Point(x - 1 + i, y - preCurveHeight - 1), new Shapes.Mound(width / 2, curveHeight), Actions.Chain(new Actions.SetTile((ushort)ModContent.TileType<LivingBaobab>())));
