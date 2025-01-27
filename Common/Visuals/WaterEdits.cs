@@ -12,12 +12,13 @@ namespace SpiritReforged.Common.Visuals;
 /// Handles transparency edits for <see cref="LiquidRenderer.DrawNormalLiquids(SpriteBatch, Vector2, int, float, bool)"/>,
 /// <see cref="Main.DrawBlack(bool)"/> (my beloathed), <see cref="TileDrawing"/>.DrawPartialLiquid, and 
 /// <see cref="Lighting.GetCornerColors(int, int, out VertexColors, float)"/>.<br/>
-/// 
 /// Allows transparency functionality everywhere.
 /// </summary>
 internal class WaterEdits : ModSystem
 {
-	public bool DrawingLiquid = false;
+	public static bool DrawingLiquid = false;
+
+	private static bool DontModifyLiquidRendering = false;
 
 	public override void Load()
 	{
@@ -26,6 +27,19 @@ internal class WaterEdits : ModSystem
 		On_TileDrawing.DrawPartialLiquid += FixSlopes;
 
 		IL_Main.DrawBlack += HijackDrawBlack;
+		IL_LiquidRenderer.DrawNormalLiquids += GetDrawingLiquidType;
+	}
+
+	private static void GetDrawingLiquidType(ILContext il)
+	{
+		ILCursor c = new(il);
+
+		if (!c.TryGotoNext(MoveType.After, x => x.MatchStloc(8)))
+			return;
+
+		c.Emit(OpCodes.Ldloc_S, (byte)8);
+		c.Emit(OpCodes.Ldloc_S, (byte)4);
+		c.EmitDelegate<Action<int, int>>(static (int type, int y) => DontModifyLiquidRendering = type == WaterStyleID.Lava || type == LiquidID.Honey || y > Main.worldSurface);
 	}
 
 	private void HijackDrawBlack(ILContext il)
@@ -63,22 +77,25 @@ internal class WaterEdits : ModSystem
 			drawPosX++;
 	}
 
-	private void FixSlopes(On_TileDrawing.orig_DrawPartialLiquid orig, TileDrawing self, bool behind, Tile tileCache, ref Vector2 pos,
+	private static void FixSlopes(On_TileDrawing.orig_DrawPartialLiquid orig, TileDrawing self, bool behind, Tile tileCache, ref Vector2 pos,
 		ref Rectangle size, int liquidType, ref VertexColors colors)
 	{
-		DrawingLiquid = true;
+		if (liquidType != WaterStyleID.Lava && liquidType != WaterStyleID.Honey && pos.Y < Main.worldSurface)
+		{
+			DrawingLiquid = true;
 
-		ModifyVertexColors(ref colors, 0.8f);
+			ModifyVertexColors(ref colors, 0.8f);
+		}
 
 		orig(self, behind, tileCache, ref pos, ref size, liquidType, ref colors);
 		DrawingLiquid = false;
 	}
 
-	private void HijackLiquidSlopeColoring(On_Lighting.orig_GetCornerColors orig, int centerX, int centerY, out VertexColors vertices, float scale)
+	private static void HijackLiquidSlopeColoring(On_Lighting.orig_GetCornerColors orig, int centerX, int centerY, out VertexColors vertices, float scale)
 	{
 		orig(centerX, centerY, out vertices, scale);
 
-		if (DrawingLiquid)
+		if (DrawingLiquid && !DontModifyLiquidRendering)
 			ModifyVertexColors(ref vertices);
 	}
 
@@ -93,17 +110,17 @@ internal class WaterEdits : ModSystem
 	private static void ModifyColor(ref Color color, float opacity = 1f)
 	{
 		float luminance = Luminance(color);
-		color = Color.Lerp(color, new Color(8, 8, 80) * 0.6f * opacity, 1 - luminance);
-
+		color = Color.Lerp(color, new Color(8, 8, 80) * 0.45f * opacity, 1 - luminance);
+		
 		if (luminance < 0.2f)
 			color = Color.Lerp(color, Color.Black, 1 - luminance / 0.2f);
 	}
 
 	private static float Luminance(Color color) => 0.299f * color.R / 255f + 0.587f * color.G / 255f + 0.114f * color.B / 255f;
 
-	private void CheckLiquid(On_LiquidRenderer.orig_DrawNormalLiquids orig, LiquidRenderer self, SpriteBatch batch, Vector2 off, int style, float alpha, bool bg)
+	private static void CheckLiquid(On_LiquidRenderer.orig_DrawNormalLiquids orig, LiquidRenderer self, SpriteBatch batch, Vector2 off, int style, float alpha, bool bg)
 	{
-		DrawingLiquid = true;
+		DrawingLiquid = !DontModifyLiquidRendering;
 		orig(self, batch, off, style, alpha, bg);
 		DrawingLiquid = false;
 	}
