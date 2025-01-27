@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Common.Misc;
-using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Content.Savanna.NPCs.Sparrow;
 using SpiritReforged.Content.Savanna.Tiles.Paintings;
 using System.Linq;

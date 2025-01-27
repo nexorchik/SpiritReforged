@@ -176,11 +176,6 @@ public class Ostrich : ModNPC
 				NPC.frameCounter = endFrames[AIState] - 1; //Skip the animation in this context
 			}
 
-		if (!Collision.SolidCollision(NPC.position, NPC.width, NPC.height + 2))
-			NoCollideTime++;
-		else
-			NoCollideTime = 0;
-
 		if (Charging)
 		{
 			if (!wasCharging && Counter != 0)
@@ -315,6 +310,11 @@ public class Ostrich : ModNPC
 			(NPC.frame.X, NPC.frame.Y) = (3 * NPC.frame.Width, 3 * frameHeight); //Airborne frame
 		else
 			NPC.frame.Y = (int)NPC.frameCounter * frameHeight;
+
+		if (NPC.velocity.Y != 0)
+			NoCollideTime++;
+		else
+			NoCollideTime = 0;
 	}
 
 	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

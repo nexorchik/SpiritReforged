@@ -31,11 +31,4 @@ public class SavannaGlobalItem : GlobalItem
 		if (item.type == Mod.Find<ModItem>("SparrowItem").Type)
 			item.value = Item.sellPrice(0, 0, 5, 0);
 	}
-
-	public override void AddRecipes() => Recipe.Create(ItemID.HunterPotion, 1)
-			.AddIngredient(ItemID.BottledWater)
-			.AddIngredient(ItemID.Blinkroot)
-			.AddIngredient(Mod.Find<ModItem>("GarItem").Type)
-			.AddTile(TileID.Bottles)
-			.Register();
 }

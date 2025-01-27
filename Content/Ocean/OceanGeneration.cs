@@ -201,7 +201,7 @@ public class OceanGeneration : ModSystem
 				}
 
 				//Growing kelp
-				if (WorldGen.genRand.Next(5) < 2 && tilesFromInnerEdge < 133 && Main.tile[i, j].TileType == TileID.Sand)
+				if (WorldGen.genRand.Next(5) < 2 && tilesFromInnerEdge < 133 && Main.tile[i, j].TileType == TileID.Sand && !Main.tile[i, j - 1].HasTile)
 				{
 					Framing.GetTileSafely(i, j).Slope = SlopeType.Solid;
 					Framing.GetTileSafely(i, j).IsHalfBlock = false;

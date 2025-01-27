@@ -29,7 +29,7 @@ public class HallowSavannaBGStyle : SavannaBGStyle
 	/// <returns> The background ID to use. </returns>
 	private static int ModifyStyle(int style)
 	{
-		if (style is 5 or 6 && SavannaTileCounts.InSavanna) //Only modify the background if a hallowed style is active
+		if (style is 5 or 6 && Main.LocalPlayer.ZoneHallow && SavannaTileCounts.InSavanna) //Only modify the background if a hallowed style is active
 			style = ModContent.GetInstance<HallowSavannaBGStyle>().Slot;
 
 		return style;
