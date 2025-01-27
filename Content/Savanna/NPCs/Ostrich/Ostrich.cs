@@ -274,7 +274,7 @@ public class Ostrich : ModNPC
 
 		if (!Main.dedServ && dead)
 		{
-			for (int i = 1; i < 6; i++)
+			for (int i = 1; i < 5; i++)
 				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity * Main.rand.NextFloat(), Mod.Find<ModGore>("Ostrich" + i).Type);
 
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Ostrich_Death") with { Volume = .75f, PitchVariance = .5f, Pitch = -.5f, MaxInstances = 0 }, NPC.Center);
