@@ -77,14 +77,13 @@ internal class SavannaEcotone : EcotoneBase
 		static bool NotOcean(EcotoneSurfaceMapping.EcotoneEntry e) => e.Start.X > GenVars.leftBeachEnd
 			&& e.End.X > GenVars.leftBeachEnd && e.Start.X < GenVars.rightBeachStart && e.End.X < GenVars.rightBeachStart;
 
-		IEnumerable<EcotoneSurfaceMapping.EcotoneEntry> validEntries
-			= entries.Where(x => x.SurroundedBy("Desert", "Jungle") && Math.Abs(x.Start.Y - x.End.Y) < 120 && NotOcean(x));
+		IEnumerable<EcotoneSurfaceMapping.EcotoneEntry> validEntries= entries.Where(x => x.SurroundedBy("Desert", "Jungle") 
+			&& Math.Abs(x.Start.Y - x.End.Y) < 120 && NotOcean(x));
 
 		if (!validEntries.Any())
 			return;
 
 		var entry = validEntries.ElementAt(WorldGen.genRand.Next(validEntries.Count()));
-
 		if (entry is null)
 			return;
 
@@ -94,6 +93,8 @@ internal class SavannaEcotone : EcotoneBase
 		int endX = entry.End.X + 0;
 		short startY = EcotoneSurfaceMapping.TotalSurfaceY[(short)entry.Start.X];
 		short endY = EcotoneSurfaceMapping.TotalSurfaceY[(short)entry.End.X];
+
+		//A hash of tile types which can be replaced
 		HashSet<int> validIds = [TileID.Dirt, TileID.Grass, TileID.ClayBlock, TileID.CrimsonGrass, TileID.CorruptGrass, TileID.Stone];
 
 		var topBottomY = new Point(Math.Min(startY, endY), Math.Max(startY, endY));
@@ -124,7 +125,6 @@ internal class SavannaEcotone : EcotoneBase
 				curve += Math.Max(amount, .008f);
 			}
 
-			bool hitSolid = false;
 			float taper = Math.Clamp((float)Math.Sin((float)(x - startX) / (endX - startX) * Math.PI) * 1.75f, 0, 1);
 			int startHeight = Math.Min(HighestSurfacePoint(x) - y, 0);
 
@@ -135,14 +135,11 @@ internal class SavannaEcotone : EcotoneBase
 
 				if (i >= 0)
 				{
-					if (i >= 15 && (tile.HasTile || tile.WallType != WallID.None))
-						hitSolid = true; //Replace tiles a minimum of 15 times, and until a solid tile or wall is hit
-
-					if (i >= 0 && !hitSolid)
+					if (i < 15 || tile.WallType == WallID.None)
 						tile.HasTile = true;
 
 					if (tile.HasTile && !validIds.Contains(tile.TileType) && !TileID.Sets.Ore[tile.TileType])
-						continue;
+						continue; //Can this tile be replaced by type?
 
 					if (realY < topBottomY.X)
 						topBottomY.X = realY;
@@ -156,8 +153,8 @@ internal class SavannaEcotone : EcotoneBase
 					if (i > 90 + depth - noise)
 						type = TileID.Sandstone;
 
-					if (tile.TileType == TileID.Stone || TileID.Sets.Ore[tile.TileType])
-						type = GetHardConversion(type, y);
+					if (i > noise && TileID.Sets.Ore[tile.TileType])
+						type = tile.TileType; //Keep below-surface ores
 
 					tile.TileType = (ushort)type;
 
@@ -165,10 +162,9 @@ internal class SavannaEcotone : EcotoneBase
 					{
 						if (tile.TileType is TileID.Sand or TileID.HardenedSand)
 							tile.WallType = WallID.HardenedSand;
-						else if (tile.TileType == TileID.Sandstone)
+						else if (tile.TileType is TileID.Sandstone || TileID.Sets.Ore[tile.TileType])
 							tile.WallType = WallID.Sandstone;
-
-						if (tile.WallType is WallID.None or WallID.DirtUnsafe)
+						else if (tile.WallType is WallID.None or WallID.DirtUnsafe)
 							tile.WallType = (ushort)ModContent.WallType<SavannaDirtWall>();
 					}
 					else
@@ -196,14 +192,6 @@ internal class SavannaEcotone : EcotoneBase
 			}
 
 			return off < 3 ? TileID.Sandstone : TileID.Sand;
-		}
-
-		static ushort GetHardConversion(int tileType, int y)
-		{
-			if (y < 6 && TileID.Sets.Ore[tileType] || tileType == TileID.Stone)
-				return (ushort)ModContent.TileType<SavannaDirt>(); //Convert ores and stone close to the surface
-
-			return (ushort)(tileType == TileID.Stone ? TileID.ClayBlock : tileType);
 		}
 
 		static int HighestSurfacePoint(int x)
@@ -270,7 +258,7 @@ internal class SavannaEcotone : EcotoneBase
 		for (int i = SavannaArea.Left; i < SavannaArea.Right; ++i)
 			for (int j = SavannaArea.Top - 1; j < SavannaArea.Bottom; ++j)
 			{
-				OpenFlags flags = OpenTools.GetOpenings(i, j, onlySolid: true);
+				OpenFlags flags = OpenTools.GetOpenings(i, j, false, false, true);
 				var tile = Main.tile[i, j];
 
 				if (flags == OpenFlags.None)
@@ -290,6 +278,9 @@ internal class SavannaEcotone : EcotoneBase
 
 					if (flags.HasFlag(OpenFlags.Above))
 						grassTop.Add(new Point16(i, j));
+
+					if (tile.WallType == ModContent.WallType<SavannaDirtWall>())
+						tile.Clear(TileDataType.Wall); //Clear walls again, but specifically for savanna dirt
 				}
 
 				if (WorldGen.genRand.NextBool(120)) //Rare bones
