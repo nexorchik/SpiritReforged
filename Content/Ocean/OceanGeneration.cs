@@ -6,9 +6,6 @@ using SpiritReforged.Content.Ocean.Tiles;
 using SpiritReforged.Common.ConfigurationCommon;
 using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Common.WorldGeneration;
-using SpiritReforged.Common.Misc;
-using SpiritReforged.Content.Ocean.Items.PoolNoodle;
-using SpiritReforged.Content.Ocean.Items.Vanity;
 
 namespace SpiritReforged.Content.Ocean;
 
@@ -33,9 +30,9 @@ public class OceanGeneration : ModSystem
 			if (cavesIndex != -1)
 				tasks[cavesIndex] = new PassLegacy("Create Ocean Caves", GenerateOceanCaves);
 
-			int sandIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Remove Water From Sand")); //Populate the ocean
-			if (sandIndex != -1)
-				tasks.Insert(sandIndex + 1, new PassLegacy("Populate Ocean", GenerateOceanObjects));
+			int chestIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Water Chests")); //Populate the ocean
+			if (chestIndex != -1)
+				tasks.Insert(chestIndex + 1, new PassLegacy("Populate Ocean", GenerateOceanObjects));
 		}
 	}
 
@@ -144,18 +141,6 @@ public class OceanGeneration : ModSystem
 
 	private static void PopulateOcean(Rectangle bounds, int side)
 	{
-		static bool ValidGround(int i, int j, int width, int type = TileID.Sand)
-		{
-			for (int k = i; k < i + width; ++k)
-			{
-				Tile t = Framing.GetTileSafely(k, j);
-				if (!t.HasTile || t.TileType != type || t.IsHalfBlock || t.TopSlope || !Main.tileSolid[t.TileType])
-					return false;
-			}
-
-			return true;
-		}
-
 		PlacePirateChest(side == 0 ? bounds.Right : bounds.Left, side);
 		PlaceSunkenTreasure(side == 0 ? bounds.Right : bounds.Left, side);
 
@@ -172,9 +157,9 @@ public class OceanGeneration : ModSystem
 
 				int coralChance = 0;
 				if (tilesFromInnerEdge < 133) //First slope (I hope)
-					coralChance = 10;
+					coralChance = 15;
 				else if (tilesFromInnerEdge < 161)
-					coralChance = 22;
+					coralChance = 27;
 
 				//Coral multitiles
 				if (coralChance > 0 && WorldGen.genRand.NextBool((int)(coralChance * 1.25f)))
@@ -216,16 +201,22 @@ public class OceanGeneration : ModSystem
 				}
 
 				//Growing kelp
-				if (WorldGen.genRand.Next(5) < 2 && tilesFromInnerEdge < 133 && ValidGround(i, j, 1, TileID.Sand))
+				if (WorldGen.genRand.Next(5) < 2 && tilesFromInnerEdge < 133 && Main.tile[i, j].TileType == TileID.Sand)
 				{
+					Framing.GetTileSafely(i, j).Slope = SlopeType.Solid;
+					Framing.GetTileSafely(i, j).IsHalfBlock = false;
+
 					int height = WorldGen.genRand.Next(6, 23) + 2;
 					int clumpHeight = !WorldGen.genRand.NextBool(8) ? WorldGen.genRand.Next(19) + 2 : 0;
 					int clump2Height = WorldGen.genRand.NextBool(3) ? WorldGen.genRand.Next(9) + 2 : 0;
 
 					int offset = 1;
-					while (!Framing.GetTileSafely(i, j - offset).HasTile && Framing.GetTileSafely(i, j - offset).LiquidAmount == 255 && height > 0)
+					while (Framing.GetTileSafely(i, j - offset).LiquidAmount == 255 && height > 0)
 					{
 						WorldGen.PlaceTile(i, j - offset, ModContent.TileType<OceanKelp>(), true);
+
+						if (Main.tile[i, j - offset].TileType != ModContent.TileType<OceanKelp>())
+							break; //Failed to place
 
 						var t = Framing.GetTileSafely(i, j - offset);
 						if (clumpHeight > 0)
