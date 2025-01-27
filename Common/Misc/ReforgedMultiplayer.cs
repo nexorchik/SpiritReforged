@@ -21,7 +21,8 @@ public static class ReforgedMultiplayer
 		RemovePin,
 		AskForPointsOfInterest,
 		RemovePointOfInterest,
-		RevealMap
+		RevealMap,
+		MagmaGlowPoint
 	}
 
 	public static void HandlePacket(BinaryReader reader, int whoAmI)
@@ -145,6 +146,10 @@ public static class ReforgedMultiplayer
 			case MessageType.RevealMap:
 				var syncType = (RevealMap.MapSyncId)reader.ReadByte();
 				RevealMap.RecieveSync(syncType, reader);
+				break;
+
+			case MessageType.MagmaGlowPoint: //Received by clients only
+				Magmastone.ToggleWireGlowPoint(reader.ReadInt16(), reader.ReadInt16());
 				break;
 		}
 	}

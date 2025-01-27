@@ -13,9 +13,9 @@ namespace SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 public class HydrothermalVent : ModTile
 {
 	/// <summary> Cooldowns for all <see cref="HydrothermalVent"/> tiles in the world. Never read on multiplayer clients. </summary>
-	internal static readonly Dictionary<Point16, int> cooldowns = [];
-	internal const int cooldownMax = (int)(Main.dayLength / 5);
-	internal const int eruptDuration = 60 * 10;
+	private static readonly Dictionary<Point16, int> cooldowns = [];
+	private const int cooldownMax = (int)(Main.dayLength / 5);
+	internal const int eruptDuration = 600;
 
 	/// <summary> Precise texture top positions for all tile styles, used for visuals. </summary>
 	private static readonly Point[] tops = [new Point(16, 16), new Point(16, 16), new Point(16, 24), new Point(12, 4), new Point(20, 4), new Point(16, 16), new Point(16, 16), new Point(16, 16)];
@@ -181,6 +181,7 @@ public class HydrothermalVent : ModTile
 			}
 
 			Main.LocalPlayer.SimpleShakeScreen(2, 3, 90, 16 * 10);
+			Magmastone.AddGlowPoint(i, j);
 		}
 	}
 }
