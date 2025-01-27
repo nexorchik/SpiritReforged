@@ -4,8 +4,8 @@ namespace SpiritReforged.Content.Ocean;
 
 public class OceanPlayer : ModPlayer
 {
-	/// <summary> Whether the player is present in the ocean, and not in the depths. </summary>
-	public bool ZoneOcean => Player.ZoneBeach && (!Player.GetModPlayer<OceanPlayer>().Submerged(35) || NotInDepths(Player));
+	///// <summary> Whether the player is present in the ocean, and not in the depths. </summary>
+	//public bool ZoneOcean => Player.ZoneBeach && (!Player.GetModPlayer<OceanPlayer>().Submerged(30) || NotInDepths(Player));
 	/// <summary> Whether the player is present in the deep ocean. </summary>
 	public bool ZoneDeepOcean => Player.ZoneBeach && Player.GetModPlayer<OceanPlayer>().Submerged(30) && NotInDepths(Player);
 	public bool nearLure;
@@ -40,14 +40,14 @@ public class OceanPlayer : ModPlayer
             if (!WorldGen.InWorld(tPos.X, tPos.Y - i))
                 return true;
 
-            if (!countRealDepth && WorldGen.SolidTile(tPos.X, tPos.Y - i))
+            if (!countRealDepth && WorldGen.SolidOrSlopedTile(tPos.X, tPos.Y - i))
                 return true; //Fully submerged to the point where the player should not be able to breathe
-            else if (countRealDepth && WorldGen.SolidTile(tPos.X, tPos.Y - i))
+            else if (countRealDepth && WorldGen.SolidOrSlopedTile(tPos.X, tPos.Y - i))
                 continue;
 
             if (Framing.GetTileSafely(tPos.X, tPos.Y - i).LiquidAmount < 255)
-                return false;
-        }
+				return false;
+		}
 
         return true;
     }
