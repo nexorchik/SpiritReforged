@@ -1,9 +1,5 @@
-using SpiritReforged.Common.Misc;
-using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Buffs.SummonTag;
-using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
-using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.PoolNoodle;
 

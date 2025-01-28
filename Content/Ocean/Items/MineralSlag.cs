@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using Terraria.Utilities;
@@ -12,13 +13,10 @@ public class MineralSlag : ModItem
 		public int stack = stack;
 	}
 
-	protected const int frameCount = 5;
-	protected int subID = -1; //Controls the in-world sprite for this item
-
 	public override void SetStaticDefaults()
 	{
-		Main.RegisterItemAnimation(Type, new Terraria.DataStructures.DrawAnimationVertical(2, frameCount) { NotActuallyAnimating = true });
 		ItemID.Sets.ExtractinatorMode[Type] = Type;
+		VariantGlobalItem.AddVariants(Type, [new Point(20, 20), new Point(20, 20), new Point(20, 22), new Point(20, 22), new Point(20, 20)]);
 	}
 
 	public override void SetDefaults()
@@ -32,24 +30,6 @@ public class MineralSlag : ModItem
 		Item.useStyle = ItemUseStyleID.Swing;
 		Item.autoReuse = true;
 		Item.consumable = true;
-	}
-
-	public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
-	{
-		if (subID == -1)
-			subID = Main.rand.Next(frameCount);
-
-		var texture = TextureAssets.Item[Type].Value;
-		var source = texture.Frame(1, frameCount, 0, subID, 0, -2);
-
-		spriteBatch.Draw(texture, Item.position - Main.screenPosition, source, GetAlpha(lightColor) ?? lightColor, rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
-		return false;
-	}
-
-	public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
-	{
-		subID = -1;
-		return true;
 	}
 
 	public override void ExtractinatorUse(int extractinatorBlockType, ref int resultType, ref int resultStack)
@@ -95,7 +75,7 @@ public class MineralSlagPickup : MineralSlag
 			float intensity = (timeLeft - (timeLeftMax - duration)) / duration;
 
 			var texture = TextureAssets.Item[Type].Value;
-			var source = texture.Frame(1, frameCount, 0, subID, 0, -2);
+			var source = VariantGlobalItem.GetSource(Item);
 
 			Main.EntitySpriteDraw(AssetLoader.LoadedTextures["Bloom"], Item.Center - Main.screenPosition, null,
 				(Color.Yellow with { A = 0 }) * .35f * intensity, rotation, AssetLoader.LoadedTextures["Bloom"].Size() / 2, Item.scale * .25f, SpriteEffects.None);
