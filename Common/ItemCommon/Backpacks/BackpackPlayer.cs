@@ -1,4 +1,5 @@
 ﻿using Terraria.ModLoader.IO;
+using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Common.ItemCommon.Backpacks;
 
@@ -62,5 +63,19 @@ internal class BackpackPlayer : ModPlayer
 			vanityBackpack = ItemIO.Load(vanity);
 
 		packVisible = tag.Get<bool>(nameof(packVisible));
+	}
+
+	public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) => SendVisibilityPacket(packVisible, Player.whoAmI);
+
+	/// <summary> Syncs backpack visibility corresponding to <paramref name="value"/> for player <paramref name="whoAmI"/>. </summary>
+	/// <param name="value"> Whether this player's backpack is visible. </param>
+	/// <param name="whoAmI"> The index of player to sync. </param>
+	/// <param name="ignoreClient"> The client to ignore sending this packet to. -1 ignores nobody. </param>
+	public static void SendVisibilityPacket(bool value, int whoAmI, int ignoreClient = -1)
+	{
+		ModPacket packet = SpiritReforgedMod.Instance.GetPacket(MessageType.PackVisibility, 2);
+		packet.Write(value);
+		packet.Write(whoAmI);
+		packet.Send(ignoreClient: ignoreClient);
 	}
 }

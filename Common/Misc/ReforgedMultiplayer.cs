@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.ItemCommon.Pins;
+﻿using SpiritReforged.Common.ItemCommon.Backpacks;
+using SpiritReforged.Common.ItemCommon.Pins;
 using SpiritReforged.Common.MapCommon;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.SimpleEntity;
@@ -22,7 +23,8 @@ public static class ReforgedMultiplayer
 		AskForPointsOfInterest,
 		RemovePointOfInterest,
 		RevealMap,
-		MagmaGlowPoint
+		MagmaGlowPoint,
+		PackVisibility
 	}
 
 	public static void HandlePacket(BinaryReader reader, int whoAmI)
@@ -150,6 +152,16 @@ public static class ReforgedMultiplayer
 
 			case MessageType.MagmaGlowPoint: //Received by clients only
 				Magmastone.ToggleWireGlowPoint(reader.ReadInt16(), reader.ReadInt16());
+				break;
+
+			case MessageType.PackVisibility:
+				bool visibility = reader.ReadBoolean();
+				int player = reader.ReadByte();
+
+				if (Main.netMode == NetmodeID.Server)
+					BackpackPlayer.SendVisibilityPacket(visibility, player, whoAmI);
+
+				Main.player[player].GetModPlayer<BackpackPlayer>().packVisible = visibility;
 				break;
 		}
 	}

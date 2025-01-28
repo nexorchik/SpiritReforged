@@ -1,8 +1,10 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
 using System.Linq;
+using Terraria;
 using Terraria.Audio;
 using Terraria.GameInput;
 using Terraria.UI;
+using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Common.UI.BackpackInterface;
 
@@ -113,7 +115,9 @@ public class BackpackUISlot : UIElement
 		return plr.HeldItem.ModItem is BackpackItem || plr.HeldItem.IsAir || Main.mouseItem.IsAir;
 	}
 
-	/// <returns> Whether an interaction occured. </returns>
+	/// <summary> Draws the toggleable visibility icon associated with this equip slot. </summary>
+	/// <param name="spriteBatch"> The SpriteBatch to draw on. </param>
+	/// <returns> Whether an interaction has occured. </returns>
 	private bool DrawVisibility(SpriteBatch spriteBatch)
 	{
 		if (_isVanity)
@@ -139,7 +143,8 @@ public class BackpackUISlot : UIElement
 				SoundEngine.PlaySound(SoundID.MenuTick);
 
 				if (Main.netMode == NetmodeID.MultiplayerClient)
-					NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, Main.myPlayer);
+					BackpackPlayer.SendVisibilityPacket(mPlayer.packVisible, Main.myPlayer);
+				//NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, Main.myPlayer);
 			}
 
 			Main.HoverItem = new Item();
