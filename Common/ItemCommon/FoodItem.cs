@@ -1,13 +1,20 @@
-﻿using Terraria.DataStructures;
+﻿using SpiritReforged.Common.Misc;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.ItemCommon;
 
 public abstract class FoodItem : ModItem
 {
-	internal static HashSet<int> FruitItemsSet = [];
 	internal abstract Point Size { get; }
 	internal virtual int Rarity => ItemRarityID.Blue;
-	internal virtual bool Consumeable => true;
+	internal virtual bool Consumable => true;
+
+	/// <summary> Adds this item type to <see cref="RecipeGroupID.Fruit"/> and makes it shimmerable into <see cref="ItemID.Ambrosia"/>. </summary>
+	protected void SetFruitType()
+	{
+		ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.Ambrosia;
+		Recipes.AddToGroup(RecipeGroupID.Fruit, Type);
+	}
 
 	public sealed override void SetStaticDefaults()
 	{
@@ -30,14 +37,11 @@ public abstract class FoodItem : ModItem
 		Item.useStyle = ItemUseStyleID.EatFood;
 		Item.useTime = Item.useAnimation = 20;
 		Item.noMelee = true;
-		Item.consumable = Consumeable;
+		Item.consumable = Consumable;
 		Item.autoReuse = false;
 		Item.UseSound = SoundID.Item2;
 		Item.buffTime = 5 * 60 * 60;
 		Item.buffType = BuffID.WellFed;
-
-		if (FruitItemsSet.Contains(Type))
-			ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.Ambrosia;
 
 		Defaults();
 	}

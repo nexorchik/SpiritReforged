@@ -1,4 +1,5 @@
 using SpiritReforged.Common.ItemCommon.FloatingItem;
+using SpiritReforged.Common.Misc;
 
 namespace SpiritReforged.Content.Ocean.Items.Driftwood;
 
@@ -7,6 +8,8 @@ public class DriftwoodTileItem : FloatingItem
 	public override float SpawnWeight => 1f;
 	public override float Weight => base.Weight * 0.9f;
 	public override float Bouyancy => base.Bouyancy * 1.05f;
+
+	public override void SetStaticDefaults() => Recipes.AddToGroup(RecipeGroupID.Wood, Type);
 
 	public override void SetDefaults()
 	{

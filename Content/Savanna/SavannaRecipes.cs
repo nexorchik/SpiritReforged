@@ -10,10 +10,4 @@ public class SavannaRecipes : ModSystem
 		Recipe.Create(ItemID.RoastedBird).AddIngredient(Mod.Find<ModItem>("SparrowItem").Type)
 			.AddTile(TileID.CookingPots).Register();
 	}
-
-	public override void AddRecipeGroups()
-	{
-		RecipeGroup birds = RecipeGroup.recipeGroups[RecipeGroup.recipeGroupIDs["Birds"]];
-		birds.ValidItems.Add(Mod.Find<ModItem>("SparrowItem").Type);
-	}
 }

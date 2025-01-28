@@ -1,3 +1,4 @@
+using SpiritReforged.Common.Misc;
 using SpiritReforged.Content.Savanna.Biome;
 using Terraria.GameContent.Bestiary;
 
@@ -10,6 +11,7 @@ public class Sparrow : ModNPC
 	{
 		Main.npcFrameCount[Type] = 5;
 		NPCID.Sets.ShimmerTransformToNPC[Type] = NPCID.Shimmerfly;
+		Recipes.AddToGroup(RecipeGroupID.Birds, Mod.Find<ModItem>(Name + "Item").Type);
 	}
 
 	public override void SetDefaults()
