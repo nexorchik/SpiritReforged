@@ -1,8 +1,8 @@
 using System.Linq;
 
-namespace SpiritReforged.Content.Forest.Misc.TornMap;
+namespace SpiritReforged.Content.Forest.Misc.Maps;
 
-public class TornMapWall : ModTile
+public class TatteredMapWall : ModTile
 {
 	public override void SetStaticDefaults()
 	{
@@ -19,12 +19,12 @@ public class TornMapWall : ModTile
 		TileObjectData.addTile(Type);
 
 		AddMapEntry(new Color(23, 23, 23), Language.GetText("MapObject.Painting"));
-		RegisterItemDrop(ModContent.ItemType<TornMapPiece>());
+		RegisterItemDrop(ModContent.ItemType<TatteredMap>());
 		DustType = -1;
 	}
 }
 
-public class TornMapWallSmall : ModTile
+public class TatteredMapWallSmall : ModTile
 {
 	public override void SetStaticDefaults()
 	{
@@ -41,7 +41,7 @@ public class TornMapWallSmall : ModTile
 		TileObjectData.addTile(Type);
 
 		AddMapEntry(new Color(23, 23, 23), Language.GetText("MapObject.Painting"));
-		RegisterItemDrop(ModContent.ItemType<TornMapPiece>());
+		RegisterItemDrop(ModContent.ItemType<TatteredMap>());
 		DustType = -1;
 	}
 }

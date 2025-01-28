@@ -3,7 +3,7 @@ using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Forest.ArcaneNecklace;
 using SpiritReforged.Content.Forest.Cloudstalk.Items;
 using SpiritReforged.Content.Forest.Misc;
-using SpiritReforged.Content.Forest.Misc.TornMap;
+using SpiritReforged.Content.Forest.Misc.Maps;
 using SpiritReforged.Content.Forest.RoguesCrest;
 
 namespace SpiritReforged.Content.Underground;

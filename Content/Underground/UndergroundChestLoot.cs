@@ -2,7 +2,7 @@
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Underground.ExplorerTreads;
-using SpiritReforged.Content.Forest.Misc.TornMap;
+using SpiritReforged.Content.Forest.Misc.Maps;
 
 namespace SpiritReforged.Content.Underground;
 
