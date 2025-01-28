@@ -2,6 +2,7 @@ using SpiritReforged.Common.MathHelpers;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 using Terraria.DataStructures;
 using Terraria.Audio;
+using SpiritReforged.Common.ProjectileCommon;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter;
 
@@ -33,15 +34,15 @@ public class UrchinStaff : ModItem
 
 		Vector2 targetPos = Main.MouseWorld;
 		Vector2 shotTrajectory = player.GetArcVel(targetPos, 0.25f, velocity.Length());
-		var proj = Projectile.NewProjectileDirect(source, player.MountedCenter, Vector2.Zero, type, damage, knockback, player.whoAmI);
 
-		if (proj.ModProjectile is UrchinStaffProjectile staffProj)
+		PreNewProjectile.New(source, player.MountedCenter, Vector2.Zero, type, damage, knockback, player.whoAmI, preSpawnAction: delegate (Projectile p)
 		{
-			staffProj.ShotTrajectory = shotTrajectory;
-			staffProj.RelativeTargetPosition = Main.MouseWorld - player.MountedCenter;
-			if (Main.netMode != NetmodeID.SinglePlayer) //sync extra ai as projectile is made
-				NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, proj.whoAmI);
-		}
+			if (p.ModProjectile is UrchinStaffProjectile staffProj)
+			{
+				staffProj.ShotTrajectory = shotTrajectory;
+				staffProj.RelativeTargetPosition = Main.MouseWorld - player.MountedCenter;
+			}
+		});
 
 		return false;
 	}
