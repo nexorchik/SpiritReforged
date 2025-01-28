@@ -2,12 +2,12 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 using SpiritReforged.Common.Easing;
-using Microsoft.Xna.Framework.Audio;
 using ReLogic.Utilities;
-using Microsoft.Xna.Framework.Input;
+using SpiritReforged.Common.Visuals.Glowmasks;
 
 namespace SpiritReforged.Content.Snow.Frostbite;
 
+[AutoloadGlowmask("255,255,255", false)]
 public class FrostbiteProj : ModProjectile
 {
 	SlotId loopedSound = SlotId.Invalid;
@@ -107,7 +107,7 @@ public class FrostbiteProj : ModProjectile
 
 		if (distance <= damageRange)
 		{
-			float damageMult = 2f - (distance / damageRange) * 1f;
+			float damageMult = 2f - distance / damageRange * 1f;
 			modifiers.FinalDamage *= damageMult;
 		}
 
@@ -131,7 +131,8 @@ public class FrostbiteProj : ModProjectile
 
 			Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, color, rotation, texture.Size() / 2, scale, SpriteEffects.None, 0);
 
-			Main.EntitySpriteDraw(ModContent.Request<Texture2D>(Texture + "_Glow").Value, Projectile.Center - Main.screenPosition, null, color * .3f, rotation, texture.Size() / 2, scale, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(GlowmaskProjectile.ProjIdToGlowmask[Type].Glowmask.Value, Projectile.Center - Main.screenPosition, 
+				null, color * .3f, rotation, texture.Size() / 2, scale, SpriteEffects.None, 0);
 		}
 
 		scale = 1f + Projectile.scale / 3;
@@ -148,8 +149,7 @@ public class FrostbiteProj : ModProjectile
 		if (owner.channel && !Released)
 		{
 			if (!SoundEngine.TryGetActiveSound(loopedSound, out ActiveSound sound) || sound is null)
-				loopedSound = SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Blizzard_Loop") with { Pitch = -.6f, Volume = .6f, MaxInstances = 1, IsLooped = true }, Projectile.Center);
-			
+				loopedSound = SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Blizzard_Loop") with { Pitch = -.6f, MaxInstances = 1, IsLooped = true }, Projectile.Center);
 			else
 				sound.Position = Projectile.Center;
 		}

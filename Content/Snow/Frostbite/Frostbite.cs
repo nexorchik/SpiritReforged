@@ -40,8 +40,6 @@ public class FrostbiteItem : ModItem
 
 public class FrostbiteHeldOut : ModProjectile
 {
-	public Player Owner => Main.player[Projectile.owner];
-
 	public override void SetStaticDefaults() => Main.projFrames[Type] = 4;
 
 	public override void SetDefaults()
@@ -54,24 +52,23 @@ public class FrostbiteHeldOut : ModProjectile
 		Projectile.tileCollide = false;
 	}
 
-	public override void OnSpawn(IEntitySource source)
-	{
-		if (!Main.dedServ)
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/PageFlip") with { PitchVariance = 0.3f, Volume = 0.65f }, Owner.Center);
-	}
-
 	public override void AI()
 	{
-		Owner.itemRotation = MathHelper.WrapAngle(Projectile.velocity.ToRotation() + (Projectile.direction < 0 ? MathHelper.Pi : 0));
-		Owner.heldProj = Projectile.whoAmI;
+		var owner = Main.player[Projectile.owner];
 
-		Projectile.direction = Projectile.spriteDirection = Owner.direction;
-		Projectile.rotation = .4f * Owner.direction;
-		Projectile.Center = Owner.MountedCenter + new Vector2(Owner.direction * 14, 4);
+		if (Projectile.timeLeft > 2 && !Main.dedServ) //The projectile just spawned; play a sound for all clients
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/PageFlip") with { PitchVariance = 0.3f, Volume = 0.65f }, owner.Center);
+
+		owner.itemRotation = MathHelper.WrapAngle(Projectile.velocity.ToRotation() + (Projectile.direction < 0 ? MathHelper.Pi : 0));
+		owner.heldProj = Projectile.whoAmI;
+
+		Projectile.direction = Projectile.spriteDirection = owner.direction;
+		Projectile.rotation = .4f * owner.direction;
+		Projectile.Center = owner.RotatedRelativePoint(owner.MountedCenter + new Vector2(owner.direction * 14, 4));
 
 		float rotation = Projectile.rotation - 1.57f * Projectile.direction;
-		Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters, rotation);
-		Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.ThreeQuarters, rotation);
+		owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters, rotation);
+		owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.ThreeQuarters, rotation);
 
 		if (Main.rand.NextBool(10))
 		{
@@ -87,7 +84,7 @@ public class FrostbiteHeldOut : ModProjectile
 				Projectile.frame++;
 		}
 
-		if (Owner.channel)
+		if (owner.channel)
 			Projectile.timeLeft = 2;
 	}
 
@@ -102,6 +99,5 @@ public class FrostbiteHeldOut : ModProjectile
 	}
 
 	public override bool? CanDamage() => false;
-
 	public override bool? CanCutTiles() => false;
 }
