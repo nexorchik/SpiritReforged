@@ -21,14 +21,7 @@ public class BambooHalberd : ModItem
 	}
 
 	public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback) => velocity = velocity.RotatedByRandom(.1f);
-
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ItemID.BambooBlock, 20);
-		recipe.AddTile(TileID.WorkBenches);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BambooBlock, 20).AddTile(TileID.WorkBenches).Register();
 }
 
 public class BambooHalberdProj : ModProjectile

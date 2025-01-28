@@ -116,11 +116,5 @@ public class BambooPikeItem : ModItem
 		return base.CanUseItem(player);
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ItemID.BambooBlock, 2);
-		recipe.AddTile(TileID.WorkBenches);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BambooBlock, 2).AddTile(TileID.WorkBenches).Register();
 }

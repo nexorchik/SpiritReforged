@@ -80,13 +80,7 @@ public class BambooKendoBlade : ModItem, IDashSword
 		info.DrawDataCache.Add(new DrawData(texture.Value, drawPos, frame, color, rotation, new Vector2(30), 1, info.playerEffect, 0));
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<StrippedBamboo>(), 20);
-		recipe.AddTile(TileID.WorkBenches);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<StrippedBamboo>(), 20).AddTile(TileID.WorkBenches).Register();
 }
 
 public class KendoBladeSwing : ModProjectile

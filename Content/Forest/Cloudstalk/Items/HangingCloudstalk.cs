@@ -14,13 +14,7 @@ public class HangingCloudstalk : ModItem
 		Item.value = Item.sellPrice(0, 0, 1, 50);
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ItemID.PotSuspended);
-		recipe.AddIngredient(ModContent.ItemType<Cloudstalk>());
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.PotSuspended).AddIngredient(ModContent.ItemType<Cloudstalk>()).Register();
 }
 
 public class HangingCloudstalkTile : ModTile, ISwayTile

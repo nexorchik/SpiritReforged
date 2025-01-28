@@ -13,12 +13,6 @@ public class Sushi : FoodItem
 		return true;
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe1 = CreateRecipe(1);
-		recipe1.AddIngredient(ModContent.ItemType<Kelp>(), 5);
-		recipe1.AddIngredient(ModContent.ItemType<RawFish>(), 1);
-		recipe1.AddTile(TileID.CookingPots);
-		recipe1.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<Kelp>(), 5)
+		.AddIngredient(ModContent.ItemType<RawFish>()).AddTile(TileID.CookingPots).Register();
 }

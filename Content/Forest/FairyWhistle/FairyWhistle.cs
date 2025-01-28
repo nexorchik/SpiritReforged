@@ -40,12 +40,5 @@ public class FairyWhistle : ModItem
 	}
 
 	public override Vector2? HoldoutOffset() => new Vector2(5, -2);
-
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddRecipeGroup(RecipeGroupID.Wood, 25);
-		recipe.AddTile(TileID.WorkBenches);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddRecipeGroup(RecipeGroupID.Wood, 25).AddTile(TileID.WorkBenches).Register();
 }

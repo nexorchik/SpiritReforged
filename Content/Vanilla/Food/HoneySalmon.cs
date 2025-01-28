@@ -19,13 +19,7 @@ public class HoneySalmon : FoodItem
 		Item.buffTime = 9 * 60 * 60;
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe1 = CreateRecipe(1);
-		recipe1.AddIngredient(ModContent.ItemType<RawFish>(), 2);
-		recipe1.AddIngredient(ItemID.BottledHoney, 1);
-		recipe1.AddTile(TileID.CookingPots);
-		recipe1.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<RawFish>(), 2)
+		.AddIngredient(ItemID.BottledHoney).AddTile(TileID.CookingPots).Register();
 }
 

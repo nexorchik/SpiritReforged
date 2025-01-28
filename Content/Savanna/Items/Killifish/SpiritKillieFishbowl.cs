@@ -1,4 +1,3 @@
-using Terraria.Audio;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Items.Killifish;
@@ -20,17 +19,14 @@ public class SpiritKillieFishbowlItem : ModItem
 		Item.autoReuse = true;
 		Item.consumable = true;
 	}
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(Mod.Find<ModItem>("KillifishItem").Type, 1);
-		recipe.AddIngredient(ItemID.BottledWater, 1);
-		recipe.AddTile(TileID.WorkBenches);
-		recipe.Register();
-	}
+
+	public override void AddRecipes() => CreateRecipe().AddIngredient(Mod.Find<ModItem>("KillifishItem").Type)
+		.AddIngredient(ItemID.BottledWater).AddTile(TileID.WorkBenches).Register();
 }
 public class SpiritKillieFishbowl_Tile : ModTile
 {
+	bool activeAnimation = false;
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
@@ -41,7 +37,7 @@ public class SpiritKillieFishbowl_Tile : ModTile
 		TileObjectData.newTile.UsesCustomCanPlace = true;
 		TileObjectData.newTile.Height = 3;
 		TileObjectData.newTile.Origin = new Point16(1, 2);
-		TileObjectData.newTile.CoordinateHeights = new[] { 16, 16, 18 };
+		TileObjectData.newTile.CoordinateHeights = [16, 16, 18];
 		Main.tileFrameImportant[Type] = Main.tileFrameImportant[TileID.FishBowl];
 		Main.tileLavaDeath[Type] = Main.tileLavaDeath[TileID.FishBowl];
 		Main.tileSolidTop[Type] = Main.tileSolidTop[TileID.FishBowl];
@@ -54,15 +50,14 @@ public class SpiritKillieFishbowl_Tile : ModTile
 		LocalizedText name = CreateMapEntryName();
 		AddMapEntry(new Color(200, 200, 200), name);
 	}
+
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = 2;
-	
-	bool activeAnimation = false;
+
 	public override void AnimateTile(ref int frame, ref int frameCounter)
 	{
 		if (Main.rand.NextBool(100) && Main.netMode != NetmodeID.Server)
-		{
 			activeAnimation = true;
-		}
+
 		if (activeAnimation)
 		{
 			frameCounter++;
@@ -72,6 +67,7 @@ public class SpiritKillieFishbowl_Tile : ModTile
 				frame++;
 				frame %= 22;
 			}
+
 			if (frame == 16)
 				activeAnimation = false;
 		}
@@ -84,6 +80,7 @@ public class SpiritKillieFishbowl_Tile : ModTile
 				frame++;
 				frame %= 22;
 			}
+
 			if (frame == 18)
 				frame = 17;
 		}

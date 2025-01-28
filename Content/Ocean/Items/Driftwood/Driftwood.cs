@@ -22,12 +22,7 @@ public class SmallDriftwoodItem : ModItem
 		return false;
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<DriftwoodTileItem>(), 10);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<DriftwoodTileItem>(), 10).Register();
 }
 
 public class SmallDriftwoodTile : ModTile
@@ -42,7 +37,7 @@ public class SmallDriftwoodTile : ModTile
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.Height = 2;
 		TileObjectData.newTile.Width = 3;
-		TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
+		TileObjectData.newTile.CoordinateHeights = [16, 16];
 		TileObjectData.newTile.Direction = TileObjectDirection.PlaceLeft;
 		TileObjectData.newTile.StyleWrapLimit = 2;
 		TileObjectData.newTile.StyleMultiplier = 2;
@@ -82,12 +77,7 @@ public class MediumDriftwoodItem : ModItem
 		return false;
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<DriftwoodTileItem>(), 20);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<DriftwoodTileItem>(), 20).Register();
 }
 
 public class MediumDriftwoodTile : ModTile
@@ -102,7 +92,7 @@ public class MediumDriftwoodTile : ModTile
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.Height = 2;
 		TileObjectData.newTile.Width = 4;
-		TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
+		TileObjectData.newTile.CoordinateHeights = [16, 16];
 		TileObjectData.newTile.Direction = TileObjectDirection.PlaceLeft;
 		TileObjectData.newTile.StyleWrapLimit = 2;
 		TileObjectData.newTile.StyleMultiplier = 2;
@@ -142,12 +132,7 @@ public class LargeDriftwoodItem : ModItem
 		return false;
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<DriftwoodTileItem>(), 25);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<DriftwoodTileItem>(), 25).Register();
 }
 
 public class LargeDriftwoodTile : ModTile
@@ -162,7 +147,7 @@ public class LargeDriftwoodTile : ModTile
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.Height = 2;
 		TileObjectData.newTile.Width = 4;
-		TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
+		TileObjectData.newTile.CoordinateHeights = [16, 16];
 		TileObjectData.newTile.Direction = TileObjectDirection.PlaceLeft;
 		TileObjectData.newTile.StyleWrapLimit = 2;
 		TileObjectData.newTile.StyleMultiplier = 2;

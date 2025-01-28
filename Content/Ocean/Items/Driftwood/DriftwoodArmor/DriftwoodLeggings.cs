@@ -3,8 +3,6 @@ namespace SpiritReforged.Content.Ocean.Items.Driftwood.DriftwoodArmor;
 [AutoloadEquip(EquipType.Legs)]
 public class DriftwoodLeggings : ModItem
 {
-	// public override void SetStaticDefaults() => DisplayName.SetDefault("Driftwood Leggings");
-
 	public override void SetDefaults()
 	{
 		Item.width = 38;
@@ -14,11 +12,5 @@ public class DriftwoodLeggings : ModItem
 		Item.defense = 1;
 	}
 
-	public override void AddRecipes()
-	{
-		var recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<DriftwoodTileItem>(), 12);
-		recipe.AddTile(TileID.WorkBenches);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<DriftwoodTileItem>(), 12).AddTile(TileID.WorkBenches).Register();
 }

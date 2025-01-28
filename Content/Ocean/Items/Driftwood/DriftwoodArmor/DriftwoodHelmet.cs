@@ -3,8 +3,6 @@ namespace SpiritReforged.Content.Ocean.Items.Driftwood.DriftwoodArmor;
 [AutoloadEquip(EquipType.Head)]
 public class DriftwoodHelmet : ModItem
 {
-	// public override void SetStaticDefaults() => DisplayName.SetDefault("Driftwood Helmet");
-
 	public override void SetDefaults()
 	{
 		Item.width = 28;
@@ -25,11 +23,5 @@ public class DriftwoodHelmet : ModItem
 			player.velocity.Y = MathHelper.Clamp(player.velocity.Y -= 0.35f, -4, 100000);
 	}
 
-	public override void AddRecipes()
-	{
-		var recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<DriftwoodTileItem>(), 15);
-		recipe.AddTile(TileID.WorkBenches);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<DriftwoodTileItem>(), 15).AddTile(TileID.WorkBenches).Register();
 }

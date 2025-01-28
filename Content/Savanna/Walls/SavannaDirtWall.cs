@@ -32,6 +32,7 @@ public class SavannaDirtWall : ModWall, IAutoloadWallItem
 			t.WallFrameY = 4 * 36;
 			return false;
 		}
+
 		return true;
 	}
 }

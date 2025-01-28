@@ -20,13 +20,7 @@ public class CrystalFish : FoodItem
 		Item.value = Item.sellPrice(0, 0, 2, 0);
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe1 = CreateRecipe(1);
-		recipe1.AddIngredient(ModContent.ItemType<RawFish>(), 1);
-		recipe1.AddIngredient(ItemID.CrystalShard, 1);
-		recipe1.AddTile(TileID.CookingPots);
-		recipe1.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<RawFish>())
+		.AddIngredient(ItemID.CrystalShard).AddTile(TileID.CookingPots).Register();
 }
 

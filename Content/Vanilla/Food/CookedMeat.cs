@@ -1,5 +1,4 @@
 using SpiritReforged.Common.ItemCommon;
-using SpiritReforged.Content.Savanna.Items.Fishing;
 
 namespace SpiritReforged.Content.Vanilla.Food;
 
@@ -9,20 +8,12 @@ public class CookedMeat : FoodItem
 
 	internal override Point Size => new(30, 24);
 
-	public override bool CanUseItem(Player player) => true;
-
 	public override void Defaults() => Item.buffTime = 6 * 60 * 60;
 
 	public override void AddRecipes()
 	{
-		Recipe recipe1 = CreateRecipe(1);
-		recipe1.AddIngredient(ModContent.ItemType<RawMeat>(), 1);
-		recipe1.AddTile(TileID.Campfire);
-		recipe1.Register();
-		Recipe recipe2 = CreateRecipe(2);
-		recipe2.AddIngredient(ModContent.ItemType<RawMeat>(), 1);
-		recipe2.AddTile(TileID.CookingPots);
-		recipe2.Register();
+		CreateRecipe().AddIngredient(ModContent.ItemType<RawMeat>()).AddTile(TileID.Campfire).Register();
+		CreateRecipe(2).AddIngredient(ModContent.ItemType<RawMeat>()).AddTile(TileID.CookingPots).Register();
 	}
 }
 

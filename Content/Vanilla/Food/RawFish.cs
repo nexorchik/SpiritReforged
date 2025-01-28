@@ -16,14 +16,7 @@ public class RawFish : FoodItem
 
 	public override void AddRecipes()
 	{
-		var recipe1 = Recipe.Create(ItemID.CookedFish, 1);
-		recipe1.AddIngredient(ModContent.ItemType<RawFish>(), 1);
-		recipe1.AddTile(TileID.CookingPots);
-		recipe1.Register();
-
-		var recipe2 = Recipe.Create(ItemID.Sashimi, 1);
-		recipe2.AddIngredient(ModContent.ItemType<RawFish>(), 1);
-		recipe2.AddTile(TileID.WorkBenches);
-		recipe2.Register();
+		Recipe.Create(ItemID.CookedFish).AddIngredient(ModContent.ItemType<RawFish>()).AddTile(TileID.CookingPots).Register();
+		Recipe.Create(ItemID.Sashimi).AddIngredient(ModContent.ItemType<RawFish>()).AddTile(TileID.WorkBenches).Register();
 	}
 }

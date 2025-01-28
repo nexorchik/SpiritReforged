@@ -17,15 +17,10 @@ public class GarInAJar : ModItem
 		Item.autoReuse = true;
 		Item.consumable = true;
 	}
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(Mod.Find<ModItem>("GarItem").Type, 1);
-		recipe.AddIngredient(ItemID.BottledWater, 1);
-		recipe.AddTile(TileID.WorkBenches);
-		recipe.Register();
-	}
+
+	public override void AddRecipes() => CreateRecipe().AddIngredient(Mod.Find<ModItem>("GarItem").Type).AddIngredient(ItemID.BottledWater).AddTile(TileID.WorkBenches).Register();
 }
+
 public class GarInAJar_Tile : ModTile
 {
 	public override void SetStaticDefaults()
@@ -48,7 +43,9 @@ public class GarInAJar_Tile : ModTile
 		LocalizedText name = CreateMapEntryName();
 		AddMapEntry(new Color(200, 200, 200), name);
 	}
+
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = 2;
+
 	public override void AnimateTile(ref int frame, ref int frameCounter)
 	{
 		frameCounter++;

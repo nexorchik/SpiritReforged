@@ -29,14 +29,6 @@ public class DoubleJumpPotion : ModItem
 		Item.UseSound = SoundID.Item3;
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ItemID.BottledWater);
-		recipe.AddIngredient(ModContent.ItemType<Cloudstalk>());
-		recipe.AddIngredient(ItemID.Cloud, 5);
-		recipe.AddIngredient(ItemID.Feather);
-		recipe.AddTile(TileID.Bottles);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BottledWater).AddIngredient(ModContent.ItemType<Cloudstalk>())
+		.AddIngredient(ItemID.Cloud, 5).AddIngredient(ItemID.Feather).AddTile(TileID.Bottles).Register();
 }

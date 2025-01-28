@@ -10,11 +10,5 @@ public class StrippedBamboo : ModItem
 		Item.value = 1;
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ItemID.BambooBlock);
-		recipe.AddTile(TileID.WorkBenches);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BambooBlock).AddTile(TileID.WorkBenches).Register();
 }

@@ -21,14 +21,6 @@ public class FlightPotion : ModItem
 		Item.UseSound = SoundID.Item3;
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ItemID.BottledWater);
-		recipe.AddIngredient(ModContent.ItemType<Cloudstalk>());
-		recipe.AddIngredient(ItemID.SoulofFlight, 5);
-		recipe.AddIngredient(ItemID.Damselfish);
-		recipe.AddTile(TileID.Bottles);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BottledWater).AddIngredient(ModContent.ItemType<Cloudstalk>())
+		.AddIngredient(ItemID.SoulofFlight, 5).AddIngredient(ItemID.Damselfish).AddTile(TileID.Bottles).Register();
 }

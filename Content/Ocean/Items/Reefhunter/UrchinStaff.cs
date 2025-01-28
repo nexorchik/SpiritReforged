@@ -46,12 +46,6 @@ public class UrchinStaff : ModItem
 		return false;
 	}
 
-	public override void AddRecipes()
-	{
-		var recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<IridescentScale>(), 8);
-		recipe.AddIngredient(ModContent.ItemType<MineralSlag>(), 10);
-		recipe.AddTile(TileID.Anvils);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<IridescentScale>(), 8)
+		.AddIngredient(ModContent.ItemType<MineralSlag>(), 10).AddTile(TileID.Anvils).Register();
 }
