@@ -1,10 +1,15 @@
-﻿using SpiritReforged.Content.Savanna.Tiles;
+﻿using SpiritReforged.Common.Misc;
+using SpiritReforged.Content.Savanna.Tiles;
 
 namespace SpiritReforged.Content.Savanna.Items.Drywood;
 
 public class Drywood : ModItem
 {
-	public override void SetStaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.Wood;
+	public override void SetStaticDefaults()
+	{
+		ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.Wood;
+		Recipes.AddToGroup(RecipeGroupID.Wood, Type);
+	}
 
 	public override void SetDefaults()
 	{

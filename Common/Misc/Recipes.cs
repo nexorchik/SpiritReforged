@@ -1,13 +1,23 @@
-﻿using SpiritReforged.Content.Ocean.Items.Driftwood;
-
-namespace SpiritReforged.Common.Misc;
+﻿namespace SpiritReforged.Common.Misc;
 
 internal class Recipes : ModSystem
 {
+	private static Dictionary<int, int> groupEntries = [];
+
+	/// <summary> Add the given item <paramref name="type"/> to the existing recipe group of <paramref name="groupID"/>. </summary>
+	/// <param name="groupID"> The recipe group to add to. </param>
+	/// <param name="type"> The item type to add. </param>
+	public static void AddToGroup(int groupID, int type) => groupEntries.Add(type, groupID);
+
 	public override void AddRecipeGroups()
 	{
-		RecipeGroup woodGrp = RecipeGroup.recipeGroups[RecipeGroup.recipeGroupIDs["Wood"]];
-		woodGrp.ValidItems.Add(ModContent.ItemType<DriftwoodTileItem>());
+		foreach (var pair in groupEntries)
+		{
+			var group = RecipeGroup.recipeGroups[pair.Value];
+			group.ValidItems.Add(pair.Key);
+		}
+
+		groupEntries = null;
 
 		RecipeGroup BaseGroup(object GroupName, int[] Items)
 		{
