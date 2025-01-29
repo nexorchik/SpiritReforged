@@ -151,19 +151,8 @@ public class BaobabPod : ModTile, ISwayTile
 		hitData.Remove(key);
 	} //Remove our hitdata
 
-	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
+	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
-		static float GetRotation(int i, int j)
-		{
-			TileExtensions.GetTopLeft(ref i, ref j);
-
-			var key = new Point16(i, j);
-			if (hitData.TryGetValue(key, out float rotation))
-				return rotation;
-
-			return 0;
-		}
-
 		var tile = Framing.GetTileSafely(i, j);
 		var data = TileObjectData.GetTileData(tile);
 
@@ -182,6 +171,17 @@ public class BaobabPod : ModTile, ISwayTile
 		var key = new Point16(i, j);
 		if (hitData.TryGetValue(key, out float hitRot))
 			hitData[key] = MathHelper.Lerp(hitRot, 0, .1f);
+
+		static float GetRotation(int i, int j)
+		{
+			TileExtensions.GetTopLeft(ref i, ref j);
+
+			var key = new Point16(i, j);
+			if (hitData.TryGetValue(key, out float rotation))
+				return rotation;
+
+			return 0;
+		}
 	}
 
 	private void DrawGrassOverlay(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
@@ -196,5 +196,16 @@ public class BaobabPod : ModTile, ISwayTile
 		var source = new Rectangle(18 * 6, frameX, 18, 18);
 
 		spriteBatch.Draw(texture, position + offset, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+	}
+
+	public float Physics(Point16 topLeft)
+	{
+		var data = TileObjectData.GetTileData(Framing.GetTileSafely(topLeft));
+		float rotation = Main.instance.TilesRenderer.GetWindCycle(topLeft.X, topLeft.Y, TileSwaySystem.Instance.GrassWindCounter);
+
+		if (!WorldGen.InAPlaceWithWind(topLeft.X, topLeft.Y, data.Width, data.Height))
+			rotation = 0f;
+
+		return (rotation + TileSwayHelper.GetHighestWindGridPushComplex(topLeft.X, topLeft.Y, data.Width, data.Height, 20, 3f, 1, true)) * 1f;
 	}
 }

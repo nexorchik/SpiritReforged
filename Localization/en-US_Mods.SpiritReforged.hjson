@@ -40,6 +40,9 @@ Projectiles: {
 	Zipline.DisplayName: Zipline
 	RogueKnifeMinion.DisplayName: Rusted Knife
 	CactusWallProj.DisplayName: Cactus Wall
+	SkullSentryEye.DisplayName: Skull Sentry Eye
+	SkullSentryMucus.DisplayName: Skull Sentry Mucus
+	SkullSentrySentry.DisplayName: Skull Sentry Sentry
 }
 
 Configs: {
