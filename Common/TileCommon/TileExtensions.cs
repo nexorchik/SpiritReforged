@@ -1,4 +1,4 @@
-﻿using SpiritReforged.Common.WorldGeneration;
+﻿using SpiritReforged.Common.WorldGeneration.Chests;
 
 namespace SpiritReforged.Common.TileCommon;
 

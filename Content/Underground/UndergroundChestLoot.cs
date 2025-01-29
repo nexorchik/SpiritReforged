@@ -1,7 +1,7 @@
 ﻿using SpiritReforged.Content.Underground.Railgun;
-using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Underground.ExplorerTreads;
 using SpiritReforged.Content.Forest.Misc.Maps;
+using SpiritReforged.Common.WorldGeneration.Chests;
 
 namespace SpiritReforged.Content.Underground;
 

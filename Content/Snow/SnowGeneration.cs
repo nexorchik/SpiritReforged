@@ -1,4 +1,4 @@
-﻿using SpiritReforged.Common.WorldGeneration;
+﻿using SpiritReforged.Common.WorldGeneration.Chests;
 using SpiritReforged.Content.Snow.Frostbite;
 
 namespace SpiritReforged.Content.Snow;

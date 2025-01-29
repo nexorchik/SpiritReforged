@@ -1,18 +1,19 @@
 ﻿using System.Linq;
 
-namespace SpiritReforged.Common.WorldGeneration;
+namespace SpiritReforged.Common.WorldGeneration.Chests;
 
 public static class ChestPoolUtils
 {
-	/// <summary>
-	/// Struct containing information related to chest item pools. <br />
-	/// Inputting an int[] for Items results in one of the items from that array being picked for that slot randomly, while inputting an int or short directly adds the corresponding item.
-	/// </summary>
-	public struct ChestInfo(object Items, int Stack = 1, float Chance = 1)
+	/// <summary> Struct containing information related to chest item pools. </summary>
+	/// <param name="items"> The item types to add to the chest pool. Accepts <see cref="int"/>, <see cref="short"/>, and int[].<para/>
+	/// Only one item type will be selected when using int[]. </param>
+	/// <param name="stack"> The item stack. </param>
+	/// <param name="chance"> The chance for the item to generate. </param>
+	public struct ChestInfo(object items, int stack = 1, float chance = 1)
 	{
-		public object Items = Items;
-		public int Stack = Stack;
-		public float Chance = Chance;
+		public object items = items;
+		public int stack = stack;
+		public float chance = chance;
 
 		public readonly List<ChestInfo> ToList() => [this];
 	}
@@ -22,19 +23,19 @@ public static class ChestPoolUtils
 	{
 		foreach (ChestInfo chestInfo in list)
 		{
-			switch (chestInfo.Items)
+			switch (chestInfo.items)
 			{
 				case int[] itemPool:
 					chest.item[itemIndex].SetDefaults(itemPool[Main.rand.Next(itemPool.Length)]);
-					chest.item[itemIndex].stack = chestInfo.Stack;
+					chest.item[itemIndex].stack = chestInfo.stack;
 					break;
 				case int intItem:
-					chest.item[itemIndex].SetDefaults((int)chestInfo.Items);
-					chest.item[itemIndex].stack = chestInfo.Stack;
+					chest.item[itemIndex].SetDefaults((int)chestInfo.items);
+					chest.item[itemIndex].stack = chestInfo.stack;
 					break;
 				case short shortItem:
-					chest.item[itemIndex].SetDefaults((short)chestInfo.Items);
-					chest.item[itemIndex].stack = chestInfo.Stack;
+					chest.item[itemIndex].SetDefaults((short)chestInfo.items);
+					chest.item[itemIndex].stack = chestInfo.stack;
 					break;
 			}
 
@@ -54,7 +55,7 @@ public static class ChestPoolUtils
 
 		foreach (ChestInfo c in list)
 		{ //prune the list based on the chances of items being added and stacks
-			if (Main.rand.NextFloat() >= c.Chance || c.Stack == 0)
+			if (Main.rand.NextFloat() >= c.chance || c.stack == 0)
 				continue; //skip
 
 			newList.Add(c);
@@ -74,7 +75,7 @@ public static class ChestPoolUtils
 	{
 		int itemIndex = 0;
 
-		int[] importantItemPool = (int[])list.ElementAt(0).Items;
+		int[] importantItemPool = (int[])list.ElementAt(0).items;
 		int itemToPlace = 0;
 		bool canPlace = false;
 		while (!canPlace)
@@ -111,8 +112,9 @@ public static class ChestPoolUtils
 
 	public static void AddToModdedChestWithOverlapCheck(List<ChestInfo> list, int chestType)
 	{
-		int[] items = (int[])list.ElementAt(0).Items;
+		int[] items = (int[])list.ElementAt(0).items;
 		bool[] placedItems = new bool[items.Length];
+
 		for (int chestIndex = 0; chestIndex < Main.chest.Length; chestIndex++)
 		{
 			Chest chest = Main.chest[chestIndex];
@@ -121,88 +123,23 @@ public static class ChestPoolUtils
 		}
 	}
 
-	public static void AddToVanillaChest(List<ChestInfo> list, int chestFrame, int index = 0, ushort tileType = TileID.Containers)
+	/// <inheritdoc cref="AddToVanillaChest(List{ChestInfo}, int, int, ushort)"/>
+	/// <param name="item"> The <see cref="ChestInfo"/> to add. </param>
+	public static void AddToVanillaChest(ChestInfo item, int chestFrame, int index, ushort tileType = TileID.Containers) => AddToVanillaChest(item.ToList(), chestFrame, index, tileType);
+
+	/// <summary> Adds the given item info to chest inventories. </summary>
+	/// <param name="items"> The <see cref="ChestInfo"/> to add. </param>
+	/// <param name="chestFrame"> The horizontal frame of <paramref name="tileType"/> to consider. See <see cref="VanillaChestID"/> and <see cref="VanillaChestID2"/>. </param>
+	/// <param name="index"> The chest inventory index. </param>
+	/// <param name="tileType"> The chest tile type. </param>
+	public static void AddToVanillaChest(List<ChestInfo> items, int chestFrame, int index = 0, ushort tileType = TileID.Containers)
 	{
 		chestFrame *= 36;
 		for (int chestIndex = 0; chestIndex < Main.chest.Length; chestIndex++)
 		{
 			Chest chest = Main.chest[chestIndex];
 			if (chest != null && Main.tile[chest.x, chest.y].TileType == tileType && Main.tile[chest.x, chest.y].TileFrameX == chestFrame)
-				PlaceChestItems(list, chest, index);
+				PlaceChestItems(items, chest, index);
 		}
 	}
-
-	public static void AddToVanillaChest(ChestInfo item, int chestFrame, int index, ushort tileType = TileID.Containers)
-	{
-		chestFrame *= 36;
-		for (int chestIndex = 0; chestIndex < Main.chest.Length; chestIndex++)
-		{
-			Chest chest = Main.chest[chestIndex];
-			if (chest != null && Main.tile[chest.x, chest.y].TileType == tileType && Main.tile[chest.x, chest.y].TileFrameX == chestFrame)
-				PlaceChestItems(item.ToList(), chest, index);
-		}
-	}
-}
-
-public enum VanillaChestID : byte
-{
-	Wood,
-	Gold,
-	LockedGold,
-	Shadow,
-	LockedShadow,
-	Barrel,
-	TrashCan,
-	Ebonwood,
-	Mahogany,
-	Pearlwood,
-	Ivy,
-	Frozen,
-	LivingWood,
-	Sky,
-	Shadewood,
-	Webbed,
-	Lihahzrd,
-	Water,
-	Jungle,
-	Corruption,
-	Crimson,
-	Hallow,
-	Ice,
-	JungleLocked,
-	CorruptionLocked,
-	CrimsonLocked,
-	HallowLocked,
-	IceLocked,
-	Dynasty,
-	Honey,
-	Steampunk,
-	PalmWood,
-	Mushroom,
-	BorealWood,
-	Slime,
-	DungeonGreen,
-	DungeonGreenLocked,
-	DungeonPink,
-	DungeonPinkLocked,
-	DungeonBlue,
-	DungeonBlueLocked,
-	Bone,
-	Cactus,
-	Flesh,
-	Obsidian,
-	Pumpkin,
-	Spooky,
-	Glass,
-	Martian,
-	Meteorite,
-	Granite,
-	Marble,
-	Crystal,
-	Golden
-}
-
-public enum VanillaChestID2 : byte
-{
-	Sandstone = 11
 }
