@@ -134,7 +134,7 @@ public class Hyena : ModNPC
 
 					SetPace();
 
-					if (!holdingMeat && AnimationState == (int)State.TrotEnd && Main.rand.NextBool(400)) //Randomly laugh when still; not synced
+					if (!holdingMeat && AnimationState == (int)State.TrotEnd && Main.rand.NextBool(800)) //Randomly laugh when still; not synced
 					{
 						ChangeAnimationState(State.Laugh);
 						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 2 }, NPC.Center);
@@ -200,7 +200,7 @@ public class Hyena : ModNPC
 				{
 					ChangeAnimationState(State.TrotEnd);
 
-					if (!holdingMeat && !swimming && Main.rand.NextBool(150)) //Randomly laugh; not synced
+					if (!holdingMeat && !swimming && Main.rand.NextBool(250)) //Randomly laugh; not synced
 					{
 						ChangeAnimationState(State.Laugh);
 						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 2 }, NPC.Center);
@@ -449,8 +449,9 @@ public class Hyena : ModNPC
 	{
 		int x = spawnInfo.SpawnTileX;
 		int y = spawnInfo.SpawnTileY;
+		int wall = Framing.GetTileSafely(x, y).WallType;
 
-		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Water && NPC.IsValidSpawningGroundTile(x, y))
+		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Water && NPC.IsValidSpawningGroundTile(x, y) && wall == WallID.None)
 			return .33f;
 
 		return 0;

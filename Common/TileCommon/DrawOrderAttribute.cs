@@ -23,8 +23,11 @@ internal class DrawOrderAttribute(params Layer[] layers) : Attribute
 
 internal class DrawOrderSystem : ModSystem
 {
-	private static readonly Dictionary<int, Layer[]> drawOrderTypes = []; //Store tile types & defined layer pairs
-	public static readonly Dictionary<Point16, Layer[]> specialDrawPoints = []; //Store drawing coordinates with layer data so our detours know where to draw
+	/// <summary> Stores tile types and defined layer pairs. </summary>
+	private static readonly Dictionary<int, Layer[]> drawOrderTypes = []; 
+
+	/// <summary> Stores drawing coordinates with layer data so our detours know where and when to draw. </summary>
+	internal static readonly Dictionary<Point16, Layer[]> specialDrawPoints = [];
 
 	/// <summary> Used in conjunction with <see cref="DrawOrderAttribute"/> to tell whether a tile is drawing as a result of the attribute and on what layer. </summary>
 	internal static Layer Order = Layer.Default;
@@ -121,7 +124,7 @@ internal class DrawOrderGlobalTile : GlobalTile
 
 		if (DrawOrderSystem.Order == Layer.Default)
 		{
-			DrawOrderSystem.specialDrawPoints.Add(new Point16(i, j), value);
+			DrawOrderSystem.specialDrawPoints.TryAdd(new Point16(i, j), value);
 			return value.Contains(Layer.Default);
 		}
 
