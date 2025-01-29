@@ -11,6 +11,7 @@ public class PoolNoodleProj : BaseWhipProj
 		set => Projectile.ai[1] = value;
 	}
 
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.PoolNoodle.DisplayName");
 	public override void StaticDefaults() => Main.projFrames[Type] = 7;
 
 	public override void Defaults()

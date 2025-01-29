@@ -10,19 +10,15 @@ Tiles: {
 	MediumDriftwoodTile.MapEntry: Medium Driftwood
 	LargeDriftwoodTile.MapEntry: Large Driftwood
 	BambooBirdCage.MapEntry: Bamboo Bird Cage
-	BambooPot.MapEntry: Bamboo Pot
 	KoiTotem_Tile.MapEntry: Koi Totem
 	HerosMemorialStatue.MapEntry: A Hero's Memorial
 	TermiteJar_Tile.MapEntry: Termite Jar
-	SpiritKillieFishbowl_Tile.MapEntry: Spirit Killie Fishbowl
+	SpiritKillieFishbowl_Tile.MapEntry: Killie Fishbowl
 }
 
 Projectiles: {
 	HydrothermalVentPlume.DisplayName: Smoke Plume
 	Cannonbubble.DisplayName: Cannonbubble
-	SkullSentryEye.DisplayName: Eye
-	SkullSentryMucus.DisplayName: Mucus
-	SkullSentrySentry.DisplayName: Maneater Skull
 	UrchinBall.DisplayName: Urchin Ball
 	UrchinSpike.DisplayName: Urchin Spike
 	JellyfishBolt.DisplayName: Electric Bolt
@@ -30,22 +26,18 @@ Projectiles: {
 	ReefWrathProj.DisplayName: Coral Reef
 	JellyfishPet.DisplayName: Jellyfish Pet
 	FairyMinion.DisplayName: Fairy Minion
-	FairyProj.DisplayName: Fairy Proj
+	FairyProj.DisplayName: Magical Bolt
 	StarPowderProj.DisplayName: Star Powder
 	ButterflyMinion.DisplayName: Butterfly Minion
-	PoolNoodleProj.DisplayName: Pool Noodle Proj
 	ToucanFeather.DisplayName: Toucan Feather
 	ToucanMinion.DisplayName: Toucan Minion
 	TumblerPet.DisplayName: Tumbler Pet
 	BaobabFruitProj.DisplayName: Falling Baobab Fruit
 	SunOrb.DisplayName: Sun Orb
-	SunStaffHeld.DisplayName: Sun Staff Held
-	WheatgrassSeedProjectile.DisplayName: Wheatgrass Seed Projectile
-	RoyalKhopeshHeld.DisplayName: Royal Khopesh Held
+	SunStaffHeld.DisplayName: Sun Staff
+	WheatgrassSeedProjectile.DisplayName: Wheatgrass Seed
+	RoyalKhopeshHeld.DisplayName: Royal Khopesh
 	Zipline.DisplayName: Zipline
-	FrostbiteProj.DisplayName: Frostbite
-	FrozenFragment.DisplayName: Frozen Fragment
-	FrostbiteHeldOut.DisplayName: Frostbite Held Out
 	RogueKnifeMinion.DisplayName: Rusted Knife
 	CactusWallProj.DisplayName: Cactus Wall
 }

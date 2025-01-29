@@ -38,39 +38,14 @@ DriftwoodTileItem: {
 	Tooltip: ""
 }
 
-LargeKelpItem: {
-	DisplayName: Large Glowing Plant
-	Tooltip: ""
-}
-
-LargeVentItem: {
-	DisplayName: Large Hydrothermal Vent
-	Tooltip: ""
-}
-
 MusselItem: {
 	DisplayName: Mussel
-	Tooltip: ""
-}
-
-SmallKelpItem: {
-	DisplayName: Small Glowing Plant
-	Tooltip: ""
-}
-
-SmallVentItem: {
-	DisplayName: Small Hydrothermal Vent
 	Tooltip: ""
 }
 
 CrinoidItem: {
 	DisplayName: Crinoid
 	Tooltip: ""
-}
-
-FloaterItem: {
-	DisplayName: Luminous Floater
-	Tooltip: "'A beacon at the beach'"
 }
 
 PelicanItem: {
@@ -291,7 +266,7 @@ BambooBenchItem: {
 
 BambooBirdCageItem: {
 	DisplayName: Bamboo Bird Cage
-	Tooltip: ""
+	Tooltip: Some birds can be placed inside using right click
 }
 
 BambooPikeItem: {
@@ -395,7 +370,7 @@ FloatingDriftwood: {
 
 FishCrate: {
 	DisplayName: Packing Crate
-	Tooltip: Right-click to open
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
 Ambergris: {
@@ -509,11 +484,6 @@ PoolNoodle: {
 		{$CommonItemTooltip.Whips}
 		Struck enemies may release bubbly explosions when hit by summons
 		'''
-}
-
-RodofDunes: {
-	DisplayName: Rod of Dunes
-	Tooltip: Summons a sand warrior to fight for you
 }
 
 ToucaneItem: {
@@ -1026,13 +996,13 @@ DrywoodWallItem: {
 }
 
 ZiplineGun: {
+	DisplayName: Rail-gun
 	Tooltip:
 		'''
 		Use left or right click to latch each side of the rail to tiles
 		Rails carry players swiftly in either direction
 		Tethers can be removed when hovered over or replaced by firing
 		'''
-	DisplayName: Rail-gun
 }
 
 FrostbiteItem: {

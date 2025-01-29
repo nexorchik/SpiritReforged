@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace SpiritReforged.Common.TileCommon;
+namespace SpiritReforged.Common.TileCommon.TileTag;
 
 public partial class TagGlobalTile : GlobalTile
 {
@@ -18,7 +18,6 @@ public partial class TagGlobalTile : GlobalTile
 	{
 		var types = typeof(TagGlobalTile).Assembly.GetTypes();
 		foreach (var type in types)
-		{
 			if (typeof(ModTile).IsAssignableFrom(type))
 			{
 				var tag = (TileTagAttribute)Attribute.GetCustomAttribute(type, typeof(TileTagAttribute));
@@ -37,6 +36,5 @@ public partial class TagGlobalTile : GlobalTile
 				if (tag.Tags.Contains(TileTags.HarvestableHerb))
 					_harvestableHerbs.Add(id);
 			}
-		}
 	}
 }

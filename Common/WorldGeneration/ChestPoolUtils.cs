@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace SpiritReforged.Common.Misc;
+namespace SpiritReforged.Common.WorldGeneration;
 
 public static class ChestPoolUtils
 {
@@ -21,7 +21,7 @@ public static class ChestPoolUtils
 	private static void AddItemsToChest(IEnumerable<ChestInfo> list, Chest chest, int itemIndex)
 	{
 		foreach (ChestInfo chestInfo in list)
-		{ 
+		{
 			switch (chestInfo.Items)
 			{
 				case int[] itemPool:
@@ -142,4 +142,67 @@ public static class ChestPoolUtils
 				PlaceChestItems(item.ToList(), chest, index);
 		}
 	}
+}
+
+public enum VanillaChestID : byte
+{
+	Wood,
+	Gold,
+	LockedGold,
+	Shadow,
+	LockedShadow,
+	Barrel,
+	TrashCan,
+	Ebonwood,
+	Mahogany,
+	Pearlwood,
+	Ivy,
+	Frozen,
+	LivingWood,
+	Sky,
+	Shadewood,
+	Webbed,
+	Lihahzrd,
+	Water,
+	Jungle,
+	Corruption,
+	Crimson,
+	Hallow,
+	Ice,
+	JungleLocked,
+	CorruptionLocked,
+	CrimsonLocked,
+	HallowLocked,
+	IceLocked,
+	Dynasty,
+	Honey,
+	Steampunk,
+	PalmWood,
+	Mushroom,
+	BorealWood,
+	Slime,
+	DungeonGreen,
+	DungeonGreenLocked,
+	DungeonPink,
+	DungeonPinkLocked,
+	DungeonBlue,
+	DungeonBlueLocked,
+	Bone,
+	Cactus,
+	Flesh,
+	Obsidian,
+	Pumpkin,
+	Spooky,
+	Glass,
+	Martian,
+	Meteorite,
+	Granite,
+	Marble,
+	Crystal,
+	Golden
+}
+
+public enum VanillaChestID2 : byte
+{
+	Sandstone = 11
 }

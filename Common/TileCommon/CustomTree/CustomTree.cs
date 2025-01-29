@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Common.WorldGeneration;
+using SpiritReforged.Common.WorldGeneration.Noise;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;

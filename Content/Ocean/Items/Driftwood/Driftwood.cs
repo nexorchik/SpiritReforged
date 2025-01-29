@@ -47,9 +47,8 @@ public class SmallDriftwoodTile : ModTile
 		TileObjectData.addAlternate(1); //facing right will use the second texture style
 		TileObjectData.addTile(Type);
 
-		LocalizedText name = CreateMapEntryName();
-		AddMapEntry(new Color(69, 54, 43), name);
-		DustType = DustID.Stone;
+		AddMapEntry(new Color(69, 54, 43));
+		DustType = DustID.BorealWood;
 	}
 
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = 2;
@@ -102,9 +101,8 @@ public class MediumDriftwoodTile : ModTile
 		TileObjectData.addAlternate(1); //facing right will use the second texture style
 		TileObjectData.addTile(Type);
 
-		LocalizedText name = CreateMapEntryName();
-		AddMapEntry(new Color(69, 54, 43), name);
-		DustType = DustID.Stone;
+		AddMapEntry(new Color(69, 54, 43));
+		DustType = DustID.BorealWood;
 	}
 
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = 2;
@@ -157,9 +155,8 @@ public class LargeDriftwoodTile : ModTile
 		TileObjectData.addAlternate(1); //facing right will use the second texture style
 		TileObjectData.addTile(Type);
 
-		LocalizedText name = CreateMapEntryName();
-		AddMapEntry(new Color(69, 54, 43), name);
-		DustType = DustID.Stone;
+		AddMapEntry(new Color(69, 54, 43));
+		DustType = DustID.BorealWood;
 	}
 
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = 2;

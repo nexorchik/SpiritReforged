@@ -101,7 +101,7 @@ internal class SavannaEcotone : EcotoneBase
 
 		Steps = WorldGen.genRand.Next(2, 5);
 
-		var sandNoise = new FastNoiseLite(WorldGen.genRand.Next());
+		var sandNoise = new Common.WorldGeneration.Noise.FastNoiseLite(WorldGen.genRand.Next());
 		sandNoise.SetFrequency(0.04f);
 		int xOffsetForFactor = -1;
 		float curve = 0;

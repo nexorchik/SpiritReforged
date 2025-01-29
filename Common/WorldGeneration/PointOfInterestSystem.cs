@@ -7,6 +7,18 @@ using Terraria.Utilities;
 
 namespace SpiritReforged.Common.WorldGeneration;
 
+public enum InterestType : byte
+{
+	FloatingIsland,
+	EnchantedSword,
+	ButterflyShrine,
+	Shimmer,
+	Savanna,
+	Hive,
+	Curiosity,
+	Count
+}
+
 /// <summary>
 /// Handles marking any points of interest, such as the Shimmer and Hives.
 /// This is currently for use in Hiker's mapping system.

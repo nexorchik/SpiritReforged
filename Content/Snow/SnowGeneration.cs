@@ -1,6 +1,5 @@
-﻿using SpiritReforged.Common.Misc;
-using SpiritReforged.Common.WorldGeneration;
-using SpiritReforged.Content.Snow.Frostbite; 
+﻿using SpiritReforged.Common.WorldGeneration;
+using SpiritReforged.Content.Snow.Frostbite;
 
 namespace SpiritReforged.Content.Snow;
 

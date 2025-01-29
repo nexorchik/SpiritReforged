@@ -23,6 +23,7 @@ public class SpiritKillieFishbowlItem : ModItem
 	public override void AddRecipes() => CreateRecipe().AddIngredient(Mod.Find<ModItem>("KillifishItem").Type)
 		.AddIngredient(ItemID.BottledWater).AddTile(TileID.WorkBenches).Register();
 }
+
 public class SpiritKillieFishbowl_Tile : ModTile
 {
 	bool activeAnimation = false;

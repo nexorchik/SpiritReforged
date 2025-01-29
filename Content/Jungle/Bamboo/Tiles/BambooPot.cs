@@ -25,8 +25,7 @@ public class BambooPot : ModTile, IAutoloadTileItem
 		TileObjectData.newTile.CoordinateHeights = [18];
 		TileObjectData.addTile(Type);
 
-		LocalizedText name = CreateMapEntryName();
-		AddMapEntry(new Color(100, 100, 60), name);
+		AddMapEntry(new Color(100, 100, 60));
 
 		DustType = DustID.PalmWood;
 		AdjTiles = [TileID.ClayPot];

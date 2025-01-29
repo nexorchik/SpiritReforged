@@ -2,7 +2,7 @@
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PostDrawTreeHookSystem;
 using SpiritReforged.Common.TileCommon.TileSway;
-using SpiritReforged.Common.WorldGeneration;
+using SpiritReforged.Common.WorldGeneration.Noise;
 using SpiritReforged.Content.Forest.Stargrass.Tiles;
 using Terraria.DataStructures;
 

@@ -7,7 +7,7 @@
 /// </summary>
 public class PetPlayer : ModPlayer
 {
-	public Dictionary<int, bool> pets = new();
+	public Dictionary<int, bool> pets = [];
 
 	public override void ResetEffects()
 	{
@@ -20,8 +20,7 @@ public class PetPlayer : ModPlayer
 	{
 		var modPlayer = Main.player[projectile.owner].GetModPlayer<PetPlayer>();
 
-		if (!modPlayer.pets.ContainsKey(projectile.type))
-			modPlayer.pets.Add(projectile.type, true);
+		modPlayer.pets.TryAdd(projectile.type, true);
 
 		if (Player.dead)
 			modPlayer.pets[projectile.type] = false;

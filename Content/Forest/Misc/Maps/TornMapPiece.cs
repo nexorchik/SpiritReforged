@@ -1,5 +1,5 @@
 using SpiritReforged.Common.ItemCommon;
-using SpiritReforged.Common.WorldGeneration;
+using SpiritReforged.Common.WorldGeneration.Noise;
 using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 

@@ -18,6 +18,7 @@ public class FrostbiteProj : ModProjectile
 		set => Projectile.ai[0] = value ? 1 : 0; 
 	}
 
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.Frostbite.DisplayName");
 	public override void SetDefaults()
 	{
 		Projectile.Size = new Vector2(120);

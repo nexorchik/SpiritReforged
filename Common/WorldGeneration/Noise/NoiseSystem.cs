@@ -1,4 +1,4 @@
-﻿namespace SpiritReforged.Common.WorldGeneration;
+﻿namespace SpiritReforged.Common.WorldGeneration.Noise;
 
 internal class NoiseSystem : ModSystem
 {

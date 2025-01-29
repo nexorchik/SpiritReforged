@@ -54,7 +54,7 @@ using System.Runtime.CompilerServices;
 // Switch between using floats or doubles for input position
 using FNLfloat = System.Single;
 
-namespace SpiritReforged.Common.WorldGeneration;
+namespace SpiritReforged.Common.WorldGeneration.Noise;
 
 public class FastNoiseLite
 {
@@ -2765,7 +2765,7 @@ public class FastNoiseLite
 					const FNLfloat SQRT3 = (FNLfloat)1.7320508075688772935274463415059;
 					const FNLfloat F2 = 0.5f * (SQRT3 - 1);
 					FNLfloat t = (x + y) * F2;
-					x += t; 
+					x += t;
 					y += t;
 				}
 
@@ -2796,7 +2796,7 @@ public class FastNoiseLite
 					FNLfloat xz = x + z;
 					FNLfloat s2 = xz * -(FNLfloat)0.211324865405187;
 					y *= (FNLfloat)0.577350269189626;
-					x += s2 - y; 
+					x += s2 - y;
 					z += s2 - y;
 					y += xz * (FNLfloat)0.577350269189626;
 				}

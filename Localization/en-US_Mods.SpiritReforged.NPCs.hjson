@@ -73,8 +73,6 @@ Termite: {
 	Entry: If a tree falls in a forest and no one is around to hear it, it's probably a termite's fault.
 }
 
-DevourerOfSoil.DisplayName: Devourer of Soil
-
 SavannaSandSlime: {
 	DisplayName: Sand Slime
 	Entry: Slightly more leafy, a little less sandy, all the same danger.

@@ -40,6 +40,7 @@ public class FrostbiteItem : ModItem
 
 public class FrostbiteHeldOut : ModProjectile
 {
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.Frostbite.DisplayName");
 	public override void SetStaticDefaults() => Main.projFrames[Type] = 4;
 
 	public override void SetDefaults()

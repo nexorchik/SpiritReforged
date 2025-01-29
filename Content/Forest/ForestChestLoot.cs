@@ -1,5 +1,4 @@
-﻿using SpiritReforged.Common.Misc;
-using SpiritReforged.Common.WorldGeneration;
+﻿using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Forest.ArcaneNecklace;
 using SpiritReforged.Content.Forest.Cloudstalk.Items;
 using SpiritReforged.Content.Forest.Misc;

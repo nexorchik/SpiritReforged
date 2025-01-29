@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SpiritReforged.Common.TileCommon;
+﻿namespace SpiritReforged.Common.TileCommon.TileTag;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class TileTagAttribute(params TileTags[] tags) : Attribute

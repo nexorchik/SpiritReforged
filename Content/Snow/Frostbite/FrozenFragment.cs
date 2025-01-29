@@ -12,6 +12,7 @@ public class FrozenFragment : ModProjectile
 
 	private Vector2 relativeOffset;
 
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.Frostbite.DisplayName");
 	public override void SetStaticDefaults() =>	Main.projFrames[Type] = 3;
 
 	public override void SetDefaults()

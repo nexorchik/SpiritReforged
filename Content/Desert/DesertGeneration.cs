@@ -1,5 +1,4 @@
-﻿using SpiritReforged.Common.Misc;
-using SpiritReforged.Common.WorldGeneration;
+﻿using SpiritReforged.Common.WorldGeneration;
 
 namespace SpiritReforged.Content.Desert;
 
