@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Content.Forest.Stargrass.Tiles;
-using SpiritReforged.Content.Savanna.Items.Fishing;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Items;
@@ -10,8 +9,8 @@ internal class StarPowder : ModItem
 
 	public override void SetDefaults()
 	{
-		Item.width = 22;
-		Item.height = 26;
+		Item.width = 26;
+		Item.height = 28;
 		Item.rare = ItemRarityID.White;
 		Item.maxStack = Item.CommonMaxStack;
 		Item.useStyle = ItemUseStyleID.Swing;
