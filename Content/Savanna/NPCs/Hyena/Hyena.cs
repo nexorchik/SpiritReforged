@@ -452,7 +452,7 @@ public class Hyena : ModNPC
 		int wall = Framing.GetTileSafely(x, y).WallType;
 
 		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Water && NPC.IsValidSpawningGroundTile(x, y) && wall == WallID.None)
-			return .33f;
+			return .36f;
 
 		return 0;
 	}
