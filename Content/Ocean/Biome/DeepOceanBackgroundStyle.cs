@@ -2,6 +2,20 @@
 
 internal class DeepOceanBackgroundStyle : ModSurfaceBackgroundStyle
 {
+	/// <summary> Used with <see cref="Common.Visuals.ForceWaterStyle"/> to enforce the correct water style in various cases. </summary>
+	/// <returns> The water style to use. </returns>
+	public static int ChooseWaterStyle()
+	{
+		if (Main.LocalPlayer.ZoneCorrupt)
+			return WaterStyleID.Corrupt;
+		else if (Main.LocalPlayer.ZoneCrimson)
+			return WaterStyleID.Crimson;
+		else if (Main.LocalPlayer.ZoneHallow)
+			return WaterStyleID.Hallow;
+		else
+			return 0;
+	}
+
 	public override int ChooseMiddleTexture() => BackgroundTextureLoader.GetBackgroundSlot(Mod, "Assets/Textures/Backgrounds/OceanUnderwaterBG2");
 	public override int ChooseFarTexture() => BackgroundTextureLoader.GetBackgroundSlot(Mod, "Assets/Textures/Backgrounds/OceanUnderwaterBG3");
 
