@@ -432,26 +432,6 @@ TermiteItem: {
 	Tooltip: ""
 }
 
-EnchantedApple: {
-	DisplayName: Enchanted Apple
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed}
-		Increases mana regeneration
-		'Glimmers and shines brightly...'
-		'''
-}
-
-EnchantedStarFruit: {
-	DisplayName: Enchanted Star Fruit
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed}
-		Increases mana regeneration
-		'Tastes like the cosmos.'
-		'''
-}
-
 StarPowder: {
 	DisplayName: Starpowder
 	Tooltip: Throw onto grass to invigorate it with starlight!
@@ -1258,4 +1238,43 @@ CraneFeather: {
 TatteredMap: {
 	DisplayName: Tattered Map
 	Tooltip: ""
+}
+
+CrescentMelon: {
+	DisplayName: Crescent Melon
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		{$ItemTooltip.ManaRegenerationPotion}
+		'''
+}
+
+MidnightApple: {
+	DisplayName: Midnight Apple
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		{$ItemTooltip.ManaRegenerationPotion}
+		'Sparkles like the night sky'
+		'''
+}
+
+NightSky: {
+	DisplayName: Night Sky
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		{$ItemTooltip.ManaRegenerationPotion}
+		'Tastes like the cosmos'
+		'''
+}
+
+Pearlberry: {
+	DisplayName: Pearlberry
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		{$ItemTooltip.ManaRegenerationPotion}
+		'Glimmers and shines brightly...'
+		'''
 }

@@ -2,9 +2,9 @@ using SpiritReforged.Common.ItemCommon;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Items;
 
-public class EnchantedApple : FoodItem
+public class CrescentMelon : FoodItem
 {
-	internal override Point Size => new(20, 22);
+	internal override Point Size => new(26, 28);
 	public override void StaticDefaults() => SetFruitType();
 
 	public override bool CanUseItem(Player player)
