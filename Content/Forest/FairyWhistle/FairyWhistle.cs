@@ -1,3 +1,5 @@
+using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Particle;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
@@ -5,8 +7,6 @@ namespace SpiritReforged.Content.Forest.FairyWhistle;
 
 public class FairyWhistle : ModItem
 {
-	public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
-
 	public override void SetDefaults()
 	{
 		Item.damage = 8;
@@ -21,24 +21,58 @@ public class FairyWhistle : ModItem
 		Item.useAnimation = 30;
 		Item.DamageType = DamageClass.Summon;
 		Item.noMelee = true;
+		Item.noUseGraphic = true;
 		Item.shoot = ModContent.ProjectileType<FairyMinion>();
 
 		if (!Main.dedServ)
 			Item.UseSound = new SoundStyle("SpiritReforged/Assets/SFX/Item/Whistle") with { PitchVariance = 0.3f, Volume = 1.2f };
-
-		Item.scale = 0.75f;
 	}
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
-		player.itemRotation = 0;
-		if (!Main.dedServ)
-			SoundEngine.PlaySound(SoundID.Item44, player.Center);
+		SoundEngine.PlaySound(SoundID.Item44, player.Center);
 
-		Projectile.NewProjectile(source, position, -Vector2.UnitY, type, damage, knockback, player.whoAmI);
+		Projectile.NewProjectile(source, position, -Vector2.UnitY, type, damage, knockback, player.whoAmI, ai1: Main.rand.Next(3));
+		Projectile.NewProjectile(source, position, Vector2.Zero, ModContent.ProjectileType<FairyWhistleHeld>(), 0, 0, player.whoAmI);
 		return false;
 	}
 
 	public override Vector2? HoldoutOffset() => new Vector2(5, -2);
 	public override void AddRecipes() => CreateRecipe().AddRecipeGroup(RecipeGroupID.Wood, 25).AddTile(TileID.WorkBenches).Register();
+}
+
+/// <summary> Used for controlling <see cref="FairyWhistle"/> item use visuals. </summary>
+internal class FairyWhistleHeld : ModProjectile
+{
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.FairyWhistle.DisplayName");
+
+	public override void SetDefaults()
+	{
+		Projectile.timeLeft = 30;
+		Projectile.ignoreWater = true;
+	}
+
+	public override void AI()
+	{
+		var owner = Main.player[Projectile.owner];
+		var position = owner.MountedCenter + new Vector2(12 * owner.direction, -3);
+
+		Projectile.direction = Projectile.spriteDirection = owner.direction;
+		Projectile.Center = owner.RotatedRelativePoint(position);
+		owner.heldProj = Projectile.whoAmI;
+	}
+
+	public override bool ShouldUpdatePosition() => false;
+	public override bool? CanCutTiles() => false;
+	public override bool? CanDamage() => false;
+
+	public override bool PreDraw(ref Color lightColor)
+	{
+		var texture = TextureAssets.Projectile[Type].Value;
+		var position = new Vector2((int)(Projectile.Center.X - Main.screenPosition.X), (int)(Projectile.Center.Y - Main.screenPosition.Y));
+		var effects = (Projectile.spriteDirection == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+
+		Main.EntitySpriteDraw(texture, position, null, Projectile.GetAlpha(lightColor), Projectile.rotation, texture.Size() / 2, Projectile.scale, effects);
+		return false;
+	}
 }
