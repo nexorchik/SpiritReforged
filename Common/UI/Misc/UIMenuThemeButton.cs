@@ -9,7 +9,8 @@ namespace SpiritReforged.Common.UI.Misc;
 
 public class UIMenuThemeButton : UIElement
 {
-	private static FieldInfo SwitchToMenu, CurrentMenu;
+	private static FieldInfo SwitchToMenu;
+	private static FieldInfo CurrentMenu;
 	private static ModMenu LastMenu;
 
 	private readonly Asset<Texture2D> Texture;
