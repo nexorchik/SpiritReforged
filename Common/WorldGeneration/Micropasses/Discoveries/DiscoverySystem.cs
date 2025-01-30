@@ -11,7 +11,7 @@ internal class DiscoverySystem : ModSystem
 		valid.Clear();
 
 		var allDiscoveries = ModContent.GetContent<Discovery>().ToArray();
-		int numDiscoveries = Math.Min(Main.maxTilesX / (WorldGen.WorldSizeSmallX / 2), allDiscoveries.Length); //Per world
+		int numDiscoveries = allDiscoveries.Length; //Math.Min(Main.maxTilesX / (WorldGen.WorldSizeSmallX / 2), allDiscoveries.Length); //Per world
 
 		for (int a = 0; a < numDiscoveries; a++)
 			if (!valid.Add(allDiscoveries[WorldGen.genRand.Next(allDiscoveries.Length)]))
