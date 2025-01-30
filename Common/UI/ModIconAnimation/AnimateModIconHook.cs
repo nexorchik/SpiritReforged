@@ -27,7 +27,7 @@ internal class AnimateModIconHook : ILoadable
 		orig(self);
 
 		string name = ModNameInfo.GetValue(self) as string;
-
+		
 		if (name == "SpiritReforged")
 		{
 			var icon = IconInfo.GetValue(self) as UIImage;
@@ -39,6 +39,15 @@ internal class AnimateModIconHook : ILoadable
 			var scroll = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("icon_scroll", AssetRequestMode.ImmediateLoad);
 
 			element.Append(new UIScrollingImage(tex, scroll, 0.3f));
+
+			if (UIMenuThemeButton.CanExist()) //Add the menu theme button
+			{
+				var menuButton = new UIMenuThemeButton(SpiritReforgedMod.Instance.Assets.Request<Texture2D>("icon_small"));
+				menuButton.Left.Set(426, 0);
+				menuButton.Top.Set(42, 0);
+
+				element.Append(menuButton);
+			}
 		}
 	}
 
