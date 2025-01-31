@@ -27,6 +27,8 @@ internal class Zipline(int owner)
 		return false;
 	}
 
+	/// <summary> Removes <paramref name="point"/> from this zipline and destroys it if no points remain. </summary>
+	/// <param name="point"> The point to remove. </param>
 	public void RemovePoint(Vector2 point)
 	{
 		points.Remove(point);
@@ -75,10 +77,17 @@ internal class Zipline(int owner)
 		GetRange(out var start, out var end);
 
 		float collisionPoint = 0;
-		if (player.velocity.Y >= 0 && Collision.CheckAABBvLineCollision(player.position, player.Size, start, end, width, ref collisionPoint) && !player.FallThrough())
+		var lowRect = new Rectangle((int)player.position.X, (int)player.position.Y + player.height / 2, player.width, player.height / 2);
+
+		if (player.velocity.Y >= 0 && Collision.CheckAABBvLineCollision(lowRect.TopLeft(), lowRect.Size(), start, end, width, ref collisionPoint) && !player.FallThrough())
 		{
 			var delta = Vector2.Lerp(start, end, collisionPoint / start.Distance(end));
-			UpdatePlayer(player, delta, start.AngleTo(end));
+			float angle = start.AngleTo(end);
+
+			if (Math.Abs(angle) > .5f)
+				return false;
+
+			UpdatePlayer(player, delta, angle);
 
 			return true;
 		}
@@ -88,14 +97,13 @@ internal class Zipline(int owner)
 
 	private static void UpdatePlayer(Player player, Vector2 delta, float rotation)
 	{
-		if (!Collision.SolidCollision(player.position, player.width, player.height))
-			player.position = new Vector2(player.position.X, delta.Y - player.height);
+		player.position = new Vector2(player.position.X, delta.Y - player.height);
 
 		player.velocity.Y = 0;
-		player.gfxOffY = 0;
+		player.gfxOffY = -Math.Abs(rotation * 10);
 
 		player.fullRotation = rotation;
-		player.fullRotationOrigin = new Vector2(player.width / 2, player.height);
+		player.fullRotationOrigin = new Vector2(player.width / 2, player.height + 8);
 	}
 
 	private void GetRange(out Vector2 start, out Vector2 end)

@@ -3,6 +3,7 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Particles;
 using System.IO;
+using System.Linq;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Underground.Zipline;
@@ -24,7 +25,7 @@ public class ZiplineProj : ModProjectile
 		Projectile.rotation = Projectile.velocity.ToRotation();
 
 		float length = Projectile.velocity.Length();
-		if (Projectile.Distance(cursorPoint) <= length)
+		if (Projectile.Distance(cursorPoint) <= length + 8)
 		{
 			Projectile.Center = cursorPoint;
 			Projectile.Kill();
@@ -33,15 +34,15 @@ public class ZiplineProj : ModProjectile
 
 	public override void OnKill(int timeLeft)
 	{
+		if (timeLeft == 0)
+			return; //Don't interact with rails after timing out for whatever reason
+
 		bool removed = false;
 
 		foreach (var zipline in ZiplineHandler.ziplines)
 		{
-			if (zipline.Owner == Main.player[Projectile.owner] && zipline.Contains(Projectile.Center.ToPoint(), out var contained))
-			{
-				zipline.RemovePoint(contained);
-				removed = true;
-			}
+			if (zipline.Owner == Main.player[Projectile.owner])
+				UpdateExisting(zipline, out removed);
 		}
 
 		if (!removed)
@@ -54,6 +55,24 @@ public class ZiplineProj : ModProjectile
 			Dust.NewDustPerfect(Projectile.Center, DustID.AmberBolt, Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f), Scale: Main.rand.NextFloat(.5f, 1.5f)).noGravity = true;
 
 		SoundEngine.PlaySound(SoundID.Item101 with { Pitch = .25f }, Projectile.Center);
+	}
+
+	private void UpdateExisting(Zipline zipline, out bool removed)
+	{
+		removed = false;
+
+		if (zipline.Contains(Projectile.Center.ToPoint(), out var contained))
+		{
+			zipline.RemovePoint(contained);
+			removed = true;
+		}
+		else
+		{
+			var last = zipline.points.Last();
+
+			if ((last / 16).Distance(Main.MouseWorld / 16) > ZiplineGun.ExceedDist + .5f)
+				ZiplineHandler.ziplines.Remove(zipline);
+		}
 	}
 
 	public override bool PreDraw(ref Color lightColor)

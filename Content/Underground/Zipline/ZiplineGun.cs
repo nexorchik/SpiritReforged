@@ -2,24 +2,42 @@ using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Common.WorldGeneration;
+using System.Linq;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.UI;
+using System.Collections.ObjectModel;
 
 namespace SpiritReforged.Content.Underground.Zipline;
 
 public class ZiplineGun : ModItem
 {
+	public const int ExceedDist = 150;
 	public const int UseTime = 60;
+
 	private static Asset<Texture2D> xTexture;
 
-	private static bool CheckTile()
+	/// <summary> Checks whether <see cref="Main.MouseWorld"/> has valid tile surroundings for a zipline. </summary>
+	/// <param name="wall"> Whether the check is a wall. </param>
+	private static bool CheckTile(out bool wall)
 	{
 		var coords = Main.MouseWorld.ToTileCoordinates();
-		var flags = OpenTools.GetOpenings(coords.X, coords.Y, false, onlySolid: true);
+		wall = false;
 
-		return !WorldGen.SolidOrSlopedTile(Framing.GetTileSafely(coords)) && !flags.HasFlag(OpenFlags.Above | OpenFlags.Right | OpenFlags.Below | OpenFlags.Left);
+		if (WorldGen.SolidTile(Framing.GetTileSafely(coords)))
+			return false;
+
+		if (Framing.GetTileSafely(coords).WallType != WallID.None)
+		{
+			wall = true;
+			return true;
+		}
+
+		var flags = OpenTools.GetOpenings(coords.X, coords.Y, false, onlySolid: true);
+		return !flags.HasFlag(OpenFlags.Above | OpenFlags.Right | OpenFlags.Below | OpenFlags.Left);
 	}
 
+	/// <summary> Checks whether <see cref="Main.MouseWorld"/> is hovering over a removeable zipline. </summary>
 	private static bool CheckRemoveable()
 	{
 		foreach (var zipline in ZiplineHandler.ziplines)
@@ -31,21 +49,44 @@ public class ZiplineGun : ModItem
 		return false;
 	}
 
+	/// <summary> Checks whether <see cref="Main.MouseWorld"/> in within distance of an existing zipline. </summary>
+	/// <param name="exceedsRange"> Whether the cursor is excedingly far away from the last zipline. Returns true in this case. </param>
+	private static bool CheckDistance(out bool exceedsRange)
+	{
+		const int minDistance = 70;
+
+		exceedsRange = false;
+		var myZipline = ZiplineHandler.ziplines.Where(x => x.Owner == Main.LocalPlayer).FirstOrDefault();
+
+		if (myZipline == default || myZipline.points.Count == 0)
+			return true;
+
+		var last = myZipline.points.Last();
+		if ((last / 16).Distance(Main.MouseWorld / 16) > ExceedDist + .5f)
+		{
+			exceedsRange = true;
+			return true;
+		}
+
+		return (last / 16).Distance(Main.MouseWorld / 16) <= minDistance + .5f;
+	}
+
 	public override void Load()
 	{
 		xTexture = ModContent.Request<Texture2D>(Texture + "_Cancel");
-		On_Main.DrawInterface_6_TileGridOption += On_Main_DrawInterface_6_TileGridOption;
+		On_Main.DrawInterface_6_TileGridOption += DrawAssistant;
 	}
 
-	private void On_Main_DrawInterface_6_TileGridOption(On_Main.orig_DrawInterface_6_TileGridOption orig)
+	private void DrawAssistant(On_Main.orig_DrawInterface_6_TileGridOption orig)
 	{
 		bool oldMouseShowGrid = Main.MouseShowBuildingGrid;
 
-		if (Main.LocalPlayer.HeldItem.type == ModContent.ItemType<ZiplineGun>())
+		if (!Main.LocalPlayer.mouseInterface && Main.LocalPlayer.HeldItem?.ModItem is ZiplineGun ziplineGun && Main.LocalPlayer.GetModPlayer<ZiplinePlayer>().assistant)
 		{
 			var grid = TextureAssets.CursorRadial.Value;
 			var position = Main.MouseWorld.ToTileCoordinates().ToWorldCoordinates() - Main.screenPosition;
 			float rotation = (float)Math.Sin(Main.timeForVisualEffects / 50f) * .1f;
+			bool exceedsRange = false;
 
 			if (Main.LocalPlayer.gravDir == -1f)
 				position.Y = Main.screenHeight - position.Y;
@@ -58,8 +99,11 @@ public class ZiplineGun : ModItem
 				Main.spriteBatch.Draw(grid, position - grid.Size() / 2, (Color.Green * .5f).Additive());
 				Main.spriteBatch.Draw(outline, position, source, Color.Green.Additive(), rotation, source.Size() / 2, 1 + rotation, default, 0);
 			}
-			else if (!CheckTile())
+			else if (!CheckDistance(out exceedsRange) || !CheckTile(out _))
 			{
+				if (!exceedsRange)
+					DrawDottedLine(Color.Red.Additive());
+
 				var x = xTexture.Value;
 
 				Main.spriteBatch.Draw(grid, position - grid.Size() / 2, (Color.Red * .5f).Additive());
@@ -67,6 +111,9 @@ public class ZiplineGun : ModItem
 			}
 			else
 			{
+				if (!exceedsRange)
+					DrawDottedLine(Color.Cyan.Additive());
+
 				var outline = TextureAssets.Extra[2].Value;
 				var source = new Rectangle(0, 0, 16, 16);
 
@@ -80,6 +127,45 @@ public class ZiplineGun : ModItem
 		orig();
 
 		Main.MouseShowBuildingGrid = oldMouseShowGrid;
+
+		static void DrawDottedLine(Color color)
+		{
+			const int chunkWidth = 16;
+
+			var myZipline = ZiplineHandler.ziplines.Where(x => x.Owner == Main.LocalPlayer).FirstOrDefault();
+			if (myZipline == default || myZipline.points.Count == 0)
+				return;
+
+			var start = Main.MouseWorld.ToTileCoordinates().ToWorldCoordinates();
+			var end = myZipline.points.Last();
+			float totalDistance = start.Distance(end);
+
+			var dirUnit = start.DirectionTo(end);
+			float motionUnit = (float)Main.timeForVisualEffects / 50 % 2;
+
+			var texture = TextureAssets.MagicPixel.Value;
+			var source = new Rectangle(0, 0, 1, 4);
+
+			int chunks = (int)(totalDistance / chunkWidth);
+
+			for (int i = 0; i < chunks; i++)
+			{
+				if (i % 2 == 0)
+					continue;
+
+				var position = Vector2.Lerp(end + dirUnit * chunkWidth, start, (i + motionUnit) / chunks);
+
+				float scaleWidth = totalDistance / chunks;
+				if (i >= chunks - 2)
+					scaleWidth *= 1f - motionUnit;
+				else if (i <= 1)
+					scaleWidth *= motionUnit / 2;
+
+				var scale = new Vector2(scaleWidth, 1);
+
+				Main.spriteBatch.Draw(texture, position - Main.screenPosition, source, color, start.AngleTo(end), source.Size() / 2, scale, default, 0);
+			}
+		}
 	}
 
 	public override void SetDefaults()
@@ -97,11 +183,7 @@ public class ZiplineGun : ModItem
 		Item.shootSpeed = 8f;
 	}
 
-	public override Vector2? HoldoutOffset() => new Vector2(-10, 0);
-
-	public override bool AltFunctionUse(Player player) => true;
-
-	public override bool CanUseItem(Player player) => CheckTile() || CheckRemoveable();
+	public override bool CanUseItem(Player player) => CheckTile(out _) && CheckDistance(out _) || CheckRemoveable();
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
@@ -123,6 +205,46 @@ public class ZiplineGun : ModItem
 
 		return false;
 	}
+
+	public override bool CanRightClick() => true;
+	public override bool ConsumeItem(Player player) => false;
+
+	public override void RightClick(Player player)
+	{
+		var mPlayer = Main.LocalPlayer.GetModPlayer<ZiplinePlayer>();
+
+		mPlayer.assistant = !mPlayer.assistant;
+		SoundEngine.PlaySound(SoundID.Mech);
+	}
+
+	public override bool PreDrawTooltip(ReadOnlyCollection<TooltipLine> lines, ref int x, ref int y) //Assistant tooltip
+	{
+		const int padding = 17;
+
+		if (Item.tooltipContext != ItemSlot.Context.InventoryItem)
+			return true;
+
+		var ruler = TextureAssets.BuilderAcc.Value;
+		var source = new Rectangle(0, 14, 14, 14);
+		var position = new Vector2(x - 14, y + 5);
+
+		string text = Language.GetTextValue("Mods.SpiritReforged.Items.ZiplineGun.Assistant" + (Main.LocalPlayer.GetModPlayer<ZiplinePlayer>().assistant ? "Off" : "On"));
+		int textLength = (int)FontAssets.MouseText.Value.MeasureString(text).X + padding;
+
+		foreach (var line in lines)
+			position.Y += FontAssets.MouseText.Value.MeasureString(line.Text).Y; //Position vertically
+
+		if (Main.SettingsEnabled_OpaqueBoxBehindTooltips)
+		{
+			var bgSource = new Rectangle((int)position.X, (int)position.Y, textLength + padding, 34);
+			Utils.DrawInvBG(Main.spriteBatch, bgSource, new Color(23, 25, 81, 255) * 0.925f);
+		}
+
+		Main.spriteBatch.Draw(ruler, position + new Vector2(4, 15), source, Color.White, 0, source.Size() / 2, 1, default, 0);
+		Utils.DrawBorderString(Main.spriteBatch, text, position + new Vector2(padding, 6), Main.MouseTextColorReal);
+
+		return true;
+	}
 }
 
 [AutoloadGlowmask("255,255,255", false)]
@@ -138,6 +260,7 @@ internal class ZiplineGunHeld : ModProjectile
 	{
 		Projectile.timeLeft = TimeLeftMax;
 		Projectile.ignoreWater = true;
+		Projectile.tileCollide = false;
 	}
 
 	public override void AI()

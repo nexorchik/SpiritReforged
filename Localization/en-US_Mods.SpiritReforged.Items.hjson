@@ -979,10 +979,11 @@ ZiplineGun: {
 	DisplayName: Rail-gun
 	Tooltip:
 		'''
-		Use left or right click to latch each side of the rail to tiles
-		Rails carry players swiftly in either direction
-		Tethers can be removed when hovered over or replaced by firing
+		Creates a rail at the cursor position to carry players
+		Rails can be removed when hovered over or replaced by firing
 		'''
+	AssistantOn: Right click to enable assistant
+	AssistantOff: Right click to disable assistant
 }
 
 FrostbiteItem: {

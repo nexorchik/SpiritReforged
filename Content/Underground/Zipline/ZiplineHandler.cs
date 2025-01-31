@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.PlayerCommon;
 using System.Linq;
+using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Underground.Zipline;
 
@@ -8,9 +9,13 @@ internal class ZiplineHandler : ILoadable
 	internal static Asset<Texture2D> ziplineNode;
 	internal static Asset<Texture2D> ziplineWire;
 
-	/// <summary> <see cref="Zipline"/>s belonging to all players. </summary>
+	/// <summary> <see cref="Zipline"/>s belonging to all players.<para/>
+	/// Use <see cref="Add"/> and <see cref="Zipline.RemovePoint"/> instead of directly adding and removing points from this set. </summary>
 	public static readonly HashSet<Zipline> ziplines = [];
 
+	/// <summary> Creates a new zipline at <paramref name="position"/> or adds to an existing zipline belonging to <paramref name="player"/>. </summary>
+	/// <param name="player"> The zipline owner. </param>
+	/// <param name="position"> The position to deploy at. </param>
 	public static void Add(Player player, Vector2 position)
 	{
 		var line = ziplines.Where(x => x.Owner == player).FirstOrDefault();
@@ -36,13 +41,13 @@ internal class ZiplineHandler : ILoadable
 
 	public void Load(Mod mod)
 	{
-		On_Main.DoDraw_Tiles_NonSolid += On_Main_DoDraw_Tiles_NonSolid;
+		On_Main.DoDraw_Tiles_NonSolid += DrawAllZiplines;
 
 		ziplineNode = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("Content/Underground/Zipline/Zipline");
 		ziplineWire = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("Content/Underground/Zipline/Zipline_Chain");
 	}
 
-	private static void On_Main_DoDraw_Tiles_NonSolid(On_Main.orig_DoDraw_Tiles_NonSolid orig, Main self)
+	private static void DrawAllZiplines(On_Main.orig_DoDraw_Tiles_NonSolid orig, Main self)
 	{
 		orig(self);
 
@@ -64,9 +69,10 @@ internal class ZiplineHandler : ILoadable
 	public void Unload() { }
 }
 
-/// <summary> Only exists to call <see cref="ZiplineHandler.CheckZipline"/>. </summary>
+/// <summary> Exists to override <see cref="ModPlayer.PreUpdateMovement"/> and call <see cref="ZiplineHandler.CheckZipline"/>. </summary>
 internal class ZiplinePlayer : ModPlayer
 {
+	public bool assistant = true;
 	private bool wasOnZipline;
 
 	public override void PreUpdateMovement()
@@ -75,6 +81,7 @@ internal class ZiplinePlayer : ModPlayer
 
 		if (onZipline)
 		{
+			Player.moveSpeed += .2f;
 			wasOnZipline = true;
 
 			if (Player.controlDown)
@@ -84,4 +91,7 @@ internal class ZiplinePlayer : ModPlayer
 		if (!onZipline && wasOnZipline) //Reset rotation
 			Player.fullRotation = 0;
 	}
+
+	public override void SaveData(TagCompound tag) => tag[nameof(assistant)] = assistant;
+	public override void LoadData(TagCompound tag) => assistant = tag.GetBool(nameof(assistant));
 }
