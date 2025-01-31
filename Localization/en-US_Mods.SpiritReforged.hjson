@@ -43,6 +43,7 @@ Projectiles: {
 	SkullSentryEye.DisplayName: Skull Sentry Eye
 	SkullSentryMucus.DisplayName: Skull Sentry Mucus
 	SkullSentrySentry.DisplayName: Skull Sentry Sentry
+	ZiplineProj.DisplayName: Zipline Proj
 }
 
 Configs: {
