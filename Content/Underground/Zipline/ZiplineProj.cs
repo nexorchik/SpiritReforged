@@ -71,7 +71,7 @@ public class ZiplineProj : ModProjectile
 			var last = zipline.points.Last();
 
 			if ((last / 16).Distance(Main.MouseWorld / 16) > ZiplineGun.ExceedDist + .5f)
-				ZiplineHandler.ziplines.Remove(zipline);
+				ZiplineHandler.ziplines.Remove(zipline); //Remove the last rail if distance is excessive
 		}
 	}
 

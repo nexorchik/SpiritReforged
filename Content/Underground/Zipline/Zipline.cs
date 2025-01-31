@@ -39,7 +39,7 @@ internal class Zipline(int owner)
 
 	public void Draw(SpriteBatch spriteBatch)
 	{
-		var texture = ZiplineHandler.ziplineNode.Value;
+		var texture = ZiplineHandler.hookTexture.Value;
 
 		for (int i = 0; i < points.Count; i++)
 		{
@@ -54,7 +54,7 @@ internal class Zipline(int owner)
 
 		static void DrawLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end)
 		{
-			var texture = ZiplineHandler.ziplineWire.Value;
+			var texture = ZiplineHandler.wireTexture.Value;
 			int length = (int)(start.Distance(end) / texture.Width) + 2;
 
 			for (int i = 0; i < length; i++)
@@ -100,7 +100,7 @@ internal class Zipline(int owner)
 		player.position = new Vector2(player.position.X, delta.Y - player.height);
 
 		player.velocity.Y = 0;
-		player.gfxOffY = -Math.Abs(rotation * 10);
+		player.gfxOffY = rotation * 10;
 
 		player.fullRotation = rotation;
 		player.fullRotationOrigin = new Vector2(player.width / 2, player.height + 8);
