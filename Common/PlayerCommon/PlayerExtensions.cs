@@ -4,6 +4,8 @@ namespace SpiritReforged.Common.PlayerCommon;
 
 internal static class PlayerExtensions
 {
+	public static bool FallThrough(this Player player) => player.GetModPlayer<CollisionPlayer>().FallThrough();
+
 	public static bool HasAccessory(this Player player, Item item) => item.ModItem is AccessoryItem acc && player.GetModPlayer<MiscAccessoryPlayer>().accessory[acc.AccName];
 	public static bool HasAccessory(this Player player, ModItem item) => item is AccessoryItem acc && player.GetModPlayer<MiscAccessoryPlayer>().accessory[acc.AccName];
 	public static bool HasAccessory<TItem>(this Player player) where TItem : AccessoryItem => player.GetModPlayer<MiscAccessoryPlayer>().accessory[ModContent.GetInstance<TItem>().AccName];
