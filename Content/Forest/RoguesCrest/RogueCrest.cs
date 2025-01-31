@@ -19,8 +19,8 @@ public class RogueCrest : MinionAccessory
 		Item.damage = 6;
 		Item.DamageType = DamageClass.Summon;
 		Item.knockBack = .5f;
-		Item.width = 48;
-		Item.height = 49;
+		Item.width = 38;
+		Item.height = 36;
 		Item.value = Item.buyPrice(0, 3, 0, 0);
 		Item.rare = ItemRarityID.Green;
 		Item.defense = 1;
