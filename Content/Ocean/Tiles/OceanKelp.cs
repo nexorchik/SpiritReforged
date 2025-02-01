@@ -4,6 +4,8 @@ namespace SpiritReforged.Content.Ocean.Tiles;
 
 internal class OceanKelp : ModTile
 {
+	private const int ClumpX = 92;
+
 	private static Asset<Texture2D> Clump = null;
 
 	private readonly static int[] ClumpOffsets = [0, -8, 8];
@@ -52,11 +54,32 @@ internal class OceanKelp : ModTile
 		tile.TileFrameX = frameX;
 		int oldFrameY = tile.TileFrameY;
 
+		if (Main.rand.NextBool(12) && above.HasTile && above.TileType == Type && CanPlaceClump(i, j))
+		{
+			tile.TileFrameX = ClumpX;
+			tile.TileFrameY = (short)Main.rand.Next(4);
+			return false;
+		}
+
 		SetFrameY(tile, above, below, Type, resetFrame);
 
 		// Set to the same clump status as the old frame
 		tile.TileFrameY += (short)(GetClumpNumber(oldFrameY) * 198);
 		return false;
+	}
+
+	private bool CanPlaceClump(int i, int j)
+	{
+		int y = j;
+
+		while (Main.tile[i, y].HasTile && Main.tile[i, y].TileType == Type && Main.tile[i, y].TileFrameX != ClumpX)
+		{
+			y++;
+		}
+
+		y--;
+
+		return y - j > 2;
 	}
 
 	/// <summary>
@@ -103,7 +126,7 @@ internal class OceanKelp : ModTile
 
 	public override void RandomUpdate(int i, int j)
 	{
-		if (Main.rand.NextBool(1))
+		if (Main.rand.NextBool(15))
 		{
 			bool canAddClump = Main.tile[i, j + 1].TileType != Type || GetClumpNumber(i, j + 1) != GetClumpNumber(i, j);
 
@@ -128,6 +151,11 @@ internal class OceanKelp : ModTile
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		Tile tile = Main.tile[i, j];
+		Tile above = Main.tile[i, j - 1];
+
+		if (above.TileType == Type && above.TileFrameX == ClumpX)
+			return false;
+
 		Texture2D tex = TextureAssets.Tile[Type].Value;
 		int clumpAmount = GetClumpNumber(tile.TileFrameY) + 1;
 		Rectangle frame = new(tile.TileFrameX, tile.TileFrameY % 198, 44, 16);
@@ -137,6 +165,7 @@ internal class OceanKelp : ModTile
 		{
 			bool useClump = (i + j) % 3 + j % 4 + i % 3 == 0; // Deterministic "random" for switching up the clump type
 			int clump = k;
+			Vector2 realPos = drawPos + new Vector2(ClumpOffsets[clump] + GetOffset(i, j), 0);
 
 			if (useClump)
 			{
@@ -146,14 +175,29 @@ internal class OceanKelp : ModTile
 					clump = 1;
 			}
 
-			Vector2 realPos = drawPos + new Vector2(ClumpOffsets[clump] + GetOffset(i, j), 0);
-			Color color = Lighting.GetColor(i, j, Color.Lerp(Color.White, Color.Black, clump / (float)clumpAmount));
-			frame.X = GetGroupFrameX(i + clump, j);
-
-			spriteBatch.Draw(tex, realPos, frame, color, 0f, new Vector2(23, 16), 1f, SpriteEffects.None, 0);
+			if (tile.TileFrameX == ClumpX)
+				DrawClump(i, j, spriteBatch, clumpAmount, frame, realPos, clump);
+			else
+				DrawSingleKelp(i, j, spriteBatch, tex, clumpAmount, frame, realPos, clump);
 		}
 
 		return false;
+	}
+
+	private static void DrawClump(int i, int j, SpriteBatch spriteBatch, int clumpAmount, Rectangle frame, Vector2 drawPos, int clump)
+	{
+		Color color = Lighting.GetColor(i, j, Color.Lerp(Color.White, Color.Black, clump / (float)clumpAmount));
+		frame = new Rectangle(GetGroupFrameX(i, j) == 48 ? 76 : 2, frame.Y * 34, 72, 32);
+
+		spriteBatch.Draw(Clump.Value, drawPos, frame, color, 0f, new Vector2(36, 16), 1f, SpriteEffects.None, 0);
+	}
+
+	private static void DrawSingleKelp(int i, int j, SpriteBatch spriteBatch, Texture2D tex, int clumpAmount, Rectangle frame, Vector2 drawPos, int clump)
+	{
+		Color color = Lighting.GetColor(i, j, Color.Lerp(Color.White, Color.Black, clump / (float)clumpAmount));
+		frame.X = GetGroupFrameX(i + clump, j);
+
+		spriteBatch.Draw(tex, drawPos, frame, color, 0f, new Vector2(23, 16), 1f, SpriteEffects.None, 0);
 	}
 
 	public float GetOffset(int i, int j, float sOffset = 0f)
