@@ -203,43 +203,44 @@ public class OceanGeneration : ModSystem
 				//Growing kelp
 				if (WorldGen.genRand.Next(5) < 2 && tilesFromInnerEdge < 133 && Main.tile[i, j].TileType == TileID.Sand && !Main.tile[i, j - 1].HasTile)
 				{
-					Framing.GetTileSafely(i, j).Slope = SlopeType.Solid;
-					Framing.GetTileSafely(i, j).IsHalfBlock = false;
+					// TODO - Kelp growing
+					//Framing.GetTileSafely(i, j).Slope = SlopeType.Solid;
+					//Framing.GetTileSafely(i, j).IsHalfBlock = false;
 
-					int height = WorldGen.genRand.Next(6, 23) + 2;
-					int clumpHeight = !WorldGen.genRand.NextBool(8) ? WorldGen.genRand.Next(19) + 2 : 0;
-					int clump2Height = WorldGen.genRand.NextBool(3) ? WorldGen.genRand.Next(9) + 2 : 0;
+					//int height = WorldGen.genRand.Next(6, 23) + 2;
+					//int clumpHeight = !WorldGen.genRand.NextBool(8) ? WorldGen.genRand.Next(19) + 2 : 0;
+					//int clump2Height = WorldGen.genRand.NextBool(3) ? WorldGen.genRand.Next(9) + 2 : 0;
 
-					int offset = 1;
-					while (Framing.GetTileSafely(i, j - offset).LiquidAmount == 255 && height > 0)
-					{
-						WorldGen.PlaceTile(i, j - offset, ModContent.TileType<OceanKelp>(), true);
+					//int offset = 1;
+					//while (Framing.GetTileSafely(i, j - offset).LiquidAmount == 255 && height > 0)
+					//{
+					//	WorldGen.PlaceTile(i, j - offset, ModContent.TileType<OceanKelp>(), true);
 
-						if (Main.tile[i, j - offset].TileType != ModContent.TileType<OceanKelp>())
-							break; //Failed to place
+					//	if (Main.tile[i, j - offset].TileType != ModContent.TileType<OceanKelp>())
+					//		break; //Failed to place
 
-						var t = Framing.GetTileSafely(i, j - offset);
-						if (clumpHeight > 0)
-						{
-							t.TileFrameX += OceanKelp.ClumpFrameOffset;
-							clumpHeight--;
-						}
+					//	var t = Framing.GetTileSafely(i, j - offset);
+					//	if (clumpHeight > 0)
+					//	{
+					//		t.TileFrameX += OceanKelp.ClumpFrameOffset;
+					//		clumpHeight--;
+					//	}
 
-						if (clump2Height > 0)
-						{
-							t.TileFrameX += OceanKelp.ClumpFrameOffset;
-							clump2Height--;
-						}
+					//	if (clump2Height > 0)
+					//	{
+					//		t.TileFrameX += OceanKelp.ClumpFrameOffset;
+					//		clump2Height--;
+					//	}
 
-						if (WorldGen.genRand.NextBool(10) && height - 1 == 0) //Flower top
-						{
-							t.TileFrameX = 18;
-							t.TileFrameY = 108;
-						}
+					//	if (WorldGen.genRand.NextBool(10) && height - 1 == 0) //Flower top
+					//	{
+					//		t.TileFrameX = 18;
+					//		t.TileFrameY = 108;
+					//	}
 
-						offset++;
-						height--;
-					}
+					//	offset++;
+					//	height--;
+					//}
 				}
 			}
 		}
