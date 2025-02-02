@@ -7,6 +7,11 @@ using static SpiritReforged.Common.TileCommon.DrawOrderAttribute;
 
 namespace SpiritReforged.Common.TileCommon;
 
+/// <summary>
+/// Defines the draw orders for a given tile.<br/>
+/// This attribute is not inherited.
+/// </summary>
+/// <param name="layers"></param>
 [AttributeUsage(AttributeTargets.Class)]
 internal class DrawOrderAttribute(params Layer[] layers) : Attribute
 {

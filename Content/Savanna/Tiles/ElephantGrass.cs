@@ -145,7 +145,7 @@ public class ElephantGrass : ModTile, IConvertibleTile
 		}
 	}
 
-	public virtual bool Convert(IEntitySource source, ConversionType type, int i, int j)
+	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
 	{
 		if (source is EntitySource_Parent { Entity: Projectile })
 			return false;

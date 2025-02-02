@@ -9,7 +9,7 @@ public class OceanGlobalTile : GlobalTile
 {
 	public override void RandomUpdate(int i, int j, int type)
 	{
-		int[] sands = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand]; //All valid sands
+		int[] sands = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand, TileID.Pearlsand]; //All valid sands
 		int[] woods = [TileID.WoodBlock, TileID.BorealWood, TileID.Ebonwood, TileID.DynastyWood, TileID.RichMahogany, TileID.PalmWood, TileID.Shadewood, TileID.WoodenBeam,
 			ModContent.TileType<DriftwoodTile>(), TileID.Pearlwood];
 
@@ -20,11 +20,11 @@ public class OceanGlobalTile : GlobalTile
 		{
 			if (Framing.GetTileSafely(i, j - 1).LiquidAmount > 200) //water stuff
 			{
-				if (Main.rand.NextBool(25))
+				if (Main.rand.NextBool(35))
 					WorldGen.PlaceTile(i, j - 1, ModContent.TileType<OceanKelp>(), true); //Kelp spawning
 
 				bool openSpace = !Framing.GetTileSafely(i, j - 2).HasTile;
-				if (openSpace && Main.rand.NextBool(40)) //1x2 kelp
+				if (openSpace && Main.rand.NextBool(60)) //1x2 kelp
 					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Kelp1x2>(), true);
 
 				openSpace = !Framing.GetTileSafely(i + 1, j - 1).HasTile && !Framing.GetTileSafely(i + 1, j - 2).HasTile && !Framing.GetTileSafely(i, j - 2).HasTile;

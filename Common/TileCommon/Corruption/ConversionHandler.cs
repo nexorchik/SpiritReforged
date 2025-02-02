@@ -1,5 +1,6 @@
 ﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using MonoMod.RuntimeDetour;
 using System.Linq;
 using Terraria.DataStructures;
 
@@ -7,10 +8,23 @@ namespace SpiritReforged.Common.TileCommon.Corruption;
 
 internal class ConversionHandler : ILoadable
 {
+	public static IEntitySource ConversionSource = null;
+
+	private static Hook ProjAIHook = null;
+
 	public void Load(Mod mod)
 	{
 		On_WorldGen.Convert += OnConvert;
 		IL_WorldGen.GERunner += OnHardmodeEvils;
+
+		ProjAIHook = new Hook(typeof(ProjectileLoader).GetMethod(nameof(ProjectileLoader.ProjectileAI)), AddConversionSource);
+	}
+
+	private void AddConversionSource(On_Projectile.orig_VanillaAI orig, Projectile self)
+	{
+		ConversionSource = self.GetSource_FromAI();
+		orig(self);
+		ConversionSource = null;
 	}
 
 	private void OnHardmodeEvils(ILContext il)
@@ -55,7 +69,7 @@ internal class ConversionHandler : ILoadable
 			_ => ConversionType.Purify,
 		};
 
-		ConvertArea(new Point16(i, j), size, type);
+		ConvertArea(new Point16(i, j), size, type, ConversionSource);
 	}
 
 	/// <summary> Converts an area of tiles using the selected <see cref="ConversionType"/>. </summary>
