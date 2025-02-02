@@ -10,8 +10,7 @@ public class JellyCandle : ModItem
 	public override void SetDefaults()
 	{
 		Item.CloneDefaults(ItemID.Fish);
-		Item.width = 30;
-		Item.height = 46;
+		Item.width = Item.height = 20;
 		Item.shoot = ModContent.ProjectileType<JellyfishPet>();
 		Item.buffType = ModContent.BuffType<JellyfishBuff>();
 	}

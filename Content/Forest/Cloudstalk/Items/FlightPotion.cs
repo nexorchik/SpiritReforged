@@ -8,8 +8,8 @@ public class FlightPotion : ModItem
 
 	public override void SetDefaults()
 	{
-		Item.width = 32;
-		Item.height = 26;
+		Item.width = 28;
+		Item.height = 30;
 		Item.rare = ItemRarityID.Blue;
 		Item.maxStack = Item.CommonMaxStack;
 		Item.useStyle = ItemUseStyleID.DrinkLiquid;

@@ -16,8 +16,8 @@ public class DoubleJumpPotion : ModItem
 
 	public override void SetDefaults()
 	{
-		Item.width = 20;
-		Item.height = 34;
+		Item.width = 16;
+		Item.height = 32;
 		Item.rare = ItemRarityID.Blue;
 		Item.maxStack = Item.CommonMaxStack;
 		Item.useStyle = ItemUseStyleID.DrinkLiquid;
