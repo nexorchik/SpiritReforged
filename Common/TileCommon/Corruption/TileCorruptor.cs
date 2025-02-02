@@ -17,6 +17,7 @@ internal static class TileCorruptor
 		if (tile.HasTile && ModContent.GetModTile(tile.TileType) is IConvertibleTile conv)
 		{
 			int oldType = Main.tile[i, j].TileType;
+
 			if (conv.Convert(source, type, i, j) && oldType != Main.tile[i, j].TileType) //There was a tile change
 			{
 				WorldGen.SquareTileFrame(i, j);

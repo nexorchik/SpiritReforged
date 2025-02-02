@@ -1,19 +1,24 @@
 ﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.Corruption;
+using Terraria.DataStructures;
+using Terraria.GameContent.UI.Elements;
 
 namespace SpiritReforged.Content.Ocean.Tiles;
 
 [DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
-internal class OceanKelp : ModTile
+public class OceanKelp : ModTile, IConvertibleTile
 {
 	private const int ClumpX = 92;
 
-	private static Asset<Texture2D> Clump = null;
+	private static readonly Dictionary<int, Asset<Texture2D>> ClumpTextures = [];
+
+	private Asset<Texture2D> Clump => ClumpTextures[Type];
 
 	private readonly static int[] ClumpOffsets = [0, -8, 8];
 
 	public override void SetStaticDefaults()
 	{
-		Clump = ModContent.Request<Texture2D>(Texture + "_Clump");
+		ClumpTextures.Add(Type, ModContent.Request<Texture2D>(Texture + "_Clump"));
 
 		Main.tileSolid[Type] = false;
 		Main.tileBlockLight[Type] = false;
@@ -23,15 +28,25 @@ internal class OceanKelp : ModTile
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.WaterPlacement = LiquidPlacement.OnlyInFullLiquid;
-		TileObjectData.newTile.AnchorBottom = new Terraria.DataStructures.AnchorData(AnchorType.SolidTile | AnchorType.AlternateTile, 1, 0);
-		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand];
-		TileObjectData.newTile.AnchorAlternateTiles = [Type];
+		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.AlternateTile, 1, 0);
+
+		// Anchors accept all variants as otherwise the custom anchoring is too inconsistent.
+		// The anchors, however, do automatically change the kelp, so it works out.
+		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Ebonsand, TileID.Crimsand, TileID.Pearlsand];
+		TileObjectData.newTile.AnchorAlternateTiles = [ModContent.TileType<OceanKelp>(), ModContent.TileType<OceanKelpCorrupt>(), ModContent.TileType<OceanKelpCrimson>(), 
+			ModContent.TileType<OceanKelpHallowed>()];
+
+		PreAddObjectData();
 		TileObjectData.addTile(Type);
 
-		AddMapEntry(new Color(21, 92, 19));
-		RegisterItemDrop(ModContent.ItemType<Items.Kelp>()); //Reiterate
-		DustType = DustID.Grass;
+		RegisterItemDrop(ModContent.ItemType<Items.Kelp>());
 		HitSound = SoundID.Grass;
+	}
+
+	public virtual void PreAddObjectData()
+	{
+		AddMapEntry(new(104, 156, 70));
+		DustType = DustID.Grass;
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
@@ -51,22 +66,26 @@ internal class OceanKelp : ModTile
 		Tile tile = Main.tile[i, j];
 		Tile above = Main.tile[i, j - 1];
 		Tile below = Main.tile[i, j + 1];
+		var data = TileObjectData.GetTileData(Type, 0);
 
-		if (!below.HasTile || below.TileType != TileID.Sand && below.TileType != Type)
+		// IsValidTileAnchor doesn't account for alternate tiles, so the Kelp check is seperate
+		if (!below.HasTile || !data.isValidTileAnchor(below.TileType) && (below.TileType < TileID.Count || ModContent.GetModTile(below.TileType) is not OceanKelp))
 		{
 			WorldGen.KillTile(i, j, false);
 
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				NetMessage.SendTileSquare(-1, i, j);
-			
+
 			return false;
 		}
 
+		// Gets the group frame (left or right) for the given tile
 		short frameX = GetGroupFrameX(i, j);
 
 		tile.TileFrameX = frameX;
 		int oldFrameY = tile.TileFrameY;
 
+		// Sets the tile as a clump randomly and if the conditions are right (tile above, no clumps below nearby)
 		if (Main.rand.NextBool(12) && above.HasTile && above.TileType == Type && CanPlaceClump(i, j))
 		{
 			tile.TileFrameX = ClumpX;
@@ -74,7 +93,7 @@ internal class OceanKelp : ModTile
 			return false;
 		}
 
-		SetFrameY(tile, above, below, Type, resetFrame);
+		SetFrameY(tile, above, below, Type);
 
 		// Set to the same clump status as the old frame
 		tile.TileFrameY += (short)(GetClumpNumber(oldFrameY) * 198);
@@ -111,7 +130,7 @@ internal class OceanKelp : ModTile
 	/// <summary>
 	/// Sets the given tile's frame Y based on the conditions around it.
 	/// </summary>
-	public static void SetFrameY(Tile tile, Tile above, Tile below, int type, bool resetFrame)
+	public static void SetFrameY(Tile tile, Tile above, Tile below, int type)
 	{
 		if (above.TileType != type) // Prioritize using the top texture if the tile above isn't kelp
 		{
@@ -135,14 +154,14 @@ internal class OceanKelp : ModTile
 	{
 		Tile tile = Main.tile[i, j];
 
-		if (tile.TileFrameY <= 18 && Main.rand.NextBool(10))
+		if (tile.TileFrameY <= 18 && Main.rand.NextBool(10)) // Grow cut tops
 		{
 			tile.TileFrameY += 36;
 
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				NetMessage.SendTileSquare(-1, i, j);
 		}
-		else if (tile.TileFrameY > 18 && Main.rand.NextBool(60) && !Main.tile[i, j - 1].HasTile)
+		else if (tile.TileFrameY > 18 && Main.rand.NextBool(35) && !Main.tile[i, j - 1].HasTile) // Grow kelp itself
 		{
 			WorldGen.PlaceTile(i, j - 1, Type, true);
 
@@ -150,7 +169,7 @@ internal class OceanKelp : ModTile
 				NetMessage.SendTileSquare(-1, i, j - 1);
 		}
 
-		if (Main.rand.NextBool(15))
+		if (Main.rand.NextBool(40)) // Adds an additional "clump" to give depth & add a back layer
 		{
 			bool canAddClump = Main.tile[i, j + 1].TileType != Type || GetClumpNumber(i, j + 1) != GetClumpNumber(i, j);
 
@@ -171,7 +190,10 @@ internal class OceanKelp : ModTile
 	public override void NearbyEffects(int i, int j, bool closer) //Dust effects
 	{
 		if (Main.rand.Next(1000) <= 1) //Spawns little bubbles
-			Dust.NewDustPerfect(new Vector2(i * 16, j * 16) + new Vector2(2 + Main.rand.Next(12), Main.rand.Next(16)), 34, new Vector2(Main.rand.NextFloat(-0.08f, 0.08f), Main.rand.NextFloat(-0.2f, -0.02f)));
+		{
+			Vector2 pos = new Vector2(i * 16, j * 16) + new Vector2(2 + Main.rand.Next(12), Main.rand.Next(16));
+			Dust.NewDustPerfect(pos, 34, new Vector2(Main.rand.NextFloat(-0.08f, 0.08f), Main.rand.NextFloat(-0.2f, -0.02f)));
+		}
 	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
@@ -205,13 +227,13 @@ internal class OceanKelp : ModTile
 			if (tile.TileFrameX == ClumpX)
 				DrawClump(i, j, spriteBatch, clumpAmount, frame, realPos, clump);
 			else
-				DrawSingleKelp(i, j, spriteBatch, tex, clumpAmount, frame, realPos, clump);
+				DrawSingleKelp(i, j, spriteBatch, tex, clumpAmount, frame, realPos, clump, k);
 		}
 
 		return false;
 	}
 
-	private static void DrawClump(int i, int j, SpriteBatch spriteBatch, int clumpAmount, Rectangle frame, Vector2 drawPos, int clump)
+	private void DrawClump(int i, int j, SpriteBatch spriteBatch, int clumpAmount, Rectangle frame, Vector2 drawPos, int clump)
 	{
 		Color color = Lighting.GetColor(i, j, Color.Lerp(Color.White, Color.Black, clump / (float)clumpAmount));
 		frame = new Rectangle(GetGroupFrameX(i, j) == 48 ? 76 : 2, frame.Y / 18 * 34, 72, 32);
@@ -219,10 +241,13 @@ internal class OceanKelp : ModTile
 		spriteBatch.Draw(Clump.Value, drawPos, frame, color, 0f, new Vector2(36, 16), 1f, SpriteEffects.None, 0);
 	}
 
-	private static void DrawSingleKelp(int i, int j, SpriteBatch spriteBatch, Texture2D tex, int clumpAmount, Rectangle frame, Vector2 drawPos, int clump)
+	private static void DrawSingleKelp(int i, int j, SpriteBatch spriteBatch, Texture2D tex, int clumpAmount, Rectangle frame, Vector2 drawPos, int clump, int realClump)
 	{
 		Color color = Lighting.GetColor(i, j, Color.Lerp(Color.White, Color.Black, clump / (float)clumpAmount));
 		frame.X = GetGroupFrameX(i + clump, j);
+
+		if (clump != 0 && GetClumpNumber(Main.tile[i, j - 1]) < realClump)
+			frame.Y = 0;
 
 		spriteBatch.Draw(tex, drawPos, frame, color, 0f, new Vector2(23, 16), 1f, SpriteEffects.None, 0);
 	}
@@ -240,199 +265,68 @@ internal class OceanKelp : ModTile
 
 		return sin;
 	}
+
+	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
+	{
+		if (source is EntitySource_Parent { Entity: Projectile })
+			return false;
+
+		var tile = Main.tile[i, j];
+		int oldType = tile.TileType;
+
+		tile.TileType = (ushort)(type switch
+		{
+			ConversionType.Hallow => ModContent.TileType<OceanKelpHallowed>(),
+			ConversionType.Crimson => ModContent.TileType<OceanKelpCrimson>(),
+			ConversionType.Corrupt => ModContent.TileType<OceanKelpCorrupt>(),
+			_ => ModContent.TileType<OceanKelp>(),
+		});
+
+		if (oldType != tile.TileType)
+			TileCorruptor.Convert(new EntitySource_TileUpdate(i, j), type, i, j - 1);
+
+		return true;
+	}
 }
 
-//public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak) //Sets and randomizes tile frame
-//{
-//	var t = Framing.GetTileSafely(i, j); //this tile :)
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
+public class OceanKelpCorrupt : OceanKelp
+{
+	public override void PreAddObjectData()
+	{
+		AddMapEntry(new Color(129, 120, 143));
 
-//	int totalOffset = t.TileFrameX / ClumpFrameOffset;
-//	int realFrameX = t.TileFrameX - ClumpFrameOffset * totalOffset; //Adjusted so its easy to read
+		TileID.Sets.AddCorruptionTile(Type);
+		TileID.Sets.Corrupt[Type] = true;
 
-//	if (realFrameX < 36 && t.TileFrameY < 108) //Used for adjusting stem/top; does not include grown top or leafy stems
-//	{
-//		if (!Framing.GetTileSafely(i, j - 1).HasTile) //If top
-//			t.TileFrameX = (short)(18 + ClumpFrameOffset * totalOffset);
-//		else //If stem
-//			t.TileFrameX = (short)(0 + ClumpFrameOffset * totalOffset);
-//		realFrameX = 0;
-//	}
+		DustType = DustID.Corruption;
+	}
+}
 
-//	if (realFrameX == 0) //If stem
-//		t.TileFrameY = (short)(Main.rand.Next(6) * 18); //Stem
-//	else if (realFrameX == 18)
-//	{
-//		if (t.TileFrameY >= 108) //If grown top
-//			t.TileFrameY = (short)(Main.rand.Next(4) * 18 + 108);
-//		else //If ungrown top
-//			t.TileFrameY = (short)(Main.rand.Next(6) * 18);
-//	}
-//	else //Leafy stem
-//		t.TileFrameY = (short)(18 * Main.rand.Next(8));
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
+public class OceanKelpCrimson : OceanKelp
+{
+	public override void PreAddObjectData()
+	{
+		AddMapEntry(new Color(191, 107, 76));
 
-//	if (t.TileFrameY is 152 and >= 108)
-//		t.TileFrameY = (short)(Main.rand.Next(6) * 18);
+		TileID.Sets.AddCrimsonTile(Type);
+		TileID.Sets.Crimson[Type] = true;
 
-//	var below = Framing.GetTileSafely(i, j + 1);
-//	if (!below.HasTile || below.IsHalfBlock || below.TopSlope) //KILL ME if there's no ground below me
-//		WorldGen.KillTile(i, j);
+		DustType = DustID.CrimsonPlants;
+	}
+}
 
-//	return false;
-//}
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
+public class OceanKelpHallowed : OceanKelp
+{
+	public override void PreAddObjectData()
+	{
+		AddMapEntry(new Color(111, 183, 170));
 
-//public override void RandomUpdate(int i, int j) //Used for growing and "growing"
-//{
-//	var t = Framing.GetTileSafely(i, j);
+		TileID.Sets.Hallow[Type] = true;
+		TileID.Sets.HallowBiome[Type] = 1;
 
-//	int totalOffset = t.TileFrameX / ClumpFrameOffset;
-//	int realFrameX = t.TileFrameX - ClumpFrameOffset * totalOffset; //Adjusted so its easy to read
-
-//	if (!Framing.GetTileSafely(i, j - 1).HasTile && Main.rand.NextBool(4) && t.LiquidAmount > 155 && t.TileFrameX < 36 && t.TileFrameY < 108) //Grows the kelp
-//	{
-//		int height = 1;
-
-//		while (Framing.GetTileSafely(i, j + height).HasTile && Framing.GetTileSafely(i, j + height).TileType == Type)
-//			height++;
-
-//		int maxHeight = Main.rand.Next(17, 23);
-//		if (height < maxHeight && !Main.tile[i, j - 1].HasTile)
-//		{
-//			WorldGen.PlaceTile(i, j - 1, Type, true, false);
-//			if (Main.rand.NextBool(12) && height == maxHeight - 1) //Flower top
-//			{
-//				Framing.GetTileSafely(i, j - 1).TileFrameX = 18;
-//				Framing.GetTileSafely(i, j - 1).TileFrameY = 108;
-//			}
-//		}
-//	}
-
-//	if (realFrameX == 18 && t.TileFrameY < 54 && t.LiquidAmount < 155) //Sprouts top
-//		t.TileFrameY = (short)(Main.rand.Next(2) * 18 + 54);
-
-//	if (realFrameX == 0 && Main.rand.NextBool(3)) //"Places" side (just changes frame [we do a LOT of deception])
-//	{
-//		t.TileFrameY = (short)(18 * Main.rand.Next(8));
-//		t.TileFrameX = (short)(44 + totalOffset * ClumpFrameOffset);
-//	}
-
-//	bool validGrowthBelow = Framing.GetTileSafely(i, j + 1).TileType != Type || Framing.GetTileSafely(i, j + 1).TileType == Type && Framing.GetTileSafely(i, j + 1).TileFrameX >= ClumpFrameOffset;
-//	if (realFrameX == 0 && t.TileFrameX < ClumpFrameOffset * 2 && validGrowthBelow) //grows "clumps"
-//	{
-//		bool validBelow = Framing.GetTileSafely(i, j + 1).TileFrameX >= ClumpFrameOffset && Framing.GetTileSafely(i, j + 1).TileFrameX < ClumpFrameOffset * 2 && t.TileFrameX < ClumpFrameOffset;
-//		if (Framing.GetTileSafely(i, j + 1).TileType != Type && t.TileFrameX < ClumpFrameOffset * 2) //Grows clump if above sand
-//			t.TileFrameX += ClumpFrameOffset;
-//		else if (validBelow) //grows clump 1
-//			t.TileFrameX += ClumpFrameOffset;
-//		else if (Framing.GetTileSafely(i, j + 1).TileFrameX >= ClumpFrameOffset * 2 && t.TileFrameX < ClumpFrameOffset * 2) //grows clump 2
-//			t.TileFrameX += ClumpFrameOffset;
-//	}
-//}
-
-//public override bool PreDraw(int i, int j, SpriteBatch spriteBatch) //Drawing woo
-//{
-//	Tile t = Framing.GetTileSafely(i, j); //ME!
-//	Texture2D tile = TextureAssets.Tile[Type].Value; //Associated texture - loaded automatically
-
-//	int totalOffset = t.TileFrameX / ClumpFrameOffset; //Gets offset
-//	int realFrameX = t.TileFrameX - ClumpFrameOffset * totalOffset; //Adjusted so its easy to read
-
-//	float xOff = GetOffset(i, j, t.TileFrameX); //Sin offset.
-
-//	var source = new Rectangle(t.TileFrameX, t.TileFrameY, 16, 16); //Source rectangle used for drawing
-//	if (realFrameX == 44)
-//		source = new Rectangle(t.TileFrameX, t.TileFrameY, 26, 16);
-
-//	Vector2 drawPos = this.DrawPosition(i, j); //Draw position
-
-//	bool[] hasClumps = [GetKelpTile(i, j - 1) >= ClumpFrameOffset, GetKelpTile(i, j - 1) >= ClumpFrameOffset * 2]; //Checks for if there's a grown clump above this clump
-
-//	for (int v = totalOffset; v >= 0; --v)
-//	{
-//		Rectangle realSource = source;
-//		Color col = Color.White; //Lighting colour
-//		Vector2 realPos = drawPos;
-
-//		if (v == 0)
-//			xOff = GetOffset(i, j, realSource.X); //Grab offset properly
-//		else if (v == 1)
-//		{
-//			realPos.X -= 8f + i % 2; //Plain visual offset
-
-//			if (realSource.Y < 108) //"Randomzies" frame (it's consistent but we do a little more deception)
-//			{
-//				realSource.Y += 18;
-//				if (realSource.Y >= 108)
-//					realSource.Y -= 108;
-//			}
-
-//			col = new Color(169, 169, 169); //Makes it darker for depth
-
-//			if (!hasClumps[0]) //Adjust frame so it's a kelp top
-//			{
-//				realSource.X = 18;
-//				realSource.Width = 16;
-//				if (realSource.Y >= 108)
-//					realSource.Y -= 36;
-//			}
-
-//			xOff = GetOffset(i, j, realSource.X, -0.75f + i % 4 * 0.4f);
-//		}
-//		else if (v == 2) //Repeat lines 150-167 but slight offsets
-//		{
-//			realPos.X += 6f + i % 2;
-
-//			if (realSource.Y < 108)
-//			{
-//				realSource.Y -= 18;
-//				if (realSource.Y < 0)
-//					realSource.Y += 108;
-//			}
-
-//			col = new Color(140, 140, 140);
-
-//			if (!hasClumps[1]) //Adjust frame to be a kelp top
-//			{
-//				realSource.X = 18;
-//				realSource.Width = 16;
-//				if (realSource.Y >= 108)
-//					realSource.Y -= 36;
-//			}
-
-//			xOff = GetOffset(i, j, realSource.X, -1.55f + i % 4 * 0.4f);
-//		}
-
-//		col = Lighting.GetColor(i, j, col);
-//		spriteBatch.Draw(tile, realPos - new Vector2(xOff, 0), realSource, new Color(col.R, col.G, col.B, 255), 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
-//	}
-
-//	return false; //don't draw the BORING, STUPID vanilla tile
-//}
-
-//public float GetOffset(int i, int j, int frameX, float sOffset = 0f)
-//{
-//	float sin = (float)Math.Sin((Main.GameUpdateCount + i * 24 + j * 19) * (0.04f * (!Lighting.NotRetro ? 0f : 1)) + sOffset) * 2.3f;
-//	if (Framing.GetTileSafely(i, j + 1).TileType != Type) //Adjusts the sine wave offset to make it look nicer when closer to ground
-//		sin *= 0.25f;
-//	else if (Framing.GetTileSafely(i, j + 2).TileType != Type)
-//		sin *= 0.5f;
-//	else if (Framing.GetTileSafely(i, j + 3).TileType != Type)
-//		sin *= 0.75f;
-
-//	if (frameX > ClumpFrameOffset) 
-//		frameX -= ClumpFrameOffset;
-
-//	if (frameX > ClumpFrameOffset) 
-//		frameX -= ClumpFrameOffset; //repeat twice to adjust properly
-
-//	if (frameX == 44)
-//		sin += 4; //Adjusts since the source is bigger here
-
-//	return sin;
-//}
-
-//public int GetKelpTile(int i, int j)
-//{
-//	if (Framing.GetTileSafely(i, j).HasTile && Framing.GetTileSafely(i, j).TileType == Type)
-//		return Framing.GetTileSafely(i, j).TileFrameX;
-//	return -1;
-//}
+		DustType = DustID.HallowedPlants;
+	}
+}
