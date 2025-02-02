@@ -15,6 +15,7 @@ internal class TileCorruptionGlobalTile : GlobalTile
 
 		TileExtensions.GetTopLeft(ref x, ref y);
 		var data = TileObjectData.GetTileData(Main.tile[x, y]);
+
 		if (data != null)
 		{
 			y += data.Height;

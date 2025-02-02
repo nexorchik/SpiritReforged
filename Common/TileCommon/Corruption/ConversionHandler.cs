@@ -94,10 +94,6 @@ internal class ConversionHandler : ILoadable
 					continue; //Purification powder can't cleanse the hallow
 
 				TileCorruptor.Convert(source, type, x, y);
-
-				// Corrupt the tiles above the solid tile so the plants are converted properly
-				if (WorldGen.SolidOrSlopedTile(x, y) && !WorldGen.SolidOrSlopedTile(x, y - 1) && Main.tile[x, y - 1].HasTile)					
-					TileCorruptor.Convert(new EntitySource_TileUpdate(x, y), type, x, y - 1);
 			}
 		}
 	}
