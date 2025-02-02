@@ -39,7 +39,11 @@ internal class WaterEdits : ModSystem
 
 		c.Emit(OpCodes.Ldloc_S, (byte)8);
 		c.Emit(OpCodes.Ldloc_S, (byte)4);
-		c.EmitDelegate<Action<int, int>>(static (int type, int y) => DontModifyLiquidRendering = type == WaterStyleID.Lava || type == LiquidID.Honey || y > Main.worldSurface);
+		c.EmitDelegate(static (int type, int y) =>
+		{
+			// Disable transparency on lava, honey, or subsurface liquid
+			DontModifyLiquidRendering = type == WaterStyleID.Lava || type == LiquidID.Honey || y > Main.worldSurface;
+		});
 	}
 
 	private void HijackDrawBlack(ILContext il)
@@ -82,7 +86,7 @@ internal class WaterEdits : ModSystem
 	{
 		if (liquidType != WaterStyleID.Lava && liquidType != WaterStyleID.Honey && pos.Y < Main.worldSurface)
 		{
-			DrawingLiquid = true;
+			DrawingLiquid = Main.LocalPlayer.ZoneBeach;
 
 			ModifyVertexColors(ref colors, 0.8f);
 		}
@@ -120,7 +124,7 @@ internal class WaterEdits : ModSystem
 
 	private static void CheckLiquid(On_LiquidRenderer.orig_DrawNormalLiquids orig, LiquidRenderer self, SpriteBatch batch, Vector2 off, int style, float alpha, bool bg)
 	{
-		DrawingLiquid = !DontModifyLiquidRendering;
+		DrawingLiquid = !DontModifyLiquidRendering && Main.LocalPlayer.ZoneBeach;
 		orig(self, batch, off, style, alpha, bg);
 		DrawingLiquid = false;
 	}
