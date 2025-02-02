@@ -73,7 +73,6 @@ public class ReefSpearProjectile : ModProjectile
 
 		if(Projectile.timeLeft > _maxTimeleft)
 			Windup(p, ref factor, ref stretchAmount);
-
 		else
 			StabCombo(ref length, ref factor, ref stretchAmount);
 
@@ -119,11 +118,10 @@ public class ReefSpearProjectile : ModProjectile
 		{
 			if(Projectile.timeLeft == stabTimes[i])
 			{
-
 				if (_rotationDirection == 0)
 					_rotationDirection = 1;
 
-				_rotationDirection *= Main.rand.NextFloat(-1.2f, -0.8f);
+				_rotationDirection *= Main.rand.NextFloat(-.7f, -.5f);
 				if (Projectile.timeLeft == stabTimes[NUM_STABS - 1])
 					_rotationDirection = 0;
 

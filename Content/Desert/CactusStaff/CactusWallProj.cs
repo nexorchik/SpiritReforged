@@ -5,15 +5,13 @@ namespace SpiritReforged.Content.Desert.CactusStaff;
 
 public class CactusWallProj : ModProjectile
 {
-	private float FadeInCounter
-	{
-		get => Projectile.ai[0];
-		set => Projectile.ai[0] = value;
-	}
+	public ref float FadeInCounter => ref Projectile.ai[0];
 
+	/// <summary> The maximum number of hits that can be sustained before dying, counted with <see cref="Projectile.numHits"/>. </summary>
+	private const int MaxHits = 10;
 	private const int MaxTimeLeft = 15 * 60;
 
-	public override void SetStaticDefaults() => Main.projFrames[Projectile.type] = 3;
+	public override void SetStaticDefaults() => Main.projFrames[Type] = 3;
 
 	public override void SetDefaults()
 	{
@@ -66,6 +64,7 @@ public class CactusWallProj : ModProjectile
 	{
 		if (timeLeft <= 0)
 			return;
+
 		for (int i = 0; i < 4; ++i) //This is for offsetting position
 			for (int j = 0; j < 3; ++j) //This is for tripling per offset
 				Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y + i * 16), 16, 16, DustID.t_Cactus);
@@ -78,6 +77,12 @@ public class CactusWallProj : ModProjectile
 	{
 		SoundEngine.PlaySound(SoundID.NPCHit7 with { Volume = .65f }, Projectile.Center);
 		SoundEngine.PlaySound(SoundID.NPCHit11 with { Volume = .4f }, Projectile.Center);
+
+		if (Projectile.numHits >= MaxHits)
+		{
+			Projectile.netUpdate = true;
+			Projectile.Kill();
+		}
 	}
 
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)

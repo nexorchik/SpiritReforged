@@ -141,7 +141,10 @@ public class JellyfishMinion : BaseMinion
 
 				if (AiTimer >= AIMTIME)
 				{
-					AiState = AISTATE_DASH;
+					AiTimer = 0;
+					AiState = AISTATE_PREPARESHOOT;
+
+					/*AiState = AISTATE_DASH;
 					AiTimer = 0;
 					float DashSpeed = 26;
 					Projectile.velocity = Projectile.DirectionTo(target.Center) * DashSpeed;
@@ -162,12 +165,12 @@ public class JellyfishMinion : BaseMinion
 							var particleVelocity = Projectile.velocity * Main.rand.NextFloat(0.1f, 0.25f);
 							ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center + Main.rand.NextVector2Circular(10, 10), particleVelocity, particleColor, Main.rand.NextFloat(0.4f, 0.6f), 50, 3, delegate (Particle p) { p.Velocity *= 0.97f; }));
 						}
-					}
+					}*/
 				}
 
 				break;
 
-			case AISTATE_DASH:
+			/*case AISTATE_DASH:
 				//put vfx here maybe
 
 				Projectile.velocity *= 0.96f;
@@ -180,7 +183,7 @@ public class JellyfishMinion : BaseMinion
 					Projectile.netUpdate = true;
 				}
 
-				break;
+				break;*/
 
 			case AISTATE_PREPARESHOOT:
 				float progress = AiTimer / RISETIME;
@@ -226,8 +229,12 @@ public class JellyfishMinion : BaseMinion
 						false,
 						0.3f).WithSkew(0.6f, aimDirection.ToRotation() + MathHelper.Pi));
 
-					var bolt = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection * JellyfishBolt.HITSCAN_STEP, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0, 0, 3);
-					bolt.netUpdate = true;
+					PreNewProjectile.New(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection * JellyfishBolt.HITSCAN_STEP, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0, 0, 3, delegate (Projectile p)
+					{
+						if (p.ModProjectile is JellyfishBolt jellyfishBolt)
+							jellyfishBolt.startPos = p.Center;
+					});
+
 					Projectile.netUpdate = true;
 					Projectile.velocity = 0.5f * new Vector2(-xSpeed * aimDirection.X, -ySpeed);
 				}

@@ -50,7 +50,7 @@ public class Blunderbuss : ModItem
 		//Spawn a harmless animated projectile
 		Projectile.NewProjectile(source, position, unit, ModContent.ProjectileType<BlunderbussProj>(), 0, 0, player.whoAmI);
 
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 6; i++)
 		{
 			PreNewProjectile.New(source, position, velocity.RotatedByRandom(spread) * Main.rand.NextFloat(1f - speedVariance, 1f + speedVariance), type, damage, knockback, player.whoAmI, preSpawnAction: (Projectile projectile) =>
 			{

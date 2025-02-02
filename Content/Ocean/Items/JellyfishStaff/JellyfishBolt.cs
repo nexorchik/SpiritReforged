@@ -15,16 +15,10 @@ public class JellyfishBolt : ModProjectile
 		set => Projectile.ai[0] = value ? 1 : 0;
 	}
 
-	public bool SetSpawnPos
-	{
-		get => (int)Projectile.ai[1] != 0;
-		set => Projectile.ai[1] = value ? 1 : 0;
-	}
-
 	public static int MAX_CHAIN_DISTANCE => (int)(JellyfishMinion.SHOOT_RANGE * 0.66f);
 	public static int HITSCAN_STEP { get; set; } = 5;
 
-	public Vector2 BoltStartPos = new(0, 0);
+	public Vector2 startPos;
 
 	public override string Texture => "Terraria/Images/Projectile_1"; //Use a basic texture because this projectile is hidden
 
@@ -46,21 +40,11 @@ public class JellyfishBolt : ModProjectile
 		Projectile.ignoreWater = true;
 	}
 
-	public override void AI()
-	{
-		if (!SetSpawnPos)
-		{
-			BoltStartPos = Projectile.Center;
-			SetSpawnPos = true;
-			Projectile.netUpdate = true;
-		}
-	}
-
 	public override void OnKill(int timeLeft)
 	{
 		//If the projectile times out and doesn't hit something
 		if (timeLeft == 0 && Projectile.penetrate > 0 && !Main.dedServ)
-			ParticleHandler.SpawnParticle(new LightningParticle(BoltStartPos, Projectile.Center, ParticleColor, 30, 30f));
+			ParticleHandler.SpawnParticle(new LightningParticle(startPos, Projectile.Center, ParticleColor, 30, 30f));
 	}
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -68,7 +52,7 @@ public class JellyfishBolt : ModProjectile
 		if (!Main.dedServ)
 		{
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricSting") with { PitchVariance = 0.5f, Pitch = .65f, Volume = 0.8f, MaxInstances = 3 }, Projectile.Center);
-			ParticleHandler.SpawnParticle(new LightningParticle(BoltStartPos, target.Center, ParticleColor, 30, 30f));
+			ParticleHandler.SpawnParticle(new LightningParticle(startPos, target.Center, ParticleColor, 30, 30f));
 
 			HitEffects(target.Center);
 		}
@@ -80,7 +64,7 @@ public class JellyfishBolt : ModProjectile
 			{
 				Projectile.timeLeft = MAX_CHAIN_DISTANCE;
 				Projectile.velocity = Projectile.DirectionTo(newTarget.Center) * HITSCAN_STEP;
-				BoltStartPos = target.Center;
+				startPos = target.Center;
 				Projectile.netUpdate = true;
 				Projectile.damage = (int)(Projectile.damage * 0.8f);
 			}
@@ -93,11 +77,11 @@ public class JellyfishBolt : ModProjectile
 	{
 		if (!Main.dedServ)
 		{
-			ParticleHandler.SpawnParticle(new LightningParticle(BoltStartPos, Projectile.Center, ParticleColor, 30, 30f));
+			ParticleHandler.SpawnParticle(new LightningParticle(startPos, Projectile.Center, ParticleColor, 30, 30f));
 			HitEffects(Projectile.Center);
 		}
 
-		return base.OnTileCollide(oldVelocity);
+		return true;
 	}
 
 	private void HitEffects(Vector2 center)
@@ -124,7 +108,6 @@ public class JellyfishBolt : ModProjectile
 
 	private Color ParticleColor => IsPink ? new Color(255, 161, 225) : new Color(156, 255, 245);
 
-	public override void SendExtraAI(BinaryWriter writer) => writer.WriteVector2(BoltStartPos);
-
-	public override void ReceiveExtraAI(BinaryReader reader) => BoltStartPos = reader.ReadVector2();
+	public override void SendExtraAI(BinaryWriter writer) => writer.WriteVector2(startPos);
+	public override void ReceiveExtraAI(BinaryReader reader) => startPos = reader.ReadVector2();
 }

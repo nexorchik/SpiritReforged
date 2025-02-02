@@ -113,8 +113,8 @@ IridescentScale: {
 }
 
 OceanPendant: {
-	DisplayName: Seafarer's Pendant
-	Tooltip: Grants unhindered movement underwater
+	DisplayName: Merfolk's Treasure
+	Tooltip: Greatly enhanced underwater movement
 }
 
 ReefSpear: {
