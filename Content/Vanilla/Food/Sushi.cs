@@ -5,7 +5,7 @@ namespace SpiritReforged.Content.Vanilla.Food;
 
 public class Sushi : FoodItem
 {
-	internal override Point Size => new(44, 28);
+	internal override Point Size => new(26, 24);
 
 	public override bool CanUseItem(Player player)
 	{
