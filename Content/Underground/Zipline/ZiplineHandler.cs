@@ -1,5 +1,8 @@
-﻿using SpiritReforged.Common.PlayerCommon;
+﻿using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.PlayerCommon;
+using SpiritReforged.Content.Particles;
 using System.Linq;
+using Terraria.Audio;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Underground.Zipline;
@@ -55,12 +58,16 @@ internal class ZiplineHandler : ILoadable
 			zipline.Draw(Main.spriteBatch);
 	}
 
-	public static bool CheckZipline(Player player)
+	public static bool CheckZipline(Player player, out Zipline thisZipline)
 	{
+		thisZipline = null;
 		foreach (var zipline in ziplines)
 		{
 			if (zipline.OnZipline(player))
+			{
+				thisZipline = zipline;
 				return true;
+			}
 		}
 
 		return false;
@@ -77,11 +84,15 @@ internal class ZiplinePlayer : ModPlayer
 
 	public override void PreUpdateMovement()
 	{
-		bool onZipline = ZiplineHandler.CheckZipline(Player);
+		bool onZipline = ZiplineHandler.CheckZipline(Player, out var line);
 
 		if (onZipline)
 		{
-			Player.moveSpeed += .2f;
+			float speedLimit = Math.Max(Player.maxRunSpeed * 2.2f, Player.accRunSpeed);
+
+			if (Player.velocity.Length() < speedLimit)
+				Player.velocity *= 1.05f + Math.Abs(line.Angle() / 20f);
+
 			wasOnZipline = true;
 
 			if (Player.controlDown)
@@ -89,7 +100,25 @@ internal class ZiplinePlayer : ModPlayer
 		}
 
 		if (!onZipline && wasOnZipline) //Reset rotation
+		{
 			Player.fullRotation = 0;
+			wasOnZipline = false;
+		}
+	}
+
+	public static void TryDoEffects(Player player, Vector2 start, Vector2 end)
+	{
+		if (Math.Abs(player.velocity.X) > player.maxRunSpeed + .1f)
+		{
+			if (player.whoAmI == Main.myPlayer && Main.timeForVisualEffects % 3 == 0)
+				ParticleHandler.SpawnParticle(new LightningParticle(start, end, Color.Red, 30, 8f));
+
+			if (Main.rand.NextBool(3))
+				Dust.NewDustPerfect(start, DustID.Torch, Scale: 2).noGravity = true;
+
+			if (Math.Abs(player.velocity.X) > player.accRunSpeed && Main.timeForVisualEffects % 10 == 9)
+				SoundEngine.PlaySound(SoundID.Run with { Volume = .75f, Pitch = .25f }, start);
+		}
 	}
 
 	public override void SaveData(TagCompound tag) => tag[nameof(assistant)] = assistant;

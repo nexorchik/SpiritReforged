@@ -183,7 +183,7 @@ public class ZiplineGun : ModItem
 		Item.shootSpeed = 8f;
 	}
 
-	public override bool CanUseItem(Player player) => CheckTile(out _) && CheckDistance(out _) || CheckRemoveable();
+	public override bool CanUseItem(Player player) =>  player.altFunctionUse == 2 || CheckTile(out _) && CheckDistance(out _) || CheckRemoveable();
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
@@ -197,13 +197,40 @@ public class ZiplineGun : ModItem
 			Dust.NewDustPerfect(muzzle, DustID.AmberBolt, (velocity * mag).RotatedByRandom(.5f * (1f - mag)), Scale: Main.rand.NextFloat(.5f, 1f)).noGravity = true;
 		}
 
-		PreNewProjectile.New(source, position, velocity, type, preSpawnAction: delegate (Projectile p)
+		if (player.altFunctionUse != 2)
 		{
-			if (p.ModProjectile is ZiplineProj zipline)
-				zipline.cursorPoint = Main.MouseWorld.ToTileCoordinates().ToWorldCoordinates();
-		});
+			PreNewProjectile.New(source, position, velocity, type, preSpawnAction: delegate (Projectile p)
+			{
+				if (p.ModProjectile is ZiplineProj zipline)
+					zipline.cursorPoint = Main.MouseWorld.ToTileCoordinates().ToWorldCoordinates();
+			});
+		}
 
 		return false;
+	}
+
+	public override bool AltFunctionUse(Player player) => ZiplineHandler.ziplines.Where(x => x.Owner == player).Any();
+	public override bool? UseItem(Player player)
+	{
+		if (player.altFunctionUse == 2)
+		{
+			foreach (var zipline in ZiplineHandler.ziplines)
+			{
+				if (zipline.Owner == player)
+				{
+					FX(zipline);
+					ZiplineHandler.ziplines.Remove(zipline);
+				}
+			}
+		}
+
+		return true;
+
+		static void FX(Zipline zipline)
+		{
+			foreach (var p in zipline.points)
+				ZiplineProj.DeathEffects(p);
+		}
 	}
 
 	public override bool CanRightClick() => true;

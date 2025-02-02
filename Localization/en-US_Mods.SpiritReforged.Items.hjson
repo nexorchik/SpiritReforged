@@ -980,7 +980,7 @@ ZiplineGun: {
 	Tooltip:
 		'''
 		Creates a rail at the cursor position to carry players
-		Rails can be removed when hovered over or replaced by firing
+		Rails can be removed when hovered over or by using right click
 		'''
 	AssistantOn: Right click to enable assistant
 	AssistantOff: Right click to disable assistant

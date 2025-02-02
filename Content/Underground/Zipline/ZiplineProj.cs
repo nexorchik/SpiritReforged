@@ -38,7 +38,6 @@ public class ZiplineProj : ModProjectile
 			return; //Don't interact with rails after timing out for whatever reason
 
 		bool removed = false;
-
 		foreach (var zipline in ZiplineHandler.ziplines)
 		{
 			if (zipline.Owner == Main.player[Projectile.owner])
@@ -48,13 +47,7 @@ public class ZiplineProj : ModProjectile
 		if (!removed)
 			ZiplineHandler.Add(Main.player[Projectile.owner], Projectile.Center);
 
-		ParticleHandler.SpawnParticle(new TexturedPulseCircle(Projectile.Center, (Color.Goldenrod * .75f).Additive(), 1, 100, 30, "Bloom", new Vector2(1), Common.Easing.EaseFunction.EaseCircularOut));
-		ParticleHandler.SpawnParticle(new TexturedPulseCircle(Projectile.Center, (Color.White * .5f).Additive(), 1, 100, 20, "Bloom", new Vector2(1), Common.Easing.EaseFunction.EaseCircularOut));
-
-		for (int i = 0; i < 12; i++)
-			Dust.NewDustPerfect(Projectile.Center, DustID.AmberBolt, Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f), Scale: Main.rand.NextFloat(.5f, 1.5f)).noGravity = true;
-
-		SoundEngine.PlaySound(SoundID.Item101 with { Pitch = .25f }, Projectile.Center);
+		DeathEffects(Projectile.Center);
 	}
 
 	private void UpdateExisting(Zipline zipline, out bool removed)
@@ -73,6 +66,17 @@ public class ZiplineProj : ModProjectile
 			if ((last / 16).Distance(Main.MouseWorld / 16) > ZiplineGun.ExceedDist + .5f)
 				ZiplineHandler.ziplines.Remove(zipline); //Remove the last rail if distance is excessive
 		}
+	}
+
+	public static void DeathEffects(Vector2 position)
+	{
+		ParticleHandler.SpawnParticle(new TexturedPulseCircle(position, (Color.Goldenrod * .75f).Additive(), 1, 100, 30, "Bloom", new Vector2(1), Common.Easing.EaseFunction.EaseCircularOut));
+		ParticleHandler.SpawnParticle(new TexturedPulseCircle(position, (Color.White * .5f).Additive(), 1, 100, 20, "Bloom", new Vector2(1), Common.Easing.EaseFunction.EaseCircularOut));
+
+		for (int i = 0; i < 12; i++)
+			Dust.NewDustPerfect(position, DustID.AmberBolt, Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f), Scale: Main.rand.NextFloat(.5f, 1.5f)).noGravity = true;
+
+		SoundEngine.PlaySound(SoundID.Item101 with { Pitch = .25f }, position);
 	}
 
 	public override bool PreDraw(ref Color lightColor)

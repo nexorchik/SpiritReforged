@@ -10,6 +10,16 @@ internal class Zipline(int owner)
 	public Player Owner => Main.player[owner];
 	public bool DrawingLine => points.Count == 2;
 
+	/// <returns> Returns the angle of the zipline in radians. </returns>
+	public float Angle()
+	{
+		if (!DrawingLine)
+			return 0;
+
+		GetRange(out var start, out var end);
+		return start.AngleTo(end);
+	}
+
 	public bool Contains(Point point, out Vector2 contained)
 	{
 		const int size = 16;
@@ -68,9 +78,11 @@ internal class Zipline(int owner)
 		}
 	}
 
+	/// <summary> Checks whether <paramref name="player"/> is colliding with this zipline, and if so, calls <see cref="UpdatePlayer"/>. </summary>
 	public bool OnZipline(Player player)
 	{
-		const int width = 6;
+		const int width = 6; //Collision line width
+
 		if (!DrawingLine)
 			return false;
 
@@ -81,31 +93,40 @@ internal class Zipline(int owner)
 
 		if (player.velocity.Y >= 0 && Collision.CheckAABBvLineCollision(lowRect.TopLeft(), lowRect.Size(), start, end, width, ref collisionPoint) && !player.FallThrough())
 		{
-			var delta = Vector2.Lerp(start, end, collisionPoint / start.Distance(end));
 			float angle = start.AngleTo(end);
+			var delta = GetDelta(collisionPoint);
 
-			if (Math.Abs(angle) > .5f)
+			if (Math.Abs(angle) > MathHelper.PiOver4)
 				return false;
 
 			UpdatePlayer(player, delta, angle);
+			ZiplinePlayer.TryDoEffects(player, delta, GetDelta(collisionPoint - player.velocity.X * 5f));
 
 			return true;
 		}
 
 		return false;
+
+		Vector2 GetDelta(float progress) => Vector2.Lerp(start, end, progress / start.Distance(end));
 	}
 
+	/// <summary> Controls <paramref name="player"/> velocity and position to imitate a solid surface. </summary>
+	/// <param name="player"> The player. </param>
+	/// <param name="delta"> The coordinates of the rail in contact. </param>
+	/// <param name="rotation"> The rotation of the player. </param>
 	private static void UpdatePlayer(Player player, Vector2 delta, float rotation)
 	{
-		player.position = new Vector2(player.position.X, delta.Y - player.height);
+		float velocityOffY = player.velocity.X * (rotation / MathHelper.PiOver4);
 
+		player.position = new Vector2(player.position.X, delta.Y - player.height + velocityOffY);
 		player.velocity.Y = 0;
-		player.gfxOffY = rotation * 10;
 
+		player.gfxOffY = 0;
 		player.fullRotation = rotation;
-		player.fullRotationOrigin = new Vector2(player.width / 2, player.height + 8);
+		player.fullRotationOrigin = new Vector2(0, player.height);
 	}
 
+	/// <summary> Orders two <see cref="points"/> by X (ascending, <paramref name="start"/> to <paramref name="end"/>). </summary>
 	private void GetRange(out Vector2 start, out Vector2 end)
 	{
 		if (points[0].X < points[1].X)
