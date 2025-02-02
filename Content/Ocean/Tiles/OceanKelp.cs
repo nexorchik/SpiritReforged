@@ -203,7 +203,7 @@ public class OceanKelp : ModTile, IConvertibleTile
 		Texture2D tex = TextureAssets.Tile[Type].Value;
 		int clumpAmount = GetClumpNumber(tile.TileFrameY) + 1;
 		Rectangle frame = new(tile.TileFrameX, tile.TileFrameY % 198, 44, 16);
-		Vector2 drawPos = new Vector2(i, j + 1) * 16 - Main.screenPosition + new Vector2(10, 0);
+		Vector2 drawPos = new Vector2(i, j + 1) * 16 - Main.screenPosition + new Vector2(10, 2);
 
 		for (int k = clumpAmount - 1; k >= 0; --k)
 		{
