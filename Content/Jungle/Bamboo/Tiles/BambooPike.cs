@@ -64,7 +64,7 @@ public class BambooPike : ModTile
 		}
 		else if (entity is Player player)
 		{
-			player.Hurt(PlayerDeathReason.ByOther(3), (int)damage, 0);
+			player.Hurt(BambooPikePlayer.GetDeathReason(player), (int)damage, 0);
 			player.AddBuff(ModContent.BuffType<Impaled>(), 500);
 			player.velocity = new Vector2(0, 1);
 		}

@@ -243,3 +243,10 @@ Misc: {
 	GraveText: <wavy>The text is old and faded; you can't quite make out what it says.
 	MenuButton: Use menu style
 }
+
+DamageSources: {
+	Impaling: {
+		0: "{0} has been impaled."
+		1: "{0} was skewered."
+	}
+}
