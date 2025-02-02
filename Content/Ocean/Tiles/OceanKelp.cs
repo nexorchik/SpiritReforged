@@ -2,6 +2,7 @@
 
 namespace SpiritReforged.Content.Ocean.Tiles;
 
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid, DrawOrderAttribute.Layer.OverPlayers)]
 internal class OceanKelp : ModTile
 {
 	private const int ClumpX = 92;
@@ -15,9 +16,10 @@ internal class OceanKelp : ModTile
 		Clump = ModContent.Request<Texture2D>(Texture + "_Clump");
 
 		Main.tileSolid[Type] = false;
-		Main.tileMergeDirt[Type] = false;
 		Main.tileBlockLight[Type] = false;
 		Main.tileFrameImportant[Type] = true;
+
+		TileID.Sets.NotReallySolid[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.WaterPlacement = LiquidPlacement.OnlyInFullLiquid;
@@ -49,6 +51,17 @@ internal class OceanKelp : ModTile
 		Tile tile = Main.tile[i, j];
 		Tile above = Main.tile[i, j - 1];
 		Tile below = Main.tile[i, j + 1];
+
+		if (!below.HasTile || below.TileType != TileID.Sand && below.TileType != Type)
+		{
+			WorldGen.KillTile(i, j, false);
+
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				NetMessage.SendTileSquare(-1, i, j);
+			
+			return false;
+		}
+
 		short frameX = GetGroupFrameX(i, j);
 
 		tile.TileFrameX = frameX;
@@ -102,16 +115,10 @@ internal class OceanKelp : ModTile
 	{
 		if (above.TileType != type) // Prioritize using the top texture if the tile above isn't kelp
 		{
-			if (resetFrame) // Only fully reset the frame if resetFrame is true
-				tile.TileFrameY = (short)(Main.rand.Next(2) * 18);
-			else
-			{
-				if (tile.TileFrameY >= 36 && tile.TileFrameY <= 54)
-					return;
+			if (tile.TileFrameY >= 36 && tile.TileFrameY <= 54)
+				return;
 
-				tile.TileFrameY = (short)((Main.rand.Next(2) + 2) * 18);
-			}
-
+			tile.TileFrameY = (short)(Main.rand.Next(2) * 18);
 			return;
 		}
 
@@ -126,14 +133,33 @@ internal class OceanKelp : ModTile
 
 	public override void RandomUpdate(int i, int j)
 	{
+		Tile tile = Main.tile[i, j];
+
+		if (tile.TileFrameY <= 18 && Main.rand.NextBool(10))
+		{
+			tile.TileFrameY += 36;
+
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				NetMessage.SendTileSquare(-1, i, j);
+		}
+		else if (tile.TileFrameY > 18 && Main.rand.NextBool(60) && !Main.tile[i, j - 1].HasTile)
+		{
+			WorldGen.PlaceTile(i, j - 1, Type, true);
+
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				NetMessage.SendTileSquare(-1, i, j - 1);
+		}
+
 		if (Main.rand.NextBool(15))
 		{
 			bool canAddClump = Main.tile[i, j + 1].TileType != Type || GetClumpNumber(i, j + 1) != GetClumpNumber(i, j);
 
-			if (canAddClump && Main.tile[i, j].TileFrameY < 198 * 2)
+			if (canAddClump && tile.TileFrameY < 198 * 2)
 			{
-				Tile tile = Main.tile[i, j];
 				tile.TileFrameY += 198;
+
+				if (Main.netMode == NetmodeID.MultiplayerClient)
+					NetMessage.SendTileSquare(-1, i, j);
 			}
 		}
 	}
@@ -151,18 +177,19 @@ internal class OceanKelp : ModTile
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		Tile tile = Main.tile[i, j];
-		Tile above = Main.tile[i, j - 1];
-
-		if (above.TileType == Type && above.TileFrameX == ClumpX)
-			return false;
 
 		Texture2D tex = TextureAssets.Tile[Type].Value;
 		int clumpAmount = GetClumpNumber(tile.TileFrameY) + 1;
 		Rectangle frame = new(tile.TileFrameX, tile.TileFrameY % 198, 44, 16);
-		Vector2 drawPos = this.DrawPosition(i, j + 1) + new Vector2(10, 0);
+		Vector2 drawPos = new Vector2(i, j + 1) * 16 - Main.screenPosition + new Vector2(10, 0);
 
 		for (int k = clumpAmount - 1; k >= 0; --k)
 		{
+			if (DrawOrderSystem.Order == DrawOrderAttribute.Layer.Default && k == 0)
+				continue;
+			else if (DrawOrderSystem.Order == DrawOrderAttribute.Layer.OverPlayers && k != 0)
+				continue;
+
 			bool useClump = (i + j) % 3 + j % 4 + i % 3 == 0; // Deterministic "random" for switching up the clump type
 			int clump = k;
 			Vector2 realPos = drawPos + new Vector2(ClumpOffsets[clump] + GetOffset(i, j), 0);
@@ -187,7 +214,7 @@ internal class OceanKelp : ModTile
 	private static void DrawClump(int i, int j, SpriteBatch spriteBatch, int clumpAmount, Rectangle frame, Vector2 drawPos, int clump)
 	{
 		Color color = Lighting.GetColor(i, j, Color.Lerp(Color.White, Color.Black, clump / (float)clumpAmount));
-		frame = new Rectangle(GetGroupFrameX(i, j) == 48 ? 76 : 2, frame.Y * 34, 72, 32);
+		frame = new Rectangle(GetGroupFrameX(i, j) == 48 ? 76 : 2, frame.Y / 18 * 34, 72, 32);
 
 		spriteBatch.Draw(Clump.Value, drawPos, frame, color, 0f, new Vector2(36, 16), 1f, SpriteEffects.None, 0);
 	}

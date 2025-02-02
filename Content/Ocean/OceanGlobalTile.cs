@@ -20,8 +20,8 @@ public class OceanGlobalTile : GlobalTile
 		{
 			if (Framing.GetTileSafely(i, j - 1).LiquidAmount > 200) //water stuff
 			{
-				//if (Main.rand.NextBool(25))
-				//	WorldGen.PlaceTile(i, j - 1, ModContent.TileType<OceanKelp>(), true); //Kelp spawning
+				if (Main.rand.NextBool(35))
+					WorldGen.PlaceTile(i, j - 1, ModContent.TileType<OceanKelp>(), true); //Kelp spawning
 
 				bool openSpace = !Framing.GetTileSafely(i, j - 2).HasTile;
 				if (openSpace && Main.rand.NextBool(40)) //1x2 kelp

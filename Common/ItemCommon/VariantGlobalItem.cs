@@ -19,7 +19,8 @@ internal class VariantGlobalItem : GlobalItem
 	private int subID = -1;
 
 	/// <summary> Registers the given item <paramref name="type"/> as having variants of <paramref name="amount"/>.<para/>
-	/// The item texture must be a vertical sheet with 2px padding to work correctly. </summary>
+	/// The item texture must be a vertical sheet with 2px padding to work correctly.<br/>
+	/// Additionally, each frame should be at the top-left of the "frame" box.</summary>
 	/// <param name="type"> The item type. </param>
 	/// <param name="amount"> The number of variants. </param>
 	/// <param name="appliesToInventory"> Whether this item can use variants in the inventory. </param>
