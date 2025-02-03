@@ -27,7 +27,6 @@ public class BotanistHat : ModItem
 	public override void AddRecipes() => CreateRecipe()
 			.AddIngredient(ItemID.Sunflower, 1)
 			.AddIngredient(ItemID.Hay, 10)
-			.AddIngredient(ItemID.FallenStar, 3)
 			.AddTile(TileID.Loom)
 			.Register();
 }

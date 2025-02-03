@@ -13,8 +13,7 @@ public class BotanistBody : ModItem
 	}
 
 	public override void AddRecipes() => CreateRecipe()
-			.AddIngredient(ItemID.Silk, 6)
-			.AddIngredient(ItemID.FallenStar, 5)
+			.AddIngredient(ItemID.Silk, 10)
 			.AddTile(TileID.Loom)
 			.Register();
 }

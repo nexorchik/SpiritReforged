@@ -15,8 +15,7 @@ public class BotanistLegs : ModItem
 	public override void UpdateEquip(Player player) => player.moveSpeed += 0.1f;
 
 	public override void AddRecipes() => CreateRecipe()
-			.AddIngredient(ItemID.Sunflower, 1)
-			.AddIngredient(ItemID.FallenStar, 1)
+			.AddIngredient(ItemID.Silk, 6)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 }
