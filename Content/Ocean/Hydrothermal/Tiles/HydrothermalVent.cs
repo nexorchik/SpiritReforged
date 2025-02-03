@@ -58,7 +58,7 @@ public class HydrothermalVent : ModTile
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.Height = 4;
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 16];
-		TileObjectData.newTile.Origin = new(1, 3);
+		TileObjectData.newTile.Origin = new(0, 3);
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<Gravel>(), ModContent.TileType<Magmastone>(), TileID.Sand];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 8;

@@ -1,6 +1,6 @@
 ﻿using SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
-using SpiritReforged.Content.Ocean.Tiles;
 using System.Linq;
+using Terraria.DataStructures;
 using Terraria.IO;
 using Terraria.WorldBuilding;
 
@@ -12,145 +12,118 @@ internal class GravelMicropass : Micropass
 
 	public override int GetWorldGenIndexInsert(List<GenPass> passes, ref bool afterIndex)
 	{
-		afterIndex = false;
-		return passes.FindIndex(genpass => genpass.Name.Equals("Cactus, Palm Trees, & Coral")); //Earlier passes try to generate dirt on top of gravel
+		afterIndex = true;
+		return passes.FindIndex(genpass => genpass.Name.Equals("Quick Cleanup")); //Generate after Quick Cleanup or contend with the dirt chunks.
 	}
 
 	public override void Run(GenerationProgress progress, GameConfiguration config)
 	{
-		const int maxFails = 1000;
+		const int width = 2;
+		const int height = 4;
 
+		const int maxTries = 2000;
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Gravel");
 
-		int count = 0, fails = 0;
-		int maxCount = 8 + 4 * WorldGen.GetWorldSize(); //The maximum number of gravel patches which can generate in a world
-		int distance = WorldGen.oceanDistance;
+		int count = 0;
+		int countMax = 9;
 
-		int waterTopLeft = 0, waterTopRight = 0;
-		GetWaterTop(ref waterTopLeft, ref waterTopRight);
-
-		while (count < maxCount && fails < maxFails)
+		for (int i = 0; i < maxTries; i++)
 		{
-			int minY = waterTopLeft;
+			int x = WorldGen.genRand.NextBool() ? WorldGen.genRand.Next(Main.maxTilesX - WorldGen.beachDistance, Main.maxTilesX - 40) : WorldGen.genRand.Next(40, WorldGen.beachDistance);
 
-			int x = WorldGen.genRand.Next(40, distance);
-			if (WorldGen.genRand.NextBool())
+			int y = WorldGen.genRand.Next((int)(Main.maxTilesY * 0.35f / 16f), (int)WorldGen.oceanLevel);
+			while (Framing.GetTileSafely(x, y).LiquidAmount == 255)
+				y++;
+
+			if (Surface(x, y) && GenVars.structures.CanPlace(new Rectangle(x, y - height, height, width), 4) && WorldMethods.AreaClear(x, y - height, width, height) && WorldMethods.Submerged(x, y - height - 2, width, height + 2))
 			{
-				x = WorldGen.genRand.Next(Main.maxTilesX - distance, Main.maxTilesX - 40);
-				minY = waterTopRight;
-			}
+				GenGravel(new Point16(x, y));
 
-			int y = WorldGen.genRand.Next(minY + 20, (int)WorldGen.oceanLevel);
+				if (++count >= countMax)
+					return;
 
-			if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.Sand && !Main.tile[x, y - 1].HasTile
-				&& Main.tile[x, y - 1].LiquidType == LiquidID.Water && Main.tile[x, y - 1].LiquidAmount > 0)
-			{
-				if (!TileObject.CanPlace(x, y - 1, ModContent.TileType<HydrothermalVent>(), 0, 1, out _, true))
-				{
-					fails++;
-					continue;
-				}
-
-				if (WorldGen.genRand.NextBool(5)) //Generate a platform
-				{
-					int dims = 2;
-					for (int i = 0; i < dims * dims; i++)
-					{
-						var p = new Point(x - i % dims, y - i / dims);
-
-						WorldGen.PlaceTile(p.X, p.Y, ModContent.TileType<Gravel>());
-						if (Main.tile[p.X, p.Y].TileType == ModContent.TileType<Gravel>())
-						{
-							Framing.GetTileSafely(p).Slope = SlopeType.Solid;
-							Framing.GetTileSafely(p).IsHalfBlock = false;
-						}
-					}
-
-					y--;
-				}
-
-				WorldGen.PlaceObject(x, y - 1, ModContent.TileType<HydrothermalVent>(), true,
-					Main.rand.Next(TileObjectData.GetTileData(ModContent.TileType<HydrothermalVent>(), 0).RandomStyleRange));
-
-				MoveDown(x, ref y, ModContent.TileType<Gravel>()); //This is the lowest we move y directly
-				WorldGen.OreRunner(x, y, WorldGen.genRand.Next(5, 10),
-					WorldGen.genRand.Next(10, 15), (ushort)ModContent.TileType<Gravel>()); //Initial gravel patch
-
-				if (WorldGen.genRand.NextBool()) //Generate small protrusions (rocks)
-				{
-					int offX = x + WorldGen.genRand.Next(-4, 4);
-					int offY = y;
-
-					MoveDown(offX, ref offY);
-					MoveUp(offX, ref offY); //Surface
-					SmallRoundedRock(offX, ref offY, WorldGen.genRand.Next(2, 4));
-				}
-
-				if (WorldGen.genRand.NextBool(4)) //Extension gravel patch
-				{
-					int offX = x + WorldGen.genRand.Next(-3, 3);
-					int offY = y;
-
-					MoveDown(offX, ref offY, ModContent.TileType<Gravel>());
-					WorldGen.OreRunner(offX, offY, WorldGen.genRand.Next(3, 8),
-						WorldGen.genRand.Next(6, 13), (ushort)ModContent.TileType<Gravel>());
-				}
-
-				int magmaCount = WorldGen.genRand.Next(4);
-				for (int i = 0; i < magmaCount; i++) //Bottom magma patches
-				{
-					int offX = x + WorldGen.genRand.Next(-10, 10);
-					int offY = y;
-
-					MoveDown(offX, ref offY, ModContent.TileType<Gravel>());
-					if (WorldGen.SolidTile(offX, offY - 1)) //Only move back up (to the gravel tile, presumably) if it's buried
-						offY--;
-
-					if (Main.tile[offX, offY].HasTile && Main.tile[offX, offY].TileType == ModContent.TileType<Gravel>())
-						WorldGen.OreRunner(offX, offY, 4, 1, (ushort)ModContent.TileType<Magmastone>());
-					else
-						i--; //Try again
-				}
-
-				count++;
+				i--;
 			}
 		}
 
-		static void MoveDown(int x, ref int y, int ignore = -1)
+		static bool Surface(int x, int y)
 		{
-			while (!Main.tile[x, y].HasTile || ignore != -1 && Main.tile[x, y].HasTile && Main.tile[x, y].TileType == ignore)
+			int type = TileID.Sand;
+			for (int w = x; w < x + 2; w++)
+			{
+				var tile = Framing.GetTileSafely(w, y);
+				if (!tile.HasTile || tile.TileType != type)
+					return false;
+			}
+
+			return true;
+		}
+	}
+
+	private static void GenGravel(Point16 position)
+	{
+		int x = position.X;
+		int y = position.Y;
+
+		int pillarHeight = WorldGen.genRand.Next(3);
+		int rockCount = WorldGen.genRand.Next(3);
+
+		WorldGen.OreRunner(x, y, WorldGen.genRand.Next(5, 10), WorldGen.genRand.Next(10, 15), (ushort)ModContent.TileType<Gravel>()); //Initial gravel patch
+
+		WorldUtils.Gen(new Point(x, y - pillarHeight), new Shapes.Rectangle(2, pillarHeight + 1), Actions.Chain(new Actions.SetTile((ushort)ModContent.TileType<Gravel>()))); //Be careful with this
+
+		WorldGen.PlaceTile(x, y - pillarHeight - 1, ModContent.TileType<HydrothermalVent>(), true, style: WorldGen.genRand.Next(8));
+
+		for (int i = 0; i < rockCount; i++)
+		{
+			int offX = x + (Main.rand.NextBool() ? -WorldGen.genRand.Next(2, 5) : WorldGen.genRand.Next(2, 5));
+			int offY = y;
+
+			WorldMethods.FindGround(offX, ref offY);
+
+			if (WorldGen.InWorld(offX, offY))
+				SmallRock(offX, ref offY, WorldGen.genRand.Next(2, 4));
+		}
+
+		if (WorldGen.genRand.NextBool(4)) //Extension gravel patch
+		{
+			int offX = x + WorldGen.genRand.Next(-3, 3);
+			int offY = y;
+
+			MoveBelowGravel(offX, ref offY);
+
+			WorldGen.OreRunner(offX, offY, WorldGen.genRand.Next(3, 8),
+				WorldGen.genRand.Next(6, 13), (ushort)ModContent.TileType<Gravel>());
+		}
+
+		int magmaCount = WorldGen.genRand.Next(2, 5);
+		for (int i = 0; i < magmaCount; i++) //Bottom magma patches
+		{
+			int offX = x + WorldGen.genRand.Next(-10, 10);
+			int offY = y;
+
+			MoveBelowGravel(offX, ref offY);
+
+			if (WorldGen.SolidTile(offX, offY - 1)) //Only move back up to the gravel tile, presumably, if it's buried
+				offY--;
+
+			if (Main.tile[offX, offY].HasTile && Main.tile[offX, offY].TileType == ModContent.TileType<Gravel>())
+				WorldGen.OreRunner(offX, offY, 4, 1, (ushort)ModContent.TileType<Magmastone>());
+			else
+				i--; //Try again
+		}
+
+		static void MoveBelowGravel(int x, ref int y)
+		{
+			while (Framing.GetTileSafely(x, y).TileType == ModContent.TileType<Gravel>())
 				y++;
 		}
-
-		static void MoveUp(int x, ref int y)
-		{
-			while (WorldGen.SolidOrSlopedTile(Main.tile[x, y - 1]))
-				y--;
-		}
 	}
 
-	private static void GetWaterTop(ref int left, ref int right)
-	{
-		for (int x = 0; x < 2; x++)
-		{
-			int i = (x > 0) ? Main.maxTilesX - 40 : 40;
-			int j = 0;
-
-			while (j < (int)WorldGen.oceanLevel && Main.tile[i, j].LiquidType != LiquidID.Water || Main.tile[i, j].LiquidAmount == 0)
-				j++;
-
-			if (i != 0)
-				right = j;
-			else
-				left = j;
-		}
-	}
-
-	private static void SmallRoundedRock(int x, ref int y, int size)
+	private static void SmallRock(int x, ref int y, int size)
 	{
 		//Tiles we're allowed to modify/destroy
-		int[] canTouch = [TileID.Sand, TileID.HardenedSand, ModContent.TileType<Gravel>(), ModContent.TileType<OceanKelp>(), 
-			ModContent.TileType<Kelp1x2>(), ModContent.TileType<Kelp2x2>(), ModContent.TileType<Kelp2x3>()];
+		int[] canTouch = [TileID.Sand, TileID.HardenedSand];
 
 		if (!GenVars.structures.CanPlace(new Rectangle(x, y, size, size)))
 			return;

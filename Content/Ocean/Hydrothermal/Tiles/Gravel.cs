@@ -1,4 +1,5 @@
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Ocean.Items;
 
 namespace SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
@@ -31,25 +32,10 @@ public class Gravel : ModTile, IAutoloadTileItem
 		int type = ModContent.TileType<HydrothermalVent>();
 		var data = TileObjectData.GetTileData(type, 0);
 
-		if (Main.rand.NextBool(55) && !WorldGen.PlayerLOS(i, j) && Submerged())
+		if (Main.rand.NextBool(90) && !WorldGen.PlayerLOS(i, j) && WorldMethods.Submerged(i, j - 4, 2, 4))
 		{
 			if (WorldGen.PlaceTile(i, j - 1, type, true, style: Main.rand.Next(data.RandomStyleRange)))
 				NetMessage.SendTileSquare(-1, i, j - data.Height, data.Width, data.Height, TileChangeType.None);
-		}
-
-		bool Submerged()
-		{
-			for (int x = 0; x < data.Width; x++)
-			{
-				for (int y = 0; y < data.Height; y++)
-				{
-					var tile = Framing.GetTileSafely(i + x, j - y);
-					if (tile.LiquidType != LiquidID.Water || tile.LiquidAmount < 255)
-						return false;
-				}
-			}
-
-			return true;
 		}
 	}
 

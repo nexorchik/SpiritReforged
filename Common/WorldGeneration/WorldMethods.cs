@@ -1,3 +1,5 @@
+using Terraria.DataStructures;
+
 namespace SpiritReforged.Common.WorldGeneration;
 
 public class WorldMethods
@@ -86,6 +88,22 @@ public class WorldMethods
 	}
 
 	public static bool AreaClear(int i, int j, int width, int height) => AreaCount(i, j, width, height) == 0;
+
+	/// <summary> Checks whether this tile area is completely submerged in water. </summary>
+	public static bool Submerged(int i, int j, int width, int height)
+	{
+		for (int x = i; x < i + width; x++)
+		{
+			for (int y = j; y < j + height; y++)
+			{
+				var tile = Framing.GetTileSafely(x, y);
+				if (tile.LiquidType != LiquidID.Water || tile.LiquidAmount < 255)
+					return false;
+			}
+		}
+
+		return true;
+	}
 
 	public static bool AdjacentOpening(int x, int y)
 	{
