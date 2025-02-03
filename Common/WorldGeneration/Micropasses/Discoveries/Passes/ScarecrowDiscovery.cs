@@ -39,13 +39,13 @@ internal class ScarecrowDiscovery : Discovery
 			WorldMethods.FindGround(x, ref y);
 
 			var tile = Main.tile[x, y];
-			if (tile.TileType == TileID.Dirt && tile.LiquidAmount < 50)
+			if (tile.TileType == TileID.Dirt && tile.LiquidAmount == 0)
 			{
 				var area = new Rectangle(x - fieldSize, y - 2, fieldSize * 2 + 1, 3);
 
-				if (TryGenArea(new Point16(x, y), fieldSize) && GenVars.structures.CanPlace(area))
+				if (TryGenArea(new Point16(x, y), fieldSize) && GenVars.structures.CanPlace(area, 2))
 				{
-					GenVars.structures.AddProtectedStructure(area);
+					GenVars.structures.AddProtectedStructure(area, 2);
 					return;
 				}
 			}
@@ -61,12 +61,16 @@ internal class ScarecrowDiscovery : Discovery
 		if (!IsFlat(out int start, out int end) || WorldMethods.CloudsBelow(position.X, position.Y, out _))
 			return false;
 
-		for (int x = position.X - width; x < position.X + width + 1; x++)
+		int loopStart = position.X - width;
+		int loopEnd = position.X + width + 1;
+
+		for (int x = loopStart; x < loopEnd; x++)
 		{
-			int y = (int)MathHelper.Lerp(start, end, (float)(x - (position.X - width)) / (width * 2f));
+			float progress = ((float)x - loopStart) / (width * 2f);
+			int y = (int)MathHelper.Lerp(start, end, progress);
 
 			ClearAbove(x, y);
-			FillBelow(x, y);
+			FillBelow(x, y, progress);
 
 			if (x == position.X)
 				ScarecrowTileEntity.Generate(position.X, y - 1);
@@ -88,29 +92,33 @@ internal class ScarecrowDiscovery : Discovery
 			}
 		}
 
-		static void FillBelow(int x, int floor)
+		static void FillBelow(int x, int floor, float depth)
 		{
 			int y = floor;
+			int maxY = 3 + (int)(Math.Sin(depth * MathHelper.Pi) * 5);
 
-			while (!Main.tile[x, y].HasTile || y == floor)
+			while (true)
 			{
 				var tile = Framing.GetTileSafely(x, y);
 
 				tile.HasTile = true;
 				tile.TileType = (y == floor) ? TileID.Grass : TileID.Dirt;
 
-				y++;
+				if (++y > maxY + floor)
+					break;
 			}
 		}
 
 		bool IsFlat(out int startY, out int endY)
 		{
-			const int maxDeviance = 3;
+			const int maxDeviance = 2;
+			int maxSamples = (width * 2 + 1) / 4;
+
 			List<int> samples = [];
 
-			for (int i = 0; i < 2; i++)
+			for (int i = 0; i < maxSamples; i++)
 			{
-				int x = (i == 0) ? position.X - width : position.X + width;
+				int x = (int)MathHelper.Lerp(position.X - width, position.X + width, (float)i / maxSamples);
 				int y = position.Y;
 
 				WorldMethods.FindGround(x, ref y);
@@ -118,9 +126,12 @@ internal class ScarecrowDiscovery : Discovery
 			}
 
 			startY = samples[0];
-			endY = samples[1];
+			endY = samples[^1];
 
-			return Math.Abs(startY - endY) <= maxDeviance;
+			int average = (int)samples.Average();
+			int surfaceAverage = (int)Math.Abs(MathHelper.Lerp(startY, endY, .5f));
+
+			return Math.Abs(startY - endY) <= maxDeviance && Math.Abs(average - surfaceAverage) <= maxDeviance;
 		}
 	}
 }
