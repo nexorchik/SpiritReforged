@@ -23,7 +23,41 @@ public class BlunderbussTile : ModTile
 		AddMapEntry(new Color(100, 100, 50));
 		RegisterItemDrop(ModContent.ItemType<Blunderbuss>());
 
-		DustType = -1; //No dust
+		DustType = DustID.Sand; //No dust
+	}
+
+	public override void MouseOver(int i, int j)
+	{
+		Player player = Main.LocalPlayer;
+		player.noThrow = 2;
+		player.cursorItemIconEnabled = true;
+		player.cursorItemIconID = ModContent.ItemType<Blunderbuss>();
+	}
+
+	public override bool RightClick(int i, int j)
+	{
+		int y = 0;
+		TileExtensions.GetTopLeft(ref i, ref y);
+
+		WorldGen.KillTile(i, j);
+		if (Main.netMode != NetmodeID.SinglePlayer)
+			NetMessage.SendTileSquare(-1, i, j, 2, 1);
+
+		return true;
+	}
+
+	public override bool CreateDust(int i, int j, ref int type)
+	{
+		var tile = Framing.GetTileSafely(i, j);
+		type = (tile.TileFrameY / 18) switch
+		{
+			1 => DustID.Corruption,
+			2 => DustID.Crimson,
+			3 => DustID.Pearlsand,
+			_ => DustID.Sand,
+		};
+
+		return true;
 	}
 
 	public override IEnumerable<Item> GetItemDrops(int i, int j)
