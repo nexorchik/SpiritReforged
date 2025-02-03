@@ -6,7 +6,7 @@ namespace SpiritReforged.Common.Visuals;
 /// <summary> Manually overrides water style in specific scenarios. </summary>
 internal class ForceWaterStyle : ModSystem
 {
-	private static int DeepOceanWaterStyle;
+	//private static int DeepOceanWaterStyle;
 	private static readonly Dictionary<int, int> StyleSets = []; //background, water
 
 	public override void Load() => IL_Main.CalculateWaterStyle += SetWaterStyleDefault;
@@ -19,7 +19,7 @@ internal class ForceWaterStyle : ModSystem
 				StyleSets.Add(scene.SurfaceBackgroundStyle.Slot, scene.WaterStyle.Slot);
 		}
 
-		DeepOceanWaterStyle = ModContent.GetInstance<DeepOceanBackgroundStyle>().Slot;
+		//DeepOceanWaterStyle = ModContent.GetInstance<DeepOceanBackgroundStyle>().Slot;
 	}
 
 	private static void SetWaterStyleDefault(ILContext il)
@@ -38,8 +38,8 @@ internal class ForceWaterStyle : ModSystem
 	/// <returns> The replacement water style. </returns>
 	private static int Modify(int style)
 	{
-		if (Main.bgStyle == DeepOceanWaterStyle)
-			return DeepOceanBackgroundStyle.ChooseWaterStyle();
+		//if (Main.bgStyle == DeepOceanWaterStyle)
+		//	return DeepOceanBackgroundStyle.ChooseWaterStyle();
 
 		foreach (var set in StyleSets)
 		{

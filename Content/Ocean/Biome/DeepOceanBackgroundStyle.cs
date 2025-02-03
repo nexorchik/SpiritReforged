@@ -1,4 +1,4 @@
-﻿namespace SpiritReforged.Content.Ocean.Biome;
+﻿/*namespace SpiritReforged.Content.Ocean.Biome;
 
 internal class DeepOceanBackgroundStyle : ModSurfaceBackgroundStyle
 {
@@ -42,4 +42,4 @@ internal class DeepOceanBackgroundStyle : ModSurfaceBackgroundStyle
 					fades[i] = 0f;
 			}
 	}
-}
+}*/
