@@ -9,6 +9,6 @@ public class OceanChestLoot : ModSystem
 	public override void PostWorldGen()
 	{
 		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<PoolNoodle>() }, 1, 0.33f), (int)VanillaChestID.Water, 1);
-		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<BeachTowel>(), ModContent.ItemType<BikiniBottom>(), ModContent.ItemType<BikiniTop>(), ModContent.ItemType<SwimmingTrunks>(), ModContent.ItemType<TintedGlasses>() }, 1, 0.33f), (int)VanillaChestID.Water, 1);
+		ChestPoolUtils.AddToVanillaChest(new ChestPoolUtils.ChestInfo(new int[] { ModContent.ItemType<BeachTowel>(), ModContent.ItemType<BikiniBottom>(), ModContent.ItemType<BikiniTop>(), ModContent.ItemType<SwimmingTrunks>(), ModContent.ItemType<TintedGlasses>() }, 1, 0.5f), (int)VanillaChestID.Water, 1);
 	}
 }
