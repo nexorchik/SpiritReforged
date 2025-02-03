@@ -13,7 +13,7 @@ internal class ScarecrowDiscovery : Discovery
 	public override int GetWorldGenIndexInsert(List<GenPass> passes, List<Discovery> discoveries, ref bool afterIndex)
 	{
 		afterIndex = false;
-		return passes.FindIndex(genpass => genpass.Name.Equals("Spreading Grass"));
+		return passes.FindIndex(genpass => genpass.Name.Equals("Smooth World"));
 	}
 
 	public override void Run(GenerationProgress progress, GameConfiguration config)
@@ -56,19 +56,22 @@ internal class ScarecrowDiscovery : Discovery
 
 	private static bool TryGenArea(Point16 position, int width)
 	{
-		if (!IsFlat(out int middleY) || WorldMethods.CloudsBelow(position.X, position.Y, out _))
+		if (!IsFlat(out int start, out int end) || WorldMethods.CloudsBelow(position.X, position.Y, out _))
 			return false;
 
-		int y = middleY;
 		for (int x = position.X - width; x < position.X + width + 1; x++)
 		{
+			int y = (int)MathHelper.Lerp(start, end, (float)(x - (position.X - width)) / (width * 2f));
+
 			ClearAbove(x, y);
 			FillBelow(x, y);
 
-			WorldGen.PlaceTile(x, y - 1, ModContent.TileType<Wheatgrass>(), true, style: Main.rand.Next(6));
+			if (x == position.X)
+				ScarecrowTileEntity.Generate(position.X, y - 1);
+			else
+				WorldGen.PlaceTile(x, y - 1, ModContent.TileType<Wheatgrass>(), true, style: Main.rand.Next(6));
 		}
 
-		ScarecrowTileEntity.Generate(position.X, y - 1);
 		return true;
 
 		static void ClearAbove(int x, int floor)
@@ -94,14 +97,11 @@ internal class ScarecrowDiscovery : Discovery
 				tile.HasTile = true;
 				tile.TileType = (y == floor) ? TileID.Grass : TileID.Dirt;
 
-				tile.IsHalfBlock = false;
-				tile.Slope = SlopeType.Solid;
-
 				y++;
 			}
 		}
 
-		bool IsFlat(out int middleY)
+		bool IsFlat(out int startY, out int endY)
 		{
 			const int maxDeviance = 3;
 			List<int> samples = [];
@@ -115,7 +115,9 @@ internal class ScarecrowDiscovery : Discovery
 				samples.Add(y);
 			}
 
-			middleY = (int)MathHelper.Lerp(samples.First(), samples.Last(), .5f);
+			startY = samples.First();
+			endY = samples.Last();
+
 			return Math.Abs(samples.First() - samples.Last()) <= maxDeviance;
 		}
 	}
