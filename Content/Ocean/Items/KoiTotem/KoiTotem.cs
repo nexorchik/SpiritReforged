@@ -63,7 +63,6 @@ public class KoiTotem : FloatingItem
 		Item.height = 36;
 		Item.value = Item.sellPrice(gold: 1);
 		Item.rare = ItemRarityID.Blue;
-		Item.accessory = true;
 		Item.consumable = true;
 		Item.useStyle = ItemUseStyleID.Swing;
 		Item.useTime = 10;
@@ -71,10 +70,6 @@ public class KoiTotem : FloatingItem
 		Item.useTurn = true;
 		Item.createTile = ModContent.TileType<KoiTotem_Tile>();
 	}
-
-	public override void UpdateAccessory(Player player, bool hideVisual) => player.AddBuff(ModContent.BuffType<KoiTotemBuff>(), 2);
-
-	public override bool AllowPrefix(int pre) => false;
 }
 
 public class KoiTotem_Tile : ModTile

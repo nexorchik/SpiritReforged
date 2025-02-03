@@ -181,7 +181,7 @@ public class OceanGeneration : ModSystem
 				}
 
 				//Kelp multitiles
-				int kelpChance = tilesFromInnerEdge < 100 ? 50 : 22; //Higher on first slope, then less common
+				int kelpChance = tilesFromInnerEdge < 100 ? 46 : 18; //Higher on first slope, then less common
 				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance))
 				{
 					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Kelp2x3>(), true);

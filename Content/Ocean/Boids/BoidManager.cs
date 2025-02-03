@@ -84,7 +84,7 @@ public class BoidManager : ModSystem
 
 		var player = Main.LocalPlayer;
 		bool nearLure = player.GetModPlayer<OceanPlayer>().nearLure;
-		int spawnRate = nearLure ? 32 : 40;
+		int spawnRate = nearLure ? 28 : 34;
 
 		if ((player.ZoneBeach || nearLure) && Main.GameUpdateCount % spawnRate == 0)
 		{
