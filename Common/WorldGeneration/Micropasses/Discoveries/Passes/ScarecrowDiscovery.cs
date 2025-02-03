@@ -41,9 +41,11 @@ internal class ScarecrowDiscovery : Discovery
 			var tile = Main.tile[x, y];
 			if (tile.TileType == TileID.Dirt && tile.LiquidAmount < 50)
 			{
-				if (TryGenArea(new Point16(x, y), fieldSize))
+				var area = new Rectangle(x - fieldSize, y - 2, fieldSize * 2 + 1, 3);
+
+				if (TryGenArea(new Point16(x, y), fieldSize) && GenVars.structures.CanPlace(area))
 				{
-					GenVars.structures.AddProtectedStructure(new Rectangle(x - fieldSize, y - 2, fieldSize * 2 + 1, 3));
+					GenVars.structures.AddProtectedStructure(area);
 					return;
 				}
 			}
@@ -115,10 +117,10 @@ internal class ScarecrowDiscovery : Discovery
 				samples.Add(y);
 			}
 
-			startY = samples.First();
-			endY = samples.Last();
+			startY = samples[0];
+			endY = samples[1];
 
-			return Math.Abs(samples.First() - samples.Last()) <= maxDeviance;
+			return Math.Abs(startY - endY) <= maxDeviance;
 		}
 	}
 }
