@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Content.Forest.Botanist.Tiles;
 using System.Linq;
+using Terraria.DataStructures;
 using Terraria.IO;
 using Terraria.WorldBuilding;
 
@@ -12,52 +13,110 @@ internal class ScarecrowDiscovery : Discovery
 	public override int GetWorldGenIndexInsert(List<GenPass> passes, List<Discovery> discoveries, ref bool afterIndex)
 	{
 		afterIndex = false;
-		return passes.FindIndex(genpass => genpass.Name.Equals("Planting Trees")); //Generate before trees so we can have a wide open area
+		return passes.FindIndex(genpass => genpass.Name.Equals("Spreading Grass"));
 	}
 
 	public override void Run(GenerationProgress progress, GameConfiguration config)
 	{
+		const int maxTries = 1000;
+
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Scarecrow");
-		int[] anchors = TileObjectData.GetTileData(ModContent.TileType<Wheatgrass>(), 0).AnchorValidTiles;
+		int region = (int)(Main.maxTilesX * .45f);
+		int tries = 0;
 
-		retry:
-		int x = WorldGen.genRand.Next(40, Main.maxTilesX / 3);
-		if (WorldGen.genRand.NextBool())
-			x = WorldGen.genRand.Next(Main.maxTilesX - Main.maxTilesX / 3, Main.maxTilesX - 40);
-
-		int y = (int)(Main.worldSurface * 0.5f);
-		if (WorldGen.remixWorldGen)
-			y = WorldGen.genRand.Next((int)(Main.maxTilesY / 1.5f), Main.maxTilesY - 200);
-
-		while (!Main.tile[x, y].HasTile || !anchors.Contains(Main.tile[x, y].TileType)) //Loop to valid ground
+		int fieldSize = WorldGen.GetWorldSize() switch
 		{
-			y++;
-			if (!WorldGen.remixWorldGen && y > Main.worldSurface + 20 || y > Main.maxTilesY - 150)
-				goto retry;
+			1 => 8,
+			2 => 12,
+			_ => 5
+		};
+
+		while (tries < maxTries)
+		{
+			int x = WorldGen.genRand.NextBool() ? WorldGen.genRand.Next(Main.maxTilesX - region, Main.maxTilesX) : WorldGen.genRand.Next(region);
+			int y = WorldGen.remixWorldGen ? WorldGen.genRand.Next((int)(Main.maxTilesY / 1.5f), Main.maxTilesY - 200) : (int)(Main.worldSurface * .5f);
+
+			WorldMethods.FindGround(x, ref y);
+
+			var tile = Main.tile[x, y];
+			if (tile.TileType == TileID.Dirt && tile.LiquidAmount < 50)
+			{
+				if (TryGenArea(new Point16(x, y), fieldSize))
+				{
+					GenVars.structures.AddProtectedStructure(new Rectangle(x - fieldSize, y - 2, fieldSize * 2 + 1, 3));
+					return;
+				}
+			}
+
+			tries++;
 		}
 
-		if (!TileObject.CanPlace(x, y - 1, ModContent.TileType<Scarecrow>(), 0, 0, out var _, true)
-			|| Collision.WetCollision(new Vector2(x, y - 3) * 16, 16, 16 * 3)
-			|| !WorldMethods.AreaClear(x - 1, y - 3, 3, 3))
-			goto retry;
+		SpiritReforgedMod.Instance.Logger.Info("Generator exceeded maximum tries for structure: " + WorldGenName);
+	}
 
-		const int Distance = 20;
-		if (!GenVars.structures.CanPlace(new Rectangle(x - Distance, y, Distance * 2, 10)))
-			goto retry;
+	private static bool TryGenArea(Point16 position, int width)
+	{
+		if (!IsFlat(out int middleY) || WorldMethods.CloudsBelow(position.X, position.Y, out _))
+			return false;
 
-		var start = new Point(x, y);
-		for (x = start.X - Distance; x < start.X + Distance; x++)
+		int y = middleY;
+		for (int x = position.X - width; x < position.X + width + 1; x++)
 		{
-			y = start.Y - 30;
-			while (!Main.tile[x, y].HasTile || !anchors.Contains(Main.tile[x, y].TileType)) //Loop to valid ground
-				if (++y > Main.worldSurface + 100)
-					break;
+			ClearAbove(x, y);
+			FillBelow(x, y);
 
-			if (Main.tile[x, y].HasTile && anchors.Contains(Main.tile[x, y].TileType))
-				WorldGen.PlaceTile(x, y - 1, ModContent.TileType<Wheatgrass>(), true, style: Main.rand.Next(6));
+			WorldGen.PlaceTile(x, y - 1, ModContent.TileType<Wheatgrass>(), true, style: Main.rand.Next(6));
 		}
 
-		ScarecrowTileEntity.Generate(start.X, start.Y - 1);
-		GenVars.structures.AddProtectedStructure(new Rectangle(start.X - Distance, start.Y - 6, Distance * 2, 10), 2);
+		ScarecrowTileEntity.Generate(position.X, y - 1);
+		return true;
+
+		static void ClearAbove(int x, int floor)
+		{
+			int y = floor;
+			WorldMethods.FindGround(x, ref y);
+
+			while (y < floor)
+			{
+				Main.tile[x, y].ClearEverything();
+				y++;
+			}
+		}
+
+		static void FillBelow(int x, int floor)
+		{
+			int y = floor;
+
+			while (!Main.tile[x, y].HasTile || y == floor)
+			{
+				var tile = Framing.GetTileSafely(x, y);
+
+				tile.HasTile = true;
+				tile.TileType = (y == floor) ? TileID.Grass : TileID.Dirt;
+
+				tile.IsHalfBlock = false;
+				tile.Slope = SlopeType.Solid;
+
+				y++;
+			}
+		}
+
+		bool IsFlat(out int middleY)
+		{
+			const int maxDeviance = 3;
+			List<int> samples = [];
+
+			for (int i = 0; i < 2; i++)
+			{
+				int x = (i == 0) ? position.X - width : position.X + width;
+				int y = position.Y;
+
+				WorldMethods.FindGround(x, ref y);
+				samples.Add(y);
+			}
+
+			middleY = (int)MathHelper.Lerp(samples.First(), samples.Last(), .5f);
+			return Math.Abs(samples.First() - samples.Last()) <= maxDeviance;
+		}
 	}
 }
