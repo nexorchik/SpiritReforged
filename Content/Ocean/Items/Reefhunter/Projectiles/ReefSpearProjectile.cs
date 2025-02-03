@@ -3,7 +3,9 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using SpiritReforged.Content.Particles;
 using System.IO;
+using Terraria;
 using Terraria.Audio;
+using Terraria.WorldBuilding;
 using static Terraria.Player;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
@@ -60,7 +62,7 @@ public class ReefSpearProjectile : ModProjectile
 
 		if (_maxTimeleft == 0) //Initialize
 		{
-			if(p.whoAmI == Main.myPlayer)
+			if (p.whoAmI == Main.myPlayer)
 				_direction = Vector2.Normalize(p.Center - Main.MouseWorld);
 
 			float modifiedAttackSpeed = 0.25f + p.GetWeaponAttackSpeed(p.HeldItem) * 0.75f;
@@ -71,7 +73,7 @@ public class ReefSpearProjectile : ModProjectile
 			Projectile.netUpdate = true;
 		}
 
-		if(Projectile.timeLeft > _maxTimeleft)
+		if (Projectile.timeLeft > _maxTimeleft)
 			Windup(p, ref factor, ref stretchAmount);
 		else
 			StabCombo(ref length, ref factor, ref stretchAmount);
@@ -116,7 +118,7 @@ public class ReefSpearProjectile : ModProjectile
 
 		for (int i = 0; i < stabTimes.ToArray().Length; i++)
 		{
-			if(Projectile.timeLeft == stabTimes[i])
+			if (Projectile.timeLeft == stabTimes[i])
 			{
 				if (_rotationDirection == 0)
 					_rotationDirection = 1;
@@ -167,18 +169,12 @@ public class ReefSpearProjectile : ModProjectile
 			stretchAmount = CompositeArmStretchAmount.ThreeQuarters;
 	}
 
-	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-	{
-		modifiers.HitDirectionOverride = Math.Sign(-_direction.X);
-		if (CheckStuckSpears(target))
-			modifiers.SourceDamage *= 1.33f;
-	}
-
+	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) => modifiers.HitDirectionOverride = Math.Sign(-_direction.X);
 	public override void ModifyHitPlayer(Player target, ref HurtModifiers modifiers) => modifiers.HitDirectionOverride = Math.Sign(-_direction.X);
 
 	private bool CheckStuckSpears(NPC target)
 	{
-		foreach(Projectile proj in Main.ActiveProjectiles)
+		foreach (Projectile proj in Main.ActiveProjectiles)
 		{
 			if (proj.ModProjectile == null)
 				continue;
@@ -202,8 +198,16 @@ public class ReefSpearProjectile : ModProjectile
 
 	public override bool CanHitPlayer(Player target) => _canHitEnemy;
 
-	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => HitEffects();
+	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+	{
+		HitEffects();
+
+		if (CheckStuckSpears(target))
+			target.SimpleStrikeNPC(damageDone / 3, hit.HitDirection, false, 0, null, false, 0, false);
+	}
+
 	public override void OnHitPlayer(Player target, HurtInfo info) => HitEffects();
+
 	private void HitEffects()
 	{
 		if (_hitEffectCooldown)
@@ -225,7 +229,7 @@ public class ReefSpearProjectile : ModProjectile
 
 		ParticleHandler.SpawnParticle(particle);
 
-		for(int i = 0; i < (int)(Main.rand.Next(5, 7) * scaleMod); i++)
+		for (int i = 0; i < (int)(Main.rand.Next(5, 7) * scaleMod); i++)
 		{
 			Vector2 offset = Vector2.UnitY.RotatedBy(_direction.ToRotation() + _rotationOffset * _rotationDirection) * Main.rand.NextFloat(-15, 15) * scaleMod;
 			offset = offset.RotatedByRandom(0.2f);
