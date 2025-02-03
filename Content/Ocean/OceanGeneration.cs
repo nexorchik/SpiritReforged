@@ -201,7 +201,7 @@ public class OceanGeneration : ModSystem
 				}
 
 				//Growing kelp
-				if (WorldGen.genRand.NextBool(3) && tilesFromInnerEdge < 133 && Main.tile[i, j].TileType == TileID.Sand && !Main.tile[i, j - 1].HasTile)
+				if (WorldGen.genRand.NextBool(4, 7) && tilesFromInnerEdge < 133 && Main.tile[i, j].TileType == TileID.Sand && !Main.tile[i, j - 1].HasTile)
 					GrowKelp(i, j - 1);
 			}
 		}

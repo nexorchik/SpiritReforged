@@ -11,7 +11,7 @@ class ReforgeClientConfig : ModConfig
 	[DefaultValue(OceanGeneration.OceanShape.Piecewise_V)]
 	public OceanGeneration.OceanShape OceanShape { get; set; }
 
-	[ReloadRequired]
-	[DefaultValue(true)]
-	public bool SurfaceWaterTransparency { get; set; }
+	//[ReloadRequired]
+	//[DefaultValue(true)]
+	//public bool SurfaceWaterTransparency { get; set; }
 }
