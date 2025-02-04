@@ -4,9 +4,11 @@ using SpiritReforged.Common.MapCommon;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.SimpleEntity;
 using SpiritReforged.Common.WorldGeneration;
+using SpiritReforged.Content.Forest.Safekeeper;
 using SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 using System.IO;
+using Terraria;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.Misc;
@@ -26,6 +28,7 @@ public static class ReforgedMultiplayer
 		RevealMap,
 		MagmaGlowPoint,
 		PackVisibility,
+		BurnNPC,
 		CascadeBubble,
 	}
 
@@ -167,6 +170,11 @@ public static class ReforgedMultiplayer
 					Main.player[player].GetModPlayer<BackpackPlayer>().packVisible = visibility;
 					break;
 				}
+
+			case MessageType.BurnNPC: //Sent from server to clients
+				int npcIndex = reader.ReadInt32();
+				UndeadNPC.BurnAway(Main.npc[npcIndex]);
+				break;
 
 			case MessageType.CascadeBubble:
 				{
