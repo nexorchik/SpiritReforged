@@ -221,6 +221,7 @@ public class KendoBladeLunge : ModProjectile
 
 		if (Counter < DashDuration) //Ongoing dash
 		{
+			owner.GetModPlayer<DashSwordPlayer>().dashing = true;
 			float quote = Counter / DashDuration;
 
 			if (Counter + 1 == DashDuration)
@@ -264,6 +265,8 @@ public class KendoBladeLunge : ModProjectile
 			dust.noGravity = true;
 			dust.noLightEmittence = true;
 		}
+		else
+			owner.GetModPlayer<DashSwordPlayer>().dashing = false;
 
 		if (Counter > DashDuration + StrikeDelay)
 		{
