@@ -64,7 +64,7 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 
 	public override void IdleMovement(Player player)
 	{
-		Vector2 desiredPos = player.RotatedRelativePoint(player.MountedCenter + new Vector2(0, -60 + (float)Math.Sin(Main.GameUpdateCount / 30f) * 5));
+		var desiredPos = player.MountedCenter + new Vector2(0, -60 + (float)Math.Sin(Main.GameUpdateCount / 30f) * 5);
 
 		AiTimer = 0;
 
