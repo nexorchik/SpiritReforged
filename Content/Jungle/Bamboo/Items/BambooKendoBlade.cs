@@ -247,7 +247,7 @@ public class KendoBladeLunge : ModProjectile
 			owner.armorEffectDrawShadow = true;
 			owner.armorEffectDrawShadowLokis = true;
 
-			if (targetWhoAmI == -1) //Find a target
+			if (Projectile.owner == Main.myPlayer && targetWhoAmI == -1) //Find a target
 			{
 				if (lastPosition == Vector2.Zero)
 					lastPosition = owner.Center;
