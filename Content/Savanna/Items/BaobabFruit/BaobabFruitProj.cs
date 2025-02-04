@@ -28,17 +28,15 @@ public class BaobabFruitProj : ModProjectile
 
 	public override void OnSpawn(IEntitySource source)
 	{
-		if (Main.netMode != NetmodeID.MultiplayerClient)
-		{
-			var dropType = new WeightedRandom<DropType>();
-			dropType.Add(DropType.Fruit, 1f);
-			dropType.Add(DropType.Acorn, .9f);
-			dropType.Add(DropType.Worm, .001f);
+		var dropType = new WeightedRandom<DropType>();
+		dropType.Add(DropType.Fruit, 1f);
+		dropType.Add(DropType.Acorn, .9f);
+		dropType.Add(DropType.Worm, .001f);
 
-			drop = (DropType)dropType;
+		drop = (DropType)dropType;
 
-			Projectile.netUpdate = true;
-		} //Pick a drop when the projectile spawns and sync it
+		Projectile.netUpdate = true;
+		//Pick a drop when the projectile spawns and sync it
 	}
 
 	public override void AI()
@@ -87,13 +85,10 @@ public class BaobabFruitProj : ModProjectile
 
 		void SpawnItem(int type)
 		{
-			if (Main.netMode != NetmodeID.MultiplayerClient)
-			{
-				int id = Item.NewItem(Projectile.GetSource_Death(), Projectile.Center, type);
+			int id = Item.NewItem(Projectile.GetSource_Death(), Projectile.Center, type);
 
-				if (Main.dedServ)
-					NetMessage.SendData(MessageID.SyncItem, number: id);
-			}
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				NetMessage.SendData(MessageID.SyncItem, number: id, number2: 1);
 		}
 	}
 
