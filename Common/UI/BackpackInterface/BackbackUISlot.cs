@@ -143,7 +143,7 @@ public class BackpackUISlot : UIElement
 				SoundEngine.PlaySound(SoundID.MenuTick);
 
 				if (Main.netMode == NetmodeID.MultiplayerClient)
-					BackpackPlayer.SendVisibilityPacket(mPlayer.packVisible, Main.myPlayer);
+					BackpackPlayer.SendVisibilityPacket(mPlayer.packVisible, (byte)Main.myPlayer);
 				//NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, Main.myPlayer);
 			}
 

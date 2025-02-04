@@ -5,6 +5,7 @@ using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.SimpleEntity;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
+using SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 using System.IO;
 using Terraria.DataStructures;
 
@@ -24,7 +25,8 @@ public static class ReforgedMultiplayer
 		RemovePointOfInterest,
 		RevealMap,
 		MagmaGlowPoint,
-		PackVisibility
+		PackVisibility,
+		CascadeBubble,
 	}
 
 	public static void HandlePacket(BinaryReader reader, int whoAmI)
@@ -155,14 +157,28 @@ public static class ReforgedMultiplayer
 				break;
 
 			case MessageType.PackVisibility:
-				bool visibility = reader.ReadBoolean();
-				int player = reader.ReadByte();
+				{
+					bool visibility = reader.ReadBoolean();
+					byte player = reader.ReadByte();
 
-				if (Main.netMode == NetmodeID.Server)
-					BackpackPlayer.SendVisibilityPacket(visibility, player, whoAmI);
+					if (Main.netMode == NetmodeID.Server)
+						BackpackPlayer.SendVisibilityPacket(visibility, player, whoAmI);
 
-				Main.player[player].GetModPlayer<BackpackPlayer>().packVisible = visibility;
-				break;
+					Main.player[player].GetModPlayer<BackpackPlayer>().packVisible = visibility;
+					break;
+				}
+
+			case MessageType.CascadeBubble:
+				{
+					float value = reader.ReadSingle();
+					byte player = reader.ReadByte();
+
+					if (Main.netMode == NetmodeID.Server)
+						CascadeArmorPlayer.SendBubblePacket(value, player, whoAmI);
+
+					Main.player[player].GetModPlayer<CascadeArmorPlayer>().bubbleStrength = value;
+					break;
+				}
 		}
 	}
 }
