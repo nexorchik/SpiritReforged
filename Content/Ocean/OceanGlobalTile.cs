@@ -1,6 +1,8 @@
-﻿using SpiritReforged.Content.Ocean.Items.Driftwood;
+﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Content.Ocean.Items.Driftwood;
 using SpiritReforged.Content.Ocean.NPCs.OceanSlime;
 using SpiritReforged.Content.Ocean.Tiles;
+using SpiritReforged.Content.Savanna.Tiles;
 using System.Linq;
 
 namespace SpiritReforged.Content.Ocean;
@@ -11,35 +13,33 @@ public class OceanGlobalTile : GlobalTile
 	{
 		int[] sands = [TileID.Sand, TileID.Crimsand, TileID.Ebonsand, TileID.Pearlsand]; //All valid sands
 		int[] woods = [TileID.WoodBlock, TileID.BorealWood, TileID.Ebonwood, TileID.DynastyWood, TileID.RichMahogany, TileID.PalmWood, TileID.Shadewood, TileID.WoodenBeam,
-			ModContent.TileType<DriftwoodTile>(), TileID.Pearlwood];
+			ModContent.TileType<DriftwoodTile>(), ModContent.TileType<DrywoodTile>(), TileID.Pearlwood];
 
-		bool inOcean = (i < Main.maxTilesX / 16 || i > Main.maxTilesX / 16 * 15) && j < (int)Main.worldSurface; //Might need adjustment; don't know if this will be exclusively in the ocean
+		bool inOcean = (i < Main.maxTilesX / 16 || i > Main.maxTilesX / 16 * 15) && j < (int)Main.worldSurface;
 		bool inWorldBounds = i > 40 && i < Main.maxTilesX - 40;
+		var above = Framing.GetTileSafely(i, j - 1);
 
-		if (sands.Contains(type) && inOcean && inWorldBounds && !Framing.GetTileSafely(i, j - 1).HasTile && !Framing.GetTileSafely(i, j).TopSlope) //woo
+		if (sands.Contains(type) && inOcean && inWorldBounds && !above.HasTile && !Framing.GetTileSafely(i, j).TopSlope)
 		{
-			if (Framing.GetTileSafely(i, j - 1).LiquidAmount > 200) //water stuff
+			if (above.LiquidAmount == 255) //water stuff
 			{
-				if (Main.rand.NextBool(35))
-					WorldGen.PlaceTile(i, j - 1, ModContent.TileType<OceanKelp>(), true); //Kelp spawning
+				if (Main.rand.NextBool(35)) //Ocean kelp
+					Place(i, j - 1, ModContent.TileType<OceanKelp>());
 
-				bool openSpace = !Framing.GetTileSafely(i, j - 2).HasTile;
-				if (openSpace && Main.rand.NextBool(60)) //1x2 kelp
-					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Kelp1x2>(), true);
+				if (Main.rand.NextBool(60)) //1x2 kelp
+					Place(i, j - 1, ModContent.TileType<Kelp1x2>());
 
-				openSpace = !Framing.GetTileSafely(i + 1, j - 1).HasTile && !Framing.GetTileSafely(i + 1, j - 2).HasTile && !Framing.GetTileSafely(i, j - 2).HasTile;
-				if (openSpace && Framing.GetTileSafely(i + 1, j).HasTile && Main.tileSolid[Framing.GetTileSafely(i + 1, j).TileType] && Framing.GetTileSafely(i + 1, j).TopSlope && Main.rand.NextBool(80)) //2x2 kelp
-					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Kelp2x2>(), true);
+				if (Main.rand.NextBool(80)) //2x2 kelp
+					Place(i, j - 1, ModContent.TileType<Kelp2x2>());
 
-				openSpace = !Framing.GetTileSafely(i + 1, j - 1).HasTile && !Framing.GetTileSafely(i + 1, j - 2).HasTile && !Framing.GetTileSafely(i, j - 2).HasTile && !Framing.GetTileSafely(i + 1, j - 3).HasTile && !Framing.GetTileSafely(i, j - 3).HasTile;
-				if (openSpace && Framing.GetTileSafely(i + 1, j).HasTile && Main.tileSolid[Framing.GetTileSafely(i + 1, j).TileType] && Framing.GetTileSafely(i + 1, j).TopSlope && Main.rand.NextBool(90)) //2x3 kelp
-					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Kelp2x3>(), true);
+				if (Main.rand.NextBool(90)) //2x3 kelp
+					Place(i, j - 1, ModContent.TileType<Kelp2x3>());
 			}
 			else if (Main.rand.NextBool(6))
 				SpawnSeagrass(i, j, 5);
 		}
 
-		if (inOcean && inWorldBounds && woods.Contains(Framing.GetTileSafely(i, j).TileType))
+		if (inOcean && inWorldBounds && woods.Contains(type))
 		{
 			for (int k = i - 1; k < i + 2; ++k)
 			{
@@ -48,12 +48,10 @@ public class OceanGlobalTile : GlobalTile
 					if (k == i && l == j)
 						continue; //Dont check myself
 
-					Tile cur = Framing.GetTileSafely(k, l);
-					if (!cur.HasTile && cur.LiquidAmount > 155 && cur.LiquidType == LiquidID.Water && Main.rand.NextBool(6))
+					var current = Framing.GetTileSafely(k, l);
+					if (!current.HasTile && current.LiquidAmount > 155 && current.LiquidType == LiquidID.Water && Main.rand.NextBool(6))
 					{
-						int musselType = ModContent.TileType<Mussel>();
-						WorldGen.PlaceTile(k, l, musselType, style: Main.rand.Next(TileObjectData.GetTileData(musselType, 0).RandomStyleRange));
-						
+						Place(k, l, ModContent.TileType<Mussel>());
 						return;
 					}
 				}
@@ -77,7 +75,21 @@ public class OceanGlobalTile : GlobalTile
 		} //Checks whether grass is in range (left or right) of the tile at these coordinates
 
 		if (GrassInRange())
-			WorldGen.PlaceTile(i, j - 1, ModContent.TileType<Seagrass>(), true, true, -1, Main.rand.Next(16));
+			Place(i, j - 1, ModContent.TileType<Seagrass>());
+	}
+
+	/// <summary> Places a tile of <paramref name="type"/> at the given coordinates and automatically syncs it. </summary>
+	private static void Place(int i, int j, int type)
+	{
+		var data = TileObjectData.GetTileData(type, 0);
+		if (data is null)
+			return;
+
+		if (WorldGen.PlaceTile(i, j, type, true, style: data.RandomStyleRange) && Main.netMode != NetmodeID.SinglePlayer)
+		{
+			TileExtensions.GetTopLeft(ref i, ref j);
+			NetMessage.SendTileSquare(i, j, data.Width, data.Height);
+		}
 	}
 
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
@@ -91,9 +103,7 @@ public class OceanGlobalTile : GlobalTile
 
 				// Crawl upwards until an air tile is found
 				while (y > 0 && Main.tile[x, y].HasTile)
-				{
 					y--;
-				}
 
 				if (NPC.CountNPCS(ModContent.NPCType<OceanSlime>()) < 1) //too many of these guys has to feel bad... right? feel free to remove if we want to troll players
 					NPC.NewNPC(WorldGen.GetItemSource_FromTreeShake(i, j), x * 16, y * 16, ModContent.NPCType<OceanSlime>());
