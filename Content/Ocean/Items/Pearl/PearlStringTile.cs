@@ -43,7 +43,12 @@ public class PearlStringTile : ModTile
 
 		WorldGen.KillTile(i, j);
 		if (Main.netMode != NetmodeID.SinglePlayer)
+		{
 			NetMessage.SendTileSquare(-1, i, j, 2, 1);
+
+			int item = Item.NewItem(new EntitySource_TileBreak(i, j), new Rectangle(i * 16, j * 16, 32, 16), ModContent.ItemType<PearlString>());
+			NetMessage.SendData(MessageID.SyncItem, number: item);
+		}
 
 		return true;
 	}
