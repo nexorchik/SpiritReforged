@@ -245,14 +245,12 @@ public class ScarecrowTileEntity : ModTileEntity
 
 	public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate)
 	{
-		var tile = Framing.GetTileSafely(i, j);
-		(i, j) = (i - tile.TileFrameX % TileObjectData.GetTileData(tile).CoordinateFullWidth / 18, 
-			j - tile.TileFrameY % TileObjectData.GetTileData(tile).CoordinateFullHeight / 18);
+		TileExtensions.GetTopLeft(ref i, ref j);
 
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 		{
-			NetMessage.SendTileSquare(Main.myPlayer, i, j);
-			NetMessage.SendData(MessageID.TileEntityPlacement, -1, -1, null, i, j, Type, 0f, 0, 0, 0);
+			NetMessage.SendTileSquare(Main.myPlayer, i, j, 1, 3);
+			NetMessage.SendData(MessageID.TileEntityPlacement, number: i, number2: j, number3: Type);
 			return -1;
 		}
 
