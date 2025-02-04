@@ -54,7 +54,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 		var drops = base.GetItemDrops(i, j);
 
 		var entity = ScarecrowTileEntity.GetMe(i, j);
-		if (entity is not null && entity.Hat is not null)
+		if (entity is not null && !entity.Hat.IsAir)
 		{
 			if (drops is null) //Don't concat if drops are null
 				drops = [entity.Hat.Clone()];
@@ -82,7 +82,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 		Player player = Main.LocalPlayer;
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
-		player.cursorItemIconID = (entity.Hat is null) ? Mod.Find<ModItem>(Name + "Item").Type : entity.Hat.type;
+		player.cursorItemIconID = entity.Hat.IsAir ? Mod.Find<ModItem>(Name + "Item").Type : entity.Hat.type;
 	}
 
 	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
@@ -110,7 +110,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 
 public class ScarecrowTileEntity : ModTileEntity
 {
-	public Item Hat { get; private set; } = null;
+	public Item Hat { get; private set; } = new();
 
 	private readonly Player dummy;
 
@@ -157,7 +157,7 @@ public class ScarecrowTileEntity : ModTileEntity
 
 	public void DrawHat()
 	{
-		if (Hat is null || Hat.headSlot < 0)
+		if (Hat.IsAir || Hat.headSlot < 0)
 			return;
 
 		//The base of the scarecrow
@@ -213,7 +213,7 @@ public class ScarecrowTileEntity : ModTileEntity
 			return false;
 		}
 
-		if (Hat is null)
+		if (Hat.IsAir)
 		{
 			if (TryPlaceHat())
 				NetMessage.SendData(MessageID.TileEntitySharing, number: ID, number2: Position.X, number3: Position.Y);
@@ -224,7 +224,7 @@ public class ScarecrowTileEntity : ModTileEntity
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				NetMessage.SendData(MessageID.SyncItem, number: id, number2: 1f);
 
-			Hat = null;
+			Hat.TurnToAir();
 			TryPlaceHat();
 
 			NetMessage.SendData(MessageID.TileEntitySharing, number: ID, number2: Position.X, number3: Position.Y);
@@ -251,7 +251,7 @@ public class ScarecrowTileEntity : ModTileEntity
 		{
 			NetMessage.SendTileSquare(Main.myPlayer, i, j, 1, 3);
 			NetMessage.SendData(MessageID.TileEntityPlacement, number: i, number2: j, number3: Type);
-			return -1;
+			//return -1;
 		}
 
 		return Place(i, j);
@@ -263,7 +263,7 @@ public class ScarecrowTileEntity : ModTileEntity
 
 	public override void SaveData(TagCompound tag)
 	{
-		if (Hat != null)
+		if (!Hat.IsAir)
 			tag[nameof(Hat)] = Hat;
 	}
 
