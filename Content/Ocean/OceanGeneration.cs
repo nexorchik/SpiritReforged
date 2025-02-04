@@ -6,6 +6,8 @@ using SpiritReforged.Content.Ocean.Tiles;
 using SpiritReforged.Common.ConfigurationCommon;
 using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Common.WorldGeneration;
+using Terraria;
+using Terraria.UI;
 
 namespace SpiritReforged.Content.Ocean;
 
@@ -134,6 +136,7 @@ public class OceanGeneration : ModSystem
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.PopulateOcean");
 
 		PlaceOceanPendant();
+		PlaceWaterChests(_oceanInfos.Item1, _oceanInfos.Item2);
 
 		PopulateOcean(_oceanInfos.Item1, 0);
 		PopulateOcean(_oceanInfos.Item2, 1);
@@ -298,6 +301,56 @@ public class OceanGeneration : ModSystem
 				Tile tile = Main.tile[i, chest.Y];
 				tile.TileType = TileID.HardenedSand;
 				tile.HasTile = true;
+			}
+		}
+	}
+
+	/// <summary> Places additional water chests in the inner ocean. </summary>
+	/// <param name="leftBounds"> The left ocean bounds. </param>
+	/// <param name="rightBounds"> The right ocean bounds. </param>
+	public static void PlaceWaterChests(Rectangle leftBounds, Rectangle rightBounds)
+	{
+		const int maxTries = 100;
+
+		int count = 0;
+		int countMax = WorldGen.genRand.Next(3, 6);
+
+		for (int i = 0; i < maxTries; i++)
+		{
+			int x = GetBound();
+			int y = (int)(Main.maxTilesY * 0.35f / 16f);
+			while (!WorldGen.SolidTile(x, y))
+				y++;
+
+			if (WorldMethods.AreaClear(x, y - 2, 2, 2) && WorldMethods.Submerged(x, y - 2, 2, 2))
+			{
+				for (int w = 0; w < 2; w++)
+				{
+					WorldGen.KillTile(x + w, y, false, false, true);
+					WorldGen.PlaceTile(x + w, y, TileID.Sand, true, false);
+				}
+
+				int contain = WorldGen.genRand.NextFromList(new short[5] { 863, 186, 277, 187, 4404 });
+				WorldGen.AddBuriedChest(x, y - 1, contain, Style: (int)Common.WorldGeneration.Chests.VanillaChestID.Water);
+
+				if (++count >= countMax)
+					break;
+			}
+		}
+
+		int GetBound()
+		{
+			const int length = 120;
+
+			if (WorldGen.genRand.NextBool())
+			{
+				int start = rightBounds.Left;
+				return WorldGen.genRand.Next(start, start + length);
+			}
+			else
+			{
+				int end = leftBounds.Right;
+				return WorldGen.genRand.Next(end - length, end);
 			}
 		}
 	}
