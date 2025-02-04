@@ -2,7 +2,6 @@
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.TileSway;
 using System.IO;
-using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 using Terraria.ModLoader.IO;
@@ -47,22 +46,19 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
-	public override void KillMultiTile(int i, int j, int frameX, int frameY) => ModContent.GetInstance<ScarecrowTileEntity>().Kill(i, j);
 
-	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
-		var drops = base.GetItemDrops(i, j);
-
 		var entity = ScarecrowTileEntity.GetMe(i, j);
 		if (entity is not null && !entity.Hat.IsAir)
 		{
-			if (drops is null) //Don't concat if drops are null
-				drops = [entity.Hat.Clone()];
-			else
-				drops = drops.Concat([entity.Hat.Clone()]);
+			int item = Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 16, entity.Hat);
+
+			if (Main.netMode != NetmodeID.SinglePlayer)
+				NetMessage.SendData(MessageID.SyncItem, number: item, number2: 1);
 		}
 
-		return drops;
+		ModContent.GetInstance<ScarecrowTileEntity>().Kill(i, j);
 	}
 
 	public override bool RightClick(int i, int j)
@@ -114,15 +110,20 @@ public class ScarecrowTileEntity : ModTileEntity
 
 	private readonly Player dummy;
 
+	/// <summary> Gets a <see cref="ScarecrowTileEntity"/> instance by tile position, and in a multiplayer friendly fashion. </summary>
+	/// <returns> null if no entity is found. </returns>
 	public static ScarecrowTileEntity GetMe(int i, int j)
 	{
 		TileExtensions.GetTopLeft(ref i, ref j);
-		if (ByPosition.TryGetValue(new Point16(i, j), out TileEntity entity) && entity is ScarecrowTileEntity sgaregrow)
-			return sgaregrow;
 
-		return null;
+		int id = ModContent.GetInstance<ScarecrowTileEntity>().Find(i, j);
+		if (id == -1)
+			return null;
+
+		return (ScarecrowTileEntity)ByID[id];
 	}
 
+	/// <summary> Places <see cref="Scarecrow"/> in the world along with the associated tile entity, wearing a sunflower hat. </summary>
 	public static void Generate(int i, int j)
 	{
 		WorldGen.PlaceObject(i, j, ModContent.TileType<Scarecrow>(), true);
@@ -240,7 +241,7 @@ public class ScarecrowTileEntity : ModTileEntity
 	public override bool IsTileValidForEntity(int x, int y)
 	{
 		Tile tile = Framing.GetTileSafely(x, y);
-		return tile.HasTile && tile.TileType == ModContent.TileType<Scarecrow>();
+		return tile.HasTile && tile.TileType == ModContent.TileType<Scarecrow>() && tile.TileFrameY == 0;
 	}
 
 	public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate)
@@ -251,7 +252,7 @@ public class ScarecrowTileEntity : ModTileEntity
 		{
 			NetMessage.SendTileSquare(Main.myPlayer, i, j, 1, 3);
 			NetMessage.SendData(MessageID.TileEntityPlacement, number: i, number2: j, number3: Type);
-			//return -1;
+			return -1;
 		}
 
 		return Place(i, j);

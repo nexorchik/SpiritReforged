@@ -1,10 +1,8 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
 using System.Linq;
-using Terraria;
 using Terraria.Audio;
 using Terraria.GameInput;
 using Terraria.UI;
-using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Common.UI.BackpackInterface;
 
