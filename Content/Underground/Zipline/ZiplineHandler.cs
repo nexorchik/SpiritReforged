@@ -110,7 +110,7 @@ internal class ZiplinePlayer : ModPlayer
 	{
 		if (Math.Abs(player.velocity.X) > player.maxRunSpeed + .1f)
 		{
-			if (player.whoAmI == Main.myPlayer && Main.timeForVisualEffects % 3 == 0)
+			if (Main.timeForVisualEffects % 3 == 0)
 				ParticleHandler.SpawnParticle(new LightningParticle(start, end, Color.Red, 30, 8f));
 
 			if (Main.rand.NextBool(3))
