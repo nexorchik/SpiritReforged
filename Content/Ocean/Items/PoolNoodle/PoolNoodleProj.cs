@@ -30,6 +30,7 @@ public class PoolNoodleProj : BaseWhipProj
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
 		base.OnHitNPC(target, hit, damageDone);
+
 		target.AddBuff(ModContent.BuffType<SummonTag3>(), 360);
 		target.AddBuff(ModContent.BuffType<PoolNoodleBubbleBuff>(), 600);
 	}
