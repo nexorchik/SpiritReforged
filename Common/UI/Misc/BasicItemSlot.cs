@@ -52,6 +52,4 @@ internal class BasicItemSlot : UIElement
 		Main.LocalPlayer.mouseInterface = true;
 		ItemSlot.Handle(ref item, ItemSlot.Context.InventoryItem); //Don't use _context because it may cause issues in multiplayer due to syncing
 	}
-
-	public virtual bool CanClickItem(Item item) => true;
 }

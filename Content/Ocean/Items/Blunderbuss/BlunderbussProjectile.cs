@@ -69,6 +69,9 @@ internal class BlunderbussProjectile : GlobalProjectile
 		firedFromBlunderbuss = binaryReader.ReadBoolean();
 
 		if (firedFromBlunderbuss)
+		{
 			projectile.scale = binaryReader.ReadSingle();
+			projectile.timeLeft = timeLeftMax; //We don't need to write timeLeft because it's constant
+		}
 	}
 }

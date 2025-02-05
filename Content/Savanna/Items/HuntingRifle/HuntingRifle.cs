@@ -2,7 +2,6 @@
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Particles;
-using SpiritReforged.Content.Savanna.Items.Fishing;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
