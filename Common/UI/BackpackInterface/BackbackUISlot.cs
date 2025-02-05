@@ -79,7 +79,7 @@ public class BackpackUISlot : UIElement
 
 		if (Main.mouseLeft && Main.mouseLeftRelease && CanClickItem(item) && CheckVanity())
 		{
-			ItemSlot.LeftClick(ref item, Context);
+			ItemSlot.LeftClick(ref item, ItemSlot.Context.InventoryItem); //Don't use Context because it causes issues in multiplayer due to syncing
 			ItemSlot.RightClick(ref item, Context);
 		}
 
