@@ -5,8 +5,6 @@ namespace SpiritReforged.Content.Desert.GildedScarab;
 internal abstract class ScarabLayerBase : PlayerDrawLayer
 {
 	private static Asset<Texture2D> gildedScarabTexture;
-
-	private float opacity;
 	private float visualCounter;
 
 	public override void Load() => gildedScarabTexture = Mod.Assets.Request<Texture2D>("Content/Desert/GildedScarab/GildedScarab_Player");
@@ -22,13 +20,14 @@ internal abstract class ScarabLayerBase : PlayerDrawLayer
 			return;
 
 		var player = drawInfo.drawPlayer;
+		var mPlayer = player.GetModPlayer<GildedScarabPlayer>();
 
 		if (player.HasBuff<GildedScarabBuff>())
-			opacity = MathHelper.Min(opacity + .05f, 1);
+			mPlayer.opacity = MathHelper.Min(mPlayer.opacity + .05f, 1);
 		else
-			opacity = MathHelper.Max(opacity - .05f, 0);
+			mPlayer.opacity = MathHelper.Max(mPlayer.opacity - .05f, 0);
 
-		if (opacity > 0)
+		if (mPlayer.opacity > 0)
 		{
 			if (!Main.gamePaused)
 				visualCounter = (visualCounter + 1f / frameDuration) % numFramesY;
@@ -39,7 +38,7 @@ internal abstract class ScarabLayerBase : PlayerDrawLayer
 			var texture = gildedScarabTexture.Value;
 			var source = texture.Frame(1, numFramesY, 0, (int)visualCounter, sizeOffsetY: -2);
 			var position = player.Center - Main.screenPosition + new Vector2(-(float)Math.Sin(visualCounter / numFramesY * MathHelper.TwoPi) * 22f, 0);
-			var color = Lighting.GetColor(player.Center.ToTileCoordinates()) * opacity;
+			var color = Lighting.GetColor(player.Center.ToTileCoordinates()) * mPlayer.opacity;
 
 			var drawData = new DrawData(texture, position, source, color, 0, source.Size() / 2, 1, SpriteEffects.None, 0);
 			drawInfo.DrawDataCache.Add(drawData);
