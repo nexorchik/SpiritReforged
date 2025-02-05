@@ -1,6 +1,5 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.PlayerCommon;
-using SpiritReforged.Content.Savanna.Items.WrithingSticks;
 
 namespace SpiritReforged.Content.Ocean.Items.Pearl;
 

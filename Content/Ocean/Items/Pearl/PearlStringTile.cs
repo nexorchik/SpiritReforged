@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
@@ -46,8 +47,8 @@ public class PearlStringTile : ModTile
 		{
 			NetMessage.SendTileSquare(-1, i, j, 2, 1);
 
-			int item = Item.NewItem(new EntitySource_TileBreak(i, j), new Rectangle(i * 16, j * 16, 32, 16), ModContent.ItemType<PearlString>());
-			NetMessage.SendData(MessageID.SyncItem, number: item);
+			var pos = new Rectangle(i * 16, j * 16, 32, 16).Center();
+			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ModContent.ItemType<PearlString>(), pos, true);
 		}
 
 		return true;

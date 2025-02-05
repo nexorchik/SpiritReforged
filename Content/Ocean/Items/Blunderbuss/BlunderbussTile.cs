@@ -1,5 +1,5 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
-using SpiritReforged.Content.Ocean.Items.Pearl;
 using System.Linq;
 using Terraria.DataStructures;
 
@@ -45,8 +45,8 @@ public class BlunderbussTile : ModTile
 		{
 			NetMessage.SendTileSquare(-1, i, j, 2, 1);
 
-			int item = Item.NewItem(new EntitySource_TileBreak(i, j), new Rectangle(i * 16, j * 16, 32, 16), ModContent.ItemType<Blunderbuss>());
-			NetMessage.SendData(MessageID.SyncItem, number: item);
+			var pos = new Rectangle(i * 16, j * 16, 32, 16).Center();
+			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ModContent.ItemType<Blunderbuss>(), pos, true);
 		}
 
 		return true;
