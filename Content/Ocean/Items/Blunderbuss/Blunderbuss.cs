@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Common.ProjectileCommon;
-using SpiritReforged.Content.Forest.ArcaneNecklace;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
