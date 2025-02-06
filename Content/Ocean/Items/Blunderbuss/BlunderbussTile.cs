@@ -41,12 +41,13 @@ public class BlunderbussTile : ModTile
 		TileExtensions.GetTopLeft(ref i, ref y);
 
 		WorldGen.KillTile(i, j);
-		if (Main.netMode != NetmodeID.SinglePlayer)
+		if (Main.netMode == NetmodeID.MultiplayerClient)
 		{
 			NetMessage.SendTileSquare(-1, i, j, 2, 1);
 
 			var pos = new Rectangle(i * 16, j * 16, 32, 16).Center();
 			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ModContent.ItemType<Blunderbuss>(), pos, true);
+			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), new Item(ItemID.MusketBall, 30), pos, true);
 		}
 
 		return true;

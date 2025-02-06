@@ -43,7 +43,7 @@ public class SkeletonHand : ModTile
 	public override bool RightClick(int i, int j)
 	{
 		WorldGen.KillTile(i, j);
-		if (Main.netMode != NetmodeID.SinglePlayer)
+		if (Main.netMode == NetmodeID.MultiplayerClient)
 		{
 			NetMessage.SendTileSquare(-1, i, j);
 

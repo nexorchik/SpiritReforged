@@ -43,7 +43,7 @@ public class PearlStringTile : ModTile
 		TileExtensions.GetTopLeft(ref i, ref y);
 
 		WorldGen.KillTile(i, j);
-		if (Main.netMode != NetmodeID.SinglePlayer)
+		if (Main.netMode == NetmodeID.MultiplayerClient)
 		{
 			NetMessage.SendTileSquare(-1, i, j, 2, 1);
 
