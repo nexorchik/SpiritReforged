@@ -21,6 +21,7 @@ internal class GildedScarabPlayer : ModPlayer
 	public int ScarabDefense { get; private set; }
 
 	public float opacity;
+	public float visualCounter;
 
 	public override void OnHurt(Player.HurtInfo info)
 	{
