@@ -87,11 +87,8 @@ public class MantarayMount : ModMount
 			if (player.velocity.Y == 0 && player.oldVelocity.Y == 0) //Grounded check
 				MountData.runSpeed = 0.1f;
 
-			if (player.controlJump)
-			{
-				HoverBehaviour(player);
+			if (player.controlJump && HoverBehaviour(player))
 				_hovering = true;
-			}
 		}
 		else
 		{
@@ -109,36 +106,32 @@ public class MantarayMount : ModMount
 		player.gills = true;
 	}
 
-	private void HoverBehaviour(Player player)
+	private bool HoverBehaviour(Player player)
 	{
 		const int hoverHeight = 5;
 		var playerPos = new Point((int)(player.Bottom.X / 16), (int)(player.Bottom.Y / 16));
 
 		for (int i = 0; i < hoverHeight; i++)
 		{
-			var tile = Main.tile[playerPos.X, playerPos.Y + i];
-			if (WorldGen.SolidOrSlopedTile(tile) || tile.LiquidAmount > 0)
+			var tile = Framing.GetTileSafely(playerPos.X, playerPos.Y + i);
+			if (tile.LiquidAmount > 0)
 			{
-				player.velocity.Y = MathHelper.Lerp(player.velocity.Y, -5f, .1f); //Hover velocity
-				if (tile.LiquidAmount > 0)
-				{
-					MountData.acceleration = 0.2f;
-					MountData.dashSpeed = 2.5f;
-					MountData.runSpeed = 9f;
-				}
-				else
-				{
-					MountData.acceleration = 0.15f;
-					MountData.dashSpeed = 1f;
-					MountData.runSpeed = 3f;
-				}
+				player.velocity.Y = MathHelper.Lerp(player.velocity.Y, -4f, .1f); //Hover velocity
+
+				MountData.acceleration = 0.2f;
+				MountData.dashSpeed = 2.5f;
+				MountData.runSpeed = 9f;
 
 				break;
 			}
+			else if (WorldGen.SolidOrSlopedTile(tile))
+				return false;
 		}
 
 		if (player.velocity.Y > 0)
 			player.velocity.Y *= .8f; //Reduce gravity
+
+		return true;
 	}
 
 	public override bool UpdateFrame(Player mountedPlayer, int state, Vector2 velocity)
@@ -147,7 +140,7 @@ public class MantarayMount : ModMount
 		_frameProgress += 0.02f + Math.Min(velocity.Length() / MaxSpeed, 1) * 0.04f;
 		_frameProgress %= 1;
 
-		if (_hovering)
+		if (_hovering || mountedPlayer.velocity.Y == 0)
 			mountedPlayer.mount._frame = (int)(6 * _frameProgress);
 		else
 			mountedPlayer.mount._frame = (int)(6 + 7 * _frameProgress);

@@ -20,13 +20,14 @@ public class Killifish : ModNPC
 	{
 		Main.npcFrameCount[Type] = 9;
 		Main.npcCatchable[Type] = true;
+
 		NPCID.Sets.CountsAsCritter[Type] = true;
-		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Shimmerfly;
+		NPCID.Sets.ShimmerTransformToNPC[Type] = NPCID.Shimmerfly;
 	}
 
 	public override void SetDefaults()
 	{
-		NPC.width = 46;
+		NPC.width = 28;
 		NPC.height = 28;
 		NPC.damage = 0;
 		NPC.defense = 0;

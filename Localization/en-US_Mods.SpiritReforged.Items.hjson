@@ -98,7 +98,7 @@ Lifesaver: {
 	Tooltip:
 		'''
 		Summons a rideable manta ray mount
-		The manta Ray is incapable of movement on land
+		The manta Ray is incapable of movement on land, but can hover over liquids
 		'''
 }
 
@@ -417,7 +417,7 @@ KoiTotem: {
 	DisplayName: Koi Totem
 	Tooltip:
 		'''
-		Increases fishing skill when worn or when placed nearby
+		Increases fishing skill when placed nearby
 		Occasionally replenishes the bait that was last used
 		'''
 }
@@ -981,6 +981,7 @@ ZiplineGun: {
 		'''
 		Creates a rail at the cursor position to carry players
 		Rails can be removed when hovered over or by using right click
+		'Not to be confused with the railgun'
 		'''
 	AssistantOn: Right click to enable assistant
 	AssistantOff: Right click to disable assistant

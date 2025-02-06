@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
 
@@ -29,6 +30,28 @@ public class SkeletonHand : ModTile
 
 		AddMapEntry(new Color(165, 165, 150));
 		RegisterItemDrop(ModContent.ItemType<SafekeeperRing>());
+	}
+
+	public override void MouseOver(int i, int j)
+	{
+		Player player = Main.LocalPlayer;
+		player.noThrow = 2;
+		player.cursorItemIconEnabled = true;
+		player.cursorItemIconID = ModContent.ItemType<SafekeeperRing>();
+	}
+
+	public override bool RightClick(int i, int j)
+	{
+		WorldGen.KillTile(i, j);
+		if (Main.netMode != NetmodeID.SinglePlayer)
+		{
+			NetMessage.SendTileSquare(-1, i, j);
+
+			var pos = new Rectangle(i * 16, j * 16, 16, 16).Center();
+			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ModContent.ItemType<SafekeeperRing>(), pos, true);
+		}
+
+		return true;
 	}
 
 	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)

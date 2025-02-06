@@ -44,13 +44,14 @@ public class CloudstalkTile : HerbTile
 
 	public override void StaticDefaults()
 	{
-		LocalizedText name = CreateMapEntryName();
-		AddMapEntry(new Color(178, 234, 234), name);
-
 		TileObjectData.newTile.CopyFrom(TileObjectData.StyleAlch);
-		TileObjectData.newTile.AnchorValidTiles = [TileID.Grass, TileID.HallowedGrass, TileID.JungleGrass, ModContent.TileType<Savanna.Tiles.SavannaGrass>(), TileID.Cloud, TileID.RainCloud, TileID.SnowCloud];
+		TileObjectData.newTile.AnchorValidTiles = [TileID.Grass, TileID.HallowedGrass, TileID.JungleGrass, ModContent.TileType<Savanna.Tiles.SavannaGrass>(), 
+			ModContent.TileType<Savanna.Tiles.SavannaGrassHallow>(), TileID.Cloud, TileID.RainCloud, TileID.SnowCloud];
 		TileObjectData.newTile.AnchorAlternateTiles = [TileID.ClayPot, TileID.PlanterBox];
 		TileObjectData.addTile(Type);
+
+		LocalizedText name = CreateMapEntryName();
+		AddMapEntry(new Color(178, 234, 234), name);
 
 		DustType = DustID.Cloud;
 	}
