@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
 using SpiritReforged.Common.ItemCommon.Pins;
 using SpiritReforged.Common.MapCommon;
+using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.SimpleEntity;
 using SpiritReforged.Common.WorldGeneration;
@@ -24,7 +25,8 @@ public static class ReforgedMultiplayer
 		RemovePointOfInterest,
 		RevealMap,
 		MagmaGlowPoint,
-		PackVisibility
+		PackVisibility,
+		SummonTag
 	}
 
 	public static void HandlePacket(BinaryReader reader, int whoAmI)
@@ -162,6 +164,16 @@ public static class ReforgedMultiplayer
 					BackpackPlayer.SendVisibilityPacket(visibility, player, whoAmI);
 
 				Main.player[player].GetModPlayer<BackpackPlayer>().packVisible = visibility;
+				break;
+
+			case MessageType.SummonTag:
+				int npc = reader.ReadInt16();
+				byte damage = reader.ReadByte();
+
+				if (Main.netMode == NetmodeID.Server)
+					SummontTagGlobalNPC.SendTagPacket(npc, damage, whoAmI);
+
+				Main.npc[npc].ApplySummonTag(damage, false);
 				break;
 		}
 	}
