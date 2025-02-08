@@ -4,7 +4,7 @@ public class BambooHalberd : ModItem
 {
 	public override void SetDefaults()
 	{
-		Item.damage = 7;
+		Item.damage = 5;
 		Item.knockBack = 2f;
 		Item.width = Item.height = 24;
 		Item.value = Item.sellPrice(silver: 18);
