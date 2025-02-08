@@ -54,12 +54,12 @@ public class Hyena : ModNPC
 	{
 		NPC.Size = new Vector2(40, 40);
 		NPC.damage = 10;
-		NPC.defense = 0;
-		NPC.lifeMax = 40;
-		NPC.value = 38f;
+		NPC.defense = 4;
+		NPC.lifeMax = 56;
+		NPC.value = 44f;
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
-		NPC.knockBackResist = .45f;
+		NPC.knockBackResist = .41f;
 		NPC.direction = 1; //Don't start at 0
 		AIType = -1;
 		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];

@@ -103,7 +103,7 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/SwordSlash1") with { Pitch = 1.25f }, Projectile.Center);
 
 				AiTimer = attackCooldown;
-				Projectile.velocity = (Projectile.DirectionTo(target.Center) * 28).RotatedByRandom(0.1f);
+				Projectile.velocity = (Projectile.DirectionTo(target.Center) * 24).RotatedByRandom(0.1f);
 
 				for (int i = 0; i < 10; i++)
 				{

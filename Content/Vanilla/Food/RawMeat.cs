@@ -17,7 +17,7 @@ public class RawMeat : FoodItem
 		ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<RawFish>();
 	}
 
-	public override void Defaults() => Item.buffTime = 2 * 60 * 60;
+	public override void Defaults() => Item.buffTime = 45 * 60;
 
 	public override void Update(ref float gravity, ref float maxFallSpeed)
 	{

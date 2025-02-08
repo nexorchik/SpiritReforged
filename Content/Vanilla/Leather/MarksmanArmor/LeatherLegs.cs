@@ -14,7 +14,7 @@ public class LeatherLegs : ModItem
 
 	public override void AddRecipes() => CreateRecipe()
 		.AddIngredient(ItemID.Leather, 7)
-		.AddIngredient(ItemID.IronBar, 2)
+		.AddIngredient(RecipeGroupID.IronBar, 2)
 		.AddTile(TileID.Anvils)
 		.Register();
 }

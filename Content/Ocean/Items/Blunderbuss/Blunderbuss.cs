@@ -42,7 +42,7 @@ public class Blunderbuss : ModItem
 				DustID.Torch, unit * Main.rand.NextFloat(), 0, default, Main.rand.NextFloat(2f)).noGravity = true;
         for (int i = 0; i < 15; i++)
             Dust.NewDustPerfect(position + unit * fxDistance + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), 
-				DustID.Smoke, unit.RotatedByRandom(1f) * Main.rand.NextFloat(), 240, default, Main.rand.NextFloat(5f, 8f));
+				DustID.Smoke, unit.RotatedByRandom(1f) * Main.rand.NextFloat(), 240, default, Main.rand.NextFloat(3f, 6f));
 
 		player.velocity -= velocity * .15f; //Player knockback
 
