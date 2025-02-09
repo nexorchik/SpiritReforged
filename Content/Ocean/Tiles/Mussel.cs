@@ -5,7 +5,7 @@ namespace SpiritReforged.Content.Ocean.Tiles;
 
 public class Mussel : ModTile, IAutoloadTileItem
 {
-	private const int styleRange = 3;
+	public const int styleRange = 3;
 
 	public void SetItemDefaults(ModItem item)
 	{
@@ -19,15 +19,12 @@ public class Mussel : ModTile, IAutoloadTileItem
 		Main.tileSolid[Type] = false;
 		Main.tileNoAttach[Type] = true;
 		Main.tileNoFail[Type] = true;
-		Main.tileWaterDeath[Type] = true;
-
-		TileID.Sets.FramesOnKillWall[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
 		TileObjectData.newTile.AnchorAlternateTiles = [TileID.WoodenBeam];
-		TileObjectData.newTile.RandomStyleRange = styleRange;
 		TileObjectData.newTile.StyleHorizontal = true;
+		TileObjectData.newTile.RandomStyleRange = styleRange;
 
 		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
 		TileObjectData.newAlternate.AnchorRight = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide | AnchorType.AlternateTile, TileObjectData.newTile.Height, 0);

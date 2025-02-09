@@ -4,6 +4,7 @@ using SpiritReforged.Content.Ocean.NPCs.OceanSlime;
 using SpiritReforged.Content.Ocean.Tiles;
 using SpiritReforged.Content.Savanna.Tiles;
 using System.Linq;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean;
 
@@ -41,20 +42,15 @@ public class OceanGlobalTile : GlobalTile
 
 		if (inOcean && inWorldBounds && woods.Contains(type))
 		{
-			for (int k = i - 1; k < i + 2; ++k)
-			{
-				for (int l = j - 1; l < j + 2; ++l)
-				{
-					if (k == i && l == j)
-						continue; //Dont check myself
+			int seed = Main.rand.Next(4);
+			Point16[] offset = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
+			var coords = new Point16(i, j) + offset[seed];
 
-					var current = Framing.GetTileSafely(k, l);
-					if (!current.HasTile && current.LiquidAmount > 155 && current.LiquidType == LiquidID.Water && Main.rand.NextBool(6))
-					{
-						Place(k, l, ModContent.TileType<Mussel>());
-						return;
-					}
-				}
+			var current = Framing.GetTileSafely(coords);
+			if (!current.HasTile && current.LiquidAmount > 155 && current.LiquidType == LiquidID.Water && Main.rand.NextBool(32))
+			{
+				Place(coords.X, coords.Y, ModContent.TileType<Mussel>(), Main.rand.Next(Mussel.styleRange));
+				return;
 			}
 		}
 	}
@@ -79,16 +75,19 @@ public class OceanGlobalTile : GlobalTile
 	}
 
 	/// <summary> Places a tile of <paramref name="type"/> at the given coordinates and automatically syncs it. </summary>
-	private static void Place(int i, int j, int type)
+	private static void Place(int i, int j, int type, int style = -1)
 	{
 		var data = TileObjectData.GetTileData(type, 0);
 		if (data is null)
 			return;
 
-		if (WorldGen.PlaceTile(i, j, type, true, style: data.RandomStyleRange) && Main.netMode != NetmodeID.SinglePlayer)
+		if (style == -1)
+			style = data.RandomStyleRange;
+
+		if (WorldGen.PlaceTile(i, j, type, true, style: style) && Main.netMode != NetmodeID.SinglePlayer)
 		{
 			TileExtensions.GetTopLeft(ref i, ref j);
-			NetMessage.SendTileSquare(i, j, data.Width, data.Height);
+			NetMessage.SendTileSquare(-1, i, j, data.Width, data.Height);
 		}
 	}
 
