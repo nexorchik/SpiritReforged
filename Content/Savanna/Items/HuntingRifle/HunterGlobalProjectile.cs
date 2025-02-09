@@ -62,7 +62,7 @@ public class HunterGlobalProjectile : GlobalProjectile
 		bitWriter.WriteBit(firedFromHuntingRifle);
 
 		if (firedFromHuntingRifle)
-			binaryWriter.Write(projectile.extraUpdates);
+			binaryWriter.Write((byte)projectile.extraUpdates);
 	}
 
 	public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader)
@@ -70,6 +70,6 @@ public class HunterGlobalProjectile : GlobalProjectile
 		firedFromHuntingRifle = bitReader.ReadBit();
 
 		if (firedFromHuntingRifle)
-			projectile.extraUpdates = binaryReader.Read();
+			projectile.extraUpdates = binaryReader.ReadByte();
 	}
 }

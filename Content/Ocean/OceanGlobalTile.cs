@@ -25,16 +25,16 @@ public class OceanGlobalTile : GlobalTile
 			if (above.LiquidAmount == 255) //water stuff
 			{
 				if (Main.rand.NextBool(35)) //Ocean kelp
-					Place(i, j - 1, ModContent.TileType<OceanKelp>());
+					TileExtensions.Place(i, j - 1, ModContent.TileType<OceanKelp>());
 
 				if (Main.rand.NextBool(60)) //1x2 kelp
-					Place(i, j - 1, ModContent.TileType<Kelp1x2>());
+					TileExtensions.Place(i, j - 1, ModContent.TileType<Kelp1x2>());
 
 				if (Main.rand.NextBool(80)) //2x2 kelp
-					Place(i, j - 1, ModContent.TileType<Kelp2x2>());
+					TileExtensions.Place(i, j - 1, ModContent.TileType<Kelp2x2>());
 
 				if (Main.rand.NextBool(90)) //2x3 kelp
-					Place(i, j - 1, ModContent.TileType<Kelp2x3>());
+					TileExtensions.Place(i, j - 1, ModContent.TileType<Kelp2x3>());
 			}
 			else if (Main.rand.NextBool(6))
 				SpawnSeagrass(i, j, 5);
@@ -49,7 +49,7 @@ public class OceanGlobalTile : GlobalTile
 			var current = Framing.GetTileSafely(coords);
 			if (!current.HasTile && current.LiquidAmount > 155 && current.LiquidType == LiquidID.Water && Main.rand.NextBool(32))
 			{
-				Place(coords.X, coords.Y, ModContent.TileType<Mussel>(), Main.rand.Next(Mussel.styleRange));
+				TileExtensions.Place(coords.X, coords.Y, ModContent.TileType<Mussel>(), Main.rand.Next(Mussel.StyleRange));
 				return;
 			}
 		}
@@ -71,24 +71,7 @@ public class OceanGlobalTile : GlobalTile
 		} //Checks whether grass is in range (left or right) of the tile at these coordinates
 
 		if (GrassInRange())
-			Place(i, j - 1, ModContent.TileType<Seagrass>());
-	}
-
-	/// <summary> Places a tile of <paramref name="type"/> at the given coordinates and automatically syncs it. </summary>
-	private static void Place(int i, int j, int type, int style = -1)
-	{
-		var data = TileObjectData.GetTileData(type, 0);
-		if (data is null)
-			return;
-
-		if (style == -1)
-			style = data.RandomStyleRange;
-
-		if (WorldGen.PlaceTile(i, j, type, true, style: style) && Main.netMode != NetmodeID.SinglePlayer)
-		{
-			TileExtensions.GetTopLeft(ref i, ref j);
-			NetMessage.SendTileSquare(-1, i, j, data.Width, data.Height);
-		}
+			TileExtensions.Place(i, j - 1, ModContent.TileType<Seagrass>());
 	}
 
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)

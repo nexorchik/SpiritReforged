@@ -29,7 +29,7 @@ public static class ReforgedMultiplayer
 		MagmaGlowPoint,
 		PackVisibility,
 		SummonTag,
-		BurnNPC,
+		BurnUndeadNPC,
 		CascadeBubble,
 	}
 
@@ -172,7 +172,7 @@ public static class ReforgedMultiplayer
 					break;
 				}
 
-			case MessageType.BurnNPC: //Sent from server to clients
+			case MessageType.BurnUndeadNPC: //Sent from server to clients
 				int npcIndex = reader.ReadInt32();
 				UndeadNPC.BurnAway(Main.npc[npcIndex]);
 				break;

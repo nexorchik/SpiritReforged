@@ -130,7 +130,7 @@ public class UndeadNPC : GlobalNPC
 
 		if (Main.netMode != NetmodeID.SinglePlayer)
 		{
-			ModPacket packet = SpiritReforgedMod.Instance.GetPacket(MessageType.BurnNPC, 1);
+			ModPacket packet = SpiritReforgedMod.Instance.GetPacket(MessageType.BurnUndeadNPC, 1);
 			packet.Write(npc.whoAmI);
 			packet.Send();
 		}

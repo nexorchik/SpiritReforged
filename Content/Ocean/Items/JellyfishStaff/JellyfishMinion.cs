@@ -233,8 +233,7 @@ public class JellyfishMinion : BaseMinion
 					{
 						PreNewProjectile.New(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection * JellyfishBolt.HITSCAN_STEP, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0, 0, 3, delegate (Projectile p)
 						{
-							if (p.ModProjectile is JellyfishBolt jellyfishBolt)
-								jellyfishBolt.startPos = p.Center;
+							(p.ModProjectile as JellyfishBolt).startPos = p.Center;
 						});
 
 						Projectile.netUpdate = true;
