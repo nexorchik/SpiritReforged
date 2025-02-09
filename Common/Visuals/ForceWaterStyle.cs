@@ -13,6 +13,9 @@ internal class ForceWaterStyle : ModSystem
 
 	public override void SetStaticDefaults()
 	{
+		if (Main.dedServ)
+			return;
+
 		foreach (var scene in ModContent.GetContent<ModSceneEffect>())
 		{
 			if (scene.SurfaceBackgroundStyle != null && scene.WaterStyle != null)

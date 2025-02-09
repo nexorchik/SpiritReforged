@@ -13,7 +13,7 @@ public class PearlStringTile : ModTile
 		Main.tileSolid[Type] = false;
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoFail[Type] = true;
-
+		
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);
 		TileObjectData.newTile.CoordinateHeights = [16];
 		TileObjectData.newTile.Origin = new(1, 0);
@@ -22,7 +22,7 @@ public class PearlStringTile : ModTile
 		TileObjectData.addTile(Type);
 
 		AddMapEntry(new Color(100, 100, 120));
-		RegisterItemDrop(ModContent.ItemType<PearlString>());
+		RegisterItemDrop(ModContent.ItemType<PearlString>(), 0, 1, 2, 3);
 		SolidBottomGlobalTile.solidBottomTypes.Add(Type);
 
 		DustType = DustID.Sand;
@@ -123,16 +123,19 @@ public class PearlStringTileRubble : PearlStringTile
 	{
 		base.SetStaticDefaults();
 		FlexibleTileWand.RubblePlacementSmall.AddVariation(ModContent.ItemType<PearlString>(), Type, 0);
+		//RegisterItemDrop(ModContent.ItemType<PearlString>());
 	}
 
-	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
+	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 			return;
 
 		int item = Item.NewItem(null, new Rectangle(i * 16, j * 16, 16, 16), ModContent.ItemType<PearlString>());
-		if (Main.netMode != NetmodeID.SinglePlayer)
-			NetMessage.SendData(MessageID.SyncItem, number: item);
+		Main.item[item].ResetPrefix();
+
+		//if (Main.netMode != NetmodeID.SinglePlayer)
+		//	NetMessage.SendData(MessageID.SyncItem, number: item);
 	}
 
 	public override bool CanDrop(int i, int j) => false; //Don't drop the default item

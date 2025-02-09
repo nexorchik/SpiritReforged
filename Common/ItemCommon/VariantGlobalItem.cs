@@ -9,10 +9,11 @@ internal class VariantGlobalItem : GlobalItem
 {
 	public override bool InstancePerEntity => true;
 
-	private struct VarData(Point[] sizes, bool inventory)
+	private struct VarData(Point[] sizes, bool inventory, Asset<Texture2D> overrideTexture = null)
 	{
 		public Point[] sizes = sizes;
 		public bool inventory = inventory;
+		public Asset<Texture2D> overrideTexture = overrideTexture;
 	}
 
 	private static readonly Dictionary<int, VarData> variantData = []; //Type, frame sizes
@@ -24,9 +25,10 @@ internal class VariantGlobalItem : GlobalItem
 	/// <param name="type"> The item type. </param>
 	/// <param name="amount"> The number of variants. </param>
 	/// <param name="appliesToInventory"> Whether this item can use variants in the inventory. </param>
-	public static void AddVariants(int type, int amount, bool appliesToInventory = false)
+	public static void AddVariants(int type, int amount, bool appliesToInventory = false, string overrideTexturePath = null)
 	{
-		variantData.Add(type, new VarData(null, appliesToInventory));
+		Asset<Texture2D> asset = Main.dedServ || overrideTexturePath is null ? null : ModContent.Request<Texture2D>(overrideTexturePath);
+		variantData.Add(type, new VarData(null, appliesToInventory, asset));
 		Main.RegisterItemAnimation(type, new DrawAnimationVertical(2, amount) { NotActuallyAnimating = true });
 	}
 
@@ -34,9 +36,13 @@ internal class VariantGlobalItem : GlobalItem
 	/// <param name="type"> The item type. </param>
 	/// <param name="sizes"> The dimensions of each individual frame. Also determines the frame count based on length. </param>
 	/// <param name="appliesToInventory"> Whether this item can use variants in the inventory. </param>
-	public static void AddVariants(int type, Point[] sizes, bool appliesToInventory = false)
+	/// <param name="overrideTexturePath"> Overrides the variant texture to be the one provided.<br/>
+	/// Path is used in <see cref="ModContent.Request{T}(string, AssetRequestMode)"/>.<br/>
+	/// This parameter is automatically ignored on the server. </param>
+	public static void AddVariants(int type, Point[] sizes, bool appliesToInventory = false, string overrideTexturePath = null)
 	{
-		variantData.Add(type, new VarData(sizes, appliesToInventory));
+		Asset<Texture2D> asset = Main.dedServ || overrideTexturePath is null ? null : ModContent.Request<Texture2D>(overrideTexturePath);
+		variantData.Add(type, new VarData(sizes, appliesToInventory, asset));
 		Main.RegisterItemAnimation(type, new DrawAnimationVertical(2, sizes.Length) { NotActuallyAnimating = true });
 	}
 
@@ -59,7 +65,7 @@ internal class VariantGlobalItem : GlobalItem
 		int frameCount = Main.itemAnimations[type].FrameCount;
 		int frame = Math.Max(subID, 0);
 
-		var texture = TextureAssets.Item[type].Value;
+		var texture = (variantData[type].overrideTexture ?? TextureAssets.Item[type]).Value;
 		var rectangle = texture.Frame(1, frameCount, 0, frame, 0, -2);
 		var sizes = variantData[type].sizes;
 
@@ -93,7 +99,7 @@ internal class VariantGlobalItem : GlobalItem
 		if (!variantData[item.type].inventory && subID == -1)
 			subID = Main.rand.Next(frameCount);
 
-		var texture = TextureAssets.Item[item.type].Value;
+		var texture = (variantData[item.type].overrideTexture ?? TextureAssets.Item[item.type]).Value;
 		var source = GetSource(item.type);
 
 		spriteBatch.Draw(texture, item.position + item.Size - source.Size() - Main.screenPosition, source, GetAlpha(item, lightColor) ?? lightColor, rotation, Vector2.Zero, scale, SpriteEffects.None, 0);
@@ -105,7 +111,7 @@ internal class VariantGlobalItem : GlobalItem
 		if (!variantData[item.type].inventory)
 			subID = -1;
 
-		var texture = TextureAssets.Item[item.type].Value;
+		var texture = (variantData[item.type].overrideTexture ?? TextureAssets.Item[item.type]).Value;
 		var source = GetSource(item.type);
 
 		//Scale the item according to 'source' instead of 'frame'

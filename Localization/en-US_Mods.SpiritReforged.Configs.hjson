@@ -42,4 +42,9 @@ ReforgedServerConfig: {
 			However, they do contribute to the maximum NPC limit
 			'''
 	}
+
+	MaxFloatingItemCount: {
+		Label: Max Floating Item Count
+		Tooltip: ""
+	}
 }
