@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
 using SpiritReforged.Common.ItemCommon.Pins;
 using SpiritReforged.Common.MapCommon;
+using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.SimpleEntity;
 using SpiritReforged.Common.WorldGeneration;
@@ -8,7 +9,6 @@ using SpiritReforged.Content.Forest.Safekeeper;
 using SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 using System.IO;
-using Terraria;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.Misc;
@@ -28,6 +28,7 @@ public static class ReforgedMultiplayer
 		RevealMap,
 		MagmaGlowPoint,
 		PackVisibility,
+		SummonTag,
 		BurnNPC,
 		CascadeBubble,
 	}
@@ -187,6 +188,16 @@ public static class ReforgedMultiplayer
 					Main.player[player].GetModPlayer<CascadeArmorPlayer>().bubbleStrength = value;
 					break;
 				}
+
+			case MessageType.SummonTag:
+				int npc = reader.ReadInt16();
+				byte damage = reader.ReadByte();
+
+				if (Main.netMode == NetmodeID.Server)
+					SummontTagGlobalNPC.SendTagPacket(npc, damage, whoAmI);
+
+				Main.npc[npc].ApplySummonTag(damage, false);
+				break;
 		}
 	}
 }

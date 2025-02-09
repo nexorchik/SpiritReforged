@@ -71,7 +71,7 @@ public class HuntingRifle : ModItem
 	public override void SetDefaults()
     {
         Item.width = Item.height = 12;
-        Item.damage = 10;
+        Item.damage = 22;
         Item.knockBack = 5;
         Item.useAnimation = Item.useTime = 60;
 		Item.UseSound = new SoundStyle("SpiritReforged/Assets/SFX/Item/Gunshot");

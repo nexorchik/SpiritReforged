@@ -35,12 +35,17 @@ public class Hyena : ModNPC
 	public ref float Counter => ref NPC.ai[1]; //Used to change behaviour at intervals
 	public ref float TargetSpeed => ref NPC.ai[2]; //Stores a direction to lerp to over time
 
-	private bool holdingMeat; //Whether this NPC is holding raw meat
-	private bool dealDamage; //Whether this NPC can deal damage
-	private bool isAngry; //Similar to dealDamage but is reset differently
-	private int oldX; //Tracks the last horizontal jump coordinate so the NPC doesn't constantly jump in the same place
+	/// <summary> Whether this NPC is holding raw meat. </summary>
+	private bool holdingMeat;
+	/// <summary> Whether this NPC can deal damage. </summary>
+	private bool dealDamage;
+	/// <summary> Similar to <see cref="dealDamage"/> but is reset differently. </summary>
+	private bool isAngry;
+	/// <summary> Tracks the last horizontal jump coordinate so the NPC doesn't constantly jump in the same place. </summary>
+	private int oldX;
 	private int drownTime;
-	private TargetSearchFlag focus = TargetSearchFlag.All; //Which target types should be focused when searching
+	/// <summary> Which target types should be focused when searching. </summary>
+	private TargetSearchFlag focus = TargetSearchFlag.All;
 
 	public override void SetStaticDefaults()
 	{
@@ -54,12 +59,13 @@ public class Hyena : ModNPC
 	{
 		NPC.Size = new Vector2(40, 40);
 		NPC.damage = 10;
-		NPC.defense = 0;
-		NPC.lifeMax = 40;
-		NPC.value = 38f;
+		NPC.defense = 4;
+		NPC.lifeMax = 56;
+		NPC.value = 44f;
+		NPC.chaseable = false;
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
-		NPC.knockBackResist = .45f;
+		NPC.knockBackResist = .41f;
 		NPC.direction = 1; //Don't start at 0
 		AIType = -1;
 		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
@@ -70,6 +76,7 @@ public class Hyena : ModNPC
 	public override void AI()
 	{
 		dealDamage = false;
+
 		int searchDist = (focus is TargetSearchFlag.All) ? 350 : 450;
 		var search = NPC.FindTarget(focus, SearchFilters.OnlyPlayersInCertainDistance(NPC.Center, searchDist), AdvancedTargetingHelper.NPCsByDistanceAndType(NPC, searchDist));
 		bool wounded = NPC.life < NPC.lifeMax * .25f;
@@ -99,6 +106,7 @@ public class Hyena : ModNPC
 		{
 			focus = TargetSearchFlag.All;
 			isAngry = false;
+			NPC.chaseable = false;
 			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, TargetSpeed, .025f);
 
 			if (AnimationState == (int)State.Laugh && Math.Abs(NPC.velocity.X) < .1f)
@@ -111,7 +119,7 @@ public class Hyena : ModNPC
 			}
 			else
 			{
-				if (swimming)
+				/*if (swimming)
 				{
 					if (drownTime == drownTimeMax / 2)
 						TargetSpeed = -TargetSpeed; //Turn around because I've been swimming for too long
@@ -121,7 +129,7 @@ public class Hyena : ModNPC
 
 					ChangeAnimationState(State.Trotting, true);
 				}
-				else
+				else*/
 				{
 					if (!FoundPickup() && Counter % 250 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
 					{
@@ -146,6 +154,7 @@ public class Hyena : ModNPC
 		{
 			const int spotDistance = 16 * 12;
 
+			NPC.chaseable = isAngry && focus.HasFlag(TargetSearchFlag.Players);
 			TargetSpeed = 0;
 			var target = NPC.GetTargetData();
 			Separate();
@@ -270,8 +279,8 @@ public class Hyena : ModNPC
 						HitEffect(new NPC.HitInfo());
 					}
 				}
-				else
-					NPC.velocity.Y = Math.Max(NPC.velocity.Y - .75f, -1.5f);
+				//else
+				//	NPC.velocity.Y = Math.Max(NPC.velocity.Y - .75f, -1.5f);
 			}
 			else if (!NPC.wet)
 				drownTime = 0;

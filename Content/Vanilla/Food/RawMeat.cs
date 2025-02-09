@@ -12,7 +12,7 @@ public class RawMeat : FoodItem
 		VariantGlobalItem.AddVariants(Type, [new Point(30, 26), new Point(28, 22), new Point(26, 22)]);
 	}
 
-	public override void Defaults() => Item.buffTime = 2 * 60 * 60;
+	public override void Defaults() => Item.buffTime = 45 * 60;
 
 	public override bool CanUseItem(Player player)
 	{

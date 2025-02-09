@@ -1,8 +1,14 @@
-﻿
-namespace SpiritReforged.Common.NPCCommon;
+﻿namespace SpiritReforged.Common.NPCCommon;
 
 public static class NPCHelper
 {
+	/// <summary> Applies summon tag of <paramref name="damage"/> to this NPC. </summary>
+	public static void ApplySummonTag(this NPC npc, int damage, bool sync = true)
+	{
+		if (npc.TryGetGlobalNPC(out SummontTagGlobalNPC tagNPC))
+			tagNPC.ApplySummonTag(damage, npc.whoAmI, sync);
+	}
+
 	public static void BuffImmune(int type, bool whipsToo = false)
 	{
 		if (whipsToo)
@@ -19,8 +25,7 @@ public static class NPCHelper
 			NPCID.Sets.SpecificDebuffImmunity[npc.Type][buff] = true;
 	}
 
-	public static void ImmuneTo<T>(ModNPC npc, params int[] buffs) where T : ModBuff => ImmuneTo(npc, [.. new List<int>(buffs) { ModContent.BuffType<T>() }]
-);
+	public static void ImmuneTo<T>(ModNPC npc, params int[] buffs) where T : ModBuff => ImmuneTo(npc, [.. new List<int>(buffs) { ModContent.BuffType<T>() }]);
 	public static void ImmuneTo<T1, T2>(ModNPC npc, params int[] buffs) where T1 : ModBuff where T2 : ModBuff => ImmuneTo(npc, [.. new List<int>(buffs) { ModContent.BuffType<T1>(), ModContent.BuffType<T2>() }]);
 
 	public static void ImmuneTo<T1, T2, T3>(ModNPC npc, params int[] buffs) where T1 : ModBuff where T2 : ModBuff where T3 : ModBuff

@@ -9,7 +9,7 @@ public class FairyWhistle : ModItem
 {
 	public override void SetDefaults()
 	{
-		Item.damage = 8;
+		Item.damage = 4;
 		Item.width = 22;
 		Item.height = 18;
 		Item.value = Item.sellPrice(0, 0, 0, 10);
@@ -38,7 +38,7 @@ public class FairyWhistle : ModItem
 	}
 
 	public override Vector2? HoldoutOffset() => new Vector2(5, -2);
-	public override void AddRecipes() => CreateRecipe().AddRecipeGroup(RecipeGroupID.Wood, 25).AddTile(TileID.WorkBenches).Register();
+	public override void AddRecipes() => CreateRecipe().AddRecipeGroup(RecipeGroupID.Wood, 20).AddRecipeGroup(ItemID.Acorn, 1).AddTile(TileID.WorkBenches).Register();
 }
 
 /// <summary> Used for controlling <see cref="FairyWhistle"/> item use visuals. </summary>

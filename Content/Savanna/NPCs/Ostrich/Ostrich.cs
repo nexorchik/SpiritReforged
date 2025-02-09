@@ -42,7 +42,8 @@ public class Ostrich : ModNPC
 
 	private float frameRate = .2f;
 	private int drownTime;
-	private int oldX; //Tracks the last horizontal jump coordinate so the NPC doesn't constantly jump in the same place
+	/// <summary> Tracks the last horizontal jump coordinate so the NPC doesn't constantly jump in the same place. </summary>
+	private int oldX;
 	private bool wasCharging;
 
 	public override void SetStaticDefaults()
@@ -56,8 +57,9 @@ public class Ostrich : ModNPC
 		NPC.Size = new Vector2(40, 60);
 		NPC.damage = 20;
 		NPC.defense = 0;
-		NPC.value = 45f;
 		NPC.lifeMax = 62;
+		NPC.value = 45f;
+		NPC.chaseable = false;
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = .45f;
@@ -220,6 +222,7 @@ public class Ostrich : ModNPC
 		void TrySwim()
 		{
 			if (NPC.wet && Collision.WetCollision(NPC.position, NPC.width, NPC.height / 3))
+			{
 				if (++drownTime > drownTimeMax)
 				{
 					NPC.velocity *= .99f;
@@ -232,8 +235,9 @@ public class Ostrich : ModNPC
 						HitEffect(new NPC.HitInfo());
 					}
 				}
-				else
-					NPC.velocity.Y = Math.Max(NPC.velocity.Y - .75f, -3f);
+				//else
+				//	NPC.velocity.Y = Math.Max(NPC.velocity.Y - .75f, -3f);
+			}
 			else if (!NPC.wet)
 				drownTime = 0;
 		}

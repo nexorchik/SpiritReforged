@@ -1,5 +1,5 @@
+using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.ProjectileCommon;
-using SpiritReforged.Content.Buffs.SummonTag;
 
 namespace SpiritReforged.Content.Ocean.Items.PoolNoodle;
 
@@ -31,7 +31,7 @@ public class PoolNoodleProj : BaseWhipProj
 	{
 		base.OnHitNPC(target, hit, damageDone);
 
-		target.AddBuff(ModContent.BuffType<SummonTag3>(), 360);
+		target.ApplySummonTag(3);
 		target.AddBuff(ModContent.BuffType<PoolNoodleBubbleBuff>(), 600);
 	}
 }

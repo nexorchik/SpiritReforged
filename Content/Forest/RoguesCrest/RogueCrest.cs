@@ -18,7 +18,7 @@ public class RogueCrest : MinionAccessory
 
 	public override void SetDefaults()
 	{
-		Item.damage = 6;
+		Item.damage = 4;
 		Item.DamageType = DamageClass.Summon;
 		Item.knockBack = .5f;
 		Item.width = 38;
