@@ -123,7 +123,6 @@ public class PearlStringTileRubble : PearlStringTile
 	{
 		base.SetStaticDefaults();
 		FlexibleTileWand.RubblePlacementSmall.AddVariation(ModContent.ItemType<PearlString>(), Type, 0);
-		//RegisterItemDrop(ModContent.ItemType<PearlString>());
 	}
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
@@ -133,9 +132,6 @@ public class PearlStringTileRubble : PearlStringTile
 
 		int item = Item.NewItem(null, new Rectangle(i * 16, j * 16, 16, 16), ModContent.ItemType<PearlString>());
 		Main.item[item].ResetPrefix();
-
-		//if (Main.netMode != NetmodeID.SinglePlayer)
-		//	NetMessage.SendData(MessageID.SyncItem, number: item);
 	}
 
 	public override bool CanDrop(int i, int j) => false; //Don't drop the default item
