@@ -22,7 +22,8 @@ internal class VariantGlobalItem : GlobalItem
 
 	/// <summary> Registers the given item <paramref name="type"/> as having variants of <paramref name="amount"/>.<para/>
 	/// The item texture must be a vertical sheet with 2px padding to work correctly.<br/>
-	/// Additionally, each frame should be at the top-left of the "frame" box.</summary>
+	/// Additionally, each frame should be at the top-left of the "frame" box.<para/>
+	/// Adding "_World" to the name of an item texture will cause it to be prioritized over the default item texture when drawn in the world. </summary>
 	/// <param name="type"> The item type. </param>
 	/// <param name="amount"> The number of variants. </param>
 	/// <param name="auto"> Whether this item automatically selects a variant. </param>

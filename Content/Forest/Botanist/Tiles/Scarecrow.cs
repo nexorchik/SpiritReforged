@@ -1,4 +1,5 @@
 ﻿using MonoMod.Cil;
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.TileSway;
 using System.IO;
@@ -141,7 +142,7 @@ public class ScarecrowTileEntity : ModTileEntity
 		dummy.skinVariant = 10;
 	}
 
-	public override void Load() => IL_TileDrawing.DrawEntities_HatRacks += (ILContext il) =>
+	public override void Load() => IL_TileDrawing.DrawEntities_HatRacks += static (ILContext il) =>
 	{
 		var c = new ILCursor(il);
 		if (!c.TryGotoNext(x => x.MatchCallvirt<SpriteBatch>("End")))
@@ -221,9 +222,7 @@ public class ScarecrowTileEntity : ModTileEntity
 		}
 		else
 		{
-			int id = Item.NewItem(player.GetSource_TileInteraction(Position.X, Position.Y), Position.ToVector2() * 16, Hat);
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-				NetMessage.SendData(MessageID.SyncItem, number: id, number2: 1f);
+			ItemMethods.NewItemSynced(player.GetSource_TileInteraction(Position.X, Position.Y), Hat, Position.ToVector2() * 16, true);
 
 			Hat.TurnToAir();
 			TryPlaceHat();
