@@ -94,10 +94,14 @@ public class BackpackUISlot : UIElement
 	/// <param name="vanity"> Whether this slot is a vanity slot. </param>
 	internal static bool CanClickItem(Item currentItem, bool vanity = false)
 	{
-		if (vanity)
-			return !currentItem.IsAir;
+		var plr = Main.LocalPlayer;
 
-		if (!currentItem.IsAir && currentItem.ModItem is BackpackItem backpack && backpack.items.Any(x => !x.IsAir))
+		if (vanity)
+		{
+			if (currentItem.IsAir)
+				return plr.HeldItem.ModItem is BackpackItem vanityPack && !vanityPack.items.Any(x => !x.IsAir);
+		}
+		else if (!currentItem.IsAir && currentItem.ModItem is BackpackItem backpack && backpack.items.Any(x => !x.IsAir))
 		{
 			if (currentItem.TryGetGlobalItem(out BackpackGlobal anim))
 				anim.StartAnimation();
@@ -105,7 +109,6 @@ public class BackpackUISlot : UIElement
 			return false;
 		}
 
-		var plr = Main.LocalPlayer;
 		return plr.HeldItem.ModItem is BackpackItem || plr.HeldItem.IsAir || Main.mouseItem.IsAir;
 	}
 
