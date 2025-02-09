@@ -9,7 +9,7 @@ public class FairyWhistle : ModItem
 {
 	public override void SetDefaults()
 	{
-		Item.damage = 8;
+		Item.damage = 4;
 		Item.width = 22;
 		Item.height = 18;
 		Item.value = Item.sellPrice(0, 0, 0, 10);

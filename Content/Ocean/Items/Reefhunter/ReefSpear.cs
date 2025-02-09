@@ -7,7 +7,7 @@ public class ReefSpear : ModItem
 {
 	public override void SetDefaults()
 	{
-		Item.damage = 26;
+		Item.damage = 20;
 		Item.width = 28;
 		Item.height = 14;
 		Item.useTime = Item.useAnimation = 30;

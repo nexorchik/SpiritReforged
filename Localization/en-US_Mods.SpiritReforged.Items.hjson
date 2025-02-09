@@ -1280,3 +1280,13 @@ Pearlberry: {
 		'Glimmers and shines brightly...'
 		'''
 }
+
+DriftwoodBow: {
+	DisplayName: Driftwood Bow
+	Tooltip: ""
+}
+
+DriftwoodHammer: {
+	DisplayName: Driftwood Hammer
+	Tooltip: ""
+}

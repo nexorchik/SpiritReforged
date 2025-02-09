@@ -12,7 +12,7 @@ public class ClawCannon : ModItem
 {
 	public override void SetDefaults()
 	{
-		Item.damage = 18;
+		Item.damage = 15;
 		Item.width = 38;
 		Item.height = 26;
 		Item.useTime = Item.useAnimation = 30;
