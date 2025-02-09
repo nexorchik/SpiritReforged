@@ -36,7 +36,7 @@ public class LeatherHood : ModItem
 
 	public override void AddRecipes() => CreateRecipe()
 		.AddIngredient(ItemID.Leather, 6)
-		.AddIngredient(RecipeGroupID.IronBar, 2)
+		.AddRecipeGroup(RecipeGroupID.IronBar, 2)
 		.AddTile(TileID.Anvils)
 		.Register();
 
