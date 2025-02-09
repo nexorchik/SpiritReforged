@@ -1,10 +1,8 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
 using System.Linq;
-using Terraria;
 using Terraria.Audio;
 using Terraria.GameInput;
 using Terraria.UI;
-using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Common.UI.BackpackInterface;
 
@@ -79,7 +77,7 @@ public class BackpackUISlot : UIElement
 		ItemSlot.OverrideHover(ref item, Context);
 		ItemSlot.MouseHover(ref item, Context);
 
-		if (Main.mouseLeft && Main.mouseLeftRelease && CanClickItem(item) && CheckVanity())
+		if (Main.mouseLeft && Main.mouseLeftRelease && CanClickItem(item, _isVanity))
 		{
 			ItemSlot.LeftClick(ref item, Context);
 			ItemSlot.RightClick(ref item, Context);
@@ -92,17 +90,13 @@ public class BackpackUISlot : UIElement
 		}
 	}
 
-	private bool CheckVanity() //Don't allow backpacks to be placed in the vanity slot when full
+	/// <param name="currentItem"> The item currently in the slot. </param>
+	/// <param name="vanity"> Whether this slot is a vanity slot. </param>
+	internal static bool CanClickItem(Item currentItem, bool vanity = false)
 	{
-		if (!_isVanity)
-			return true;
+		if (vanity)
+			return !currentItem.IsAir;
 
-		var plr = Main.LocalPlayer;
-		return !(!plr.HeldItem.IsAir && plr.HeldItem.ModItem is BackpackItem backpack && backpack.items.Any(x => !x.IsAir));
-	}
-
-	internal static bool CanClickItem(Item currentItem)
-	{
 		if (!currentItem.IsAir && currentItem.ModItem is BackpackItem backpack && backpack.items.Any(x => !x.IsAir))
 		{
 			if (currentItem.TryGetGlobalItem(out BackpackGlobal anim))

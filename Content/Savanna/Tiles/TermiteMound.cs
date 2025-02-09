@@ -21,7 +21,8 @@ public class TermiteMoundLarge : ModTile
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 16, 16];
 		TileObjectData.newTile.Origin = new(2, 4);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 3, 0);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaDirt>()];
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaGrassCorrupt>(), 
+			ModContent.TileType<SavannaGrassCrimson>(), ModContent.TileType<SavannaGrassHallow>(), ModContent.TileType<SavannaDirt>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.addTile(Type);
 
@@ -93,7 +94,8 @@ public class TermiteMoundMedium : ModTile
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 16];
 		TileObjectData.newTile.Origin = new(2, 3);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 3, 0);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaDirt>()];
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaGrassCorrupt>(),
+			ModContent.TileType<SavannaGrassCrimson>(), ModContent.TileType<SavannaGrassHallow>(), ModContent.TileType<SavannaDirt>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 2;
 		TileObjectData.addTile(Type);
@@ -150,7 +152,8 @@ public class TermiteMoundSmall : ModTile
 		TileObjectData.newTile.CoordinateHeights = [16];
 		TileObjectData.newTile.Origin = new(1, 0);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 2, 0);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaDirt>()];
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaGrassCorrupt>(),
+			ModContent.TileType<SavannaGrassCrimson>(), ModContent.TileType<SavannaGrassHallow>(), ModContent.TileType<SavannaDirt>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.addTile(Type);
