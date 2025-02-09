@@ -1,4 +1,5 @@
 using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.PlayerCommon;
 
 namespace SpiritReforged.Content.Vanilla.Food;
 
@@ -16,6 +17,9 @@ public class RawMeat : FoodItem
 
 	public override bool CanUseItem(Player player)
 	{
+		if (player.UsedQuickBuff())
+			return false;
+
 		player.AddBuff(BuffID.Poisoned, 45 * 60);
 		return true;
 	}

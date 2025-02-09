@@ -1265,7 +1265,7 @@ NightSky: {
 	DisplayName: Night Sky
 	Tooltip:
 		'''
-		{$BuffDescription.WellFed}
+		{$BuffDescription.WellFed2}
 		{$ItemTooltip.ManaRegenerationPotion}
 		'Tastes like the cosmos'
 		'''
