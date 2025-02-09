@@ -79,7 +79,7 @@ public class BackpackUISlot : UIElement
 
 		if (Main.mouseLeft && Main.mouseLeftRelease && CanClickItem(item, _isVanity))
 		{
-			ItemSlot.LeftClick(ref item, Context);
+			ItemSlot.LeftClick(ref item, ItemSlot.Context.InventoryItem); //Don't use Context because it causes issues in multiplayer due to syncing
 			ItemSlot.RightClick(ref item, Context);
 		}
 
@@ -137,7 +137,7 @@ public class BackpackUISlot : UIElement
 				SoundEngine.PlaySound(SoundID.MenuTick);
 
 				if (Main.netMode == NetmodeID.MultiplayerClient)
-					BackpackPlayer.SendVisibilityPacket(mPlayer.packVisible, Main.myPlayer);
+					BackpackPlayer.SendVisibilityPacket(mPlayer.packVisible, (byte)Main.myPlayer);
 				//NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, Main.myPlayer);
 			}
 

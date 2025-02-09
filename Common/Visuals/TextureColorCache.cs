@@ -3,6 +3,7 @@
 namespace SpiritReforged.Common.Visuals;
 
 /// <summary> Caches basic color data of textures for efficiency. </summary>
+[Autoload(Side = ModSide.Client)]
 internal class TextureColorCache
 {
 	private static readonly Dictionary<Texture2D, Color> brightestColorCache = [];

@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
+using SpiritReforged.Common.UI.Misc;
 using SpiritReforged.Common.UI.System;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
@@ -78,7 +79,7 @@ internal class BackpackUIState : AutoUIState
 		List<UIElement> removals = [];
 
 		foreach (var item in Children)
-			if (item is UIItemSlot or UIText)
+			if (item is BasicItemSlot or UIText)
 				removals.Add(item);
 
 		foreach (var item in removals)
@@ -104,7 +105,7 @@ internal class BackpackUIState : AutoUIState
 
 			for (int i = 0; i < items.Length; ++i) //Add backpack storage slots
 			{
-				var newSlot = new UIItemSlot(items, i, ItemSlot.Context.ChestItem)
+				var newSlot = new BasicItemSlot(items, i, scale: .6f)
 				{
 					Left = new StyleDimension(BaseX + xOff * 32, 0),
 					Top = new StyleDimension(105 + yOff * 33, 0),
@@ -123,15 +124,5 @@ internal class BackpackUIState : AutoUIState
 				Append(newSlot);
 			}
 		}
-	}
-
-	protected override void DrawChildren(SpriteBatch spriteBatch)
-	{
-		float lastScale = Main.inventoryScale;
-		Main.inventoryScale = 0.6f; //Scale down storage slots
-
-		base.DrawChildren(spriteBatch);
-
-		Main.inventoryScale = lastScale;
 	}
 }

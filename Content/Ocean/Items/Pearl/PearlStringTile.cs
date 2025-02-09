@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
@@ -42,8 +43,13 @@ public class PearlStringTile : ModTile
 		TileExtensions.GetTopLeft(ref i, ref y);
 
 		WorldGen.KillTile(i, j);
-		if (Main.netMode != NetmodeID.SinglePlayer)
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+		{
 			NetMessage.SendTileSquare(-1, i, j, 2, 1);
+
+			var pos = new Rectangle(i * 16, j * 16, 32, 16).Center();
+			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ModContent.ItemType<PearlString>(), pos, true);
+		}
 
 		return true;
 	}

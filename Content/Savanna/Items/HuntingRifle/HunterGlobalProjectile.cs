@@ -57,7 +57,19 @@ public class HunterGlobalProjectile : GlobalProjectile
 		return false;
 	}
 
-	//Sync hasDistanceMultiplier because it will be assigned to in local-client-only locations
-	public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter) => bitWriter.WriteBit(firedFromHuntingRifle);
-	public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader) => firedFromHuntingRifle = bitReader.ReadBit();
+	public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter)
+	{
+		bitWriter.WriteBit(firedFromHuntingRifle);
+
+		if (firedFromHuntingRifle)
+			binaryWriter.Write((byte)projectile.extraUpdates);
+	}
+
+	public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader)
+	{
+		firedFromHuntingRifle = bitReader.ReadBit();
+
+		if (firedFromHuntingRifle)
+			projectile.extraUpdates = binaryReader.ReadByte();
+	}
 }

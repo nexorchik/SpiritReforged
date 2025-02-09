@@ -1,7 +1,10 @@
 ﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
+using System.IO;
 using Terraria.Audio;
 using Terraria.GameContent.Drawing;
+using Terraria.ModLoader.IO;
+using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Content.Forest.Safekeeper;
 
@@ -40,7 +43,7 @@ public class UndeadNPC : GlobalNPC
 
 	internal static bool IsUndeadType(int type) => undeadTypes.Contains(type) || customUndeadTypes.Contains(type) || NPCID.Sets.Zombies[type] || NPCID.Sets.Skeletons[type] || NPCID.Sets.DemonEyes[type];
 
-	private static bool ShouldTrackGore(NPC self, int dmg = 0) => self.life - dmg <= 0 && self.TryGetGlobalNPC(out UndeadNPC _) && Main.player[self.lastInteraction].HasAccessory<SafekeeperRing>();
+	private static bool ShouldTrackGore(NPC self) => self.TryGetGlobalNPC(out UndeadNPC _);
 
 	public override bool InstancePerEntity => true;
 	public override bool AppliesToEntity(NPC entity, bool lateInstantiation) => IsUndeadType(entity.type);
@@ -54,7 +57,7 @@ public class UndeadNPC : GlobalNPC
 
 	private static void TrackGore(On_NPC.orig_HitEffect_HitInfo orig, NPC self, NPC.HitInfo hit)
 	{
-		trackingGore = ShouldTrackGore(self, hit.Damage);
+		trackingGore = ShouldTrackGore(self);
 
 		orig(self, hit);
 
@@ -114,21 +117,37 @@ public class UndeadNPC : GlobalNPC
 		if (!Main.player[npc.lastInteraction].HasAccessory<SafekeeperRing>())
 			return true;
 
-		decayTime -= decayRate;
-		npc.life = 1;
-		npc.dontTakeDamage = true;
-
 		npc.NPCLoot();
 
-		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Fire_1") with { Pitch = .25f, PitchVariance = .2f }, npc.Center);
-		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Explosion_Liquid") with { Pitch = .8f, PitchVariance = .2f }, npc.Center);
+		if (!Main.dedServ)
+			BurnAway(npc);
 
+		npc.life = 1;
+		npc.dontTakeDamage = true;
+		npc.netUpdate = true;
+
+		decayTime -= decayRate;
+
+		if (Main.netMode != NetmodeID.SinglePlayer)
+		{
+			ModPacket packet = SpiritReforgedMod.Instance.GetPacket(MessageType.BurnUndeadNPC, 1);
+			packet.Write(npc.whoAmI);
+			packet.Send();
+		}
+
+		return false;
+	}
+
+	public static void BurnAway(NPC npc)
+	{
 		if (!Main.dedServ)
 		{
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Fire_1") with { Pitch = .25f, PitchVariance = .2f }, npc.Center);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Explosion_Liquid") with { Pitch = .8f, PitchVariance = .2f }, npc.Center);
+
 			var pos = npc.Center;
 			for (int i = 0; i < 3; i++)
 				ParticleOrchestrator.SpawnParticlesDirect(ParticleOrchestraType.AshTreeShake, new ParticleOrchestraSettings() with { PositionInWorld = pos });
-
 			ParticleHandler.SpawnParticle(new Particles.LightBurst(npc.Center, 0, Color.Goldenrod with { A = 0 }, npc.scale * .8f, 10));
 
 			for (int i = 0; i < 15; i++)
@@ -137,8 +156,6 @@ public class UndeadNPC : GlobalNPC
 					Color.White, Color.Lerp(Color.Goldenrod, Color.Orange, Main.rand.NextFloat()), 1, Main.rand.Next(10, 20), 8));
 			}
 		}
-
-		return false;
 	}
 
 	public override void PostAI(NPC npc)
@@ -168,5 +185,17 @@ public class UndeadNPC : GlobalNPC
 
 		toDraw.Add(npc);
 		return false;
+	}
+
+	public override void SendExtraAI(NPC npc, BitWriter bitWriter, BinaryWriter binaryWriter)
+	{
+		binaryWriter.Write(decayTime);
+		binaryWriter.Write(npc.dontTakeDamage); //dontTakeDamage isn't normally synced, so sync it here
+	}
+
+	public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader binaryReader)
+	{
+		decayTime = binaryReader.ReadSingle();
+		npc.dontTakeDamage = binaryReader.ReadBoolean();
 	}
 }

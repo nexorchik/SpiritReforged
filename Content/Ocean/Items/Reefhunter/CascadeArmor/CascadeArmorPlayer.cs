@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using Terraria.Audio;
+using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 
@@ -40,20 +41,29 @@ public class CascadeArmorPlayer : ModPlayer
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
 		if (setActive && bubbleCooldown == 0)
+		{
 			bubbleStrength = MathHelper.Clamp(bubbleStrength += .125f, 0, 1);
+
+			if (Main.netMode != NetmodeID.SinglePlayer)
+				SendBubblePacket(bubbleStrength, (byte)Player.whoAmI);
+		}
+	}
+
+	/// <summary> Syncs bubble strength corresponding to <paramref name="value"/> for player <paramref name="whoAmI"/>. </summary>
+	/// <param name="value"> The strength of <paramref name="whoAmI"/> player's bubble. </param>
+	/// <param name="whoAmI"> The index of player to sync. </param>
+	/// <param name="ignoreClient"> The client to ignore sending this packet to. -1 ignores nobody. </param>
+	public static void SendBubblePacket(float value, byte whoAmI, int ignoreClient = -1)
+	{
+		ModPacket packet = SpiritReforgedMod.Instance.GetPacket(MessageType.CascadeBubble, 2);
+		packet.Write(value);
+		packet.Write(whoAmI);
+		packet.Send(ignoreClient: ignoreClient);
 	}
 
 	public override void PreUpdate() => realOldVelocity = Player.velocity;
 
-	public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers) => TryPopBubble(ref modifiers.FinalDamage);
-	
-	public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers) => TryPopBubble(ref modifiers.FinalDamage);
-
-	public override void ModifyHurt(ref Player.HurtModifiers modifiers)
-	{
-		if (modifiers.DamageSource.SourceOtherIndex is 2 or 3)
-			TryPopBubble(ref modifiers.FinalDamage);
-	}
+	public override void ModifyHurt(ref Player.HurtModifiers modifiers) => TryPopBubble(ref modifiers.FinalDamage);
 
 	public override void PostHurt(Player.HurtInfo info)
 	{

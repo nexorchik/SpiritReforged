@@ -1,6 +1,4 @@
 ﻿using SpiritReforged.Common.Misc;
-using System.Linq;
-using Terraria.Graphics.Renderers;
 
 namespace SpiritReforged.Common.Particle;
 

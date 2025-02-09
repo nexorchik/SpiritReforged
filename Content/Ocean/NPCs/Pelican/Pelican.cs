@@ -195,14 +195,12 @@ public class Pelican : ModNPC
 			//Scare check
 			if (target.active && !target.dead && target.DistanceSQ(NPC.Center) < 200 * 200 && target.velocity.LengthSquared() > 5 * 5)
 			{
-				NPC.netUpdate = true;
 				NPC.velocity = new Vector2(-Math.Sign(target.Center.X - NPC.Center.X) * 8, -8);
 				NPC.noGravity = true;
 
 				ChangeState(State.Startle);
 				NPC.frameCounter = 1; //Use the startle frame in Idle's column
 				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Pelican_Surprise") with { PitchVariance = 0.4f, Pitch = .2f, Volume = 1f, MaxInstances = 2 }, NPC.Center);
-
 
 				if (heldItemType != ItemID.None) //Startled - drop the held item
 				{
