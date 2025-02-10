@@ -13,6 +13,8 @@ public class PearlStringTile : ModTile
 		Main.tileSolid[Type] = false;
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoFail[Type] = true;
+
+		TileID.Sets.CanDropFromRightClick[Type] = true;
 		
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);
 		TileObjectData.newTile.CoordinateHeights = [16];
@@ -22,7 +24,7 @@ public class PearlStringTile : ModTile
 		TileObjectData.addTile(Type);
 
 		AddMapEntry(new Color(100, 100, 120));
-		RegisterItemDrop(ModContent.ItemType<PearlString>(), 0, 1, 2, 3);
+		RegisterItemDrop(ModContent.ItemType<PearlString>());
 		SolidBottomGlobalTile.solidBottomTypes.Add(Type);
 
 		DustType = DustID.Sand;
@@ -36,17 +38,17 @@ public class PearlStringTile : ModTile
 		player.cursorItemIconID = ModContent.ItemType<PearlString>();
 	}
 
-	public override bool RightClick(int i, int j)
-	{
-		int y = 0;
-		TileExtensions.GetTopLeft(ref i, ref y);
+	//public override bool RightClick(int i, int j)
+	//{
+	//	int y = 0;
+	//	TileExtensions.GetTopLeft(ref i, ref y);
 
-		WorldGen.KillTile(i, j);
-		if (Main.netMode != NetmodeID.SinglePlayer)
-			NetMessage.SendTileSquare(-1, i, j, 2, 1);
+	//	WorldGen.KillTile(i, j);
+	//	if (Main.netMode != NetmodeID.SinglePlayer)
+	//		NetMessage.SendTileSquare(-1, i, j, 2, 1);
 
-		return true;
-	}
+	//	return true;
+	//}
 
 	public override bool CreateDust(int i, int j, ref int type)
 	{
@@ -122,7 +124,9 @@ public class PearlStringTileRubble : PearlStringTile
 	public override void SetStaticDefaults()
 	{
 		base.SetStaticDefaults();
+		
 		FlexibleTileWand.RubblePlacementSmall.AddVariation(ModContent.ItemType<PearlString>(), Type, 0);
+		TileID.Sets.CanDropFromRightClick[Type] = false;
 	}
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
