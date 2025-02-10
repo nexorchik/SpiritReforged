@@ -15,6 +15,7 @@ global using NPCUtils;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.BuffCommon;
+using SpiritReforged.Common.TileCommon;
 
 namespace SpiritReforged;
 
@@ -26,6 +27,7 @@ public partial class SpiritReforgedMod : Mod
 
 	public override void Load()
 	{
+		AutoloadedRubbleHandler.Initialize(this);
 		NPCUtils.NPCUtils.AutoloadModBannersAndCritters(this);
 		NPCUtils.NPCUtils.TryLoadBestiaryHelper();
 		AutoloadMinionDictionary.AddBuffs(Code);

@@ -7,8 +7,10 @@ using Terraria.DataStructures;
 namespace SpiritReforged.Content.Ocean.Items.Pearl;
 
 [AutoloadGlowmask("255,255,255", false)]
-public class PearlStringTile : ModTile
+public class PearlStringTile : NameableTile, IAutoloadRubble
 {
+	public IAutoloadRubble.RubbleData Data => new(ModContent.ItemType<PearlString>(), IAutoloadRubble.RubbleSize.Small);
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = false;
@@ -31,6 +33,9 @@ public class PearlStringTile : ModTile
 
 	public override void MouseOver(int i, int j)
 	{
+		if (RubbleGlobalTile.IsRubble(Type))
+			return;
+
 		Player player = Main.LocalPlayer;
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
@@ -119,29 +124,4 @@ public class PearlStringTile : ModTile
 
 		return false;
 	}
-}
-
-public class PearlStringTileRubble : PearlStringTile
-{
-	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
-
-	public override void SetStaticDefaults()
-	{
-		base.SetStaticDefaults();
-		FlexibleTileWand.RubblePlacementSmall.AddVariation(ModContent.ItemType<PearlString>(), Type, 0);
-	}
-
-	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
-	{
-		if (Main.netMode == NetmodeID.MultiplayerClient)
-			return;
-
-		int item = Item.NewItem(null, new Rectangle(i * 16, j * 16, 16, 16), ModContent.ItemType<PearlString>());
-		if (Main.netMode != NetmodeID.SinglePlayer)
-			NetMessage.SendData(MessageID.SyncItem, number: item);
-	}
-
-	public override bool CanDrop(int i, int j) => false; //Don't drop the default item
-	public override void MouseOver(int i, int j) { }
-	public override bool RightClick(int i, int j) => false;
 }

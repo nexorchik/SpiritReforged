@@ -1,12 +1,15 @@
-﻿using SpiritReforged.Common.TileCommon.Corruption;
+﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Content.Savanna.Items;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
-public class SavannaShrubs : ModTile, IConvertibleTile
+public class SavannaShrubs : NameableTile, IConvertibleTile, IAutoloadRubble
 {
 	protected virtual int[] Anchors => [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaDirt>(), TileID.Sand];
+
+	public IAutoloadRubble.RubbleData Data => new(ModContent.ItemType<SavannaGrassSeeds>(), IAutoloadRubble.RubbleSize.Small, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
 	public override void SetStaticDefaults()
 	{
@@ -67,22 +70,4 @@ public class SavannaShrubsCrimson : SavannaShrubs
 public class SavannaShrubsHallow : SavannaShrubs
 {
 	protected override int[] Anchors => [ModContent.TileType<SavannaGrassHallow>(), TileID.Pearlsand];
-}
-
-public class SavannaShrubsRubble : SavannaShrubs
-{
-	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
-
-	public override void SetStaticDefaults()
-	{
-		base.SetStaticDefaults();
-
-		int styleRange = TileObjectData.GetTileData(Type, 0).RandomStyleRange;
-		TileObjectData.GetTileData(Type, 0).RandomStyleRange = 0; //Random style breaks rubble placement
-
-		for (int i = 0; i < styleRange; i++)
-			FlexibleTileWand.RubblePlacementSmall.AddVariation(ModContent.ItemType<SavannaGrassSeeds>(), Type, i);
-
-		RegisterItemDrop(ModContent.ItemType<SavannaGrassSeeds>());
-	}
 }

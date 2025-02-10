@@ -1,14 +1,17 @@
 ﻿using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Safekeeper;
 
 [AutoloadGlowmask("255,255,255", false)]
-public class SkeletonHand : ModTile
+public class SkeletonHand : NameableTile, IAutoloadRubble
 {
 	private static readonly Point[] glowPoints = [new Point(9, 11), new Point(13, 5), new Point(7, 11)]; //Corresponds to different styles
+
+	public IAutoloadRubble.RubbleData Data => new(ModContent.ItemType<SafekeeperRing>(), IAutoloadRubble.RubbleSize.Small, [0, 1, 2]);
 
 	public override void SetStaticDefaults()
 	{
@@ -34,6 +37,9 @@ public class SkeletonHand : ModTile
 
 	public override void MouseOver(int i, int j)
 	{
+		if (RubbleGlobalTile.IsRubble(Type))
+			return;
+
 		Player player = Main.LocalPlayer;
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
@@ -42,6 +48,9 @@ public class SkeletonHand : ModTile
 
 	public override bool RightClick(int i, int j)
 	{
+		if (RubbleGlobalTile.IsRubble(Type))
+			return false;
+
 		WorldGen.KillTile(i, j);
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 		{
@@ -78,29 +87,4 @@ public class SkeletonHand : ModTile
 				Vector2.UnitY * -Main.rand.NextFloat(.5f), Color.White, Color.Orange, .15f, 30, 5));
 		}
 	}
-}
-
-public class SkeletonHandRubble : SkeletonHand
-{
-	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
-
-	public override void SetStaticDefaults()
-	{
-		base.SetStaticDefaults();
-
-		TileObjectData.GetTileData(Type, 0).RandomStyleRange = 0;
-		FlexibleTileWand.RubblePlacementSmall.AddVariations(ModContent.ItemType<SafekeeperRing>(), Type, 0, 1, 2);
-	}
-
-	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
-	{
-		if (Main.netMode == NetmodeID.MultiplayerClient)
-			return;
-
-		int item = Item.NewItem(null, new Rectangle(i * 16, j * 16, 16, 16), ModContent.ItemType<SafekeeperRing>());
-		if (Main.netMode != NetmodeID.SinglePlayer)
-			NetMessage.SendData(MessageID.SyncItem, number: item);
-	}
-
-	public override bool CanDrop(int i, int j) => false; //Don't drop the default item
 }

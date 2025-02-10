@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Terraria.ModLoader.Core;
 
 namespace SpiritReforged.Common.Visuals.Glowmasks;
 
@@ -7,40 +6,36 @@ internal class GlowmaskAutoloader : ModSystem
 {
 	public override void PostSetupContent()
 	{
-		var types = AssemblyManager.GetLoadableTypes(Mod.Code).Where(x => !x.IsAbstract && Attribute.IsDefined(x, typeof(AutoloadGlowmaskAttribute)));
-		var npcGetId = typeof(ModContent).GetMethod(nameof(ModContent.NPCType));
-		var tileGetId = typeof(ModContent).GetMethod(nameof(ModContent.TileType));
-		var projGetId = typeof(ModContent).GetMethod(nameof(ModContent.ProjectileType));
-		var itemGetId = typeof(ModContent).GetMethod(nameof(ModContent.ItemType));
+		var types = Mod.GetContent().Where(x => Attribute.IsDefined(x.GetType(), typeof(AutoloadGlowmaskAttribute)));
 
 		foreach (var type in types)
 		{
-			Func<object, Color> color = AutoloadGlowmaskAttribute.GetAttributeInfo(Mod, type, out bool autoDraw);
+			Func<object, Color> color = AutoloadGlowmaskAttribute.GetAttributeInfo(Mod, type.GetType(), out bool autoDraw);
 
-			if (typeof(ModNPC).IsAssignableFrom(type))
+			if (type is ModNPC npc)
 			{
-				int id = (int)npcGetId.MakeGenericMethod(type).Invoke(null, null);
+				int id = npc.Type;
 				if (TryGetGlowmask(ModContent.GetModNPC(id).Texture, out var glowMask))
 					GlowmaskNPC.NpcIdToGlowmask.Add(id, new(glowMask, color, autoDraw));
 			}
 
-			else if (typeof(ModTile).IsAssignableFrom(type))
+			else if (type is ModTile tile)
 			{
-				int id = (int)tileGetId.MakeGenericMethod(type).Invoke(null, null);
+				int id = tile.Type;
 				if (TryGetGlowmask(ModContent.GetModTile(id).Texture, out var glowMask))
 					GlowmaskTile.TileIdToGlowmask.Add(id, new(glowMask, color, autoDraw));
 			}
 
-			else if (typeof(ModProjectile).IsAssignableFrom(type))
+			else if (type is ModProjectile projectile)
 			{
-				int id = (int)projGetId.MakeGenericMethod(type).Invoke(null, null);
+				int id = projectile.Type;
 				if (TryGetGlowmask(ModContent.GetModProjectile(id).Texture, out var glowMask))
 					GlowmaskProjectile.ProjIdToGlowmask.Add(id, new(glowMask, color, autoDraw));
 			}
 
-			else if (typeof(ModItem).IsAssignableFrom(type))
+			else if (type is ModItem item)
 			{
-				int id = (int)itemGetId.MakeGenericMethod(type).Invoke(null, null);
+				int id = item.Type;
 				if (TryGetGlowmask(ModContent.GetModItem(id).Texture, out var glowMask))
 					GlowmaskItem.ItemIdToGlowmask.Add(id, new(glowMask, color, autoDraw));
 			}
