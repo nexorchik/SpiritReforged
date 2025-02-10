@@ -1,4 +1,3 @@
-using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
@@ -15,6 +14,8 @@ public class PearlStringTile : ModTile
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoFail[Type] = true;
 
+		TileID.Sets.CanDropFromRightClick[Type] = true;
+		
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);
 		TileObjectData.newTile.CoordinateHeights = [16];
 		TileObjectData.newTile.Origin = new(1, 0);
@@ -35,23 +36,6 @@ public class PearlStringTile : ModTile
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
 		player.cursorItemIconID = ModContent.ItemType<PearlString>();
-	}
-
-	public override bool RightClick(int i, int j)
-	{
-		int y = 0;
-		TileExtensions.GetTopLeft(ref i, ref y);
-
-		WorldGen.KillTile(i, j);
-		if (Main.netMode == NetmodeID.MultiplayerClient)
-		{
-			NetMessage.SendTileSquare(-1, i, j, 2, 1);
-
-			var pos = new Rectangle(i * 16, j * 16, 32, 16).Center();
-			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ModContent.ItemType<PearlString>(), pos, true);
-		}
-
-		return true;
 	}
 
 	public override bool CreateDust(int i, int j, ref int type)
@@ -128,20 +112,20 @@ public class PearlStringTileRubble : PearlStringTile
 	public override void SetStaticDefaults()
 	{
 		base.SetStaticDefaults();
+		
 		FlexibleTileWand.RubblePlacementSmall.AddVariation(ModContent.ItemType<PearlString>(), Type, 0);
+		TileID.Sets.CanDropFromRightClick[Type] = false;
 	}
 
-	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
+	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 			return;
 
-		int item = Item.NewItem(null, new Rectangle(i * 16, j * 16, 16, 16), ModContent.ItemType<PearlString>());
-		if (Main.netMode != NetmodeID.SinglePlayer)
-			NetMessage.SendData(MessageID.SyncItem, number: item);
+		int item = Item.NewItem(new EntitySource_TileBreak(i, j), new Rectangle(i * 16, j * 16, 32, 16), ModContent.ItemType<PearlString>());
+		Main.item[item].ResetPrefix();
 	}
 
 	public override bool CanDrop(int i, int j) => false; //Don't drop the default item
 	public override void MouseOver(int i, int j) { }
-	public override bool RightClick(int i, int j) => false;
 }

@@ -1,6 +1,6 @@
-﻿using SpiritReforged.Common.ItemCommon;
-using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.Visuals.Glowmasks;
+using SpiritReforged.Content.Ocean.Items.Pearl;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Safekeeper;
@@ -17,6 +17,8 @@ public class SkeletonHand : ModTile
 		Main.tileMergeDirt[Type] = false;
 		Main.tileBlockLight[Type] = false;
 		Main.tileFrameImportant[Type] = true;
+
+		TileID.Sets.CanDropFromRightClick[Type] = true;
 
 		const int height = 30;
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
@@ -38,20 +40,6 @@ public class SkeletonHand : ModTile
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
 		player.cursorItemIconID = ModContent.ItemType<SafekeeperRing>();
-	}
-
-	public override bool RightClick(int i, int j)
-	{
-		WorldGen.KillTile(i, j);
-		if (Main.netMode == NetmodeID.MultiplayerClient)
-		{
-			NetMessage.SendTileSquare(-1, i, j);
-
-			var pos = new Rectangle(i * 16, j * 16, 16, 16).Center();
-			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ModContent.ItemType<SafekeeperRing>(), pos, true);
-		}
-
-		return true;
 	}
 
 	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
@@ -90,6 +78,7 @@ public class SkeletonHandRubble : SkeletonHand
 
 		TileObjectData.GetTileData(Type, 0).RandomStyleRange = 0;
 		FlexibleTileWand.RubblePlacementSmall.AddVariations(ModContent.ItemType<SafekeeperRing>(), Type, 0, 1, 2);
+		TileID.Sets.CanDropFromRightClick[Type] = false;
 	}
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
@@ -97,10 +86,10 @@ public class SkeletonHandRubble : SkeletonHand
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 			return;
 
-		int item = Item.NewItem(null, new Rectangle(i * 16, j * 16, 16, 16), ModContent.ItemType<SafekeeperRing>());
-		if (Main.netMode != NetmodeID.SinglePlayer)
-			NetMessage.SendData(MessageID.SyncItem, number: item);
+		int item = Item.NewItem(new EntitySource_TileBreak(i, j), new Rectangle(i * 16, j * 16, 16, 16), ModContent.ItemType<PearlString>());
+		Main.item[item].ResetPrefix();
 	}
 
 	public override bool CanDrop(int i, int j) => false; //Don't drop the default item
+	public override void MouseOver(int i, int j) { }
 }
