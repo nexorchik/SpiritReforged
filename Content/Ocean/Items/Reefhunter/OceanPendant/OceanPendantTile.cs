@@ -25,6 +25,8 @@ public class OceanPendantTile : ModTile
 		Main.tileLavaDeath[Type] = true;
 		Main.tileSpelunker[Type] = true;
 
+		TileID.Sets.CanDropFromRightClick[Type] = true;
+
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.CoordinateHeights = [18];
 		TileObjectData.addTile(Type);
@@ -40,15 +42,6 @@ public class OceanPendantTile : ModTile
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
 		player.cursorItemIconID = ItemType;
-	}
-
-	public override bool RightClick(int i, int j)
-	{
-		WorldGen.KillTile(i, j);
-		if (Main.netMode != NetmodeID.SinglePlayer)
-			NetMessage.SendTileSquare(-1, i, j);
-
-		return true;
 	}
 
 	public override void NearbyEffects(int i, int j, bool closer)

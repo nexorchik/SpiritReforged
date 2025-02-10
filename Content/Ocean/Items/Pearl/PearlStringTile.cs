@@ -38,18 +38,6 @@ public class PearlStringTile : ModTile
 		player.cursorItemIconID = ModContent.ItemType<PearlString>();
 	}
 
-	//public override bool RightClick(int i, int j)
-	//{
-	//	int y = 0;
-	//	TileExtensions.GetTopLeft(ref i, ref y);
-
-	//	WorldGen.KillTile(i, j);
-	//	if (Main.netMode != NetmodeID.SinglePlayer)
-	//		NetMessage.SendTileSquare(-1, i, j, 2, 1);
-
-	//	return true;
-	//}
-
 	public override bool CreateDust(int i, int j, ref int type)
 	{
 		var tile = Framing.GetTileSafely(i, j);
@@ -134,11 +122,10 @@ public class PearlStringTileRubble : PearlStringTile
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 			return;
 
-		int item = Item.NewItem(null, new Rectangle(i * 16, j * 16, 16, 16), ModContent.ItemType<PearlString>());
+		int item = Item.NewItem(new EntitySource_TileBreak(i, j), new Rectangle(i * 16, j * 16, 32, 16), ModContent.ItemType<PearlString>());
 		Main.item[item].ResetPrefix();
 	}
 
 	public override bool CanDrop(int i, int j) => false; //Don't drop the default item
 	public override void MouseOver(int i, int j) { }
-	public override bool RightClick(int i, int j) => false;
 }

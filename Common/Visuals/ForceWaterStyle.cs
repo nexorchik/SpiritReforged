@@ -1,9 +1,9 @@
 ﻿using MonoMod.Cil;
-using SpiritReforged.Content.Ocean.Biome;
 
 namespace SpiritReforged.Common.Visuals;
 
-/// <summary> Manually overrides water style in specific scenarios. </summary>
+/// <summary> Manually overrides water style in specific scenarios. Doesn't exist on the server. </summary>
+[Autoload(Side = ModSide.Client)]
 internal class ForceWaterStyle : ModSystem
 {
 	//private static int DeepOceanWaterStyle;

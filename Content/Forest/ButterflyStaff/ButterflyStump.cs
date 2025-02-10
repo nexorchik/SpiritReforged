@@ -1,5 +1,7 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
+using SpiritReforged.Content.Forest.Safekeeper;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.ObjectInteractions;
@@ -81,10 +83,7 @@ public class ButterflyStump : ModTile
 			if (Main.netMode != NetmodeID.SinglePlayer)
 				NetMessage.SendTileSquare(-1, i, j, 2, 4);
 
-			int item = Item.NewItem(null, new Vector2(i + 1, j) * 16, ItemType);
-			if (Main.netMode != NetmodeID.SinglePlayer)
-				NetMessage.SendData(MessageID.SyncItem, number: item);
-
+			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ItemType, new Vector2(i, j).ToWorldCoordinates(16, 0), true);
 			NPC.NewNPCDirect(null, (i + 1) * 16, (j + 1) * 16, ModContent.NPCType<ButterflyCritter>()).netUpdate = true;
 
 			return true;
@@ -130,14 +129,12 @@ public class ButterflyStumpRubble : ButterflyStump
 		FlexibleTileWand.RubblePlacementLarge.AddVariations(ItemType, Type, 0);
 	}
 
-	public override void KillMultiTile(int i, int j, int frameX, int frameY)
+	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 			return;
 
-		int item = Item.NewItem(null, new Rectangle(i * 16, j * 16, 32, 64), ItemType);
-		if (Main.netMode != NetmodeID.SinglePlayer)
-			NetMessage.SendData(MessageID.SyncItem, number: item);
+		ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ModContent.ItemType<SafekeeperRing>(), new Vector2(i, j).ToWorldCoordinates(16, 32), true);
 	}
 
 	public override bool CanDrop(int i, int j) => false; //Don't drop the default item
