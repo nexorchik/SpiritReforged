@@ -32,7 +32,7 @@ public class SavannaRockLarge : NameableTile, IAutoloadRubble
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 	public override void DropCritterChance(int i, int j, ref int wormChance, ref int grassHopperChance, ref int jungleGrubChance)
-		=> wormChance = RubbleGlobalTile.IsRubble(Type) ? 0 : 6;
+		=> wormChance = RubbleSystem.IsRubble(Type) ? 0 : 6;
 }
 
 public class SavannaRockSmall : NameableTile, IAutoloadRubble
@@ -63,5 +63,5 @@ public class SavannaRockSmall : NameableTile, IAutoloadRubble
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 	public override void DropCritterChance(int i, int j, ref int wormChance, ref int grassHopperChance, ref int jungleGrubChance)
-		=> wormChance = RubbleGlobalTile.IsRubble(Type) ? 0 : 6;
+		=> wormChance = RubbleSystem.IsRubble(Type) ? 0 : 6;
 }

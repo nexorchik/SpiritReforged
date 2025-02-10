@@ -1,7 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
-using SpiritReforged.Content.Forest.Safekeeper;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.ObjectInteractions;
@@ -64,7 +63,7 @@ public class ButterflyStump : NameableTile, IAutoloadRubble
 
 	public override void MouseOver(int i, int j)
 	{
-		if (!HasItem(i, j) || RubbleGlobalTile.IsRubble(Type))
+		if (!HasItem(i, j) || RubbleSystem.IsRubble(Type))
 			return;
 
 		Player player = Main.LocalPlayer;
@@ -75,7 +74,7 @@ public class ButterflyStump : NameableTile, IAutoloadRubble
 
 	public override bool RightClick(int i, int j)
 	{
-		if (HasItem(i, j) && !RubbleGlobalTile.IsRubble(Type))
+		if (HasItem(i, j) && !RubbleSystem.IsRubble(Type))
 		{
 			TileExtensions.GetTopLeft(ref i, ref j);
 

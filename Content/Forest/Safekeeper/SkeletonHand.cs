@@ -1,7 +1,6 @@
 ﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
-using SpiritReforged.Content.Ocean.Items.Pearl;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Safekeeper;
@@ -39,7 +38,7 @@ public class SkeletonHand : NameableTile, IAutoloadRubble
 
 	public override void MouseOver(int i, int j)
 	{
-		if (RubbleGlobalTile.IsRubble(Type))
+		if (RubbleSystem.IsRubble(Type))
 			return;
 
 		Player player = Main.LocalPlayer;

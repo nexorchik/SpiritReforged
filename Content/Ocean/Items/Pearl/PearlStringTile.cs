@@ -34,7 +34,7 @@ public class PearlStringTile : NameableTile, IAutoloadRubble
 
 	public override void MouseOver(int i, int j)
 	{
-		if (RubbleGlobalTile.IsRubble(Type))
+		if (RubbleSystem.IsRubble(Type))
 			return;
 
 		Player player = Main.LocalPlayer;
