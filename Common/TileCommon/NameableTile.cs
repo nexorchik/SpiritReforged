@@ -8,7 +8,7 @@ public abstract class NameableTile : ModTile
 {
 	public string BaseName => GetType().Name;
 
-	public void ChangeName(string name, string textureName = default)
+	internal void ChangeName(string name, string textureName = default)
 	{
 		_name = name;
 		_textureName = textureName;
