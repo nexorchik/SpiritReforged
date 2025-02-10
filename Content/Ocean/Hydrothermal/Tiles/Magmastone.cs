@@ -103,10 +103,10 @@ public class Magmastone : ModTile, IAutoloadTileItem
 
 		AddMapEntry(new Color(200, 160, 80));
 		this.Merge(TileID.Sand, TileID.HardenedSand, ModContent.TileType<Gravel>());
+		TileID.Sets.PreventsTileRemovalIfOnTopOfIt[ModContent.TileType<HydrothermalVent>()] = true;
 
 		DustType = DustID.Asphalt;
 		MineResist = .5f;
-		MinPick = 50;
 	}
 
 	public override void HitWire(int i, int j)

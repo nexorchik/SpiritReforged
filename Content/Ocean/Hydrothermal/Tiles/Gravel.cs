@@ -21,11 +21,11 @@ public class Gravel : ModTile, IAutoloadTileItem
 		Main.tileMerge[TileID.HardenedSand][Type] = true;
 		TileID.Sets.ChecksForMerge[Type] = true;
 		TileID.Sets.CanBeDugByShovel[Type] = true;
+		TileID.Sets.PreventsTileRemovalIfOnTopOfIt[ModContent.TileType<HydrothermalVent>()] = true;
 
 		AddMapEntry(new Color(120, 120, 120));
 		DustType = DustID.Asphalt;
 		MineResist = .5f;
-		MinPick = 50;
 	}
 
 	public override void RandomUpdate(int i, int j)
