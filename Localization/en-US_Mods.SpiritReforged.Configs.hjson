@@ -44,7 +44,7 @@ ReforgedServerConfig: {
 	}
 
 	MaxFloatingItemCount: {
-		Label: Max Floating Item Count
-		Tooltip: ""
+		Label: Floating Item Cap
+		Tooltip: Determines how many floating items can be active in the world at one time.
 	}
 }
