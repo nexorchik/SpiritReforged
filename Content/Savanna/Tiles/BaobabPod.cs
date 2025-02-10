@@ -32,30 +32,6 @@ public class BaobabPod : ModTile, ISwayTile
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		void DropCoins(int amount)
-		{
-			int[] split = Utils.CoinsSplit(amount);
-
-			for (int c = 0; c < split.Length; c++)
-			{
-				if (split[c] == 0)
-					continue;
-
-				int type = c switch
-				{
-					3 => ItemID.PlatinumCoin,
-					2 => ItemID.GoldCoin,
-					1 => ItemID.SilverCoin,
-					_ => ItemID.CopperCoin,
-				};
-
-				int numStacks = Math.Min(Main.rand.Next(3) + 1, split[c]);
-				for (int r = 0; r < numStacks; r++)
-					DropItem(i, j, type, split[c] / numStacks);
-				//Split the stack across a number of items randomly
-			}
-		}
-
 		if (!ProgressStage(i, j, out int stage))
 			return;
 
@@ -107,6 +83,30 @@ public class BaobabPod : ModTile, ISwayTile
 		} //Break open
 		else
 			DropCoins(Main.rand.Next(150, 200));
+
+		void DropCoins(int amount)
+		{
+			int[] split = Utils.CoinsSplit(amount);
+
+			for (int c = 0; c < split.Length; c++)
+			{
+				if (split[c] == 0)
+					continue;
+
+				int type = c switch
+				{
+					3 => ItemID.PlatinumCoin,
+					2 => ItemID.GoldCoin,
+					1 => ItemID.SilverCoin,
+					_ => ItemID.CopperCoin,
+				};
+
+				int numStacks = Math.Min(Main.rand.Next(3) + 1, split[c]);
+				for (int r = 0; r < numStacks; r++)
+					DropItem(i, j, type, split[c] / numStacks);
+				//Split the stack across a number of items randomly
+			}
+		}
 	}
 
 	private static bool ProgressStage(int i, int j, out int stage)
@@ -134,15 +134,12 @@ public class BaobabPod : ModTile, ISwayTile
 	{
 		var source = new EntitySource_TileBreak(i, j);
 
-		if (Main.netMode != NetmodeID.MultiplayerClient)
-		{
-			int id = Item.NewItem(source, new Rectangle(i * 16, j * 16, 32, 16), type, stack, true);
-			Main.item[id].velocity = (Vector2.UnitY * -Main.rand.NextFloat(1f, 4f)).RotatedByRandom(1.5f);
-			Main.item[id].noGrabDelay = 100;
+		int id = Item.NewItem(source, new Rectangle(i * 16, j * 16, 32, 16), type, stack, true);
+		Main.item[id].velocity = (Vector2.UnitY * -Main.rand.NextFloat(1f, 4f)).RotatedByRandom(1.5f);
+		Main.item[id].noGrabDelay = 100;
 
-			if (Main.netMode != NetmodeID.SinglePlayer)
-				NetMessage.SendData(MessageID.SyncItem, number: id);
-		}
+		if (Main.netMode != NetmodeID.SinglePlayer)
+			NetMessage.SendData(MessageID.SyncItem, number: id, number2: 1f);
 	}
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)

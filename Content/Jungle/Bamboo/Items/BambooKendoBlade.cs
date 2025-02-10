@@ -17,7 +17,7 @@ public class BambooKendoBlade : ModItem, IDashSword
 
 	public override void SetDefaults()
 	{
-		Item.damage = 7;
+		Item.damage = 10;
 		Item.crit = 2;
 		Item.knockBack = 3;
 		Item.useTime = Item.useAnimation = 20;
@@ -49,7 +49,7 @@ public class BambooKendoBlade : ModItem, IDashSword
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
 		if (player.altFunctionUse == 2)
-			Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<KendoBladeLunge>(), damage, knockback, player.whoAmI);
+			Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<KendoBladeLunge>(), damage * 3, knockback, player.whoAmI);
 		else
 		{
 			float oldSwingArc = swingArc;
@@ -247,7 +247,7 @@ public class KendoBladeLunge : ModProjectile
 			owner.armorEffectDrawShadow = true;
 			owner.armorEffectDrawShadowLokis = true;
 
-			if (targetWhoAmI == -1) //Find a target
+			if (Projectile.owner == Main.myPlayer && targetWhoAmI == -1) //Find a target
 			{
 				if (lastPosition == Vector2.Zero)
 					lastPosition = owner.Center;

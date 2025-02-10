@@ -3,23 +3,29 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using SpiritReforged.Content.Particles;
+using System.IO;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
 public class ReefSpearThrown : ModProjectile
 {
+	public bool HasTarget
+	{
+		get => Projectile.ai[2] == 1;
+		set => Projectile.ai[2] = value ? 1 : 0;
+	}
+
 	public const float MAX_SPEED = 13;
 
-	private bool hasTarget = false;
 	private Vector2 relativePoint = Vector2.Zero;
 
 	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.ReefSpear.DisplayName");
 
 	public override void SetStaticDefaults()
 	{
-		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
-		ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+		ProjectileID.Sets.TrailCacheLength[Type] = 6;
+		ProjectileID.Sets.TrailingMode[Type] = 2;
 	}
 
 	public override void SetDefaults()
@@ -33,12 +39,12 @@ public class ReefSpearThrown : ModProjectile
 		Projectile.aiStyle = 0;
 	}
 
-	public override bool? CanDamage() => !hasTarget;
-	public override bool? CanCutTiles() => !hasTarget;
+	public override bool? CanDamage() => !HasTarget;
+	public override bool? CanCutTiles() => !HasTarget;
 
 	public override void AI()
 	{
-		if (!hasTarget)
+		if (!HasTarget)
 		{
 			Projectile.velocity.Y += 0.3f;
 			Projectile.rotation = Projectile.velocity.ToRotation();
@@ -57,7 +63,7 @@ public class ReefSpearThrown : ModProjectile
 				Projectile.timeLeft *= 2;
 				Projectile.velocity *= 0;
 
-				hasTarget = false;
+				HasTarget = false;
 				return;
 			}
 
@@ -88,10 +94,10 @@ public class ReefSpearThrown : ModProjectile
 		Projectile.ai[0] = 0;
 		Projectile.ai[1] = target.whoAmI;
 		Projectile.tileCollide = false;
-		Projectile.netUpdate = true;
 		Projectile.timeLeft = 300;
+		Projectile.netUpdate = true;
 
-		hasTarget = true;
+		HasTarget = true;
 		relativePoint = Projectile.Center - target.Center;
 
 		MakeParticles(Projectile.velocity);
@@ -105,11 +111,11 @@ public class ReefSpearThrown : ModProjectile
 
 	public override bool PreDraw(ref Color lightColor)
 	{
-		Texture2D projTex = TextureAssets.Projectile[Projectile.type].Value;
+		Texture2D projTex = TextureAssets.Projectile[Type].Value;
 		const int halfTipWidth = 15;
 		var drawOrigin = new Vector2(Projectile.spriteDirection > 0 ? projTex.Width - halfTipWidth : halfTipWidth, projTex.Height / 2);
 
-		if (!hasTarget)
+		if (!HasTarget)
 			Projectile.QuickDrawTrail(Main.spriteBatch, 0.25f, drawOrigin: drawOrigin);
 
 		Projectile.QuickDraw(Main.spriteBatch, origin: drawOrigin);
@@ -118,7 +124,7 @@ public class ReefSpearThrown : ModProjectile
 
 	public override void OnKill(int timeLeft)
 	{
-		if (!hasTarget)
+		if (!HasTarget)
 		{
 			SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_Hard") with { PitchVariance = 0.2f, Pitch = -2f, Volume = 2.5f }, Projectile.Center);
@@ -140,6 +146,9 @@ public class ReefSpearThrown : ModProjectile
 
 	private void MakeParticles(Vector2 velocity)
 	{
+		if (Main.dedServ)
+			return;
+
 		float velocityRatio = Math.Min(velocity.Length() / MAX_SPEED, 1);
 
 		ParticleHandler.SpawnParticle(new ReefSpearImpact(null,
@@ -168,4 +177,7 @@ public class ReefSpearThrown : ModProjectile
 	}
 
 	public NPC GetStuckNPC() => Main.npc[(int)Projectile.ai[1]];
+
+	public override void SendExtraAI(BinaryWriter writer) => writer.WriteVector2(relativePoint);
+	public override void ReceiveExtraAI(BinaryReader reader) => relativePoint = reader.ReadVector2();
 }

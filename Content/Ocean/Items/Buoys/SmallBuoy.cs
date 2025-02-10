@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.SimpleEntity;
 using SpiritReforged.Common.TileCommon.TileSway;
 using Terraria.Audio;
@@ -121,6 +122,7 @@ public class SmallBuoyEntity : SimpleEntity
 			if (Main.mouseRight && Main.mouseRightRelease)
 			{
 				Kill();
+				ItemMethods.NewItemSynced(GetSource_Death(), ItemType, Hitbox.Center(), true);
 
 				if (Main.netMode != NetmodeID.SinglePlayer)
 				{
@@ -132,13 +134,7 @@ public class SmallBuoyEntity : SimpleEntity
 		}
 	}
 
-	public override void OnKill()
-	{
-		if (Main.netMode != NetmodeID.MultiplayerClient)
-			Item.NewItem(GetSource_Death(), Hitbox, ItemType);
-
-		SoundEngine.PlaySound(SoundID.Dig, Center);
-	}
+	public override void OnKill() => SoundEngine.PlaySound(SoundID.Dig, Center);
 
 	public override void Draw(SpriteBatch spriteBatch)
 	{

@@ -7,9 +7,10 @@ public class QuenchPotion : ModItem
 	public override void Load()
 	{
 		On_Player.QuickBuff += FocusQuenchPotion;
-		BuffHooks.ModifyBuffTime += QuenchifyBuff;
+		BuffPlayer.ModifyBuffTime += QuenchifyBuff;
 	}
 
+	/// <summary> Forces this potion to be used before all others with quick buff. </summary>
 	private void FocusQuenchPotion(On_Player.orig_QuickBuff orig, Player self)
 	{
 		if (!self.cursed && !self.CCed && !self.dead && !self.HasBuff<QuenchPotion_Buff>() && self.CountBuffs() < Player.MaxBuffs)
@@ -31,6 +32,7 @@ public class QuenchPotion : ModItem
 		orig(self);
 	}
 
+	/// <summary> Improves buff times with <see cref="QuenchPotion_Buff"/>. </summary>
 	private void QuenchifyBuff(int buffType, ref int buffTime, Player player, bool quickBuff)
 	{
 		if (!Main.debuff[buffType] && buffType != ModContent.BuffType<QuenchPotion_Buff>() && player.HasBuff<QuenchPotion_Buff>())

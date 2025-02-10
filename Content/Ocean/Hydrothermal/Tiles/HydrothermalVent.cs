@@ -14,7 +14,7 @@ public class HydrothermalVent : ModTile
 {
 	/// <summary> Cooldowns for all <see cref="HydrothermalVent"/> tiles in the world. Never read on multiplayer clients. </summary>
 	private static readonly Dictionary<Point16, int> cooldowns = [];
-	private const int cooldownMax = (int)(Main.dayLength / 5);
+	private const int cooldownMax = (int)(Main.dayLength / 2);
 	internal const int eruptDuration = 600;
 
 	/// <summary> Precise texture top positions for all tile styles, used for visuals. </summary>
@@ -53,7 +53,10 @@ public class HydrothermalVent : ModTile
 		Main.tileNoAttach[Type] = true;
 		Main.tileSpelunker[Type] = true;
 		Main.tileLighted[Type] = true;
+
 		TileID.Sets.DisableSmartCursor[Type] = true;
+		TileID.Sets.PreventsTileRemovalIfOnTopOfIt[Type] = true;
+		TileID.Sets.PreventsTileReplaceIfOnTopOfIt[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.Height = 4;
@@ -160,6 +163,8 @@ public class HydrothermalVent : ModTile
 
 		if (!Main.dedServ)
 		{
+			var player = Main.LocalPlayer;
+
 			for (int k = 0; k <= 20; k++)
 				Dust.NewDustPerfect(position, ModContent.DustType<Dusts.BoneDust>(), new Vector2(0, 6).RotatedByRandom(1) * Main.rand.NextFloat(-1, 1));
 			for (int k = 0; k <= 20; k++)
@@ -175,12 +180,12 @@ public class HydrothermalVent : ModTile
 				new Vector2(4, 0.75f), EaseFunction.EaseCubicOut).WithSkew(0.75f, MathHelper.Pi - MathHelper.PiOver2));
 
 			for (int x = 0; x < 5; x++) //Large initial smoke plume
-			{
 				ParticleHandler.SpawnParticle(new DissipatingSmoke(position + Main.rand.NextVector2Unit() * 25f, -Vector2.UnitY,
 					new Color(40, 40, 50), Color.Black, Main.rand.NextFloat(.05f, .3f), 150));
-			}
 
-			Main.LocalPlayer.SimpleShakeScreen(2, 3, 90, 16 * 10);
+			if (Collision.WetCollision(player.position, player.width, player.height))
+				player.SimpleShakeScreen(2, 3, 90, 16 * 10);
+
 			Magmastone.AddGlowPoint(i, j);
 		}
 	}

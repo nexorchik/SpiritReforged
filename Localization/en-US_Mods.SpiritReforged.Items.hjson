@@ -1265,7 +1265,7 @@ NightSky: {
 	DisplayName: Night Sky
 	Tooltip:
 		'''
-		{$BuffDescription.WellFed}
+		{$BuffDescription.WellFed2}
 		{$ItemTooltip.ManaRegenerationPotion}
 		'Tastes like the cosmos'
 		'''
@@ -1279,4 +1279,14 @@ Pearlberry: {
 		{$ItemTooltip.ManaRegenerationPotion}
 		'Glimmers and shines brightly...'
 		'''
+}
+
+DriftwoodBow: {
+	DisplayName: Driftwood Bow
+	Tooltip: ""
+}
+
+DriftwoodHammer: {
+	DisplayName: Driftwood Hammer
+	Tooltip: ""
 }

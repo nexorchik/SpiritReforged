@@ -88,7 +88,9 @@ public class BaobabFruitTile : ModTile
 		if (tile.TileFrameY == 18) //This is a fruit frame
 		{
 			var position = new Vector2(i, j) * 16 + new Vector2(8);
-			Projectile.NewProjectile(new EntitySource_TileBreak(i, j), position, Vector2.Zero, ModContent.ProjectileType<BaobabFruitProj>(), 10, 0f, ai0: tile.TileFrameX / 18);
+
+			Projectile.NewProjectileDirect(new EntitySource_TileBreak(i, j), position, Vector2.Zero, 
+				ModContent.ProjectileType<BaobabFruitProj>(), 10, 0f, ai0: tile.TileFrameX / 18).netUpdate = true;
 		}
 	}
 

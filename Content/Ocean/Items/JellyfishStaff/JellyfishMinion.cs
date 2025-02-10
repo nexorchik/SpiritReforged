@@ -229,13 +229,16 @@ public class JellyfishMinion : BaseMinion
 						false,
 						0.3f).WithSkew(0.6f, aimDirection.ToRotation() + MathHelper.Pi));
 
-					PreNewProjectile.New(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection * JellyfishBolt.HITSCAN_STEP, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0, 0, 3, delegate (Projectile p)
+					if (Projectile.owner == Main.myPlayer)
 					{
-						if (p.ModProjectile is JellyfishBolt jellyfishBolt)
-							jellyfishBolt.startPos = p.Center;
-					});
+						PreNewProjectile.New(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection * JellyfishBolt.HITSCAN_STEP, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0, 0, 3, delegate (Projectile p)
+						{
+							(p.ModProjectile as JellyfishBolt).startPos = p.Center;
+						});
 
-					Projectile.netUpdate = true;
+						Projectile.netUpdate = true;
+					}
+
 					Projectile.velocity = 0.5f * new Vector2(-xSpeed * aimDirection.X, -ySpeed);
 				}
 

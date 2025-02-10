@@ -5,7 +5,9 @@ using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.SimpleEntity;
 using SpiritReforged.Common.WorldGeneration;
+using SpiritReforged.Content.Forest.Safekeeper;
 using SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
+using SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 using System.IO;
 using Terraria.DataStructures;
 
@@ -26,7 +28,9 @@ public static class ReforgedMultiplayer
 		RevealMap,
 		MagmaGlowPoint,
 		PackVisibility,
-		SummonTag
+		SummonTag,
+		BurnUndeadNPC,
+		CascadeBubble,
 	}
 
 	public static void HandlePacket(BinaryReader reader, int whoAmI)
@@ -157,14 +161,33 @@ public static class ReforgedMultiplayer
 				break;
 
 			case MessageType.PackVisibility:
-				bool visibility = reader.ReadBoolean();
-				int player = reader.ReadByte();
+				{
+					bool visibility = reader.ReadBoolean();
+					byte player = reader.ReadByte();
 
-				if (Main.netMode == NetmodeID.Server)
-					BackpackPlayer.SendVisibilityPacket(visibility, player, whoAmI);
+					if (Main.netMode == NetmodeID.Server)
+						BackpackPlayer.SendVisibilityPacket(visibility, player, whoAmI);
 
-				Main.player[player].GetModPlayer<BackpackPlayer>().packVisible = visibility;
+					Main.player[player].GetModPlayer<BackpackPlayer>().packVisible = visibility;
+					break;
+				}
+
+			case MessageType.BurnUndeadNPC: //Sent from server to clients
+				int npcIndex = reader.ReadInt32();
+				UndeadNPC.BurnAway(Main.npc[npcIndex]);
 				break;
+
+			case MessageType.CascadeBubble:
+				{
+					float value = reader.ReadSingle();
+					byte player = reader.ReadByte();
+
+					if (Main.netMode == NetmodeID.Server)
+						CascadeArmorPlayer.SendBubblePacket(value, player, whoAmI);
+
+					Main.player[player].GetModPlayer<CascadeArmorPlayer>().bubbleStrength = value;
+					break;
+				}
 
 			case MessageType.SummonTag:
 				int npc = reader.ReadInt16();

@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.PlayerCommon;
+using SpiritReforged.Content.Savanna.Tiles;
 
 namespace SpiritReforged.Content.Savanna.Biome;
 
@@ -22,10 +23,18 @@ public class SavannaBiome : ModBiome
 
 internal class SavannaTileCounts : ModSystem
 {
+	internal static int[] SavannaTypes;
 	public int savannaCount;
 
 	public static bool InSavanna => ModContent.GetInstance<SavannaTileCounts>().savannaCount >= 400;
 
-	public override void TileCountsAvailable(ReadOnlySpan<int> tileCounts) 
-		=> savannaCount = tileCounts[ModContent.TileType<Tiles.SavannaGrass>()] + tileCounts[ModContent.TileType<Tiles.SavannaDirt>()];
+	public override void SetStaticDefaults() => SavannaTypes = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaGrassCorrupt>(), ModContent.TileType<SavannaGrassCrimson>(), ModContent.TileType<SavannaGrassHallow>(), ModContent.TileType<SavannaDirt>()];
+
+	public override void TileCountsAvailable(ReadOnlySpan<int> tileCounts)
+	{
+		savannaCount = 0;
+
+		foreach (int type in SavannaTypes)
+			savannaCount += tileCounts[type];
+	}
 }

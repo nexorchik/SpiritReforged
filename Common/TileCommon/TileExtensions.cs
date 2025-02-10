@@ -109,6 +109,33 @@ public static class TileExtensions
 		(i, j) = (i - tile.TileFrameX % data.CoordinateFullWidth / 18, j - tile.TileFrameY % data.CoordinateFullHeight / 18);
 	}
 
+	/// <summary> Places a tile of <paramref name="type"/> at the given coordinates and automatically syncs it. </summary>
+	/// <param name="type"> The tile type to place. </param>
+	/// <param name="style"> The tile style to place. -1 tries to place a random style. </param>
+	public static void Place(int i, int j, int type, int style = -1)
+	{
+		int width = 1;
+		int height = 1;
+		var data = TileObjectData.GetTileData(type, 0);
+
+		if (data is null)
+			style = 0;
+		else
+		{
+			width = data.Width;
+			height = data.Height;
+
+			if (style == -1)
+				style = data.RandomStyleRange;
+		}
+
+		if (WorldGen.PlaceTile(i, j, type, true, style: style) && Main.netMode != NetmodeID.SinglePlayer)
+		{
+			GetTopLeft(ref i, ref j);
+			NetMessage.SendTileSquare(-1, i, j, width, height);
+		}
+	}
+
 	/// <summary> Tries to place or extend a vine at the given coordinates. </summary>
 	/// <param name="i"> The tile's X coordinate. </param>
 	/// <param name="j"> The tile's Y coordinate. </param>

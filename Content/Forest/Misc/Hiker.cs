@@ -184,7 +184,7 @@ public class Hiker : ModNPC
 	public override bool CanChat() => true;
 	public override string GetChat()
 	{
-		if (!_info.priceOff && PlayerHasFood(out int type))
+		if (_info.hasBundle && !_info.priceOff && PlayerHasFood(out int type))
 			return Language.GetText("Mods.SpiritReforged.NPCs.Hiker.Dialogue.Hungry.Asking." + Main.rand.Next(4)).WithFormatArgs($"[i:{type}]").Value;
 
 		return Language.GetTextValue("Mods.SpiritReforged.NPCs.Hiker.Dialogue.Idle." + Main.rand.Next(5));

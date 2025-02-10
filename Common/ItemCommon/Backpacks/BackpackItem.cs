@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.UI.BackpackInterface;
 using SpiritReforged.Common.UI.System;
+using System.IO;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Common.ItemCommon.Backpacks;
@@ -71,5 +72,17 @@ internal abstract class BackpackItem : ModItem
 			else
 				items[i] = new Item();
 		}
+	}
+
+	public override void NetSend(BinaryWriter writer)
+	{
+		foreach (var item in items)
+			ItemIO.Send(item, writer, true);
+	}
+
+	public override void NetReceive(BinaryReader reader)
+	{
+		foreach (var item in items)
+			ItemIO.Receive(item, reader, true);
 	}
 }
