@@ -20,6 +20,7 @@ public class PoolNoodle : ModItem
 		CrateDatabase.AddCrateRule(ItemID.OceanCrate, ItemDropRule.Common(Type, 8));
 		CrateDatabase.AddCrateRule(ItemID.OceanCrateHard, ItemDropRule.Common(Type, 8));
 	}
+
 	public override void SetDefaults()
 	{
 		Item.DefaultToWhip(ModContent.ProjectileType<PoolNoodleProj>(), 14, 0, 4);
