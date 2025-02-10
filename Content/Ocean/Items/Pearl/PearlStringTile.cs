@@ -1,4 +1,3 @@
-using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
@@ -17,6 +16,8 @@ public class PearlStringTile : NameableTile, IAutoloadRubble
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoFail[Type] = true;
 
+		TileID.Sets.CanDropFromRightClick[Type] = true;
+		
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);
 		TileObjectData.newTile.CoordinateHeights = [16];
 		TileObjectData.newTile.Origin = new(1, 0);
@@ -40,23 +41,6 @@ public class PearlStringTile : NameableTile, IAutoloadRubble
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
 		player.cursorItemIconID = ModContent.ItemType<PearlString>();
-	}
-
-	public override bool RightClick(int i, int j)
-	{
-		int y = 0;
-		TileExtensions.GetTopLeft(ref i, ref y);
-
-		WorldGen.KillTile(i, j);
-		if (Main.netMode == NetmodeID.MultiplayerClient)
-		{
-			NetMessage.SendTileSquare(-1, i, j, 2, 1);
-
-			var pos = new Rectangle(i * 16, j * 16, 32, 16).Center();
-			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ModContent.ItemType<PearlString>(), pos, true);
-		}
-
-		return true;
 	}
 
 	public override bool CreateDust(int i, int j, ref int type)

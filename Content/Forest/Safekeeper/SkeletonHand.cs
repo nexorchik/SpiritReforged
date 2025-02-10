@@ -1,7 +1,7 @@
-﻿using SpiritReforged.Common.ItemCommon;
-using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
+using SpiritReforged.Content.Ocean.Items.Pearl;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Safekeeper;
@@ -20,6 +20,8 @@ public class SkeletonHand : NameableTile, IAutoloadRubble
 		Main.tileMergeDirt[Type] = false;
 		Main.tileBlockLight[Type] = false;
 		Main.tileFrameImportant[Type] = true;
+
+		TileID.Sets.CanDropFromRightClick[Type] = true;
 
 		const int height = 30;
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
@@ -44,23 +46,6 @@ public class SkeletonHand : NameableTile, IAutoloadRubble
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
 		player.cursorItemIconID = ModContent.ItemType<SafekeeperRing>();
-	}
-
-	public override bool RightClick(int i, int j)
-	{
-		if (RubbleGlobalTile.IsRubble(Type))
-			return false;
-
-		WorldGen.KillTile(i, j);
-		if (Main.netMode == NetmodeID.MultiplayerClient)
-		{
-			NetMessage.SendTileSquare(-1, i, j);
-
-			var pos = new Rectangle(i * 16, j * 16, 16, 16).Center();
-			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ModContent.ItemType<SafekeeperRing>(), pos, true);
-		}
-
-		return true;
 	}
 
 	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)

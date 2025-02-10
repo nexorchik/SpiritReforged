@@ -1,5 +1,7 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
+using SpiritReforged.Content.Forest.Safekeeper;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.ObjectInteractions;
@@ -84,10 +86,7 @@ public class ButterflyStump : NameableTile, IAutoloadRubble
 			if (Main.netMode != NetmodeID.SinglePlayer)
 				NetMessage.SendTileSquare(-1, i, j, 2, 4);
 
-			int item = Item.NewItem(null, new Vector2(i + 1, j) * 16, ItemType);
-			if (Main.netMode != NetmodeID.SinglePlayer)
-				NetMessage.SendData(MessageID.SyncItem, number: item);
-
+			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ItemType, new Vector2(i, j).ToWorldCoordinates(16, 0), true);
 			NPC.NewNPCDirect(null, (i + 1) * 16, (j + 1) * 16, ModContent.NPCType<ButterflyCritter>()).netUpdate = true;
 
 			return true;

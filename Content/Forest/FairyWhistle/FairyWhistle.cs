@@ -38,7 +38,7 @@ public class FairyWhistle : ModItem
 	}
 
 	public override Vector2? HoldoutOffset() => new Vector2(5, -2);
-	public override void AddRecipes() => CreateRecipe().AddRecipeGroup(RecipeGroupID.Wood, 20).AddRecipeGroup(ItemID.Acorn, 1).AddTile(TileID.WorkBenches).Register();
+	public override void AddRecipes() => CreateRecipe().AddRecipeGroup(RecipeGroupID.Wood, 20).AddIngredient(ItemID.Acorn, 1).AddTile(TileID.WorkBenches).Register();
 }
 
 /// <summary> Used for controlling <see cref="FairyWhistle"/> item use visuals. </summary>

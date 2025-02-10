@@ -1,4 +1,3 @@
-using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using System.Linq;
 using Terraria.DataStructures;
@@ -13,6 +12,8 @@ public class BlunderbussTile : ModTile
 		Main.tileSolid[Type] = false;
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoFail[Type] = true;
+
+		TileID.Sets.CanDropFromRightClick[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);
 		TileObjectData.newTile.CoordinateHeights = [18];
@@ -33,24 +34,6 @@ public class BlunderbussTile : ModTile
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
 		player.cursorItemIconID = ModContent.ItemType<Blunderbuss>();
-	}
-
-	public override bool RightClick(int i, int j)
-	{
-		int y = 0;
-		TileExtensions.GetTopLeft(ref i, ref y);
-
-		WorldGen.KillTile(i, j);
-		if (Main.netMode == NetmodeID.MultiplayerClient)
-		{
-			NetMessage.SendTileSquare(-1, i, j, 2, 1);
-
-			var pos = new Rectangle(i * 16, j * 16, 32, 16).Center();
-			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ModContent.ItemType<Blunderbuss>(), pos, true);
-			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), new Item(ItemID.MusketBall, 30), pos, true);
-		}
-
-		return true;
 	}
 
 	public override bool CreateDust(int i, int j, ref int type)
