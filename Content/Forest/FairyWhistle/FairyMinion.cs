@@ -95,7 +95,7 @@ public class FairyMinion : BaseMinion
 		if (Math.Abs(Projectile.velocity.X) > 1) //dont flip too fast
 			Projectile.direction = Projectile.spriteDirection = Math.Sign(Projectile.velocity.X) > 0 ? -1 : 1;
 
-		Vector2 desiredPosition = player.MountedCenter - new Vector2(0, 60 + (float)Math.Sin(Main.GameUpdateCount / 6f) * 6);
+		Vector2 desiredPosition = player.MountedCenter - new Vector2(0, 48 + (float)Math.Sin(Main.GameUpdateCount / 6f) * 6);
 		Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.Lerp(Projectile.Center, desiredPosition, 0.15f) - Projectile.Center, 0.1f);
 
 		if (Projectile.Distance(desiredPosition) > 600) //Teleport

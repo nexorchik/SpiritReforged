@@ -1,6 +1,7 @@
 using SpiritReforged.Common.ItemCommon;
 using System.IO;
 using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Ocean.Items.PoolNoodle;
@@ -12,7 +13,13 @@ public class PoolNoodle : ModItem
 	public const int NumStyles = 3;
 	public byte style = NumStyles;
 
-	public override void SetStaticDefaults() => VariantGlobalItem.AddVariants(Type, NumStyles, false);
+	public override void SetStaticDefaults()
+	{
+		VariantGlobalItem.AddVariants(Type, NumStyles, false);
+
+		CrateDatabase.AddCrateRule(ItemID.OceanCrate, ItemDropRule.Common(Type, 8));
+		CrateDatabase.AddCrateRule(ItemID.OceanCrateHard, ItemDropRule.Common(Type, 8));
+	}
 	public override void SetDefaults()
 	{
 		Item.DefaultToWhip(ModContent.ProjectileType<PoolNoodleProj>(), 14, 0, 4);

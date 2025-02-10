@@ -1,5 +1,7 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.ItemCommon.FloatingItem;
 using SpiritReforged.Common.Misc;
+using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Ocean.Items.Driftwood;
 
@@ -9,7 +11,13 @@ public class DriftwoodTileItem : FloatingItem
 	public override float Weight => base.Weight * 0.9f;
 	public override float Bouyancy => base.Bouyancy * 1.05f;
 
-	public override void SetStaticDefaults() => Recipes.AddToGroup(RecipeGroupID.Wood, Type);
+	public override void SetStaticDefaults()
+	{
+		Recipes.AddToGroup(RecipeGroupID.Wood, Type);
+
+		CrateDatabase.AddCrateRule(ItemID.OceanCrate, ItemDropRule.Common(Type, 5, 10, 30));
+		CrateDatabase.AddCrateRule(ItemID.OceanCrateHard, ItemDropRule.Common(Type, 5, 10, 30));
+	}
 
 	public override void SetDefaults()
 	{

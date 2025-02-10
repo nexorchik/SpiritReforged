@@ -106,6 +106,7 @@ public class Magmastone : ModTile, IAutoloadTileItem
 
 		DustType = DustID.Asphalt;
 		MineResist = .5f;
+		MinPick = 50;
 	}
 
 	public override void HitWire(int i, int j)

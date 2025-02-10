@@ -25,6 +25,7 @@ public class Gravel : ModTile, IAutoloadTileItem
 		AddMapEntry(new Color(120, 120, 120));
 		DustType = DustID.Asphalt;
 		MineResist = .5f;
+		MinPick = 50;
 	}
 
 	public override void RandomUpdate(int i, int j)
