@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.Misc;
+﻿using SpiritReforged.Common.Multiplayer;
+using System.IO;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.PrimitiveRendering;
@@ -46,15 +47,34 @@ public static class TrailDetours
 		{
 			if (Main.netMode == NetmodeID.SinglePlayer)
 				(projectile.ModProjectile as ITrailProjectile).DoTrailCreation(AssetLoader.VertexTrailManager);
-
 			else
-			{
-				ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.SpawnTrail, 1);
-				packet.Write(index);
-				packet.Send();
-			}
+				new SpawnTrailData(index).Send();
 		}
 
 		return index;
 	}
+}
+
+internal class SpawnTrailData : PacketData
+{
+	public SpawnTrailData() { }
+	public SpawnTrailData(int index) => _index = index;
+
+	private readonly int _index;
+
+	public override void OnReceive(BinaryReader reader, int whoAmI)
+	{
+		int index = reader.Read();
+
+		if (Main.netMode == NetmodeID.Server)
+		{
+			new SpawnTrailData(index).Send();
+			return;
+		}
+
+		if (Main.projectile[index].ModProjectile is IManualTrailProjectile trailProj)
+			trailProj.DoTrailCreation(AssetLoader.VertexTrailManager);
+	}
+
+	public override void OnSend(ModPacket modPacket) => modPacket.Write(_index);
 }

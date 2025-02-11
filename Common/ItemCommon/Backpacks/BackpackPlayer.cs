@@ -1,5 +1,6 @@
-﻿using Terraria.ModLoader.IO;
-using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
+﻿using SpiritReforged.Common.Multiplayer;
+using System.IO;
+using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Common.ItemCommon.Backpacks;
 
@@ -65,17 +66,35 @@ internal class BackpackPlayer : ModPlayer
 		packVisible = tag.Get<bool>(nameof(packVisible));
 	}
 
-	public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) => SendVisibilityPacket(packVisible, (byte)Player.whoAmI);
+	public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) => new PackVisibilityData(packVisible, (byte)Player.whoAmI).Send();
+}
 
-	/// <summary> Syncs backpack visibility corresponding to <paramref name="value"/> for player <paramref name="whoAmI"/>. </summary>
-	/// <param name="value"> Whether this player's backpack is visible. </param>
-	/// <param name="whoAmI"> The index of player to sync. </param>
-	/// <param name="ignoreClient"> The client to ignore sending this packet to. -1 ignores nobody. </param>
-	public static void SendVisibilityPacket(bool value, byte whoAmI, int ignoreClient = -1)
+internal class PackVisibilityData : PacketData
+{
+	private readonly bool _visibility;
+	private readonly byte _playerIndex;
+
+	public PackVisibilityData() { }
+	public PackVisibilityData(bool value, byte playerIndex)
 	{
-		ModPacket packet = SpiritReforgedMod.Instance.GetPacket(MessageType.PackVisibility, 2);
-		packet.Write(value);
-		packet.Write(whoAmI);
-		packet.Send(ignoreClient: ignoreClient);
+		_visibility = value;
+		_playerIndex = playerIndex;
+	}
+
+	public override void OnReceive(BinaryReader reader, int whoAmI)
+	{
+		bool visibility = reader.ReadBoolean();
+		byte player = reader.ReadByte();
+
+		if (Main.netMode == NetmodeID.Server)
+			new PackVisibilityData(visibility, player).Send(ignoreClient: whoAmI);
+
+		Main.player[player].GetModPlayer<BackpackPlayer>().packVisible = visibility;
+	}
+
+	public override void OnSend(ModPacket modPacket)
+	{
+		modPacket.Write(_visibility);
+		modPacket.Write(_playerIndex);
 	}
 }

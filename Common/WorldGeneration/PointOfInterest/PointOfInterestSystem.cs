@@ -1,11 +1,9 @@
-﻿using SpiritReforged.Common.Misc;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using Terraria.DataStructures;
 using Terraria.ModLoader.IO;
 using Terraria.Utilities;
 
-namespace SpiritReforged.Common.WorldGeneration;
+namespace SpiritReforged.Common.WorldGeneration.PointOfInterest;
 
 public enum InterestType : byte
 {
@@ -60,13 +58,7 @@ internal class PointOfInterestSystem : ModSystem
 		}
 
 		if (!fromNet && Main.netMode != NetmodeID.SinglePlayer)
-		{
-			ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.RemovePointOfInterest, 3);
-			packet.Write((byte)type);
-			packet.Write(position.X);
-			packet.Write(position.Y);
-			packet.Send();
-		}
+			new RemovePoIData((byte)type, position).Send();
 	}
 
 	public void InstancedAddPoint(Point16 position, InterestType type)
@@ -121,76 +113,6 @@ internal class PointOfInterestSystem : ModSystem
 
 			dictionary.Add(type, points);
 			takenTypes.Add(type);
-		}
-	}
-
-	internal static void SendAllPoints(BinaryReader reader)
-	{
-		bool isWorldGen = reader.ReadBoolean();
-		byte fromWho = reader.ReadByte();
-		Dictionary<InterestType, HashSet<Point16>> dictionary = isWorldGen ? Instance.WorldGen_PointsOfInterestByPosition : Instance.PointsOfInterestByPosition;
-		int packetSize = 2 + dictionary.Count * 2 + dictionary.Sum(x => x.Value.Count) * 2;
-
-		ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.AskForPointsOfInterest, packetSize);
-		packet.Write(isWorldGen);
-		packet.Write((short)dictionary.Count);
-
-		for (int i = 0; i < dictionary.Count; ++i)
-		{
-			var pair = dictionary.ElementAt(i);
-			packet.Write((byte)pair.Key);
-			packet.Write((short)pair.Value.Count);
-
-			for (int j = 0; j < pair.Value.Count; ++j)
-			{
-				var pos = pair.Value.ElementAt(j);
-				packet.Write(pos.X);
-				packet.Write(pos.Y);
-			}
-		}
-
-		packet.Send(fromWho);
-	}
-
-	internal static void RecieveAllPoints(BinaryReader reader)
-	{
-		bool isWorldGen = reader.ReadBoolean();
-		Dictionary<InterestType, HashSet<Point16>> dictionary = isWorldGen ? Instance.WorldGen_PointsOfInterestByPosition : Instance.PointsOfInterestByPosition;
-		dictionary.Clear();
-
-		short count = reader.ReadInt16();
-
-		for (int i = 0; i < count; ++i)
-		{
-			var type = (InterestType)reader.ReadByte();
-			int subCount = reader.ReadInt16();
-
-			for (int j = 0; j < subCount; ++j)
-			{
-				int x = reader.ReadInt16();
-				int y = reader.ReadInt16();
-
-				AddPoint(new Point16(x, y), type);
-			}
-		}
-	}
-
-	public class PoIPlayer : ModPlayer
-	{
-		public override void OnEnterWorld()
-		{
-			if (Main.netMode != NetmodeID.SinglePlayer)
-			{
-				ModPacket worldGenPacket = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.AskForPointsOfInterest, 2);
-				worldGenPacket.Write(true);
-				worldGenPacket.Write((byte)Main.myPlayer);
-				worldGenPacket.Send();
-
-				ModPacket normalPacket = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.AskForPointsOfInterest, 2);
-				normalPacket.Write(false);
-				normalPacket.Write((byte)Main.myPlayer);
-				normalPacket.Send();
-			}
 		}
 	}
 }

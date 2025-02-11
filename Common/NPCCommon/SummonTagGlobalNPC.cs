@@ -1,4 +1,5 @@
-﻿using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
+﻿using SpiritReforged.Common.Multiplayer;
+using System.IO;
 
 namespace SpiritReforged.Common.NPCCommon;
 
@@ -19,15 +20,7 @@ public class SummontTagGlobalNPC : GlobalNPC
 		_duration = Duration;
 
 		if (sync && Main.netMode != NetmodeID.SinglePlayer)
-			SendTagPacket(npcIndex, damage);
-	}
-
-	public static void SendTagPacket(int npcIndex, int damage, int ignoreClient = -1)
-	{
-		ModPacket packet = SpiritReforgedMod.Instance.GetPacket(MessageType.SummonTag, 3);
-		packet.Write(npcIndex);
-		packet.Write((byte)damage);
-		packet.Send(-1, ignoreClient);
+			new SummonTagData((byte)npcIndex, (byte)damage).Send();
 	}
 
 	public override void ResetEffects(NPC npc)
@@ -40,5 +33,35 @@ public class SummontTagGlobalNPC : GlobalNPC
 	{
 		if (projectile.IsMinionOrSentryRelated)
 			modifiers.FinalDamage.Flat += _summonTag;
+	}
+}
+
+internal class SummonTagData : PacketData
+{
+	private readonly byte _index;
+	private readonly byte _damage;
+
+	public SummonTagData() { }
+	public SummonTagData(byte index, byte damage)
+	{
+		_index = index;
+		_damage = damage;
+	}
+
+	public override void OnReceive(BinaryReader reader, int whoAmI)
+	{
+		byte npc = reader.ReadByte();
+		byte damage = reader.ReadByte();
+
+		if (Main.netMode == NetmodeID.Server)
+			new SummonTagData(npc, damage).Send(ignoreClient: whoAmI);
+
+		Main.npc[npc].ApplySummonTag(damage, false);
+	}
+
+	public override void OnSend(ModPacket modPacket)
+	{
+		modPacket.Write(_index);
+		modPacket.Write(_damage);
 	}
 }

@@ -58,7 +58,7 @@ internal static class AssetLoader
 			}
 		}
 
-		VertexTrailManager = new TrailManager(mod);
+		VertexTrailManager = new TrailManager();
 	}
 
 	/// <summary>

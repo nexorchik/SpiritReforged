@@ -2,7 +2,6 @@
 using SpiritReforged.Common.SimpleEntity;
 using SpiritReforged.Common.TileCommon.TileSway;
 using Terraria.Audio;
-using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Content.Ocean.Items;
 
@@ -60,13 +59,8 @@ public class FishLure : FloatingItem
 
 			SimpleEntitySystem.NewEntity(type, position);
 
-			if (Main.netMode != NetmodeID.SinglePlayer)
-			{
-				ModPacket packet = SpiritReforgedMod.Instance.GetPacket(MessageType.SpawnSimpleEntity, 2);
-				packet.Write(type);
-				packet.WriteVector2(position);
-				packet.Send();
-			}
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				new SpawnSimpleEntityData((short)type, position).Send();
 
 			return true;
 		}
@@ -115,12 +109,8 @@ public class FishLureEntity : SimpleEntity
 			{
 				Kill();
 
-				if (Main.netMode != NetmodeID.SinglePlayer)
-				{
-					ModPacket packet = SpiritReforgedMod.Instance.GetPacket(MessageType.KillSimpleEntity, 1);
-					packet.Write(whoAmI);
-					packet.Send();
-				}
+				if (Main.netMode == NetmodeID.MultiplayerClient)
+					new KillSimpleEntityData((short)whoAmI).Send();
 			}
 		}
 	}

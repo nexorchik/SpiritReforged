@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.WorldGeneration.Chests;
+using SpiritReforged.Common.WorldGeneration.PointOfInterest;
 using SpiritReforged.Content.Forest.Botanist.Tiles;
 using SpiritReforged.Content.Forest.ButterflyStaff;
 using SpiritReforged.Content.Forest.Safekeeper;

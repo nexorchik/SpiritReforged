@@ -1,7 +1,8 @@
-﻿using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Multiplayer;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
+using System.IO;
 using Terraria.Audio;
-using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 
@@ -45,20 +46,8 @@ public class CascadeArmorPlayer : ModPlayer
 			bubbleStrength = MathHelper.Clamp(bubbleStrength += .125f, 0, 1);
 
 			if (Main.netMode != NetmodeID.SinglePlayer)
-				SendBubblePacket(bubbleStrength, (byte)Player.whoAmI);
+				new CascadeBubbleData(bubbleStrength, (byte)Player.whoAmI).Send();
 		}
-	}
-
-	/// <summary> Syncs bubble strength corresponding to <paramref name="value"/> for player <paramref name="whoAmI"/>. </summary>
-	/// <param name="value"> The strength of <paramref name="whoAmI"/> player's bubble. </param>
-	/// <param name="whoAmI"> The index of player to sync. </param>
-	/// <param name="ignoreClient"> The client to ignore sending this packet to. -1 ignores nobody. </param>
-	public static void SendBubblePacket(float value, byte whoAmI, int ignoreClient = -1)
-	{
-		ModPacket packet = SpiritReforgedMod.Instance.GetPacket(MessageType.CascadeBubble, 2);
-		packet.Write(value);
-		packet.Write(whoAmI);
-		packet.Send(ignoreClient: ignoreClient);
 	}
 
 	public override void PreUpdate() => realOldVelocity = Player.velocity;
@@ -182,5 +171,36 @@ public class CascadeArmorPlayer : ModPlayer
 
 			sB.Draw(texture, drawPos, null, lightColor * bubbleVisual * opacity, 0f, texture.Size() / 2f, bubbleSquish * GetBaseBubbleScale, SpriteEffects.None, 0);
 		}
+	}
+}
+
+/// <summary> Syncs bubble strength corresponding to <paramref name="value"/> for player <paramref name="index"/>. </summary>
+internal class CascadeBubbleData : PacketData
+{
+	private readonly float _value;
+	private readonly byte _playerIndex;
+
+	public CascadeBubbleData() { }
+	public CascadeBubbleData(float value, byte playerIndex)
+	{
+		_value = value;
+		_playerIndex = playerIndex;
+	}
+
+	public override void OnReceive(BinaryReader reader, int whoAmI)
+	{
+		float value = reader.ReadSingle();
+		byte player = reader.ReadByte();
+
+		if (Main.netMode == NetmodeID.Server)
+			new CascadeBubbleData(value, player).Send(ignoreClient: whoAmI);
+
+		Main.player[player].GetModPlayer<CascadeArmorPlayer>().bubbleStrength = value;
+	}
+
+	public override void OnSend(ModPacket modPacket)
+	{
+		modPacket.Write(_value);
+		modPacket.Write(_playerIndex);
 	}
 }

@@ -1,8 +1,9 @@
+using SpiritReforged.Common.Multiplayer;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Ocean.Items;
+using System.IO;
 using Terraria.DataStructures;
-using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 
@@ -111,13 +112,27 @@ public class Magmastone : ModTile, IAutoloadTileItem
 	public override void HitWire(int i, int j)
 	{
 		if (Main.dedServ)
-		{
-			var packet = SpiritReforgedMod.Instance.GetPacket(MessageType.MagmaGlowPoint, 2); //Send to multiplayer clients
-			packet.Write((short)i);
-			packet.Write((short)j);
-			packet.Send();
-		}
+			new MagmaGlowData(new Point16(i, j)).Send();
 		else
 			ToggleWireGlowPoint(i, j);
 	}
+}
+
+internal class MagmaGlowData : PacketData
+{
+	private readonly Point16 _point;
+
+	public MagmaGlowData() { }
+	public MagmaGlowData(Point16 point) => _point = point;
+
+	public override void OnReceive(BinaryReader reader, int whoAmI)
+	{
+		short i = reader.ReadInt16();
+		short j = reader.ReadInt16();
+
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+			Magmastone.ToggleWireGlowPoint(i, j);
+	}
+
+	public override void OnSend(ModPacket modPacket) => modPacket.WritePoint16(_point);
 }
