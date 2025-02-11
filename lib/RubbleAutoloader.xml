@@ -29,6 +29,18 @@
         <member name="P:RubbleAutoloader.IAutoloadRubble.RubbleData.Styles">
             <summary> The tile styles to use. </summary>
         </member>
+        <member name="T:RubbleAutoloader.IAutoloadRubble.RubbleSize">
+            <summary> Size settings according to <see cref="T:Terraria.GameContent.FlexibleTileWand"/> rubble placement. </summary>
+        </member>
+        <member name="F:RubbleAutoloader.IAutoloadRubble.RubbleSize.Small">
+            <summary><see cref="F:Terraria.GameContent.FlexibleTileWand.RubblePlacementSmall"/></summary>
+        </member>
+        <member name="F:RubbleAutoloader.IAutoloadRubble.RubbleSize.Medium">
+            <summary><see cref="F:Terraria.GameContent.FlexibleTileWand.RubblePlacementMedium"/></summary>
+        </member>
+        <member name="F:RubbleAutoloader.IAutoloadRubble.RubbleSize.Large">
+            <summary><see cref="F:Terraria.GameContent.FlexibleTileWand.RubblePlacementLarge"/></summary>
+        </member>
         <member name="P:RubbleAutoloader.IAutoloadRubble.Data">
             <summary> <see cref="T:RubbleAutoloader.IAutoloadRubble.RubbleData"/> belonging to this rubble type. </summary>
         </member>
@@ -42,10 +54,7 @@
             <summary> Prevents normal item drops for autoloaded rubble tiles. </summary>
         </member>
         <member name="T:RubbleAutoloader.NameableTile">
-            <summary>
-            <inheritdoc cref="T:Terraria.ModLoader.ModTile"/><para/>
-            Can be renamed externally by using <see cref="M:RubbleAutoloader.NameableTile.ChangeName(System.String,System.String)"/>.
-            </summary>
+            <inheritdoc cref="T:Terraria.ModLoader.ModTile"/>
         </member>
         <member name="P:RubbleAutoloader.NameableTile.BaseName">
             <summary> The type name. </summary>
