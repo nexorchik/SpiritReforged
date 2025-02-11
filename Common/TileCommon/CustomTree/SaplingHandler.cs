@@ -7,12 +7,11 @@ internal class SaplingHandler : ILoadable
 	private static readonly Dictionary<int, int[]> saplingDefinitions = []; //Stores the sapling type and tile anchors, respectively
 
 	/// <summary> Allows saplings without an associated ModTree to be grown using an acorn. </summary>
-	internal static void RegisterSapling(int tileType) =>
-		saplingDefinitions.Add(tileType, TileObjectData.GetTileData(tileType, 0).AnchorValidTiles);
+	internal static void RegisterSapling(int tileType) => saplingDefinitions.Add(tileType, TileObjectData.GetTileData(tileType, 0).AnchorValidTiles);
 
 	public void Load(Mod mod) => On_Player.FigureOutWhatToPlace += PlaceFromDefinition;
 
-	private void PlaceFromDefinition(On_Player.orig_FigureOutWhatToPlace orig, Player self, Tile targetTile, Item sItem, out int tileToCreate, out int previewPlaceStyle, out bool? overrideCanPlace, out int? forcedRandom)
+	private static void PlaceFromDefinition(On_Player.orig_FigureOutWhatToPlace orig, Player self, Tile targetTile, Item sItem, out int tileToCreate, out int previewPlaceStyle, out bool? overrideCanPlace, out int? forcedRandom)
 	{
 		orig(self, targetTile, sItem, out tileToCreate, out previewPlaceStyle, out overrideCanPlace, out forcedRandom);
 

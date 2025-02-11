@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Multiplayer;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using System.IO;
@@ -51,10 +52,10 @@ public class JellyfishBolt : ModProjectile
 	{
 		if (!Main.dedServ)
 		{
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricSting") with { PitchVariance = 0.5f, Pitch = .65f, Volume = 0.8f, MaxInstances = 3 }, Projectile.Center);
-			ParticleHandler.SpawnParticle(new LightningParticle(startPos, target.Center, ParticleColor, 30, 30f));
+			SharedOnHitNPC(target);
 
-			HitEffects(target.Center);
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				new JellyHitData((short)Projectile.whoAmI, (byte)target.whoAmI).Send();
 		}
 
 		if (Projectile.penetrate > 0)
@@ -71,6 +72,15 @@ public class JellyfishBolt : ModProjectile
 			else
 				Projectile.penetrate = 0;
 		}
+	}
+
+	/// <summary> Can be shared between all clients in multiplayer for synced hit effects. </summary>
+	public void SharedOnHitNPC(NPC target)
+	{
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricSting") with { PitchVariance = 0.5f, Pitch = .65f, Volume = 0.8f, MaxInstances = 3 }, Projectile.Center);
+		ParticleHandler.SpawnParticle(new LightningParticle(startPos, target.Center, ParticleColor, 30, 30f));
+
+		HitEffects(target.Center);
 	}
 
 	public override bool OnTileCollide(Vector2 oldVelocity)
@@ -110,4 +120,34 @@ public class JellyfishBolt : ModProjectile
 
 	public override void SendExtraAI(BinaryWriter writer) => writer.WriteVector2(startPos);
 	public override void ReceiveExtraAI(BinaryReader reader) => startPos = reader.ReadVector2();
+}
+
+internal class JellyHitData : PacketData
+{
+	private readonly short _projIndex;
+	private readonly byte _targetIndex;
+
+	public JellyHitData() { }
+	public JellyHitData(short projIndex, byte targetIndex)
+	{
+		_projIndex = projIndex;
+		_targetIndex = targetIndex;
+	}
+
+	public override void OnReceive(BinaryReader reader, int whoAmI)
+	{
+		short projectile = reader.ReadInt16();
+		byte target = reader.ReadByte();
+
+		if (Main.netMode == NetmodeID.Server)
+			new JellyHitData(projectile, target).Send(ignoreClient: whoAmI);
+		else if (Main.projectile[projectile].ModProjectile is JellyfishBolt bolt)
+			bolt.SharedOnHitNPC(Main.npc[target]);
+	}
+
+	public override void OnSend(ModPacket modPacket)
+	{
+		modPacket.Write(_projIndex);
+		modPacket.Write(_targetIndex);
+	}
 }
