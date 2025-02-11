@@ -1,4 +1,3 @@
-using RubbleAutoloader;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
@@ -7,10 +6,8 @@ using Terraria.DataStructures;
 namespace SpiritReforged.Content.Ocean.Items.Pearl;
 
 [AutoloadGlowmask("255,255,255", false)]
-public class PearlStringTile : NameableTile, IAutoloadRubble
+public class PearlStringTile : ModTile
 {
-	public IAutoloadRubble.RubbleData Data => new(ModContent.ItemType<PearlString>(), IAutoloadRubble.RubbleSize.Small);
-
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = false;
@@ -35,9 +32,6 @@ public class PearlStringTile : NameableTile, IAutoloadRubble
 
 	public override void MouseOver(int i, int j)
 	{
-		if (Autoloader.IsRubble(Type))
-			return;
-
 		Player player = Main.LocalPlayer;
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
@@ -109,4 +103,12 @@ public class PearlStringTile : NameableTile, IAutoloadRubble
 
 		return false;
 	}
+}
+
+public class PearlStringTileRubble : PearlStringTile, IRubble
+{
+	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
+	IRubble.RubbleData IRubble.Data => new(ModContent.ItemType<PearlString>(), IRubble.RubbleSize.Small);
+
+	public override void MouseOver(int i, int j) { }
 }

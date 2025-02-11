@@ -13,8 +13,5 @@
     <Reference Include="StructureHelper">
       <HintPath>lib\StructureHelper.dll</HintPath>
     </Reference>
-	  <Reference Include="RubbleAutoloader">
-		  <HintPath>lib\RubbleAutoloader.dll</HintPath>
-	  </Reference>
   </ItemGroup>
 </Project>

@@ -1,11 +1,11 @@
-﻿using RubbleAutoloader;
+﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Content.Savanna.Items;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
-public abstract class SavannaShrubsBase : NameableTile, IConvertibleTile
+public class SavannaShrubs : ModTile, IConvertibleTile
 {
 	protected virtual int[] Anchors => [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaDirt>(), TileID.Sand];
 
@@ -38,7 +38,7 @@ public abstract class SavannaShrubsBase : NameableTile, IConvertibleTile
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 
-	public virtual bool Convert(IEntitySource source, ConversionType type, int i, int j)
+	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
 	{
 		Tile tile = Main.tile[i, j];
 		int oldId = tile.TileType;
@@ -55,30 +55,23 @@ public abstract class SavannaShrubsBase : NameableTile, IConvertibleTile
 	}
 }
 
-public class SavannaShrubs : SavannaShrubsBase, IAutoloadRubble
-{
-	public IAutoloadRubble.RubbleData Data => new(ModContent.ItemType<SavannaGrassSeeds>(), IAutoloadRubble.RubbleSize.Small, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-
-	public override bool Convert(IEntitySource source, ConversionType type, int i, int j)
-	{
-		if (Autoloader.IsRubble(Type))
-			return false;
-
-		return base.Convert(source, type, i, j);
-	}
-}
-
-public class SavannaShrubsCorrupt : SavannaShrubsBase
+public class SavannaShrubsCorrupt : SavannaShrubs
 {
 	protected override int[] Anchors => [ModContent.TileType<SavannaGrassCorrupt>(), TileID.Ebonsand];
 }
 
-public class SavannaShrubsCrimson : SavannaShrubsBase
+public class SavannaShrubsCrimson : SavannaShrubs
 {
 	protected override int[] Anchors => [ModContent.TileType<SavannaGrassCrimson>(), TileID.Crimsand];
 }
 
-public class SavannaShrubsHallow : SavannaShrubsBase
+public class SavannaShrubsHallow : SavannaShrubs
 {
 	protected override int[] Anchors => [ModContent.TileType<SavannaGrassHallow>(), TileID.Pearlsand];
+}
+
+public class SavannaShrubsRubble : SavannaShrubs, IRubble
+{
+	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
+	IRubble.RubbleData IRubble.Data => new(ModContent.ItemType<SavannaGrassSeeds>(), IRubble.RubbleSize.Small);
 }

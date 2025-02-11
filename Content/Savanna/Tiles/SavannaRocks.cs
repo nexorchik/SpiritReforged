@@ -1,13 +1,11 @@
-﻿using RubbleAutoloader;
+﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Savanna.Items;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
-public class SavannaRockLarge : NameableTile, IAutoloadRubble
+public class SavannaRockLarge : ModTile
 {
-	public IAutoloadRubble.RubbleData Data => new(ModContent.ItemType<SavannaGrassSeeds>(), IAutoloadRubble.RubbleSize.Large, [0, 1, 2]);
-
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = false;
@@ -31,14 +29,11 @@ public class SavannaRockLarge : NameableTile, IAutoloadRubble
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
-	public override void DropCritterChance(int i, int j, ref int wormChance, ref int grassHopperChance, ref int jungleGrubChance)
-		=> wormChance = Autoloader.IsRubble(Type) ? 0 : 6;
+	public override void DropCritterChance(int i, int j, ref int wormChance, ref int grassHopperChance, ref int jungleGrubChance) => wormChance = 6;
 }
 
-public class SavannaRockSmall : NameableTile, IAutoloadRubble
+public class SavannaRockSmall : ModTile
 {
-	public IAutoloadRubble.RubbleData Data => new(ModContent.ItemType<SavannaGrassSeeds>(), IAutoloadRubble.RubbleSize.Small, [0, 1, 2]);
-
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = false;
@@ -62,6 +57,21 @@ public class SavannaRockSmall : NameableTile, IAutoloadRubble
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
-	public override void DropCritterChance(int i, int j, ref int wormChance, ref int grassHopperChance, ref int jungleGrubChance)
-		=> wormChance = Autoloader.IsRubble(Type) ? 0 : 6;
+	public override void DropCritterChance(int i, int j, ref int wormChance, ref int grassHopperChance, ref int jungleGrubChance) => wormChance = 6;
+}
+
+public class SavannaRockLargeRubble : SavannaRockLarge, IRubble
+{
+	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
+	IRubble.RubbleData IRubble.Data => new(ModContent.ItemType<SavannaGrassSeeds>(), IRubble.RubbleSize.Large);
+
+	public override void DropCritterChance(int i, int j, ref int wormChance, ref int grassHopperChance, ref int jungleGrubChance) { }
+}
+
+public class SavannaRockSmallRubble : SavannaRockSmall, IRubble
+{
+	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
+	IRubble.RubbleData IRubble.Data => new(ModContent.ItemType<SavannaGrassSeeds>(), IRubble.RubbleSize.Small);
+
+	public override void DropCritterChance(int i, int j, ref int wormChance, ref int grassHopperChance, ref int jungleGrubChance) { }
 }

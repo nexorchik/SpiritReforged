@@ -1,16 +1,15 @@
-﻿using RubbleAutoloader;
-using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
+using SpiritReforged.Content.Ocean.Tiles;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Safekeeper;
 
 [AutoloadGlowmask("255,255,255", false)]
-public class SkeletonHand : NameableTile, IAutoloadRubble
+public class SkeletonHand : ModTile
 {
 	private static readonly Point[] glowPoints = [new Point(9, 11), new Point(13, 5), new Point(7, 11)]; //Corresponds to different styles
-
-	public IAutoloadRubble.RubbleData Data => new(ModContent.ItemType<SafekeeperRing>(), IAutoloadRubble.RubbleSize.Small, [0, 1, 2]);
 
 	public override void SetStaticDefaults()
 	{
@@ -38,9 +37,6 @@ public class SkeletonHand : NameableTile, IAutoloadRubble
 
 	public override void MouseOver(int i, int j)
 	{
-		if (Autoloader.IsRubble(Type))
-			return;
-
 		Player player = Main.LocalPlayer;
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
@@ -71,4 +67,12 @@ public class SkeletonHand : NameableTile, IAutoloadRubble
 				Vector2.UnitY * -Main.rand.NextFloat(.5f), Color.White, Color.Orange, .15f, 30, 5));
 		}
 	}
+}
+
+public class SkeletonHandRubble : SkeletonHand, IRubble
+{
+	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
+	IRubble.RubbleData IRubble.Data => new(ModContent.ItemType<SafekeeperRing>(), IRubble.RubbleSize.Small);
+
+	public override void MouseOver(int i, int j) { }
 }

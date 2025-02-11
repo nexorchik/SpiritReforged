@@ -1,16 +1,14 @@
-﻿using RubbleAutoloader;
+﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.DrawPreviewHook;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean.Tiles;
 
-public class Coral3x3 : NameableTile, IDrawPreview, IAutoloadRubble
+public class Coral3x3 : ModTile, IDrawPreview
 {
 	public virtual Point FrameOffset => Point.Zero;
 
 	public override string Texture => base.Texture.Remove(base.Texture.Length - 3, 3); //Remove the size signature
-
-	public virtual IAutoloadRubble.RubbleData Data => new(ItemID.Coral, IAutoloadRubble.RubbleSize.Large);
 
 	public override void SetStaticDefaults()
 	{
@@ -88,8 +86,6 @@ public class Coral2x2 : Coral3x3
 {
 	public override Point FrameOffset => new(3, 1);
 
-	public override IAutoloadRubble.RubbleData Data => new(ItemID.Coral, IAutoloadRubble.RubbleSize.Medium, [0, 1, 2]);
-
 	public override void SetObjectData()
 	{
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
@@ -114,8 +110,6 @@ public class Coral1x2 : Coral3x3
 {
 	public override Point FrameOffset => new(9, 1);
 
-	public override IAutoloadRubble.RubbleData Data => new(ItemID.Coral, IAutoloadRubble.RubbleSize.Small);
-
 	public override void SetObjectData()
 	{
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
@@ -136,4 +130,22 @@ public class Coral1x2 : Coral3x3
 	{
 		yield return new Item(ItemID.Coral);
 	}
+}
+
+public class Coral3x3Rubble : Coral3x3, IRubble
+{
+	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
+	IRubble.RubbleData IRubble.Data => new(ItemID.Coral, IRubble.RubbleSize.Large);
+}
+
+public class Coral2x2Rubble : Coral2x2, IRubble
+{
+	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
+	IRubble.RubbleData IRubble.Data => new(ItemID.Coral, IRubble.RubbleSize.Medium);
+}
+
+public class Coral1x2Rubble : Coral1x2, IRubble
+{
+	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
+	IRubble.RubbleData IRubble.Data => new(ItemID.Coral, IRubble.RubbleSize.Small);
 }
