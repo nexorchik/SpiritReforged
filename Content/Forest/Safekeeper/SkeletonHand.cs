@@ -1,5 +1,5 @@
-﻿using SpiritReforged.Common.Particle;
-using SpiritReforged.Common.TileCommon;
+﻿using RubbleAutoloader;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
 
@@ -38,7 +38,7 @@ public class SkeletonHand : NameableTile, IAutoloadRubble
 
 	public override void MouseOver(int i, int j)
 	{
-		if (RubbleSystem.IsRubble(Type))
+		if (Autoloader.IsRubble(Type))
 			return;
 
 		Player player = Main.LocalPlayer;

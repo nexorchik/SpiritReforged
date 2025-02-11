@@ -1,4 +1,4 @@
-﻿using SpiritReforged.Common.TileCommon;
+﻿using RubbleAutoloader;
 using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Content.Savanna.Items;
 using Terraria.DataStructures;
@@ -61,7 +61,7 @@ public class SavannaShrubs : SavannaShrubsBase, IAutoloadRubble
 
 	public override bool Convert(IEntitySource source, ConversionType type, int i, int j)
 	{
-		if (RubbleSystem.IsRubble(Type))
+		if (Autoloader.IsRubble(Type))
 			return false;
 
 		return base.Convert(source, type, i, j);

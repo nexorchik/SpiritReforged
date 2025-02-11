@@ -1,3 +1,4 @@
+using RubbleAutoloader;
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
@@ -63,7 +64,7 @@ public class ButterflyStump : NameableTile, IAutoloadRubble
 
 	public override void MouseOver(int i, int j)
 	{
-		if (!HasItem(i, j) || RubbleSystem.IsRubble(Type))
+		if (!HasItem(i, j) || Autoloader.IsRubble(Type))
 			return;
 
 		Player player = Main.LocalPlayer;
@@ -74,7 +75,7 @@ public class ButterflyStump : NameableTile, IAutoloadRubble
 
 	public override bool RightClick(int i, int j)
 	{
-		if (HasItem(i, j) && !RubbleSystem.IsRubble(Type))
+		if (HasItem(i, j) && !Autoloader.IsRubble(Type))
 		{
 			TileExtensions.GetTopLeft(ref i, ref j);
 

@@ -1,4 +1,4 @@
-﻿using SpiritReforged.Common.TileCommon;
+﻿using RubbleAutoloader;
 using SpiritReforged.Content.Savanna.Items;
 using Terraria.DataStructures;
 
@@ -32,7 +32,7 @@ public class SavannaRockLarge : NameableTile, IAutoloadRubble
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 	public override void DropCritterChance(int i, int j, ref int wormChance, ref int grassHopperChance, ref int jungleGrubChance)
-		=> wormChance = RubbleSystem.IsRubble(Type) ? 0 : 6;
+		=> wormChance = Autoloader.IsRubble(Type) ? 0 : 6;
 }
 
 public class SavannaRockSmall : NameableTile, IAutoloadRubble
@@ -63,5 +63,5 @@ public class SavannaRockSmall : NameableTile, IAutoloadRubble
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 	public override void DropCritterChance(int i, int j, ref int wormChance, ref int grassHopperChance, ref int jungleGrubChance)
-		=> wormChance = RubbleSystem.IsRubble(Type) ? 0 : 6;
+		=> wormChance = Autoloader.IsRubble(Type) ? 0 : 6;
 }

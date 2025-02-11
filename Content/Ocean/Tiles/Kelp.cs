@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.TileCommon;
+﻿using RubbleAutoloader;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.DrawPreviewHook;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Ocean.Items;
