@@ -1,16 +1,20 @@
-﻿using SpiritReforged.Common.TileCommon;
+﻿using RubbleAutoloader;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.DrawPreviewHook;
 using SpiritReforged.Common.Visuals.Glowmasks;
+using SpiritReforged.Content.Ocean.Items;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean.Tiles;
 
 [AutoloadGlowmask("255,255,255", false)]
-public class Kelp2x3 : ModTile, IDrawPreview
+public class Kelp2x3 : NameableTile, IDrawPreview, IAutoloadRubble
 {
 	public virtual Point FrameOffset => Point.Zero;
 
 	public override string Texture => base.Texture.Remove(base.Texture.Length - 3, 3); //Remove the size signature
+
+	public virtual IAutoloadRubble.RubbleData Data => new(ModContent.ItemType<Kelp>(), IAutoloadRubble.RubbleSize.Large);
 
 	public override void SetStaticDefaults()
 	{
@@ -111,25 +115,11 @@ public class Kelp2x3 : ModTile, IDrawPreview
 	}
 }
 
-public class Kelp2x3Rubble : Kelp2x3
-{
-	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
-
-	public override void SetStaticDefaults()
-	{
-		base.SetStaticDefaults();
-		FlexibleTileWand.RubblePlacementLarge.AddVariation(ModContent.ItemType<Items.Kelp>(), Type, 0);
-	}
-
-	public override IEnumerable<Item> GetItemDrops(int i, int j)
-	{
-		yield return new Item(ModContent.ItemType<Items.Kelp>());
-	}
-}
-
 public class Kelp2x2 : Kelp2x3
 {
 	public override Point FrameOffset => new(2, 1);
+
+	public override IAutoloadRubble.RubbleData Data => new(ModContent.ItemType<Kelp>(), IAutoloadRubble.RubbleSize.Medium);
 
 	public override void SetObjectData()
 	{
@@ -155,25 +145,11 @@ public class Kelp2x2 : Kelp2x3
 	}
 }
 
-public class Kelp2x2Rubble : Kelp2x2
-{
-	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
-
-	public override void SetStaticDefaults()
-	{
-		base.SetStaticDefaults();
-		FlexibleTileWand.RubblePlacementMedium.AddVariation(ModContent.ItemType<Items.Kelp>(), Type, 0);
-	}
-
-	public override IEnumerable<Item> GetItemDrops(int i, int j)
-	{
-		yield return new Item(ModContent.ItemType<Items.Kelp>());
-	}
-}
-
 public class Kelp1x2 : Kelp2x3
 {
 	public override Point FrameOffset => new(4, 1);
+
+	public override IAutoloadRubble.RubbleData Data => new(ModContent.ItemType<Kelp>(), IAutoloadRubble.RubbleSize.Small);
 
 	public override void SetObjectData()
 	{
@@ -198,21 +174,5 @@ public class Kelp1x2 : Kelp2x3
 			var col = GetGlowColor(i) / 2.9f;
 			(r, g, b) = (col.X, col.Y, col.Z);
 		}
-	}
-}
-
-public class Kelp1x2Rubble : Kelp1x2
-{
-	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
-
-	public override void SetStaticDefaults()
-	{
-		base.SetStaticDefaults();
-		FlexibleTileWand.RubblePlacementSmall.AddVariation(ModContent.ItemType<Items.Kelp>(), Type, 0);
-	}
-
-	public override IEnumerable<Item> GetItemDrops(int i, int j)
-	{
-		yield return new Item(ModContent.ItemType<Items.Kelp>());
 	}
 }

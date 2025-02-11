@@ -1,13 +1,16 @@
-﻿using SpiritReforged.Common.TileCommon.DrawPreviewHook;
+﻿using RubbleAutoloader;
+using SpiritReforged.Common.TileCommon.DrawPreviewHook;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean.Tiles;
 
-public class Coral3x3 : ModTile, IDrawPreview
+public class Coral3x3 : NameableTile, IDrawPreview, IAutoloadRubble
 {
 	public virtual Point FrameOffset => Point.Zero;
 
 	public override string Texture => base.Texture.Remove(base.Texture.Length - 3, 3); //Remove the size signature
+
+	public virtual IAutoloadRubble.RubbleData Data => new(ItemID.Coral, IAutoloadRubble.RubbleSize.Large);
 
 	public override void SetStaticDefaults()
 	{
@@ -81,25 +84,11 @@ public class Coral3x3 : ModTile, IDrawPreview
 	}
 }
 
-public class Coral3x3Rubble : Coral3x3
-{
-	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
-
-	public override void SetStaticDefaults()
-	{
-		base.SetStaticDefaults();
-		FlexibleTileWand.RubblePlacementLarge.AddVariation(ItemID.Coral, Type, 0);
-	}
-
-	public override IEnumerable<Item> GetItemDrops(int i, int j)
-	{
-		yield return new Item(ItemID.Coral);
-	}
-}
-
 public class Coral2x2 : Coral3x3
 {
 	public override Point FrameOffset => new(3, 1);
+
+	public override IAutoloadRubble.RubbleData Data => new(ItemID.Coral, IAutoloadRubble.RubbleSize.Medium, [0, 1, 2]);
 
 	public override void SetObjectData()
 	{
@@ -121,27 +110,11 @@ public class Coral2x2 : Coral3x3
 	}
 }
 
-public class Coral2x2Rubble : Coral2x2
-{
-	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
-
-	public override void SetStaticDefaults()
-	{
-		base.SetStaticDefaults();
-
-		TileObjectData.GetTileData(Type, 0).RandomStyleRange = 0;
-		FlexibleTileWand.RubblePlacementMedium.AddVariations(ItemID.Coral, Type, 0, 1, 2);
-	}
-
-	public override IEnumerable<Item> GetItemDrops(int i, int j)
-	{
-		yield return new Item(ItemID.Coral);
-	}
-}
-
 public class Coral1x2 : Coral3x3
 {
 	public override Point FrameOffset => new(9, 1);
+
+	public override IAutoloadRubble.RubbleData Data => new(ItemID.Coral, IAutoloadRubble.RubbleSize.Small);
 
 	public override void SetObjectData()
 	{
@@ -158,22 +131,6 @@ public class Coral1x2 : Coral3x3
 	}
 
 	public override void SetSpriteEffects(int i, int j, ref SpriteEffects spriteEffects) => spriteEffects = (i % 2 == 0) ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-
-	public override IEnumerable<Item> GetItemDrops(int i, int j)
-	{
-		yield return new Item(ItemID.Coral);
-	}
-}
-
-public class Coral1x2Rubble : Coral1x2
-{
-	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
-
-	public override void SetStaticDefaults()
-	{
-		base.SetStaticDefaults();
-		FlexibleTileWand.RubblePlacementSmall.AddVariation(ItemID.Coral, Type, 0);
-	}
 
 	public override IEnumerable<Item> GetItemDrops(int i, int j)
 	{
