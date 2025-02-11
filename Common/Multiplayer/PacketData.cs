@@ -18,10 +18,10 @@ internal abstract class PacketData
 		packet.Send(toClient, ignoreClient);
 	}
 
-	/// <summary> Use the provided <see cref="ModPacket"/> to write data here (usually fields assigned by the constructor).<br/>
+	/// <summary> Use <paramref name="modPacket"/> to write data here (usually fields assigned by the constructor).<br/>
 	/// Sending is automatic and should not be done here. </summary>
 	public abstract void OnSend(ModPacket modPacket);
-	/// <summary> Read your packet data here. <br/> Remember that only the provided <see cref="BinaryReader"/> should be used to get variable data. </summary>
+	/// <summary> Read your packet data here. <br/> Remember that only <paramref name="reader"/> should be used to get variable data, not fields. </summary>
 	/// <param name="whoAmI">The index of player this message is from. Only relevant for server code.</param>
 	public abstract void OnReceive(BinaryReader reader, int whoAmI);
 }
