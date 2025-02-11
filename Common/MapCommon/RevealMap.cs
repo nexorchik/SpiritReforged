@@ -1,5 +1,7 @@
 ﻿using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Multiplayer;
 using System.IO;
+using Terraria.DataStructures;
 using Terraria.Map;
 
 namespace SpiritReforged.Common.MapCommon;
@@ -21,13 +23,7 @@ internal class RevealMap
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 		{
 			NetMessage.SendData(MessageID.TileSection, -1, -1, null, x - radius, y - radius, radius * 2, radius * 2);
-
-			ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.RevealMap, 4);
-			packet.Write((byte)MapSyncId.DrawMap);
-			packet.Write(x);
-			packet.Write(y);
-			packet.Write((short)radius);
-			packet.Send();
+			new RevealMapData((byte)MapSyncId.DrawMap, new Point16(x, y), (short)radius).Send();
 		}
 		else
 			DrawMap(x, y, radius);
@@ -79,17 +75,41 @@ internal class RevealMap
 					foreach (var plr in Main.ActivePlayers) // This is a little hacky lol
 						RemoteClient.CheckSection(plr.whoAmI, new Vector2(x, y).ToWorldCoordinates(), 2);
 
-					ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.RevealMap, 4);
-					packet.Write((byte)id);
-					packet.Write(x);
-					packet.Write(y);
-					packet.Write(size);
-					packet.Send();
+					new RevealMapData((byte)id, new Point16(x, y), size).Send();
 				}
 				else
 					DrawMap(x, y, size);
 
 				break;
 		}
+	}
+}
+
+internal class RevealMapData : PacketData
+{
+	private readonly byte _syncType;
+	private readonly Point16 _point;
+	private readonly short _size;
+
+	public RevealMapData() { }
+	public RevealMapData(byte syncType, Point16 point, short size)
+	{
+		_syncType = syncType;
+		_point = point;
+		_size = size;
+	}
+
+	public override void OnReceive(BinaryReader reader, int whoAmI)
+	{
+		var syncType = (RevealMap.MapSyncId)reader.ReadByte();
+		RevealMap.RecieveSync(syncType, reader);
+	}
+
+	public override void OnSend(ModPacket modPacket)
+	{
+		modPacket.Write(_syncType);
+		modPacket.Write(_point.X);
+		modPacket.Write(_point.Y);
+		modPacket.Write(_size);
 	}
 }

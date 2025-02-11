@@ -1,6 +1,4 @@
-﻿using SpiritReforged.Common.Misc;
-using SpiritReforged.Common.PrimitiveRendering.Trail_Components;
-using System;
+﻿using SpiritReforged.Common.PrimitiveRendering.Trail_Components;
 
 namespace SpiritReforged.Common.PrimitiveRendering;
 
@@ -13,18 +11,10 @@ public enum TrailLayer
 
 public class TrailManager
 {
-	private readonly List<BaseTrail> _trails = new();
-	private readonly Effect _effect;
+	private readonly List<BaseTrail> _trails = [];
+	private readonly Effect _effect = AssetLoader.LoadedShaders["trailShaders"];
 
-	private BasicEffect _basicEffect; //Not readonly due to thread queue
-
-	public TrailManager(Mod mod)
-	{
-		_trails = [];
-		_effect = AssetLoader.LoadedShaders["trailShaders"];
-
-		_basicEffect = AssetLoader.BasicShaderEffect;
-	}
+	private BasicEffect _basicEffect = AssetLoader.BasicShaderEffect; //Not readonly due to thread queue
 
 	public static void TryTrailKill(Projectile projectile)
 	{
@@ -87,14 +77,11 @@ public class TrailManager
 	public static void ManualTrailSpawn(Projectile projectile)
 	{
 		if (projectile.ModProjectile is IManualTrailProjectile)
+		{
 			if (Main.netMode == NetmodeID.SinglePlayer)
 				(projectile.ModProjectile as IManualTrailProjectile).DoTrailCreation(AssetLoader.VertexTrailManager);
-
 			else
-			{
-				ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.SpawnTrail, 1);
-				packet.Write(projectile.whoAmI);
-				packet.Send();
-			}
+				new SpawnTrailData(projectile.whoAmI).Send();
+		}
 	}
 }

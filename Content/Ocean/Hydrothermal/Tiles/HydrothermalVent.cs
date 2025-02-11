@@ -1,12 +1,13 @@
 ﻿using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.Multiplayer;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Content.Particles;
+using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 
@@ -139,12 +140,7 @@ public class HydrothermalVent : ModTile
 			cooldowns[pt] = cooldownMax;
 
 			if (Main.netMode != NetmodeID.SinglePlayer) //Sync vent eruption in multiplayer
-			{
-				var packet = SpiritReforgedMod.Instance.GetPacket(MessageType.SendVentEruption, 2);
-				packet.Write((short)i);
-				packet.Write((short)j);
-				packet.Send();
-			}
+				new EruptionData(new Point16(i, j)).Send();
 
 			return true;
 		}
@@ -189,4 +185,24 @@ public class HydrothermalVent : ModTile
 			Magmastone.AddGlowPoint(i, j);
 		}
 	}
+}
+
+internal class EruptionData : PacketData
+{
+	private readonly Point16 _point;
+
+	public EruptionData() { }
+	public EruptionData(Point16 point) => _point = point;
+
+	public override void OnReceive(BinaryReader reader, int whoAmI)
+	{
+		var point = reader.ReadPoint16();
+
+		if (Main.netMode == NetmodeID.Server) //If received by the server, send to all clients
+			new EruptionData(point).Send(ignoreClient: whoAmI);
+
+		HydrothermalVent.Erupt(point.X, point.Y);
+	}
+
+	public override void OnSend(ModPacket modPacket) => modPacket.WritePoint16(_point);
 }

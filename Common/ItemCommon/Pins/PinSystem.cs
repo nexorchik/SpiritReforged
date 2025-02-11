@@ -1,4 +1,3 @@
-using SpiritReforged.Common.Misc;
 using System.IO;
 using Terraria.ModLoader.IO;
 
@@ -19,12 +18,7 @@ public class PinSystem : ModSystem
 		ModContent.GetInstance<PinSystem>().SetPin(heldPinValue, position);
 
 		if (Main.netMode == NetmodeID.MultiplayerClient)
-		{
-			ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.AddPin, 3);
-			packet.WriteVector2(position); // WriteVector2 writes x, y - so this counts as 2
-			packet.Write(heldPinValue);
-			packet.Send();
-		}
+			new AddPinData(position, heldPinValue).Send();
 	}
 
 	/// <summary> Removes the pin of <paramref name="name"/> type. Since there's only one pin per type per world, this needs only the name. </summary>
@@ -34,11 +28,7 @@ public class PinSystem : ModSystem
 		ModContent.GetInstance<PinSystem>().RemovePin(name);
 
 		if (Main.netMode == NetmodeID.MultiplayerClient)
-		{
-			ModPacket packet = SpiritReforgedMod.Instance.GetPacket(ReforgedMultiplayer.MessageType.RemovePin, 1);
-			packet.Write(name);
-			packet.Send();
-		}
+			new RemovePinData(name).Send();
 	}
 
 	public void SetPin(string name, Vector2 pos) => pins[name] = pos;

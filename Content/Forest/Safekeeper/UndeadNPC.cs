@@ -1,10 +1,10 @@
-﻿using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Multiplayer;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
 using System.IO;
 using Terraria.Audio;
 using Terraria.GameContent.Drawing;
 using Terraria.ModLoader.IO;
-using static SpiritReforged.Common.Misc.ReforgedMultiplayer;
 
 namespace SpiritReforged.Content.Forest.Safekeeper;
 
@@ -129,11 +129,7 @@ public class UndeadNPC : GlobalNPC
 		decayTime -= decayRate;
 
 		if (Main.netMode != NetmodeID.SinglePlayer)
-		{
-			ModPacket packet = SpiritReforgedMod.Instance.GetPacket(MessageType.BurnUndeadNPC, 1);
-			packet.Write(npc.whoAmI);
-			packet.Send();
-		}
+			new BurnUndeadData((byte)npc.whoAmI).Send();
 
 		return false;
 	}
@@ -198,4 +194,27 @@ public class UndeadNPC : GlobalNPC
 		decayTime = binaryReader.ReadSingle();
 		npc.dontTakeDamage = binaryReader.ReadBoolean();
 	}
+}
+
+internal class BurnUndeadData : PacketData
+{
+	private readonly byte _npcIndex;
+
+	public BurnUndeadData() { }
+	public BurnUndeadData(byte npcIndex) => _npcIndex = npcIndex;
+
+	public override void OnReceive(BinaryReader reader, int whoAmI)
+	{
+		byte index = reader.ReadByte();
+
+		if (Main.netMode == NetmodeID.Server)
+		{
+			new BurnUndeadData(index).Send();
+			return;
+		}
+
+		UndeadNPC.BurnAway(Main.npc[index]);
+	}
+
+	public override void OnSend(ModPacket modPacket) => modPacket.Write(_npcIndex);
 }
