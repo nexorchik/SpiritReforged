@@ -104,7 +104,7 @@ public class HuntingRifle : ModItem
 		float mult = 1f;
 		if (player.velocity == Vector2.Zero)
 		{
-			ParticleHandler.SpawnParticle(new SmokeParticle(position + unit * fxDistance, unit * -.2f, 
+			ParticleHandler.SpawnParticle(new SmokeCircleParticle(position + unit * fxDistance, unit * -.2f, 
 				Lighting.GetColor(position.ToTileCoordinates(), Color.LightSlateGray), .5f, unit.ToRotation(), 30));
 
 			//Grant a damage bonus (+25%) when standing still. Additional bonuses are applied in HunterGlobalProjectile
