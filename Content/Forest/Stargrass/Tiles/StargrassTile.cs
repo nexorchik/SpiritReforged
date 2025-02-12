@@ -107,7 +107,10 @@ public class StargrassTile : ModTile
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		fail = true;
-		Framing.GetTileSafely(i, j).TileType = TileID.Dirt; //Always turn to dirt on the first strike
+		if (!fail) //Change self into dirt
+		{
+			fail = true;
+			Framing.GetTileSafely(i, j).TileType = TileID.Dirt;
+		}
 	}
 }
