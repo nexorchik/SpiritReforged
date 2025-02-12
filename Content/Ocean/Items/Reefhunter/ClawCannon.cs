@@ -56,6 +56,6 @@ public class ClawCannon : ModItem
 
 	public override Vector2? HoldoutOffset() => new Vector2(-10, 0);
 
-	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<IridescentScale>(), 6)
-		.AddIngredient(ModContent.ItemType<MineralSlag>(), 14).AddTile(TileID.Anvils).Register();
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<MineralSlag>(), 14)
+		.AddRecipeGroup("Shells", 2).AddTile(TileID.Anvils).Register();
 }

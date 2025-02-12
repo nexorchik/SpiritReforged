@@ -40,19 +40,8 @@ public class OceanGlobalTile : GlobalTile
 				SpawnSeagrass(i, j, 5);
 		}
 
-		if (inOcean && inWorldBounds && woods.Contains(type))
-		{
-			int seed = Main.rand.Next(4);
-			Point16[] offset = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
-			var coords = new Point16(i, j) + offset[seed];
-
-			var current = Framing.GetTileSafely(coords);
-			if (!current.HasTile && current.LiquidAmount > 155 && current.LiquidType == LiquidID.Water && Main.rand.NextBool(32))
-			{
-				TileExtensions.Place(coords.X, coords.Y, ModContent.TileType<Mussel>(), Main.rand.Next(Mussel.StyleRange));
-				return;
-			}
-		}
+		if (inOcean && inWorldBounds && woods.Contains(type) && Main.rand.NextBool(48))
+			SpawnMussels(i, j);
 	}
 
 	private static void SpawnSeagrass(int i, int j, int rangeFromGrass)
@@ -72,6 +61,23 @@ public class OceanGlobalTile : GlobalTile
 
 		if (GrassInRange())
 			TileExtensions.Place(i, j - 1, ModContent.TileType<Seagrass>());
+	}
+
+	private static void SpawnMussels(int i, int j)
+	{
+		const int limitRadius = 6;
+		const int spawnLimit = 10;
+
+		int type = ModContent.TileType<Mussel>();
+		Point16[] offset = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
+		var coords = new Point16(i, j) + offset[Main.rand.Next(4)];
+
+		var current = Framing.GetTileSafely(coords);
+		if (!current.HasTile && current.LiquidAmount > 155 && current.LiquidType == LiquidID.Water && WorldGen.CountNearBlocksTypes(i, j, limitRadius, spawnLimit, type) < spawnLimit)
+		{
+			TileExtensions.Place(coords.X, coords.Y, ModContent.TileType<Mussel>(), Main.rand.Next(Mussel.StyleRange));
+			return;
+		}
 	}
 
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)

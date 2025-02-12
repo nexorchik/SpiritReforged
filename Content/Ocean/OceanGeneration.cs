@@ -6,8 +6,6 @@ using SpiritReforged.Content.Ocean.Tiles;
 using SpiritReforged.Common.ConfigurationCommon;
 using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Common.WorldGeneration;
-using Terraria;
-using Terraria.UI;
 
 namespace SpiritReforged.Content.Ocean;
 
@@ -165,49 +163,44 @@ public class OceanGeneration : ModSystem
 					coralChance = 27;
 
 				//Coral multitiles
-				if (coralChance > 0 && WorldGen.genRand.NextBool((int)(coralChance * 1.25f)))
-				{
-					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Coral3x3>(), true);
+				if (coralChance > 0 && WorldGen.genRand.NextBool((int)(coralChance * 1.25f)) && TryPlaceSubmerged(i, j, ModContent.TileType<Coral3x3>()))
 					continue;
-				}
 
-				if (coralChance > 0 && WorldGen.genRand.NextBool(coralChance))
-				{
-					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Coral2x2>(), true, WorldGen.genRand.Next(3));
+				if (coralChance > 0 && WorldGen.genRand.NextBool(coralChance) && TryPlaceSubmerged(i, j, ModContent.TileType<Coral2x2>(), WorldGen.genRand.Next(3)))
 					continue;
-				}
 
-				if (coralChance > 0 && WorldGen.genRand.NextBool((int)(coralChance * 1.75f)))
-				{
-					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Coral1x2>(), true);
+				if (coralChance > 0 && WorldGen.genRand.NextBool((int)(coralChance * 1.75f)) && TryPlaceSubmerged(i, j, ModContent.TileType<Coral1x2>()))
 					continue;
-				}
 
 				//Kelp multitiles
 				int kelpChance = tilesFromInnerEdge < 100 ? 46 : 18; //Higher on first slope, then less common
-				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance))
-				{
-					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Kelp2x3>(), true);
+				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance) && TryPlaceSubmerged(i, j, ModContent.TileType<Kelp2x3>()))
 					continue;
-				}
 
-				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance))
-				{
-					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Kelp2x2>(), true);
+				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance) && TryPlaceSubmerged(i, j, ModContent.TileType<Kelp2x2>()))
 					continue;
-				}
 
-				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance))
-				{
-					WorldGen.PlaceObject(i, j - 1, ModContent.TileType<Kelp1x2>(), true);
+				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance) && TryPlaceSubmerged(i, j, ModContent.TileType<Kelp1x2>()))
 					continue;
-				}
 
 				//Growing kelp
 				if (WorldGen.genRand.NextBool(4, 7) && tilesFromInnerEdge < 133 && Main.tile[i, j].TileType == TileID.Sand && !Main.tile[i, j - 1].HasTile)
 					GrowKelp(i, j - 1);
 			}
 		}
+	}
+
+	/// <summary> Places <paramref name="type"/> above the given coordinates if completely submerged. </summary>
+	private static bool TryPlaceSubmerged(int i, int j, int type, int style = 0)
+	{
+		var data = TileObjectData.GetTileData(type, style);
+		if (data != null && WorldMethods.Submerged(i, j - data.Height, data.Width, data.Height))
+		{
+			WorldGen.PlaceObject(i, j - 1, type, true, style);
+			return true;
+		}
+
+		return false;
 	}
 
 	private static void GrowKelp(int i, int j)
