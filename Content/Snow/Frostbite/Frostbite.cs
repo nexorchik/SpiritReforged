@@ -9,7 +9,7 @@ namespace SpiritReforged.Content.Snow.Frostbite;
 
 public class FrostbiteItem : ModItem
 {
-	public const int AttackRange = 150;
+	public const int AttackRange = 200;
 
 	public override void SetDefaults()
 	{
@@ -34,6 +34,8 @@ public class FrostbiteItem : ModItem
 
 public class FrostbiteProj : ModProjectile
 {
+	private const int FadeTime = 20;
+
 	public ref float Counter => ref Projectile.ai[0];
 	private SlotId loopedSound = SlotId.Invalid;
 
@@ -54,14 +56,14 @@ public class FrostbiteProj : ModProjectile
 	{
 		var owner = Main.player[Projectile.owner];
 
-		if (Projectile.timeLeft > 2 && !Main.dedServ)
+		if (Projectile.timeLeft > FadeTime && !Main.dedServ)
 		{
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/PageFlip") with { PitchVariance = 0.3f, Volume = 0.65f }, owner.Center);
 			SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown with { Pitch = .5f }, owner.Center);
 			SoundEngine.PlaySound(SoundID.AbigailAttack with { Volume = .15f, Pitch = 1f }, owner.Center);
 		}
 
-		Projectile.Opacity = MathHelper.Min(Projectile.Opacity + .05f, 1);
+		Projectile.Opacity = MathHelper.Min(Projectile.Opacity + 1f / FadeTime, 1);
 
 		owner.itemRotation = MathHelper.WrapAngle(Projectile.velocity.ToRotation() + (Projectile.direction < 0 ? MathHelper.Pi : 0));
 		owner.heldProj = Projectile.whoAmI;
@@ -83,21 +85,23 @@ public class FrostbiteProj : ModProjectile
 		owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters, rotation);
 		owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.ThreeQuarters, rotation);
 		owner.ChangeDir(Projectile.velocity.X < 0 ? -1 : 1);
-		owner.itemTime = owner.itemAnimation = 2;
+		owner.itemTime = owner.itemAnimation = FadeTime;
 
-		if (owner.channel && DrainMana(owner))
-			Projectile.timeLeft = 2;
+		if (owner.channel && DrainMana(owner, 20))
+			Projectile.timeLeft = FadeTime;
 
 		Projectile.UpdateFrame(5, 1);
 		DoVisuals();
 		UpdateSound();
+
+		Counter++;
 	}
 
-	private bool DrainMana(Player owner)
+	/// <summary> Drains <paramref name="owner"/>'s mana by <paramref name="manaPerSecond"/>. </summary>
+	/// <returns> Whether mana was drained (was above zero). </returns>
+	private bool DrainMana(Player owner, int manaPerSecond)
 	{
-		const int manaPerSecond = 20;
-
-		if (++Counter % (60f / manaPerSecond) == 0)
+		if (Counter % (60f / manaPerSecond) == 0)
 			owner.statMana = Math.Max(owner.statMana - 1, 0);
 
 		return owner.statMana > 0;
@@ -112,8 +116,8 @@ public class FrostbiteProj : ModProjectile
 			dust.velocity = new Vector2(0, -Main.rand.NextFloat(2f));
 		}
 
-		var color = Color.Lerp(Color.White, Color.Blue, Main.rand.NextFloat(.5f)).Additive(200);
-		ParticleHandler.SpawnParticle(new SmokeCloud(Projectile.Center, Projectile.velocity * .08f, color * .25f, Main.rand.NextFloat(.25f), Common.Easing.EaseFunction.EaseCircularOut, 60));
+		var color = Color.Lerp(Color.White, Color.Cyan, Main.rand.NextFloat(.75f)).Additive(180);
+		ParticleHandler.SpawnParticle(new SmokeCloud(Projectile.Center, Projectile.velocity * .08f, color * .3f, Main.rand.NextFloat(.25f), Common.Easing.EaseFunction.EaseCircularOut, 60));
 
 		if (Main.rand.NextBool())
 		{
@@ -122,7 +126,7 @@ public class FrostbiteProj : ModProjectile
 
 			ParticleHandler.SpawnParticle(new GlowParticle(pos, vel, Color.White, Color.CornflowerBlue, Main.rand.NextFloat(0.15f, 0.45f), Main.rand.Next(30, 50), 1, delegate (Particle p)
 			{
-				p.Velocity *= 0.95f;
+				p.Velocity *= .95f;
 			}));
 		}
 
@@ -137,35 +141,58 @@ public class FrostbiteProj : ModProjectile
 			ParticleHandler.SpawnParticle(p);
 		}
 
-		if (Main.rand.NextBool(10))
+		if (Main.rand.NextBool(8))
 		{
 			var pos = Projectile.Center + (Projectile.velocity * Main.rand.NextFloat()).RotatedByRandom(.5f);
 			var vel = Vector2.Normalize(Projectile.velocity).RotatedByRandom(1) * .25f;
 
-			var p = new StarParticle(pos, vel, Color.White, Color.Blue * .25f, Main.rand.NextFloat(.025f, .1f), 60, 0);
+			var p = new StarParticle(pos, vel, Color.White, Color.Blue * .25f, Main.rand.NextFloat(.03f, .1f), 60, 0);
+			ParticleHandler.SpawnParticle(p);
+		}
+
+		if (Counter % 25 == 0)
+		{
+			float mag = Main.rand.NextFloat();
+			var pos = Projectile.Center;
+			var vel = (Projectile.velocity * Main.rand.NextFloat(.01f, .03f)).RotatedByRandom(.25f);
+			var startColor = (Color.Lerp(Color.White, Color.Cyan, Main.rand.NextFloat(.75f)) * mag * .5f).Additive();
+
+			var p = new SnowflakeParticle(pos, vel, startColor, (Color.RoyalBlue * mag).Additive(), Main.rand.NextFloat(.5f), 60, 0, Main.rand.Next(3), delegate (Particle p)
+			{
+				p.Velocity *= .98f;
+				p.Velocity = p.Velocity.RotatedByRandom(.05f);
+				p.Rotation += p.Velocity.Length() * .025f;
+			});
 			ParticleHandler.SpawnParticle(p);
 		}
 
 		if (Main.timeForVisualEffects % 10 == 0)
-			ParticleHandler.SpawnParticle(new ImpactLine(Projectile.Center, Projectile.velocity.RotatedByRandom(.5f) * .05f, Color.White * .5f, new Vector2(.1f, .3f), 20));
+			ParticleHandler.SpawnParticle(new ImpactLine(Projectile.Center, Projectile.velocity.RotatedByRandom(.5f) * .05f, Color.White * .75f, new Vector2(.12f, .4f), 20));
 	}
 
 	private void UpdateSound()
 	{
-		const int volume = 2;
+		const int volume = 1;
 
 		Player owner = Main.player[Projectile.owner];
 		if (owner.channel && Projectile.timeLeft > 1)
 		{
-			if (!SoundEngine.TryGetActiveSound(loopedSound, out ActiveSound sound) || sound is null)
+			if (!SoundEngine.TryGetActiveSound(loopedSound, out ActiveSound sound))
 				loopedSound = SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Blizzard_Loop") with { Volume = volume, Pitch = -.6f, MaxInstances = 1, IsLooped = true }, Projectile.Center);
 			else
+			{
 				sound.Position = Projectile.Center;
+				sound.Pitch = (float)Math.Sin((float)(Main.timeForVisualEffects / 100f) * Math.PI) * .1f;
+			}
 		}
-		else if (SoundEngine.TryGetActiveSound(loopedSound, out ActiveSound sound) && sound is not null)
+		else if (SoundEngine.TryGetActiveSound(loopedSound, out ActiveSound sound))
 		{
-			sound.Stop();
-			loopedSound = SlotId.Invalid;
+			sound.Volume = MathHelper.Lerp(0, volume, (float)(Projectile.timeLeft - 1) / FadeTime);
+			if (sound.Volume == 0)
+			{
+				sound.Stop();
+				loopedSound = SlotId.Invalid;
+			}
 		}
 	}
 

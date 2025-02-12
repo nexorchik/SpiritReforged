@@ -1,14 +1,14 @@
 ﻿using SpiritReforged.Common.Particle;
 
-namespace SpiritReforged.Content.Particles;
+namespace SpiritReforged.Content.Savanna.Items.HuntingRifle;
 
-public class SmokeParticle : Particle
+public class SmokeCircleParticle : Particle
 {
 	private readonly int _maxTime;
 
 	public override ParticleDrawType DrawType => ParticleDrawType.Custom;
 
-	public SmokeParticle(Vector2 position, Vector2 velocity, Color color, float scale, float rotation, int maxTime)
+	public SmokeCircleParticle(Vector2 position, Vector2 velocity, Color color, float scale, float rotation, int maxTime)
 	{
 		Position = position;
 		Velocity = velocity;
