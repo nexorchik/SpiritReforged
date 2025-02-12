@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Common.WorldGeneration.Noise;
@@ -9,7 +10,7 @@ using System.Linq;
 namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
 
 [AutoloadGlowmask("Method:Content.Forest.Stargrass.Tiles.StargrassTile Glow")]
-public class StargrassTile : ModTile
+public class StargrassTile : GrassTile
 {
 	public static Color Glow(object obj) 
 	{
@@ -20,24 +21,14 @@ public class StargrassTile : ModTile
 
 	public override void SetStaticDefaults()
 	{
-		Main.tileSolid[Type] = true;
-		Main.tileMerge[Type][Type] = true;
-		Main.tileBlockLight[Type] = true;
+		base.SetStaticDefaults();
+
 		Main.tileLighted[Type] = true;
-		Main.tileMerge[TileID.Dirt][Type] = true;
-		Main.tileMerge[Type][TileID.Dirt] = true;
-		Main.tileMerge[TileID.Grass][Type] = true;
-		Main.tileMerge[Type][TileID.Grass] = true;
-
-		TileID.Sets.Grass[Type] = true;
 		TileID.Sets.Conversion.Grass[Type] = true;
-		TileID.Sets.CanBeDugByShovel[Type] = true;
 
+		RegisterItemDrop(ItemID.DirtBlock);
 		AddMapEntry(new Color(28, 216, 151));
 		DustType = DustID.Flare_Blue;
-
-		var data = TileObjectData.GetTileData(TileID.Sunflower, 0);
-		data.AnchorValidTiles = data.AnchorValidTiles.Concat([Type]).ToArray(); //Allow sunflowers to be planted on this tile
 	}
 
 	public override void FloorVisuals(Player player)
@@ -74,12 +65,6 @@ public class StargrassTile : ModTile
 		}
 	}
 
-	public override bool CanExplode(int i, int j)
-	{
-		WorldGen.KillTile(i, j, false, false, true); //Makes the tile completely go away instead of reverting to dirt
-		return true;
-	}
-
 	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
 	{
 		var flags = OpenTools.GetOpenings(i, j, false, false, true);
@@ -104,13 +89,4 @@ public class StargrassTile : ModTile
 	}
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.05f, 0.2f, 0.5f);
-
-	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
-	{
-		if (!fail) //Change self into dirt
-		{
-			fail = true;
-			Framing.GetTileSafely(i, j).TileType = TileID.Dirt;
-		}
-	}
 }

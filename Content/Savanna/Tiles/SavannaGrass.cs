@@ -1,39 +1,22 @@
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.Corruption;
-using System.Linq;
+using SpiritReforged.Common.TileCommon.PresetTiles;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
-public class SavannaGrass : ModTile, IConvertibleTile
+public class SavannaGrass : GrassTile, IConvertibleTile
 {
-	protected virtual int DirtType => ModContent.TileType<SavannaDirt>();
+	protected override int DirtType => ModContent.TileType<SavannaDirt>();
 	protected virtual Color MapColor => new(104, 156, 70);
 
 	public override void SetStaticDefaults()
 	{
-		Main.tileSolid[Type] = true;
-		Main.tileMerge[Type][Type] = true;
-		Main.tileBlockLight[Type] = true;
-		Main.tileNoFail[Type] = true;
+		base.SetStaticDefaults();
 
-		TileID.Sets.Grass[Type] = true;
-		TileID.Sets.NeedsGrassFramingDirt[Type] = DirtType;
-		TileID.Sets.CanBeDugByShovel[Type] = true;
-
-		RegisterItemDrop(DirtType);
+		RegisterItemDrop(Mod.Find<ModItem>("SavannaDirtItem").Type);
 		AddMapEntry(MapColor);
-		this.Merge(DirtType, ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaGrassCorrupt>(), 
-			ModContent.TileType<SavannaGrassHallow>(), ModContent.TileType<SavannaGrassCrimson>());
-
-		var data = TileObjectData.GetTileData(TileID.Sunflower, 0);
-		data.AnchorValidTiles = data.AnchorValidTiles.Concat([Type]).ToArray(); //Allow sunflowers to be planted on this tile
-	}
-
-	public override bool CanExplode(int i, int j)
-	{
-		WorldGen.KillTile(i, j, false, false, true); //Makes the tile completely go away instead of reverting to dirt
-		return true;
+		this.Merge(ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaGrassCorrupt>(), ModContent.TileType<SavannaGrassHallow>(), ModContent.TileType<SavannaGrassCrimson>());
 	}
 
 	public override void RandomUpdate(int i, int j)
@@ -77,21 +60,6 @@ public class SavannaGrass : ModTile, IConvertibleTile
 			int type = ModContent.TileType<ElephantGrass>();
 			return Framing.GetTileSafely(i - 1, j - 1).TileType == type || Framing.GetTileSafely(i + 1, j - 1).TileType == type;
 		}
-	}
-
-	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
-	{
-		if (!fail) //Change self into dirt
-		{
-			fail = true;
-			Framing.GetTileSafely(i, j).TileType = (ushort)DirtType;
-		}
-	}
-
-	public override bool CanReplace(int i, int j, int tileTypeBeingPlaced)
-	{
-		Framing.GetTileSafely(i, j).TileType = (ushort)DirtType;
-		return true;
 	}
 
 	public override void FloorVisuals(Player player)

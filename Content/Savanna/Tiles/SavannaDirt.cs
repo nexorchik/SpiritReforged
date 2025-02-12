@@ -16,14 +16,9 @@ public class SavannaDirt : ModTile, IAutoloadTileItem, ICheckItemUse
 		Main.tileBlockLight[Type] = true;
 		Main.tileMerge[TileID.Sand][Type] = true;
 
-		Main.tileMerge[TileID.ClayBlock][Type] = true; //Two-way clay merge
-		Main.tileMerge[Type][TileID.ClayBlock] = true;
-
-		Main.tileMerge[TileID.Stone][Type] = true; //Two-way stone merge
-		Main.tileMerge[Type][TileID.Stone] = true;
-
 		TileID.Sets.ChecksForMerge[Type] = true;
 
+		this.Merge(TileID.Stone, TileID.Dirt, TileID.Mud, TileID.ClayBlock);
 		AddMapEntry(new Color(138, 79, 45));
 		MineResist = .5f;
 	}
