@@ -5,18 +5,17 @@ namespace SpiritReforged.Content.Particles;
 
 public class SnowflakeParticle : Particle
 {
-	private Color _startColor;
-	private Color _endColor;
-	private readonly float _rotSpeed;
-	public int style;
-
 	private const float FADETIME = 0.3f;
 
-	public delegate void UpdateAction(Particle particle);
+	public override ParticleDrawType DrawType => ParticleDrawType.Custom;
 
+	public delegate void UpdateAction(Particle particle);
 	private readonly UpdateAction _action;
 
-	public override ParticleDrawType DrawType => ParticleDrawType.Custom;
+	private readonly float _rotSpeed;
+	private readonly int _style;
+	private Color _startColor;
+	private Color _endColor;
 
 	public SnowflakeParticle(Vector2 position, Vector2 velocity, Color startColor, Color endColor, float scale, int maxTime, float rotationSpeed = 1f, int typeValue = 1, UpdateAction action = null)
 	{
@@ -29,7 +28,7 @@ public class SnowflakeParticle : Particle
 		MaxTime = maxTime;
 		_action = action;
 		_rotSpeed = rotationSpeed;
-		style = typeValue; 
+		_style = typeValue; 
 	}
 
 	public override void Update()
@@ -53,9 +52,9 @@ public class SnowflakeParticle : Particle
 	{
 		var tex = ParticleHandler.GetTexture(Type);
 		var bloom = AssetLoader.LoadedTextures["Bloom"];
-		var frame = tex.Frame(1, 3, frameY: style);
+		var frame = tex.Frame(1, 3, frameY: _style);
 
 		spriteBatch.Draw(bloom, Position - Main.screenPosition, null, (Color * .6f).Additive(), 0, bloom.Size() / 2, Scale / 4f, SpriteEffects.None, 0);
-		spriteBatch.Draw(tex, Position - Main.screenPosition, tex.Frame(1, 3, frameY: Math.Min(style, 2)), Color, Rotation, frame.Size() / 2, Scale, SpriteEffects.None, 0);
+		spriteBatch.Draw(tex, Position - Main.screenPosition, tex.Frame(1, 3, frameY: Math.Min(_style, 2)), Color, Rotation, frame.Size() / 2, Scale, SpriteEffects.None, 0);
 	}
 }

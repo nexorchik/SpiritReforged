@@ -37,9 +37,10 @@ public class FrostbiteProj : ModProjectile
 	private const int FadeTime = 20;
 
 	public ref float Counter => ref Projectile.ai[0];
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.Frostbite.DisplayName");
+
 	private SlotId loopedSound = SlotId.Invalid;
 
-	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.Frostbite.DisplayName");
 	public override void SetStaticDefaults() => Main.projFrames[Type] = 2;
 
 	public override void SetDefaults()
