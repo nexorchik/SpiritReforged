@@ -1,5 +1,5 @@
 displayName = Spirit Reforged
 author = Team Spirit
 version = 0.1
-dllReferences = NPCUtils, StructureHelper
+dllReferences = NPCUtils, StructureHelper, RubbleAutoloader
 buildIgnore = Assets/Shaders/*.dll
