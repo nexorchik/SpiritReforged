@@ -26,6 +26,7 @@ public partial class SpiritReforgedMod : Mod
 
 	public override void Load()
 	{
+		RubbleAutoloader.Autoloader.Load(this);
 		NPCUtils.NPCUtils.AutoloadModBannersAndCritters(this);
 		NPCUtils.NPCUtils.TryLoadBestiaryHelper();
 		AutoloadMinionDictionary.AddBuffs(Code);

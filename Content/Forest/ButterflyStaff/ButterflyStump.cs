@@ -1,3 +1,4 @@
+using RubbleAutoloader;
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
@@ -8,11 +9,13 @@ using Terraria.GameContent.ObjectInteractions;
 namespace SpiritReforged.Content.Forest.ButterflyStaff;
 
 [AutoloadGlowmask("100,100,100,0")]
-public class ButterflyStump : ModTile
+public class ButterflyStump : ModTile, IAutoloadRubble
 {
 	private const int FrameHeight = 18 * 4;
 
 	protected static int ItemType => ModContent.ItemType<ButterflyStaff>();
+
+	public IAutoloadRubble.RubbleData Data => new(ItemType, IAutoloadRubble.RubbleSize.Large);
 
 	private static bool HasItem(int i, int j) => Framing.GetTileSafely(i, j).TileFrameY < FrameHeight;
 	private static bool TopHalf(int i, int j) => Framing.GetTileSafely(i, j).TileFrameY % FrameHeight < 18 * 2;
@@ -61,7 +64,7 @@ public class ButterflyStump : ModTile
 
 	public override void MouseOver(int i, int j)
 	{
-		if (!HasItem(i, j))
+		if (!HasItem(i, j) || Autoloader.IsRubble(Type))
 			return;
 
 		Player player = Main.LocalPlayer;
@@ -72,7 +75,7 @@ public class ButterflyStump : ModTile
 
 	public override bool RightClick(int i, int j)
 	{
-		if (HasItem(i, j))
+		if (HasItem(i, j) && !Autoloader.IsRubble(Type))
 		{
 			TileExtensions.GetTopLeft(ref i, ref j);
 
@@ -117,13 +120,4 @@ public class ButterflyStump : ModTile
 		var color = new Vector3(255, 125, 255) * .001f;
 		(r, g, b) = (color.X, color.Y, color.Z);
 	}
-}
-
-public class ButterflyStumpRubble : ButterflyStump, IRubble
-{
-	public override string Texture => base.Texture.Remove(base.Texture.Length - 6, 6); //Remove "Rubble"
-	IRubble.RubbleData IRubble.Data => new(ItemType, IRubble.RubbleSize.Large);
-
-	public override void MouseOver(int i, int j) { }
-	public override bool RightClick(int i, int j) => false;
 }
