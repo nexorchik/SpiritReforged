@@ -1,7 +1,6 @@
 ﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.Corruption;
 using Terraria.DataStructures;
-using Terraria.GameContent.UI.Elements;
 
 namespace SpiritReforged.Content.Ocean.Tiles;
 
@@ -33,8 +32,8 @@ public class OceanKelp : ModTile, IConvertibleTile
 		// Anchors accept all variants as otherwise the custom anchoring is too inconsistent.
 		// The anchors, however, do automatically change the kelp, so it works out.
 		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Ebonsand, TileID.Crimsand, TileID.Pearlsand];
-		TileObjectData.newTile.AnchorAlternateTiles = [ModContent.TileType<OceanKelp>(), ModContent.TileType<OceanKelpCorrupt>(), ModContent.TileType<OceanKelpCrimson>(), 
-			ModContent.TileType<OceanKelpHallowed>()];
+		TileObjectData.newTile.AnchorAlternateTiles = [ModContent.TileType<OceanKelp>(), ModContent.TileType<OceanKelpCorrupt>(), 
+			ModContent.TileType<OceanKelpCrimson>(), ModContent.TileType<OceanKelpHallowed>()];
 
 		PreAddObjectData();
 		TileObjectData.addTile(Type);
@@ -61,23 +60,11 @@ public class OceanKelp : ModTile, IConvertibleTile
 		return drops;
 	}
 
-	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
+	public override void PostTileFrame(int i, int j, int up, int down, int left, int right, int upLeft, int upRight, int downLeft, int downRight)
 	{
 		Tile tile = Main.tile[i, j];
 		Tile above = Main.tile[i, j - 1];
 		Tile below = Main.tile[i, j + 1];
-		var data = TileObjectData.GetTileData(Type, 0);
-
-		// IsValidTileAnchor doesn't account for alternate tiles, so the Kelp check is seperate
-		if (!below.HasTile || !data.isValidTileAnchor(below.TileType) && (below.TileType < TileID.Count || ModContent.GetModTile(below.TileType) is not OceanKelp))
-		{
-			WorldGen.KillTile(i, j, false);
-
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-				NetMessage.SendTileSquare(-1, i, j);
-
-			return false;
-		}
 
 		// Gets the group frame (left or right) for the given tile
 		short frameX = GetGroupFrameX(i, j);
@@ -90,14 +77,13 @@ public class OceanKelp : ModTile, IConvertibleTile
 		{
 			tile.TileFrameX = ClumpX;
 			tile.TileFrameY = (short)Main.rand.Next(4);
-			return false;
+			return;
 		}
 
 		SetFrameY(tile, above, below, Type);
 
 		// Set to the same clump status as the old frame
 		tile.TileFrameY += (short)(GetClumpNumber(oldFrameY) * 198);
-		return false;
 	}
 
 	private bool CanPlaceClump(int i, int j)

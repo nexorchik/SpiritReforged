@@ -246,56 +246,47 @@ public class OceanGeneration : ModSystem
 
 	public static void PlacePirateChest(int innerEdge, int side)
 	{
-		int placementRetries = 0;
+		const int maxTries = 200;
 
-	retry:
-		int guaranteeChestX = innerEdge - WorldGen.genRand.Next(100, innerEdge - 60);
-		if (side == 1)
-			guaranteeChestX = innerEdge + WorldGen.genRand.Next(100, Main.maxTilesX - innerEdge - 60);
-
-		var chest = new Point(guaranteeChestX, (int)(Main.maxTilesY * 0.35f / 16f));
-		while (!WorldGen.SolidTile(chest.X, chest.Y))
-			chest.Y++;
-
-		if (!WorldMethods.AreaClear(chest.X, chest.Y - 2, 2, 2))
-			goto retry; //uh oh! goto! I'm a lazy programmer seethe & rage
-
-		for (int i = 0; i < 2; ++i)
+		for (int t = 0; t < maxTries; t++)
 		{
-			WorldGen.KillTile(chest.X + i, chest.Y, false, false, true);
-			WorldGen.PlaceTile(chest.X + i, chest.Y , TileID.Sand, true, false);
-			Framing.GetTileSafely(chest.X + i, chest.Y).Slope = 0;
+			int x = innerEdge - WorldGen.genRand.Next(100, innerEdge - 60);
+			if (side == 1)
+				x = innerEdge + WorldGen.genRand.Next(100, Main.maxTilesX - innerEdge - 60);
+
+			int y = (int)(Main.maxTilesY * 0.35f / 16f);
+			while (!WorldGen.SolidTile(x, y))
+				y++;
+
+			if (WorldMethods.AreaClear(x, y - 2, 2, 2))
+			{
+				for (int w = 0; w < 4; w++)
+				{
+					int i = x + w % 2;
+					int j = y + w / 2;
+
+					WorldGen.KillTile(i, j, false, noItem: true);
+					WorldGen.PlaceTile(i, j, TileID.HardenedSand, true);
+				}
+
+				PlaceChest(x, y - 1, ModContent.TileType<OceanPirateChest>(),
+					[
+						(side == 0 ? ItemID.PirateStaff : ItemID.CoinGun, 1)
+					],
+					[
+						(ItemID.GoldCoin, WorldGen.genRand.Next(12, 30)), (ItemID.Diamond, WorldGen.genRand.Next(12, 30)), (ItemID.GoldCrown, 1), (ItemID.GoldDust, WorldGen.genRand.Next(1, 3)),
+						(ItemID.GoldChest, 1), (ItemID.GoldenChair, 1), (ItemID.GoldChandelier, 1), (ItemID.GoldenPlatform, WorldGen.genRand.Next(12, 18)), (ItemID.GoldenSink, 1), (ItemID.GoldenSofa, 1),
+						(ItemID.GoldenTable, 1), (ItemID.GoldenToilet, 1), (ItemID.GoldenWorkbench, 1), (ItemID.GoldenPiano, 1), (ItemID.GoldenLantern, 1), (ItemID.GoldenLamp, 1), (ItemID.GoldenDresser, 1),
+						(ItemID.GoldenDoor, 1), (ItemID.GoldenCrate, 1), (ItemID.GoldenClock, 1), (ItemID.GoldenChest, 1), (ItemID.GoldenCandle, WorldGen.genRand.Next(2, 4)), (ItemID.GoldenBookcase, 1),
+						(ItemID.TitaniumBar, BarStack()), (ItemID.PalladiumBar, BarStack()), (ItemID.OrichalcumBar, BarStack())
+					],
+					true, WorldGen.genRand, WorldGen.genRand.Next(15, 21), 1, true, 2, 2);
+
+				break;
+			}
 		}
 
 		static int BarStack() => WorldGen.genRand.Next(3, 7);
-
-		placementRetries++;
-
-		bool success = PlaceChest(chest.X, chest.Y - 1, ModContent.TileType<OceanPirateChest>(), 
-			[
-				(side == 0 ? ItemID.PirateStaff : ItemID.CoinGun, 1)
-			], 
-			[   
-				(ItemID.GoldCoin, WorldGen.genRand.Next(12, 30)), (ItemID.Diamond, WorldGen.genRand.Next(12, 30)), (ItemID.GoldCrown, 1), (ItemID.GoldDust, WorldGen.genRand.Next(1, 3)),
-				(ItemID.GoldChest, 1), (ItemID.GoldenChair, 1), (ItemID.GoldChandelier, 1), (ItemID.GoldenPlatform, WorldGen.genRand.Next(12, 18)), (ItemID.GoldenSink, 1), (ItemID.GoldenSofa, 1),
-				(ItemID.GoldenTable, 1), (ItemID.GoldenToilet, 1), (ItemID.GoldenWorkbench, 1), (ItemID.GoldenPiano, 1), (ItemID.GoldenLantern, 1), (ItemID.GoldenLamp, 1), (ItemID.GoldenDresser, 1),
-				(ItemID.GoldenDoor, 1), (ItemID.GoldenCrate, 1), (ItemID.GoldenClock, 1), (ItemID.GoldenChest, 1), (ItemID.GoldenCandle, WorldGen.genRand.Next(2, 4)), (ItemID.GoldenBookcase, 1),
-				(ItemID.GoldenBed, 1), (ItemID.GoldenBathtub, 1), (ItemID.MythrilBar, BarStack()), (ItemID.AdamantiteBar, BarStack()), (ItemID.CobaltBar, BarStack()),
-				(ItemID.TitaniumBar, BarStack()), (ItemID.PalladiumBar, BarStack()), (ItemID.OrichalcumBar, BarStack())
-			],
-			true, WorldGen.genRand, WorldGen.genRand.Next(15, 21), 1, true, 2, 2);
-
-		if (!success && placementRetries < 200)
-			goto retry;
-		else
-		{
-			for (int i = 0; i < 2; ++i)
-			{
-				Tile tile = Main.tile[i, chest.Y];
-				tile.TileType = TileID.HardenedSand;
-				tile.HasTile = true;
-			}
-		}
 	}
 
 	/// <summary> Places additional water chests in the inner ocean. </summary>
