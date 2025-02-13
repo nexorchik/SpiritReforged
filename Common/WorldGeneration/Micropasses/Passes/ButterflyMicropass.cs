@@ -54,7 +54,9 @@ internal class ButterflyMicropass : Micropass
 				if (foundClearing) //Generate a shaft like sword shrines do
 				{
 					var data = new ShapeData();
-					WorldUtils.Gen(new Point(origin.X, top.Y + 10), new Shapes.Rectangle(1, origin.Y - top.Y - 9), Actions.Chain(new Modifiers.Blotches(2, 0.2), new Modifiers.SkipTiles(191, 192), new Actions.ClearTile().Output(data), new Modifiers.Expand(1), new Modifiers.OnlyTiles(53), new Actions.SetTile(397).Output(data)));
+					ushort[] ignore = [TileID.LivingWood, TileID.LeafBlock, TileID.BlueDungeonBrick, TileID.GreenDungeonBrick, TileID.PinkDungeonBrick];
+
+					WorldUtils.Gen(new Point(origin.X, top.Y + 10), new Shapes.Rectangle(1, origin.Y - top.Y - 9), Actions.Chain(new Modifiers.Blotches(2, 0.2), new Modifiers.SkipTiles(ignore), new Actions.ClearTile().Output(data), new Modifiers.Expand(1), new Modifiers.OnlyTiles(53), new Actions.SetTile(397).Output(data)));
 					WorldUtils.Gen(new Point(origin.X, top.Y + 10), new ModShapes.All(data), new Actions.SetFrames(frameNeighbors: true));
 				}
 			}

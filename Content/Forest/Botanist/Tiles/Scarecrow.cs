@@ -1,5 +1,6 @@
 ﻿using MonoMod.Cil;
 using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.Multiplayer;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.TileSway;
 using System.IO;
@@ -51,9 +52,9 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
 		var entity = ScarecrowTileEntity.GetMe(i, j);
-		if (entity is not null && !entity.Hat.IsAir)
+		if (entity is not null && !entity.hat.IsAir)
 		{
-			int item = Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 16, entity.Hat);
+			int item = Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 16, entity.hat);
 
 			if (Main.netMode != NetmodeID.SinglePlayer)
 				NetMessage.SendData(MessageID.SyncItem, number: item, number2: 1);
@@ -79,7 +80,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 		Player player = Main.LocalPlayer;
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
-		player.cursorItemIconID = entity.Hat.IsAir ? Mod.Find<ModItem>(Name + "Item").Type : entity.Hat.type;
+		player.cursorItemIconID = entity.hat.IsAir ? Mod.Find<ModItem>(Name + "Item").Type : entity.hat.type;
 	}
 
 	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
@@ -107,7 +108,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 
 public class ScarecrowTileEntity : ModTileEntity
 {
-	public Item Hat { get; private set; } = new();
+	public Item hat = new();
 
 	private readonly Player dummy;
 
@@ -131,7 +132,7 @@ public class ScarecrowTileEntity : ModTileEntity
 		PlaceEntityNet(i, j - 2, ModContent.TileEntityType<ScarecrowTileEntity>());
 
 		if (GetMe(i, j) is ScarecrowTileEntity sgaregrow)
-			sgaregrow.Hat = new Item(ModContent.ItemType<Items.BotanistHat>());
+			sgaregrow.hat = new Item(ModContent.ItemType<Items.BotanistHat>());
 	}
 
 	public ScarecrowTileEntity()
@@ -159,7 +160,7 @@ public class ScarecrowTileEntity : ModTileEntity
 
 	public void DrawHat()
 	{
-		if (Hat.IsAir || Hat.headSlot < 0)
+		if (hat.IsAir || hat.headSlot < 0)
 			return;
 
 		//The base of the scarecrow
@@ -181,7 +182,7 @@ public class ScarecrowTileEntity : ModTileEntity
 		dummy.Male = true;
 		dummy.isDisplayDollOrInanimate = true;
 		dummy.isHatRackDoll = true;
-		dummy.armor[0] = Hat;
+		dummy.armor[0] = hat;
 		dummy.ResetEffects();
 		dummy.ResetVisibleAccessories();
 		dummy.invis = true;
@@ -200,11 +201,32 @@ public class ScarecrowTileEntity : ModTileEntity
 	{
 		var item = player.HeldItem;
 
+		if (hat.IsAir)
+		{
+			if (TryPlaceHat() && Main.netMode == NetmodeID.MultiplayerClient)
+				new ScarecrowData((short)ID, hat).Send();
+		}
+		else
+		{
+			ItemMethods.NewItemSynced(player.GetSource_TileInteraction(Position.X, Position.Y), hat, Position.ToVector2() * 16, true);
+
+			hat.TurnToAir();
+
+			if (TryPlaceHat() && Main.netMode == NetmodeID.MultiplayerClient)
+				new ScarecrowData((short)ID, hat).Send();
+
+			for (int i = 0; i < 10; i++) //Create smoke
+			{
+				var dust = Dust.NewDustDirect(Position.ToVector2() * 16 - new Vector2(0, 8), 16, 16, DustID.Smoke, Alpha: 150, Scale: Main.rand.NextFloat(.5f, 1.5f));
+				dust.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(.25f);
+			}
+		}
+
 		bool TryPlaceHat()
 		{
 			if (item.headSlot > -1)
 			{
-				Hat = ItemLoader.TransferWithLimit(item, 1);
+				hat = ItemLoader.TransferWithLimit(item, 1);
 				Main.mouseItem.TurnToAir();
 
 				player.releaseUseItem = false;
@@ -213,27 +235,6 @@ public class ScarecrowTileEntity : ModTileEntity
 			}
 
 			return false;
-		}
-
-		if (Hat.IsAir)
-		{
-			if (TryPlaceHat())
-				NetMessage.SendData(MessageID.TileEntitySharing, number: ID, number2: Position.X, number3: Position.Y);
-		}
-		else
-		{
-			ItemMethods.NewItemSynced(player.GetSource_TileInteraction(Position.X, Position.Y), Hat, Position.ToVector2() * 16, true);
-
-			Hat.TurnToAir();
-			TryPlaceHat();
-
-			NetMessage.SendData(MessageID.TileEntitySharing, number: ID, number2: Position.X, number3: Position.Y);
-
-			for (int i = 0; i < 10; i++) //Create smoke
-			{
-				var dust = Dust.NewDustDirect(Position.ToVector2() * 16 - new Vector2(0, 8), 16, 16, DustID.Smoke, Alpha: 150, Scale: Main.rand.NextFloat(.5f, 1.5f));
-				dust.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(.25f);
-			}
 		}
 	}
 
@@ -258,14 +259,46 @@ public class ScarecrowTileEntity : ModTileEntity
 	}
 
 	public override void OnNetPlace() => NetMessage.SendData(MessageID.TileEntitySharing, number: ID, number2: Position.X, number3: Position.Y);
-	public override void NetSend(BinaryWriter writer) => ItemIO.Send(Hat, writer);
-	public override void NetReceive(BinaryReader reader) => Hat = ItemIO.Receive(reader);
+	public override void NetSend(BinaryWriter writer) => ItemIO.Send(hat, writer);
+	public override void NetReceive(BinaryReader reader) => hat = ItemIO.Receive(reader);
 
 	public override void SaveData(TagCompound tag)
 	{
-		if (!Hat.IsAir)
-			tag[nameof(Hat)] = Hat;
+		if (!hat.IsAir)
+			tag[nameof(hat)] = hat;
 	}
 
-	public override void LoadData(TagCompound tag) => Hat = tag.Get<Item>(nameof(Hat));
+	public override void LoadData(TagCompound tag) => hat = tag.Get<Item>(nameof(hat));
+}
+
+/// <summary> Sends <see cref="ScarecrowTileEntity.hat"/> by tile entity ID. </summary>
+internal class ScarecrowData : PacketData
+{
+	private readonly short _id;
+	private readonly Item _hat;
+
+	public ScarecrowData() { }
+	public ScarecrowData(short tileEntityID, Item hat)
+	{
+		_id = tileEntityID;
+		_hat = hat;
+	}
+
+	public override void OnReceive(BinaryReader reader, int whoAmI)
+	{
+		short index = reader.ReadInt16();
+		Item item = ItemIO.Receive(reader);
+
+		if (Main.netMode == NetmodeID.Server) //Relay to other clients
+			new ScarecrowData(index, item).Send(ignoreClient: whoAmI);
+
+		if (TileEntity.ByID[index] is ScarecrowTileEntity scarecrow)
+			scarecrow.hat = item;
+	}
+
+	public override void OnSend(ModPacket modPacket)
+	{
+		modPacket.Write(_id);
+		ItemIO.Send(_hat, modPacket);
+	}
 }
