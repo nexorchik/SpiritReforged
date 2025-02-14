@@ -123,7 +123,7 @@ internal class GravelMicropass : Micropass
 	private static void SmallRock(int x, ref int y, int size)
 	{
 		//Tiles we're allowed to modify/destroy
-		int[] canTouch = [TileID.Sand, TileID.HardenedSand];
+		int[] canTouch = [TileID.Sand, TileID.HardenedSand, ModContent.TileType<Gravel>()];
 
 		if (!GenVars.structures.CanPlace(new Rectangle(x, y, size, size)))
 			return;
@@ -134,8 +134,10 @@ internal class GravelMicropass : Micropass
 			if (Main.tile[p.X, p.Y].HasTile && !canTouch.Contains(Main.tile[p.X, p.Y].TileType))
 				continue;
 
-			WorldGen.KillTile(p.X, p.Y);
-			WorldGen.PlaceTile(p.X, p.Y, ModContent.TileType<Gravel>());
+			if (WorldGen.CanKillTile(p.X, p.Y, WorldGen.SpecialKillTileContext.None))
+				WorldGen.KillTile(p.X, p.Y, noItem: true);
+
+			WorldGen.PlaceTile(p.X, p.Y, ModContent.TileType<Gravel>(), true);
 
 			if (i >= size * (size - 1)) //Top layer slope logic
 			{
