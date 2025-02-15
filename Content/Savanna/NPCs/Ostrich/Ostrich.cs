@@ -24,10 +24,11 @@ public class Ostrich : ModNPC
 		Running,
 		MunchStart,
 		Munching,
-		MunchEnd
+		MunchEnd,
+		Walking
 	}
 
-	private static readonly int[] endFrames = [3, 7, 5, 8, 9, 6, 6];
+	private static readonly int[] endFrames = [3, 7, 5, 8, 9, 6, 6, 13];
 	private const int drownTimeMax = 300;
 	private const float runSpeed = 4f;
 	private const int noCollideTimeMax = 10;
@@ -49,7 +50,7 @@ public class Ostrich : ModNPC
 	public override void SetStaticDefaults()
 	{
 		NPC.SetNPCTargets(ModContent.NPCType<Hyena.Hyena>());
-		Main.npcFrameCount[Type] = 9; //Rows
+		Main.npcFrameCount[Type] = 13; //Rows
 	}
 
 	public override void SetDefaults()
@@ -89,7 +90,7 @@ public class Ostrich : ModNPC
 				else if (Main.rand.NextBool(50) && Main.netMode != NetmodeID.MultiplayerClient)
 				{
 					var action = new WeightedRandom<State>();
-					action.Add(State.Running, 1.75f);
+					action.Add(State.Walking, 1.75f);
 
 					if (!NPC.wet && Collision.SolidCollision(NPC.Bottom + new Vector2(50 * NPC.direction, 0), 4, 4)) //Is there solid collision at the head position?
 						action.Add(State.MunchStart);
@@ -111,28 +112,22 @@ public class Ostrich : ModNPC
 				frameRate = Math.Min(Math.Abs(NPC.velocity.X) / 6.5f, .25f);
 
 				if (!Charging && ShouldRunAway(16 * 28, 2.5f)) //Prioritize running from the player
-					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(NPC.Center.X - target.Center.X) * runSpeed, .1f);
-				else //Wander and charging behaviour
 				{
-					if (Counter % 160 == 159 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity == Vector2.Zero)
-						if (NPC.velocity.X == 0)
-							if (Main.netMode != NetmodeID.MultiplayerClient)
-							{
-								TargetSpeed = Main.rand.NextFloat(1.25f, 1.5f) * (Main.rand.NextBool() ? -1 : 1);
-								NPC.netUpdate = true;
-							}
-						else
-							TargetSpeed = 0;
+					TargetSpeed = Math.Sign(NPC.Center.X - target.Center.X) * runSpeed;
+					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, TargetSpeed, .1f);
+				}
+				else
+				{
+					if (Counter >= 200)
+						TargetSpeed = 0;
 
 					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, TargetSpeed, .03f);
 
 					if (wasCharging && NPC.collideX) //Bounce
 						NPC.velocity.X = -NPC.velocity.X;
 
-					if (Math.Abs(NPC.velocity.X) < .25f && Counter > 10) //Give me some time to accelerate before being able to stop
-						ChangeState(State.Stopped);
-					else
-						ChangeState(State.Running);
+					if (Math.Abs(NPC.velocity.X) < 1.5f && Counter > 10) //(Counter) give me some time to accelerate before being able to stop
+						ChangeState(State.Walking);
 				}
 
 				break;
@@ -169,30 +164,51 @@ public class Ostrich : ModNPC
 				} //Cause tiles to sway while munching
 
 				break;
+
+			case (int)State.Walking:
+
+				frameRate = .25f;
+
+				if (ShouldRunAway(16 * 28, 2.5f)) //Prioritize running from the player
+					ChangeState(State.Running);
+				else //Wander
+				{
+					if (Counter % 160 == 159 && Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(2) || Counter > 500 || NPC.velocity == Vector2.Zero)
+					{
+						if (NPC.velocity.X == 0)
+						{
+							if (Main.netMode != NetmodeID.MultiplayerClient)
+							{
+								TargetSpeed = Main.rand.NextFloat(1.25f, 1.5f) * (Main.rand.NextBool() ? -1 : 1);
+								NPC.netUpdate = true;
+							}
+						}
+						else
+							TargetSpeed = 0;
+					}
+
+					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, TargetSpeed, .03f);
+
+					if (Math.Abs(NPC.velocity.X) < .25f && Counter > 10) //(Counter) give me some time to accelerate before being able to stop
+						ChangeState(State.Stopped);
+				}
+
+				break;
 		}
 
-		if (AIState is ((int)State.Idle1) or ((int)State.Idle2) or ((int)State.MunchEnd)) //Any idle animation
-			if (OnTransitionFrame)
-			{
-				ChangeState(State.Stopped);
-				NPC.frameCounter = endFrames[AIState] - 1; //Skip the animation in this context
-			}
+		if (AIState is ((int)State.Idle1) or ((int)State.Idle2) or ((int)State.MunchEnd) && OnTransitionFrame) //Any idle animation
+		{
+			ChangeState(State.Stopped);
+			NPC.frameCounter = endFrames[AIState] - 1; //Skip the animation in this context
+		}
 
-		if (Charging)
+		if (Charging && !Main.dedServ)
 		{
 			if (!wasCharging && Counter != 0)
 				SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown with { Volume = .5f, PitchVariance = .5f }, NPC.Center);
 
 			if (Counter % 15 == 0)
-				ParticleHandler.SpawnParticle(new OstrichImpact(
-					NPC,
-					NPC.Center,
-					Vector2.Zero,
-					270,
-					100f,
-					Math.Sign(NPC.velocity.X) == 1 ? MathHelper.Pi : 0,
-					30,
-					.6f));
+				ParticleHandler.SpawnParticle(new OstrichImpact(NPC, NPC.Center, Vector2.Zero, 270, 100f, Math.Sign(NPC.velocity.X) == 1 ? MathHelper.Pi : 0, 30, .6f));
 		}
 
 		if (NPC.velocity.X < 0) //Set direction
@@ -210,6 +226,7 @@ public class Ostrich : ModNPC
 			Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
 
 			if (NPC.collideX && NPC.velocity == Vector2.Zero) //Jump
+			{
 				if ((int)NPC.Center.X == oldX)
 					TargetSpeed = -NPC.direction;
 				else
@@ -217,6 +234,7 @@ public class Ostrich : ModNPC
 					oldX = (int)NPC.Center.X;
 					NPC.velocity.Y = -height;
 				}
+			}
 		}
 
 		void TrySwim()
@@ -305,7 +323,7 @@ public class Ostrich : ModNPC
 
 		NPC.frameCounter += frameRate;
 
-		if (AIState is (int)State.Running) //Running is the only state that loops automatically
+		if (AIState is (int)State.Running or (int)State.Walking) //Running and walking are the only states that loops automatically
 			NPC.frameCounter %= endFrames[AIState];
 		else if (NPC.frameCounter >= endFrames[AIState])
 			NPC.frameCounter--;
