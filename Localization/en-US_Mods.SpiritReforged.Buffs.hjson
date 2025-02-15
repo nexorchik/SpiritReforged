@@ -58,16 +58,6 @@ ToucanMinion_Buff: {
 	Description: The toucan fights for you
 }
 
-SandWarriorMinion_Buff: {
-	DisplayName: Sand Warrior
-	Description: The sand warrior fights for you
-}
-
-SummonTag3: {
-	DisplayName: Summon Tag3
-	Description: Mods.SpiritReforged.Buffs.SummonTag3.Description
-}
-
 QuenchPotion_Buff: {
 	DisplayName: Quenched
 	Description: Other potions last 25% longer
@@ -96,4 +86,9 @@ PoolNoodleBubbleBuff: {
 ExplorerSpeed: {
 	DisplayName: Explorer Speed
 	Description: Your speed is greatly improved
+}
+
+RemedyPotionBuff: {
+	DisplayName: Remedy
+	Description: Immunity to some harmful effects
 }
