@@ -94,6 +94,7 @@ internal class ZiplinePlayer : ModPlayer
 				Player.velocity *= 1.05f + Math.Abs(line.Angle() / 20f);
 
 			wasOnZipline = true;
+			Player.wet = false;
 
 			if (Player.controlDown)
 				Player.GetModPlayer<CollisionPlayer>().fallThrough = true;

@@ -12,6 +12,7 @@ internal static class PlayerExtensions
 
 	/// <summary> Checks whether the player is in the corruption, crimson, or hallow. </summary>
 	public static bool ZoneEvil(this Player player) => player.ZoneCorrupt || player.ZoneCrimson || player.ZoneHallow;
+	/// <inheritdoc cref="CollisionPlayer.FallThrough"/>
 	public static bool FallThrough(this Player player) => player.GetModPlayer<CollisionPlayer>().FallThrough();
 	public static bool UsedQuickBuff(this Player player) => player.GetModPlayer<BuffPlayer>().usedQuickBuff;
 }

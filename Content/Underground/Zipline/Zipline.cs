@@ -4,6 +4,8 @@ namespace SpiritReforged.Content.Underground.Zipline;
 
 internal class Zipline(int owner)
 {
+	public const float MaxAngle = MathHelper.PiOver4;
+
 	public readonly List<Vector2> points = [];
 	private readonly int owner = owner;
 
@@ -17,6 +19,28 @@ internal class Zipline(int owner)
 			return 0;
 
 		GetRange(out var start, out var end);
+		return start.AngleTo(end);
+	}
+
+	/// <returns> Returns the angle of the zipline to <paramref name="to"/> in radians. </returns>
+	public float Angle(Vector2 to)
+	{
+		if (points.Count == 0)
+			return 0;
+
+		Vector2 start, end;
+
+		if (to.X < points[0].X)
+		{
+			start = to;
+			end = points[0];
+		}
+		else
+		{
+			start = points[0];
+			end = to;
+		}
+
 		return start.AngleTo(end);
 	}
 
@@ -96,7 +120,7 @@ internal class Zipline(int owner)
 			float angle = start.AngleTo(end);
 			var delta = GetDelta(collisionPoint);
 
-			if (Math.Abs(angle) > MathHelper.PiOver4)
+			if (Math.Abs(angle) > MaxAngle)
 				return false;
 
 			UpdatePlayer(player, delta, angle);

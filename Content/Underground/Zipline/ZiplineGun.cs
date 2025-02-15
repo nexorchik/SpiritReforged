@@ -71,6 +71,17 @@ public class ZiplineGun : ModItem
 		return (last / 16).Distance(Main.MouseWorld / 16) <= minDistance + .5f;
 	}
 
+	/// <summary> Checks if the angle of the zipline is within <see cref="Zipline.MaxAngle"/>. </summary>
+	private static bool CheckAngle()
+	{
+		var myZipline = ZiplineHandler.ziplines.Where(x => x.Owner == Main.LocalPlayer).FirstOrDefault();
+
+		if (myZipline == default || myZipline.points.Count == 0)
+			return true;
+
+		return Math.Abs(myZipline.Angle(Main.MouseWorld.ToTileCoordinates().ToWorldCoordinates())) <= Zipline.MaxAngle;
+	}
+
 	public override void Load()
 	{
 		xTexture = ModContent.Request<Texture2D>(Texture + "_Cancel");
@@ -111,14 +122,16 @@ public class ZiplineGun : ModItem
 			}
 			else
 			{
+				var color = CheckAngle() ? Color.Cyan : Color.Yellow;
+
 				if (!exceedsRange)
-					DrawDottedLine(Color.Cyan.Additive());
+					DrawDottedLine(color.Additive());
 
 				var outline = TextureAssets.Extra[2].Value;
 				var source = new Rectangle(0, 0, 16, 16);
 
-				Main.spriteBatch.Draw(grid, position - grid.Size() / 2, (Color.Cyan * .5f).Additive());
-				Main.spriteBatch.Draw(outline, position, source, Color.Cyan.Additive(), rotation, source.Size() / 2, 1 + rotation, default, 0);
+				Main.spriteBatch.Draw(grid, position - grid.Size() / 2, (color * .5f).Additive());
+				Main.spriteBatch.Draw(outline, position, source, color.Additive(), rotation, source.Size() / 2, 1 + rotation, default, 0);
 			}
 
 			Main.MouseShowBuildingGrid = false; //Always temporarily disable the default building grid before it is drawn
@@ -255,7 +268,8 @@ public class ZiplineGun : ModItem
 		var source = new Rectangle(0, 14, 14, 14);
 		var position = new Vector2(x - 14, y + 5);
 
-		string text = Language.GetTextValue("Mods.SpiritReforged.Items.ZiplineGun.Assistant" + (Main.LocalPlayer.GetModPlayer<ZiplinePlayer>().assistant ? "Off" : "On"));
+		bool assistant = Main.LocalPlayer.GetModPlayer<ZiplinePlayer>().assistant;
+		string text = Language.GetTextValue("Mods.SpiritReforged.Items.ZiplineGun.Assistant" + (assistant ? "Off" : "On"));
 		int textLength = (int)FontAssets.MouseText.Value.MeasureString(text).X + padding;
 
 		foreach (var line in lines)
@@ -267,7 +281,7 @@ public class ZiplineGun : ModItem
 			Utils.DrawInvBG(Main.spriteBatch, bgSource, new Color(23, 25, 81, 255) * 0.925f);
 		}
 
-		Main.spriteBatch.Draw(ruler, position + new Vector2(4, 15), source, Color.White, 0, source.Size() / 2, 1, default, 0);
+		Main.spriteBatch.Draw(ruler, position + new Vector2(4, 15), source, assistant ? Color.White : Color.Gray, 0, source.Size() / 2, 1, default, 0);
 		Utils.DrawBorderString(Main.spriteBatch, text, position + new Vector2(padding, 6), Main.MouseTextColorReal);
 
 		return true;
