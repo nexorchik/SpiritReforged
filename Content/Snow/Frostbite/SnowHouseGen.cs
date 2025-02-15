@@ -8,7 +8,7 @@ internal class SnowHouseGen : ILoadable
 
 	public void Load(Mod mod) => On_HouseBuilder.FillRooms += AddBooks;
 
-	private void AddBooks(On_HouseBuilder.orig_FillRooms orig, HouseBuilder self)
+	private static void AddBooks(On_HouseBuilder.orig_FillRooms orig, HouseBuilder self)
 	{
 		if (self.Type == HouseType.Ice)
 		{
