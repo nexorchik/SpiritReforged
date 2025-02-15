@@ -14,6 +14,19 @@ public abstract class ChandelierTile : FurnitureTile, ISwayTile
 	/// </summary>
 	public virtual (int width, int count) AnchorDataOffsets => (1, 1);
 
+	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(silver: 6);
+
+	public override void AddItemRecipes(ModItem item)
+	{
+		if (CoreMaterial != ItemID.None)
+			item.CreateRecipe()
+			.AddIngredient(CoreMaterial, 4)
+			.AddIngredient(ItemID.Torch, 4)
+			.AddIngredient(ItemID.Chain)
+			.AddTile(TileID.Anvils)
+			.Register();
+	}
+
 	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
