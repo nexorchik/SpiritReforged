@@ -7,7 +7,8 @@ public enum ParticleLayer
 	BelowProjectile,
 	AboveProjectile,
 	AboveNPC,
-	AbovePlayer
+	AbovePlayer,
+	BelowSolids
 }
 
 public enum ParticleDrawType

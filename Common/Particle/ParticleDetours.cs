@@ -9,6 +9,7 @@ public static class ParticleDetours
 		On_Main.DrawProjectiles += On_Main_DrawProjectiles;
 		On_Main.DrawNPCs += On_Main_DrawNPCs;
 		On_Main.DrawInfernoRings += On_Main_DrawInfernoRings;
+		On_Main.DoDraw_Tiles_NonSolid += On_Main_DoDraw_Tiles_NonSolid;
 	}
 
 	private static void On_Main_DrawInfernoRings(On_Main.orig_DrawInfernoRings orig, Main self)
@@ -33,6 +34,12 @@ public static class ParticleDetours
 		Main.spriteBatch.End();
 		orig(self);
 		ParticleHandler.DrawAllParticles(Main.spriteBatch, ParticleLayer.AboveProjectile);
+	}
+
+	private static void On_Main_DoDraw_Tiles_NonSolid(On_Main.orig_DoDraw_Tiles_NonSolid orig, Main self)
+	{
+		orig(self);
+		ParticleHandler.DrawAllParticles(Main.spriteBatch, ParticleLayer.BelowSolids);
 	}
 
 	public static void Unload()
