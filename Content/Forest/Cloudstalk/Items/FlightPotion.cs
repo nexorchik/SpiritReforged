@@ -22,5 +22,5 @@ public class FlightPotion : ModItem
 	}
 
 	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BottledWater).AddIngredient(ModContent.ItemType<Cloudstalk>())
-		.AddIngredient(ItemID.SoulofFlight, 5).AddIngredient(ItemID.Damselfish).AddTile(TileID.Bottles).Register();
+		.AddIngredient(ItemID.SoulofFlight, 1).AddIngredient(ItemID.Damselfish).AddTile(TileID.Bottles).Register();
 }

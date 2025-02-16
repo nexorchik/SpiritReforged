@@ -30,5 +30,5 @@ public class DoubleJumpPotion : ModItem
 	}
 
 	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BottledWater).AddIngredient(ModContent.ItemType<Cloudstalk>())
-		.AddIngredient(ItemID.Cloud, 5).AddIngredient(ItemID.Feather).AddTile(TileID.Bottles).Register();
+		.AddIngredient(ItemID.Cloud, 5).AddIngredient(ItemID.Moonglow).AddTile(TileID.Bottles).Register();
 }
