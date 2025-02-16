@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Content.Forest.Cloudstalk.Items;
+using System.Linq;
 
 namespace SpiritReforged.Content.Forest.Cloudstalk;
 
@@ -17,16 +19,19 @@ internal class CloudGlobalTile : GlobalTile
 		if (Main.tile[i, j + 1].HasTile || Main.rand.NextFloat() >= chance)
 			return;
 
-		int y = j + 1;
-		while (!Main.tile[i, y].HasTile)
-			y++;
+		while (!Main.tile[i, j + 1].HasTile)
+			j++;
 
-		Tile ground = Main.tile[i, y];
-		int herbType = ModContent.TileType<Items.CloudstalkTile>();
-		bool validTiles = TileObjectData.GetTileData(herbType, 0).AnchorValidTiles.Contains(Main.tile[i, y].TileType);
+		var ground = Main.tile[i, j + 1];
+		var tile = Main.tile[i, j];
 
-		if (validTiles && !ground.TopSlope)
-			if (WorldGen.PlaceTile(i, y - 1, herbType, true, false))
-				NetMessage.SendObjectPlacement(-1, i, y - 1, herbType, 0, 0, -1, -1);
+		int herbType = ModContent.TileType<CloudstalkTile>();
+		bool validAnchor = TileObjectData.GetTileData(herbType, 0).AnchorValidTiles.Contains(ground.TileType);
+
+		if (validAnchor && ground.Slope == SlopeType.Solid && !ground.IsHalfBlock && tile.LiquidAmount < 100 && TilePlaceHelper.IsReplaceable(i, j) && TilePlaceHelper.CanPlaceHerb(i, j, herbType))
+		{
+			tile.ClearTile();
+			TilePlaceHelper.PlaceTile(i, j, herbType);
+		}
 	}
 }

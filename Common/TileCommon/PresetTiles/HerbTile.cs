@@ -4,7 +4,7 @@ using SpiritReforged.Content.Forest.Botanist.Items;
 using System.Linq;
 using Terraria.GameContent.Metadata;
 
-namespace SpiritReforged.Common.TileCommon;
+namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
 public abstract class HerbTile : ModTile, ICheckItemUse
 {
@@ -23,10 +23,12 @@ public abstract class HerbTile : ModTile, ICheckItemUse
 		Main.tileObsidianKill[Type] = true;
 		Main.tileCut[Type] = true;
 		Main.tileNoFail[Type] = true;
+
 		TileID.Sets.ReplaceTileBreakUp[Type] = true;
 		TileID.Sets.IgnoredInHouseScore[Type] = true;
 		TileID.Sets.IgnoredByGrowingSaplings[Type] = true;
 		TileID.Sets.SwaysInWindBasic[Type] = true;
+
 		TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
 
 		HitSound = SoundID.Grass;

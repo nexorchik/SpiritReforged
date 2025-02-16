@@ -5,7 +5,6 @@ using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Common.WorldGeneration.Noise;
 using SpiritReforged.Content.Particles;
-using System.Linq;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
 

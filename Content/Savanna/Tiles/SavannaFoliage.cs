@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.TileCommon.Corruption;
 using Terraria.DataStructures;
+using Terraria.GameContent.Metadata;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
@@ -14,12 +15,13 @@ public class SavannaFoliage : ModTile, IConvertibleTile
 		const int TileHeight = 30;
 
 		Main.tileSolid[Type] = false;
-		Main.tileMergeDirt[Type] = false;
-		Main.tileBlockLight[Type] = false;
 		Main.tileFrameImportant[Type] = true;
+		Main.tileNoFail[Type] = true;
 		Main.tileCut[Type] = true;
+		Main.tileBlockLight[Type] = false;
 
 		TileID.Sets.SwaysInWindBasic[Type] = true;
+		TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.CoordinateWidth = 16;
