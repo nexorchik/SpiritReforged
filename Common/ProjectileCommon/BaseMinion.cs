@@ -1,24 +1,40 @@
-using Microsoft.Xna.Framework;
 using System.IO;
 using System.Linq;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace SpiritReforged.Common.ProjectileCommon;
 
 public abstract class BaseMinion(float TargettingRange, float DeaggroRange, Vector2 Size) : ModProjectile
 {
+	public Player Player => Main.player[Projectile.owner];
+	internal int IndexOfType => Main.projectile.Where(x => x.active && x.owner == Projectile.owner && x.type == Projectile.type && x.whoAmI < Projectile.whoAmI).Count();
+	public bool CanRetarget { get; set; }
+
+	private bool HadTarget
+	{
+		get => _hadTarget;
+		set
+		{
+			if (_hadTarget != value)
+			{
+				_hadTarget = value;
+				Projectile.netUpdate = true;
+			}
+		}
+	}
+
 	private readonly float TargettingRange = TargettingRange;
 	private readonly float DeaggroRange = DeaggroRange;
 	private readonly Vector2 Size = Size;
 
+	private bool _hadTarget = false;
+	private NPC _targetNPC;
+
 	public override void SetStaticDefaults()
 	{
-		ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
-		ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
-		ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
-		Main.projPet[Projectile.type] = true;
+		ProjectileID.Sets.MinionSacrificable[Type] = true;
+		ProjectileID.Sets.MinionTargettingFeature[Type] = true;
+		ProjectileID.Sets.CultistIsResistantTo[Type] = true;
+		Main.projPet[Type] = true;
 
 		AbstractSetStaticDefaults();
 	}
@@ -42,28 +58,7 @@ public abstract class BaseMinion(float TargettingRange, float DeaggroRange, Vect
 		AbstractSetDefaults();
 	}
 
-	private NPC _targetNPC;
-
-	public bool CanRetarget { get; set; }
-
 	public virtual void AbstractSetDefaults() { }
-
-	internal Player Player => Main.player[Projectile.owner];
-	internal int IndexOfType => Main.projectile.Where(x => x.active && x.owner == Projectile.owner && x.type == Projectile.type && x.whoAmI < Projectile.whoAmI).Count();
-
-	private bool _hadTarget = false;
-	private bool HadTarget
-	{
-		get => _hadTarget;
-		set
-		{
-			if(_hadTarget != value)
-			{
-				_hadTarget = value;
-				Projectile.netUpdate = true;
-			}
-		}
-	}
 
 	public override void AI()
 	{
@@ -71,7 +66,7 @@ public abstract class BaseMinion(float TargettingRange, float DeaggroRange, Vect
 		NPC miniontarget = Projectile.OwnerMinionAttackTargetNPC;
 		bool CanReachTarget(NPC npc, bool initialTargetCheck)
 		{
-			bool success = npc.CanBeChasedBy(this) && CanHit(Projectile.Center, npc.Center) && npc.Distance(Player.Center) <= DeaggroRange;
+			bool success = npc.CanBeChasedBy(this) && CanSelectTarget(npc) && npc.Distance(Player.Center) <= DeaggroRange;
 			if (npc.Distance(Player.Center) > maxdist && npc.Distance(Projectile.Center) > maxdist && !HadTarget && initialTargetCheck) //Only check when it's looking for a new valid target
 				return false;
 
@@ -119,7 +114,8 @@ public abstract class BaseMinion(float TargettingRange, float DeaggroRange, Vect
 			UpdateFrame(framespersecond, startframe, endframe);
 	}
 
-	internal static bool CanHit(Vector2 center1, Vector2 center2) => Collision.CanHitLine(center1, 0, 0, center2, 0, 0);
+	/// <summary> Checks whether this minion is allowed to aggro on <paramref name="target"/>. Involves a simple collision check by default. </summary>
+	public virtual bool CanSelectTarget(NPC target) => Collision.CanHitLine(Projectile.Center, 0, 0, target.Center, 0, 0);
 
 	public virtual void IdleMovement(Player player) { }
 
