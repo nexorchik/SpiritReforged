@@ -2,11 +2,11 @@
 
 namespace SpiritReforged.Content.Snow.Frostbite;
 
-internal class SnowHouseGen : ILoadable
+internal class SnowHouseGen : ModSystem
 {
 	private static bool Generated = false;
 
-	public void Load(Mod mod) => On_HouseBuilder.FillRooms += AddBooks;
+	public override void Load() => On_HouseBuilder.FillRooms += AddBooks;
 
 	private static void AddBooks(On_HouseBuilder.orig_FillRooms orig, HouseBuilder self)
 	{
@@ -57,5 +57,5 @@ internal class SnowHouseGen : ILoadable
 		}
 	}
 
-	public void Unload() { }
+	public override void PostWorldGen() => Generated = false; //Reset to default
 }
