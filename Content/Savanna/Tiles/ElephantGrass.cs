@@ -23,6 +23,8 @@ public class ElephantGrass : ModTile, IConvertibleTile
 		Main.tileNoFail[Type] = true;
 		Main.tileCut[Type] = true;
 
+		TileID.Sets.BreakableWhenPlacing[Type] = true;
+
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 1, 0);
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];

@@ -4,7 +4,7 @@ using SpiritReforged.Content.Forest.Botanist.Items;
 using System.Linq;
 using Terraria.GameContent.Metadata;
 
-namespace SpiritReforged.Common.TileCommon;
+namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
 public abstract class HerbTile : ModTile, ICheckItemUse
 {
@@ -23,10 +23,12 @@ public abstract class HerbTile : ModTile, ICheckItemUse
 		Main.tileObsidianKill[Type] = true;
 		Main.tileCut[Type] = true;
 		Main.tileNoFail[Type] = true;
+
 		TileID.Sets.ReplaceTileBreakUp[Type] = true;
 		TileID.Sets.IgnoredInHouseScore[Type] = true;
 		TileID.Sets.IgnoredByGrowingSaplings[Type] = true;
 		TileID.Sets.SwaysInWindBasic[Type] = true;
+
 		TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
 
 		HitSound = SoundID.Grass;
@@ -97,7 +99,7 @@ public abstract class HerbTile : ModTile, ICheckItemUse
 	}
 
 	public override void SetSpriteEffects(int i, int j, ref SpriteEffects spriteEffects)
-		=> spriteEffects = (i % 2 == 0) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+		=> spriteEffects = i % 2 == 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = -2;
 
@@ -114,12 +116,10 @@ public abstract class HerbTile : ModTile, ICheckItemUse
 			Player nearestPlayer = Main.player[Player.FindClosest(worldPosition, 16, 16)];
 
 			if (nearestPlayer.active && nearestPlayer.HeldItem.type == ItemID.StaffofRegrowth) // Increased yields with Staff of Regrowth, even when not fully grown
-			{
 				if (stage == PlantStage.Grown)
 					(herbItemStack, seedItemStack) = (2, Main.rand.Next(2, 5));
 				else if (stage == PlantStage.Growing)
 					seedItemStack = Main.rand.Next(1, 3);
-			}
 			else if (stage == PlantStage.Grown)
 				(herbItemStack, seedItemStack) = (1, Main.rand.Next(1, 4));
 			else if (stage == PlantStage.Growing)
