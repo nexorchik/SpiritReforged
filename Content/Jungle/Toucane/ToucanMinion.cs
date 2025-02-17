@@ -78,7 +78,9 @@ public class ToucanMinion : BaseMinion
 
 			//Only do collision effects if the change in velocity is significant enough
 			float strength = oldVelocity.Length();
-			if (strength > 2f && oldVelocity.Distance(Projectile.velocity) > strength / 4f)
+			float threshold = strength / 4f;
+
+			if (strength > 2f && oldVelocity.DistanceSQ(Projectile.velocity) > threshold * threshold)
 			{
 				SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
 				Collision.HitTiles(Projectile.Center, Projectile.velocity, Projectile.width, Projectile.height);
