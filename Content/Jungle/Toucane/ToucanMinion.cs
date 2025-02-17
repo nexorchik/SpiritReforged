@@ -9,7 +9,7 @@ namespace SpiritReforged.Content.Jungle.Toucane;
 [AutoloadMinionBuff]
 public class ToucanMinion : BaseMinion
 {
-	private const int TargetMemoryMax = 30;
+	private const int TargetMemoryMax = 20;
 
 	private ref float AiState => ref Projectile.ai[0];
 	private ref float AiTimer => ref Projectile.ai[1];
@@ -23,6 +23,8 @@ public class ToucanMinion : BaseMinion
 	private int _featherShotFrameTime;
 	/// <summary> For how long this minion can select a target without considering collision. </summary>
 	private int _targetMemory;
+	/// <summary> The whoAmI of the last NPC target. Expires with <see cref="_targetMemory"/>. </summary>
+	private int _lastTargetInMemory = -1;
 
 	public ToucanMinion() : base(700, 1200, new Vector2(40, 40)) { }
 
@@ -75,7 +77,8 @@ public class ToucanMinion : BaseMinion
 			Projectile.Bounce(oldVelocity, .75f);
 
 			//Only do collision effects if the change in velocity is significant enough
-			if (oldVelocity.Distance(Projectile.velocity) > Projectile.velocity.Length() / 4f)
+			float strength = oldVelocity.Length();
+			if (strength > 2f && oldVelocity.Distance(Projectile.velocity) > strength / 4f)
 			{
 				SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
 				Collision.HitTiles(Projectile.Center, Projectile.velocity, Projectile.width, Projectile.height);
@@ -95,6 +98,9 @@ public class ToucanMinion : BaseMinion
 	{
 		AiTimer++;
 		_featherShotFrameTime = 0;
+		_targetMemory = 0;
+		_lastTargetInMemory = -1;
+
 		if (AiState is not STATE_HOVERTORESTSPOT and not STATE_RESTING)
 		{
 			AiTimer = 0;
@@ -172,8 +178,20 @@ public class ToucanMinion : BaseMinion
 	{
 		var projRect = Projectile.getRect();
 		var npcRect = target.getRect();
+		bool inCollisionRange = Collision.CanHitLine(projRect.Top(), 0, 0, npcRect.TopLeft(), npcRect.Width, npcRect.Height);
 
-		return _targetMemory > 0 || Collision.CanHitLine(projRect.Top(), 0, 0, npcRect.TopLeft(), npcRect.Width, npcRect.Height);
+		if (target.whoAmI == _lastTargetInMemory || inCollisionRange)
+		{
+			if (inCollisionRange)
+			{
+				_targetMemory = TargetMemoryMax;
+				_lastTargetInMemory = target.whoAmI;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private bool CanLandProjectile(NPC target) => Collision.CanHitLine(Projectile.Center, 0, 0, target.Center, 0, 0);
@@ -189,11 +207,6 @@ public class ToucanMinion : BaseMinion
 		const int GlideTime = 45;
 
 		Projectile.tileCollide = AiState is STATE_GLIDING or STATE_FEATHERSHOOT;
-
-		if (!CanLandProjectile(target))
-			AiState = STATE_HOVERTOTARGET;
-		else
-			_targetMemory = TargetMemoryMax;
 
 		switch (AiState)
 		{
@@ -217,7 +230,7 @@ public class ToucanMinion : BaseMinion
 
 			case STATE_FEATHERSHOOT:
 				Projectile.direction = Projectile.spriteDirection = Projectile.Center.X < target.Center.X ? -1 : 1;
-				if (Projectile.Distance(target.Center) >= FeatherMaxRange && AiTimer <= FeatherShootTime * (FeatherShots + 0.5f)) //fly back to target if too far, and if before the anticipation before the glide
+				if ((Projectile.Distance(target.Center) >= FeatherMaxRange || !CanLandProjectile(target)) && AiTimer <= FeatherShootTime * (FeatherShots + 0.5f)) //fly back to target if too far, and if before the anticipation before the glide
 				{
 					AiState = STATE_HOVERTOTARGET;
 					AiTimer = 0;
@@ -289,6 +302,11 @@ public class ToucanMinion : BaseMinion
 		}
 
 		_featherShotFrameTime = Math.Max(_featherShotFrameTime - 1, 0);
+		_targetMemory = Math.Max(_targetMemory - 1, 0);
+
+		if (_targetMemory == 0)
+			_lastTargetInMemory = -1;
+
 		AiTimer++;
 	}
 
