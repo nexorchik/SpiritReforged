@@ -6,9 +6,26 @@ using Terraria.Audio;
 
 namespace SpiritReforged.Content.Jungle.Toucane;
 
-[AutoloadMinionBuff()]
+[AutoloadMinionBuff]
 public class ToucanMinion : BaseMinion
 {
+	private const int TargetMemoryMax = 20;
+
+	private ref float AiState => ref Projectile.ai[0];
+	private ref float AiTimer => ref Projectile.ai[1];
+
+	private const float STATE_HOVERTORESTSPOT = 0;
+	private const float STATE_RESTING = 1;
+	private const float STATE_HOVERTOTARGET = 2;
+	private const float STATE_FEATHERSHOOT = 3;
+	private const float STATE_GLIDING = 4;
+
+	private int _featherShotFrameTime;
+	/// <summary> For how long this minion can select a target without considering collision. </summary>
+	private int _targetMemory;
+	/// <summary> The whoAmI of the last NPC target. Expires with <see cref="_targetMemory"/>. </summary>
+	private int _lastTargetInMemory = -1;
+
 	public ToucanMinion() : base(700, 1200, new Vector2(40, 40)) { }
 
 	public override void AbstractSetStaticDefaults()
@@ -47,21 +64,9 @@ public class ToucanMinion : BaseMinion
 
 	public override bool MinionContactDamage() => AiState == STATE_GLIDING;
 
-	private ref float AiState => ref Projectile.ai[0];
-	private ref float AiTimer => ref Projectile.ai[1];
-
-	private const float STATE_HOVERTORESTSPOT = 0;
-	private const float STATE_RESTING = 1;
-	private const float STATE_HOVERTOTARGET = 2;
-	private const float STATE_FEATHERSHOOT = 3;
-	private const float STATE_GLIDING = 4;
-
-	private int _featherShotFrameTime;
-
 	public override bool PreAI()
 	{
 		Projectile.rotation = Projectile.velocity.X * 0.05f;
-
 		return true;
 	}
 
@@ -69,9 +74,17 @@ public class ToucanMinion : BaseMinion
 	{
 		if (AiState == STATE_GLIDING)
 		{
-			SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
-			Collision.HitTiles(Projectile.Center, Projectile.velocity, Projectile.width, Projectile.height);
-			Projectile.Bounce(oldVelocity, 0.5f);
+			Projectile.Bounce(oldVelocity, .75f);
+
+			//Only do collision effects if the change in velocity is significant enough
+			float strength = oldVelocity.Length();
+			float threshold = strength / 4f;
+
+			if (strength > 2f && oldVelocity.DistanceSQ(Projectile.velocity) > threshold * threshold)
+			{
+				SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+				Collision.HitTiles(Projectile.Center, Projectile.velocity, Projectile.width, Projectile.height);
+			}
 		}
 
 		return false;
@@ -87,6 +100,9 @@ public class ToucanMinion : BaseMinion
 	{
 		AiTimer++;
 		_featherShotFrameTime = 0;
+		_targetMemory = 0;
+		_lastTargetInMemory = -1;
+
 		if (AiState is not STATE_HOVERTORESTSPOT and not STATE_RESTING)
 		{
 			AiTimer = 0;
@@ -160,16 +176,39 @@ public class ToucanMinion : BaseMinion
 		}
 	}
 
+	public override bool CanSelectTarget(NPC target)
+	{
+		var projRect = Projectile.getRect();
+		var npcRect = target.getRect();
+		bool inCollisionRange = Collision.CanHitLine(projRect.Top(), 0, 0, npcRect.TopLeft(), npcRect.Width, npcRect.Height);
+
+		if (target.whoAmI == _lastTargetInMemory || inCollisionRange)
+		{
+			if (inCollisionRange)
+			{
+				_targetMemory = TargetMemoryMax;
+				_lastTargetInMemory = target.whoAmI;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private bool CanLandProjectile(NPC target) => Collision.CanHitLine(Projectile.Center, 0, 0, target.Center, 0, 0);
+
 	public override void TargettingBehavior(Player player, NPC target)
 	{
-		Projectile.tileCollide = true;
-		int FeatherMinRange = 200;
-		int FeatherMaxRange = 600;
-		int FeatherShootTime = 30;
-		int FeatherShots = 3;
-		float GlideStartVelocity = 8;
-		float GlideMaxVelocity = 12;
-		int GlideTime = 45;
+		const int FeatherMinRange = 200;
+		const int FeatherMaxRange = 600;
+		const int FeatherShootTime = 30;
+		const int FeatherShots = 3;
+		const float GlideStartVelocity = 8;
+		const float GlideMaxVelocity = 12;
+		const int GlideTime = 45;
+
+		Projectile.tileCollide = AiState is STATE_GLIDING or STATE_FEATHERSHOOT;
 
 		switch (AiState)
 		{
@@ -181,7 +220,7 @@ public class ToucanMinion : BaseMinion
 
 			case STATE_HOVERTOTARGET:
 				Projectile.direction = Projectile.spriteDirection = Projectile.Center.X < target.Center.X ? -1 : 1;
-				if (Projectile.Distance(target.Center) <= FeatherMinRange) //switch to shooting feathers if close enough to a target
+				if (Projectile.Distance(target.Center) <= FeatherMinRange && CanLandProjectile(target)) //switch to shooting feathers if close enough to a target
 				{
 					AiState = STATE_FEATHERSHOOT;
 					AiTimer = 0;
@@ -190,9 +229,10 @@ public class ToucanMinion : BaseMinion
 
 				Projectile.AccelFlyingMovement(target.Center, 0.25f, 0.1f, 12);
 				break;
+
 			case STATE_FEATHERSHOOT:
 				Projectile.direction = Projectile.spriteDirection = Projectile.Center.X < target.Center.X ? -1 : 1;
-				if (Projectile.Distance(target.Center) >= FeatherMaxRange && AiTimer <= FeatherShootTime * (FeatherShots + 0.5f)) //fly back to target if too far, and if before the anticipation before the glide
+				if ((Projectile.Distance(target.Center) >= FeatherMaxRange || !CanLandProjectile(target)) && AiTimer <= FeatherShootTime * (FeatherShots + 0.5f)) //fly back to target if too far, and if before the anticipation before the glide
 				{
 					AiState = STATE_HOVERTOTARGET;
 					AiTimer = 0;
@@ -239,6 +279,7 @@ public class ToucanMinion : BaseMinion
 					Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(target.Center), 0.1f);
 
 				break;
+
 			case STATE_GLIDING:
 				if (AiTimer >= GlideTime) //switch state after enough time has passed
 				{
@@ -263,6 +304,11 @@ public class ToucanMinion : BaseMinion
 		}
 
 		_featherShotFrameTime = Math.Max(_featherShotFrameTime - 1, 0);
+		_targetMemory = Math.Max(_targetMemory - 1, 0);
+
+		if (_targetMemory == 0)
+			_lastTargetInMemory = -1;
+
 		AiTimer++;
 	}
 
