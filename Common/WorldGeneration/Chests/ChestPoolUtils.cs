@@ -5,15 +5,31 @@ namespace SpiritReforged.Common.WorldGeneration.Chests;
 public static class ChestPoolUtils
 {
 	/// <summary> Struct containing information related to chest item pools. </summary>
-	/// <param name="items"> The item types to add to the chest pool. Accepts <see cref="int"/>, <see cref="short"/>, and int[].<para/>
-	/// Only one item type will be selected when using int[]. </param>
-	/// <param name="stack"> The item stack. </param>
-	/// <param name="chance"> The chance for the item to generate. </param>
-	public struct ChestInfo(object items, int stack = 1, float chance = 1)
+	public struct ChestInfo
 	{
-		public object items = items;
-		public int stack = stack;
-		public float chance = chance;
+		/// <param name="item"> The item type to add to the chest pool. </param>
+		/// <param name="stack"> The item stack. </param>
+		/// <param name="chance"> The chance for the item to generate. </param>
+		public ChestInfo(int item, int stack = 1, float chance = 1)
+		{
+			items = item;
+			this.stack = stack;
+			this.chance = chance;
+		}
+
+		/// <param name="items"> The item types to add to the chest pool. Only one item type will be selected when using int[]. </param>
+		/// <param name="stack"> The item stack. </param>
+		/// <param name="chance"> The chance for the item to generate. </param>
+		public ChestInfo(int[] items, int stack = 1, float chance = 1)
+		{
+			this.items = items;
+			this.stack = stack;
+			this.chance = chance;
+		}
+
+		public object items;
+		public int stack;
+		public float chance;
 
 		public readonly List<ChestInfo> ToList() => [this];
 	}
@@ -31,10 +47,6 @@ public static class ChestPoolUtils
 					break;
 				case int intItem:
 					chest.item[itemIndex].SetDefaults((int)chestInfo.items);
-					chest.item[itemIndex].stack = chestInfo.stack;
-					break;
-				case short shortItem:
-					chest.item[itemIndex].SetDefaults((short)chestInfo.items);
 					chest.item[itemIndex].stack = chestInfo.stack;
 					break;
 			}

@@ -13,21 +13,22 @@ public class BambooBirdCage : ModTile, IAutoloadTileItem
 {
 	private int ItemType => Mod.Find<ModItem>(Name + "Item").Type;
 
-	private static readonly int[] BirdTypes = [ItemID.Cardinal, ItemID.BlueJay, ItemID.GoldBird, ItemID.Bird, ItemID.Seagull, ItemID.BlueMacaw, ItemID.GrayCockatiel];
+	private static int[] BirdTypes;
 
 	/// <returns> Whether the multitile at the given position has a tile entity. </returns>
 	private static bool HasEntity(int i, int j, out BambooBirdCageEntity entity)
 	{
 		TileExtensions.GetTopLeft(ref i, ref j);
 
-		if (TileEntity.ByPosition.TryGetValue(new Point16(i, j), out TileEntity value) && value is BambooBirdCageEntity)
+		int id = ModContent.GetInstance<BambooBirdCageEntity>().Find(i, j);
+		if (id == -1)
 		{
-			entity = value as BambooBirdCageEntity;
-			return true;
+			entity = null;
+			return false;
 		}
 
-		entity = null;
-		return false;
+		entity = (BambooBirdCageEntity)TileEntity.ByID[id];
+		return true;
 	}
 
 	public void SetItemDefaults(ModItem item)
@@ -44,6 +45,9 @@ public class BambooBirdCage : ModTile, IAutoloadTileItem
 
 	public override void SetStaticDefaults()
 	{
+		BirdTypes = [ItemID.Cardinal, ItemID.BlueJay, ItemID.GoldBird, ItemID.Bird, ItemID.Seagull, 
+			ItemID.BlueMacaw, ItemID.GrayCockatiel, Mod.Find<ModItem>("SparrowItem").Type];
+
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
 		Main.tileLighted[Type] = true;
@@ -99,17 +103,6 @@ public class BambooBirdCage : ModTile, IAutoloadTileItem
 
 	public override bool RightClick(int i, int j)
 	{
-		static void CageItem(ref Item item, Player player)
-		{
-			//Consume an item from the player's hand
-			item = ItemLoader.TransferWithLimit(Main.mouseItem is null || Main.mouseItem.IsAir ? player.inventory[player.selectedItem] : Main.mouseItem, 1);
-
-			//Interaction effects
-			player.releaseUseItem = false;
-			player.mouseInterface = true;
-			player.PlayDroppedItemAnimation(20);
-		}
-
 		if (HasEntity(i, j, out var entity))
 		{
 			var player = Main.LocalPlayer;
@@ -133,6 +126,17 @@ public class BambooBirdCage : ModTile, IAutoloadTileItem
 		}
 
 		return false;
+
+		static void CageItem(ref Item item, Player player)
+		{
+			//Consume an item from the player's hand
+			item = ItemLoader.TransferWithLimit(Main.mouseItem is null || Main.mouseItem.IsAir ? player.inventory[player.selectedItem] : Main.mouseItem, 1);
+
+			//Interaction effects
+			player.releaseUseItem = false;
+			player.mouseInterface = true;
+			player.PlayDroppedItemAnimation(20);
+		}
 	}
 
 	public override void MouseOver(int i, int j)
@@ -181,8 +185,8 @@ public class BambooBirdCageEntity : ModTileEntity
 
 	public override bool IsTileValidForEntity(int x, int y)
 	{
-		Tile tile = Framing.GetTileSafely(x, y);
-		return tile.HasTile && tile.TileType == ModContent.TileType<BambooBirdCage>();
+		var tile = Framing.GetTileSafely(x, y);
+		return tile.HasTile && tile.TileType == ModContent.TileType<BambooBirdCage>() && TileObjectData.IsTopLeft(x, y);
 	}
 
 	public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate)
