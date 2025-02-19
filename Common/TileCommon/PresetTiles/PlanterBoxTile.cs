@@ -2,16 +2,7 @@
 
 public abstract class PlanterBoxTile : ModTile, IAutoloadTileItem
 {
-	public override void Load() => On_WorldGen.CanCutTile += StopCut;
-
-	/// <summary> Prevent planted herbs (presumably) from being cut above planter boxes, like vanilla does. </summary>
-	private static bool StopCut(On_WorldGen.orig_CanCutTile orig, int x, int y, TileCuttingContext context)
-	{
-		if (Main.tile[x, y + 1] != null && TileLoader.GetTile(Main.tile[x, y + 1].TileType) is PlanterBoxTile)
-			return false;
-
-		return orig(x, y, context);
-	}
+	public virtual void SetItemDefaults(ModItem item) => item.Item.value = Item.buyPrice(silver: 1);
 
 	public override void SetStaticDefaults()
 	{
@@ -20,13 +11,11 @@ public abstract class PlanterBoxTile : ModTile, IAutoloadTileItem
 		Main.tileSolid[Type] = true;
 		Main.tileNoAttach[Type] = true;
 		Main.tileTable[Type] = true;
-		Main.tileLavaDeath[Type] = true;
 
-		TileID.Sets.DisableSmartCursor[Type] = true;
-
-		this.Merge(TileID.PlanterBox);
-		AddMapEntry(new Color(179, 146, 107));
+		AddMapEntry(new Color(185, 150, 110));
 		DustType = DustID.WoodFurniture;
+
+		PlanterHandler.PlanterTypes.Add(Type);
 	}
 
 	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
@@ -50,6 +39,7 @@ public class PlanterBoxMerge : GlobalTile
 		return true;
 	}
 
+	/// <summary> Mimics <see cref="TileID.PlanterBox"/> framing. </summary>
 	public static void Frame(int i, int j)
 	{
 		var tile = Main.tile[i, j];
@@ -64,6 +54,7 @@ public class PlanterBoxMerge : GlobalTile
 			tile.TileFrameX = 54;
 	}
 
+	/// <summary> Checks whether <see cref="TileID.PlanterBox"/> or <see cref="PlanterBoxTile"/> exists at the given coordinates. </summary>
 	private static bool Exists(int i, int j)
 	{
 		var t = Framing.GetTileSafely(i, j);

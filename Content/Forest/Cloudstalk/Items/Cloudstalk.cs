@@ -1,6 +1,7 @@
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.TileCommon.TileTag;
 using SpiritReforged.Content.Forest.Cloudstalk.Tiles;
+using SpiritReforged.Content.Jungle.Bamboo.Tiles;
 
 namespace SpiritReforged.Content.Forest.Cloudstalk.Items;
 
@@ -48,7 +49,7 @@ public class CloudstalkTile : HerbTile
 		TileObjectData.newTile.CopyFrom(TileObjectData.StyleAlch);
 		TileObjectData.newTile.AnchorValidTiles = [TileID.Grass, TileID.HallowedGrass, TileID.JungleGrass, ModContent.TileType<Savanna.Tiles.SavannaGrass>(), 
 			ModContent.TileType<Savanna.Tiles.SavannaGrassHallow>(), TileID.Cloud, TileID.RainCloud, TileID.SnowCloud];
-		TileObjectData.newTile.AnchorAlternateTiles = [TileID.ClayPot, TileID.PlanterBox, ModContent.TileType<CloudstalkBox>()];
+		TileObjectData.newTile.AnchorAlternateTiles = [TileID.ClayPot, TileID.PlanterBox, ModContent.TileType<CloudstalkBox>(), ModContent.TileType<BambooPot>()];
 		TileObjectData.addTile(Type);
 
 		LocalizedText name = CreateMapEntryName();
