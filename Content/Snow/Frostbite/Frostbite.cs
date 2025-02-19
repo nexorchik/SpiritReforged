@@ -62,6 +62,7 @@ public class FrostbiteProj : ModProjectile
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/PageFlip") with { PitchVariance = 0.3f, Volume = 0.65f }, owner.Center);
 			SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown with { Pitch = .5f }, owner.Center);
 			SoundEngine.PlaySound(SoundID.AbigailAttack with { Volume = .15f, Pitch = 1f }, owner.Center);
+			Projectile.timeLeft = FadeTime;
 		}
 
 		Projectile.Opacity = MathHelper.Min(Projectile.Opacity + 1f / FadeTime, 1);
@@ -176,7 +177,7 @@ public class FrostbiteProj : ModProjectile
 		const int volume = 1;
 
 		Player owner = Main.player[Projectile.owner];
-		if (owner.channel && Projectile.timeLeft > 1)
+		if (Projectile.timeLeft >= FadeTime)
 		{
 			if (!SoundEngine.TryGetActiveSound(loopedSound, out ActiveSound sound))
 				loopedSound = SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Blizzard_Loop") with { Volume = volume, Pitch = -.6f, MaxInstances = 1, IsLooped = true }, Projectile.Center);
