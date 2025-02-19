@@ -48,6 +48,12 @@ public class Starflower : ModTile, ISwayTile
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 
+	public override void NearbyEffects(int i, int j, bool closer)
+	{
+		if (!closer)
+			Main.SceneMetrics.HasSunflower = true;
+	}
+
 	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
