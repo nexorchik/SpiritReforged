@@ -1294,3 +1294,8 @@ RemedyPotion: {
 		[list]
 		'''
 }
+
+CloudstalkBoxItem: {
+	DisplayName: Cloudstalk Planter Box
+	Tooltip: ""
+}
