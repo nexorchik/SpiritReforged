@@ -6,6 +6,8 @@ namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
 [AutoloadGlowmask("Method:Content.Forest.Stargrass.Tiles.StargrassFlowers Glow")]
 public class StargrassFlowers : ModTile
 {
+	public const int StyleRange = 27;
+
 	public static Color Glow(object obj)
 	{
 		const float MinBrightness = 0.4f;
@@ -42,7 +44,7 @@ public class StargrassFlowers : ModTile
 		TileObjectData.newTile.CoordinateHeights = [TileHeight];
 		TileObjectData.newTile.DrawYOffset = -(TileHeight - 18);
 		TileObjectData.newTile.StyleHorizontal = true;
-		TileObjectData.newTile.RandomStyleRange = 27;
+		TileObjectData.newTile.RandomStyleRange = StyleRange;
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<StargrassTile>()];
 		TileObjectData.newTile.AnchorAlternateTiles = [TileID.ClayPot, TileID.PlanterBox];
 		TileObjectData.addTile(Type);

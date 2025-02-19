@@ -1,6 +1,6 @@
 ﻿using Terraria.WorldBuilding;
 using SpiritReforged.Common.WorldGeneration.Micropasses;
-using SpiritReforged.Content.Forest.Stargrass.Tiles;
+using SpiritReforged.Content.Forest.Stargrass;
 
 namespace SpiritMod.World.Micropasses;
 
@@ -52,12 +52,7 @@ internal class StargrassMicropass : Micropass
 			for (int j = y - size; j < y + size; ++j)
 			{
 				if (Vector2.DistanceSquared(new Vector2(x, y), new Vector2(i, j)) < size * size)
-				{
-					Tile tile = Main.tile[i, j];
-
-					if (tile.TileType == TileID.Grass)
-						tile.TileType = (ushort)ModContent.TileType<StargrassTile>();
-				}
+					StargrassConversion.Convert(i, j);
 			}
 		}
 	}
