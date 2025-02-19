@@ -7,11 +7,13 @@ internal class SignTagHandler : ILoadable
 {
 	private delegate void TagAction(SignTag tag);
 
-	public bool HasTag => _currentTag is not null;
+	public static bool HasTag => _currentTag is not null;
 
 	private static readonly HashSet<SignTag> loadedTags = [];
-	private bool _wasSignHover;
-	private string _currentTag;
+	/// <summary> Whether a sign was being hovered over. </summary>
+	private static bool _wasSignHover;
+	/// <summary> All tag data on the currently viewed sign. </summary>
+	private static string _currentTag;
 
 	public void Load(Mod mod)
 	{
@@ -28,7 +30,7 @@ internal class SignTagHandler : ILoadable
 		On_Main.DrawInterface += ResetSignHover;
 	}
 
-	private void TrackSignText(On_Main.orig_DrawMouseOver orig, Main self)
+	private static void TrackSignText(On_Main.orig_DrawMouseOver orig, Main self)
 	{
 		if (!Main.mouseText && !Main.LocalPlayer.mouseInterface && Main.signHover != -1)
 		{
@@ -70,7 +72,7 @@ internal class SignTagHandler : ILoadable
 	/// <summary> Verifies whether the given text contains any <see cref="SignTag.Key"/>s and assigns <see cref="_currentTag"/>. <para/>
 	/// Additionally parses parameter data corresponding to the current <see cref="loadedTags"/>. </summary>
 	/// <param name="signText"> The sign text. </param>
-	private void VerifyTags(string signText)
+	private static void VerifyTags(string signText)
 	{
 		const char close = '>';
 		const char paramsIndicator = ':';
@@ -146,7 +148,7 @@ internal class SignTagHandler : ILoadable
 		int StartIndex() => _currentTag?.Length ?? 0;
 	}
 
-	private void ModifySignHover(ILContext il)
+	private static void ModifySignHover(ILContext il)
 	{
 		ILCursor c = new(il);
 		ILLabel label = null;
@@ -163,7 +165,7 @@ internal class SignTagHandler : ILoadable
 
 	/// <summary> Calculates custom sign text drawing and passes the data into the <see cref="loadedTags"/> corresponding to <see cref="_currentTag"/>. </summary>
 	/// <returns> Whether to draw normal sign text. </returns>
-	private bool CheckHasTag()
+	private static bool CheckHasTag()
 	{
 		if (HasTag) //Abbreviated vanilla code
 		{
@@ -230,7 +232,7 @@ internal class SignTagHandler : ILoadable
 	/// <param name="self"></param>
 	/// <param name="text"> The cached <see cref="Main.npcChatText"/> value. </param>
 	/// <param name="baseColor"> The color of the text. </param>
-	private void ModifySignMenu(On_Main.TextDisplayCache.orig_PrepareCache orig, object self, string text, Color baseColor)
+	private static void ModifySignMenu(On_Main.TextDisplayCache.orig_PrepareCache orig, object self, string text, Color baseColor)
 	{
 		if (HasTag && !Main.editSign && Main.LocalPlayer.sign != -1)
 		{
@@ -247,13 +249,13 @@ internal class SignTagHandler : ILoadable
 	/// <param name="orig"></param>
 	/// <param name="i"> The index of the sign in <see cref="Main.sign"/>. </param>
 	/// <param name="text"> The sign text. </param>
-	private void VerifyEditTag(On_Sign.orig_TextSign orig, int i, string text)
+	private static void VerifyEditTag(On_Sign.orig_TextSign orig, int i, string text)
 	{
 		orig(i, text);
 		VerifyTags(text);
 	}
 
-	private void ResetSignHover(On_Main.orig_DrawInterface orig, Main self, GameTime gameTime)
+	private static void ResetSignHover(On_Main.orig_DrawInterface orig, Main self, GameTime gameTime)
 	{
 		orig(self, gameTime);
 		_wasSignHover = Main.signHover != -1;

@@ -23,12 +23,13 @@ public class BoidManager : ModSystem
 		for (int i = 0; i < FishTextures.Length; i++)
 			FishTextures[i] = ModContent.Request<Texture2D>("SpiritReforged/Content/Ocean/Boids/Textures/fish_" + i);
 
-		On_Main.DrawWoF += (On_Main.orig_DrawWoF orig, Main self) =>
+		On_Main.DrawWoF += static (On_Main.orig_DrawWoF orig, Main self) =>
 		{
 			if (!Main.gamePaused) //Update here because boids are largely visual
 				Update();
 
 			Draw(Main.spriteBatch);
+			orig(self);
 		};
 	}
 
