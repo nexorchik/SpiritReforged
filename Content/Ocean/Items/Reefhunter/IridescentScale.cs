@@ -4,6 +4,8 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter;
 
 public class IridescentScale : ModItem
 {
+	public override bool IsLoadingEnabled(Mod mod) => false;
+
 	public override void SetStaticDefaults() => VariantGlobalItem.AddVariants(Type, [new Point(26, 20), new Point(26, 32), new Point(26, 28)]);
 	public override void SetDefaults()
 	{

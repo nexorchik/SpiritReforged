@@ -20,6 +20,8 @@ public class SunStaffHeld : ModProjectile
 
 	private bool _stoppedChannel = false;
 
+	public override bool IsLoadingEnabled(Mod mod) => false;
+
 	public override void SetDefaults()
 	{
 		Projectile.width = 46;

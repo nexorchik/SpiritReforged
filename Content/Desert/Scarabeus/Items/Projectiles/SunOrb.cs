@@ -2,13 +2,11 @@
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 using SpiritReforged.Common.PrimitiveRendering;
-using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Particles;
 using static SpiritReforged.Common.Easing.EaseFunction;
 using static Microsoft.Xna.Framework.MathHelper;
 using System.IO;
-using static Terraria.GameContent.Animations.Actions.Sprites;
 
 namespace SpiritReforged.Content.Desert.Scarabeus.Items.Projectiles;
 
@@ -31,6 +29,8 @@ public class SunOrb : ModProjectile
 
 	private bool _stoppedChannel = false;
 	private bool _initialized = false;
+
+	public override bool IsLoadingEnabled(Mod mod) => false;
 
 	public override void SetDefaults()
 	{

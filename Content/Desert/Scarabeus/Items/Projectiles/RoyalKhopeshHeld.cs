@@ -44,6 +44,8 @@ public class RoyalKhopeshHeld : ModProjectile
 
 	private float[] oldScale = { 0 };
 
+	public override bool IsLoadingEnabled(Mod mod) => false;
+
 	public override void SetStaticDefaults()
 	{
 		ProjectileID.Sets.TrailCacheLength[Type] = 15;
@@ -211,6 +213,7 @@ public class RoyalKhopeshHeld : ModProjectile
 				progress = EaseCircularOut.Ease(EaseQuadOut.Ease(swingProgress));
 				break;
 		}
+
 		return progress;
 	}
 
@@ -280,6 +283,7 @@ public class RoyalKhopeshHeld : ModProjectile
 				{
 					p.Velocity *= 0.93f;
 				}
+
 				ParticleHandler.SpawnParticle(new GlowParticle(target.Center + Main.rand.NextVector2Square(8, 8), velParticle, RUBY_LIGHT, RUBY_DARK, scale, Main.rand.Next(20, 40), 5, DelegateAction));
 			}
 		}

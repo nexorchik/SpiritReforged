@@ -6,6 +6,8 @@ namespace SpiritReforged.Content.Desert.Scarabeus.Items;
 [AutoloadGlowmask("255,255,255")]
 public class SunStaff : ModItem
 {
+	public override bool IsLoadingEnabled(Mod mod) => false;
+
 	public override void SetStaticDefaults() => Item.staff[Type] = true;
 
 	public override void SetDefaults()

@@ -6,6 +6,8 @@ namespace SpiritReforged.Content.Desert.Scarabeus.Items;
 
 public class RoyalKhopesh : ModItem
 {
+	public override bool IsLoadingEnabled(Mod mod) => false;
+
 	public override void SetDefaults()
 	{
 		Item.damage = 28;
@@ -66,6 +68,8 @@ public class KhopeshPlayer : ModPlayer
 	private int _comboTimer;
 
 	private const int COMBOTIMER_MAX = 60;
+
+	public override bool IsLoadingEnabled(Mod mod) => false;
 
 	public override void ResetEffects()
 	{
