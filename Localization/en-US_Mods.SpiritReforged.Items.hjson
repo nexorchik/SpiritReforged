@@ -486,11 +486,6 @@ LivingBaobabWallItem: {
 	Tooltip: ""
 }
 
-BaobabTool: {
-	DisplayName: Baobab Tool (Debug)
-	Tooltip: ""
-}
-
 LivingBaobabLeafWand: {
 	DisplayName: Living Baobab Leaf Wand
 	Tooltip: ""
