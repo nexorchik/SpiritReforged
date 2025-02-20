@@ -11,7 +11,8 @@ public abstract class WorldNPC : ModNPC
 
 	/// <summary>
 	/// <inheritdoc/><para/>
-	/// Automatically registers this NPC for <see cref="WorldNPCFlags.SpawnedToday"/>.
+	/// Automatically registers this NPC for <see cref="WorldNPCFlags.SpawnedToday"/>.<br/>
+	/// Additionally sets <see cref="NPCID.Sets.ActsLikeTownNPC"/> and <see cref="NPCID.Sets.NoTownNPCHappiness[Type]"/> to true.
 	/// </summary>
 	public override void SetStaticDefaults()
 	{
