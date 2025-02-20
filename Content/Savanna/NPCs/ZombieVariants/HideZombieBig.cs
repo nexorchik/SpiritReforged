@@ -1,4 +1,4 @@
-using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Common.NPCCommon.Abstract;
 using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Items.HuntingRifle;
 using System.IO;
