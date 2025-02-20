@@ -8,6 +8,9 @@ internal class PinPlayer : ModPlayer
 	public HashSet<string> unlockedPins = []; //Remember that this data isn't synced
 	public readonly HashSet<string> newPins = [];
 
+	/// <summary> 0-1 based on unlocked pin count/total pins. </summary>
+	public float PinProgress => (float)unlockedPins.Count / PinSystem.ItemByName.Count;
+
 	public override void SaveData(TagCompound tag) => tag["unlockedPins"] = unlockedPins.ToList();
 	public override void LoadData(TagCompound tag) => unlockedPins = tag.GetList<string>("unlockedPins").ToHashSet();
 }

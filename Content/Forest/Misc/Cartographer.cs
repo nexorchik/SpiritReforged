@@ -7,10 +7,12 @@ using SpiritReforged.Content.Savanna.Biome;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 using SpiritReforged.Common.WorldGeneration.PointOfInterest;
+using SpiritReforged.Common.NPCCommon.Abstract;
+using SpiritReforged.Common.PlayerCommon;
 
 namespace SpiritReforged.Content.Forest.Misc;
 
-public class Cartographer : ModNPC
+public class Cartographer : WorldNPC
 {
 	protected override bool CloneNewInstances => true;
 
@@ -25,10 +27,10 @@ public class Cartographer : ModNPC
 
 	public override void SetStaticDefaults()
 	{
+		base.SetStaticDefaults();
+
 		Main.npcFrameCount[Type] = 25;
 
-		NPCID.Sets.ActsLikeTownNPC[Type] = true;
-		NPCID.Sets.NoTownNPCHappiness[Type] = true;
 		NPCID.Sets.ExtraFramesCount[Type] = 9;
 		NPCID.Sets.AttackFrameCount[Type] = 4;
 		NPCID.Sets.DangerDetectRange[Type] = 600;
@@ -37,19 +39,7 @@ public class Cartographer : ModNPC
 		NPCID.Sets.HatOffsetY[Type] = 2;
 	}
 
-	public override void SetDefaults()
-	{
-		NPC.CloneDefaults(NPCID.SkeletonMerchant);
-		NPC.HitSound = SoundID.NPCHit1;
-		NPC.DeathSound = SoundID.NPCDeath1;
-		NPC.Size = new Vector2(30, 40);
-
-		AnimationType = NPCID.Guide;
-	}
-
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Surface");
-
-	public override bool CanChat() => true;
 	public override string GetChat() => Language.GetTextValue("Mods.SpiritReforged.NPCs.Cartographer.Dialogue." + Main.rand.Next(4));
 
 	public override List<string> SetNPCNameList()
@@ -153,19 +143,19 @@ public class Cartographer : ModNPC
 
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
-		if (ModContent.GetInstance<WorldNPCFlags>().cartographerSpawned || spawnInfo.Invasion || spawnInfo.Water)
+		if (SpawnedToday || spawnInfo.Invasion || spawnInfo.Water)
 			return 0; //Never spawn during an invasion, in water or if already spawned that day
 
-		if (spawnInfo.SpawnTileY > Main.worldSurface && spawnInfo.SpawnTileY < Main.UnderworldLayer)
-			return .00018f; //Rarely spawn in caves above underworld height
+		float multiplier = MathHelper.Lerp(1.75f, .5f, spawnInfo.Player.GetModPlayer<PinPlayer>().PinProgress) * (Main.hardMode ? .6f : 1f);
+
+		if (spawnInfo.SpawnTileY > Main.worldSurface && spawnInfo.SpawnTileY < Main.UnderworldLayer && !spawnInfo.Player.ZoneEvil())
+			return .00018f * multiplier; //Rarely spawn in caves above underworld height
 
 		if ((spawnInfo.Player.InModBiome<SavannaBiome>() || spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneJungle || OuterThirds(spawnInfo.SpawnTileX) && spawnInfo.Player.InZonePurity() && !spawnInfo.Player.ZoneSkyHeight) && Main.dayTime)
-			return .0019f; //Spawn most commonly in the Savanna, Desert, Jungle, and outer thirds of the Forest during the day
+			return .0019f * multiplier; //Spawn most commonly in the Savanna, Desert, Jungle, and outer thirds of the Forest during the day
 
 		return 0;
 
 		static bool OuterThirds(int x) => x < Main.maxTilesX / 3 || x > Main.maxTilesX - Main.maxTilesY / 3;
 	}
-
-	public override void OnSpawn(IEntitySource source) => ModContent.GetInstance<WorldNPCFlags>().cartographerSpawned = true;
 }

@@ -1,4 +1,4 @@
-﻿namespace SpiritReforged.Common.NPCCommon;
+﻿namespace SpiritReforged.Common.NPCCommon.Abstract;
 
 internal abstract class PlayerContainerNPC : ModNPC
 {

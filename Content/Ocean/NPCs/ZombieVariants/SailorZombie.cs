@@ -1,4 +1,4 @@
-using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Common.NPCCommon.Abstract;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;

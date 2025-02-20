@@ -6,24 +6,19 @@ using SpiritReforged.Content.Savanna.Items.Gar;
 using Terraria.Utilities;
 using Terraria.GameContent.Bestiary;
 using System.Linq;
+using SpiritReforged.Common.NPCCommon.Abstract;
 
 namespace SpiritReforged.Content.Forest.Misc;
 
-public class Hiker : ModNPC
+public class Hiker : WorldNPC
 {
-	/// <summary>
-	/// Stores all information for the hiker to pass properly between clones.
-	/// </summary>
+	/// <summary> Stores all information for the hiker to pass properly between clones. </summary>
 	private class HikerInfo
 	{
-		/// <summary>
-		/// If the hiker has a bundle to sell.
-		/// </summary>
+		/// <summary> If the hiker has a bundle to sell. </summary>
 		public bool hasBundle = true;
 
-		/// <summary>
-		/// If the hiker has been fed, and now gives away the bundle for free.
-		/// </summary>
+		/// <summary> If the hiker has been fed, and now gives away the bundle for free. </summary>
 		public bool priceOff = false;
 	}
 
@@ -59,10 +54,10 @@ public class Hiker : ModNPC
 
 	public override void SetStaticDefaults()
 	{
+		base.SetStaticDefaults();
+
 		Main.npcFrameCount[Type] = 25;
 
-		NPCID.Sets.ActsLikeTownNPC[Type] = true;
-		NPCID.Sets.NoTownNPCHappiness[Type] = true;
 		NPCID.Sets.ExtraFramesCount[Type] = 9;
 		NPCID.Sets.AttackFrameCount[Type] = 4;
 		NPCID.Sets.DangerDetectRange[Type] = 500;
@@ -78,13 +73,7 @@ public class Hiker : ModNPC
 
 	public override void SetDefaults()
 	{
-		NPC.CloneDefaults(NPCID.SkeletonMerchant);
-		NPC.HitSound = SoundID.NPCHit1;
-		NPC.DeathSound = SoundID.NPCDeath1;
-		NPC.Size = new Vector2(30, 40);
-
-		AnimationType = NPCID.Guide;
-
+		base.SetDefaults();
 		_info = new();
 	}
 
@@ -181,7 +170,6 @@ public class Hiker : ModNPC
 		_info.hasBundle = false;
 	}
 
-	public override bool CanChat() => true;
 	public override string GetChat()
 	{
 		if (_info.hasBundle && !_info.priceOff && PlayerHasFood(out int type))
@@ -275,16 +263,16 @@ public class Hiker : ModNPC
 
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
-		if (ModContent.GetInstance<WorldNPCFlags>().hikerSpawned || spawnInfo.Invasion || spawnInfo.Water)
+		if (SpawnedToday || spawnInfo.Invasion || spawnInfo.Water)
 			return 0; //Never spawn during an invasion, in water or if already spawned that day
 
+		float multiplier = Main.hardMode ? .5f : ((NPC.downedBoss1 || NPC.downedSlimeKing) ? 1f : 2f);
+
 		if ((spawnInfo.Player.ZoneSnow || InnerThirds(spawnInfo.SpawnTileX) && spawnInfo.Player.InZonePurity() && !spawnInfo.Player.ZoneSkyHeight) && Main.dayTime)
-			return .0019f; //Spawn most commonly in the Snow and inner thirds of the Forest during the day
+			return .0019f * multiplier; //Spawn most commonly in the Snow and inner thirds of the Forest during the day
 
 		return 0;
 
 		static bool InnerThirds(int x) => x > Main.maxTilesX / 3 && x < Main.maxTilesX - Main.maxTilesY / 3;
 	}
-
-	public override void OnSpawn(IEntitySource source) => ModContent.GetInstance<WorldNPCFlags>().hikerSpawned = true;
 }

@@ -1,7 +1,7 @@
 using System.Linq;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Common.NPCCommon;
+namespace SpiritReforged.Common.NPCCommon.Abstract;
 
 public abstract class ReplaceNPC : ModNPC
 {
