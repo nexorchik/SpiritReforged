@@ -11,6 +11,7 @@ internal class Seagrass : ModTile
 		Main.tileSolidTop[Type] = false;
 		Main.tileSolid[Type] = false;
 		Main.tileCut[Type] = true;
+		Main.tileNoFail[Type] = true;
 		TileID.Sets.SwaysInWindBasic[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);

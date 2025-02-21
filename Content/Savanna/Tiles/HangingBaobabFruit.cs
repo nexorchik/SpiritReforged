@@ -96,9 +96,6 @@ public class HangingBaobabFruit : ModTile, ISwayTile
 		{
 			var position = new Vector2(i, j) * 16 + new Vector2(8);
 
-			Projectile.NewProjectileDirect(new EntitySource_TileBreak(i, j), position, Vector2.Zero,
-				ModContent.ProjectileType<FallingBaobabFruit>(), 10, 0f, ai0: tile.TileFrameX / 18).netUpdate = true;
-
 			PreNewProjectile.New(new EntitySource_TileBreak(i, j), position, Vector2.Zero, ModContent.ProjectileType<FallingBaobabFruit>(), 10, 0f, ai0: tile.TileFrameX / 18, preSpawnAction: delegate (Projectile p)
 			{
 				(p.ModProjectile as FallingBaobabFruit).PickDrop();

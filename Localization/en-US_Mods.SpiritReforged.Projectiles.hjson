@@ -13,7 +13,6 @@ ButterflyMinion.DisplayName: Butterfly Minion
 ToucanFeather.DisplayName: Toucan Feather
 ToucanMinion.DisplayName: Toucan Minion
 TumblerPet.DisplayName: Tumbler Pet
-BaobabFruitProj.DisplayName: Falling Baobab Fruit
 SunOrb.DisplayName: Sun Orb
 SunStaffHeld.DisplayName: Sun Staff
 WheatgrassSeedProjectile.DisplayName: Wheatgrass Seed
@@ -25,3 +24,4 @@ SkullSentryEye.DisplayName: Skull Sentry Eye
 SkullSentryMucus.DisplayName: Skull Sentry Mucus
 SkullSentrySentry.DisplayName: Skull Sentry Sentry
 ZiplineProj.DisplayName: Zipline Proj
+FallingBaobabFruit.DisplayName: Falling Baobab Fruit
