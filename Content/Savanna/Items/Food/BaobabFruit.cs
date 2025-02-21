@@ -1,6 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 
-namespace SpiritReforged.Content.Savanna.Items.BaobabFruit;
+namespace SpiritReforged.Content.Savanna.Items.Food;
 
 public class BaobabFruit : FoodItem
 {

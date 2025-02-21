@@ -1,6 +1,4 @@
-﻿using SpiritReforged.Content.Savanna.Items.BaobabFruit;
-
-namespace SpiritReforged.Content.Savanna.Tiles;
+﻿namespace SpiritReforged.Content.Savanna.Tiles;
 
 internal class LivingBaobabLeaf : ModTile
 {
@@ -21,8 +19,6 @@ internal class LivingBaobabLeaf : ModTile
 	public override void RandomUpdate(int i, int j)
 	{
 		if (Main.rand.NextBool(50)) //Randomly grow hanging baobab fruit
-		{
-			BaobabFruitTile.GrowVine(i, ++j);
-		}
+			HangingBaobabFruit.GrowVine(i, ++j);
 	}
 }

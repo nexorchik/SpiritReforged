@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.TileSway;
+using SpiritReforged.Content.Savanna.Items.Food;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
@@ -7,7 +8,8 @@ namespace SpiritReforged.Content.Savanna.Tiles;
 
 public class BaobabPod : ModTile, ISwayTile
 {
-	private static readonly Dictionary<Point16, float> hitData = []; //Stores the modified rotation of the tile at these coordinates
+	/// <summary> Stores modified rotation per top-left tile coordinate. </summary>
+	private static readonly Dictionary<Point16, float> hitData = [];
 
 	private const int numStages = 3;
 
@@ -74,7 +76,7 @@ public class BaobabPod : ModTile, ISwayTile
 			DropItem(i, j, ModContent.ItemType<Items.Tools.LivingBaobabWand>());
 			DropItem(i, j, ItemID.Waterleaf, Main.rand.Next(2) + 1);
 			DropItem(i, j, ModContent.ItemType<Items.SavannaGrassSeeds>(), Main.rand.Next(3) + 1);
-			DropItem(i, j, ModContent.ItemType<Items.BaobabFruit.BaobabFruit>());
+			DropItem(i, j, ModContent.ItemType<BaobabFruit>());
 
 			if (Main.rand.NextBool(3))
 				DropItem(i, j, ItemID.Vine);
@@ -139,7 +141,7 @@ public class BaobabPod : ModTile, ISwayTile
 		Main.item[id].noGrabDelay = 100;
 
 		if (Main.netMode != NetmodeID.SinglePlayer)
-			NetMessage.SendData(MessageID.SyncItem, number: id, number2: 1f);
+			NetMessage.SendData(MessageID.SyncItem, number: id, number2: 100f);
 	}
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)

@@ -3,6 +3,7 @@ using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.CustomTree;
 using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Savanna.DustStorm;
+using SpiritReforged.Content.Savanna.Items.Food;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.Utilities;
@@ -69,7 +70,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		drop.Add(ItemID.None, .8f);
 		drop.Add(ModContent.ItemType<Items.Food.Caryocar>(), .2f);
 		drop.Add(ModContent.ItemType<Items.Food.CustardApple>(), .2f);
-		drop.Add(ModContent.ItemType<Items.BaobabFruit.BaobabFruit>(), .2f);
+		drop.Add(ModContent.ItemType<BaobabFruit>(), .2f);
 		drop.Add(ModContent.ItemType<Items.Drywood.Drywood>(), .8f);
 		drop.Add(ItemID.Acorn, .7f);
 

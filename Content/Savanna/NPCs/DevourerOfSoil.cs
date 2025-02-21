@@ -1,10 +1,14 @@
-﻿using SpiritReforged.Common.PlayerCommon;
+﻿using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Multiplayer;
+using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.SimpleEntity;
+using System.IO;
 using System.Linq;
 using Terraria.Audio;
 
-namespace SpiritReforged.Content.Savanna.Items.BaobabFruit;
+namespace SpiritReforged.Content.Savanna.NPCs;
 
+/// <summary> Mimics an NPC. </summary>
 public class DevourerOfSoil : SimpleEntity
 {
 	private static readonly Point[] Dimensions = [new Point(30, 38), new Point(22, 18), new Point(14, 22)]; //Excludes 2px(y) padding
@@ -21,59 +25,65 @@ public class DevourerOfSoil : SimpleEntity
 	public override void Load()
 	{
 		Size = new Vector2(30);
-
-		On_Main.UpdateAudio_DecideOnNewMusic += PlayBossMusic;
-		On_Player.ItemCheck_MeleeHitNPCs += CheckMeleeHit; //Might need synced
+		On_Player.ItemCheck_MeleeHitNPCs += CheckMeleeHit;
 	}
 
-	private static void PlayBossMusic(On_Main.orig_UpdateAudio_DecideOnNewMusic orig, Main self)
-	{
-		orig(self);
-
-		if (!Main.gameMenu && SimpleEntitySystem.entities.Where(x => x is DevourerOfSoil && x.Center.Distance(Main.LocalPlayer.Center) < 1500).Any())
-			Main.newMusic = MusicID.Boss1;
-	}
-
+	#region hit detection
 	private static void CheckMeleeHit(On_Player.orig_ItemCheck_MeleeHitNPCs orig, Player self, Item sItem, Rectangle itemRectangle, int originalDamage, float knockBack)
 	{
 		orig(self, sItem, itemRectangle, originalDamage, knockBack);
 
 		foreach (var entity in SimpleEntitySystem.entities)
-		{
-			if (entity is DevourerOfSoil dos && !dos.playingDeathAnimation)
+			if (MeleeCollide(entity, itemRectangle))
+				return;
+	}
+
+	private static bool MeleeCollide(SimpleEntity entity, Rectangle meleeHitbox)
+	{
+		if (entity is not DevourerOfSoil dos || dos.playingDeathAnimation)
+			return false;
+
+		foreach (var position in dos.positions)
+			if (meleeHitbox.Intersects(dos.GetHitbox(position)))
 			{
-				foreach (var position in dos.positions)
-				{
-					if (itemRectangle.Intersects(dos.GetHitbox(position)))
-					{
-						dos.OnHit();
-						return;
-					}
-				}
+				dos.OnHit();
+
+				if (Main.netMode == NetmodeID.MultiplayerClient)
+					new DoSHitData((short)dos.whoAmI).Send();
+
+				return true;
 			}
-		}
+
+		return false;
 	}
 
 	private void CheckProjectileHit()
 	{
 		foreach (var projectile in Main.ActiveProjectiles)
-		{
-			if (projectile.friendly)
-			{
-				foreach (var position in positions)
-				{
-					var hitbox = GetHitbox(position);
+			if (ProjectileCollide(projectile))
+				return;
+	}
 
-					if (Collision.CheckAABBvLineCollision(position - hitbox.Size() / 2, hitbox.Size(), projectile.Center - projectile.velocity, projectile.Center) 
-						|| projectile.ModProjectile is ModProjectile modProj && modProj.Colliding(projectile.getRect(), hitbox) is true)
-					{
-						OnHit();
-						return;
-					}
-				}
+	private bool ProjectileCollide(Projectile projectile)
+	{
+		if (!projectile.friendly)
+			return false;
+
+		foreach (var position in positions)
+		{
+			var hitbox = GetHitbox(position);
+
+			if (Collision.CheckAABBvLineCollision(position - hitbox.Size() / 2, hitbox.Size(), projectile.Center - projectile.velocity, projectile.Center)
+				|| projectile.ModProjectile is ModProjectile modProj && modProj.Colliding(projectile.getRect(), hitbox) is true)
+			{
+				OnHit();
+				return true;
 			}
 		}
+
+		return false;
 	}
+	#endregion
 
 	public override void Update()
 	{
@@ -116,6 +126,9 @@ public class DevourerOfSoil : SimpleEntity
 		rotation = velocity.ToRotation();
 		position += velocity;
 		soundDelay = Math.Max(soundDelay - 1, 0);
+
+		if (Center.Distance(Main.LocalPlayer.Center) < 1500)
+			ChooseMusic.SetMusic(MusicID.Boss1); //Play Boss 1
 	}
 
 	private void ChaseTarget(Vector2 targetPosition)
@@ -128,7 +141,7 @@ public class DevourerOfSoil : SimpleEntity
 			velocity = new Vector2(velocity.X * .98f, velocity.Y + .1f);
 	}
 
-	private void OnHit()
+	public void OnHit()
 	{
 		velocity.Y -= 2f;
 		SoundEngine.PlaySound(SoundID.NPCHit1, Center);
@@ -170,7 +183,6 @@ public class DevourerOfSoil : SimpleEntity
 	private void DoDeathAnimation()
 	{
 		if (InsideTiles())
-		{
 			if (justDied)
 				velocity.Y = -8f; //Shoot out of the ground before dying
 			else
@@ -178,7 +190,6 @@ public class DevourerOfSoil : SimpleEntity
 				DoDeathEffects();
 				Kill();
 			}
-		}
 		else
 		{
 			justDied = false;
@@ -192,7 +203,7 @@ public class DevourerOfSoil : SimpleEntity
 
 			for (int i = 0; i < positions.Length; i++)
 			{
-				int id = (i == positions.Length - 1) ? 3 : (i == 0) ? 1 : 2;
+				int id = i == positions.Length - 1 ? 3 : i == 0 ? 1 : 2;
 				int goreType = SpiritReforgedMod.Instance.Find<ModGore>(nameof(DevourerOfSoil) + id).Type;
 
 				Gore.NewGore(null, positions[i], Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f), goreType);
@@ -203,7 +214,7 @@ public class DevourerOfSoil : SimpleEntity
 			}
 
 			SoundEngine.PlaySound(SoundID.NPCDeath1, Center);
-			QuickCameraModifiers.SimpleShakeScreen(Main.LocalPlayer, 3f, 3f, 60, 16 * 30);
+			Main.LocalPlayer.SimpleShakeScreen(3f, 3f, 60, 16 * 30);
 		}
 	}
 
@@ -217,11 +228,11 @@ public class DevourerOfSoil : SimpleEntity
 
 		for (int i = length; i >= 0; i--)
 		{
-			int frameY = (i == length) ? 2 : (i == 0) ? 0 : 1;
+			int frameY = i == length ? 2 : i == 0 ? 0 : 1;
 			var frame = texture.Frame(1, Dimensions.Length, 0, frameY) with { Width = Dimensions[frameY].X, Height = Dimensions[frameY].Y };
-			
+
 			var position = positions[i];
-			float rot = (i == 0) ? rotation : positions[i].AngleTo(positions[i - 1]);
+			float rot = i == 0 ? rotation : positions[i].AngleTo(positions[i - 1]);
 
 			var lightColor = Lighting.GetColor((int)(position.X / 16), (int)(position.Y / 16));
 
@@ -236,4 +247,26 @@ public class DevourerOfSoil : SimpleEntity
 		var tile = Framing.GetTileSafely(Center);
 		return WorldGen.SolidOrSlopedTile(tile);
 	}
+}
+
+/// <summary> Syncs Devourer of Soil melee strike damage. </summary>
+internal class DoSHitData : PacketData
+{
+	private readonly short _entityIndex;
+
+	public DoSHitData() { }
+	public DoSHitData(short entityIndex) => _entityIndex = entityIndex;
+
+	public override void OnReceive(BinaryReader reader, int whoAmI)
+	{
+		short entity = reader.ReadInt16();
+
+		if (Main.netMode == NetmodeID.Server)
+			new DoSHitData(entity).Send(ignoreClient: whoAmI);
+
+		if (SimpleEntitySystem.entities[entity] is DevourerOfSoil dos)
+			dos.OnHit();
+	}
+
+	public override void OnSend(ModPacket modPacket) => modPacket.Write(_entityIndex);
 }
