@@ -1,5 +1,4 @@
-﻿using SpiritReforged.Content.Forest.Stargrass.Tiles;
-using Terraria.DataStructures;
+﻿using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Items;
 
@@ -53,11 +52,7 @@ internal class StarPowderProj : ModProjectile
 		}
 	}
 
-	public override void AI() => ConvertTiles();
-
-	private static bool IsVine(Tile tile) => tile.TileType is TileID.Vines or TileID.VineFlowers;
-
-	private void ConvertTiles()
+	public override void AI()
 	{
 		Point pos = Projectile.position.ToTileCoordinates();
 		Point end = Projectile.BottomRight.ToTileCoordinates();
@@ -65,31 +60,7 @@ internal class StarPowderProj : ModProjectile
 		for (int i = pos.X; i < end.X; ++i)
 		{
 			for (int j = pos.Y; j < end.Y; ++j)
-			{
-				if (!WorldGen.InWorld(i, j))
-					continue;
-
-				Tile tile = Main.tile[i, j];
-
-				if (tile.TileType == TileID.Grass)
-					tile.TileType = (ushort)ModContent.TileType<StargrassTile>();
-				else if (IsVine(tile))
-					SpreadVine(i, j);
-			}
-		}
-	}
-
-	private static void SpreadVine(int i, int j)
-	{
-		while (IsVine(Main.tile[i, j]))
-			j--;
-
-		j++;
-
-		while (IsVine(Main.tile[i, j]))
-		{
-			Main.tile[i, j].TileType = (ushort)ModContent.TileType<StargrassVine>();
-			j++;
+				StargrassConversion.Convert(i, j);
 		}
 	}
 }

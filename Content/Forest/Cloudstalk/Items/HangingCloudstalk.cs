@@ -23,7 +23,6 @@ public class HangingCloudstalkTile : ModTile, ISwayTile
 
 	public override void SetStaticDefaults()
 	{
-		Main.tileTable[Type] = true;
 		Main.tileSolidTop[Type] = false;
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;

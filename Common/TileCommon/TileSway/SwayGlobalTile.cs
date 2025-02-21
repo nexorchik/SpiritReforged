@@ -17,16 +17,8 @@ internal class SwayGlobalTile : GlobalTile
 			{
 				if ((int)counter == -1)
 					DrawCustomSway(i, j, spriteBatch);
-				else
-				{
-					if (counter is TileCounterType.MultiTileGrass)
-					{
-						var origin = TileObjectData.GetTileData(Main.tile[i, j]).Origin;
-						Main.instance.TilesRenderer.AddSpecialPoint(i + origin.X, j + origin.Y, counter);
-					}
-					else if (counter is TileCounterType.MultiTileVine)
-						Main.instance.TilesRenderer.AddSpecialPoint(i, j, counter);
-				}
+				else if (counter is TileCounterType.MultiTileVine or TileCounterType.MultiTileGrass)
+					Main.instance.TilesRenderer.AddSpecialPoint(i, j, counter);
 			}
 
 			return false;
