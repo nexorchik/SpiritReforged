@@ -1,5 +1,3 @@
-using SpiritReforged.Common.Misc;
-using SpiritReforged.Common.Particle;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
@@ -23,9 +21,7 @@ public class FairyWhistle : ModItem
 		Item.noMelee = true;
 		Item.noUseGraphic = true;
 		Item.shoot = ModContent.ProjectileType<FairyMinion>();
-
-		if (!Main.dedServ)
-			Item.UseSound = new SoundStyle("SpiritReforged/Assets/SFX/Item/Whistle") with { PitchVariance = 0.3f, Volume = 1.2f };
+		Item.UseSound = new SoundStyle("SpiritReforged/Assets/SFX/Item/Whistle") with { PitchVariance = .3f, Volume = 1.2f };
 	}
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -50,6 +46,7 @@ internal class FairyWhistleHeld : ModProjectile
 	{
 		Projectile.timeLeft = 30;
 		Projectile.ignoreWater = true;
+		Projectile.tileCollide = false;
 	}
 
 	public override void AI()

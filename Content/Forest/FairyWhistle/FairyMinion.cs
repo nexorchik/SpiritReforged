@@ -4,7 +4,6 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Common.BuffCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
-using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Easing;
 
 namespace SpiritReforged.Content.Forest.FairyWhistle;
@@ -29,13 +28,7 @@ public class FairyMinion : BaseMinion
 		_ => new(0, 193, 141),
 	};
 
-	public override void AbstractSetStaticDefaults()
-	{
-		Main.projFrames[Type] = 6;
-		ProjectileID.Sets.TrailCacheLength[Type] = 8;
-		ProjectileID.Sets.TrailingMode[Type] = 2;
-	}
-
+	public override void AbstractSetStaticDefaults() => Main.projFrames[Type] = 6;
 	public override void AbstractSetDefaults() => Projectile.alpha = 255;
 
 	public override bool DoAutoFrameUpdate(ref int framespersecond, ref int startframe, ref int endframe)
@@ -134,22 +127,14 @@ public class FairyMinion : BaseMinion
 	public override bool PreDraw(ref Color lightColor)
 	{
 		float bloomOpacity = EaseFunction.EaseQuadOut.Ease(AiTimer / SHOOTTIME); //glow brighter when closer to shot time
-		bloomOpacity = Math.Max(bloomOpacity, 0.2f);
+		bloomOpacity = Math.Max(bloomOpacity, .25f);
 
 		var texture = TextureAssets.Projectile[Type].Value;
 		var glowmask = GlowmaskProjectile.ProjIdToGlowmask[Type].Glowmask.Value;
 		var source = texture.Frame(6, Main.projFrames[Type], (int)Style * 2 + (doAttackAnimation ? 1 : 0), Projectile.frame, -2, -2);
 
-		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, source, Projectile.GetAlpha(Color.White), Projectile.rotation, source.Size() / 2, Projectile.scale, default);
-
-		for (int i = 0; i < 6; i++)
-		{
-			var glowmaskRadialOffset = Vector2.UnitX.RotatedBy(MathHelper.TwoPi * i / 6);
-			glowmaskRadialOffset *= 2f;
-
-			Main.EntitySpriteDraw(glowmask, Projectile.Center + glowmaskRadialOffset - Main.screenPosition, source, 
-				Color.White.Additive() * Projectile.Opacity * bloomOpacity * .1f, Projectile.rotation, source.Size() / 2, Projectile.scale, default);
-		}
+		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, source, Projectile.GetAlpha(lightColor), Projectile.rotation, source.Size() / 2, Projectile.scale, default);
+		Main.EntitySpriteDraw(glowmask, Projectile.Center - Main.screenPosition, source, Projectile.GetAlpha(Color.White) * bloomOpacity, Projectile.rotation, source.Size() / 2, Projectile.scale, default);
 
 		return false;
 	}

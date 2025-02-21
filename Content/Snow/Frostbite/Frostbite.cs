@@ -46,6 +46,7 @@ public class FrostbiteProj : ModProjectile
 	public override void SetDefaults()
 	{
 		Projectile.Size = new Vector2(20);
+		Projectile.DamageType = DamageClass.Magic;
 		Projectile.penetrate = -1;
 		Projectile.friendly = true;
 		Projectile.ignoreWater = true;
