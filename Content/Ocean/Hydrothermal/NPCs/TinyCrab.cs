@@ -1,5 +1,4 @@
 using SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
-using System.Linq;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Ocean.Hydrothermal.NPCs;
@@ -53,6 +52,6 @@ public class TinyCrab : ModNPC
 		if (!config.VentCritters)
 			return 0;
 
-		return spawnInfo.Water && NPC.CountNPCS(Type) < 10 && spawnInfo.SpawnTileType == ModContent.TileType<Gravel>() ? .25f : 0;
+		return spawnInfo.Water && spawnInfo.SpawnTileType == ModContent.TileType<Gravel>() && NPC.CountNPCS(Type) < 10 ? .75f : 0;
 	}
 }

@@ -8,7 +8,7 @@ namespace SpiritReforged.Content.Ocean.Hydrothermal.NPCs;
 [AutoloadCritter]
 public class TubeWorm : ModNPC
 {
-	private int pickedType;
+	private byte _pickedType;
 
 	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 6;
 
@@ -34,7 +34,7 @@ public class TubeWorm : ModNPC
 	public override void OnSpawn(IEntitySource source)
 	{
 		NPC.scale = Main.rand.NextFloat(.6f, 1.15f);
-		pickedType = Main.rand.Next(4);
+		_pickedType = (byte)Main.rand.Next(4);
 		NPC.netUpdate = true;
 	}
 
@@ -43,7 +43,7 @@ public class TubeWorm : ModNPC
 	public override void FindFrame(int frameHeight)
 	{
 		NPC.frame.Width = 18;
-		NPC.frame.X = NPC.frame.Width * pickedType;
+		NPC.frame.X = NPC.frame.Width * _pickedType;
 
 		NPC.frameCounter += 0.18f;
 		NPC.frameCounter %= Main.npcFrameCount[Type];
@@ -51,9 +51,8 @@ public class TubeWorm : ModNPC
 		NPC.frame.Y = frame * frameHeight;
 	}
 
-	public override void SendExtraAI(BinaryWriter writer) => writer.Write(pickedType);
-
-	public override void ReceiveExtraAI(BinaryReader reader) => pickedType = reader.ReadInt32();
+	public override void SendExtraAI(BinaryWriter writer) => writer.Write(_pickedType);
+	public override void ReceiveExtraAI(BinaryReader reader) => _pickedType = reader.ReadByte();
 
 	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 	{
@@ -78,6 +77,6 @@ public class TubeWorm : ModNPC
 		if (!config.VentCritters)
 			return 0;
 
-		return spawnInfo.Water && NPC.CountNPCS(Type) < 10 && spawnInfo.SpawnTileType == ModContent.TileType<Gravel>() ? .27f : 0;
+		return spawnInfo.Water && spawnInfo.SpawnTileType == ModContent.TileType<Gravel>() && NPC.CountNPCS(Type) < 10 ? .77f : 0;
 	}
 }

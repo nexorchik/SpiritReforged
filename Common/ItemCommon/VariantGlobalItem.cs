@@ -93,10 +93,13 @@ internal class VariantGlobalItem : GlobalItem
 		var rectangle = texture.Frame(1, frameCount, 0, frame, 0, -2);
 		var sizes = variantData[type].sizes;
 
-		if (sizes != null && !inInventory && frame < sizes.Length)
+		if (sizes != null && frame < sizes.Length)
 		{
-			rectangle.Width = sizes[frame].X;
-			rectangle.Height = sizes[frame].Y;
+			if (variantData[type].worldTexture is null || !inInventory)
+			{
+				rectangle.Width = sizes[frame].X;
+				rectangle.Height = sizes[frame].Y;
+			}
 		}
 
 		return rectangle;
