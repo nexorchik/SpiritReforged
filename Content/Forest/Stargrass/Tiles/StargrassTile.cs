@@ -76,15 +76,19 @@ public class StargrassTile : GrassTile
 
 	public override void RandomUpdate(int i, int j)
 	{
-		if (!Framing.GetTileSafely(i, j - 1).HasTile && Main.rand.NextBool(4))
+		if (!Main.tile[i, j - 1].HasTile && Main.rand.NextBool(4))
 		{
-			int style = Main.rand.Next(26);
+			int style = Main.rand.Next(StargrassFlowers.StyleRange);
+
 			WorldGen.PlaceObject(i, j - 1, ModContent.TileType<StargrassFlowers>(), true, style);
 			NetMessage.SendObjectPlacement(-1, i, j - 1, ModContent.TileType<StargrassFlowers>(), style, 0, -1, -1);
 		}
 
 		if (SpreadHelper.Spread(i, j, Type, 4, TileID.Dirt) && Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None);
+
+		if (Main.rand.NextBool(60) && !Main.tile[i, j + 1].HasTile && Main.tile[i, j + 1].LiquidType != LiquidID.Lava)
+			TileExtensions.GrowVine(i, j + 1, ModContent.TileType<StargrassVine>());
 	}
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.05f, 0.2f, 0.5f);

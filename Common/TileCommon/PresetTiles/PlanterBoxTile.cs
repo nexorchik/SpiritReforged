@@ -2,7 +2,11 @@
 
 public abstract class PlanterBoxTile : ModTile, IAutoloadTileItem
 {
-	public virtual void SetItemDefaults(ModItem item) => item.Item.value = Item.buyPrice(silver: 1);
+	public virtual void SetItemDefaults(ModItem item)
+	{
+		item.Item.value = Item.buyPrice(silver: 1);
+		item.Item.ResearchUnlockCount = 25;
+	}
 
 	public override void SetStaticDefaults()
 	{

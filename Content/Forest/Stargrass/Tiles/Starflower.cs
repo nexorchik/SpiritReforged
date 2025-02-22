@@ -24,6 +24,7 @@ public class Starflower : ModTile, ISwayTile
 	public override void SetStaticDefaults()
 	{
 		Main.tileBlockLight[Type] = false;
+		Main.tileLighted[Type] = true;
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
 		Main.tileLavaDeath[Type] = true;
@@ -53,6 +54,8 @@ public class Starflower : ModTile, ISwayTile
 		if (!closer)
 			Main.SceneMetrics.HasSunflower = true;
 	}
+
+	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (.3f, .28f, .1f);
 
 	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{

@@ -12,6 +12,9 @@ public static class TilePlaceHelper
 	{
 		var tile = Main.tile[i, j];
 
+		if (!tile.HasTile)
+			return true;
+
 		if (TileObjectData.GetTileData(tile.TileType, 0) != null)
 			return false;
 
