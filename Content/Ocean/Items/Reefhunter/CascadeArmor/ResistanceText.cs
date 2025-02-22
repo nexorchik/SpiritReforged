@@ -29,25 +29,40 @@ internal class ResistanceTextHandler : ILoadable
 			string text = ((int)resistanceDamage).ToString();
 			var font = FontAssets.CombatText[0].Value;
 			var origin = font.MeasureString(text) / 2;
-			var position = cText.position - Main.screenPosition + origin - new Vector2(span * 18);
+
+			var center = cText.position - Main.screenPosition + origin;
+			var leftPosition = center - new Vector2(span * 18);
 
 			if (Main.LocalPlayer.gravDir == -1)
 			{
 				float posY = Main.screenHeight - (cText.position.Y - Main.screenPosition.Y);
-				position = new Vector2(cText.position.X - Main.screenPosition.X, posY) + origin - new Vector2(span * 18);
+				leftPosition = new Vector2(cText.position.X - Main.screenPosition.X, posY) + origin - new Vector2(span * 18);
 			}
 
-			if (time < timeMax)
+			if (damage == 0) //Special case where the player resists ALL damage
 			{
-				Main.spriteBatch.Draw(shield, position, null, Color.Cyan.Additive() * cText.alpha, cText.rotation, shield.Size() / 2, cText.scale * .8f * span, default, 0);
-				Main.spriteBatch.Draw(shield, position, null, Color.White * cText.alpha, cText.rotation, shield.Size() / 2, cText.scale * .75f * span, default, 0);
+				var ray = AssetLoader.LoadedTextures["GodrayCircle"];
 
-				Utils.DrawBorderStringFourWay(Main.spriteBatch, font, text, position.X, position.Y, GetColor(1f) * span * cText.alpha, GetColor(.25f) * span * cText.alpha, origin, cText.scale);
-			}
-			else //Draw a combined value
-			{
+				Main.spriteBatch.Draw(ray, center, null, Color.CornflowerBlue.Additive(), (float)Main.timeForVisualEffects / 80f, ray.Size() / 2, cText.scale * .075f * span, default, 0);
+				Main.spriteBatch.Draw(shield, center, null, Color.Cyan.Additive(), cText.rotation, shield.Size() / 2, cText.scale * .8f * span, default, 0);
+				Main.spriteBatch.Draw(shield, center, null, Color.White, cText.rotation, shield.Size() / 2, cText.scale * .75f * span, default, 0);
+
 				cText.alpha = 0; //Turn the default text invisible
-				Utils.DrawBorderStringFourWay(Main.spriteBatch, font, ((int)(damage + resistanceDamage)).ToString(), position.X, position.Y, GetColor(.85f), GetColor(.25f), origin, cText.scale);
+			}
+			else
+			{
+				if (time < timeMax)
+				{
+					Main.spriteBatch.Draw(shield, leftPosition, null, Color.Cyan.Additive() * cText.alpha, cText.rotation, shield.Size() / 2, cText.scale * .8f * span, default, 0);
+					Main.spriteBatch.Draw(shield, leftPosition, null, Color.White * cText.alpha, cText.rotation, shield.Size() / 2, cText.scale * .75f * span, default, 0);
+
+					Utils.DrawBorderStringFourWay(Main.spriteBatch, font, text, leftPosition.X, leftPosition.Y, GetColor(1f) * span * cText.alpha, GetColor(.25f) * span * cText.alpha, origin, cText.scale);
+				}
+				else //Draw a combined value
+				{
+					cText.alpha = 0; //Turn the default text invisible
+					Utils.DrawBorderStringFourWay(Main.spriteBatch, font, ((int)(damage + resistanceDamage)).ToString(), leftPosition.X, leftPosition.Y, GetColor(.85f), GetColor(.25f), origin, cText.scale);
+				}
 			}
 
 			Color GetColor(float dark)

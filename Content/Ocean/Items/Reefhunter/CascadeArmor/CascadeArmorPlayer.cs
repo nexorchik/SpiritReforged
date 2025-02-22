@@ -74,6 +74,9 @@ public class CascadeArmorPlayer : ModPlayer
 			ResistanceTextHandler.ApplyText(0, _lastResisted, index);
 
 			Player.SetImmuneTimeForAllTypes(40);
+			SoundEngine.PlaySound(SoundID.Item155 with { Pitch = .5f }, Player.Center);
+			SoundEngine.PlaySound(SoundID.MaxMana with { Pitch = 1f }, Player.Center);
+
 			return true;
 		}
 

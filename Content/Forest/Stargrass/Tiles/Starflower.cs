@@ -23,7 +23,6 @@ public class Starflower : ModTile, ISwayTile
 
 	public override void SetStaticDefaults()
 	{
-		Main.tileBlockLight[Type] = false;
 		Main.tileLighted[Type] = true;
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
@@ -62,7 +61,9 @@ public class Starflower : ModTile, ISwayTile
 		var tile = Framing.GetTileSafely(i, j);
 		var data = TileObjectData.GetTileData(tile);
 		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
-		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, data.CoordinateHeights[tile.TileFrameY / 18]);
+		int heights = (tile.TileFrameY == 54) ? 18 : 16;
+
+		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, heights);
 
 		spriteBatch.Draw(TextureAssets.Tile[Type].Value, drawPos + offset, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		spriteBatch.Draw(GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value, drawPos + offset, source, Color.White, rotation, origin, 1, SpriteEffects.None, 0);
