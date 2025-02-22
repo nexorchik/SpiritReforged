@@ -71,10 +71,20 @@ internal static class StockableShop
 {
 	public class StockData
 	{
-		public StockData(int value) => this.value = capacity = value;
+		public StockData(int minCapacity, int maxCapacity)
+		{
+			capacityMin = minCapacity;
+			capacityMax = maxCapacity;
+			value = Capacity;
+		}
 
+		public StockData(int value) => this.value = capacityMin = capacityMax = value;
+
+		/// <summary> The current, depletable stock counter. </summary>
 		public int value;
-		public int capacity;
+		private readonly int capacityMin, capacityMax;
+
+		public int Capacity => Main.rand.Next(capacityMin, capacityMax + 1);
 	}
 
 	private static readonly Dictionary<int, StockData> stockLookup = []; //item type, stock
@@ -92,7 +102,7 @@ internal static class StockableShop
 	public static void ResetAllStock()
 	{
 		foreach (int key in stockLookup.Keys)
-			stockLookup[key].value = stockLookup[key].capacity;
+			stockLookup[key].value = stockLookup[key].Capacity;
 	}
 
 	/// <summary> Attempts to get this item's stock value. </summary>
@@ -106,6 +116,7 @@ internal static class StockableShop
 		return 0;
 	}
 
+	/// <summary> Adds <paramref name="itemType"/> to this shop with a maximum of <paramref name="stock"/>. </summary>
 	public static NPCShop AddLimited(this NPCShop shop, int itemType, int stock, params Condition[] condition)
 	{
 		var item = new Item(itemType);
@@ -119,17 +130,31 @@ internal static class StockableShop
 		return shop.Add(item, condition);
 	}
 
+	/// <inheritdoc cref="AddLimited(NPCShop, int, int, Condition[])"/>
 	public static NPCShop AddLimited<T>(this NPCShop shop, int stock, params Condition[] condition) where T : ModItem
 	{
 		int itemType = ModContent.ItemType<T>();
+		return shop.AddLimited(itemType, stock, condition);
+	}
+
+	/// <summary> Adds <paramref name="itemType"/> to this shop with a maximum selected randomly between <paramref name="minCapacity"/> and <paramref name="maxCapacity"/>. </summary>
+	public static NPCShop AddLimited(this NPCShop shop, int itemType, int minCapacity, int maxCapacity, params Condition[] condition)
+	{
 		var item = new Item(itemType);
 
 		if (item.TryGetGlobalItem(out StockableItem sItem))
 		{
 			sItem.stockable = true;
-			stockLookup.Add(itemType, new StockData(stock));
+			stockLookup.Add(itemType, new StockData(minCapacity, maxCapacity));
 		}
 
 		return shop.Add(item, condition);
+	}
+
+	/// <inheritdoc cref="AddLimited(NPCShop, int, int, int, Condition[])"/>
+	public static NPCShop AddLimited<T>(this NPCShop shop, int minCapacity, int maxCapacity, params Condition[] condition) where T : ModItem
+	{
+		int itemType = ModContent.ItemType<T>();
+		return shop.AddLimited(itemType, minCapacity, maxCapacity, condition);
 	}
 }
