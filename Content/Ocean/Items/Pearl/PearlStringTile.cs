@@ -28,7 +28,7 @@ public class PearlStringTile : ModTile, IAutoloadRubble
 
 		AddMapEntry(new Color(100, 100, 120));
 		RegisterItemDrop(ModContent.ItemType<PearlString>());
-		SolidBottomGlobalTile.solidBottomTypes.Add(Type);
+		SolidBottomTile.TileTypes.Add(Type);
 
 		DustType = DustID.Sand;
 	}

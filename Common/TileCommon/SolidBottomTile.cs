@@ -1,12 +1,12 @@
 ﻿namespace SpiritReforged.Common.TileCommon;
 
-internal class SolidBottomGlobalTile : GlobalTile
+internal class SolidBottomTile : GlobalTile
 {
-	internal static HashSet<int> solidBottomTypes = []; //Strictly for visual merging
+	internal static HashSet<int> TileTypes = []; //Strictly for visual merging
 
 	public override bool TileFrame(int i, int j, int type, ref bool resetFrame, ref bool noBreak)
 	{
-		if (Main.tileSolid[type] && Main.tile[i, j - 1].HasTile && solidBottomTypes.Contains(Main.tile[i, j - 1].TileType))
+		if (Main.tileSolid[type] && Main.tile[i, j - 1].HasTile && TileTypes.Contains(Main.tile[i, j - 1].TileType))
 		{
 			var t = Main.tile[i, j];
 			if (t.IsHalfBlock || t.Slope != SlopeType.Solid)

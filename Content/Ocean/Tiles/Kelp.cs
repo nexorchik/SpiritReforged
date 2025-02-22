@@ -23,7 +23,7 @@ public class Kelp2x3 : ModTile, IDrawPreview, IAutoloadRubble
 		Main.tileLavaDeath[Type] = true;
 		Main.tileCut[Type] = false;
 		Main.tileLighted[Type] = true;
-		SolidBottomGlobalTile.solidBottomTypes.Add(Type);
+		SolidBottomTile.TileTypes.Add(Type);
 
 		SetObjectData();
 

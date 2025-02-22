@@ -1,6 +1,7 @@
 using Terraria.GameContent.ItemDropRules;
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.ItemCommon.FloatingItem;
+using SpiritReforged.Common.TileCommon;
 
 namespace SpiritReforged.Content.Ocean.Items;
 
@@ -70,8 +71,8 @@ public class SunkenTreasureTile : ModTile
 		TileObjectData.addAlternate(1);
 		TileObjectData.addTile(Type);
 
-		LocalizedText name = CreateMapEntryName();
 		DustType = -1;
-		AddMapEntry(new Color(133, 106, 56), name);
+		AddMapEntry(new Color(133, 106, 56), CreateMapEntryName());
+		SolidBottomTile.TileTypes.Add(Type);
 	}
 }

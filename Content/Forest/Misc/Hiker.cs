@@ -268,7 +268,7 @@ public class Hiker : WorldNPC
 
 		float multiplier = Main.hardMode ? .5f : ((NPC.downedBoss1 || NPC.downedSlimeKing) ? 1f : 2f);
 
-		if ((spawnInfo.Player.ZoneSnow || InnerThirds(spawnInfo.SpawnTileX) && spawnInfo.Player.InZonePurity() && !spawnInfo.Player.ZoneSkyHeight) && Main.dayTime)
+		if ((spawnInfo.Player.ZoneSnow || InnerThirds(spawnInfo.SpawnTileX) && spawnInfo.Player.InZonePurity()) && spawnInfo.Player.ZoneOverworldHeight && Main.dayTime)
 			return .0019f * multiplier; //Spawn most commonly in the Snow and inner thirds of the Forest during the day
 
 		return 0;
