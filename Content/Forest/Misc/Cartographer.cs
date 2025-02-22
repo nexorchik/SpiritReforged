@@ -9,6 +9,7 @@ using Terraria.GameContent.Bestiary;
 using SpiritReforged.Common.WorldGeneration.PointOfInterest;
 using SpiritReforged.Common.NPCCommon.Abstract;
 using SpiritReforged.Common.PlayerCommon;
+using System.IO;
 
 namespace SpiritReforged.Content.Forest.Misc;
 
@@ -51,6 +52,9 @@ public class Cartographer : WorldNPC
 
 		return names;
 	}
+
+	public override void SendExtraAI(BinaryWriter writer) => writer.Write(_hasPin);
+	public override void ReceiveExtraAI(BinaryReader reader) => _hasPin = reader.ReadBoolean();
 
 	public override void SetChatButtons(ref string button, ref string button2)
 	{

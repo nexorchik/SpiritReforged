@@ -21,5 +21,13 @@ public class CascadeHelmet : ModItem
 	}
 
 	public override void UpdateEquip(Player player) => player.gills = true;
-	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<MineralSlag>(), 12).AddTile(TileID.Anvils).Register();
+	public override void AddRecipes()
+	{
+		CreateRecipe().AddIngredient(ModContent.ItemType<MineralSlag>(), 12).AddTile(TileID.Anvils).Register();
+
+		Recipe.Create(ModContent.ItemType<CascadeChestplate>()).AddIngredient(ModContent.ItemType<MineralSlag>(), 14)
+			.AddIngredient(ItemID.SharkFin).AddTile(TileID.Anvils).Register();
+
+		Recipe.Create(ModContent.ItemType<CascadeLeggings>()).AddIngredient(ModContent.ItemType<MineralSlag>(), 10).AddTile(TileID.Anvils).Register();
+	}
 }

@@ -11,7 +11,4 @@ public class CascadeChestplate : ModItem
 		Item.rare = ItemRarityID.Blue;
 		Item.defense = 4;
 	}
-
-	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<MineralSlag>(), 14)
-		.AddIngredient(ItemID.SharkFin).AddTile(TileID.Anvils).Register();
 }

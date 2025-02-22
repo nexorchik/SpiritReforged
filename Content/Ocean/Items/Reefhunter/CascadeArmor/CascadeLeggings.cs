@@ -17,6 +17,4 @@ public class CascadeLeggings : ModItem
 		if (player.wet)
 			player.moveSpeed += .15f;
 	}
-
-	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<MineralSlag>(), 10).AddTile(TileID.Anvils).Register();
 }

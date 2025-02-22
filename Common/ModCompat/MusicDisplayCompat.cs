@@ -18,6 +18,7 @@ internal class MusicDisplayCompat : ModSystem
 
 		AddMusic("Duststorm");
 		AddMusic("Savanna");
+		AddMusic("SavannaNight");
 		AddMusic("DeepOcean");
 	}
 }
