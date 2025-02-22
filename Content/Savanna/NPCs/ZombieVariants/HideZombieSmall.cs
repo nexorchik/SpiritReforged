@@ -1,8 +1,4 @@
-using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Content.Savanna.Biome;
-using SpiritReforged.Content.Savanna.Items.HuntingRifle;
-using System.IO;
-using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 

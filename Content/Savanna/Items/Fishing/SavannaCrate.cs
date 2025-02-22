@@ -14,6 +14,7 @@ public class SavannaCrate : ModItem
 		var main = ItemDropRule.OneFromOptions(1, ModContent.ItemType<HuntingRifle.HuntingRifle>(), ItemID.SandstorminaBottle, ItemID.AnkletoftheWind, 
 			ItemID.MysticCoilSnake, ItemID.FeralClaws);
 
-		CrateHelper.BiomeCrate(itemLoot, main, ItemDropRule.NotScalingWithLuck(ItemID.BambooBlock, 3, 20, 50), ItemDropRule.NotScalingWithLuck(ItemID.DesertFossil, 3, 20, 50));
+		CrateHelper.BiomeCrate(itemLoot, main, ItemDropRule.NotScalingWithLuck(ItemID.BambooBlock, 3, 20, 50), 
+			ItemDropRule.NotScalingWithLuck(ItemID.DesertFossil, 3, 20, 50), ItemDropRule.NotScalingWithLuck(ItemID.Leather, 3, 5, 10));
 	}
 }

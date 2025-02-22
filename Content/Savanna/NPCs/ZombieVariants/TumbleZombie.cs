@@ -7,14 +7,15 @@ namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
 public class TumbleZombie : ReplaceNPC
 {
-	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie,
-		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie];
+	private float frameCounter;
+
+	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie, NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie];
 
 	public override void StaticDefaults()
 	{
 		Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
 		NPCID.Sets.Zombies[Type] = true;
-		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Skeleton;
+		NPCID.Sets.ShimmerTransformToNPC[Type] = NPCID.Skeleton;
 	}
 
 	public override void SetDefaults()
@@ -41,9 +42,7 @@ public class TumbleZombie : ReplaceNPC
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		for (int k = 0; k < 20; k++)
-		{
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, 2.5f * hit.HitDirection, -2.5f, 0, Color.White, 0.78f);
-		}
 
 		if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
 		{
@@ -59,8 +58,6 @@ public class TumbleZombie : ReplaceNPC
 		if (Main.rand.NextBool(30))
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, 385, Main.rand.NextFloat(.25f, .4f));
 	}
-
-	float frameCounter;
 
 	public override void FindFrame(int frameHeight)
 	{
@@ -78,8 +75,7 @@ public class TumbleZombie : ReplaceNPC
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
 		npcLoot.AddCommon(ModContent.ItemType<Items.WrithingSticks.WrithingSticks>(), 800);
 		npcLoot.AddCommon(ModContent.ItemType<HuntingRifle>(), 300);
-
 	}
 
-	public override bool CanSpawn(Player player) => player.InModBiome<Biome.SavannaBiome>();
+	public override bool CanSpawn(Player player) => player.InModBiome<SavannaBiome>();
 }

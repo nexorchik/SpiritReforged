@@ -7,14 +7,15 @@ namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
 public class SafariZombie : ReplaceNPC
 {
-	public override int[] TypesToReplace => [NPCID.Zombie,
-		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie];
+	private float frameCounter;
+
+	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie];
 
 	public override void StaticDefaults()
 	{
 		Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
 		NPCID.Sets.Zombies[Type] = true;
-		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Skeleton;
+		NPCID.Sets.ShimmerTransformToNPC[Type] = NPCID.Skeleton;
 	}
 
 	public override void SetDefaults()
@@ -36,7 +37,7 @@ public class SafariZombie : ReplaceNPC
 		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
 
-	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "NightTime");
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
@@ -47,8 +48,6 @@ public class SafariZombie : ReplaceNPC
 			for (int i = 1; i < 4; ++i)
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("SafariZombie" + i).Type, 1f);
 	}
-
-	float frameCounter;
 
 	public override void FindFrame(int frameHeight)
 	{
@@ -62,18 +61,11 @@ public class SafariZombie : ReplaceNPC
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
-		// drop both at the same time
-		if (Main.rand.NextBool(100))
-		{
-			npcLoot.AddCommon(ModContent.ItemType<HuntingRifle>());
-			npcLoot.AddCommon(ItemID.MusketBall, 1, 25, 45);
-		}
-
+		npcLoot.AddCommon(ModContent.ItemType<HuntingRifle>(), 100);
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
-		npcLoot.AddOneFromOptions(75, ModContent.ItemType<Items.Vanity.SafariHat>(), 
-			ModContent.ItemType<Items.Vanity.SafariVest>(), ModContent.ItemType<Items.Vanity.SafariShorts>());
+		npcLoot.AddOneFromOptions(75, ModContent.ItemType<Items.Vanity.SafariHat>(), ModContent.ItemType<Items.Vanity.SafariVest>(), ModContent.ItemType<Items.Vanity.SafariShorts>());
 	}
 
-	public override bool CanSpawn(Player player) => player.InModBiome<Biome.SavannaBiome>();
+	public override bool CanSpawn(Player player) => player.InModBiome<SavannaBiome>();
 }
