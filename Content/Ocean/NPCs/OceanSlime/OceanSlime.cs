@@ -1,4 +1,3 @@
-using Mono.Cecil;
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Content.Vanilla.Food;
 using System.IO;
@@ -7,8 +6,11 @@ using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Ocean.NPCs.OceanSlime;
 
+[AutoloadBanner]
 public class OceanSlime : ModNPC
 {
+	int damageLevel;
+
 	public override void SetStaticDefaults()
 	{
 		Main.npcFrameCount[NPC.type] = 2;
@@ -29,13 +31,12 @@ public class OceanSlime : ModNPC
 
 		AIType = NPCID.BlueSlime;
 		AnimationType = NPCID.BlueSlime;
-		//Banner = NPC.type;
-		//BannerItem = ModContent.ItemType<Items.Banners.CoconutSlimeBanner>();
 	}
-	int damageLevel;
+
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Ocean");
 	public override void SendExtraAI(BinaryWriter writer) => writer.Write(damageLevel);
 	public override void ReceiveExtraAI(BinaryReader reader) => damageLevel = reader.ReadInt32();
+
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit") with { PitchVariance = 0.4f, Pitch = 0.1f, Volume = 1.1f, MaxInstances = 2 }, NPC.Center);
@@ -71,6 +72,7 @@ public class OceanSlime : ModNPC
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Coconut2").Type, 1f);
 		}
 	}
+
 	public override void AI()
 	{
 		if (NPC.life > NPC.lifeMax / 3 * 2)
@@ -86,11 +88,13 @@ public class OceanSlime : ModNPC
 			damageLevel = 2; 
 		}
 	}
+
 	public override void FindFrame(int frameHeight)
 	{
 		NPC.frame.X = 50 * damageLevel;
 		NPC.frame.Width = 50;
 	}
+
 	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 	{
 		drawColor = NPC.GetNPCColorTintedByBuffs(drawColor);
@@ -98,6 +102,7 @@ public class OceanSlime : ModNPC
 		spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY), NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, effects, 0);
 		return false;
 	}
+
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
 		npcLoot.AddCommon(ItemID.Gel, 1, 1, 3);

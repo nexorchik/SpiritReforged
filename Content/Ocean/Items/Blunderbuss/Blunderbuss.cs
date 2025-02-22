@@ -22,6 +22,7 @@ public class Blunderbuss : ModItem
         Item.shoot = ProjectileID.Bullet;
         Item.useAmmo = AmmoID.Bullet;
         Item.shootSpeed = 10f;
+		Item.value = Item.buyPrice(0, 5, 0, 0);
 
 		if (NPC.downedBoss3)
 			ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.QuadBarrelShotgun;
