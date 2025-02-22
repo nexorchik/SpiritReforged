@@ -41,7 +41,7 @@ public class FrostbiteTile : ModTile
 		float distance = Main.LocalPlayer.Distance(world);
 
 		if (closer && !Main.gamePaused && distance < maxDistance)
-			DoVisuals(world, 1f - distance / maxDistance);
+			DoVisuals(world, Math.Min(1f - distance / maxDistance, .35f));
 	}
 
 	private static void DoVisuals(Vector2 world, float progress)

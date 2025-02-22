@@ -14,7 +14,7 @@ public class FrostbiteItem : ModItem
 	public override void SetDefaults()
 	{
 		Item.width = Item.height = 24;
-		Item.damage = 7;
+		Item.damage = 8;
 		Item.knockBack = 0;
 		Item.DamageType = DamageClass.Magic;
 		Item.noMelee = true;
