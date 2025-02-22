@@ -23,9 +23,8 @@ public class BigBuoy : SmallBuoy
 	}
 
 	public override void AddRecipes() => CreateRecipe()
-			.AddRecipeGroup(RecipeGroupID.IronBar, 8)
-			.AddIngredient(ItemID.Wire, 7)
-			.AddIngredient(ItemID.Glass, 7)
+			.AddRecipeGroup("CopperBars", 3)
+			.AddIngredient(ItemID.Glass, 2)
 			.AddTile(TileID.Anvils)
 			.Register();
 }

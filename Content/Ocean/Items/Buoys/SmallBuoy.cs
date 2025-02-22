@@ -65,9 +65,8 @@ public class SmallBuoy : ModItem
 	}
 
 	public override void AddRecipes() => CreateRecipe()
-			.AddRecipeGroup(RecipeGroupID.IronBar, 3)
-			.AddIngredient(ItemID.Wire, 5)
-			.AddIngredient(ItemID.Glass, 5)
+			.AddRecipeGroup("CopperBars", 1)
+			.AddIngredient(ItemID.Glass, 1)
 			.AddTile(TileID.Anvils)
 			.Register();
 }
