@@ -69,17 +69,17 @@ TubeWormItem: {
 }
 
 CascadeChestplate: {
-	DisplayName: Cascade Chestplate
+	DisplayName: Reef Hunter Chestplate
 	Tooltip: 50% knockback resistance
 }
 
 CascadeHelmet: {
-	DisplayName: Cascade Helmet
+	DisplayName: Reef Hunter Helmet
 	Tooltip: Allows for breathing underwater
 }
 
 CascadeLeggings: {
-	DisplayName: Cascade Greaves
+	DisplayName: Reef Hunter Greaves
 	Tooltip: 15% increased movement in water
 }
 
