@@ -16,7 +16,7 @@ public class FloatingItemWorld : ModSystem
 
 	public override void PreUpdateWorld()
 	{
-		if (Main.rand.NextBool(3000))
+		if (Main.rand.NextBool(2800))
 		{
 			int floatingItemCount = 0;
 			foreach (Item item in Main.ActiveItems)

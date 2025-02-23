@@ -1,11 +1,10 @@
-﻿using SpiritReforged.Common.TileCommon.TileSway;
-using SpiritReforged.Common.Visuals.Glowmasks;
+﻿using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
 
-[AutoloadGlowmask("230,230,195", false)]
-public class Starflower : ModTile, ISwayTile
+[AutoloadGlowmask("230,230,195", true)]
+public class Starflower : ModTile//, ISwayTile
 {
 	public override void Load() => On_Player.FigureOutWhatToPlace += OverrideSunflower;
 
@@ -27,7 +26,6 @@ public class Starflower : ModTile, ISwayTile
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
 		Main.tileLavaDeath[Type] = true;
-		Main.tileCut[Type] = false;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.Width = 2;
@@ -40,7 +38,6 @@ public class Starflower : ModTile, ISwayTile
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.addTile(Type);
 
-		TileID.Sets.DisableSmartCursor[Type] = true;
 		DustType = DustID.Grass;
 		AddMapEntry(new Color(20, 190, 130));
 		RegisterItemDrop(ItemID.Sunflower);
@@ -56,7 +53,7 @@ public class Starflower : ModTile, ISwayTile
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (.3f, .28f, .1f);
 
-	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
+	/*public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
 		var data = TileObjectData.GetTileData(tile);
@@ -78,5 +75,5 @@ public class Starflower : ModTile, ISwayTile
 			rotation = 0f;
 
 		return rotation * .75f;
-	}
+	}*/
 }

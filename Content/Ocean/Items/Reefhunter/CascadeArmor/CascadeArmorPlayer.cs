@@ -56,7 +56,7 @@ public class CascadeArmorPlayer : ModPlayer
 	{
 		if (setActive && bubbleCooldown == 0)
 		{
-			float added = bubbleStrength + Math.Min(damageDone / 150f, .075f);
+			float added = bubbleStrength + Math.Min(damageDone / 180f, .05f);
 			bubbleStrength = MathHelper.Clamp(added, 0, 1);
 
 			if (Main.netMode != NetmodeID.SinglePlayer)

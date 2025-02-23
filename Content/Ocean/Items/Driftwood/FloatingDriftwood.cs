@@ -6,7 +6,7 @@ namespace SpiritReforged.Content.Ocean.Items.Driftwood;
 /// <summary> The naturally spawning variant of our driftwood decoration items, and the player's source of driftwood blocks. </summary>
 public class FloatingDriftwood : FloatingItem
 {
-	public override float SpawnWeight => 1.4f;
+	public override float SpawnWeight => base.Weight * 1.2f;
 	public override float Weight => base.Weight * 0.9f;
 	public override float Bouyancy => base.Bouyancy * 1.05f;
 	public override string Texture => base.Texture.Replace("Floating", string.Empty);
