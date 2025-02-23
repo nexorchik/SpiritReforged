@@ -61,7 +61,11 @@ public class SunkenTreasureTile : ModTile
 		Main.tileLavaDeath[Type] = true;
 		Main.tileSpelunker[Type] = true;
 
+		TileID.Sets.PreventsSandfall[Type] = true;
+		TileID.Sets.GeneralPlacementTiles[Type] = false;
+
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
+		TileObjectData.newTile.Origin = new(1, 1);
 		TileObjectData.newTile.Direction = TileObjectDirection.PlaceLeft;
 		TileObjectData.newTile.StyleWrapLimit = 2;
 		TileObjectData.newTile.StyleMultiplier = 2;

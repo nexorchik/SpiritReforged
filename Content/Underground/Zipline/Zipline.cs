@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.PlayerCommon;
+using System.Linq;
 
 namespace SpiritReforged.Content.Underground.Zipline;
 
@@ -29,15 +30,16 @@ internal class Zipline(int owner)
 			return 0;
 
 		Vector2 start, end;
+		var last = points[^1];
 
-		if (to.X < points[0].X)
+		if (to.X < last.X)
 		{
 			start = to;
-			end = points[0];
+			end = last;
 		}
 		else
 		{
-			start = points[0];
+			start = last;
 			end = to;
 		}
 

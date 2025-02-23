@@ -1,7 +1,6 @@
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
-using SpiritReforged.Common.WorldGeneration;
 using System.Linq;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -16,6 +15,23 @@ public class ZiplineGun : ModItem
 	public const int UseTime = 60;
 
 	private static Asset<Texture2D> xTexture;
+
+	#region checks
+	/// <summary> Gets the cursor position in tile coordinates optionally adjusted by <see cref="MagnetCursor"/>. </summary>
+	/// <param name="magnet"> Whether the final position should adjust to nearby solid tiles. </param>
+	/// <param name="failed"> Whether <see cref="MagnetCursor"/> found a nearby solid tile. </param>
+	private static Point16 GetCursor(bool magnet, out bool failed)
+	{
+		if (magnet && Main.SmartCursorIsUsed)
+			return MagnetCursor.Magnetize(3, out failed);
+		else
+		{
+			var coords = Main.MouseWorld.ToTileCoordinates16();
+			failed = !MagnetCursor.ScanSurrounding(coords);
+
+			return coords;
+		}
+	}
 
 	/// <summary> Checks whether <see cref="Main.MouseWorld"/> has valid tile surroundings for a zipline. </summary>
 	/// <param name="wall"> Whether the check is a wall. </param>
@@ -33,8 +49,8 @@ public class ZiplineGun : ModItem
 			return true;
 		}
 
-		var flags = OpenTools.GetOpenings(coords.X, coords.Y, false, onlySolid: true);
-		return !flags.HasFlag(OpenFlags.Above | OpenFlags.Right | OpenFlags.Below | OpenFlags.Left);
+		GetCursor(true, out bool failed);
+		return !failed;
 	}
 
 	/// <summary> Checks whether <see cref="Main.MouseWorld"/> is hovering over a removeable zipline. </summary>
@@ -62,13 +78,13 @@ public class ZiplineGun : ModItem
 			return true;
 
 		var last = myZipline.points.Last();
-		if ((last / 16).Distance(Main.MouseWorld / 16) > ExceedDist + .5f)
+		if ((last / 16).Distance(GetCursor(true, out _).ToVector2()) > ExceedDist + .5f)
 		{
 			exceedsRange = true;
 			return true;
 		}
 
-		return (last / 16).Distance(Main.MouseWorld / 16) <= minDistance + .5f;
+		return (last / 16).Distance(GetCursor(true, out _).ToVector2()) <= minDistance + .5f;
 	}
 
 	/// <summary> Checks if the angle of the zipline is within <see cref="Zipline.MaxAngle"/>. </summary>
@@ -79,8 +95,9 @@ public class ZiplineGun : ModItem
 		if (myZipline == default || myZipline.points.Count == 0)
 			return true;
 
-		return Math.Abs(myZipline.Angle(Main.MouseWorld.ToTileCoordinates().ToWorldCoordinates())) <= Zipline.MaxAngle;
+		return Math.Abs(myZipline.Angle(GetCursor(true, out _).ToWorldCoordinates())) <= Zipline.MaxAngle;
 	}
+	#endregion
 
 	public override void Load()
 	{
@@ -95,20 +112,23 @@ public class ZiplineGun : ModItem
 		if (!Main.LocalPlayer.mouseInterface && Main.LocalPlayer.HeldItem?.ModItem is ZiplineGun ziplineGun && Main.LocalPlayer.GetModPlayer<ZiplinePlayer>().assistant)
 		{
 			var grid = TextureAssets.CursorRadial.Value;
-			var position = Main.MouseWorld.ToTileCoordinates().ToWorldCoordinates() - Main.screenPosition;
+
+			var cursorPos = GetCursor(false, out _).ToWorldCoordinates() - Main.screenPosition; //The position of the cursor
+			var finalPos = GetCursor(true, out _).ToWorldCoordinates() - Main.screenPosition; //The position of placement (cursor adjusted by Magnetize)
+
 			float rotation = (float)Math.Sin(Main.timeForVisualEffects / 50f) * .1f;
 			bool exceedsRange = false;
 
 			if (Main.LocalPlayer.gravDir == -1f)
-				position.Y = Main.screenHeight - position.Y;
+				cursorPos.Y = Main.screenHeight - cursorPos.Y;
 
 			if (CheckRemoveable())
 			{
 				var outline = TextureAssets.Extra[2].Value;
 				var source = new Rectangle(0, 0, 16, 16);
 
-				Main.spriteBatch.Draw(grid, position - grid.Size() / 2, (Color.Green * .5f).Additive());
-				Main.spriteBatch.Draw(outline, position, source, Color.Green.Additive(), rotation, source.Size() / 2, 1 + rotation, default, 0);
+				Main.spriteBatch.Draw(grid, cursorPos - grid.Size() / 2, (Color.Green * .5f).Additive());
+				Main.spriteBatch.Draw(outline, finalPos, source, Color.Green.Additive(), rotation, source.Size() / 2, 1 + rotation, default, 0);
 			}
 			else if (!CheckDistance(out exceedsRange) || !CheckTile(out _))
 			{
@@ -117,8 +137,8 @@ public class ZiplineGun : ModItem
 
 				var x = xTexture.Value;
 
-				Main.spriteBatch.Draw(grid, position - grid.Size() / 2, (Color.Red * .5f).Additive());
-				Main.spriteBatch.Draw(x, position, null, Color.Red.Additive(), rotation, x.Size() / 2, 1 + rotation, default, 0);
+				Main.spriteBatch.Draw(grid, cursorPos - grid.Size() / 2, (Color.Red * .5f).Additive());
+				Main.spriteBatch.Draw(x, finalPos, null, Color.Red.Additive(), rotation, x.Size() / 2, 1 + rotation, default, 0);
 			}
 			else
 			{
@@ -130,8 +150,8 @@ public class ZiplineGun : ModItem
 				var outline = TextureAssets.Extra[2].Value;
 				var source = new Rectangle(0, 0, 16, 16);
 
-				Main.spriteBatch.Draw(grid, position - grid.Size() / 2, (color * .5f).Additive());
-				Main.spriteBatch.Draw(outline, position, source, color.Additive(), rotation, source.Size() / 2, 1 + rotation, default, 0);
+				Main.spriteBatch.Draw(grid, cursorPos - grid.Size() / 2, (color * .5f).Additive());
+				Main.spriteBatch.Draw(outline, finalPos, source, color.Additive(), rotation, source.Size() / 2, 1 + rotation, default, 0);
 			}
 
 			Main.MouseShowBuildingGrid = false; //Always temporarily disable the default building grid before it is drawn
@@ -149,7 +169,7 @@ public class ZiplineGun : ModItem
 			if (myZipline == default || myZipline.points.Count == 0)
 				return;
 
-			var start = Main.MouseWorld.ToTileCoordinates().ToWorldCoordinates();
+			var start = GetCursor(true, out _).ToWorldCoordinates();
 			var end = myZipline.points.Last();
 			float totalDistance = start.Distance(end);
 
@@ -200,6 +220,9 @@ public class ZiplineGun : ModItem
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
+		var targetPos = GetCursor(true, out _).ToWorldCoordinates();
+		velocity = new Vector2(velocity.Length(), 0).RotatedBy(player.AngleTo(targetPos));
+
 		Projectile.NewProjectile(source, position, Vector2.Normalize(velocity), ModContent.ProjectileType<ZiplineGunHeld>(), 0, 0, player.whoAmI);
 		SoundEngine.PlaySound(SoundID.DD2_BallistaTowerShot with { Pitch = .5f }, position);
 
@@ -215,7 +238,7 @@ public class ZiplineGun : ModItem
 			PreNewProjectile.New(source, position, velocity, type, preSpawnAction: delegate (Projectile p)
 			{
 				if (p.ModProjectile is ZiplineProj zipline)
-					zipline.cursorPoint = Main.MouseWorld.ToTileCoordinates().ToWorldCoordinates();
+					zipline.cursorPoint = targetPos;
 			});
 		}
 

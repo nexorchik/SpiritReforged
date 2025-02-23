@@ -469,7 +469,7 @@ public class Hyena : ModNPC
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
 		npcLoot.AddCommon<RawMeat>(3);
-		npcLoot.AddCommon(ItemID.Leather, 2, 1, 2);
+		npcLoot.AddCommon(ItemID.Leather, 2, 3, 5);
 	}
 
 	public override void OnKill()

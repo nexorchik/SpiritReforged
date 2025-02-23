@@ -8,23 +8,36 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 
 public class CascadeArmorPlayer : ModPlayer
 {
-	private float GetBaseBubbleScale => Common.Easing.EaseFunction.EaseCubicOut.Ease(bubbleVisual) * (1 + (float)Math.Sin(Main.time * MathHelper.TwoPi / 120) / 30);
+	private float GetBaseBubbleScale => Common.Easing.EaseFunction.EaseCubicOut.Ease(_bubbleVisual) * (1 + (float)Math.Sin(Main.time * MathHelper.TwoPi / 120) / 30);
 
 	private static Asset<Texture2D> ShieldTexture, OutlineTexture;
-
-	public const float MaxResist = .20f;
-
-	private float _lastResisted;
 
 	internal float bubbleStrength = 0;
 	internal int bubbleCooldown = 120;
 	internal bool setActive = false;
 
 	//Visual data
-	internal Vector2 bubbleSquish = Vector2.One;
-	internal Vector2 squishVelocity = Vector2.Zero;
-	internal float bubbleVisual = 0;
-	internal Vector2 realOldVelocity = Vector2.Zero; //Mandatory, player.oldVelocity just doesn't work????????? ???? ???
+	private Vector2 _realOldVelocity = Vector2.Zero; //Mandatory, player.oldVelocity just doesn't work????????? ???? ???
+	private Vector2 _bubbleSquish = Vector2.One;
+	private Vector2 _squishVelocity = Vector2.Zero;
+	private float _bubbleVisual = 0;
+
+	/// <summary> The last value of <see cref="GetResist"/> before being struck. </summary>
+	private float _lastResisted;
+
+	/// <summary> Gets a flat damage resistance value based on difficulty and current <see cref="bubbleStrength"/>, with slight random variance. </summary>
+	private float GetResist()
+	{
+		const float variance = 1.8f;
+		int maxResist = 20;
+
+		if (Main.masterMode)
+			maxResist = 50;
+		else if (Main.expertMode)
+			maxResist = 35;
+
+		return (maxResist + Main.rand.NextFloat(-variance, variance)) * bubbleStrength;
+	}
 
 	public override void SetStaticDefaults()
 	{
@@ -43,21 +56,37 @@ public class CascadeArmorPlayer : ModPlayer
 	{
 		if (setActive && bubbleCooldown == 0)
 		{
-			bubbleStrength = MathHelper.Clamp(bubbleStrength += .125f, 0, 1);
+			float added = bubbleStrength + Math.Min(damageDone / 150f, .075f);
+			bubbleStrength = MathHelper.Clamp(added, 0, 1);
 
 			if (Main.netMode != NetmodeID.SinglePlayer)
 				new CascadeBubbleData(bubbleStrength, (byte)Player.whoAmI).Send();
 		}
 	}
 
-	public override void PreUpdate() => realOldVelocity = Player.velocity;
-
+	public override void PreUpdate() => _realOldVelocity = Player.velocity;
 	public override void ModifyHurt(ref Player.HurtModifiers modifiers) => TryPopBubble(ref modifiers.FinalDamage);
+	public override bool FreeDodge(Player.HurtInfo info)
+	{
+		if (setActive && info.Damage == 1) //Instead of taking one damage upon resisting an attack, dodge it
+		{
+			int index = CombatText.NewText(Player.getRect(), CombatText.DamagedFriendly, 0);
+			ResistanceTextHandler.ApplyText(0, _lastResisted, index);
+
+			Player.SetImmuneTimeForAllTypes(40);
+			SoundEngine.PlaySound(SoundID.Item155 with { Pitch = .5f }, Player.Center);
+			SoundEngine.PlaySound(SoundID.MaxMana with { Pitch = 1f }, Player.Center);
+
+			return true;
+		}
+
+		return false;
+	}
 
 	public override void PostHurt(Player.HurtInfo info)
 	{
 		if (setActive)
-			ModContent.GetInstance<ResistanceTextHandler>().ApplyText(info.Damage, _lastResisted);
+			ResistanceTextHandler.ApplyText(info.Damage, _lastResisted);
 	}
 
 	public override void PostUpdate()
@@ -80,14 +109,49 @@ public class CascadeArmorPlayer : ModPlayer
 				PopBubble();
 
 			bubbleCooldown = 60;
-			bubbleSquish = Vector2.One;
-			squishVelocity = Vector2.Zero;
+			_bubbleSquish = Vector2.One;
+			_squishVelocity = Vector2.Zero;
 		}
 
-		if (bubbleVisual < bubbleStrength) //smooth transition for visual
-			bubbleVisual = MathHelper.Lerp(bubbleVisual, bubbleStrength, .1f);
+		if (_bubbleVisual < bubbleStrength) //smooth transition for visual
+			_bubbleVisual = MathHelper.Lerp(_bubbleVisual, bubbleStrength, .1f);
 
-		bubbleVisual = Math.Min(bubbleVisual, bubbleStrength); //Cap visual strength at real strength value
+		_bubbleVisual = Math.Min(_bubbleVisual, bubbleStrength); //Cap visual strength at real strength value
+	}
+
+	private void TryPopBubble(ref StatModifier damage)
+	{
+		_lastResisted = GetResist();
+
+		if (bubbleStrength > 0f)
+		{
+			damage.Flat -= _lastResisted;
+			PopBubble();
+		}
+	}
+
+	private void PopBubble()
+	{
+		int radius = (int)(120 * bubbleStrength);
+
+		foreach (var npc in Main.ActiveNPCs)
+		{
+			if (npc.CanBeChasedBy() && npc.DistanceSQ(Player.Center) < radius * radius)
+				npc.SimpleStrikeNPC(1, Player.Center.X < npc.Center.X ? 1 : -1, false, 3f * bubbleStrength);
+		}
+
+		if (!Main.dedServ)
+		{
+			ParticleHandler.SpawnParticle(new BubblePop(Player.Center, GetBaseBubbleScale, 0.8f * _bubbleVisual, 30));
+
+			SoundEngine.PlaySound(SoundID.Item54 with { PitchVariance = 0.2f }, Player.Center);
+			SoundEngine.PlaySound(SoundID.NPCHit3 with { PitchVariance = 0.2f, Pitch = -.5f }, Player.Center);
+			SoundEngine.PlaySound(SoundID.Item86, Player.Center);
+		}
+
+		bubbleStrength = 0f;
+		_bubbleVisual = 0f;
+		bubbleCooldown = 120;
 	}
 
 	/// <summary>
@@ -109,58 +173,24 @@ public class CascadeArmorPlayer : ModPlayer
 		desiredSquish.X *= playerMovementFactor;
 		desiredSquish.Y /= playerMovementFactor;
 
-		var squishDirectionUnit = (desiredSquish - bubbleSquish).SafeNormalize(Vector2.One);
-		if (Vector2.Distance(desiredSquish, bubbleSquish) > 0.05f) //don't change velocity if it's super minor, to avoid rapid tiny changes in size
-			squishVelocity = Vector2.Lerp(squishVelocity, squishDirectionUnit, interpolationspeed);
+		var squishDirectionUnit = (desiredSquish - _bubbleSquish).SafeNormalize(Vector2.One);
+		if (Vector2.Distance(desiredSquish, _bubbleSquish) > 0.05f) //don't change velocity if it's super minor, to avoid rapid tiny changes in size
+			_squishVelocity = Vector2.Lerp(_squishVelocity, squishDirectionUnit, interpolationspeed);
 
 		//jiggle more if player makes a sudden big jump in velocity (ie dashing, landing, jumping)
-		if (Math.Abs(Player.velocity.Length() - realOldVelocity.Length()) > SUPERjiggleThreshold)
-			squishVelocity += squishDirectionUnit / 2;
+		if (Math.Abs(Player.velocity.Length() - _realOldVelocity.Length()) > SUPERjiggleThreshold)
+			_squishVelocity += squishDirectionUnit / 2;
 
-		bubbleSquish += squishVelocity * squishspeed;
+		_bubbleSquish += _squishVelocity * squishspeed;
 
 		//Loosely clamp the squish so it doesnt stretch too far in either direction, without making an awkward looking hard restriction
-		var clampedBubbleSquish = new Vector2(MathHelper.Clamp(bubbleSquish.X, 1 - squishBounds, 1 + squishBounds), MathHelper.Clamp(bubbleSquish.Y, 1 - squishBounds, 1 + squishBounds));
-		bubbleSquish = Vector2.Lerp(bubbleSquish, clampedBubbleSquish, interpolationspeed);
-	}
-
-	private void TryPopBubble(ref StatModifier damage)
-	{
-		_lastResisted = MaxResist * bubbleStrength;
-
-		if (bubbleStrength > 0f)
-		{
-			damage *= 1 - _lastResisted;
-			PopBubble();
-		}
-	}
-
-	private void PopBubble()
-	{
-		int radius = (int)(120 * bubbleStrength);
-
-		foreach (var npc in Main.ActiveNPCs)
-		{
-			if (npc.CanBeChasedBy() && npc.DistanceSQ(Player.Center) < radius * radius)
-				npc.SimpleStrikeNPC(1, Player.Center.X < npc.Center.X ? 1 : -1, false, 3f * bubbleStrength);
-		}
-
-		if (!Main.dedServ)
-		{
-			ParticleHandler.SpawnParticle(new BubblePop(Player.Center, GetBaseBubbleScale, 0.8f * bubbleVisual, 35));
-			SoundEngine.PlaySound(SoundID.Item54 with { PitchVariance = 0.2f }, Player.Center);
-			SoundEngine.PlaySound(SoundID.NPCHit3 with { PitchVariance = 0.2f }, Player.Center);
-			SoundEngine.PlaySound(SoundID.Item86, Player.Center);
-		}
-
-		bubbleStrength = 0f;
-		bubbleVisual = 0f;
-		bubbleCooldown = 120;
+		var clampedBubbleSquish = new Vector2(MathHelper.Clamp(_bubbleSquish.X, 1 - squishBounds, 1 + squishBounds), MathHelper.Clamp(_bubbleSquish.Y, 1 - squishBounds, 1 + squishBounds));
+		_bubbleSquish = Vector2.Lerp(_bubbleSquish, clampedBubbleSquish, interpolationspeed);
 	}
 
 	private void DrawBubble(SpriteBatch sB, bool outline = false)
 	{
-		if (bubbleVisual > 0f)
+		if (_bubbleVisual > 0f)
 		{
 			Texture2D texture = (outline ? OutlineTexture : ShieldTexture).Value;
 
@@ -169,7 +199,7 @@ public class CascadeArmorPlayer : ModPlayer
 			float opacity = outline ? .25f : 0.8f;
 			Color lightColor = Lighting.GetColor((int)(Player.Center.X / 16), (int)(Player.Center.Y / 16));
 
-			sB.Draw(texture, drawPos, null, lightColor * bubbleVisual * opacity, 0f, texture.Size() / 2f, bubbleSquish * GetBaseBubbleScale, SpriteEffects.None, 0);
+			sB.Draw(texture, drawPos, null, lightColor * _bubbleVisual * opacity, 0f, texture.Size() / 2f, _bubbleSquish * GetBaseBubbleScale, SpriteEffects.None, 0);
 		}
 	}
 }

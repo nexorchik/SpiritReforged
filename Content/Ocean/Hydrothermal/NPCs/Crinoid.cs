@@ -8,7 +8,7 @@ namespace SpiritReforged.Content.Ocean.Hydrothermal.NPCs;
 [AutoloadCritter]
 public class Crinoid : ModNPC
 {
-	private int pickedType;
+	private byte _pickedType;
 
 	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 6;
 
@@ -38,7 +38,7 @@ public class Crinoid : ModNPC
 	public override void OnSpawn(IEntitySource source)
 	{
 		NPC.scale = Main.rand.NextFloat(.6f, 1f);
-		pickedType = Main.rand.Next(3);
+		_pickedType = (byte)Main.rand.Next(3);
 		NPC.netUpdate = true;
 	}
 
@@ -47,25 +47,16 @@ public class Crinoid : ModNPC
 	public override void FindFrame(int frameHeight)
 	{
 		NPC.frame.Width = 46;
-		NPC.frame.X = NPC.frame.Width * pickedType;
+		NPC.frame.X = NPC.frame.Width * _pickedType;
 
 		NPC.frameCounter += 0.22f;
 		NPC.frameCounter %= Main.npcFrameCount[Type];
 		int frame = (int)NPC.frameCounter;
 		NPC.frame.Y = frame * frameHeight;
-
-		//if (NPC.IsABestiaryIconDummy && frame == 5)
-		//{
-		//	pickedType++;
-
-		//	if (pickedType > 2)
-		//		pickedType = 0;
-		//}
 	}
 
-	public override void SendExtraAI(BinaryWriter writer) => writer.Write(pickedType);
-
-	public override void ReceiveExtraAI(BinaryReader reader) => pickedType = reader.ReadInt32();
+	public override void SendExtraAI(BinaryWriter writer) => writer.Write(_pickedType);
+	public override void ReceiveExtraAI(BinaryReader reader) => _pickedType = reader.ReadByte();
 
 	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 	{
@@ -83,7 +74,7 @@ public class Crinoid : ModNPC
 		if (NPC.life > 0 || Main.netMode == NetmodeID.Server)
 			return;
 
-		string goreType = pickedType switch
+		string goreType = _pickedType switch
 		{
 			1 => "RedCrinoid",
 			2 => "YellowCrinoid",
@@ -103,6 +94,6 @@ public class Crinoid : ModNPC
 		if (!config.VentCritters)
 			return 0;
 
-		return spawnInfo.Water && NPC.CountNPCS(Type) < 10 && spawnInfo.SpawnTileType == ModContent.TileType<Gravel>() ? .21f : 0;
+		return spawnInfo.Water && spawnInfo.SpawnTileType == ModContent.TileType<Gravel>() && NPC.CountNPCS(Type) < 10 ? .71f : 0;
 	}
 }

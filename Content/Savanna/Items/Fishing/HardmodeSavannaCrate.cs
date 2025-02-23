@@ -16,6 +16,6 @@ public class HardmodeSavannaCrate : ModItem
 			ItemID.MysticCoilSnake, ItemID.FeralClaws);
 
 		CrateHelper.HardmodeBiomeCrate(itemLoot, main, ItemDropRule.NotScalingWithLuck(ItemID.BambooBlock, 3, 20, 50), 
-			ItemDropRule.NotScalingWithLuck(ItemID.DesertFossil, 3, 20, 50));
+			ItemDropRule.NotScalingWithLuck(ItemID.DesertFossil, 3, 20, 50), ItemDropRule.NotScalingWithLuck(ItemID.Leather, 3, 5, 10));
 	}
 }

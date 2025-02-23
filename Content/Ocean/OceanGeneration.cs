@@ -224,7 +224,11 @@ public class OceanGeneration : ModSystem
 
 	private static void PlaceSunkenTreasure(int innerEdge, int side)
 	{
-		for (int i = 0; i < 2; ++i)
+		const int maxTries = 100;
+		int countMax = WorldGen.genRand.Next(2, 4);
+		int count = 0;
+
+		for (int t = 0; t < maxTries; t++)
 		{
 			int sunkenX = innerEdge - WorldGen.genRand.Next(133, innerEdge - 40);
 			if (side == 1)
@@ -234,13 +238,14 @@ public class OceanGeneration : ModSystem
 			while (!WorldGen.SolidTile(pos.X, pos.Y))
 				pos.Y++;
 
-			for (int j = pos.X; j < pos.X + 3; ++j)
+			if (WorldMethods.AreaClear(pos.X - 1, pos.Y - 2, 3, 2))
 			{
-				for (int k = pos.Y - 1; k < pos.Y; ++k)
-					WorldGen.KillTile(j, k, false, false, true);
-			}
+				int type = ModContent.TileType<SunkenTreasureTile>();
+				WorldGen.PlaceTile(pos.X, pos.Y - 1, type, true);
 
-			WorldGen.PlaceObject(pos.X, pos.Y - 1, ModContent.TileType<SunkenTreasureTile>());
+				if (Main.tile[pos.X, pos.Y - 1].TileType == type && ++count >= countMax)
+					break;
+			}
 		}
 	}
 
@@ -258,7 +263,7 @@ public class OceanGeneration : ModSystem
 			while (!WorldGen.SolidTile(x, y))
 				y++;
 
-			if (WorldMethods.AreaClear(x, y - 2, 2, 2))
+			if (WorldMethods.AreaClear(x, y - 2, 2, 2) && GenVars.structures.CanPlace(new Rectangle(x, y - 2, 2, 2)))
 			{
 				for (int w = 0; w < 4; w++)
 				{
@@ -306,7 +311,7 @@ public class OceanGeneration : ModSystem
 			while (!WorldGen.SolidTile(x, y))
 				y++;
 
-			if (WorldMethods.AreaClear(x, y - 2, 2, 2) && WorldMethods.Submerged(x, y - 2, 2, 2))
+			if (WorldMethods.AreaClear(x, y - 2, 2, 2) && WorldMethods.Submerged(x, y - 2, 2, 2) && GenVars.structures.CanPlace(new Rectangle(x, y - 2, 2, 2)))
 			{
 				for (int w = 0; w < 2; w++)
 				{

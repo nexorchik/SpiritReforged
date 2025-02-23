@@ -23,7 +23,7 @@ public abstract class HerbTile : ModTile, ICheckItemUse
 		Main.tileObsidianKill[Type] = true;
 		Main.tileCut[Type] = true;
 		Main.tileNoFail[Type] = true;
-		Main.tileAlch[Type] = true;
+		//Main.tileAlch[Type] = true; //Prevents the tile from existing on normal anchors
 
 		TileID.Sets.ReplaceTileBreakUp[Type] = true;
 		TileID.Sets.IgnoredInHouseScore[Type] = true;

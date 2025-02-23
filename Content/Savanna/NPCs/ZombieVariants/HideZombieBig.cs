@@ -1,23 +1,20 @@
 using SpiritReforged.Common.NPCCommon.Abstract;
 using SpiritReforged.Content.Savanna.Biome;
-using SpiritReforged.Content.Savanna.Items.HuntingRifle;
-using System.IO;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
 public class HideZombieBig : ReplaceNPC
 {
-	float frameCounter;
+	private float frameCounter;
 
-	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie,
-		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
+	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie, NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
 
 	public override void StaticDefaults()
 	{
 		Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
 		NPCID.Sets.Zombies[Type] = true;
-		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Skeleton;
+		NPCID.Sets.ShimmerTransformToNPC[Type] = NPCID.Skeleton;
 	}
 
 	public override void SetDefaults()
@@ -66,11 +63,10 @@ public class HideZombieBig : ReplaceNPC
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
-		npcLoot.AddCommon(ItemID.Leather, 2, 1, 2);
+		npcLoot.AddCommon(ItemID.Leather, 2, 2, 4);
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
-
 	}
 
-	public override bool CanSpawn(Player player) => player.InModBiome<Biome.SavannaBiome>();
+	public override bool CanSpawn(Player player) => player.InModBiome<SavannaBiome>();
 }
