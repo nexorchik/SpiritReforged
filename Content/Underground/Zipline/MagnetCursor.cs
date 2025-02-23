@@ -6,8 +6,9 @@ namespace SpiritReforged.Content.Underground.Zipline;
 
 internal static class MagnetCursor
 {
-	/// <summary> Cache to prevent continuous, unecessary tile checks. </summary>
-	private static Point16 LastCursorPos, LastMagnetizePos;
+	//Cache to prevent continuous, unecessary tile checks.
+	private static Point16 LastCursorPos;
+	private static Point16 LastMagnetizePos;
 
 	public static Point16 Magnetize(int range, out bool failed)
 	{

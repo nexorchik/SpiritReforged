@@ -26,7 +26,7 @@ internal class ResistanceTextHandler : ILoadable
 			int time = Math.Clamp(cText.lifeTime - 35, 0, timeMax);
 			float span = 1f - (float)time / timeMax;
 
-			string text = ((int)resistanceDamage).ToString();
+			string text = resistanceDamage.ToString("0");
 			var font = FontAssets.CombatText[0].Value;
 			var origin = font.MeasureString(text) / 2;
 
@@ -61,7 +61,7 @@ internal class ResistanceTextHandler : ILoadable
 				else //Draw a combined value
 				{
 					cText.alpha = 0; //Turn the default text invisible
-					Utils.DrawBorderStringFourWay(Main.spriteBatch, font, ((int)(damage + resistanceDamage)).ToString(), leftPosition.X, leftPosition.Y, GetColor(.85f), GetColor(.25f), origin, cText.scale);
+					Utils.DrawBorderStringFourWay(Main.spriteBatch, font, (damage + resistanceDamage).ToString("0"), leftPosition.X, leftPosition.Y, GetColor(.85f), GetColor(.25f), origin, cText.scale);
 				}
 			}
 

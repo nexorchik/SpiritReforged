@@ -2,6 +2,7 @@ using SpiritReforged.Common.NPCCommon.Abstract;
 using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Items.HuntingRifle;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Savanna.NPCs.ZombieVariants;
 
@@ -61,7 +62,10 @@ public class SafariZombie : ReplaceNPC
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
-		npcLoot.AddCommon(ModContent.ItemType<HuntingRifle>(), 100);
+		var rule = ItemDropRule.Common(ModContent.ItemType<HuntingRifle>(), 100);
+		rule.OnSuccess(ItemDropRule.Common(ItemID.MusketBall, 1, 25, 45), hideLootReport: true);
+		npcLoot.Add(rule);
+
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
 		npcLoot.AddOneFromOptions(75, ModContent.ItemType<Items.Vanity.SafariHat>(), ModContent.ItemType<Items.Vanity.SafariVest>(), ModContent.ItemType<Items.Vanity.SafariShorts>());

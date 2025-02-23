@@ -12,6 +12,19 @@ public class CascadeArmorPlayer : ModPlayer
 
 	private static Asset<Texture2D> ShieldTexture, OutlineTexture;
 
+	internal float bubbleStrength = 0;
+	internal int bubbleCooldown = 120;
+	internal bool setActive = false;
+
+	//Visual data
+	private Vector2 _realOldVelocity = Vector2.Zero; //Mandatory, player.oldVelocity just doesn't work????????? ???? ???
+	private Vector2 _bubbleSquish = Vector2.One;
+	private Vector2 _squishVelocity = Vector2.Zero;
+	private float _bubbleVisual = 0;
+
+	/// <summary> The last value of <see cref="GetResist"/> before being struck. </summary>
+	private float _lastResisted;
+
 	/// <summary> Gets a flat damage resistance value based on difficulty and current <see cref="bubbleStrength"/>, with slight random variance. </summary>
 	private float GetResist()
 	{
@@ -25,19 +38,6 @@ public class CascadeArmorPlayer : ModPlayer
 
 		return (maxResist + Main.rand.NextFloat(-variance, variance)) * bubbleStrength;
 	}
-
-	internal float bubbleStrength = 0;
-	internal int bubbleCooldown = 120;
-	internal bool setActive = false;
-
-	//Visual data
-	private Vector2 _realOldVelocity = Vector2.Zero; //Mandatory, player.oldVelocity just doesn't work????????? ???? ???
-	private Vector2 _bubbleSquish = Vector2.One;
-	private Vector2 _squishVelocity = Vector2.Zero;
-	private float _bubbleVisual = 0;
-
-	/// <summary> The last value of <see cref="GetResist"/> before being struck. </summary>
-	private float _lastResisted;
 
 	public override void SetStaticDefaults()
 	{
