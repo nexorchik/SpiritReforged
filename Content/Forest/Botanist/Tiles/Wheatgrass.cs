@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Forest.Stargrass.Tiles;
+using SpiritReforged.Content.Savanna.Tiles;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Botanist.Tiles;
@@ -17,7 +18,7 @@ public class Wheatgrass : ModTile, ISwayTile
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
 		TileObjectData.newTile.Origin = new(0, 1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, TileObjectData.newTile.Width, 0);
-		TileObjectData.newTile.AnchorValidTiles = [TileID.Grass, TileID.Dirt, ModContent.TileType<StargrassTile>()];
+		TileObjectData.newTile.AnchorValidTiles = [TileID.Grass, TileID.Dirt, ModContent.TileType<StargrassTile>(), ModContent.TileType<SavannaGrass>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = 6;
 		TileObjectData.addTile(Type);

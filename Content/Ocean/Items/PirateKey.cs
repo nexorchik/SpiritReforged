@@ -5,6 +5,8 @@ namespace SpiritReforged.Content.Ocean.Items;
 
 public class PirateKey : ModItem
 {
+	public override bool IsLoadingEnabled(Mod mod) => false;
+
 	public override void SetStaticDefaults()
 	{
 		Item.ResearchUnlockCount = 1;
