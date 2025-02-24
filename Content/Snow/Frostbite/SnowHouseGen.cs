@@ -1,61 +1,73 @@
-﻿using Terraria.GameContent.Biomes.CaveHouse;
+﻿using System.Linq;
+using Terraria.GameContent.Biomes.CaveHouse;
 
 namespace SpiritReforged.Content.Snow.Frostbite;
 
 internal class SnowHouseGen : ModSystem
 {
-	private static bool Generated = false;
+	/// <summary> The number of Frostbite tomes generated. </summary>
+	private static int GenCount;
+
+	/// <summary> The maximum number of <b>guaranteed</b> Frostbite tomes in this world. </summary>
+	public static int GenCountMax => WorldGen.GetWorldSize() == WorldGen.WorldSize.Large ? 2 : 1;
 
 	public override void Load() => On_HouseBuilder.FillRooms += AddBooks;
 
 	private static void AddBooks(On_HouseBuilder.orig_FillRooms orig, HouseBuilder self)
 	{
+		bool genned = false; //Whether Frostbite has already generated in this particular house
+		bool shouldGen = GenCount < GenCountMax || WorldGen.genRand.NextBool(5);
+
 		if (self.Type == HouseType.Ice)
 		{
-			if (!Generated)
+			foreach (var room in self.Rooms)
 			{
-				Rectangle room = self.Rooms[WorldGen.genRand.Next(self.Rooms.Count)];
-
-				int length = WorldGen.genRand.Next(3, 6);
-
-				PlaceShelf(room.X + 1 + WorldGen.genRand.Next(room.Width - (length + 1)), room.Y + 2, length, WorldGen.genRand.Next(1, 3));
-				Generated = true; //The first snow house generated always has Frostbite
-			}
-			else
-			{
-				foreach (var room in self.Rooms)
+				if (shouldGen && !genned || WorldGen.genRand.NextBool(4 + WorldGen.GetWorldSize()))
 				{
-					if (WorldGen.genRand.NextBool(4 + WorldGen.GetWorldSize()))
-					{
-						int length = WorldGen.genRand.Next(3, 6);
-						PlaceShelf(room.X + 1 + WorldGen.genRand.Next(room.Width - (length + 1)), room.Y + 2, length, WorldGen.genRand.Next(1, 3));
-					}
+					int length = WorldGen.genRand.Next(3, 6);
+					PlaceShelf(room.X + 1 + WorldGen.genRand.Next(room.Width - (length + 1)), room.Y + 2, new Point(length, WorldGen.genRand.Next(1, 3)));
 				}
 			}
 		}
 
 		orig(self);
 
-		void PlaceShelf(int x, int y, int length, int num)
+		void PlaceShelf(int originX, int originY, Point size)
 		{
-			int specialPos = Generated ? -1 : WorldGen.genRand.Next(length * num); //Which tile Frostbite should generate on
+			HashSet<Point> safe = []; //Keeps track of empty shelves for Frostbite gen
 
-			for (int i = 0; i < length; i++)
+			for (int x = originX; x < originX + size.X; x++)
 			{
-				for (int j = 0; j < num; j++)
+				for (int j = 0; j < size.Y; j++)
 				{
-					WorldGen.PlaceTile(x + i, y + j * 2, TileID.Platforms, style: self.PlatformStyle);
+					int y = originY + j * 2;
 
-					if (specialPos == 0)
-						WorldGen.PlaceTile(x + i, y + j * 2 - 1, ModContent.TileType<FrostbiteTile>());
-					else if (WorldGen.genRand.NextFloat() < .66f)
-						WorldGen.PlaceTile(x + i, y + j * 2 - 1, TileID.Books, style: WorldGen.genRand.Next(6));
+					WorldGen.PlaceTile(x, y, TileID.Platforms, style: self.PlatformStyle);
 
-					specialPos--;
+					if (WorldGen.genRand.NextFloat() < .66f)
+						WorldGen.PlaceTile(x, y - 1, TileID.Books, style: WorldGen.genRand.Next(6));
+					else
+						safe.Add(new Point(x, y - 1));
+				}
+			}
+
+			if (shouldGen && !genned)
+			{
+				foreach (var pt in safe.OrderBy(x => WorldGen.genRand.Next(safe.Count)))
+				{
+					int type = ModContent.TileType<FrostbiteTile>();
+					WorldGen.PlaceTile(pt.X, pt.Y, type);
+
+					if (Framing.GetTileSafely(pt).TileType == type)
+					{
+						genned = true;
+						GenCount++;
+						break;
+					}
 				}
 			}
 		}
 	}
 
-	public override void PostWorldGen() => Generated = false; //Reset to default
+	public override void PostWorldGen() => GenCount = 0; //Reset to default
 }
