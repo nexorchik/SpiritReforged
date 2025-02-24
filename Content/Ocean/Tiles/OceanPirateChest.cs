@@ -8,6 +8,8 @@ namespace SpiritReforged.Content.Ocean.Tiles;
 
 public class OceanPirateChest : ModTile
 {
+	public override bool IsLoadingEnabled(Mod mod) => false;
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileSpelunker[Type] = true;
