@@ -4,6 +4,8 @@ namespace SpiritReforged.Content.Ocean.Items;
 
 public class PirateChest : ModItem
 {
+	public override bool IsLoadingEnabled(Mod mod) => false;
+
 	public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
 
 	public override void SetDefaults()

@@ -142,7 +142,7 @@ public class OceanGeneration : ModSystem
 
 	private static void PopulateOcean(Rectangle bounds, int side)
 	{
-		PlacePirateChest(side == 0 ? bounds.Right : bounds.Left, side);
+		//PlacePirateChest(side == 0 ? bounds.Right : bounds.Left, side);
 		PlaceSunkenTreasure(side == 0 ? bounds.Right : bounds.Left, side);
 
 		for (int i = bounds.Left; i < bounds.Right; ++i)
@@ -249,7 +249,7 @@ public class OceanGeneration : ModSystem
 		}
 	}
 
-	public static void PlacePirateChest(int innerEdge, int side)
+	/*public static void PlacePirateChest(int innerEdge, int side)
 	{
 		const int maxTries = 200;
 
@@ -292,7 +292,7 @@ public class OceanGeneration : ModSystem
 		}
 
 		static int BarStack() => WorldGen.genRand.Next(3, 7);
-	}
+	}*/
 
 	/// <summary> Places additional water chests in the inner ocean. </summary>
 	/// <param name="leftBounds"> The left ocean bounds. </param>
@@ -344,7 +344,7 @@ public class OceanGeneration : ModSystem
 		}
 	}
 
-	public static bool PlaceChest(int x, int y, int type, (int, int)[] mainItems, (int, int)[] subItems, bool noTypeRepeat = true, UnifiedRandom r = null, int subItemLength = 6, int style = 0, bool overRide = false, int width = 2, int height = 2)
+	/*public static bool PlaceChest(int x, int y, int type, (int, int)[] mainItems, (int, int)[] subItems, bool noTypeRepeat = true, UnifiedRandom r = null, int subItemLength = 6, int style = 0, bool overRide = false, int width = 2, int height = 2)
 	{
 		r ??= Main.rand;
 
@@ -389,7 +389,7 @@ public class OceanGeneration : ModSystem
 		}
 
 		return false;
-	}
+	}*/
 
 	private static float OceanSlopeRoughness()
 	{

@@ -47,9 +47,6 @@ internal abstract class BackpackItem : ModItem
 
 		player.GetModPlayer<BackpackPlayer>().backpack = Item.Clone();
 		Item.SetDefaults(oldPack.type);
-
-		if (!oldPack.IsAir) //Refresh the backpack slots manually because BackpackUIState can't detect a change in this case
-			UISystem.GetState<BackpackUIState>().SetStorageSlots(false);
 	}
 
 	public override void SaveData(TagCompound tag)

@@ -8,30 +8,30 @@ namespace SpiritReforged.Common.UI.BackpackInterface;
 
 internal class BackpackUIState : AutoUIState
 {
-	private BackpackUISlot functionalSlot;
-	private BackpackUISlot vanitySlot;
+	private BackpackUISlot _functionalSlot;
+	private BackpackUISlot _vanitySlot;
 
-	private bool _hadBackpack;
+	private Item _lastBackpack;
 	private int _lastAdjustY;
 
 	public override void OnInitialize()
 	{
 		Width = Height = StyleDimension.Fill;
 
-		functionalSlot = new BackpackUISlot(false);
-		functionalSlot.Left = new StyleDimension(-186, 1);
-		Append(functionalSlot);
+		_functionalSlot = new BackpackUISlot(false);
+		_functionalSlot.Left = new StyleDimension(-186, 1);
+		Append(_functionalSlot);
 
-		vanitySlot = new BackpackUISlot(true);
-		vanitySlot.Left = new StyleDimension(functionalSlot.Left.Pixels - 48, 1);
-		Append(vanitySlot);
+		_vanitySlot = new BackpackUISlot(true);
+		_vanitySlot.Left = new StyleDimension(_functionalSlot.Left.Pixels - 48, 1);
+		Append(_vanitySlot);
 
 		SetVariablePositions();
 
 		On_Main.DrawInventory += TryOpenUI;
 	}
 
-	private void TryOpenUI(On_Main.orig_DrawInventory orig, Main self)
+	private static void TryOpenUI(On_Main.orig_DrawInventory orig, Main self)
 	{
 		orig(self);
 
@@ -43,32 +43,38 @@ internal class BackpackUIState : AutoUIState
 	{
 		if (!Main.playerInventory)
 		{
-			_hadBackpack = false; //Force the storage list to reload when the UI closes
+			_lastBackpack = null; //Force the storage list to reload when the UI closes
 			SetStorageSlots(true);
 
 			UISystem.SetInactive<BackpackUIState>(); //Close the UI
 			return;
 		}
 
-		bool hasBackpack = Main.LocalPlayer.GetModPlayer<BackpackPlayer>().backpack.ModItem is BackpackItem;
+		if (Main.LocalPlayer.GetModPlayer<BackpackPlayer>().backpack.ModItem is BackpackItem bp)
+		{
+			if (_lastBackpack != bp.Item)
+				SetStorageSlots(false);
 
-		if (hasBackpack && !_hadBackpack)
-			SetStorageSlots(false);
-		else if (!hasBackpack && _hadBackpack)
-			SetStorageSlots(true);
+			_lastBackpack = bp.Item;
+		}
+		else
+		{
+			if (_lastBackpack != null)
+				SetStorageSlots(true);
 
-		_hadBackpack = hasBackpack;
+			_lastBackpack = null;
+		}
 
-		int adjustY = UIHelper.AdjustY;
-		if (adjustY != _lastAdjustY)
+		int value = UIHelper.GetMapHeight();
+		if (value != _lastAdjustY)
 			SetVariablePositions();
 
-		_lastAdjustY = adjustY;
+		_lastAdjustY = value;
 
 		base.Update(gameTime);
 	}
 
-	private void SetVariablePositions() => functionalSlot.Top = vanitySlot.Top = new StyleDimension(UIHelper.AdjustY + 174, 0);
+	private void SetVariablePositions() => _functionalSlot.Top = _vanitySlot.Top = new StyleDimension(UIHelper.GetMapHeight() + 174, 0);
 
 	/// <summary> Adds or removes backpack slots with items according to the currently equipped backpack.<para/>
 	/// This is a snapshot, and must be called again if the <see cref="BackpackPlayer.backpack"/> instance has changed.<br/>
