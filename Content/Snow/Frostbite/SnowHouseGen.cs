@@ -5,11 +5,11 @@ namespace SpiritReforged.Content.Snow.Frostbite;
 
 internal class SnowHouseGen : ModSystem
 {
-	/// <summary> The number of Frostbite tomes generated. </summary>
-	private static int GenCount;
-
 	/// <summary> The maximum number of <b>guaranteed</b> Frostbite tomes in this world. </summary>
 	public static int GenCountMax => WorldGen.GetWorldSize() == WorldGen.WorldSize.Large ? 2 : 1;
+
+	/// <summary> The number of Frostbite tomes generated. </summary>
+	private static int GenCount;
 
 	public override void Load() => On_HouseBuilder.FillRooms += AddBooks;
 
