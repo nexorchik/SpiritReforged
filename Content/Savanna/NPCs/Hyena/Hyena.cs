@@ -72,13 +72,14 @@ public class Hyena : ModNPC
 	}
 
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
+	public static SearchFilter<Player> WithinDistanceAndVisible(Vector2 position, float maxDistance) => (Player player) => player.Distance(position) <= maxDistance && !player.invis;
 
 	public override void AI()
 	{
 		dealDamage = false;
 
 		int searchDist = (focus is TargetSearchFlag.All) ? 350 : 450;
-		var search = NPC.FindTarget(focus, SearchFilters.OnlyPlayersInCertainDistance(NPC.Center, searchDist), AdvancedTargetingHelper.NPCsByDistanceAndType(NPC, searchDist));
+		var search = NPC.FindTarget(focus, WithinDistanceAndVisible(NPC.Center, searchDist), AdvancedTargetingHelper.NPCsByDistanceAndType(NPC, searchDist));
 		bool wounded = NPC.life < NPC.lifeMax * .25f;
 
 		bool swimming = TrySwim();
@@ -170,7 +171,7 @@ public class Hyena : ModNPC
 				{
 					ChangeAnimationState(State.TrottingAngry, true);
 
-					if (!holdingMeat && Main.rand.NextBool(120)) //Randomly bark; not synced
+					if (!holdingMeat && Main.rand.NextBool(250)) //Randomly bark; not synced
 					{
 						ChangeAnimationState(State.BarkingAngry);
 						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Bark") with { Volume = .18f, PitchVariance = .4f }, NPC.Center);
