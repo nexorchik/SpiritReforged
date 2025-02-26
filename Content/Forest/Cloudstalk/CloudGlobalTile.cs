@@ -16,10 +16,10 @@ internal class CloudGlobalTile : GlobalTile
 			_ => 0
 		};
 
-		if (Main.tile[i, j + 1].HasTile || Main.rand.NextFloat() >= chance)
+		if (WorldGen.SolidOrSlopedTile(i, j + 1) || Main.rand.NextFloat() >= chance)
 			return;
 
-		while (!Main.tile[i, j + 1].HasTile)
+		while (!WorldGen.SolidOrSlopedTile(i, j + 1))
 			j++;
 
 		var ground = Main.tile[i, j + 1];
