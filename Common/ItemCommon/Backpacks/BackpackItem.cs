@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Common.UI.BackpackInterface;
-using SpiritReforged.Common.UI.System;
 using System.IO;
 using Terraria.ModLoader.IO;
 

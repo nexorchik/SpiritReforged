@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.Multiplayer;
 using System.IO;
+using Terraria;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Common.ItemCommon.Backpacks;
@@ -28,6 +29,16 @@ internal class BackpackPlayer : ModPlayer
 		}
 
 		_hadBackpack = Player.HeldItem.ModItem is BackpackItem;
+
+		if (backpack.ModItem is BackpackItem bp) //Update backpack contents as though they were in the inventory
+		{
+			foreach (var item in bp.items)
+			{
+				ItemLoader.UpdateInventory(item, Player);
+				Player.RefreshInfoAccsFromItemType(item);
+				Player.RefreshMechanicalAccsFromItemType(item.type);
+			}
+		}
 	}
 
 	public override void FrameEffects() //This way, players can be seen wearing backpacks in the selection screen

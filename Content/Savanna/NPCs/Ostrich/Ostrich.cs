@@ -360,10 +360,16 @@ public class Ostrich : ModNPC
 		int y = spawnInfo.SpawnTileY;
 		int wall = Framing.GetTileSafely(x, y).WallType;
 
-		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Water && Main.dayTime && NPC.IsValidSpawningGroundTile(x, y) && wall == WallID.None)
+		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Water && Main.dayTime && IsValidGround() && wall == WallID.None)
 			return .38f;
 
 		return 0;
+
+		bool IsValidGround()
+		{
+			int type = Main.tile[x, y].TileType;
+			return NPC.IsValidSpawningGroundTile(x, y) && type != TileID.JungleGrass && type != TileID.Mud;
+		}
 	}
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)

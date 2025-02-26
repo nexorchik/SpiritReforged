@@ -14,9 +14,12 @@ public class WheatgrassSeedPouch : ModItem
 		Item.value = Item.sellPrice(0, 0, 0, 5);
 		Item.rare = ItemRarityID.Blue;
 		Item.shoot = ModContent.ProjectileType<WheatgrassSeedProjectile>();
+		Item.UseSound = SoundID.Item1;
 		Item.useStyle = ItemUseStyleID.Swing;
 		Item.shootSpeed = 8;
 		Item.useTime = Item.useAnimation = 25;
+		Item.useTurn = true;
+		Item.autoReuse = true;
 		Item.consumable = true;
 		Item.maxStack = Item.CommonMaxStack;
 	}
