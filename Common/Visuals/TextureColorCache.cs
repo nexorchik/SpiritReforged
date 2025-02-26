@@ -17,6 +17,10 @@ internal class TextureColorCache
 		texture.GetData(data);
 		var brightest = data.OrderBy(x => x.ToVector3().Length()).FirstOrDefault();
 
-		return (brightest == default) ? Color.Goldenrod : brightest;
+		if (brightest == default)
+			brightest = Color.White;
+
+		brightestColorCache.Add(texture, brightest);
+		return brightest;
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Content.Forest.Botanist.Tiles;
+using Terraria.Audio;
 
 namespace SpiritReforged.Content.Forest.Botanist.Items;
 
@@ -28,5 +29,7 @@ internal class WheatgrassSeedProjectile : ModProjectile
 			for (int i = 0; i < 4; ++i)
 				Dust.NewDust(pos.ToWorldCoordinates(), 2, 2, DustID.Hay, WorldGen.genRand.NextFloat(-1, 1) + Projectile.velocity.X, -Main.rand.NextFloat(1, 4), Scale: 0.6f);
 		}
+
+		SoundEngine.PlaySound(SoundID.Grass with { Volume = .5f, Pitch = .8f }, Projectile.Center);
 	}
 }

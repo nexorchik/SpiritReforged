@@ -132,38 +132,38 @@ Cartographer: {
 	}
 
 	Dialogue: {
-		0: Mapping's tough work. Sometimes you lose your place, and...wait.
-		1: Say, you got any nice, hardy paper on you? I've plum run out.
-		2: Gosh...dropping a pin on the ground is a bad time. Especially the brown ones.
+		0: Mapping's tough work. Sometimes you lose your place, and... wait.
+		1: Say, you got any nice, hardy paper on you? I've done plumb run out.
+		2: Gosh... dropping a pin on the ground is a bad time. Especially the brown ones.
 		3: Hey, do you have a map? Mind if I take a look? Better be well kept!
 
 		Map: {
 			FloatingIsland: {
-				0: Happy to share! Here's a little pin on this floating island I found. How'd I get there? Well, let's just say harpies can carry you WAY farther than you'd expect.
-				1: Oh, of course! Got up to some mischief a while back, got way up there. Found a chest. Couldn't take anything, I was preoccupied thinking of how to get down.
-				2: Happy to. Checked out an island in the sky a few weeks ago, it was cool but the neighbours were annoying! Hope you find something there that I couldn't.
+				0: Let's see... it was right here! A cute little floating island I found. How'd I get there? Well, let's just say harpies can carry you WAY farther than you'd expect.
+				1: Take a look here. Waaay up there! Got up to some mischief a while back, and ended up in the sky! I think there was some treasure, but I was a little too preoccupied thinking of how to get down.
+				2: Check this spot out! I found an island in the sky a few weeks ago, it was cool but the neighbours were annoying! Hope you find something there that I couldn't.
 			}
 
 			EnchantedSword: {
-				0: Anytime. So I was traipsing down a few narrow tunnels a while ago, and I found this glowy sword hilt in a stone. Can't imagine there was a functional blade, so I just left it.
-				1: Right on! Here's this spot. Looks unassuming, but I'm assuming the blue sword down there was cool. Pack was full of rare mushrooms and about 30 pounds of map, so I kept on moving.
-				2: Here you are! Don't remember when, but this sword was embedded into the stone. Like that one legend...King Arthur? I don't know. I don't mess with strange weapons; maybe you do?
+				0: I found something... here! It was down a narrow tunnel; wouldn't you believe it, a sword in the stone, just like the legends say! I got cold feet and shied away though, I ain't worthy.
+				1: Aha! Here's the spot. It looks unassuming, but there's a mighty looking sword hidden under the ground. I would have taken it, but my pockets were full of rare mushrooms and mapping paper.
+				2: Here we are! Dunno how it got there, but I found a sword embedded in stone. Like that one legend...King Arthur was it? I don't mess with strange weapons though; maybe that's more your thing.
 			}
 
 			Shimmer: {
 				0:
 					'''
-					Where was it...there it is. Walking, relaxing, the usual hike down a dangerous, completely dark cave. On the horizon? A brilliant, beautiful glow. Truly gorgeous.
+					Where was it...there it is! I was hikin' down a dark, and dangerous cave. And what do I see on the horizon? A brilliant, shimmering pink glow. Truly gorgeous.
 					You know what that means in nature? Stay away. So I did.
 					'''
 				1:
 					'''
-					Um...there we go. Tripped a while back, hit my head. Woke up, and it looks like some weird little fairy things took me to this crazy place. 
-					I don't remember much after that but abject panic.
+					Um... I think it was around here. Tripped and hit my head on my way back from the ocean. When I woke up, fae little critters had taken me to this strange, and unusual place. 
+					I don't remember much after that, but I did start freaking out. Those faelings took me out of there in a hurry.
 					'''
 				2:
 					'''
-					Here it is. You ever seen water? Imagine that but it glows like the night sky, an out-of-this world purple. 
+					Here it is. You ever seen water? Imagine that, but it glows like the night sky. An out-of-this world purple. 
 					Don't recommend drinking it, it makes your body feel fake. I don't know how to explain it. Trust me on this one.
 					'''
 			}
@@ -171,60 +171,60 @@ Cartographer: {
 			Savanna: {
 				0:
 					'''
-					Pin's on the house, per usual. I was walking up top, smelling the flowers and visiously punching trees to get apples. After punching a couple of trees, 
+					There we go, pin's on the house. I was up to the usual. Taking my morning walk and visiously punching trees to get apples. After punching a couple of trees, 
 					I look up. Somehow, a whole prairie snuck up on me. I went back to punching trees after a few moments.
 					'''
 				1:
 					'''
-					There it is. You ever walk and stare at the ground? You shouldn't. But a bit ago when I did, I saw the grass slowly go from a nice vibrant green to a sickly green. 
+					Take a look over here. You ever just walk straight ahead, staring right at the ground? You shouldn't. But a bit ago when I did, I saw the grass slowly go from a nice vibrant green to a sickly green. 
 					I look up; the largest grass I've ever seen. Thick as hell, too. So what'd I do? Well...I walked away. WAY too much work to walk in.
 					'''
 				2:
 					'''
-					Of course! So a bit ago I was seeing how quickly I could run from jungle bats, right, and boom. The humidity DROPS. A savanna sprawls out in front of me. What a sight!
-					And, if you care, I can run real quick if needed.
+					So a while ago I was seeing how quickly I could run from jungle bats, right? And the boom, right over here on the map, the air gets real dusty. A savanna sprawls out in front of me. What a sight!
+					And just for the record, I found out that I can run REAL quick when I need to.
 					'''
 			}
 
 			Hive: {
 				0: Pin goes...here. On the low, I don't recommend that jungle place. It's ROUGH. But when you see one of those big hives, there's honey nearby. And that's a treat worth many stings.
-				1: There you go! Um...I'll be real. Sometimes, you get the idea of getting a bunch of honey and selling it. I found some...did I ever GET any? No. Keep it hike, not business.
-				2: Ah...nope...there it is. I'll keep it short this time. Stingers hurt. Be prepared.
+				1: There you go! Um...I'll be real. Sometimees you'll strike liquid gold and it's STILL not worth investing in. Nasty bees... keep it hike, not business.
+				2: If you take a look right... here, you'll find something you may be interested in. I'll keep this short though, stingers hurt. Be prepared.
 			}
 
 			Curiosity: {
 				0:
 					'''
-					Here you are. So I go walking a lot, y'know, exploring and seeing if anything needs studying. Well, what do I know about anything when the dirt kisses my face as I fall. 
-					There's a something on the ground over here. Couldn't tell you what it is, I was way too furious to see.
+					Here you are. Y'know, I wander a lot. Seeing the sights, thinking out loud.. well, none of that matters when the dirt kisses my face as I fall. 
+					I tripped over something on the ground over here, but I couldn't tell you what it was. I was way too furious to look.
 					'''
 				1:
 					'''
-					I think it was...here? Close enough. You see a lot of things when exploring as I have. Sometimes, you see something that's worth checking out.
-					So what do you think I do when it shines or glows? I run. I run so fast.
+					I think it was...here? Close enough. You come across lots of interesting things when exploring as much as I do. Sometimes, you see something that's worth checking out.
+					If I was you i'd make a break for it. Who knows, someone else might find it before you!
 					'''
 				2:
 					'''
-					There we go. I'm a mapper, right. I map. You see a spot where you're like, man, this is a good spot to map.
-					Well, turns out a magic item was right on that spot. I knew it was too good to be true. No perfectly mapped out area is worth an ancient curse.
+					Take a look around here. I'm a mapper, right? I map. And sometimes I lose track of all my pins... well I pinned this here map, and plumb forgot why I did it.
+					Well after going all the way there, and coming all the way back, I forgot all over again. You can have it instead, maybe i'm just forgetful but I don't want no cursed doohickey.
 					'''
 			}
 
 			ButterflyShrine: {
 				0:
 					'''
-					I think...here? Ish? I was walking up on the surface right, a nice breeze flowing through my map and making my ink run a little.
-					Anyway! I slip a bit on a little hole in the ground, and I see some shimmering lights way down below. No way I'll ever go down there, but you might.
+					Check out this spot right here. It was a cold and eerie night, a hefty breeze done pulled my maps right out from my backpack.
+					I dropped to the ground to retrieve my precious handiwork, when I saw it. A little pinhole sized hole in the ground, and it was glowing purple! I don't think i'm gonna go messing with that, but you seem like the brave adventurous type.
 					'''
 				1:
 					'''
-					There it goes. I don't know how to preface this, but sometimes you just don't pay attention and a small hole gives you big issues.
-					So I drop down a bit, not long enough to hurt the body but more than long enough for the ego, and I land on these little purple butterflies. What?
+					Right here, at this point on the map! I don't know how to preface this, but you ever get those little floaties in your eye? Little lights you can't explain?
+					You'd better not laugh, but I swear i've seen little pink butterflies hanging around this spot. But they ain't real! I tried to catch em' but they're made of light, I can't explain it!
 					'''
-				2: I've fallen down a few holes in my day. Sometimes, you have the werewithal to look where you're stepping. Sometimes, those holes glow purple. Keep on walking.
+				2: This here pins where it happened. I've tripped over a few holes in my day. But never in my days have I seen one glowing purple. That's some hocus pocus nonsense that I don't want any part of, keep on walking.
 			}
 
-			FirstPin: Oh! And remember, you can always access your pin collection from the bottom of your map. Just be careful with the maps!
+			FirstPin: I've added this here pin to your "Pin collection". You can access it any time from the bottom left corner of your map.
 		}
 	}
 
@@ -243,40 +243,40 @@ Hiker: {
 	Dialogue: {
 		Hungry: {
 			Asking: {
-				0: Hey. Long hike, forgot to grab a snack. Looks like you got some {0} I could have. Mind if I partake?
-				1: You ever leave the house and THEN realize you're hungry? I wish I didn't. Could you spare me a {0}?
-				2: Uphills really take it out of you. A snack would be appreciated, stranger...maybe some {0}?
-				3: After a grueling forty-five minutes without a snack, I'm on my last legs. Could you spare one of your {0}?
+				0: Hey there stranger, care to share in some snacking? If you can lend me a {0} then I may have somthing nice for you too.
+				1: You ever leave the house, and THEN realize you're hungry? I wish I didn't... could you spare me a {0}?
+				2: A long uphill hike really takes it out of you. I'm so beat, I could go for some {0}... help a guy out?
+				3: I went through my last protein bar a whole fourty-five minutes ago, I'm on my last legs here. Could you spare one of your {0}?
 			}
 
 			Thanks: {
-				0: Thanks. I can always count on strangers giving me food. Take some supplies, on the house!
-				1: Ah, that hits the spot. I've still got some supplies if you'd like to trade it. Or just be kind, I don't mind.
-				2: Hey, thank you so much. Take some of my stuff for free if you want.
-				3: Nothing quite hits like a meal after a long hike. Prices are off, take a pack. Free!
+				0: Thanks friend, I can always count on generous strangers. Take some supplies, from one stranger to another!
+				1: Bahaha, that hits the spot! A good snack always makes me feel generous, have some supplies on the house.
+				2: Hey, thanks a million. Here friend, take a pack for free.
+				3: Nothing hits quite like a meal after a long hike. Prices are off pal, take a pack. It's free!
 			}
 		}
 
 		Idle: {
-			0: Nothing quite like a long hike down into caves. Up until the cobwebs cover the walls, it's a joy. After that point, it's a little less of a joy.
+			0: Nothing quite like a long hike down into caves. Up until you're covered in nasty cobwebs. Kinda kills the mood.
 			1: My old pal used to grab Blinkroot to explore instead of using torches. "Safer", he said. Odd guy. Wonder what happened to him.
 			2: You ever use pins? They're really useful. And old friend carried them around everywhere...last I saw she was "learning how to get on those floating islands." Tough job, huh?
 			3: Sometimes I pass by a faerie, and they guide me to gold or platinum. I always act excited, but I don't have a pickaxe. I hope they appreciate it.
-			4: You always carry a little extra supplies if you're smart. I've got just a little too much...for a small fee, I won't! Bahaha!
+			4: You always carry some extra supplies if you're smart. But my back is killing me, I brought way too much... i'll trade ya', if you've got some change burning a hole on your pocket, bahaha!
 		}
 
 		Purchase: {
-			0: Hey, thanks for lightening my pockets! Not by much, coin isn't light, but it's lighter nontheless!
-			1: Hm? Oh, bahaha! People keep asking me this: "Where do you keep entire bags full of stuff?" Where do YOU keep all of your stuff, huh?
-			2: Nothing as quaint as a nice trade on a nice hike with a nice stranger. Cheers!
+			0: Hey, That's a load off my back! I'll trade a stiff back for heavy pockets any day.
+			1: Bahaha, much obliged pal! People always ask me, "Where the heck do you keep all your stuff?" but I don't ask you your business!
+			2: Well met stranger! Nothing makes a strong connection like a good trade.
 			3: Enjoy the extra space! I've heard if you put a bunch of Angel Statues - yes entire statues - in your bag, something crazy happens.
-			4: Thanks for the trade! I would say smell the flowers, but you shouldn't smell all of the flowers you pass by. So...hey, smell the good flowers. Keeps you alive. Literally.
+			4: Thanks for the trade! I'd stop and smell the flowers, but there are some crazy plants out there. Be careful!
 		}
 
 		FailPurchase: {
-			0: Sorry, you'll need a little more coin before we can trade. Unless some spare food is burning a hole in your pockets...? Haha, just kidding. Maybe?
+			0: Sorry, you'll need to show a little more coin before I can call this a trade. Unless some spare food is burning a hole in your pockets, bahaha!
 			1: Alas, my supplies stay with me. Come back with a little more coin. It'll be worth your time! And it'll save me some carry.
-			2: No can do, partner. I am not here to barter, I'm here to hike! And to repent for a little overpreparedness...I mean...business work. Working business.
+			2: No can do, partner. I'm not here to barter. I'm just a little overprepared, that's all. I'm a little light on snacks though...
 		}
 	}
 
