@@ -1,4 +1,4 @@
-﻿using Terraria.GameInput;
+﻿using System.Reflection;
 
 namespace SpiritReforged;
 
@@ -10,14 +10,6 @@ internal static class UIHelper
 		if (!Main.mapEnabled)
 			return 0;
 
-		int value = Main.miniMapHeight;
-		if (!Main.mapFullscreen && Main.mapStyle == 1)
-			value = 256;
-
-		PlayerInput.SetZoom_UI();
-		if (value + Main.instance.RecommendedEquipmentAreaPushUp > Main.screenHeight)
-			value = Main.screenHeight - Main.instance.RecommendedEquipmentAreaPushUp;
-
-		return value; //(int)typeof(Main).GetField("mH", BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic).GetValue(null); //Use reflection to get the value
+		return (int)typeof(Main).GetField("mH", BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic).GetValue(null); //Use reflection to get the value
 	}
 }
