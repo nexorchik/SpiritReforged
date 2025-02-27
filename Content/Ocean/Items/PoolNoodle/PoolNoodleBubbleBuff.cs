@@ -5,6 +5,8 @@ namespace SpiritReforged.Content.Ocean.Items.PoolNoodle;
 
 public class PoolNoodleBubbleBuff : ModBuff
 {
+	public override string Texture => "Terraria/Images/Buff";
+
 	public override void SetStaticDefaults()
 	{
 		Main.debuff[Type] = true;

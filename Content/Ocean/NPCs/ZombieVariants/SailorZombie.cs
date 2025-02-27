@@ -69,7 +69,7 @@ public class SailorZombie : ReplaceNPC
 		npcLoot.AddCommon(ItemID.Shackle, 50);
 		npcLoot.AddCommon(ItemID.ZombieArm, 250);
 		npcLoot.AddCommon(ModContent.ItemType<Items.Kelp>(), 10, 1, 2);
-		npcLoot.AddCommon(ModContent.ItemType<Items.Vanity.SailorCap.SailorCap>(), 50);
+		npcLoot.AddCommon(ModContent.ItemType<Items.Vanity.SailorCap>(), 50);
 	}
 
 	public override bool CanSpawn(Player player) => player.ZoneBeach;

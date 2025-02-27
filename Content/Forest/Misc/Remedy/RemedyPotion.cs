@@ -87,7 +87,7 @@ public class RemedyPotion : ModItem
 			var texture = TextureAssets.Buff[buff].Value;
 			var origin = new Vector2(0, texture.Height / 2);
 
-			Main.spriteBatch.Draw(texture, new Vector2(line.X + 21 * iconScale * counter, line.Y + 12), null, Color.White, 0, origin, Main.inventoryScale * iconScale, default, 0);
+			Main.spriteBatch.Draw(texture, new Vector2(line.X + 24 * iconScale * counter, line.Y + 12), null, Color.White, 0, origin, Main.inventoryScale * iconScale, default, 0);
 			counter++;
 		}
 

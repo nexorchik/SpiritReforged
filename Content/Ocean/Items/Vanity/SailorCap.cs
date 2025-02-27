@@ -1,4 +1,4 @@
-namespace SpiritReforged.Content.Ocean.Items.Vanity.SailorCap;
+namespace SpiritReforged.Content.Ocean.Items.Vanity;
 
 [AutoloadEquip(EquipType.Head)]
 public class SailorCap : ModItem

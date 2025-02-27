@@ -4,7 +4,7 @@ using Terraria.Audio;
 
 namespace SpiritReforged.Content.Desert.GildedScarab;
 
-internal class GildedScarab : AccessoryItem
+public class GildedScarab : AccessoryItem
 {
 	public override void SetDefaults()
 	{
@@ -23,24 +23,34 @@ internal class GildedScarabPlayer : ModPlayer
 	public float opacity;
 	public float visualCounter;
 
-	public override void OnHurt(Player.HurtInfo info)
+	public override void PostUpdateEquips()
 	{
-		if (Player.HasAccessory<GildedScarab>() && !IsHazard())
+		if (Player.HasBuff<GildedScarabBuff>())
 		{
-			if (Player.HasBuff(ModContent.BuffType<GildedScarabBuff>()))
-			{
-				Player.ClearBuff(ModContent.BuffType<GildedScarabBuff>());
-				ScarabDefense = ScarabDefense + (int)(info.Damage / 8f) >= 50 || ScarabDefense >= 50 ? 50 : ScarabDefense + (int)(info.Damage / 8f);
-			}
-			else
-			{
-				SoundEngine.PlaySound(SoundID.Item76);
-				ScarabDefense = info.Damage >= 400 ? 50 : 5 + (int)(info.Damage / 8f);
-			}
-
-			Player.AddBuff(ModContent.BuffType<GildedScarabBuff>(), 300);
+			opacity = MathHelper.Min(opacity + .05f, 1);
+		}
+		else
+		{
+			opacity = MathHelper.Max(opacity - .05f, 0);
+			ScarabDefense = 0;
 		}
 
-		bool IsHazard() => info.DamageSource.SourceOtherIndex is 3 or 2; //Lava or spike damage
+		if (opacity > 0)
+			visualCounter = (visualCounter + 1f / ScarabLayerBase.FrameDuration) % ScarabLayerBase.NumFramesY;
+	}
+
+	public override void OnHurt(Player.HurtInfo info)
+	{
+		if (Player.HasAccessory<GildedScarab>())
+		{
+			if (info.DamageSource.SourceOtherIndex is 3 or 2) //Lava or spike damage
+				return;
+
+			if (!Player.HasBuff(ModContent.BuffType<GildedScarabBuff>()))
+				SoundEngine.PlaySound(SoundID.Item76);
+
+			ScarabDefense = Math.Clamp(ScarabDefense + (int)(info.Damage / 8f), 5, 50);
+			Player.AddBuff(ModContent.BuffType<GildedScarabBuff>(), 300);
+		}
 	}
 }

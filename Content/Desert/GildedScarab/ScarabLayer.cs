@@ -4,6 +4,9 @@ namespace SpiritReforged.Content.Desert.GildedScarab;
 
 internal abstract class ScarabLayerBase : PlayerDrawLayer
 {
+	public const int NumFramesY = 8;
+	public const int FrameDuration = 8;
+
 	private static Asset<Texture2D> gildedScarabTexture;
 
 	public override void Load() => gildedScarabTexture = Mod.Assets.Request<Texture2D>("Content/Desert/GildedScarab/GildedScarab_Player");
@@ -12,34 +15,24 @@ internal abstract class ScarabLayerBase : PlayerDrawLayer
 
 	protected override void Draw(ref PlayerDrawSet drawInfo)
 	{
-		const int numFramesY = 8;
-		const int frameDuration = 8;
-
 		if (drawInfo.shadow != 0f)
 			return;
 
 		var player = drawInfo.drawPlayer;
 		var mPlayer = player.GetModPlayer<GildedScarabPlayer>();
 
-		if (player.HasBuff<GildedScarabBuff>())
-			mPlayer.opacity = MathHelper.Min(mPlayer.opacity + .05f, 1);
-		else
-			mPlayer.opacity = MathHelper.Max(mPlayer.opacity - .05f, 0);
-
 		if (mPlayer.opacity > 0)
 		{
-			if (!Main.gamePaused)
-				mPlayer.visualCounter = (mPlayer.visualCounter + 1f / frameDuration) % numFramesY;
-
 			if (!CanDraw((int)mPlayer.visualCounter))
 				return;
 
 			var texture = gildedScarabTexture.Value;
-			var source = texture.Frame(1, numFramesY, 0, (int)mPlayer.visualCounter, sizeOffsetY: -2);
-			var position = player.Center - Main.screenPosition + new Vector2(-(float)Math.Sin(mPlayer.visualCounter / numFramesY * MathHelper.TwoPi) * 22f, 0);
+			var source = texture.Frame(1, NumFramesY, 0, (int)mPlayer.visualCounter, sizeOffsetY: -2);
+			float rotation = (float)Math.Sin(Main.timeForVisualEffects / 30f) * .2f;
+			var position = player.MountedCenter - Main.screenPosition + new Vector2(-(float)Math.Sin(mPlayer.visualCounter / NumFramesY * MathHelper.TwoPi) * 22f, rotation * 20 + player.gfxOffY);
 			var color = Lighting.GetColor(player.Center.ToTileCoordinates()) * mPlayer.opacity;
 
-			var drawData = new DrawData(texture, position, source, color, 0, source.Size() / 2, 1, SpriteEffects.None, 0);
+			var drawData = new DrawData(texture, position, source, color, rotation, source.Size() / 2, 1, SpriteEffects.None, 0);
 			drawInfo.DrawDataCache.Add(drawData);
 		}
 	}
