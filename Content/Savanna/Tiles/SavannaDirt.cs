@@ -20,6 +20,7 @@ public class SavannaDirt : ModTile, IAutoloadTileItem, ICheckItemUse
 
 		this.Merge(TileID.Stone, TileID.Dirt, TileID.Mud, TileID.ClayBlock);
 		AddMapEntry(new Color(138, 79, 45));
+		NoiseTile.AddTile(this);
 		MineResist = .5f;
 	}
 
