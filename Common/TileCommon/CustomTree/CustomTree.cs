@@ -15,7 +15,6 @@ public abstract class CustomTree : ModTile
 	public virtual int TreeHeight => WorldGen.genRand.Next(10, 21);
 
 	protected const int FrameSize = 22;
-	internal static readonly FastNoiseLite noise = new();
 
 	protected readonly HashSet<Point16> drawPoints = [];
 	private readonly HashSet<Point16> treeShakes = [];
@@ -64,8 +63,6 @@ public abstract class CustomTree : ModTile
 
 			if (ModContent.RequestIfExists(Texture + "_Branches", out Asset<Texture2D> branches))
 				branchesTextureByType.Add(Type, branches);
-
-			noise.SetFrequency(2f);
 		}
 
 		Main.tileSolid[Type] = false;
@@ -97,8 +94,8 @@ public abstract class CustomTree : ModTile
 	/// <summary> Called during SetStaticDefaults. </summary>
 	public virtual void PreAddTileObjectData() { }
 
-	/// <summary> Used for pseudo random logic, like branch positions, based on <see cref="noise"/>. </summary>
-	protected virtual float Noise(Vector2 position) => noise.GetNoise(position.X, position.Y) * 12;
+	/// <summary> Used for pseudo random logic, like branch positions. </summary>
+	protected virtual float Noise(Vector2 position) => NoiseSystem.PerlinStatic(position.X, position.Y * 3f) * 10f;
 
 	/// <returns> Whether the given tile has a treetop. </returns>
 	public virtual bool IsTreeTop(int i, int j) => Framing.GetTileSafely(i, j - 1).TileType != Type;
