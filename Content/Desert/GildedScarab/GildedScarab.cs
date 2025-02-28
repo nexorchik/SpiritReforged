@@ -25,7 +25,7 @@ internal class GildedScarabPlayer : ModPlayer
 
 	public override void PostUpdateEquips()
 	{
-		if (Player.HasBuff<GildedScarabBuff>())
+		if (Player.HasBuff<GildedScarabBuff>() && !Player.dead)
 		{
 			opacity = MathHelper.Min(opacity + .05f, 1);
 		}

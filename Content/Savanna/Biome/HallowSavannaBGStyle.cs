@@ -1,40 +1,9 @@
-﻿using MonoMod.Cil;
+﻿using SpiritReforged.Common.Visuals;
 
 namespace SpiritReforged.Content.Savanna.Biome;
 
-public class HallowSavannaBGStyle : SavannaBGStyle
+public class HallowSavannaBGStyle : ModSurfaceBackgroundStyle, IWaterStyle
 {
-	public override void Load() => IL_Main.GetPreferredBGStyleForPlayer += OverrideBackgroundStyle;
-
-	/// <summary>
-	/// Manually override the surface background without using a <see cref="ModSceneEffect"/> to avoid changing additional data (namely water style).
-	/// </summary>
-	/// <param name="il"></param>
-	private static void OverrideBackgroundStyle(ILContext il)
-	{
-		ILCursor c = new(il);
-
-		if (!c.TryGotoNext(x => x.MatchLdsfld("Terraria.ModLoader.GlobalBackgroundStyleLoader", "loaded")))
-		{
-			SpiritReforgedMod.Instance.Logger.Debug("Failed goto GlobalBackgroundStyleLoader.loaded");
-			return;
-		}
-
-		c.GotoNext(x => x.MatchRet());
-		c.EmitDelegate(ModifyStyle);
-	}
-
-	/// <summary> Change the surface background to <see cref="HallowSavannaBGStyle"/> when in the Hallow and Savanna biomes. </summary>
-	/// <param name="style"> The background ID. </param>
-	/// <returns> The background ID to use. </returns>
-	private static int ModifyStyle(int style)
-	{
-		if (style is 5 or 6 && Main.LocalPlayer.ZoneHallow && SavannaTileCounts.InSavanna) //Only modify the background if a hallowed style is active
-			style = ModContent.GetInstance<HallowSavannaBGStyle>().Slot;
-
-		return style;
-	}
-
 	public override int ChooseMiddleTexture() => BackgroundTextureLoader.GetBackgroundSlot(Mod, "Assets/Textures/Backgrounds/HallowSavannaBackgroundMid");
 	public override int ChooseFarTexture() => BackgroundTextureLoader.GetBackgroundSlot(Mod, "Assets/Textures/Backgrounds/HallowSavannaBackgroundFar");
 
@@ -42,5 +11,28 @@ public class HallowSavannaBGStyle : SavannaBGStyle
 	{
 		b -= 400;
 		return BackgroundTextureLoader.GetBackgroundSlot(Mod, "Assets/Textures/Backgrounds/HallowSavannaBackgroundNear");
+	}
+
+	public override void ModifyFarFades(float[] fades, float transitionSpeed)
+	{
+		for (int i = 0; i < fades.Length; i++)
+			if (i == Slot)
+			{
+				fades[i] += transitionSpeed;
+				if (fades[i] > 1f)
+					fades[i] = 1f;
+			}
+			else
+			{
+				fades[i] -= transitionSpeed;
+				if (fades[i] < 0f)
+					fades[i] = 0f;
+			}
+	}
+
+	public void ForceWaterStyle(ref int style)
+	{
+		if (style >= WaterStyleID.Count && Main.LocalPlayer.InModBiome<SavannaBiome>() && Main.LocalPlayer.ZoneHallow)
+			style = WaterStyleID.Hallow;
 	}
 }

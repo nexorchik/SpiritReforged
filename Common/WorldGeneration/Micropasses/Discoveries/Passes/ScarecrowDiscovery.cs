@@ -58,7 +58,7 @@ internal class ScarecrowDiscovery : Discovery
 
 	private static bool TryGenArea(Point16 position, int width)
 	{
-		if (!IsFlat(out int start, out int end) || WorldMethods.CloudsBelow(position.X, position.Y, out _))
+		if (!WorldMethods.IsFlat(position, width, out int start, out int end) || WorldMethods.CloudsBelow(position.X, position.Y, out _))
 			return false;
 
 		int loopStart = position.X - width;
@@ -107,31 +107,6 @@ internal class ScarecrowDiscovery : Discovery
 				if (++y > maxY + floor)
 					break;
 			}
-		}
-
-		bool IsFlat(out int startY, out int endY)
-		{
-			const int maxDeviance = 2;
-			int maxSamples = (width * 2 + 1) / 4;
-
-			List<int> samples = [];
-
-			for (int i = 0; i < maxSamples; i++)
-			{
-				int x = (int)MathHelper.Lerp(position.X - width, position.X + width, (float)i / maxSamples);
-				int y = position.Y;
-
-				WorldMethods.FindGround(x, ref y);
-				samples.Add(y);
-			}
-
-			startY = samples[0];
-			endY = samples[^1];
-
-			int average = (int)samples.Average();
-			int surfaceAverage = (int)Math.Abs(MathHelper.Lerp(startY, endY, .5f));
-
-			return Math.Abs(startY - endY) <= maxDeviance && Math.Abs(average - surfaceAverage) <= maxDeviance;
 		}
 	}
 }

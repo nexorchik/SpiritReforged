@@ -87,7 +87,7 @@ public class StargrassTile : GrassTile
 		if (SpreadHelper.Spread(i, j, Type, 4, TileID.Dirt) && Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None);
 
-		if (Main.rand.NextBool(60) && !Main.tile[i, j + 1].HasTile && Main.tile[i, j + 1].LiquidType != LiquidID.Lava)
+		if (Main.rand.NextBool(60) && Main.tile[i, j + 1].LiquidType != LiquidID.Lava)
 			TileExtensions.GrowVine(i, j + 1, ModContent.TileType<StargrassVine>());
 	}
 

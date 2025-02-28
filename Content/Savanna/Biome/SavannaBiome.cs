@@ -1,14 +1,19 @@
-﻿using SpiritReforged.Common.PlayerCommon;
-using SpiritReforged.Content.Savanna.Tiles;
+﻿using SpiritReforged.Content.Savanna.Tiles;
 
 namespace SpiritReforged.Content.Savanna.Biome;
 
 public class SavannaBiome : ModBiome
 {
-	private int SavannaMusic => Main.dayTime ? MusicLoader.GetMusicSlot(Mod, "Assets/Music/Savanna") : MusicLoader.GetMusicSlot(Mod, "Assets/Music/SavannaNight");
+	private int GetMusic()
+	{
+		if (Main.LocalPlayer.townNPCs > 2f || Main.LocalPlayer.ZoneGraveyard)
+			return -1;
 
-	public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh;
-	public override int Music => (Main.LocalPlayer.townNPCs > 2f) ? -1 : SavannaMusic;
+		return Main.dayTime ? MusicLoader.GetMusicSlot(Mod, "Assets/Music/Savanna") : MusicLoader.GetMusicSlot(Mod, "Assets/Music/SavannaNight");
+	}
+
+	public override SceneEffectPriority Priority => SceneEffectPriority.BiomeMedium;
+	public override int Music => GetMusic();
 	public override ModWaterStyle WaterStyle => ModContent.GetInstance<SavannaWaterStyle>();
 	public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle => ModContent.GetInstance<SavannaBGStyle>();
 	public override string BackgroundPath => MapBackground;
@@ -17,7 +22,7 @@ public class SavannaBiome : ModBiome
 	public override bool IsBiomeActive(Player player)
 	{
 		bool surface = player.ZoneSkyHeight || player.ZoneOverworldHeight;
-		return SavannaTileCounts.InSavanna && surface && !player.ZoneEvil();
+		return SavannaTileCounts.InSavanna && surface;
 	}
 }
 

@@ -1,4 +1,5 @@
 using SpiritReforged.Content.Savanna.Biome;
+using Terraria;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.JungleSlime;
@@ -41,8 +42,5 @@ public class SavannaJungleSlime : ModNPC
 	}
 
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
-	{
-		var player = spawnInfo.Player;
-		return player.InModBiome<SavannaBiome>() && player.ZoneJungle && Main.dayTime ? 0.1f : 0;
-	}
+		=> spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.PlayerInTown && spawnInfo.SpawnTileType == TileID.JungleGrass && Main.dayTime ? 0.1f : 0;
 }

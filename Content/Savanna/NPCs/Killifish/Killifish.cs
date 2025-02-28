@@ -1,3 +1,4 @@
+using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Vanilla.Food;
 using System.IO;
 using Terraria.DataStructures;
@@ -55,7 +56,7 @@ public class Killifish : ModNPC
 	public override void OnSpawn(IEntitySource source) //Set non-deterministic features on server then sync
 	{
 		NPC.scale = Main.rand.NextFloat(.7f, 1f);
-		pickedType = Main.rand.Next(0, 2);
+		pickedType = Main.rand.Next(2);
 		NPC.netUpdate = true;
 	}
 
@@ -322,4 +323,5 @@ public class Killifish : ModNPC
 	}
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>(3);
+	public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<SavannaBiome>() && spawnInfo.Water ? (spawnInfo.PlayerInTown ? 0.75f : 0.18f) : 0f;
 }

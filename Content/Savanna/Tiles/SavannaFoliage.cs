@@ -8,7 +8,7 @@ public class SavannaFoliage : ModTile, IConvertibleTile
 {
 	protected virtual int AnchorTile => ModContent.TileType<SavannaGrass>();
 	protected virtual Color MapColor => new(50, 92, 19);
-	protected virtual int Dust => DustID.Grass;
+	protected virtual int Dust => DustID.JunglePlants;
 
 	public override void SetStaticDefaults()
 	{

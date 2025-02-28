@@ -252,7 +252,8 @@ internal class SavannaEcotone : EcotoneBase
 				baobabArea.Inflate(40, 20);
 			}
 
-			static bool BaobabTreeGen(int i, int j) => Main.tile[i, j].TileType == ModContent.TileType<SavannaDirt>() && Main.tile[i, j - 1].LiquidAmount < 50;
+			static bool BaobabTreeGen(int i, int j) => Main.tile[i, j].TileType == ModContent.TileType<SavannaDirt>() 
+				&& Main.tile[i, j - 1].LiquidAmount < 50 && WorldMethods.IsFlat(new Point16(i, j), 20, out _, out _);
 		}
 
 		for (int i = SavannaArea.Left; i < SavannaArea.Right; ++i)

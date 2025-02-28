@@ -4,12 +4,17 @@ namespace SpiritReforged.Common.Visuals;
 
 /// <summary> Manually overrides water style in specific scenarios. Doesn't exist on the server. </summary>
 [Autoload(Side = ModSide.Client)]
-internal class ForceWaterStyle : ModSystem
+internal class WaterStyleSystem : ModSystem
 {
 	//private static int DeepOceanWaterStyle;
+	private static readonly HashSet<ModBackgroundStyle> Overrides = [];
 	private static readonly Dictionary<int, int> StyleSets = []; //background, water
 
-	public override void Load() => IL_Main.CalculateWaterStyle += SetWaterStyleDefault;
+	public override void Load()
+	{
+		IL_Main.CalculateWaterStyle += SetWaterStyleDefault;
+		On_Main.CalculateWaterStyle += OverrideWaterStyle;
+	}
 
 	public override void SetStaticDefaults()
 	{
@@ -20,6 +25,12 @@ internal class ForceWaterStyle : ModSystem
 		{
 			if (scene.SurfaceBackgroundStyle != null && scene.WaterStyle != null)
 				StyleSets.Add(scene.SurfaceBackgroundStyle.Slot, scene.WaterStyle.Slot);
+		}
+
+		foreach (var style in SpiritReforgedMod.Instance.GetContent<ModBackgroundStyle>())
+		{
+			if (style is IWaterStyle)
+				Overrides.Add(style);
 		}
 
 		//DeepOceanWaterStyle = ModContent.GetInstance<DeepOceanBackgroundStyle>().Slot;
@@ -52,4 +63,20 @@ internal class ForceWaterStyle : ModSystem
 
 		return style;
 	}
+
+	private static int OverrideWaterStyle(On_Main.orig_CalculateWaterStyle orig, bool ignoreFountains)
+	{
+		int style = orig(ignoreFountains);
+
+		foreach (var over in Overrides)
+			(over as IWaterStyle).ForceWaterStyle(ref style);
+
+		return style;
+	}
+}
+
+/// <summary> Used to forcefully override water style. Can be applied to <see cref="ModBackgroundStyle"/>. </summary>
+internal interface IWaterStyle
+{
+	public void ForceWaterStyle(ref int style);
 }
