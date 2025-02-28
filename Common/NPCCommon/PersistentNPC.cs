@@ -7,6 +7,7 @@ internal class PersistentNPCSystem : ModSystem
 	/// <returns> Whether this check was successful. Skips all later checks as a result. </returns>
 	public delegate bool PlayerCheck(Player p);
 
+	/// <summary> The range that NPCs are made persistent. </summary>
 	public static int Range => NPC.sWidth;
 
 	/// <summary> Contains NPC types who can persist off-screen without taking up space in the NPC array. Only approximate position and type are remembered. </summary>
@@ -40,7 +41,7 @@ internal class PersistentNPCSystem : ModSystem
 
 			Iterate(delegate (Player p)
 			{
-				playerInRange = new Vector2(origin.X, origin.Y).Distance(p.Center / 16) < range;
+				playerInRange = new Vector2(origin.X, origin.Y).DistanceSQ(p.Center / 16) < range * range;
 				return playerInRange;
 			});
 
@@ -84,7 +85,7 @@ internal class PersistentGlobalNPC : GlobalNPC
 
 		PersistentNPCSystem.Iterate(delegate (Player p)
 		{
-			playerInRange = npc.Distance(p.Center) < range;
+			playerInRange = npc.DistanceSQ(p.Center) < range * range;
 			return playerInRange;
 		});
 
