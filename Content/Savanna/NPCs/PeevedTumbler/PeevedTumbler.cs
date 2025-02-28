@@ -167,5 +167,6 @@ public class PeevedTumbler : ModNPC
 
 		return 0;
 	}
+
 	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon(ItemID.Nachos, 33);
 }

@@ -1,5 +1,6 @@
 using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.DustStorm;
+using SpiritReforged.Content.Savanna.Tiles;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.SandSlime;
@@ -40,6 +41,7 @@ public class SavannaSandSlime : ModNPC
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
 		var player = spawnInfo.Player;
-		return player.InModBiome<SavannaBiome>() && player.GetModPlayer<DustStormPlayer>().ZoneDustStorm ? 0.3f : 0;
+		return player.InModBiome<SavannaBiome>() && !spawnInfo.PlayerInTown && spawnInfo.SpawnTileType == ModContent.TileType<SavannaGrass>() 
+			&& player.GetModPlayer<DustStormPlayer>().ZoneDustStorm ? 0.3f : 0;
 	}
 }

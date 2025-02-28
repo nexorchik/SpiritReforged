@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.TileCommon.TileSway;
+using Terraria.DataStructures;
 using static Terraria.GameContent.Drawing.TileDrawing;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
@@ -17,6 +18,13 @@ public class SavannaVine : ModTile, ISwayTile
 		TileID.Sets.IsVine[Type] = true;
 		TileID.Sets.VineThreads[Type] = true;
 		TileID.Sets.ReplaceTileBreakDown[Type] = true;
+
+		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
+		TileObjectData.newTile.AnchorBottom = AnchorData.Empty;
+		TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile | AnchorType.AlternateTile, 1, 0);
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
+		TileObjectData.newTile.AnchorAlternateTiles = [Type];
+		TileObjectData.addTile(Type);
 
 		AddMapEntry(new Color(24, 135, 28));
 

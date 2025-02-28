@@ -29,9 +29,6 @@ public class SavannaGrass : GrassTile, IConvertibleTile
 
 	protected virtual void GrowTiles(int i, int j)
 	{
-		if (Main.rand.NextBool(30)) //Grow vines
-			TileExtensions.GrowVine(i, j + 1, ModContent.TileType<SavannaVine>());
-
 		var above = Framing.GetTileSafely(i, j - 1);
 
 		if (!above.HasTile && above.LiquidAmount < 80)
@@ -54,6 +51,9 @@ public class SavannaGrass : GrassTile, IConvertibleTile
 					NetMessage.SendTileSquare(-1, i, j - 5, 3, 5, TileChangeType.None);
 			}
 		}
+
+		if (Main.rand.NextBool(45) && Main.tile[i, j + 1].LiquidType != LiquidID.Lava)
+			TileExtensions.GrowVine(i, j + 1, ModContent.TileType<SavannaVine>());
 
 		bool GrassAny()
 		{

@@ -5,6 +5,7 @@ using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Items.Food;
+using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Vanilla.Food;
 using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
@@ -368,7 +369,7 @@ public class Ostrich : ModNPC
 		bool IsValidGround()
 		{
 			int type = Main.tile[x, y].TileType;
-			return NPC.IsValidSpawningGroundTile(x, y) && type != TileID.JungleGrass && type != TileID.Mud;
+			return NPC.IsValidSpawningGroundTile(x, y) && type == ModContent.TileType<SavannaGrass>();
 		}
 	}
 

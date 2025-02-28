@@ -1,3 +1,4 @@
+using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Vanilla.Food;
 using Terraria.DataStructures;
 
@@ -42,4 +43,5 @@ public class GoldKillifish : Killifish
 	}
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>(2);
+	public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<SavannaBiome>() && spawnInfo.Water ? (spawnInfo.PlayerInTown ? 0.01f : 0.0025f) : 0f;
 }

@@ -1,6 +1,7 @@
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Savanna.Biome;
+using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Vanilla.Food;
 using System.Linq;
 using Terraria.Audio;
@@ -469,7 +470,7 @@ public class Hyena : ModNPC
 		bool IsValidGround()
 		{
 			int type = Main.tile[x, y].TileType;
-			return NPC.IsValidSpawningGroundTile(x, y) && type != TileID.JungleGrass && type != TileID.Mud;
+			return NPC.IsValidSpawningGroundTile(x, y) && type == ModContent.TileType<SavannaGrass>();
 		}
 	}
 

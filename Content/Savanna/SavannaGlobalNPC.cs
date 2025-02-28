@@ -88,40 +88,39 @@ public class SavannaGlobalNPC : GlobalNPC
 				pool[NPCID.Herpling] = .125f;
 			}
 
-			pool[NPCID.BloodCrawler] = .08f;
-			pool[NPCID.FaceMonster] = .3f;
+			pool[NPCID.BloodCrawler] = .1f;
+			pool[NPCID.FaceMonster] = .34f;
 			pool[NPCID.Crimera] = .3f;
 		}
-		else if (spawnInfo.Player.InModBiome<SavannaBiome>() && spawnInfo.Player.ZoneCorrupt)
+		else if (spawnInfo.SpawnTileType == ModContent.TileType<SavannaGrassCorrupt>() || InCorruption())
 		{
 			pool.Remove(0); //Remove all vanilla spawns
 
-			if (Main.hardMode)
-				pool[NPCID.SeekerHead] = .028f;
-			else
-				pool[NPCID.DevourerHead] = .05f;
-		}
-		else if (spawnInfo.SpawnTileType == ModContent.TileType<SavannaGrassCorrupt>())
-		{
-			pool.Remove(0); //Remove all vanilla spawns
+			if (InCorruption() && spawnInfo.SpawnTileY > spawnInfo.PlayerFloorY)
+			{
+				if (Main.hardMode)
+					pool[NPCID.SeekerHead] = .03f;
+				else
+					pool[NPCID.DevourerHead] = .05f;
+			}
 
 			if (Main.hardMode)
 			{
-				pool[NPCID.Slimer] = .07f;
-				pool[NPCID.Corruptor] = .125f;
+				pool[NPCID.Slimer] = .1f;
+				pool[NPCID.Corruptor] = .4f;
 			}
 
-			pool[NPCID.EaterofSouls] = .125f;
+			pool[NPCID.EaterofSouls] = .4f;
 		}
 		else if (spawnInfo.SpawnTileType == ModContent.TileType<SavannaGrassHallow>())
 		{
 			pool.Remove(0); //Remove all vanilla spawns
 
-			pool[NPCID.Pixie] = .2f;
-			pool[NPCID.Unicorn] = .14f;
+			pool[NPCID.Pixie] = .5f;
+			pool[NPCID.Unicorn] = .28f;
 
 			if (!Main.dayTime)
-				pool[NPCID.Gastropod] = .1f;
+				pool[NPCID.Gastropod] = .4f;
 
 			if (Main.raining)
 				pool[NPCID.RainbowSlime] = .055f;
@@ -129,6 +128,8 @@ public class SavannaGlobalNPC : GlobalNPC
 			if (NPC.downedPlantBoss)
 				pool[NPCID.EmpressButterfly] = .005f;
 		}
+
+		bool InCorruption() => spawnInfo.Player.InModBiome<SavannaBiome>() && spawnInfo.Player.ZoneCorrupt;
 	}
 
 	public override void OnSpawn(NPC npc, IEntitySource source)

@@ -1,5 +1,6 @@
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Content.Savanna.Biome;
+using SpiritReforged.Content.Savanna.Tiles;
 using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Sparrow;
@@ -35,8 +36,8 @@ public class Sparrow : ModNPC
 
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
-		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm 
-			&& !spawnInfo.Water && Main.dayTime && !spawnInfo.Invasion)
+		if (spawnInfo.Player.InModBiome<SavannaBiome>() && spawnInfo.SpawnTileType == ModContent.TileType<SavannaGrass>() && 
+			!spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm && !spawnInfo.Water && Main.dayTime && !spawnInfo.Invasion)
 			return .15f;
 
 		return 0;
