@@ -1,5 +1,7 @@
 ﻿using SpiritReforged.Common.Misc;
+using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.NPCs.Sparrow;
+using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Savanna.Tiles.Paintings;
 using System.Linq;
 using Terraria.DataStructures;
@@ -10,7 +12,7 @@ public class SavannaGlobalNPC : GlobalNPC
 {
 	public override void ModifyActiveShop(NPC npc, string shopName, Item[] items)
 	{
-		if (npc.type == NPCID.Dryad && Main.LocalPlayer.InModBiome<Biome.SavannaBiome>())
+		if (npc.type == NPCID.Dryad && Main.LocalPlayer.InModBiome<SavannaBiome>())
 		{
 			var grassSeeds = items.FirstOrDefault(x => x != null && x.type == ItemID.GrassSeeds);
 
@@ -39,8 +41,21 @@ public class SavannaGlobalNPC : GlobalNPC
 
 	public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
 	{
-		if (spawnInfo.Player.InModBiome<Biome.SavannaBiome>() && !spawnInfo.Invasion)
+		if (spawnInfo.Invasion)
+			return;
+
+		if (spawnInfo.SpawnTileType == ModContent.TileType<SavannaGrass>())
 		{
+			if (spawnInfo.PlayerInTown)
+			{
+				pool[NPCID.Vulture] = .009f; //Vultures can sometimes spawn, as a treat
+
+				if (Main.dayTime)
+					pool[NPCID.Bird] = .07f;
+
+				return;
+			}
+
 			if (Main.dayTime)
 				pool.Remove(0); //Remove all vanilla spawns
 
@@ -62,6 +77,57 @@ public class SavannaGlobalNPC : GlobalNPC
 
 			float odds = spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm ? .22f : .12f;
 			pool[NPCID.Vulture] = odds;
+		}
+		else if (spawnInfo.SpawnTileType == ModContent.TileType<SavannaGrassCrimson>())
+		{
+			pool.Remove(0); //Remove all vanilla spawns
+
+			if (Main.hardMode)
+			{
+				pool[NPCID.Crimslime] = .1f;
+				pool[NPCID.Herpling] = .125f;
+			}
+
+			pool[NPCID.BloodCrawler] = .08f;
+			pool[NPCID.FaceMonster] = .3f;
+			pool[NPCID.Crimera] = .3f;
+		}
+		else if (spawnInfo.Player.InModBiome<SavannaBiome>() && spawnInfo.Player.ZoneCorrupt)
+		{
+			pool.Remove(0); //Remove all vanilla spawns
+
+			if (Main.hardMode)
+				pool[NPCID.SeekerHead] = .028f;
+			else
+				pool[NPCID.DevourerHead] = .05f;
+		}
+		else if (spawnInfo.SpawnTileType == ModContent.TileType<SavannaGrassCorrupt>())
+		{
+			pool.Remove(0); //Remove all vanilla spawns
+
+			if (Main.hardMode)
+			{
+				pool[NPCID.Slimer] = .07f;
+				pool[NPCID.Corruptor] = .125f;
+			}
+
+			pool[NPCID.EaterofSouls] = .125f;
+		}
+		else if (spawnInfo.SpawnTileType == ModContent.TileType<SavannaGrassHallow>())
+		{
+			pool.Remove(0); //Remove all vanilla spawns
+
+			pool[NPCID.Pixie] = .2f;
+			pool[NPCID.Unicorn] = .14f;
+
+			if (!Main.dayTime)
+				pool[NPCID.Gastropod] = .1f;
+
+			if (Main.raining)
+				pool[NPCID.RainbowSlime] = .055f;
+
+			if (NPC.downedPlantBoss)
+				pool[NPCID.EmpressButterfly] = .005f;
 		}
 	}
 

@@ -89,11 +89,11 @@ public class Magmastone : ModTile, IAutoloadTileItem
 		}
 	}
 
-	public void AddItemRecipes(ModItem item) => item.CreateRecipe(25)
-			.AddIngredient(ItemID.StoneBlock, 10)
-			.AddIngredient(ModContent.ItemType<MineralSlag>(), 1)
-			.AddTile(TileID.WorkBenches)
-			.Register();
+	public void AddItemRecipes(ModItem item)
+	{
+		item.CreateRecipe(25).AddIngredient(ItemID.StoneBlock, 10).AddIngredient(ModContent.ItemType<MineralSlag>(), 1).AddTile(TileID.WorkBenches).Register();
+		Recipe.Create(ItemID.Lava3Echo, 4).AddIngredient(item.Type).AddTile(TileID.WorkBenches).AddCondition(Condition.InGraveyard).Register();
+	}
 
 	public override void SetStaticDefaults()
 	{

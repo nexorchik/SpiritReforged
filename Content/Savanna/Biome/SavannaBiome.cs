@@ -4,10 +4,16 @@ namespace SpiritReforged.Content.Savanna.Biome;
 
 public class SavannaBiome : ModBiome
 {
-	private int SavannaMusic => Main.dayTime ? MusicLoader.GetMusicSlot(Mod, "Assets/Music/Savanna") : MusicLoader.GetMusicSlot(Mod, "Assets/Music/SavannaNight");
+	private int GetMusic()
+	{
+		if (Main.LocalPlayer.townNPCs > 2f || Main.LocalPlayer.ZoneGraveyard)
+			return -1;
+
+		return Main.dayTime ? MusicLoader.GetMusicSlot(Mod, "Assets/Music/Savanna") : MusicLoader.GetMusicSlot(Mod, "Assets/Music/SavannaNight");
+	}
 
 	public override SceneEffectPriority Priority => SceneEffectPriority.BiomeMedium;
-	public override int Music => (Main.LocalPlayer.townNPCs > 2f) ? -1 : SavannaMusic;
+	public override int Music => GetMusic();
 	public override ModWaterStyle WaterStyle => ModContent.GetInstance<SavannaWaterStyle>();
 	public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle => ModContent.GetInstance<SavannaBGStyle>();
 	public override string BackgroundPath => MapBackground;
