@@ -1,3 +1,4 @@
+using System.Linq;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.WorldGeneration;
@@ -128,5 +129,28 @@ public class WorldMethods
 
 		addY = 0;
 		return false;
+	}
+
+	public static bool IsFlat(Point16 position, int width, out int startY, out int endY, int maxDeviance = 2)
+	{
+		int maxSamples = (width * 2 + 1) / 4;
+		List<int> samples = [];
+
+		for (int i = 0; i < maxSamples; i++)
+		{
+			int x = (int)MathHelper.Lerp(position.X - width, position.X + width, (float)i / maxSamples);
+			int y = position.Y;
+
+			FindGround(x, ref y);
+			samples.Add(y);
+		}
+
+		startY = samples[0];
+		endY = samples[^1];
+
+		int average = (int)samples.Average();
+		int surfaceAverage = (int)Math.Abs(MathHelper.Lerp(startY, endY, .5f));
+
+		return Math.Abs(startY - endY) <= maxDeviance && Math.Abs(average - surfaceAverage) <= maxDeviance;
 	}
 }
