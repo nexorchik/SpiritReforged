@@ -1,38 +1,48 @@
 ﻿using System.IO;
+using System.Linq;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Forest.ButterflyStaff;
 
 internal class ButterflySystem : ModSystem
 {
-	public readonly HashSet<Rectangle> butterflyZones = [];
+	public HashSet<Rectangle> butterflyZones = [];
 
 	public override void SaveWorldData(TagCompound tag)
 	{
-		if (butterflyZones is null || butterflyZones.Count == 0)
-			return;
-
-		int count = 0;
-
-		foreach (var zone in butterflyZones)
-		{
-			tag[$"butterflyZone{count}"] = zone;
-			count++;
-		}
-
-		tag["numButterflyZones"] = count;
+		if (butterflyZones.Count != 0)
+			tag[nameof(butterflyZones)] = butterflyZones.ToList();
 	}
 
 	public override void LoadWorldData(TagCompound tag)
 	{
-		int count = tag.GetInt("numButterflyZones");
+		var list = tag.GetList<Rectangle>(nameof(butterflyZones));
+		butterflyZones = [.. list];
 
-		for (int i = 0; i < count; i++)
+		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
-			var zone = tag.Get<Rectangle>($"butterflyZone{count}");
+			foreach (var rect in butterflyZones)
+				Populate(rect);
+		}
+	}
 
-			if (zone != default)
-				butterflyZones.Add(zone);
+	/// <summary> Spawns butterfly NPCs within <paramref name="rect"/>. </summary>
+	private static void Populate(Rectangle rect)
+	{
+		const int tries = 20;
+		int randomCount = Main.rand.Next(3, 6);
+
+		for (int i = 0; i < randomCount; i++)
+		{
+			var pos = Vector2.Zero;
+			for (int t = 0; t < tries; t++)
+			{
+				pos = Main.rand.NextVector2FromRectangle(rect).ToWorldCoordinates();
+				if (!Collision.SolidCollision(pos, 8, 8))
+					break;
+			}
+
+			NPC.NewNPCDirect(null, pos, ModContent.NPCType<ButterflyCritter>()); //Withheld by PersistentNPCSystem
 		}
 	}
 

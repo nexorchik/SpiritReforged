@@ -1,3 +1,4 @@
+using SpiritReforged.Common.NPCCommon;
 using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
 
@@ -17,7 +18,11 @@ public class ButterflyCritter : ModNPC
 		return deathCounter -= 1f / 20;
 	}
 
-	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 3; //Per column
+	public override void SetStaticDefaults()
+	{
+		Main.npcFrameCount[Type] = 3; //Per column
+		PersistentNPCSystem.PersistentTypes.Add(Type);
+	}
 
 	public override void SetDefaults()
 	{
@@ -31,6 +36,7 @@ public class ButterflyCritter : ModNPC
 		NPC.aiStyle = 64;
 		NPC.npcSlots = 0;
 		NPC.noGravity = true;
+		NPC.Opacity = 0;
 		NPC.catchItem = ItemID.SilverCoin; //The player should never be able to catch this critter
 
 		AIType = NPCID.Firefly;
@@ -40,6 +46,8 @@ public class ButterflyCritter : ModNPC
 
 	public override bool PreAI()
 	{
+		NPC.Opacity = MathHelper.Min(NPC.Opacity + .01f, 1); //Fade in
+
 		if (settled)
 		{
 			NPC.TargetClosest(false);
@@ -149,7 +157,7 @@ public class ButterflyCritter : ModNPC
 			var color = Color.Lerp(new Color(90, 70, 255, 50), Color.HotPink with { A = 50 }, Lerp(25f)) * deathCounter;
 			var position = NPC.Center - screenPos + new Vector2(0f, blurStrength * (8f - deathCounter * 7f)).RotatedBy(radians) * Lerp(60f);
 
-			spriteBatch.Draw(texture, position, frame, color, NPC.rotation, frame.Size() / 2, NPC.scale, effects, 0);
+			spriteBatch.Draw(texture, position, frame, NPC.GetAlpha(color), NPC.rotation, frame.Size() / 2, NPC.scale, effects, 0);
 		}
 
 		float Lerp(float rate) => (float)Math.Sin((Main.timeForVisualEffects + NPC.whoAmI * 3) / rate);
@@ -163,7 +171,7 @@ public class ButterflyCritter : ModNPC
 		foreach (var zone in ModContent.GetInstance<ButterflySystem>().butterflyZones)
 		{
 			if (zone.Contains(coord))
-				return .5f; //Commonly spawn butterflies in the zone
+				return .75f; //Commonly spawn butterflies in the zone
 
 			if (coord.Y < zone.Y && Math.Abs(coord.X - zone.Center.X) < zone.Width)
 				return Main.dayTime ? .047f : .08f; //Rarely spawn butterflies anywhere above the zone

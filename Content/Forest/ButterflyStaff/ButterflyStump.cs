@@ -14,7 +14,6 @@ public class ButterflyStump : ModTile, IAutoloadRubble
 	private const int FrameHeight = 18 * 4;
 
 	protected static int ItemType => ModContent.ItemType<ButterflyStaff>();
-
 	public IAutoloadRubble.RubbleData Data => new(ItemType, IAutoloadRubble.RubbleSize.Large);
 
 	private static bool HasItem(int i, int j) => Framing.GetTileSafely(i, j).TileFrameY < FrameHeight;
@@ -93,6 +92,26 @@ public class ButterflyStump : ModTile, IAutoloadRubble
 		}
 
 		return false;
+	}
+
+	public override void RandomUpdate(int i, int j) //Randomly generate butterflies
+	{
+		const int tries = 20;
+
+		if (!Autoloader.IsRubble(Type) && WorldGen.PlayerLOS(i, j) && NPC.CountNPCS(ModContent.NPCType<ButterflyCritter>()) < 5)
+		{
+			var world = new Vector2(i, j).ToWorldCoordinates();
+			Vector2 pos = world;
+
+			for (int t = 0; t < tries; t++)
+			{
+				pos = world + Main.rand.NextVector2Unit() * Main.rand.NextFloat(16 * 10);
+				if (!Collision.SolidCollision(pos, 8, 8) && Collision.CanHitLine(pos, 0, 0, world, 0, 0))
+					break;
+			}
+
+			NPC.NewNPCDirect(null, pos, ModContent.NPCType<ButterflyCritter>());
+		}
 	}
 
 	public override void AnimateTile(ref int frame, ref int frameCounter)
