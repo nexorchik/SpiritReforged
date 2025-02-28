@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using Terraria.DataStructures;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Forest.ButterflyStaff;
@@ -42,7 +43,7 @@ internal class ButterflySystem : ModSystem
 					break;
 			}
 
-			NPC.NewNPCDirect(null, pos, ModContent.NPCType<ButterflyCritter>()); //Withheld by PersistentNPCSystem
+			NPC.NewNPCDirect(new EntitySource_SpawnNPC(), pos, ModContent.NPCType<ButterflyCritter>()); //Withheld by PersistentNPCSystem
 		}
 	}
 

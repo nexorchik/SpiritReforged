@@ -37,7 +37,7 @@ public class ButterflyCritter : ModNPC
 		NPC.npcSlots = 0;
 		NPC.noGravity = true;
 		NPC.Opacity = 0;
-		NPC.catchItem = ItemID.SilverCoin; //The player should never be able to catch this critter
+		NPC.catchItem = ItemID.SilverCoin; //Allows bug nets to interact with this NPC, even though the player is never allowed to catch it
 
 		AIType = NPCID.Firefly;
 	}
