@@ -1306,3 +1306,8 @@ OceanDepthsBoxItem: {
 	DisplayName: Music Box (Ocean Depths)
 	Tooltip: ""
 }
+
+OstrichPants: {
+	DisplayName: Ostrich Pants
+	Tooltip: ""
+}

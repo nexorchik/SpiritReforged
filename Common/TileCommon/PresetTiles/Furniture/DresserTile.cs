@@ -156,6 +156,8 @@ public abstract class DresserTile : FurnitureTile
 
 	public override void MouseOver(int i, int j)
 	{
+		int icon = (Main.tile[i, j].TileFrameY > 0) ? ItemID.FamiliarShirt : ModItem.Type;
+
 		TileExtensions.GetTopLeft(ref i, ref j);
 
 		Player player = Main.LocalPlayer;
@@ -174,7 +176,7 @@ public abstract class DresserTile : FurnitureTile
 			player.cursorItemIconText = Main.chest[chest].name.Length > 0 ? Main.chest[chest].name : defaultName;
 			if (player.cursorItemIconText == defaultName)
 			{
-				player.cursorItemIconID = ModItem.Type;
+				player.cursorItemIconID = icon;
 				player.cursorItemIconText = string.Empty;
 			}
 		}

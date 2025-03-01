@@ -5,6 +5,7 @@ using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Items.Food;
+using SpiritReforged.Content.Savanna.Items.Vanity;
 using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Vanilla.Food;
 using Terraria.Audio;
@@ -376,7 +377,8 @@ public class Ostrich : ModNPC
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
 		npcLoot.AddCommon<RawMeat>(3);
-		npcLoot.AddCommon<OstrichEgg>(9);
+		npcLoot.AddCommon<OstrichEgg>(7);
+		npcLoot.AddCommon<OstrichPants>(30);
 	}
 }
 
