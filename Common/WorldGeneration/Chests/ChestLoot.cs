@@ -8,6 +8,7 @@ using SpiritReforged.Content.Jungle.Misc.DyeCrate;
 using SpiritReforged.Content.Jungle.Toucane;
 using SpiritReforged.Content.Ocean.Items.PoolNoodle;
 using SpiritReforged.Content.Ocean.Items.Vanity;
+using SpiritReforged.Content.Ocean.Items.Vanity.Towel;
 using SpiritReforged.Content.Underground.ExplorerTreads;
 using SpiritReforged.Content.Underground.Zipline;
 using static SpiritReforged.Common.WorldGeneration.Chests.ChestPoolUtils;
