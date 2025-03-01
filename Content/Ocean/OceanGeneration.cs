@@ -174,13 +174,13 @@ public class OceanGeneration : ModSystem
 
 				//Kelp multitiles
 				int kelpChance = tilesFromInnerEdge < 100 ? 46 : 18; //Higher on first slope, then less common
-				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance) && TryPlaceSubmerged(i, j, ModContent.TileType<Kelp2x3>()))
+				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance) && TryPlaceSubmerged(i, j, ModContent.TileType<OceanDecor2x3>(), WorldGen.genRand.Next(2)))
 					continue;
 
-				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance) && TryPlaceSubmerged(i, j, ModContent.TileType<Kelp2x2>()))
+				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance) && TryPlaceSubmerged(i, j, ModContent.TileType<OceanDecor2x2>(), WorldGen.genRand.Next(4)))
 					continue;
 
-				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance) && TryPlaceSubmerged(i, j, ModContent.TileType<Kelp1x2>()))
+				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance) && TryPlaceSubmerged(i, j, ModContent.TileType<OceanDecor1x2>(), WorldGen.genRand.Next(3)))
 					continue;
 
 				//Growing kelp
@@ -194,6 +194,7 @@ public class OceanGeneration : ModSystem
 	private static bool TryPlaceSubmerged(int i, int j, int type, int style = 0)
 	{
 		var data = TileObjectData.GetTileData(type, style);
+
 		if (data != null && WorldMethods.Submerged(i, j - data.Height, data.Width, data.Height))
 		{
 			WorldGen.PlaceObject(i, j - 1, type, true, style);

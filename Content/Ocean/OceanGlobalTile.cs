@@ -28,13 +28,13 @@ public class OceanGlobalTile : GlobalTile
 					TilePlaceHelper.PlaceTile(i, j - 1, ModContent.TileType<OceanKelp>());
 
 				if (Main.rand.NextBool(60)) //1x2 kelp
-					TilePlaceHelper.PlaceTile(i, j - 1, ModContent.TileType<Kelp1x2>());
+					TilePlaceHelper.PlaceTile(i, j - 1, ModContent.TileType<OceanDecor1x2>());
 
 				if (Main.rand.NextBool(80)) //2x2 kelp
-					TilePlaceHelper.PlaceTile(i, j - 1, ModContent.TileType<Kelp2x2>());
+					TilePlaceHelper.PlaceTile(i, j - 1, ModContent.TileType<OceanDecor2x2>());
 
 				if (Main.rand.NextBool(90)) //2x3 kelp
-					TilePlaceHelper.PlaceTile(i, j - 1, ModContent.TileType<Kelp2x3>());
+					TilePlaceHelper.PlaceTile(i, j - 1, ModContent.TileType<OceanDecor2x3>());
 			}
 			else if (Main.rand.NextBool(6))
 				SpawnSeagrass(i, j, 5);
