@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.TileCommon;
+﻿using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Savanna.Items.Food;
 using Terraria.Audio;
@@ -51,7 +52,7 @@ public class BaobabPod : ModTile, ISwayTile
 			Dust.NewDustDirect(new Vector2(i, j) * 16, 32, 32, DustType, Scale: Main.rand.NextFloat())
 				.velocity = (Vector2.UnitY * -Main.rand.NextFloat(2f)).RotatedByRandom(MathHelper.Pi);
 
-		if (stage == numStages - 1)
+		if (stage == numStages - 1) //Break open
 		{
 			var source = new EntitySource_TileBreak(i, j);
 
@@ -81,33 +82,13 @@ public class BaobabPod : ModTile, ISwayTile
 			if (Main.rand.NextBool(3))
 				DropItem(i, j, ItemID.Vine);
 
-			DropCoins(Main.rand.Next(500, 800));
-		} //Break open
+			ItemMethods.SplitCoins(Main.rand.Next(500, 800), delegate (int type, int stack)
+			{ DropItem(i, j, type, stack); });
+		}
 		else
-			DropCoins(Main.rand.Next(150, 200));
-
-		void DropCoins(int amount)
 		{
-			int[] split = Utils.CoinsSplit(amount);
-
-			for (int c = 0; c < split.Length; c++)
-			{
-				if (split[c] == 0)
-					continue;
-
-				int type = c switch
-				{
-					3 => ItemID.PlatinumCoin,
-					2 => ItemID.GoldCoin,
-					1 => ItemID.SilverCoin,
-					_ => ItemID.CopperCoin,
-				};
-
-				int numStacks = Math.Min(Main.rand.Next(3) + 1, split[c]);
-				for (int r = 0; r < numStacks; r++)
-					DropItem(i, j, type, split[c] / numStacks);
-				//Split the stack across a number of items randomly
-			}
+			ItemMethods.SplitCoins(Main.rand.Next(150, 200), delegate (int type, int stack)
+			{ DropItem(i, j, type, stack); });
 		}
 	}
 
@@ -125,7 +106,7 @@ public class BaobabPod : ModTile, ISwayTile
 		TileExtensions.GetTopLeft(ref i, ref j);
 
 		for (int frameX = 0; frameX < data.Width; frameX++)
-			for (int frameY = 0; frameY < data.Width; frameY++)
+			for (int frameY = 0; frameY < data.Height; frameY++)
 				Framing.GetTileSafely(i + frameX, j + frameY).TileFrameX += (short)data.CoordinateFullWidth;
 
 		stage = tile.TileFrameX / data.CoordinateFullWidth;

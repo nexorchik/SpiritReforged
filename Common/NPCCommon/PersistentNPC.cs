@@ -49,6 +49,8 @@ internal class PersistentNPCSystem : ModSystem
 		}
 	}
 
+	public override void OnWorldUnload() => Persistent.Clear();
+
 	/// <summary> Kills <paramref name="npc"/> and adds them to the persistent lookup. </summary>
 	public static void MakePersistent(NPC npc)
 	{
