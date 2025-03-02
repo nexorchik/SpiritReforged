@@ -1,16 +1,16 @@
-﻿using SpiritReforged.Common.TileCommon;
+﻿using RubbleAutoloader;
+using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean.Tiles;
 
-public class OceanDecor1x2 : ModTile
+[AutoloadGlowmask("255,255,255")]
+public class OceanDecor1x2 : ModTile, IAutoloadRubble
 {
-	private static readonly Dictionary<int, Asset<Texture2D>> _GlowById = [];
+	public virtual IAutoloadRubble.RubbleData Data => new(ItemID.Coral, IAutoloadRubble.RubbleSize.Small);
 
 	public override void SetStaticDefaults()
 	{
-		_GlowById.Add(Type, ModContent.Request<Texture2D>(Texture + "_Glow"));
-
 		Main.tileSolid[Type] = false;
 		Main.tileMergeDirt[Type] = false;
 		Main.tileBlockLight[Type] = false;
@@ -47,17 +47,13 @@ public class OceanDecor1x2 : ModTile
 		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Pearlsand, TileID.Ebonsand];
 		TileObjectData.addTile(Type);
 	}
-
-	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
-	{
-		Tile tile = Main.tile[i, j];
-
-		spriteBatch.Draw(_GlowById[Type].Value, this.DrawPosition(i, j), new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 16), Color.White);
-	}
 }
 
+[AutoloadGlowmask("255,255,255")]
 public class OceanDecor2x2 : OceanDecor1x2
 {
+	public override IAutoloadRubble.RubbleData Data => new(ItemID.Coral, IAutoloadRubble.RubbleSize.Medium);
+
 	protected override void AddTileObjectData()
 	{
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
@@ -71,8 +67,11 @@ public class OceanDecor2x2 : OceanDecor1x2
 	}
 }
 
+[AutoloadGlowmask("255,255,255")]
 public class OceanDecor2x3 : OceanDecor1x2
 {
+	public override IAutoloadRubble.RubbleData Data => new(ItemID.Coral, IAutoloadRubble.RubbleSize.Large);
+
 	protected override void AddTileObjectData()
 	{
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2xX);
