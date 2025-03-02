@@ -1,0 +1,11 @@
+Diver: {
+	DisplayName: Diver
+	Flavor: After a rough spill, the Diver is ready to start in a new land, eager to see new waters.
+	Description: Starts with full Diver vanity, flippers and a Pendant of the Ocean.
+}
+
+MinorSummoner: {
+	DisplayName: Lushman
+	Flavor: A child of the Apotheosis, in word only. A botanist in a past life.
+	Description: Starts with a full Lush Wood set, a Yellow Sprout, a Lightbloom and lowered max health.
+}

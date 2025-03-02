@@ -17,4 +17,7 @@
 		  <HintPath>lib\RubbleAutoloader.dll</HintPath>
 	  </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Common\ModCompat\NewBeginningsOrigins\" />
+  </ItemGroup>
 </Project>
