@@ -13,9 +13,9 @@ public class OceanDecor1x2 : ModTile, IAutoloadRubble
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = false;
-		Main.tileMergeDirt[Type] = false;
 		Main.tileBlockLight[Type] = false;
 		Main.tileFrameImportant[Type] = true;
+		Main.tileLighted[Type] = true;
 		
 		AddTileObjectData();
 
@@ -36,6 +36,27 @@ public class OceanDecor1x2 : ModTile, IAutoloadRubble
 			type = DustID.Grass;
 
 		return true;
+	}
+
+	protected virtual Vector3 GlowColor(int x, int y)
+	{
+		var tile = Main.tile[x, y];
+
+		return ((tile.TileFrameX / 18) switch
+		{
+			0 => Color.Yellow,
+			2 => Color.Cyan,
+			_ => Color.HotPink * .25f
+		}).ToVector3();
+	}
+
+	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
+	{
+		float randomLerp = (float)(1 + Math.Sin(i / 10f) / 2f) * .2f;
+		float seedLerp = .4f + (float)(1 + Math.Sin(Main.ActiveWorldFileData.Seed) / 2f) * .2f;
+
+		Vector3 color = Vector3.Lerp(GlowColor(i, j), Color.White.ToVector3(), seedLerp + randomLerp) / 4.5f;
+		(r, g, b) = (color.X, color.Y, color.Z);
 	}
 
 	protected virtual void AddTileObjectData()
@@ -68,6 +89,19 @@ public class OceanDecor2x2 : OceanDecor1x2
 		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Pearlsand, TileID.Ebonsand];
 		TileObjectData.addTile(Type);
 	}
+
+	protected override Vector3 GlowColor(int x, int y)
+	{
+		var tile = Main.tile[x, y];
+
+		return ((tile.TileFrameX / 32) switch
+		{
+			0 => Color.Yellow,
+			1 => Color.Cyan,
+			3 => Color.Green,
+			_ => Color.Red * .25f
+		}).ToVector3();
+	}
 }
 
 public class OceanDecor2x3 : OceanDecor1x2
@@ -87,4 +121,6 @@ public class OceanDecor2x3 : OceanDecor1x2
 		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Pearlsand, TileID.Ebonsand];
 		TileObjectData.addTile(Type);
 	}
+
+	protected override Vector3 GlowColor(int x, int y) => Color.Yellow.ToVector3();
 }
