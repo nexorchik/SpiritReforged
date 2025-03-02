@@ -1,4 +1,5 @@
 ﻿using RubbleAutoloader;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
 
@@ -18,6 +19,7 @@ public class OceanDecor1x2 : ModTile, IAutoloadRubble
 		
 		AddTileObjectData();
 
+		SolidBottomTile.TileTypes.Add(Type);
 		AddMapEntry(new Color(121, 92, 19));
 		DustType = DustID.Coralstone;
 		HitSound = SoundID.Dig;
@@ -28,7 +30,7 @@ public class OceanDecor1x2 : ModTile, IAutoloadRubble
 		Tile tile = Main.tile[i, j];
 		var data = TileObjectData.GetTileData(tile);
 
-		if (tile.TileFrameX >= data.Width * 18)
+		if (tile.TileFrameX >= data.CoordinateFullWidth)
 			type = DustID.Coralstone;
 		else
 			type = DustID.Grass;
@@ -40,16 +42,16 @@ public class OceanDecor1x2 : ModTile, IAutoloadRubble
 	{
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
-		TileObjectData.newTile.Origin = new(0, 1);
+		TileObjectData.newTile.DrawYOffset = -2;
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.newTile.StyleHorizontal = true;
+		TileObjectData.newTile.Origin = new(0, 1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 1, 0);
 		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Pearlsand, TileID.Ebonsand];
 		TileObjectData.addTile(Type);
 	}
 }
 
-[AutoloadGlowmask("255,255,255")]
 public class OceanDecor2x2 : OceanDecor1x2
 {
 	public override IAutoloadRubble.RubbleData Data => new(ItemID.Coral, IAutoloadRubble.RubbleSize.Medium);
@@ -58,16 +60,16 @@ public class OceanDecor2x2 : OceanDecor1x2
 	{
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
+		TileObjectData.newTile.DrawYOffset = -2;
 		TileObjectData.newTile.RandomStyleRange = 4;
 		TileObjectData.newTile.StyleHorizontal = true;
-		TileObjectData.newTile.Origin = new(1, 1);
+		TileObjectData.newTile.Origin = new(0, 1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 2, 0);
 		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Pearlsand, TileID.Ebonsand];
 		TileObjectData.addTile(Type);
 	}
 }
 
-[AutoloadGlowmask("255,255,255")]
 public class OceanDecor2x3 : OceanDecor1x2
 {
 	public override IAutoloadRubble.RubbleData Data => new(ItemID.Coral, IAutoloadRubble.RubbleSize.Large);
@@ -77,6 +79,7 @@ public class OceanDecor2x3 : OceanDecor1x2
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2xX);
 		TileObjectData.newTile.Height = 3;
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 18];
+		TileObjectData.newTile.DrawYOffset = -2;
 		TileObjectData.newTile.RandomStyleRange = 2;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.Origin = new Point16(1, 2);
