@@ -43,7 +43,7 @@ public class UndeadNPC : GlobalNPC
 
 	internal static bool IsUndeadType(int type) => undeadTypes.Contains(type) || customUndeadTypes.Contains(type) || NPCID.Sets.Zombies[type] || NPCID.Sets.Skeletons[type] || NPCID.Sets.DemonEyes[type];
 
-	private static bool ShouldTrackGore(NPC self) => self.TryGetGlobalNPC(out UndeadNPC _);
+	private static bool ShouldTrackGore(NPC self) => self.TryGetGlobalNPC(out UndeadNPC _) && self.lastInteraction != 255 && Main.player[self.lastInteraction].HasAccessory<SafekeeperRing>();
 
 	public override bool InstancePerEntity => true;
 	public override bool AppliesToEntity(NPC entity, bool lateInstantiation) => IsUndeadType(entity.type);
