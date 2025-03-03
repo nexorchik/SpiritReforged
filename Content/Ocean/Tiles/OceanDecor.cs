@@ -13,9 +13,9 @@ public class OceanDecor1x2 : ModTile, IAutoloadRubble
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = false;
-		Main.tileMergeDirt[Type] = false;
 		Main.tileBlockLight[Type] = false;
 		Main.tileFrameImportant[Type] = true;
+		Main.tileLighted[Type] = true;
 		
 		AddTileObjectData();
 
@@ -38,11 +38,32 @@ public class OceanDecor1x2 : ModTile, IAutoloadRubble
 		return true;
 	}
 
+	protected virtual Vector3 GlowColor(int x, int y)
+	{
+		var tile = Main.tile[x, y];
+
+		return ((tile.TileFrameX / 18) switch
+		{
+			0 => Color.Yellow,
+			2 => Color.Cyan,
+			_ => Color.HotPink * .25f
+		}).ToVector3();
+	}
+
+	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
+	{
+		float randomLerp = (float)(1 + Math.Sin(i / 10f) / 2f) * .2f;
+		float seedLerp = .4f + (float)(1 + Math.Sin(Main.ActiveWorldFileData.Seed) / 2f) * .2f;
+
+		Vector3 color = Vector3.Lerp(GlowColor(i, j), Color.White.ToVector3(), seedLerp + randomLerp) / 4.5f;
+		(r, g, b) = (color.X, color.Y, color.Z);
+	}
+
 	protected virtual void AddTileObjectData()
 	{
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
-		TileObjectData.newTile.DrawYOffset = -2;
+		//TileObjectData.newTile.DrawYOffset = -2;
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.Origin = new(0, 1);
@@ -60,13 +81,26 @@ public class OceanDecor2x2 : OceanDecor1x2
 	{
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
-		TileObjectData.newTile.DrawYOffset = -2;
+		//TileObjectData.newTile.DrawYOffset = -2;
 		TileObjectData.newTile.RandomStyleRange = 4;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.Origin = new(0, 1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 2, 0);
 		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Pearlsand, TileID.Ebonsand];
 		TileObjectData.addTile(Type);
+	}
+
+	protected override Vector3 GlowColor(int x, int y)
+	{
+		var tile = Main.tile[x, y];
+
+		return ((tile.TileFrameX / 32) switch
+		{
+			0 => Color.Yellow,
+			1 => Color.Cyan,
+			3 => Color.Green,
+			_ => Color.Red * .25f
+		}).ToVector3();
 	}
 }
 
@@ -79,7 +113,7 @@ public class OceanDecor2x3 : OceanDecor1x2
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2xX);
 		TileObjectData.newTile.Height = 3;
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 18];
-		TileObjectData.newTile.DrawYOffset = -2;
+		//TileObjectData.newTile.DrawYOffset = -2;
 		TileObjectData.newTile.RandomStyleRange = 2;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.Origin = new Point16(1, 2);
@@ -87,4 +121,6 @@ public class OceanDecor2x3 : OceanDecor1x2
 		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Pearlsand, TileID.Ebonsand];
 		TileObjectData.addTile(Type);
 	}
+
+	protected override Vector3 GlowColor(int x, int y) => Color.Yellow.ToVector3();
 }
