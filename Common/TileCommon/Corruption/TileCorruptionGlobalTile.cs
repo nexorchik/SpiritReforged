@@ -6,7 +6,7 @@ internal class TileCorruptionGlobalTile : GlobalTile
 {
 	/// <summary>
 	/// <inheritdoc/><para/>
-	/// Automatically converts tiles based on lower types. Useful for things like foliage.
+	/// Automatically converts tiles based on lower (or upper, depending on anchor) types. Useful for things like foliage.
 	/// </summary>
 	public override bool TileFrame(int i, int j, int type, ref bool resetFrame, ref bool noBreak)
 	{
@@ -18,9 +18,12 @@ internal class TileCorruptionGlobalTile : GlobalTile
 
 		if (data != null)
 		{
-			y += data.Height;
-			var baseTile = Main.tile[x, y];
+			if (data.AnchorTop != default)
+				y -= 1;
+			else
+				y += data.Height;
 
+			var baseTile = Main.tile[x, y];
 			var conversionType = ConversionType.Purify;
 
 			if (TileID.Sets.Corrupt[baseTile.TileType])
