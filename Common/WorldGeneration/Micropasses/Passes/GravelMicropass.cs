@@ -70,7 +70,7 @@ internal class GravelMicropass : Micropass
 
 		WorldGen.OreRunner(x, y, WorldGen.genRand.Next(5, 10), WorldGen.genRand.Next(10, 15), (ushort)ModContent.TileType<Gravel>()); //Initial gravel patch
 
-		WorldUtils.Gen(new Point(x, y - pillarHeight), new Shapes.Rectangle(2, pillarHeight + 1), Actions.Chain(new Actions.SetTile((ushort)ModContent.TileType<Gravel>()))); //Be careful with this
+		WorldUtils.Gen(new Point(x, y - pillarHeight), new Shapes.Rectangle(2, pillarHeight + 1), Actions.Chain(new Actions.SetTile((ushort)ModContent.TileType<Gravel>()), new Actions.SetLiquid())); //Be careful with this
 
 		WorldGen.PlaceTile(x, y - pillarHeight - 1, ModContent.TileType<HydrothermalVent>(), true, style: WorldGen.genRand.Next(8));
 

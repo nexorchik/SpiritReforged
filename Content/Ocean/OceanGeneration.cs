@@ -157,7 +157,7 @@ public class OceanGeneration : ModSystem
 
 				int coralChance = 0;
 				if (tilesFromInnerEdge < 133) //First slope (I hope)
-					coralChance = 9;
+					coralChance = 15;
 				else if (tilesFromInnerEdge < 161)
 					coralChance = 27;
 
@@ -171,8 +171,8 @@ public class OceanGeneration : ModSystem
 				if (coralChance > 0 && WorldGen.genRand.NextBool((int)(coralChance * 1.75f)) && TryPlaceSubmerged(i, j, ModContent.TileType<Coral1x2>()))
 					continue;
 
-				//Kelp multitiles
-				int kelpChance = tilesFromInnerEdge < 100 ? 46 : 18; //Higher on first slope, then less common
+				//Decor multitiles
+				int kelpChance = tilesFromInnerEdge < 100 ? 14 : 35; //Higher on first slope, then less common
 				if (kelpChance > 0 && WorldGen.genRand.NextBool(kelpChance) && TryPlaceSubmerged(i, j, ModContent.TileType<OceanDecor2x3>(), WorldGen.genRand.Next(2)))
 					continue;
 
@@ -183,7 +183,7 @@ public class OceanGeneration : ModSystem
 					continue;
 
 				//Growing kelp
-				if (WorldGen.genRand.NextBool(4, 7) && tilesFromInnerEdge < 133 && Main.tile[i, j].TileType == TileID.Sand && !Main.tile[i, j - 1].HasTile)
+				if (WorldGen.genRand.NextBool(3, 6) && tilesFromInnerEdge < 133 && Main.tile[i, j].TileType == TileID.Sand && !Main.tile[i, j - 1].HasTile)
 					GrowKelp(i, j - 1);
 			}
 		}
@@ -205,6 +205,13 @@ public class OceanGeneration : ModSystem
 
 	private static void GrowKelp(int i, int j)
 	{
+		//Occasionally solidify ground slopes
+		if (WorldGen.genRand.NextBool(3))
+		{
+			Framing.GetTileSafely(i, j + 1).Slope = SlopeType.Solid;
+			Framing.GetTileSafely(i, j + 1).IsHalfBlock = false;
+		}
+
 		int height = WorldGen.genRand.Next(4, 14);
 
 		for (int y = j; y > j - height; --y)

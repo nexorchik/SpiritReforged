@@ -63,7 +63,7 @@ public class OceanDecor1x2 : ModTile, IAutoloadRubble
 	{
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
-		TileObjectData.newTile.DrawYOffset = -2;
+		//TileObjectData.newTile.DrawYOffset = -2;
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.Origin = new(0, 1);
@@ -81,7 +81,7 @@ public class OceanDecor2x2 : OceanDecor1x2
 	{
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
-		TileObjectData.newTile.DrawYOffset = -2;
+		//TileObjectData.newTile.DrawYOffset = -2;
 		TileObjectData.newTile.RandomStyleRange = 4;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.Origin = new(0, 1);
@@ -113,7 +113,7 @@ public class OceanDecor2x3 : OceanDecor1x2
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2xX);
 		TileObjectData.newTile.Height = 3;
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 18];
-		TileObjectData.newTile.DrawYOffset = -2;
+		//TileObjectData.newTile.DrawYOffset = -2;
 		TileObjectData.newTile.RandomStyleRange = 2;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.Origin = new Point16(1, 2);
