@@ -1311,3 +1311,8 @@ OstrichPants: {
 	DisplayName: Ostrich Pants
 	Tooltip: ""
 }
+
+CampfireSpit: {
+	DisplayName: Campfire Spit
+	Tooltip: ""
+}
