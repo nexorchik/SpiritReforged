@@ -73,7 +73,7 @@ internal class ScarecrowDiscovery : Discovery
 			FillBelow(x, y, progress);
 
 			if (x == position.X)
-				ScarecrowTileEntity.Generate(position.X, y - 1);
+				ScarecrowSlot.Generate(position.X, y - 1);
 			else
 				WorldGen.PlaceTile(x, y - 1, ModContent.TileType<Wheatgrass>(), true, style: Main.rand.Next(6));
 		}

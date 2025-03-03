@@ -1,20 +1,18 @@
 ﻿using MonoMod.Cil;
 using SpiritReforged.Common.ItemCommon;
-using SpiritReforged.Common.Multiplayer;
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.TileCommon.TileSway;
-using System.IO;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
-using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Forest.Botanist.Tiles;
 
 public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 {
-	private static bool IsTop(int i, int j, out ScarecrowTileEntity entity)
+	private static bool IsTop(int i, int j, out ScarecrowSlot entity)
 	{
-		entity = ScarecrowTileEntity.GetMe(i, j);
+		entity = ScarecrowSlot.GetMe(i, j);
 		return Framing.GetTileSafely(i, j).TileFrameY == 0 && entity is not null;
 	}
 
@@ -32,7 +30,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 		TileObjectData.newTile.DrawYOffset = -4;
 		TileObjectData.newTile.Origin = new(0, 2);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, 1, 0);
-		var entity = ModContent.GetInstance<ScarecrowTileEntity>();
+		var entity = ModContent.GetInstance<ScarecrowSlot>();
 		TileObjectData.newTile.HookPostPlaceMyPlayer = new PlacementHook(entity.Hook_AfterPlacement, -1, 0, false);
 		TileObjectData.newTile.Direction = TileObjectDirection.PlaceLeft;
 		TileObjectData.newTile.StyleHorizontal = true;
@@ -49,18 +47,18 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 
-	public override void KillMultiTile(int i, int j, int frameX, int frameY)
+	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		var entity = ScarecrowTileEntity.GetMe(i, j);
-		if (entity is not null && !entity.hat.IsAir)
+		if (!effectOnly && !Main.dedServ && ScarecrowSlot.GetMe(i, j) is ScarecrowSlot slot && !slot.item.IsAir)
 		{
-			int item = Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 16, entity.hat);
+			fail = true;
+			TileExtensions.GetTopLeft(ref i, ref j);
 
-			if (Main.netMode != NetmodeID.SinglePlayer)
-				NetMessage.SendData(MessageID.SyncItem, number: item, number2: 1);
+			var pos = new Vector2(i, j).ToWorldCoordinates();
+
+			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), slot.item, pos);
+			slot.item.TurnToAir();
 		}
-
-		ModContent.GetInstance<ScarecrowTileEntity>().Kill(i, j);
 	}
 
 	public override bool RightClick(int i, int j)
@@ -80,7 +78,7 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 		Player player = Main.LocalPlayer;
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
-		player.cursorItemIconID = entity.hat.IsAir ? Mod.Find<ModItem>(Name + "Item").Type : entity.hat.type;
+		player.cursorItemIconID = entity.item.IsAir ? Mod.Find<ModItem>(Name + "Item").Type : entity.item.type;
 	}
 
 	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
@@ -106,36 +104,34 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 	}
 }
 
-public class ScarecrowTileEntity : ModTileEntity
+public class ScarecrowSlot : SingleSlotEntity
 {
-	public Item hat = new();
-
 	private readonly Player dummy;
 
-	/// <summary> Gets a <see cref="ScarecrowTileEntity"/> instance by tile position, and in a multiplayer friendly fashion. </summary>
+	/// <summary> Gets a <see cref="ScarecrowSlot"/> instance by tile position, and in a multiplayer friendly fashion. </summary>
 	/// <returns> null if no entity is found. </returns>
-	public static ScarecrowTileEntity GetMe(int i, int j)
+	public static ScarecrowSlot GetMe(int i, int j)
 	{
 		TileExtensions.GetTopLeft(ref i, ref j);
 
-		int id = ModContent.GetInstance<ScarecrowTileEntity>().Find(i, j);
+		int id = ModContent.GetInstance<ScarecrowSlot>().Find(i, j);
 		if (id == -1)
 			return null;
 
-		return (ScarecrowTileEntity)ByID[id];
+		return (ScarecrowSlot)ByID[id];
 	}
 
 	/// <summary> Places <see cref="Scarecrow"/> in the world along with the associated tile entity, wearing a sunflower hat. </summary>
 	public static void Generate(int i, int j)
 	{
 		WorldGen.PlaceObject(i, j, ModContent.TileType<Scarecrow>(), true);
-		PlaceEntityNet(i, j - 2, ModContent.TileEntityType<ScarecrowTileEntity>());
+		PlaceEntityNet(i, j - 2, ModContent.TileEntityType<ScarecrowSlot>());
 
-		if (GetMe(i, j) is ScarecrowTileEntity sgaregrow)
-			sgaregrow.hat = new Item(ModContent.ItemType<Items.BotanistHat>());
+		if (GetMe(i, j) is ScarecrowSlot sgaregrow)
+			sgaregrow.item = new Item(ModContent.ItemType<Items.BotanistHat>());
 	}
 
-	public ScarecrowTileEntity()
+	public ScarecrowSlot()
 	{
 		dummy = new Player();
 		dummy.hair = 15;
@@ -153,14 +149,14 @@ public class ScarecrowTileEntity : ModTileEntity
 		c.EmitDelegate(() =>
 		{
 			foreach (var entity in ByPosition.Values)
-				if (entity is not null and ScarecrowTileEntity scarecrow)
+				if (entity is ScarecrowSlot scarecrow)
 					scarecrow.DrawHat();
 		});
 	};
 
 	public void DrawHat()
 	{
-		if (hat.IsAir || hat.headSlot < 0)
+		if (item.IsAir || item.headSlot < 0)
 			return;
 
 		//The base of the scarecrow
@@ -182,7 +178,7 @@ public class ScarecrowTileEntity : ModTileEntity
 		dummy.Male = true;
 		dummy.isDisplayDollOrInanimate = true;
 		dummy.isHatRackDoll = true;
-		dummy.armor[0] = hat;
+		dummy.armor[0] = item;
 		dummy.ResetEffects();
 		dummy.ResetVisibleAccessories();
 		dummy.invis = true;
@@ -197,108 +193,11 @@ public class ScarecrowTileEntity : ModTileEntity
 		Main.PlayerRenderer.DrawPlayer(Main.Camera, dummy, dummy.position, dummy.fullRotation, dummy.fullRotationOrigin);
 	}
 
-	public void OnInteract(Player player)
-	{
-		var item = player.HeldItem;
-
-		if (hat.IsAir)
-		{
-			if (TryPlaceHat() && Main.netMode == NetmodeID.MultiplayerClient)
-				new ScarecrowData((short)ID, hat).Send();
-		}
-		else
-		{
-			ItemMethods.NewItemSynced(player.GetSource_TileInteraction(Position.X, Position.Y), hat, Position.ToVector2() * 16, true);
-
-			hat.TurnToAir();
-
-			if (TryPlaceHat() && Main.netMode == NetmodeID.MultiplayerClient)
-				new ScarecrowData((short)ID, hat).Send();
-
-			for (int i = 0; i < 10; i++) //Create smoke
-			{
-				var dust = Dust.NewDustDirect(Position.ToVector2() * 16 - new Vector2(0, 8), 16, 16, DustID.Smoke, Alpha: 150, Scale: Main.rand.NextFloat(.5f, 1.5f));
-				dust.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(.25f);
-			}
-		}
-
-		bool TryPlaceHat()
-		{
-			if (item.headSlot > -1)
-			{
-				hat = ItemLoader.TransferWithLimit(item, 1);
-				Main.mouseItem.TurnToAir();
-
-				player.releaseUseItem = false;
-				player.mouseInterface = true;
-				return true;
-			}
-
-			return false;
-		}
-	}
+	public override bool CanAddItem(Item item) => item.headSlot > -1;
 
 	public override bool IsTileValidForEntity(int x, int y)
 	{
 		Tile tile = Framing.GetTileSafely(x, y);
 		return tile.HasTile && tile.TileType == ModContent.TileType<Scarecrow>() && tile.TileFrameY == 0;
-	}
-
-	public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate)
-	{
-		TileExtensions.GetTopLeft(ref i, ref j);
-
-		if (Main.netMode == NetmodeID.MultiplayerClient)
-		{
-			NetMessage.SendTileSquare(Main.myPlayer, i, j, 1, 3);
-			NetMessage.SendData(MessageID.TileEntityPlacement, number: i, number2: j, number3: Type);
-			return -1;
-		}
-
-		return Place(i, j);
-	}
-
-	public override void OnNetPlace() => NetMessage.SendData(MessageID.TileEntitySharing, number: ID, number2: Position.X, number3: Position.Y);
-	public override void NetSend(BinaryWriter writer) => ItemIO.Send(hat, writer);
-	public override void NetReceive(BinaryReader reader) => hat = ItemIO.Receive(reader);
-
-	public override void SaveData(TagCompound tag)
-	{
-		if (!hat.IsAir)
-			tag[nameof(hat)] = hat;
-	}
-
-	public override void LoadData(TagCompound tag) => hat = tag.Get<Item>(nameof(hat));
-}
-
-/// <summary> Sends <see cref="ScarecrowTileEntity.hat"/> by tile entity ID. </summary>
-internal class ScarecrowData : PacketData
-{
-	private readonly short _id;
-	private readonly Item _hat;
-
-	public ScarecrowData() { }
-	public ScarecrowData(short tileEntityID, Item hat)
-	{
-		_id = tileEntityID;
-		_hat = hat;
-	}
-
-	public override void OnReceive(BinaryReader reader, int whoAmI)
-	{
-		short index = reader.ReadInt16();
-		Item item = ItemIO.Receive(reader);
-
-		if (Main.netMode == NetmodeID.Server) //Relay to other clients
-			new ScarecrowData(index, item).Send(ignoreClient: whoAmI);
-
-		if (TileEntity.ByID[index] is ScarecrowTileEntity scarecrow)
-			scarecrow.hat = item;
-	}
-
-	public override void OnSend(ModPacket modPacket)
-	{
-		modPacket.Write(_id);
-		ItemIO.Send(_hat, modPacket);
 	}
 }
