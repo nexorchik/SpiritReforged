@@ -21,14 +21,20 @@ public abstract class SingleSlotEntity : ModTileEntity
 		{
 			ItemMethods.NewItemSynced(player.GetSource_TileInteraction(Position.X, Position.Y), item, Position.ToVector2() * 16, true);
 			item.TurnToAir();
+
 			success = true;
 		}
 
 		if (success)
+		{
 			item = ItemLoader.TransferWithLimit(player.HeldItem, 1);
 
-		player.releaseUseItem = false;
-		player.mouseInterface = true;
+			if (!item.IsAir)
+				player.PlayDroppedItemAnimation(20);
+
+			player.releaseUseItem = false;
+			player.mouseInterface = true;
+		}
 
 		if (lastItem != item && Main.netMode == NetmodeID.MultiplayerClient)
 			new SingleSlotData((short)ID, item).Send();

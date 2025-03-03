@@ -1,10 +1,10 @@
-using Microsoft.Build.Utilities;
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Vanilla.Food;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Savanna.Items;
 
@@ -23,6 +23,7 @@ public class CampfireSpit : ModItem
 		Item.autoReuse = true;
 		Item.consumable = true;
 		Item.value = Item.sellPrice(copper: 4);
+		Item.UseSound = SoundID.Dig;
 	}
 
 	public override void HoldItem(Player player)
@@ -55,6 +56,7 @@ public class CampfireSpit : ModItem
 		return null;
 	}
 
+	/// <summary> Checks whether the target tile position is a campfire and does not already have a fire spit. </summary>
 	private bool CanPlace(Player player)
 	{
 		int i = Player.tileTargetX;
@@ -62,7 +64,7 @@ public class CampfireSpit : ModItem
 
 		var target = Framing.GetTileSafely(i, j);
 
-		if (target.HasTile && target.TileType == TileID.Campfire && player.IsTargetTileInItemRange(Item))
+		if (target.HasTile && TileID.Sets.Campfire[target.TileType] && player.IsTargetTileInItemRange(Item))
 		{
 			TileExtensions.GetTopLeft(ref i, ref j);
 			return ModContent.GetInstance<CampfireSlot>().Find(i, j) == -1; //Invalid if this entity already exists
@@ -77,30 +79,52 @@ public class CampfireSlot : SingleSlotEntity
 	private const short cookCounterMax = 60 * 10;
 	private short cookCounter;
 
+	/// <summary> Places a <see cref="TileID.Campfire"/> in the world along with this entity, cooking meat. </summary>
+	public static void Generate(int i, int j)
+	{
+		WorldGen.PlaceObject(i, j, TileID.Campfire, true);
+		TileExtensions.GetTopLeft(ref i, ref j);
+
+		PlaceEntityNet(i, j, ModContent.TileEntityType<CampfireSlot>());
+
+		if (ByPosition[new Point16(i, j)] is CampfireSlot slot)
+			slot.item = new Item(ModContent.ItemType<CookedMeat>());
+	}
+
 	public override bool IsTileValidForEntity(int x, int y)
 	{
 		var t = Main.tile[x, y];
-		return t.TileType == TileID.Campfire && TileObjectData.IsTopLeft(x, y);
+		return TileID.Sets.Campfire[t.TileType] && TileObjectData.IsTopLeft(x, y);
 	}
 
 	public override bool CanAddItem(Item item) => RoastGlobalTile.AllowedTypes.Contains(item.type);
 
 	public override void Update()
 	{
-		if (item.type == ModContent.ItemType<RawMeat>())
+		base.Update();
+
+		if (item.type == ModContent.ItemType<RawMeat>() && CampfireLit() && ++cookCounter >= cookCounterMax)
 		{
-			if (++cookCounter >= cookCounterMax)
+			item = new Item(ModContent.ItemType<CookedMeat>());
+			cookCounter = 0;
+
+			for (int i = 0; i < 3; i++)
 			{
-				item = new Item(ModContent.ItemType<CookedMeat>());
-				cookCounter = 0;
+				var pos = Position.ToWorldCoordinates() + new Vector2(16, -4) + Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f);
+				//var pos = Main.rand.NextVector2FromRectangle(new Rectangle(Position.X * 16, Position.Y * 16, 16 * 3, 16 * 2));
+				var settings = new ParticleOrchestraSettings() { PositionInWorld = pos };
 
 				if (Main.netMode == NetmodeID.Server)
-					new SingleSlotData((short)ID, item).Send();
+					ParticleOrchestrator.BroadcastParticleSpawn(ParticleOrchestraType.WallOfFleshGoatMountFlames, settings);
+				else
+					ParticleOrchestrator.SpawnParticlesDirect(ParticleOrchestraType.WallOfFleshGoatMountFlames, settings);
 			}
+
+			if (Main.netMode == NetmodeID.Server)
+				new SingleSlotData((short)ID, item).Send();
 		}
 
-		if (!IsTileValidForEntity(Position.X, Position.Y))
-			Kill(Position.X, Position.Y);
+		bool CampfireLit() => Framing.GetTileSafely(Position).TileFrameY < 18 * 2;
 	}
 }
 
@@ -111,7 +135,7 @@ public class RoastGlobalTile : GlobalTile
 
 	private static TileEntity Entity(int i, int j)
 	{
-		if (Main.tile[i, j].TileType != TileID.Campfire)
+		if (!TileID.Sets.Campfire[Main.tile[i, j].TileType])
 			return null;
 
 		TileExtensions.GetTopLeft(ref i, ref j);
