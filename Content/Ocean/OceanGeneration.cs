@@ -1,5 +1,4 @@
-﻿using Terraria.Utilities;
-using Terraria.WorldBuilding;
+﻿using Terraria.WorldBuilding;
 using Terraria.IO;
 using Terraria.GameContent.Generation;
 using SpiritReforged.Content.Ocean.Tiles;
@@ -158,7 +157,7 @@ public class OceanGeneration : ModSystem
 
 				int coralChance = 0;
 				if (tilesFromInnerEdge < 133) //First slope (I hope)
-					coralChance = 15;
+					coralChance = 9;
 				else if (tilesFromInnerEdge < 161)
 					coralChance = 27;
 
