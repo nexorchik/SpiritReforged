@@ -1313,6 +1313,6 @@ OstrichPants: {
 }
 
 CampfireSpit: {
-	DisplayName: Campfire Spit
-	Tooltip: ""
+	DisplayName: Fire Spit
+	Tooltip: Can be placed on campfires
 }

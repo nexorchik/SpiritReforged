@@ -10,6 +10,23 @@ namespace SpiritReforged.Content.Savanna.Items;
 
 public class CampfireSpit : ModItem
 {
+	/// <summary> Checks whether the target tile position is a campfire and does not already have a fire spit. </summary>
+	private bool CanPlace(Player player)
+	{
+		int i = Player.tileTargetX;
+		int j = Player.tileTargetY;
+
+		var target = Framing.GetTileSafely(i, j);
+
+		if (target.HasTile && TileID.Sets.Campfire[target.TileType] && player.IsTargetTileInItemRange(Item))
+		{
+			TileExtensions.GetTopLeft(ref i, ref j);
+			return ModContent.GetInstance<CampfireSlot>().Find(i, j) == -1; //Invalid if this entity already exists
+		}
+
+		return false;
+	}
+
 	public override void SetStaticDefaults() => Item.ResearchUnlockCount = 25;
 
 	public override void SetDefaults()
@@ -47,7 +64,12 @@ public class CampfireSpit : ModItem
 				int j = Player.tileTargetY;
 
 				TileExtensions.GetTopLeft(ref i, ref j);
-				TileEntity.PlaceEntityNet(i, j, ModContent.TileEntityType<CampfireSlot>());
+
+				int type = ModContent.TileEntityType<CampfireSlot>();
+				TileEntity.PlaceEntityNet(i, j, type);
+
+				if (Main.netMode == NetmodeID.MultiplayerClient)
+					NetMessage.SendData(MessageID.TileEntityPlacement, number: i, number2: j, number3: type);
 
 				return true;
 			}
@@ -56,22 +78,7 @@ public class CampfireSpit : ModItem
 		return null;
 	}
 
-	/// <summary> Checks whether the target tile position is a campfire and does not already have a fire spit. </summary>
-	private bool CanPlace(Player player)
-	{
-		int i = Player.tileTargetX;
-		int j = Player.tileTargetY;
-
-		var target = Framing.GetTileSafely(i, j);
-
-		if (target.HasTile && TileID.Sets.Campfire[target.TileType] && player.IsTargetTileInItemRange(Item))
-		{
-			TileExtensions.GetTopLeft(ref i, ref j);
-			return ModContent.GetInstance<CampfireSlot>().Find(i, j) == -1; //Invalid if this entity already exists
-		}
-
-		return false;
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.Wood, 8).AddRecipeGroup(RecipeGroupID.IronBar).AddTile(TileID.WorkBenches).Register();
 }
 
 public class CampfireSlot : SingleSlotEntity
@@ -80,15 +87,22 @@ public class CampfireSlot : SingleSlotEntity
 	private short cookCounter;
 
 	/// <summary> Places a <see cref="TileID.Campfire"/> in the world along with this entity, cooking meat. </summary>
-	public static void Generate(int i, int j)
+	/// <returns> Whether the campfire was successfully placed. </returns>
+	public static bool GenerateCampfire(int i, int j)
 	{
-		WorldGen.PlaceObject(i, j, TileID.Campfire, true);
-		TileExtensions.GetTopLeft(ref i, ref j);
+		int campfire = TileID.Campfire;
+		WorldGen.PlaceObject(i, j, campfire, true);
 
+		if (Main.tile[i, j].TileType != campfire)
+			return false;
+
+		TileExtensions.GetTopLeft(ref i, ref j);
 		PlaceEntityNet(i, j, ModContent.TileEntityType<CampfireSlot>());
 
 		if (ByPosition[new Point16(i, j)] is CampfireSlot slot)
 			slot.item = new Item(ModContent.ItemType<CookedMeat>());
+
+		return true;
 	}
 
 	public override bool IsTileValidForEntity(int x, int y)
@@ -176,7 +190,7 @@ public class RoastGlobalTile : GlobalTile
 
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (!effectOnly && Entity(i, j) is CampfireSlot slot)
+		if (!effectOnly && !Main.dedServ && Entity(i, j) is CampfireSlot slot)
 		{
 			fail = true;
 			TileExtensions.GetTopLeft(ref i, ref j);

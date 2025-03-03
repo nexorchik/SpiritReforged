@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Jungle.Bamboo.Items;
@@ -90,14 +91,14 @@ public class BambooBirdCage : ModTile, IAutoloadTileItem
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) //Drop the contained bird, if any
 	{
-		if (!effectOnly && Entity(i, j) is BambooBirdCageSlot slot && !slot.item.IsAir)
+		if (!effectOnly && !Main.dedServ && Entity(i, j) is BambooBirdCageSlot slot && !slot.item.IsAir)
 		{
 			fail = true;
 			TileExtensions.GetTopLeft(ref i, ref j);
 
 			var pos = new Vector2(i, j).ToWorldCoordinates(16, 32);
 
-			Item.NewItem(new EntitySource_TileBreak(i, j), pos, slot.item);
+			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), slot.item, pos);
 			slot.item.TurnToAir();
 		}
 	}
