@@ -55,10 +55,10 @@ internal class WaterAlpha : ILoadable
 			y /= 16;
 		}
 
-		colors.TopLeftColor.A = GetAlpha(x, y);
-		colors.TopRightColor.A = GetAlpha(x + 1, y);
-		colors.BottomLeftColor.A = GetAlpha(x, y + 1);
-		colors.BottomRightColor.A = GetAlpha(x + 1, y + 1);
+		Clamp(ref colors.TopLeftColor, x, y);
+		Clamp(ref colors.TopRightColor, x + 1, y);
+		Clamp(ref colors.BottomLeftColor, x, y + 1);
+		Clamp(ref colors.BottomRightColor, x + 1, y + 1);
 
 		byte GetAlpha(int x, int y)
 		{
@@ -70,6 +70,8 @@ internal class WaterAlpha : ILoadable
 
 			return (byte)((1f - brightness) * 255f);
 		}
+
+		void Clamp(ref Color color, int x, int y) => color.A = Math.Min(color.A, GetAlpha(x, y));
 	}
 
 	public void Unload() { }
