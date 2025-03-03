@@ -1,14 +1,10 @@
-using SpiritReforged.Common.ItemCommon;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Items.Vanity;
 
 [AutoloadEquip(EquipType.Legs)]
-public class OstrichPants : ModItem, IFrameEffects
+public class OstrichPants : ModItem
 {
-	public const string WaistEquip = "OstrichPantsWaist";
-
-	public override void Load() => EquipLoader.AddEquipTexture(Mod, Texture + "_Legs", EquipType.Waist, name: WaistEquip);
-
 	public override void SetDefaults()
 	{
 		Item.width = 34;
@@ -17,7 +13,38 @@ public class OstrichPants : ModItem, IFrameEffects
 		Item.rare = ItemRarityID.Blue;
 		Item.vanity = true;
 	}
+}
 
-	//Despite being a legs equip, we need to use the waist layer due to draw order.
-	public void FrameEffects(Player player) => player.waist = EquipLoader.GetEquipSlot(Mod, WaistEquip, EquipType.Waist);
+internal class OstrichPantsLayer : PlayerDrawLayer
+{
+	private static Asset<Texture2D> Texture;
+
+	public override void Load() => Texture = ModContent.Request<Texture2D>(ModContent.GetInstance<OstrichPants>().Texture + "_Legs");
+	public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.FaceAcc);
+
+	protected override void Draw(ref PlayerDrawSet drawInfo)
+	{
+		var player = drawInfo.drawPlayer;
+		if (player.dead || player.invis)
+			return;
+
+		if (Equipped(player))
+		{
+			var pos = new Vector2((int)(drawInfo.Position.X - Main.screenPosition.X - player.legFrame.Width / 2 + player.width / 2), 
+				(int)(drawInfo.Position.Y - Main.screenPosition.Y + player.height - player.legFrame.Height + 4f)) + player.legPosition + drawInfo.legVect;
+
+			var data = new DrawData(Texture.Value, pos, player.legFrame, drawInfo.colorArmorLegs, player.legRotation, drawInfo.legVect, 1f, drawInfo.playerEffect);
+			drawInfo.DrawDataCache.Add(data);
+		}
+	}
+
+	private static bool Equipped(Player player)
+	{
+		var vLegs = player.armor[12];
+		if (vLegs != null && !vLegs.IsAir)
+			return vLegs.type == ModContent.ItemType<OstrichPants>();
+
+		var legs = player.armor[2];
+		return legs != null && legs.type == ModContent.ItemType<OstrichPants>();
+	}
 }
