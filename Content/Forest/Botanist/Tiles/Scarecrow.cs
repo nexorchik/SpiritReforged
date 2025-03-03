@@ -3,7 +3,6 @@ using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.TileCommon.TileSway;
-using SpiritReforged.Content.Jungle.Bamboo.Tiles;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 
@@ -150,7 +149,7 @@ public class ScarecrowSlot : SingleSlotEntity
 		c.EmitDelegate(() =>
 		{
 			foreach (var entity in ByPosition.Values)
-				if (entity is not null and ScarecrowSlot scarecrow)
+				if (entity is ScarecrowSlot scarecrow)
 					scarecrow.DrawHat();
 		});
 	};
