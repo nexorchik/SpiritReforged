@@ -94,10 +94,11 @@ internal class GarInAJarLayer : PlayerDrawLayer
 		if (Equipped(player))
 		{
 			var helmetOffset = drawInfo.helmetOffset;
+			var bobbing = Main.OffsetsPlayerHeadgear[player.bodyFrame.Y / player.bodyFrame.Height] * player.gravDir;
+			float yOff = (player.gravDir == -1) ? 8f : 2f;
 
-			var bobbing = Main.OffsetsPlayerHeadgear[drawInfo.drawPlayer.bodyFrame.Y / drawInfo.drawPlayer.bodyFrame.Height];
-			var position = helmetOffset + new Vector2((int)(drawInfo.Position.X - Main.screenPosition.X - drawInfo.drawPlayer.bodyFrame.Width / 2 + drawInfo.drawPlayer.width / 2), 
-				(int)(drawInfo.Position.Y - Main.screenPosition.Y + drawInfo.drawPlayer.height - drawInfo.drawPlayer.bodyFrame.Height + 2f)) + drawInfo.drawPlayer.headPosition + drawInfo.headVect + bobbing;
+			var position = helmetOffset + new Vector2((int)(drawInfo.Position.X - Main.screenPosition.X - player.bodyFrame.Width / 2 + player.width / 2),
+				(int)(drawInfo.Position.Y - Main.screenPosition.Y + player.height - player.bodyFrame.Height + yOff)) + player.headPosition + drawInfo.headVect + bobbing;
 
 			int frame = (int)(player.GetModPlayer<GarInAJarPlayer>().counter / (float)FrameDuration) % NumFrames;
 			var source = Texture.Value.Frame(1, NumFrames, 0, frame, 0, -2);
