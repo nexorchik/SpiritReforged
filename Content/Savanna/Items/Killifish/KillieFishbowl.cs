@@ -1,9 +1,9 @@
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Savanna.Items.Gar;
+namespace SpiritReforged.Content.Savanna.Items.Killifish;
 
 [AutoloadEquip(EquipType.Head)]
-public class GarInAJar : ModItem
+public class KillieFishbowl : ModItem
 {
 	public override void SetDefaults()
 	{
@@ -14,26 +14,32 @@ public class GarInAJar : ModItem
 		Item.useTime = 10;
 		Item.useAnimation = 15;
 		Item.useStyle = ItemUseStyleID.Swing;
-		Item.createTile = ModContent.TileType<GarInAJarTile>();
+		Item.createTile = ModContent.TileType<KillieFishbowlTile>();
 		Item.useTurn = true;
 		Item.autoReuse = true;
 		Item.consumable = true;
 		Item.vanity = true;
 	}
 
-	public override void AddRecipes() => CreateRecipe().AddIngredient(Mod.Find<ModItem>("GarItem").Type).AddIngredient(ItemID.BottledWater).AddTile(TileID.WorkBenches).Register();
+	public override void AddRecipes() => CreateRecipe().AddIngredient(Mod.Find<ModItem>("KillifishItem").Type)
+		.AddIngredient(ItemID.BottledWater).AddTile(TileID.WorkBenches).Register();
 }
 
-public class GarInAJarTile : ModTile
+public class KillieFishbowlTile : ModTile
 {
+	bool activeAnimation = false;
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
 		Main.tileLavaDeath[Type] = true;
 
-		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
+		TileObjectData.newTile.CopyFrom(TileObjectData.Style2xX);
 		TileObjectData.newTile.UsesCustomCanPlace = true;
+		TileObjectData.newTile.Height = 3;
+		TileObjectData.newTile.Origin = new Point16(1, 2);
+		TileObjectData.newTile.CoordinateHeights = [16, 16, 18];
 		Main.tileFrameImportant[Type] = Main.tileFrameImportant[TileID.FishBowl];
 		Main.tileLavaDeath[Type] = Main.tileLavaDeath[TileID.FishBowl];
 		Main.tileSolidTop[Type] = Main.tileSolidTop[TileID.FishBowl];
@@ -41,7 +47,7 @@ public class GarInAJarTile : ModTile
 		TileObjectData.addTile(Type);
 
 		DustType = DustID.Glass;
-		AnimationFrameHeight = 36;
+		AnimationFrameHeight = 54;
 
 		LocalizedText name = CreateMapEntryName();
 		AddMapEntry(new Color(200, 200, 200), name);
@@ -51,38 +57,60 @@ public class GarInAJarTile : ModTile
 
 	public override void AnimateTile(ref int frame, ref int frameCounter)
 	{
-		frameCounter++;
-		if (frameCounter >= 10)
+		if (Main.rand.NextBool(100) && Main.netMode != NetmodeID.Server)
+			activeAnimation = true;
+
+		if (activeAnimation)
 		{
-			frameCounter = 0;
-			frame++;
-			frame %= 19;
+			frameCounter++;
+			if (frameCounter >= 6)
+			{
+				frameCounter = 0;
+				frame++;
+				frame %= 22;
+			}
+
+			if (frame == 16)
+				activeAnimation = false;
+		}
+		else
+		{
+			frameCounter++;
+			if (frameCounter >= 26)
+			{
+				frameCounter = 0;
+				frame++;
+				frame %= 22;
+			}
+
+			if (frame == 18)
+				frame = 17;
 		}
 	}
 }
 
-internal class GarInAJarPlayer : ModPlayer
+internal class KillieFishbowlPlayer : ModPlayer
 {
 	public short counter;
 
 	public override void FrameEffects()
 	{
-		if (counter != 15 * GarInAJarLayer.FrameDuration || Main.rand.NextBool(30))
-			counter = (short)(++counter % (GarInAJarLayer.NumFrames * GarInAJarLayer.FrameDuration));
+		if (counter != 5 * KillieFishbowlLayer.FrameDuration || Main.rand.NextBool(90))
+			counter = (short)(++counter % (KillieFishbowlLayer.NumFrames * KillieFishbowlLayer.FrameDuration));
 
-		if (counter == 3 * GarInAJarLayer.FrameDuration && !Main.rand.NextBool(5))
-			counter = 13 * GarInAJarLayer.FrameDuration;
+		if (counter == 7 * KillieFishbowlLayer.FrameDuration && !Main.rand.NextBool(8))
+			counter = 0;
 	}
 }
 
-internal class GarInAJarLayer : PlayerDrawLayer
+internal class KillieFishbowlLayer : PlayerDrawLayer
 {
-	public const int NumFrames = 19;
+	public const int NumFrames = 18;
 	public const int FrameDuration = 7;
 
 	private static Asset<Texture2D> Texture;
 
-	public override void Load() => Texture = ModContent.Request<Texture2D>(ModContent.GetInstance<GarInAJar>().Texture + "_Head2");
+	public override void Load() => Texture = ModContent.Request<Texture2D>(ModContent.GetInstance<KillieFishbowl>().Texture + "_Head2");
 	public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.FaceAcc);
 
 	protected override void Draw(ref PlayerDrawSet drawInfo)
@@ -96,10 +124,11 @@ internal class GarInAJarLayer : PlayerDrawLayer
 			var helmetOffset = drawInfo.helmetOffset;
 
 			var bobbing = Main.OffsetsPlayerHeadgear[drawInfo.drawPlayer.bodyFrame.Y / drawInfo.drawPlayer.bodyFrame.Height];
-			var position = helmetOffset + new Vector2((int)(drawInfo.Position.X - Main.screenPosition.X - drawInfo.drawPlayer.bodyFrame.Width / 2 + drawInfo.drawPlayer.width / 2), 
-				(int)(drawInfo.Position.Y - Main.screenPosition.Y + drawInfo.drawPlayer.height - drawInfo.drawPlayer.bodyFrame.Height + 2f)) + drawInfo.drawPlayer.headPosition + drawInfo.headVect + bobbing;
+			var position = helmetOffset + new Vector2((int)(drawInfo.Position.X - Main.screenPosition.X - drawInfo.drawPlayer.bodyFrame.Width / 2 + drawInfo.drawPlayer.width / 2),
+				(int)(drawInfo.Position.Y - Main.screenPosition.Y + drawInfo.drawPlayer.height - drawInfo.drawPlayer.bodyFrame.Height - 12f)) + drawInfo.drawPlayer.headPosition + drawInfo.headVect + bobbing;
 
-			int frame = (int)(player.GetModPlayer<GarInAJarPlayer>().counter / (float)FrameDuration) % NumFrames;
+			var mPlayer = player.GetModPlayer<KillieFishbowlPlayer>();
+			int frame = (int)(mPlayer.counter / (float)FrameDuration) % NumFrames;
 			var source = Texture.Value.Frame(1, NumFrames, 0, frame, 0, -2);
 
 			var data = new DrawData(Texture.Value, position, source, drawInfo.colorArmorHead, player.headRotation, drawInfo.headVect, 1f, drawInfo.playerEffect);
@@ -113,9 +142,9 @@ internal class GarInAJarLayer : PlayerDrawLayer
 	{
 		var vHead = player.armor[10];
 		if (vHead != null && !vHead.IsAir)
-			return vHead.type == ModContent.ItemType<GarInAJar>();
+			return vHead.type == ModContent.ItemType<KillieFishbowl>();
 
 		var head = player.armor[0];
-		return head != null && head.type == ModContent.ItemType<GarInAJar>();
+		return head != null && head.type == ModContent.ItemType<KillieFishbowl>();
 	}
 }
