@@ -20,9 +20,13 @@ namespace SpiritReforged;
 
 public partial class SpiritReforgedMod : Mod
 {
-	public static SpiritReforgedMod Instance => ModContent.GetInstance<SpiritReforgedMod>();
+	public static SpiritReforgedMod Instance { get; private set; }
 
-	public SpiritReforgedMod() => GoreAutoloadingEnabled = true;
+	public SpiritReforgedMod()
+	{
+		GoreAutoloadingEnabled = true;
+		Instance = this;
+	}
 
 	public override void Load()
 	{
