@@ -24,12 +24,13 @@ internal class PreAddContent : ILoadable
 	{
 		foreach (string str in NameToMod)
 		{
-			string modName = str.Split("/")[0];
-			string contentName = str.Split("/")[1];
+			string[] splitMod = str.Split('/');
+			string modName = splitMod[0];
+			string contentName = splitMod[1];
 
 			if (self.Name == modName && instance.GetType().Name == contentName)
 			{
-				SpiritReforgedMod.Instance.Logger.Info("Disabled " + str.Replace("/", "."));
+				SpiritReforgedMod.Instance.Logger.Info("Disabled " + str.Replace('/', '.'));
 				return false;
 			}
 		}
