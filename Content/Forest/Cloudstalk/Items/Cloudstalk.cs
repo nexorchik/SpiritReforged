@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ModCompat.Classic;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.TileCommon.TileTag;
 using SpiritReforged.Content.Forest.Cloudstalk.Tiles;
@@ -5,6 +6,7 @@ using SpiritReforged.Content.Jungle.Bamboo.Tiles;
 
 namespace SpiritReforged.Content.Forest.Cloudstalk.Items;
 
+[FromClassic("CloudstalkItem")]
 public class Cloudstalk : ModItem
 {
 	public override void SetDefaults()

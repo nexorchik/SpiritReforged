@@ -1,10 +1,11 @@
 ﻿using SpiritReforged.Content.Desert.GildedScarab;
+using SpiritReforged.Content.Forest.RoguesCrest;
 using SpiritReforged.Content.Ocean.Hydrothermal;
+using SpiritReforged.Content.Ocean.Items;
 
 namespace SpiritReforged.Common.ModCompat.Classic;
 
-/// <summary> Handles cross mod compatibility with Spirit Classic. Does not autoload, and must be added with <see cref="AddSystem"/>. </summary>
-[Autoload(false)]
+/// <summary> Handles cross mod compatibility with Spirit Classic. Only loads when Spirit Classic is also loaded. </summary>
 internal class SpiritClassic : ModSystem
 {
 	private const string ClassicName = "SpiritMod";
@@ -16,14 +17,12 @@ internal class SpiritClassic : ModSystem
 	/// <summary> Spirit Classic items and their Reforged replacements. </summary>
 	internal static readonly Dictionary<int, int> ClassicToReforged = [];
 
-	/// <summary> Must be called in a load method. </summary>
-	public static bool AddSystem(Mod mod)
+	public override bool IsLoadingEnabled(Mod mod)
 	{
 		if (!ModLoader.HasMod(ClassicName))
 			return false;
 
 		ClassicMod = ModLoader.GetMod(ClassicName);
-		mod.AddContent((SpiritClassic)Activator.CreateInstance(typeof(SpiritClassic)));
 		mod.AddContent((ObsoleteItem)Activator.CreateInstance(typeof(ObsoleteItem)));
 
 		return true;
@@ -31,20 +30,21 @@ internal class SpiritClassic : ModSystem
 
 	public override void SetStaticDefaults()
 	{
-		foreach (var item in Mod.GetContent<ModItem>())
+		foreach (var item in Mod.GetContent<ModItem>()) //Populate Classic/Reforged counterpart item array
 		{
 			int id = ClassicItem(item);
 			if (id == -1)
 				continue;
 
 			ClassicToReforged.Add(id, item.Type);
-
-			//Populate shimmer transformations
-			ItemID.Sets.ShimmerTransformToItem[id] = item.Type;
+			ItemID.Sets.ShimmerTransformToItem[id] = item.Type; //Populate shimmer transformations
 		}
 
-		if (ClassicMod.TryFind("SulfurDeposit", out ModItem sulfur))
+		if (ClassicMod.TryFind("SulfurDeposit", out ModItem sulfur)) //Add Sulfur to our Hydrothermal vent pool
 			HydrothermalVentPlume.DropPool.Add(sulfur.Type, 3);
+
+		if (ClassicMod.TryFind("Cloudstalk", out ModTile cloudstalk)) //Remove Cloudstalk anchors so it can't grow
+			TileObjectData.GetTileData(cloudstalk.Type, 0).AnchorValidTiles = [];
 
 		static int ClassicItem(ModItem modItem)
 		{
@@ -64,6 +64,10 @@ internal class SpiritClassic : ModSystem
 	{
 		if (ClassicMod.TryFind("Chitin", out ModItem chitin))
 			Recipe.Create(ModContent.ItemType<GildedScarab>()).AddRecipeGroup("GoldBars", 5).AddIngredient(chitin.Type, 8).AddTile(TileID.Anvils).Register();
+
+		if (ClassicMod.TryFind("SpellswordCrest", out ModItem spellsword))
+			Recipe.Create(spellsword.Type).AddIngredient(ModContent.ItemType<RogueCrest>()).AddIngredient(ItemID.CrystalShard, 8)
+				.AddIngredient(ItemID.SoulofLight, 15).AddTile(TileID.TinkerersWorkbench).Register();
 	}
 
 	public override void PostAddRecipes()
@@ -77,13 +81,26 @@ internal class SpiritClassic : ModSystem
 
 			int cType = recipe.createItem?.type ?? 0;
 			if (!ClassicToReforged.ContainsKey(cType))
+			{
+				ModifyRecipe(recipe);
 				continue;
+			}
 
 			recipe.DisableRecipe();
 			fullLog += $"{ItemLoader.GetItem(cType).Name} ({recipe.RecipeIndex}), ";
 		}
 
 		SpiritReforgedMod.Instance.Logger.Info(fullLog.Remove(fullLog.Length - 2, 2));
+	}
+
+	/// <summary> Modifies recipes added by Classic if the result isn't contained in <see cref="ClassicToReforged"/>. </summary>
+	private static void ModifyRecipe(Recipe recipe)
+	{
+		for (int i = recipe.requiredItem.Count - 1; i >= 0; i--)
+		{
+			if (recipe.requiredItem[i].ModItem?.Name is "DeepCascadeShard") //Replace Deep Cascade Shards with Mineral Slag
+				recipe.requiredItem[i] = new Item(ModContent.ItemType<MineralSlag>(), recipe.requiredItem[i].stack);
+		}
 	}
 
 	/*public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight) //PreAddContent handles this more accurately
@@ -108,6 +125,7 @@ internal class SpiritClassic : ModSystem
 		}
 	}
 
+	/// <summary> Converts all Classic chest loot to their Reforged counterparts. </summary>
 	private static void EditContents(Item[] items)
 	{
 		for (int i = 0; i < items.Length; i++)
@@ -115,7 +133,7 @@ internal class SpiritClassic : ModSystem
 			var item = items[i];
 
 			if (!item.IsAir && ClassicToReforged.TryGetValue(item.type, out int reforgedType))
-				item.SetDefaults(reforgedType);
+				item.ChangeItemType(reforgedType);
 		}
 	}
 }

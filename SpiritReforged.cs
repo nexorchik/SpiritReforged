@@ -15,7 +15,6 @@ global using NPCUtils;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.BuffCommon;
-using SpiritReforged.Common.ModCompat.Classic;
 using SpiritReforged.Common.Misc;
 
 namespace SpiritReforged;
@@ -45,7 +44,6 @@ public partial class SpiritReforgedMod : Mod
 
 		ParticleHandler.RegisterParticles();
 		ParticleDetours.Initialize();
-		SpiritClassic.AddSystem(this);
 	}
 
 	public override void Unload()

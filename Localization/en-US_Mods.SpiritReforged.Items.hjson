@@ -1,8 +1,11 @@
-CommonTooltips.Backpack:
-	'''
-	Holds 4 items
-	You must empty this before taking it off
-	'''
+CommonTooltips: {
+	Backpack:
+		'''
+		Holds 4 items
+		You must empty this before taking it off
+		'''
+	Shimmerable: "{0} Transforms in shimmer"
+}
 
 Kelp: {
 	DisplayName: Kelp
