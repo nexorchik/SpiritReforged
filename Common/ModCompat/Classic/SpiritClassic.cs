@@ -10,20 +10,25 @@ internal class SpiritClassic : ModSystem
 {
 	private const string ClassicName = "SpiritMod";
 
-	public static bool Enabled => ClassicMod != null;
-
+	/// <summary> Whether Spirit Classic is enabled. </summary>
+	public static bool Enabled => Loaded ? (ClassicMod != null) : ModLoader.HasMod(ClassicName);
 	/// <summary> The loaded Spirit Classic mod instance. Check <see cref="Enabled"/> before using. </summary>
 	internal static Mod ClassicMod = null;
 	/// <summary> Spirit Classic items and their Reforged replacements. </summary>
 	internal static readonly Dictionary<int, int> ClassicToReforged = [];
 
+	private static bool Loaded = false;
+
 	public override bool IsLoadingEnabled(Mod mod)
 	{
-		if (!ModLoader.HasMod(ClassicName))
+		if (!Enabled)
 			return false;
 
 		ClassicMod = ModLoader.GetMod(ClassicName);
+		Loaded = true;
+
 		mod.AddContent((ObsoleteItem)Activator.CreateInstance(typeof(ObsoleteItem)));
+		mod.AddContent((ModifyNPCData)Activator.CreateInstance(typeof(ModifyNPCData)));
 
 		return true;
 	}
@@ -48,7 +53,7 @@ internal class SpiritClassic : ModSystem
 
 		static int ClassicItem(ModItem modItem)
 		{
-			string name;
+			string name; //Match the provided attribute name, otherwise, match internal names
 			var attr = (FromClassicAttribute)Attribute.GetCustomAttribute(modItem.GetType(), typeof(FromClassicAttribute), false);
 
 			if (attr != null)

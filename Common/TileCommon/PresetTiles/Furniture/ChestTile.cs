@@ -6,7 +6,12 @@ namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
 public abstract class ChestTile : FurnitureTile
 {
+	private static readonly Dictionary<int, int> KeyLookup = [];
+
 	public virtual LocalizedText MapEntry => ModItem.DisplayName;
+
+	/// <summary> Registers a key to use on this chest when locked. </summary>
+	public void MakeLocked(int keyItemType) => KeyLookup.Add(Type, keyItemType);
 
 	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(silver: 1);
 
@@ -49,7 +54,7 @@ public abstract class ChestTile : FurnitureTile
 		DustType = -1;
 	}
 
-	public static string MapChestName(string name, int i, int j)
+	public virtual string MapChestName(string name, int i, int j)
 	{
 		TileExtensions.GetTopLeft(ref i, ref j);
 
@@ -94,7 +99,8 @@ public abstract class ChestTile : FurnitureTile
 			player.editedChestName = false;
 		}
 
-		if (Main.netMode == NetmodeID.MultiplayerClient)
+		bool isLocked = IsLockedChest(i, j);
+		if (Main.netMode == NetmodeID.MultiplayerClient && !isLocked)
 		{
 			if (i == player.chestX && j == player.chestY && player.chest >= 0)
 			{
@@ -107,6 +113,11 @@ public abstract class ChestTile : FurnitureTile
 				NetMessage.SendData(MessageID.RequestChestOpen, -1, -1, null, i, j);
 				Main.stackSplit = 600;
 			}
+		}
+		else if (isLocked && KeyLookup.TryGetValue(Type, out int chestKey))
+		{
+			player.ConsumeItem(chestKey);
+			Chest.Unlock(i, j);
 		}
 		else
 		{
@@ -152,7 +163,7 @@ public abstract class ChestTile : FurnitureTile
 			player.cursorItemIconText = Main.chest[chest].name.Length > 0 ? Main.chest[chest].name : defaultName;
 			if (player.cursorItemIconText == defaultName)
 			{
-				player.cursorItemIconID = ModItem.Type;
+				player.cursorItemIconID = (IsLockedChest(i, j) && KeyLookup.TryGetValue(Type, out int key)) ? key : ModItem.Type;
 				player.cursorItemIconText = string.Empty;
 			}
 		}

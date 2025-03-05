@@ -5,6 +5,8 @@ using SpiritReforged.Content.Ocean.Tiles;
 using SpiritReforged.Common.ConfigurationCommon;
 using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Common.WorldGeneration;
+using Terraria.Utilities;
+using SpiritReforged.Common.ModCompat.Classic;
 
 namespace SpiritReforged.Content.Ocean;
 
@@ -141,7 +143,9 @@ public class OceanGeneration : ModSystem
 
 	private static void PopulateOcean(Rectangle bounds, int side)
 	{
-		//PlacePirateChest(side == 0 ? bounds.Right : bounds.Left, side);
+		if (SpiritClassic.Enabled)
+			PlacePirateChest(side == 0 ? bounds.Right : bounds.Left, side);
+
 		PlaceSunkenTreasure(side == 0 ? bounds.Right : bounds.Left, side);
 
 		for (int i = bounds.Left; i < bounds.Right; ++i)
@@ -256,9 +260,12 @@ public class OceanGeneration : ModSystem
 		}
 	}
 
-	/*public static void PlacePirateChest(int innerEdge, int side)
+	public static void PlacePirateChest(int innerEdge, int side)
 	{
 		const int maxTries = 200;
+
+		if (!SpiritClassic.ClassicMod.TryFind("DuelistLegacy", out ModItem duelist) || !SpiritClassic.ClassicMod.TryFind("LadyLuck", out ModItem ladyLuck))
+			return;
 
 		for (int t = 0; t < maxTries; t++)
 		{
@@ -281,9 +288,9 @@ public class OceanGeneration : ModSystem
 					WorldGen.PlaceTile(i, j, TileID.HardenedSand, true);
 				}
 
-				PlaceChest(x, y - 1, ModContent.TileType<OceanPirateChest>(),
+				PlaceChest(x, y - 1, ModContent.TileType<PirateChest>(),
 					[
-						(side == 0 ? ItemID.PirateStaff : ItemID.CoinGun, 1)
+						(side == 0 ? ladyLuck.Type : duelist.Type, 1)
 					],
 					[
 						(ItemID.GoldCoin, WorldGen.genRand.Next(12, 30)), (ItemID.Diamond, WorldGen.genRand.Next(12, 30)), (ItemID.GoldCrown, 1), (ItemID.GoldDust, WorldGen.genRand.Next(1, 3)),
@@ -299,7 +306,7 @@ public class OceanGeneration : ModSystem
 		}
 
 		static int BarStack() => WorldGen.genRand.Next(3, 7);
-	}*/
+	}
 
 	/// <summary> Places additional water chests in the inner ocean. </summary>
 	/// <param name="leftBounds"> The left ocean bounds. </param>
@@ -351,7 +358,7 @@ public class OceanGeneration : ModSystem
 		}
 	}
 
-	/*public static bool PlaceChest(int x, int y, int type, (int, int)[] mainItems, (int, int)[] subItems, bool noTypeRepeat = true, UnifiedRandom r = null, int subItemLength = 6, int style = 0, bool overRide = false, int width = 2, int height = 2)
+	public static bool PlaceChest(int x, int y, int type, (int, int)[] mainItems, (int, int)[] subItems, bool noTypeRepeat = true, UnifiedRandom r = null, int subItemLength = 6, int style = 0, bool overRide = false, int width = 2, int height = 2)
 	{
 		r ??= Main.rand;
 
@@ -396,7 +403,7 @@ public class OceanGeneration : ModSystem
 		}
 
 		return false;
-	}*/
+	}
 
 	private static float OceanSlopeRoughness()
 	{

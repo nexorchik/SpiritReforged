@@ -12,7 +12,7 @@ Kelp: {
 	Tooltip: Must be planted in water
 }
 
-PirateChest: {
+PirateChestItem: {
 	DisplayName: Pirate Chest
 	Tooltip: ""
 }
