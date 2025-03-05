@@ -24,7 +24,7 @@ public class KoiTotem : FloatingItem
 		On_Main.DrawInterface_40_InteractItemIcon += DrawPlusIcon;
 	}
 
-	private void RemovePickupSound(ILContext il)
+	private static void RemovePickupSound(ILContext il)
 	{
 		var c = new ILCursor(il);
 		if (!c.TryGotoNext(MoveType.After, x => x.MatchLdcI4(7))) //Match the sound id
@@ -34,7 +34,7 @@ public class KoiTotem : FloatingItem
 		c.EmitDelegate((int sound) => (CursorOpacity == 1) ? -1 : sound);
 	}
 
-	private void DrawPlusIcon(On_Main.orig_DrawInterface_40_InteractItemIcon orig, Main self)
+	private static void DrawPlusIcon(On_Main.orig_DrawInterface_40_InteractItemIcon orig, Main self)
 	{
 		orig(self);
 
@@ -46,7 +46,7 @@ public class KoiTotem : FloatingItem
 		}
 	}
 
-	private void CheckBait(On_Player.orig_ItemCheck_CheckFishingBobber_PickAndConsumeBait orig, Player self, Projectile bobber, out bool pullTheBobber, out int baitTypeUsed)
+	private static void CheckBait(On_Player.orig_ItemCheck_CheckFishingBobber_PickAndConsumeBait orig, Player self, Projectile bobber, out bool pullTheBobber, out int baitTypeUsed)
 	{
 		orig(self, bobber, out pullTheBobber, out baitTypeUsed);
 
@@ -59,20 +59,13 @@ public class KoiTotem : FloatingItem
 
 	public override void SetDefaults()
 	{
-		Item.width = 34;
-		Item.height = 36;
+		Item.DefaultToPlaceableTile(ModContent.TileType<KoiTotemTile>());
 		Item.value = Item.sellPrice(gold: 1);
 		Item.rare = ItemRarityID.Blue;
-		Item.consumable = true;
-		Item.useStyle = ItemUseStyleID.Swing;
-		Item.useTime = 10;
-		Item.useAnimation = 15;
-		Item.useTurn = true;
-		Item.createTile = ModContent.TileType<KoiTotem_Tile>();
 	}
 }
 
-public class KoiTotem_Tile : ModTile
+public class KoiTotemTile : ModTile
 {
 	public override void SetStaticDefaults()
 	{
@@ -80,8 +73,10 @@ public class KoiTotem_Tile : ModTile
 		Main.tileNoAttach[Type] = true;
 		Main.tileLavaDeath[Type] = true;
 
-		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
-		TileObjectData.newTile.CoordinateHeights = [16, 18];
+		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3);
+		TileObjectData.newTile.Height = 4;
+		TileObjectData.newTile.Origin = new(1, 3);
+		TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 18];
 		TileObjectData.newTile.Direction = TileObjectDirection.PlaceRight;
 		TileObjectData.newTile.StyleWrapLimit = 2; 
 		TileObjectData.newTile.StyleMultiplier = 2; 
@@ -92,36 +87,36 @@ public class KoiTotem_Tile : ModTile
 		TileObjectData.addTile(Type);
 
 		DustType = DustID.Ash;
-
-		LocalizedText name = CreateMapEntryName();
-		AddMapEntry(new Color(107, 90, 64), name);
+		AddMapEntry(new Color(107, 90, 64), CreateMapEntryName());
 	}
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
 		var player = Main.LocalPlayer;
-		if (closer)
-			player.AddBuff(ModContent.BuffType<KoiTotemBuff>(), 12);
-
-		//Create fancy visuals when bait is replenished
-		if (KoiTotem.CursorOpacity > 0 && Framing.GetTileSafely(i, j).TileFrameX % (18 * 2) == 0 && Framing.GetTileSafely(i, j).TileFrameY > 0)
+		if (!closer)
 		{
-			var pos = new Vector2(i, j + 1) * 16;
-
-			if (Main.rand.NextBool(3))
+			player.AddBuff(ModContent.BuffType<KoiTotemBuff>(), 12);
+		}
+		else if (TileObjectData.IsTopLeft(i, j))
+		{
+			//Create fancy visuals when bait is replenished
+			if (KoiTotem.CursorOpacity > 0)
 			{
-				var color = Color.Lerp(Color.LightBlue, Color.Cyan, Main.rand.NextFloat());
-				float magnitude = Main.rand.NextFloat();
+				var pos = new Vector2(i, j).ToWorldCoordinates(0, 64);
 
-				ParticleHandler.SpawnParticle(new GlowParticle(pos + new Vector2(Main.rand.NextFloat(16 * 2), 0), Vector2.UnitY * -magnitude, 
-					color, (1f - magnitude) * .25f, Main.rand.Next(30, 120), 5, extraUpdateAction: delegate (Particle p)
+				if (Main.rand.NextBool(3))
 				{
-					p.Velocity = p.Velocity.RotatedBy(Main.rand.NextFloat(-.1f, .1f));
-				}));
-			}
+					var color = Color.Lerp(Color.LightBlue, Color.Cyan, Main.rand.NextFloat());
+					float magnitude = Main.rand.NextFloat();
 
-			if (KoiTotem.CursorOpacity > .9f)
-				ParticleHandler.SpawnParticle(new DissipatingImage(pos + new Vector2(16, 0), Color.Cyan * .15f, 0, .25f, 1f, "Bloom", 120));
+					ParticleHandler.SpawnParticle(new GlowParticle(pos + new Vector2(Main.rand.NextFloat(48), 0), Vector2.UnitY * -magnitude,
+						color, (1f - magnitude) * .25f, Main.rand.Next(30, 120), 5, extraUpdateAction: delegate (Particle p)
+						{ p.Velocity = p.Velocity.RotatedBy(Main.rand.NextFloat(-.1f, .1f)); }));
+				}
+
+				if (KoiTotem.CursorOpacity > .9f)
+					ParticleHandler.SpawnParticle(new DissipatingImage(pos + new Vector2(24, 0), Color.Cyan * .15f, 0, .25f, 1f, "Bloom", 120));
+			}
 		}
 	}
 }
