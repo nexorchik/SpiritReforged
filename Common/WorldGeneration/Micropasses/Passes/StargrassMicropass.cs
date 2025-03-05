@@ -6,7 +6,7 @@ namespace SpiritMod.World.Micropasses;
 
 internal class StargrassMicropass : Micropass
 {
-	public override string WorldGenName => "Stargrass Micropass";
+	public override string WorldGenName => "Stargrass Patch";
 
 	public override int GetWorldGenIndexInsert(List<GenPass> passes, ref bool afterIndex) => passes.FindIndex(genpass => genpass.Name.Equals("Sunflowers"));
 

@@ -15,14 +15,21 @@ global using NPCUtils;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.BuffCommon;
+using SpiritReforged.Common.Misc;
 
 namespace SpiritReforged;
 
 public partial class SpiritReforgedMod : Mod
 {
-	public static SpiritReforgedMod Instance => ModContent.GetInstance<SpiritReforgedMod>();
+	public static SpiritReforgedMod Instance { get; private set; }
 
-	public SpiritReforgedMod() => GoreAutoloadingEnabled = true;
+	public SpiritReforgedMod()
+	{
+		GoreAutoloadingEnabled = true;
+		Instance = this;
+
+		PreAddContent.AddContentHook(this);
+	}
 
 	public override void Load()
 	{
