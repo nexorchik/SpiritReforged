@@ -1,5 +1,8 @@
+using SpiritReforged.Common.ModCompat.Classic;
+
 namespace SpiritReforged.Content.Forest.Misc;
 
+[FromClassic("SwiftRune")]
 public class CraneFeather : ModItem
 {
 	public override void SetDefaults()

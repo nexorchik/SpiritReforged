@@ -7,8 +7,12 @@ namespace SpiritReforged.Content.Ocean.Hydrothermal;
 
 public class HydrothermalVentPlume : ModProjectile
 {
+	/// <summary> Item drop type and chance denominator. </summary>
+	internal static readonly Dictionary<int, byte> DropPool = [];
+
 	public override string Texture => "Terraria/Images/NPC_0";
 
+	public override void SetStaticDefaults() => DropPool.Add(ModContent.ItemType<MineralSlagPickup>(), 4);
 	public override void SetDefaults()
 	{
 		Projectile.ignoreWater = true;
@@ -22,8 +26,14 @@ public class HydrothermalVentPlume : ModProjectile
 		{
 			SoundEngine.PlaySound(SoundID.Drown with { Pitch = -.5f, PitchVariance = .25f, Volume = 1.5f }, Projectile.Center);
 
-			if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(4))
-				Item.NewItem(Projectile.GetSource_FromAI(), Projectile.Center, ModContent.ItemType<MineralSlagPickup>());
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				foreach (int i in DropPool.Keys)
+				{
+					if (Main.rand.NextBool(DropPool[i]))
+						Item.NewItem(Projectile.GetSource_FromAI(), Projectile.Center, i);
+				}
+			}
 		}
 
 		if (Main.rand.NextBool(12))
