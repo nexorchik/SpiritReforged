@@ -66,7 +66,7 @@ TinyCrabItem: {
 	Tooltip: ""
 }
 
-TubeWormItem: {
+TubewormItem: {
 	DisplayName: Tubeworm
 	Tooltip: ""
 }
@@ -84,11 +84,6 @@ CascadeHelmet: {
 CascadeLeggings: {
 	DisplayName: Reef Hunter Greaves
 	Tooltip: 15% increased movement in water
-}
-
-DeepCascadeShard: {
-	DisplayName: Deep Cascade Shard
-	Tooltip: "'Where magma meets seawater'"
 }
 
 JellyfishStaff: {
@@ -930,7 +925,7 @@ MagmastoneItem: {
 	Tooltip: ""
 }
 
-HardmodeSavannaCrate: {
+SavannaCrateHardmode: {
 	DisplayName: Safari Crate
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }

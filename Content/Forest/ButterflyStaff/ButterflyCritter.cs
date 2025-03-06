@@ -36,8 +36,10 @@ public class ButterflyCritter : ModNPC
 		NPC.aiStyle = 64;
 		NPC.npcSlots = 0;
 		NPC.noGravity = true;
-		NPC.Opacity = 0;
 		NPC.catchItem = ItemID.SilverCoin; //Allows bug nets to interact with this NPC, even though the player is never allowed to catch it
+
+		if (!NPC.IsABestiaryIconDummy)
+			NPC.Opacity = 0;
 
 		AIType = NPCID.Firefly;
 	}
@@ -157,7 +159,7 @@ public class ButterflyCritter : ModNPC
 			var color = Color.Lerp(new Color(90, 70, 255, 50), Color.HotPink with { A = 50 }, Lerp(25f)) * deathCounter;
 			var position = NPC.Center - screenPos + new Vector2(0f, blurStrength * (8f - deathCounter * 7f)).RotatedBy(radians) * Lerp(60f);
 
-			spriteBatch.Draw(texture, position, frame, NPC.GetAlpha(color), NPC.rotation, frame.Size() / 2, NPC.scale, effects, 0);
+			spriteBatch.Draw(texture, position, frame, color * NPC.Opacity, NPC.rotation, frame.Size() / 2, NPC.scale, effects, 0);
 		}
 
 		float Lerp(float rate) => (float)Math.Sin((Main.timeForVisualEffects + NPC.whoAmI * 3) / rate);

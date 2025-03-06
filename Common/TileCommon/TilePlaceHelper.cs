@@ -41,7 +41,9 @@ public static class TilePlaceHelper
 				style = data.RandomStyleRange;
 		}
 
-		if (WorldGen.PlaceTile(i, j, type, true, style: style) && Main.netMode != NetmodeID.SinglePlayer)
+		WorldGen.PlaceTile(i, j, type, true, style: style);
+
+		if (Main.tile[i, j].TileType == type && Main.netMode != NetmodeID.SinglePlayer)
 		{
 			TileExtensions.GetTopLeft(ref i, ref j);
 			NetMessage.SendTileSquare(-1, i, j, width, height);

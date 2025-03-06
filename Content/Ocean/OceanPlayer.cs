@@ -6,6 +6,7 @@ public class OceanPlayer : ModPlayer
 {
 	///// <summary> Whether the player is present in the ocean, and not in the depths. </summary>
 	//public bool ZoneOcean => Player.ZoneBeach && (!Player.GetModPlayer<OceanPlayer>().Submerged(30) || NotInDepths(Player));
+
 	/// <summary> Whether the player is present in the deep ocean. </summary>
 	public bool ZoneDeepOcean => Player.ZoneBeach && Player.GetModPlayer<OceanPlayer>().Submerged(30) && NotInDepths(Player);
 	public bool nearLure;

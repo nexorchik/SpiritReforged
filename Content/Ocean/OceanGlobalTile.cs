@@ -82,20 +82,20 @@ public class OceanGlobalTile : GlobalTile
 
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (type == TileID.PalmTree && Main.rand.NextBool(10) && (i < 300 || i > Main.maxTilesX - 300)) //palm trees at/near the beach
+		if (effectOnly || !fail)
+			return;
+
+		if (type == TileID.PalmTree && Main.rand.NextBool(10) && (i < WorldGen.beachDistance || i > Main.maxTilesX - WorldGen.beachDistance)) //palm trees at/near the beach
 		{
-			if (fail)
-			{
-				int x = i;
-				int y = j;
+			int x = i;
+			int y = j;
 
-				// Crawl upwards until an air tile is found
-				while (y > 0 && Main.tile[x, y].HasTile)
-					y--;
+			// Crawl upwards until an air tile is found
+			while (y > 0 && Main.tile[x, y].HasTile)
+				y--;
 
-				if (NPC.CountNPCS(ModContent.NPCType<OceanSlime>()) < 1) //too many of these guys has to feel bad... right? feel free to remove if we want to troll players
-					NPC.NewNPC(WorldGen.GetItemSource_FromTreeShake(i, j), x * 16, y * 16, ModContent.NPCType<OceanSlime>());
-			}
+			if (NPC.CountNPCS(ModContent.NPCType<OceanSlime>()) < 1) //too many of these guys has to feel bad... right? feel free to remove if we want to troll players
+				NPC.NewNPC(WorldGen.GetItemSource_FromTreeShake(i, j), x * 16, y * 16, ModContent.NPCType<OceanSlime>());
 		}
 	}
 }

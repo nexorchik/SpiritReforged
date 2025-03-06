@@ -15,8 +15,7 @@ public class LeatherHood : ModItem
 	}
 
 	public override bool IsArmorSet(Item head, Item body, Item legs)
-		=> body.type == ModContent.ItemType<LeatherPlate>() && legs.type == ModContent.ItemType<LeatherLegs>();
-
+		=> (head.type, body.type, legs.type) == (Type, ModContent.ItemType<LeatherPlate>(), ModContent.ItemType<LeatherLegs>());
 	public override void UpdateEquip(Player player) => player.GetCritChance(DamageClass.Generic) += 5;
 
 	public override void UpdateArmorSet(Player player)
@@ -34,11 +33,12 @@ public class LeatherHood : ModItem
 			player.armorEffectDrawOutlinesForbidden = true;
 	}
 
-	public override void AddRecipes() => CreateRecipe()
-		.AddIngredient(ItemID.Leather, 6)
-		.AddRecipeGroup(RecipeGroupID.IronBar, 2)
-		.AddTile(TileID.Anvils)
-		.Register();
+	public override void AddRecipes()
+	{
+		CreateRecipe().AddIngredient(ItemID.Leather, 6).AddRecipeGroup(RecipeGroupID.IronBar, 2).AddTile(TileID.Anvils).Register();
+		Recipe.Create(ModContent.ItemType<LeatherPlate>()).AddIngredient(ItemID.Leather, 8).AddRecipeGroup(RecipeGroupID.IronBar, 4).AddTile(TileID.Anvils).Register();
+		Recipe.Create(ModContent.ItemType<LeatherLegs>()).AddIngredient(ItemID.Leather, 7).AddRecipeGroup(RecipeGroupID.IronBar, 2).AddTile(TileID.Anvils).Register();
+	}
 
 	/// <summary>
 	/// The following is code adapted from vanilla from the Eye of Yoraiz0r. Did my best to celanup + comment
@@ -92,14 +92,11 @@ public class LeatherHood : ModItem
 		if (Vector2.Distance(start, end) % 5.0 != 0.0)
 			++totalDist;
 
-		// adjustment
-		var dustOffset = new Vector2(player.direction == 1 ? 2f : -2f, -2f);
-
 		// make trail
 		for (float dist = 1f; dist <= totalDist; ++dist)
 		{
-			Dust dust = Main.dust[Dust.NewDust(player.Center, 0, 0, DustID.GoldCoin, 0.0f, 0.0f, 0, new Color(), .6f)];
-			dust.position = Vector2.Lerp(end, start, dist / totalDist) + dustOffset;
+			Dust dust = Main.dust[Dust.NewDust(player.Center, 0, 0, DustID.GoldCoin, 0.0f, 0.0f, 0, new Color(), .8f)];
+			dust.position = Vector2.Lerp(end, start, dist / totalDist);
 			dust.noGravity = true;
 			dust.velocity = Vector2.Zero;
 			dust.customData = player;

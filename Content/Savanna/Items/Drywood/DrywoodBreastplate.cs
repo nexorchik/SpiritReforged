@@ -10,7 +10,4 @@ public class DrywoodBreastplate : ModItem
 		Item.value = Item.sellPrice(copper: 12);
 		Item.defense = 1;
 	}
-
-	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<Drywood>(), 30)
-			.AddTile(TileID.WorkBenches).Register();
 }
