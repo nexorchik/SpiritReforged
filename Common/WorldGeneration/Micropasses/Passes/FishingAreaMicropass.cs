@@ -13,6 +13,8 @@ internal class FishingAreaMicropass : Micropass
 		{ 3, [new Point16(18, 3), new Point16(6, 11), new Point16(2, 17), new Point16(34, 6), new Point16(46, 22)] },
 		{ 4, [new Point16(23, 3), new Point16(4, 15), new Point16(51, 2), new Point16(49, 20)] }
 	};
+
+	public static HashSet<Point16> CovePositions = [];
 	
 	public override string WorldGenName => "Fishing Coves";
 
@@ -47,6 +49,7 @@ internal class FishingAreaMicropass : Micropass
 					continue;
 				}
 
+				CovePositions.Add(position);
 				GenVars.structures.AddProtectedStructure(new Rectangle(position.X, position.Y, size.X, size.Y), 6);
 			}
 			else
