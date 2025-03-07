@@ -6,7 +6,7 @@ using Terraria.GameContent.Bestiary;
 namespace SpiritReforged.Content.Ocean.Hydrothermal.NPCs;
 
 [AutoloadCritter]
-public class Tubeworm : ModNPC
+public class Tubeworm_ : ModNPC
 {
 	private byte _pickedType;
 

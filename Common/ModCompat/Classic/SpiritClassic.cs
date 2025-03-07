@@ -9,7 +9,7 @@ internal class SpiritClassic : ModSystem
 	private const string ClassicName = "SpiritMod";
 
 	/// <summary> Whether Spirit Classic is enabled. </summary>
-	public static bool Enabled => Loaded ? (ClassicMod != null) : ModLoader.HasMod(ClassicName);
+	public static bool Enabled => Loaded || ModLoader.HasMod(ClassicName);
 	/// <summary> The loaded Spirit Classic mod instance. Check <see cref="Enabled"/> before using. </summary>
 	internal static Mod ClassicMod = null;
 	/// <summary> Spirit Classic items and their Reforged replacements. </summary>
