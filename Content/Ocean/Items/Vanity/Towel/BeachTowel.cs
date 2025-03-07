@@ -6,12 +6,18 @@ namespace SpiritReforged.Content.Ocean.Items.Vanity.Towel;
 [AutoloadEquip(EquipType.HandsOn)]
 public class BeachTowel : ModItem
 {
-	public const string BodyEquip = "BeachTowelBody";
-
-	public override void UpdateVanity(Player player)
+	public override void Load()
 	{
-		if (player.GetModPlayer<BeachTowelPlayer>().bodyEquip)
-			player.GetModPlayer<BeachTowelPlayer>().shirtless = true;
+		EquipLoader.AddEquipTexture(Mod, Texture + "_Body", EquipType.Body, name: nameof(BeachTowel));
+		On_Player.PlayerFrame += PostPlayerFrame;
+	}
+
+	private static void PostPlayerFrame(On_Player.orig_PlayerFrame orig, Player self)
+	{
+		orig(self);
+
+		if (self.GetModPlayer<BeachTowelPlayer>().bodyEquip)
+			self.body = EquipLoader.GetEquipSlot(SpiritReforgedMod.Instance, nameof(BeachTowel), EquipType.Body);
 	}
 
 	public override void SetDefaults()
@@ -28,17 +34,8 @@ internal class BeachTowelPlayer : ModPlayer
 {
 	/// <summary> Whether the player has opted to be shirtless. </summary>
 	public bool bodyEquip;
-	/// <summary> Whether <see cref="bodyEquip"/> is true and <see cref="BeachTowel"/> is equipped in a vanity slot. </summary>
-	public bool shirtless;
 
-	public override void ResetEffects() => shirtless = false;
 	public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) => new TowelVisibilityData(bodyEquip, (byte)Player.whoAmI).Send();
-
-	public override void FrameEffects()
-	{
-		if (shirtless)
-			Player.body = EquipLoader.GetEquipSlot(Mod, BeachTowel.BodyEquip, EquipType.Body);
-	}
 }
 
 /// <summary> Syncs <see cref="BeachTowel"/> shirt visibility when updated from the local client. </summary>

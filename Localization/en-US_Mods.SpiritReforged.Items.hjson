@@ -1,15 +1,18 @@
-CommonTooltips.Backpack:
-	'''
-	Holds 4 items
-	You must empty this before taking it off
-	'''
+CommonTooltips: {
+	Backpack:
+		'''
+		Holds 4 items
+		You must empty this before taking it off
+		'''
+	Shimmerable: "{0} Transforms in shimmer"
+}
 
 Kelp: {
 	DisplayName: Kelp
 	Tooltip: Must be planted in water
 }
 
-PirateChest: {
+PirateChestItem: {
 	DisplayName: Pirate Chest
 	Tooltip: ""
 }
@@ -63,7 +66,7 @@ TinyCrabItem: {
 	Tooltip: ""
 }
 
-TubeWormItem: {
+TubewormItem: {
 	DisplayName: Tubeworm
 	Tooltip: ""
 }
@@ -81,11 +84,6 @@ CascadeHelmet: {
 CascadeLeggings: {
 	DisplayName: Reef Hunter Greaves
 	Tooltip: 15% increased movement in water
-}
-
-DeepCascadeShard: {
-	DisplayName: Deep Cascade Shard
-	Tooltip: "'Where magma meets seawater'"
 }
 
 JellyfishStaff: {
@@ -440,11 +438,6 @@ StarPowder: {
 TermiteJar: {
 	DisplayName: Termite Jar
 	Tooltip: "'An ecological nightmare'"
-}
-
-SpiritKillieFishbowlItem: {
-	DisplayName: Killifish Bowl
-	Tooltip: "'Maybe a bigger bowl next time?'"
 }
 
 ButterflyStaff: {
@@ -932,7 +925,7 @@ MagmastoneItem: {
 	Tooltip: ""
 }
 
-HardmodeSavannaCrate: {
+SavannaCrateHardmode: {
 	DisplayName: Safari Crate
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
@@ -1310,4 +1303,14 @@ OceanDepthsBoxItem: {
 OstrichPants: {
 	DisplayName: Ostrich Pants
 	Tooltip: ""
+}
+
+CampfireSpit: {
+	DisplayName: Fire Spit
+	Tooltip: Can be placed on campfires
+}
+
+KillieFishbowl: {
+	DisplayName: Killie Fishbowl
+	Tooltip: "'Maybe a bigger bowl next time?'"
 }

@@ -10,7 +10,4 @@ public class DrywoodGreaves : ModItem
 		Item.value = Item.sellPrice(copper: 9);
 		Item.defense = 1;
 	}
-
-	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<Drywood>(), 25)
-			.AddTile(TileID.WorkBenches).Register();
 }

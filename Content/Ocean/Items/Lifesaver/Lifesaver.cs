@@ -1,5 +1,8 @@
-﻿namespace SpiritReforged.Content.Ocean.Items.Lifesaver;
+﻿using SpiritReforged.Common.ModCompat.Classic;
 
+namespace SpiritReforged.Content.Ocean.Items.Lifesaver;
+
+[FromClassic("Mantaray_Hunting_Harpoon")]
 public class Lifesaver : ModItem
 {
 	public override void SetDefaults()

@@ -15,8 +15,6 @@ public class TorsoToggle : ILoadable
 		if (!Main.dedServ)
 		{
 			string texture = ModContent.GetInstance<BeachTowel>().Texture;
-
-			EquipLoader.AddEquipTexture(SpiritReforgedMod.Instance, texture + "_Body", EquipType.Body, name: BeachTowel.BodyEquip);
 			Toggle = ModContent.Request<Texture2D>(texture.Replace("BeachTowel", "TorsoToggle"));
 		}
 

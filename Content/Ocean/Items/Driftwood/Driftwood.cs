@@ -1,5 +1,8 @@
+using SpiritReforged.Common.ModCompat.Classic;
+
 namespace SpiritReforged.Content.Ocean.Items.Driftwood;
 
+[FromClassic("Driftwood1Item")]
 public class SmallDriftwoodItem : ModItem
 {
 	public override string Texture => base.Texture.Replace("SmallDriftwoodItem", "Driftwood");
@@ -54,6 +57,7 @@ public class SmallDriftwoodTile : ModTile
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = 2;
 }
 
+[FromClassic("Driftwood2Item")]
 public class MediumDriftwoodItem : ModItem
 {
 	public override string Texture => base.Texture.Replace("MediumDriftwoodItem", "Driftwood");
@@ -108,6 +112,7 @@ public class MediumDriftwoodTile : ModTile
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = 2;
 }
 
+[FromClassic("Driftwood3Item")]
 public class LargeDriftwoodItem : ModItem
 {
 	public override string Texture => base.Texture.Replace("LargeDriftwoodItem", "Driftwood");

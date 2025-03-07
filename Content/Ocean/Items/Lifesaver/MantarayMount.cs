@@ -140,7 +140,7 @@ public class MantarayMount : ModMount
 		_frameProgress += 0.02f + Math.Min(velocity.Length() / MaxSpeed, 1) * 0.04f;
 		_frameProgress %= 1;
 
-		if (_hovering || mountedPlayer.velocity.Y == 0)
+		if (_hovering || mountedPlayer.velocity.Y == 0 || mountedPlayer.velocity.Length() < 4.5f)
 			mountedPlayer.mount._frame = (int)(6 * _frameProgress);
 		else
 			mountedPlayer.mount._frame = (int)(6 + 7 * _frameProgress);

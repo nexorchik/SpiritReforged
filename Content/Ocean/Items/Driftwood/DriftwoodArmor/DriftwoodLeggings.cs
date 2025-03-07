@@ -11,6 +11,4 @@ public class DriftwoodLeggings : ModItem
 		Item.rare = ItemRarityID.Blue;
 		Item.defense = 1;
 	}
-
-	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<DriftwoodTileItem>(), 12).AddTile(TileID.WorkBenches).Register();
 }

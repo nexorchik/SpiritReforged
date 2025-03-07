@@ -1,5 +1,4 @@
-﻿using SpiritReforged.Common.WorldGeneration.Micropasses;
-using SpiritReforged.Content.Forest.Misc;
+﻿using SpiritReforged.Content.Forest.Misc;
 using Terraria.DataStructures;
 using Terraria.IO;
 using Terraria.WorldBuilding;

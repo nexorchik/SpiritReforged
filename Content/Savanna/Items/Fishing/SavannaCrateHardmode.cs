@@ -1,10 +1,9 @@
 ﻿using Terraria.GameContent.ItemDropRules;
-using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Common.ItemCommon;
 
 namespace SpiritReforged.Content.Savanna.Items.Fishing;
 
-public class HardmodeSavannaCrate : ModItem
+public class SavannaCrateHardmode : ModItem
 {
 	public override void SetStaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<SavannaCrate>();
 	public override void SetDefaults() => Item.DefaultToPlaceableTile(ModContent.TileType<SavannaCrateHardmodeTile>());
@@ -19,3 +18,5 @@ public class HardmodeSavannaCrate : ModItem
 			ItemDropRule.NotScalingWithLuck(ItemID.DesertFossil, 3, 20, 50), ItemDropRule.NotScalingWithLuck(ItemID.Leather, 3, 5, 10));
 	}
 }
+
+public class SavannaCrateHardmodeTile : SavannaCrateTile { }

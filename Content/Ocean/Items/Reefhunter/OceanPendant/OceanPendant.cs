@@ -3,10 +3,12 @@ using SpiritReforged.Common.ItemCommon;
 using Terraria.DataStructures;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
+using SpiritReforged.Common.ModCompat.Classic;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.OceanPendant;
 
 [AutoloadEquip(EquipType.Neck)]
+[FromClassic("PendantOfTheOcean")]
 public class OceanPendant : AccessoryItem
 {
 	public override void SetDefaults()

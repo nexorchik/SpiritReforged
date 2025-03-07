@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.TileCommon.CustomTree;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Common.WorldGeneration.Ecotones;
+using SpiritReforged.Content.Savanna.Items;
 using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 using SpiritReforged.Content.Savanna.Walls;
@@ -447,16 +448,13 @@ internal class SavannaEcotone : EcotoneBase
 			for (int x = i - halfCampfireDistance; x < i + halfCampfireDistance; x++)
 			{
 				WorldMethods.FindGround(x, ref y);
-				if (Math.Abs(x - i) > 2) //Don't overlap the tent position. This assumes tile widths are 3 each
-				{
-					int campfireType = ModContent.TileType<RoastCampfire>();
 
-					WorldGen.PlaceTile(x, y - 1, campfireType, true); //Place the campfire, and if successful, place the tent in our predetermined location
-					if (Main.tile[x, y - 1].TileType == campfireType)
-					{
-						WorldGen.PlaceTile(i, j - 1, TileID.LargePiles2, true, style: 26);
-						return true; //Success!
-					}
+				//Don't overlap the tent position. This assumes tile widths are 3 each
+				//Place the campfire, and if successful, place the tent in our predetermined location
+				if (Math.Abs(x - i) > 2 && CampfireSlot.GenerateCampfire(x, y - 1))
+				{
+					WorldGen.PlaceTile(i, j - 1, TileID.LargePiles2, true, style: 26);
+					return true; //Success!
 				}
 			}
 

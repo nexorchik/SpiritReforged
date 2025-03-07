@@ -50,15 +50,17 @@ public class FishCrateTile : ModTile
 {
 	public override void SetStaticDefaults()
 	{
-		Main.tileTable[Type] = true;
-		Main.tileSolidTop[Type] = true;
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
+		Main.tileSolidTop[Type] = true;
+		Main.tileTable[Type] = true;
 		Main.tileLavaDeath[Type] = true;
+
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.CoordinateHeights = [16, 18];
 		TileObjectData.addTile(Type);
 
+		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
 		AddMapEntry(new Color(150, 150, 150));
 	}
 }

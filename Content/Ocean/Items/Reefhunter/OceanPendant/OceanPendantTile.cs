@@ -8,14 +8,14 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter.OceanPendant;
 public class OceanPendantTile : ModTile
 {
 	public static int ItemType => ModContent.ItemType<OceanPendant>();
-	private static CircleBoid circleBoid;
+	private static CircleBoid _circleBoid;
 
 	public override void Load() => BoidManager.OnAddBoids += AddCircleBoid;
 
-	private void AddCircleBoid(int seed)
+	private static void AddCircleBoid(int seed)
 	{
-		circleBoid = new CircleBoid(BoidManager.Lookup(seed - 1), 1, 12, spawnWeight: 0);
-		BoidManager.boids.Add(circleBoid);
+		_circleBoid = new CircleBoid(12, 0, BoidManager.SelectTypes(seed - 1));
+		BoidManager.Boids.Add(_circleBoid);
 	}
 
 	public override void SetStaticDefaults()
@@ -47,7 +47,7 @@ public class OceanPendantTile : ModTile
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
 		var worldPos = new Vector2(i, j) * 16;
-		circleBoid.Populate(worldPos, 15, 120, worldPos); //Populate our custom boid
+		_circleBoid.Populate(worldPos, 15, 120, worldPos); //Populate our custom boid
 	}
 
 	public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref TileDrawInfo drawData)

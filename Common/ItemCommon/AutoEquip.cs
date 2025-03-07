@@ -1,4 +1,4 @@
-﻿namespace SpiritReforged.Common.ItemCommon;
+﻿/*namespace SpiritReforged.Common.ItemCommon;
 
 /// <summary> Calls <see cref="FrameEffects"/> on this ModItem when it is equipped. </summary>
 internal interface IFrameEffects
@@ -63,4 +63,4 @@ internal class AutoEquipPlayer : ModPlayer
 
 		return false;
 	}
-}
+}*/

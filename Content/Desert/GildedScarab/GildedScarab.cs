@@ -23,7 +23,10 @@ internal class GildedScarabPlayer : ModPlayer
 	public float opacity;
 	public float visualCounter;
 
-	public override void PostUpdateEquips()
+	public override void UpdateDead() => UpdateVisuals();
+	public override void PostUpdateEquips() => UpdateVisuals();
+
+	private void UpdateVisuals()
 	{
 		if (Player.HasBuff<GildedScarabBuff>() && !Player.dead)
 		{

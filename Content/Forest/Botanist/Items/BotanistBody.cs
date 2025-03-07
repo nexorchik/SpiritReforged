@@ -1,9 +1,7 @@
-using SpiritReforged.Common.ItemCommon;
-
 namespace SpiritReforged.Content.Forest.Botanist.Items;
 
 [AutoloadEquip(EquipType.Body, EquipType.Waist)]
-public class BotanistBody : ModItem, IFrameEffects
+public class BotanistBody : ModItem
 {
 	public override void SetDefaults()
 	{
@@ -14,12 +12,9 @@ public class BotanistBody : ModItem, IFrameEffects
 		Item.defense = 1;
 	}
 
-	public override void AddRecipes() => CreateRecipe()
-			.AddIngredient(ItemID.Silk, 10)
-			.AddTile(TileID.Loom)
-			.Register();
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.Silk, 10).AddTile(TileID.Loom).Register();
 
-	public void FrameEffects(Player player)
+	public override void EquipFrameEffects(Player player, EquipType type)
 	{
 		var bodyVanitySlot = player.armor[11];
 
