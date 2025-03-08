@@ -6,6 +6,8 @@ namespace SpiritReforged.Content.Ocean.Items.Vanity.Towel;
 [AutoloadEquip(EquipType.HandsOn)]
 public class BeachTowel : ModItem
 {
+	internal static int Slot { get; private set; }
+
 	public override void Load()
 	{
 		EquipLoader.AddEquipTexture(Mod, Texture + "_Body", EquipType.Body, name: nameof(BeachTowel));
@@ -16,9 +18,13 @@ public class BeachTowel : ModItem
 	{
 		orig(self);
 
-		if (self.GetModPlayer<BeachTowelPlayer>().bodyEquip)
-			self.body = EquipLoader.GetEquipSlot(SpiritReforgedMod.Instance, nameof(BeachTowel), EquipType.Body);
+		var mod = SpiritReforgedMod.Instance;
+
+		if (self.handon == Slot && self.GetModPlayer<BeachTowelPlayer>().bodyEquip)
+			self.body = EquipLoader.GetEquipSlot(mod, nameof(BeachTowel), EquipType.Body);
 	}
+
+	public override void SetStaticDefaults() => Slot = EquipLoader.GetEquipSlot(Mod, nameof(BeachTowel), EquipType.HandsOn);
 
 	public override void SetDefaults()
 	{

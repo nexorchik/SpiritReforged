@@ -100,12 +100,15 @@ public class KoiTotem_Tile : ModTile
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
 		var player = Main.LocalPlayer;
-		if (closer)
-			player.AddBuff(ModContent.BuffType<KoiTotemBuff>(), 12);
 
-		//Create fancy visuals when bait is replenished
-		if (KoiTotem.CursorOpacity > 0 && Framing.GetTileSafely(i, j).TileFrameX % (18 * 2) == 0 && Framing.GetTileSafely(i, j).TileFrameY > 0)
+		if (!closer)
 		{
+			if (!player.dead)
+				player.AddBuff(ModContent.BuffType<KoiTotemBuff>(), 12);
+		}
+		else if (KoiTotem.CursorOpacity > 0 && Framing.GetTileSafely(i, j).TileFrameX % (18 * 2) == 0 && Framing.GetTileSafely(i, j).TileFrameY > 0)
+		{
+			//Create fancy visuals when bait is replenished
 			var pos = new Vector2(i, j + 1) * 16;
 
 			if (Main.rand.NextBool(3))
@@ -113,11 +116,11 @@ public class KoiTotem_Tile : ModTile
 				var color = Color.Lerp(Color.LightBlue, Color.Cyan, Main.rand.NextFloat());
 				float magnitude = Main.rand.NextFloat();
 
-				ParticleHandler.SpawnParticle(new GlowParticle(pos + new Vector2(Main.rand.NextFloat(16 * 2), 0), Vector2.UnitY * -magnitude, 
+				ParticleHandler.SpawnParticle(new GlowParticle(pos + new Vector2(Main.rand.NextFloat(16 * 2), 0), Vector2.UnitY * -magnitude,
 					color, (1f - magnitude) * .25f, Main.rand.Next(30, 120), 5, extraUpdateAction: delegate (Particle p)
-				{
-					p.Velocity = p.Velocity.RotatedBy(Main.rand.NextFloat(-.1f, .1f));
-				}));
+					{
+						p.Velocity = p.Velocity.RotatedBy(Main.rand.NextFloat(-.1f, .1f));
+					}));
 			}
 
 			if (KoiTotem.CursorOpacity > .9f)

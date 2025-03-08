@@ -1,8 +1,25 @@
+using Terraria.DataStructures;
+
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.CascadeArmor;
 
 [AutoloadEquip(EquipType.Head)]
 public class CascadeHelmet : ModItem
 {
+	internal static int Slot { get; private set; }
+
+	public override void Load() => On_PlayerDrawLayers.DrawPlayer_21_Head_TheFace += HideHead;
+
+	/// <summary> Hide the player's head if they have both the Reefhunter helmet and chestplate equipped and visible. </summary>
+	private static void HideHead(On_PlayerDrawLayers.orig_DrawPlayer_21_Head_TheFace orig, ref PlayerDrawSet drawinfo)
+	{
+		if (drawinfo.drawPlayer.head == Slot && drawinfo.drawPlayer.body == CascadeChestplate.Slot)
+			return; //Skips orig
+
+		orig(ref drawinfo);
+	}
+
+	public override void SetStaticDefaults() => Slot = EquipLoader.GetEquipSlot(Mod, nameof(CascadeHelmet), EquipType.Head);
+
 	public override void SetDefaults()
 	{
 		Item.width = 28;
