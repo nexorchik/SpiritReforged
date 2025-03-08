@@ -19,7 +19,7 @@ internal class SpecialPointMappingMicropass : Micropass
 	public override int GetWorldGenIndexInsert(List<GenPass> passes, ref bool afterIndex)
 	{
 		afterIndex = false;
-		return passes.Count;
+		return passes.Count - 1;
 	}
 
 	public override void Run(GenerationProgress progress, GameConfiguration config)
