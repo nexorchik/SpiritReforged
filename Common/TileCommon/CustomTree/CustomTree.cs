@@ -11,42 +11,72 @@ namespace SpiritReforged.Common.TileCommon.CustomTree;
 /// <summary> Follows palm tree logic by default. </summary>
 public abstract class CustomTree : ModTile
 {
-	/// <summary> Controls growth height without the need to override <see cref="GenerateTree"/>. </summary>
-	public virtual int TreeHeight => WorldGen.genRand.Next(10, 21);
-
-	protected const int FrameSize = 22;
-
-	protected readonly HashSet<Point16> drawPoints = [];
-	private readonly HashSet<Point16> treeShakes = [];
-
-	// Textures are set as lookups, keyed by type - this means we can have one static instance (bypassing instancing issues) while keeping data easy to access
-	internal readonly static Dictionary<int, Asset<Texture2D>> branchesTextureByType = [];
-	internal readonly static Dictionary<int, Asset<Texture2D>> topsTextureByType = [];
+	/// <summary> Common frame size for tree tiles. </summary>
+	public const int FrameSize = 22;
 
 	public Asset<Texture2D> TopTexture => topsTextureByType[Type];
 	public Asset<Texture2D> BranchTexture => branchesTextureByType[Type];
 
+	/// <summary> Controls growth height without the need to override <see cref="CreateTree"/>. </summary>
+	public virtual int TreeHeight => WorldGen.genRand.Next(10, 21);
+
+	// Textures are set as lookups, keyed by type - this means we can have one static instance (bypassing instancing issues) while keeping data easy to access
+	private static readonly Dictionary<int, Asset<Texture2D>> branchesTextureByType = [];
+	private static readonly Dictionary<int, Asset<Texture2D>> topsTextureByType = [];
+
+	private static readonly HashSet<Point16> drawPoints = [];
+	private static readonly HashSet<Point16> treeShakes = [];
+
+	private static bool AppliedDetours = false;
+
+	/// <summary> Grows a custom tree at the given coordinates. </summary>
+	/// <returns> Whether the tree was successfully grown. </returns>
+	public static bool GrowTree<T>(int i, int j) where T : CustomTree
+	{
+		while (!WorldGen.SolidOrSlopedTile(Framing.GetTileSafely(i, j + 1)))
+			j++; //Find the ground
+
+		var instance = ModContent.GetInstance<T>() as CustomTree;
+		int height = instance.TreeHeight;
+
+		if (WorldGen.InWorld(i, j) && WorldMethods.AreaClear(i, j - (height - 1), 1, height))
+		{
+			WorldGen.KillTile(i, j); //Kill the tile at origin, presumably a sapling
+			instance.CreateTree(i, j, height);
+
+			if (WorldGen.PlayerLOS(i, j))
+				instance.GrowEffects(i, j);
+		}
+
+		return Framing.GetTileSafely(i, j).TileType == instance.Type;
+	}
+
+	/// <summary> <inheritdoc/><para/>
+	/// Includes detours for tree drawing.
+	/// </summary>
 	public override void Load()
 	{
-		if (Main.dedServ)
+		if (Main.dedServ || AppliedDetours)
 			return;
 
 		On_TileDrawing.DrawTrees += DrawAllFoliage;
 		On_TileDrawing.PreDrawTiles += ResetPoints;
+
+		AppliedDetours = true;
 	}
 
-	private void DrawAllFoliage(On_TileDrawing.orig_DrawTrees orig, TileDrawing self)
+	private static void DrawAllFoliage(On_TileDrawing.orig_DrawTrees orig, TileDrawing self)
 	{
 		orig(self);
 
 		foreach (Point16 p in drawPoints)
 		{
-			if (Main.tile[p.X, p.Y].TileType == Type) //Points aren't cleared before this type becomes invalidated after PreDraw, so double check
-				DrawTreeFoliage(p.X, p.Y, Main.spriteBatch);
+			if (TileLoader.GetTile(Main.tile[p.X, p.Y].TileType) is CustomTree custom)
+				custom.DrawTreeFoliage(p.X, p.Y, Main.spriteBatch);
 		}
 	}
 
-	private void ResetPoints(On_TileDrawing.orig_PreDrawTiles orig, TileDrawing self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets)
+	private static void ResetPoints(On_TileDrawing.orig_PreDrawTiles orig, TileDrawing self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets)
 	{
 		orig(self, solidLayer, forRenderTargets, intoRenderTargets);
 
@@ -87,12 +117,12 @@ public abstract class CustomTree : ModTile
 		TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
 		DustType = -1;
 
-		PreAddTileObjectData();
+		PreAddObjectData();
 		TileObjectData.addTile(Type);
 	}
 
-	/// <summary> Called during SetStaticDefaults. </summary>
-	public virtual void PreAddTileObjectData() { }
+	/// <summary> Called during SetStaticDefaults before <see cref="TileObjectData.addTile"/> is called. </summary>
+	public virtual void PreAddObjectData() { }
 
 	/// <summary> Used for pseudo random logic, like branch positions. </summary>
 	protected virtual float Noise(Vector2 position) => NoiseSystem.PerlinStatic(position.X, position.Y * 3f) * 10f;
@@ -147,21 +177,6 @@ public abstract class CustomTree : ModTile
 			ShakeTree(i, j);
 	}
 
-	/// <summary> Use this to draw treetops and tree branches based on coordinates resulting from <see cref="Noise"/>. </summary>
-	public virtual void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
-	{
-		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeHelper.GetPalmTreeOffset(i, j);
-		float rotation = Main.instance.TilesRenderer.GetWindCycle(i, j, TileSwaySystem.Instance.TreeWindCounter) * .1f;
-
-		if (IsTreeTop(i, j) && TopTexture != null) //Draw tops
-		{
-			var source = TopTexture.Frame(3, sizeOffsetX: -2, sizeOffsetY: -2);
-			var origin = source.Bottom();
-
-			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
-		}
-	}
-
 	public sealed override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		DrawTreeBody(i, j, spriteBatch);
@@ -185,28 +200,22 @@ public abstract class CustomTree : ModTile
 		return false;
 	}
 
-	/// <returns> Whether the tree was successfully grown. </returns>
-	public static bool GrowTree<T>(int i, int j) where T : CustomTree
+	/// <summary> Used to draw treetops and tree branches based on coordinates resulting from <see cref="Noise"/>. </summary>
+	public virtual void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
 	{
-		while (!WorldGen.SolidOrSlopedTile(Framing.GetTileSafely(i, j + 1)))
-			j++; //Find the ground
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeHelper.GetPalmTreeOffset(i, j);
+		float rotation = Main.instance.TilesRenderer.GetWindCycle(i, j, TileSwaySystem.Instance.TreeWindCounter) * .1f;
 
-		var instance = ModContent.GetInstance<T>() as CustomTree;
-		int height = instance.TreeHeight;
-
-		if (WorldGen.InWorld(i, j) && WorldMethods.AreaClear(i, j - (height - 1), 1, height))
+		if (IsTreeTop(i, j) && TopTexture != null) //Draw tops
 		{
-			WorldGen.KillTile(i, j); //Kill the tile at origin, presumably a sapling
-			instance.GenerateTree(i, j, height);
+			var source = TopTexture.Frame(3, sizeOffsetX: -2, sizeOffsetY: -2);
+			var origin = source.Bottom();
 
-			if (WorldGen.PlayerLOS(i, j))
-				instance.GrowEffects(i, j);
+			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
-		
-		return Framing.GetTileSafely(i, j).TileType == instance.Type;
 	}
 
-	protected virtual void GenerateTree(int i, int j, int height)
+	protected virtual void CreateTree(int i, int j, int height)
 	{
 		int variance = WorldGen.genRand.Next(-8, 9) * 2;
 		short xOff = 0;

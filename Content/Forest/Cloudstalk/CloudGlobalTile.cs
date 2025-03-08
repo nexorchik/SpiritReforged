@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace SpiritReforged.Content.Forest.Cloudstalk;
 
+/// <summary> Handles Cloudstalk growth under cloud blocks. </summary>
 internal class CloudGlobalTile : GlobalTile
 {
 	public override void RandomUpdate(int i, int j, int type)

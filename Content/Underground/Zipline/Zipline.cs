@@ -126,7 +126,7 @@ internal class Zipline(int owner)
 				return false;
 
 			UpdatePlayer(player, delta, angle);
-			ZiplinePlayer.TryDoEffects(player, delta, GetDelta(collisionPoint - player.velocity.X * 5f));
+			player.GetModPlayer<ZiplinePlayer>().DoEffects(delta, GetDelta(collisionPoint - player.velocity.X * 5f));
 
 			return true;
 		}
