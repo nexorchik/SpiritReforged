@@ -80,7 +80,9 @@ internal class ZiplineHandler : ILoadable
 internal class ZiplinePlayer : ModPlayer
 {
 	public bool assistant = true;
-	private bool wasOnZipline;
+
+	private bool _wasOnZipline;
+	private bool _fast;
 
 	public override void PreUpdateMovement()
 	{
@@ -93,33 +95,55 @@ internal class ZiplinePlayer : ModPlayer
 			if (Player.velocity.Length() < speedLimit)
 				Player.velocity *= 1.05f + Math.Abs(line.Angle() / 20f);
 
-			wasOnZipline = true;
+			_wasOnZipline = true;
 			Player.wet = false;
 
 			if (Player.controlDown)
 				Player.GetModPlayer<CollisionPlayer>().fallThrough = true;
 		}
 
-		if (!onZipline && wasOnZipline) //Reset rotation
+		if (!onZipline && _wasOnZipline) //Reset rotation
 		{
 			Player.fullRotation = 0;
-			wasOnZipline = false;
+			_wasOnZipline = false;
 		}
 	}
 
 	public static void TryDoEffects(Player player, Vector2 start, Vector2 end)
 	{
-		if (Math.Abs(player.velocity.X) > player.maxRunSpeed + .1f)
+		if (Math.Abs(player.velocity.X) <= player.maxRunSpeed + .1f)
+			return;
+
+		if (Main.timeForVisualEffects % 3 == 0)
+			ParticleHandler.SpawnParticle(new LightningParticle(start, end, Color.Red, 30, 8f));
+
+		if (Main.rand.NextBool(3))
+			Dust.NewDustPerfect(start, DustID.Torch, Scale: 2).noGravity = true;
+
+		if (Math.Abs(player.velocity.X) > player.accRunSpeed)
 		{
-			if (Main.timeForVisualEffects % 3 == 0)
-				ParticleHandler.SpawnParticle(new LightningParticle(start, end, Color.Red, 30, 8f));
+			if (Main.timeForVisualEffects % 5 == 0)
+			{
+				float lerp = (Math.Abs(player.velocity.X) - player.accRunSpeed) / 2f;
+				float pitch = MathHelper.Lerp(0f, .25f, lerp);
 
-			if (Main.rand.NextBool(3))
-				Dust.NewDustPerfect(start, DustID.Torch, Scale: 2).noGravity = true;
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricSting") with { Volume = .3f, Pitch = pitch, PitchVariance = .2f }, start);
+			}
 
-			if (Math.Abs(player.velocity.X) > player.accRunSpeed && Main.timeForVisualEffects % 10 == 9)
-				SoundEngine.PlaySound(SoundID.Run with { Volume = .75f, Pitch = .25f }, start);
+			if (!player.GetModPlayer<ZiplinePlayer>()._fast)
+			{
+				ParticleHandler.SpawnParticle(new TexturedPulseCircle(end, Color.White, Color.Red, .25f, 80f, 20, "supPerlin", Vector2.Zero, Common.Easing.EaseFunction.EaseCircularOut).WithSkew(.5f, end.AngleTo(start)));
+				SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown with { Pitch = .5f }, start);
+				SoundEngine.PlaySound(SoundID.Item52 with { Pitch = .6f }, start);
+
+				player.GetModPlayer<ZiplinePlayer>()._fast = true;
+			}
+
+			if (Main.rand.NextBool())
+				Dust.NewDustPerfect(start, DustID.MinecartSpark, (player.velocity * -Main.rand.NextFloat() - Vector2.UnitY).RotatedByRandom(1), Scale: 2);
 		}
+		else
+			player.GetModPlayer<ZiplinePlayer>()._fast = false;
 	}
 
 	public override void SaveData(TagCompound tag) => tag[nameof(assistant)] = assistant;
