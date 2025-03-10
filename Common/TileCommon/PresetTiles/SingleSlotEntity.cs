@@ -11,6 +11,7 @@ public abstract class SingleSlotEntity : ModTileEntity
 {
 	public Item item = new();
 
+	/// <summary> Called on the local client when right-clicking a tile. </summary>
 	/// <returns> Whether an interaction has occured. </returns>
 	public virtual bool OnInteract(Player player)
 	{
@@ -27,17 +28,18 @@ public abstract class SingleSlotEntity : ModTileEntity
 
 		if (success)
 		{
-			item = ItemLoader.TransferWithLimit(player.HeldItem, 1);
+			if (CanAddItem(player.HeldItem))
+				item = ItemLoader.TransferWithLimit(player.HeldItem, 1);
 
 			if (!item.IsAir)
 				player.PlayDroppedItemAnimation(20);
 
 			player.releaseUseItem = false;
 			player.mouseInterface = true;
-		}
 
-		if (lastItem != item && Main.netMode == NetmodeID.MultiplayerClient)
-			new SingleSlotData((short)ID, item).Send();
+			if (lastItem != item && Main.netMode == NetmodeID.MultiplayerClient)
+				new SingleSlotData((short)ID, item).Send();
+		}
 
 		return success;
 	}

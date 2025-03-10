@@ -133,7 +133,7 @@ public class BambooBirdCage : ModTile, IAutoloadTileItem
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		var tile = Main.tile[i, j];
-		if (Entity(i, j) is BambooBirdCageSlot slot && !slot.item.IsAir)
+		if (TileObjectData.IsTopLeft(i, j) && Entity(i, j) is BambooBirdCageSlot slot && !slot.item.IsAir)
 		{
 			var bird = TextureAssets.Item[slot.item.type];
 			var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(Main.offScreenRange);

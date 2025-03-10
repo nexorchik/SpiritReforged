@@ -32,4 +32,7 @@ internal class WheatgrassSeedProjectile : ModProjectile
 
 		SoundEngine.PlaySound(SoundID.Grass with { Volume = .5f, Pitch = .8f }, Projectile.Center);
 	}
+
+	public override bool? CanCutTiles() => false;
+	public override bool? CanDamage() => false;
 }
