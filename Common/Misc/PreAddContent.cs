@@ -10,7 +10,8 @@ internal class PreAddContent : ILoadable
 	private static Hook PreAddContentHook = null;
 
 	/// <summary> The full names of content to disable. Must be formatted as "Mod/Content". </summary>
-	private static readonly HashSet<string> NameToMod = ["SpiritMod/FloatingItemWorld", "SpiritMod/HeroMemorialMicropass", "SpiritMod/StargrassMicropass"];
+	private static readonly HashSet<string> NameToMod = ["SpiritMod/FloatingItemWorld", "SpiritMod/HeroMemorialMicropass", 
+		"SpiritMod/StargrassMicropass", "SpiritMod/ZombieGlobalNPC", "SpiritMod/BoidHost"];
 
 	/// <summary> Hooks <see cref="Mod.AddContent"/> to control whether content from other mods can be added to the game.<br/>
 	/// Must be called in the mod's constructor to ignore mod load order. </summary>

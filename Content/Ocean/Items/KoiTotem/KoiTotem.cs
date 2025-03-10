@@ -99,7 +99,8 @@ public class KoiTotemTile : ModTile, IDrawPreview
 
 		if (!closer)
 		{
-			player.AddBuff(ModContent.BuffType<KoiTotemBuff>(), 12);
+			if (!player.dead)
+				player.AddBuff(ModContent.BuffType<KoiTotemBuff>(), 12);
 		}
 		else if (TileObjectData.IsTopLeft(i, j) && KoiTotem.CursorOpacity > 0) //Create fancy visuals when bait is replenished
 		{

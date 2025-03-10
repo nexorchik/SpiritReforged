@@ -116,7 +116,7 @@ internal class KillieFishbowlLayer : PlayerDrawLayer
 	protected override void Draw(ref PlayerDrawSet drawInfo)
 	{
 		var player = drawInfo.drawPlayer;
-		if (player.dead || player.invis)
+		if (player.dead || player.invis && !player.isDisplayDollOrInanimate)
 			return;
 
 		if (Equipped(player))

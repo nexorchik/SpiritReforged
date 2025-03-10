@@ -11,10 +11,4 @@ public class LeatherLegs : ModItem
 		Item.rare = ItemRarityID.Blue;
 		Item.defense = 1;
 	}
-
-	public override void AddRecipes() => CreateRecipe()
-		.AddIngredient(ItemID.Leather, 7)
-		.AddRecipeGroup(RecipeGroupID.IronBar, 2)
-		.AddTile(TileID.Anvils)
-		.Register();
 }

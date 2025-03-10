@@ -13,8 +13,8 @@ TinyCrab: {
 	Entry: These adorable little critters are not as hostile as their larger relatives. Living in deeper waters has made them lose coloration since they have less exposure to sunlight.
 }
 
-TubeWorm: {
-	DisplayName: Tube Worm
+Tubeworm: {
+	DisplayName: Tubeworm
 	Entry: Deep below the glimmering tides, down where the light won't shine, live some fascinating creatures, able to feast off of the smog exuded from hydrothermal vents.
 }
 

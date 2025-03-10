@@ -3,6 +3,7 @@ using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.CustomTree;
 using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Savanna.DustStorm;
+using SpiritReforged.Content.Savanna.Items.Drywood;
 using SpiritReforged.Content.Savanna.Items.Food;
 using System.Linq;
 using Terraria.DataStructures;
@@ -12,10 +13,9 @@ namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
 public class AcaciaTree : CustomTree, IConvertibleTile
 {
+	/// <summary> All Acacia treetop platforms. </summary>
 	public static IEnumerable<TreetopPlatform> Platforms => SimpleEntitySystem.entities.Where(x => x is TreetopPlatform).Cast<TreetopPlatform>();
-
 	public override int TreeHeight => WorldGen.genRand.Next(8, 16);
-	protected virtual int ValidAnchor => ModContent.TileType<SavannaGrass>();
 
 	/// <summary> How much acacia tree tops sway in the wind. Used by the client for drawing and platform logic. </summary>
 	public static float GetSway(int i, int j, double factor = 0)
@@ -25,12 +25,13 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 		return Main.instance.TilesRenderer.GetWindCycle(i, j, factor) * .4f;
 	}
-	public override void PreAddTileObjectData()
+
+	public override void PreAddObjectData()
 	{
-		TileObjectData.newTile.AnchorValidTiles = [ValidAnchor];
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
 
 		AddMapEntry(new Color(120, 80, 75));
-		RegisterItemDrop(ModContent.ItemType<Items.Drywood.Drywood>());
+		RegisterItemDrop(ModContent.ItemType<Drywood>());
 		DustType = DustID.WoodFurniture;
 	}
 
@@ -68,10 +69,10 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		var drop = new WeightedRandom<int>();
 
 		drop.Add(ItemID.None, .8f);
-		drop.Add(ModContent.ItemType<Items.Food.Caryocar>(), .2f);
-		drop.Add(ModContent.ItemType<Items.Food.CustardApple>(), .2f);
+		drop.Add(ModContent.ItemType<Caryocar>(), .2f);
+		drop.Add(ModContent.ItemType<CustardApple>(), .2f);
 		drop.Add(ModContent.ItemType<BaobabFruit>(), .2f);
-		drop.Add(ModContent.ItemType<Items.Drywood.Drywood>(), .8f);
+		drop.Add(ModContent.ItemType<Drywood>(), .8f);
 		drop.Add(ItemID.Acorn, .7f);
 
 		var position = new Vector2(i, j - 3) * 16;
@@ -95,7 +96,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 			var source = TopTexture.Frame(1, framesY, 0, frameY, sizeOffsetY: -2);
 			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
 			
-			TryDrawGodrays(position, rotation);
+			DrawShade(position, rotation);
 
 			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
@@ -115,7 +116,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		}
 	}
 
-	protected static void TryDrawGodrays(Vector2 position, float rotation)
+	protected static void DrawShade(Vector2 position, float rotation)
 	{
 		const float startTime = 9.50f;
 		const float endTime = 15f;
@@ -186,7 +187,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		}
 	}
 
-	protected override void GenerateTree(int i, int j, int height)
+	protected override void CreateTree(int i, int j, int height)
 	{
 		int variance = WorldGen.genRand.Next(-8, 9) * 2;
 		short xOff = 0;
@@ -234,34 +235,28 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 public class AcaciaTreeCorrupt : AcaciaTree
 {
-	protected override int ValidAnchor => ModContent.TileType<SavannaGrassCorrupt>();
-
-	public override void SetStaticDefaults()
+	public override void PreAddObjectData()
 	{
-		base.SetStaticDefaults();
 		TileID.Sets.Corrupt[Type] = true;
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrassCorrupt>()];
 	}
 }
 
 public class AcaciaTreeCrimson : AcaciaTree
 {
-	protected override int ValidAnchor => ModContent.TileType<SavannaGrassCrimson>();
-
-	public override void SetStaticDefaults()
+	public override void PreAddObjectData()
 	{
-		base.SetStaticDefaults();
 		TileID.Sets.Crimson[Type] = true;
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrassCrimson>()];
 	}
 }
 
 public class AcaciaTreeHallow : AcaciaTree
 {
-	protected override int ValidAnchor => ModContent.TileType<SavannaGrassHallow>();
-
-	public override void SetStaticDefaults()
+	public override void PreAddObjectData()
 	{
-		base.SetStaticDefaults();
 		TileID.Sets.Hallow[Type] = true;
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrassHallow>()];
 	}
 
 	public override void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
@@ -279,7 +274,7 @@ public class AcaciaTreeHallow : AcaciaTree
 			var source = TopTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
 			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
 
-			TryDrawGodrays(position, rotation);
+			DrawShade(position, rotation);
 
 			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}

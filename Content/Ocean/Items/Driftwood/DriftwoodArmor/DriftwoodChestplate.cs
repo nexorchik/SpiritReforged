@@ -11,6 +11,4 @@ public class DriftwoodChestplate : ModItem
 		Item.rare = ItemRarityID.Blue;
 		Item.defense = 2;
 	}
-
-	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<DriftwoodTileItem>(), 20).AddTile(TileID.WorkBenches).Register();
 }

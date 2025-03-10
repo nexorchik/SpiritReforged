@@ -11,7 +11,7 @@ public class SavannaPlayer : ModPlayer
 		if (Player.InModBiome<SavannaBiome>())
 		{
 			if (attempt.crate)
-				itemDrop = Main.hardMode ? ModContent.ItemType<HardmodeSavannaCrate>() : ModContent.ItemType<SavannaCrate>();
+				itemDrop = Main.hardMode ? ModContent.ItemType<SavannaCrateHardmode>() : ModContent.ItemType<SavannaCrate>();
 
 			if (attempt.common && Main.rand.NextBool(5))
 				itemDrop = Mod.Find<ModItem>("KillifishItem").Type;

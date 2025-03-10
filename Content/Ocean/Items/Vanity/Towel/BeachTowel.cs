@@ -1,15 +1,30 @@
-using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Multiplayer;
 using System.IO;
 
 namespace SpiritReforged.Content.Ocean.Items.Vanity.Towel;
 
 [AutoloadEquip(EquipType.HandsOn)]
-public class BeachTowel : ModItem, IFrameEffects
+public class BeachTowel : ModItem
 {
-	public const string BodyEquip = "BeachTowelBody";
+	internal static int Slot { get; private set; }
 
-	public override void Load() => EquipLoader.AddEquipTexture(Mod, Texture + "_Body", EquipType.Body, name: BodyEquip);
+	public override void Load()
+	{
+		EquipLoader.AddEquipTexture(Mod, Texture + "_Body", EquipType.Body, name: nameof(BeachTowel));
+		On_Player.PlayerFrame += PostPlayerFrame;
+	}
+
+	private static void PostPlayerFrame(On_Player.orig_PlayerFrame orig, Player self)
+	{
+		orig(self);
+
+		var mod = SpiritReforgedMod.Instance;
+
+		if (self.handon == Slot && self.GetModPlayer<BeachTowelPlayer>().bodyEquip)
+			self.body = EquipLoader.GetEquipSlot(mod, nameof(BeachTowel), EquipType.Body);
+	}
+
+	public override void SetStaticDefaults() => Slot = EquipLoader.GetEquipSlot(Mod, nameof(BeachTowel), EquipType.HandsOn);
 
 	public override void SetDefaults()
 	{
@@ -18,12 +33,6 @@ public class BeachTowel : ModItem, IFrameEffects
 		Item.rare = ItemRarityID.Blue;
 		Item.accessory = true;
 		Item.vanity = true;
-	}
-
-	public void FrameEffects(Player player)
-	{
-		if (player.GetModPlayer<BeachTowelPlayer>().bodyEquip)
-			player.body = EquipLoader.GetEquipSlot(Mod, BodyEquip, EquipType.Body);
 	}
 }
 

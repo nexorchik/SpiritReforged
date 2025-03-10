@@ -1,3 +1,4 @@
+using SpiritReforged.Common.NPCCommon;
 using System.Linq;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -253,7 +254,7 @@ public class KendoBladeLunge : ModProjectile
 					lastPosition = owner.Center;
 
 				float collisionPoint = 0;
-				var crossed = Main.npc.Where(x => (x.CanBeChasedBy(Projectile) || x.type == NPCID.TargetDummy) && Collision.CheckAABBvLineCollision(x.Hitbox.TopLeft(), x.Hitbox.Size(), lastPosition, owner.Center, 15, ref collisionPoint)).OrderBy(x => x.Distance(lastPosition)).FirstOrDefault();
+				var crossed = Main.npc.Where(x => x.CanBeStruck() && Collision.CheckAABBvLineCollision(x.Hitbox.TopLeft(), x.Hitbox.Size(), lastPosition, owner.Center, 15, ref collisionPoint)).OrderBy(x => x.Distance(lastPosition)).FirstOrDefault();
 
 				if (crossed != default)
 					targetWhoAmI = crossed.whoAmI;
@@ -318,8 +319,10 @@ public class KendoBladeLunge : ModProjectile
 	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 	{
 		if (CanDamage() is true)
+		{
 			if (targetWhoAmI != -1 && Main.npc[targetWhoAmI] is NPC target && targetHitbox == target.Hitbox)
 				return true;
+		}
 
 		return false;
 	}

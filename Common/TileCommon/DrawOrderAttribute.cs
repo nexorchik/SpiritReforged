@@ -54,17 +54,19 @@ internal class DrawOrderSystem : ModSystem
 		static void Draw(Layer layer)
 		{
 			Order = layer;
-			var above = specialDrawPoints.Where(x => x.Value.Contains(Order));
-			foreach (var set in above)
+
+			foreach (var key in specialDrawPoints.Keys)
 			{
-				var p = set.Key;
-				TileLoader.PreDraw(p.X, p.Y, Framing.GetTileSafely(p.X, p.Y).TileType, Main.spriteBatch);
+				if (specialDrawPoints[key].Contains(Order))
+					TileLoader.PreDraw(key.X, key.Y, Framing.GetTileSafely(key).TileType, Main.spriteBatch);
 			}
 
 			Order = Layer.Default;
 		}
 
+		#region detours/il
 		On_TileDrawing.PreDrawTiles += ClearDrawPoints;
+
 		IL_Main.DoDraw_Tiles_Solid += (ILContext il) =>
 		{
 			var c = new ILCursor(il);
@@ -94,6 +96,7 @@ internal class DrawOrderSystem : ModSystem
 			Draw(Layer.OverPlayers);
 			Main.spriteBatch.End();
 		};
+		#endregion
 	}
 
 	private void ClearDrawPoints(On_TileDrawing.orig_PreDrawTiles orig, TileDrawing self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets)
@@ -101,7 +104,7 @@ internal class DrawOrderSystem : ModSystem
 		orig(self, solidLayer, forRenderTargets, intoRenderTargets);
 
 		bool flag = intoRenderTargets || Lighting.UpdateEveryFrame;
-		if (!solidLayer && flag)
+		if (!solidLayer && flag) //Does not clear solid points when expected and may cause issues when using them
 			specialDrawPoints.Clear();
 	}
 

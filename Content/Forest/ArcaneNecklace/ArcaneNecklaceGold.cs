@@ -1,9 +1,11 @@
 using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ModCompat.Classic;
 using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Forest.ArcaneNecklace;
 
 [AutoloadEquip(EquipType.Neck)]
+[FromClassic("ArcaneNecklace")]
 public class ArcaneNecklaceGold : AccessoryItem
 {
 	public override void SetStaticDefaults()

@@ -4,6 +4,8 @@ namespace SpiritReforged.Content.Snow.Frostbite;
 
 public class Frozen : ModBuff
 {
+	public override string Texture => "Terraria/Images/Buff";
+
 	public override void SetStaticDefaults()
 	{
 		Main.debuff[Type] = true;

@@ -1,7 +1,5 @@
 ﻿using SpiritReforged.Content.Desert.GildedScarab;
-using SpiritReforged.Content.Forest.RoguesCrest;
 using SpiritReforged.Content.Ocean.Hydrothermal;
-using SpiritReforged.Content.Ocean.Items;
 
 namespace SpiritReforged.Common.ModCompat.Classic;
 
@@ -11,7 +9,7 @@ internal class SpiritClassic : ModSystem
 	private const string ClassicName = "SpiritMod";
 
 	/// <summary> Whether Spirit Classic is enabled. </summary>
-	public static bool Enabled => Loaded ? (ClassicMod != null) : ModLoader.HasMod(ClassicName);
+	public static bool Enabled => Loaded || ModLoader.HasMod(ClassicName);
 	/// <summary> The loaded Spirit Classic mod instance. Check <see cref="Enabled"/> before using. </summary>
 	internal static Mod ClassicMod = null;
 	/// <summary> Spirit Classic items and their Reforged replacements. </summary>
@@ -69,15 +67,12 @@ internal class SpiritClassic : ModSystem
 	{
 		if (ClassicMod.TryFind("Chitin", out ModItem chitin))
 			Recipe.Create(ModContent.ItemType<GildedScarab>()).AddRecipeGroup("GoldBars", 5).AddIngredient(chitin.Type, 8).AddTile(TileID.Anvils).Register();
-
-		if (ClassicMod.TryFind("SpellswordCrest", out ModItem spellsword))
-			Recipe.Create(spellsword.Type).AddIngredient(ModContent.ItemType<RogueCrest>()).AddIngredient(ItemID.CrystalShard, 8)
-				.AddIngredient(ItemID.SoulofLight, 15).AddTile(TileID.TinkerersWorkbench).Register();
 	}
 
 	public override void PostAddRecipes()
 	{
-		string fullLog = "Disabled recipes from Classic: ";
+		string disLog = "Disabled recipes from Classic: ";
+		string modLog = "Adapted recipes from Classic: ";
 
 		foreach (var recipe in Main.recipe)
 		{
@@ -85,27 +80,46 @@ internal class SpiritClassic : ModSystem
 				continue;
 
 			int cType = recipe.createItem?.type ?? 0;
-			if (!ClassicToReforged.ContainsKey(cType))
+			if (ModifyRecipe(recipe, out bool modified))
 			{
-				ModifyRecipe(recipe);
+				if (modified)
+					modLog += $"{ItemLoader.GetItem(cType)?.Name ?? string.Empty} ({recipe.RecipeIndex}), ";
+
 				continue;
 			}
 
 			recipe.DisableRecipe();
-			fullLog += $"{ItemLoader.GetItem(cType).Name} ({recipe.RecipeIndex}), ";
+			disLog += $"{ItemLoader.GetItem(cType)?.Name ?? string.Empty} ({recipe.RecipeIndex}), ";
 		}
 
-		SpiritReforgedMod.Instance.Logger.Info(fullLog.Remove(fullLog.Length - 2, 2));
+		SpiritReforgedMod.Instance.Logger.Info(disLog.Remove(disLog.Length - 2, 2));
+		SpiritReforgedMod.Instance.Logger.Info(modLog.Remove(modLog.Length - 2, 2));
 	}
 
 	/// <summary> Modifies recipes added by Classic if the result isn't contained in <see cref="ClassicToReforged"/>. </summary>
-	private static void ModifyRecipe(Recipe recipe)
+	private static bool ModifyRecipe(Recipe recipe, out bool modified)
 	{
+		modified = false;
+
+		if (ClassicToReforged.ContainsKey(recipe.createItem.type))
+			return false; //The result is obsolete
+
 		for (int i = recipe.requiredItem.Count - 1; i >= 0; i--)
 		{
-			if (recipe.requiredItem[i].ModItem?.Name is "DeepCascadeShard") //Replace Deep Cascade Shards with Mineral Slag
-				recipe.requiredItem[i] = new Item(ModContent.ItemType<MineralSlag>(), recipe.requiredItem[i].stack);
+			var ingredient = recipe.requiredItem[i];
+
+			if (!ingredient.IsAir && ClassicToReforged.TryGetValue(ingredient.type, out int reforgedType))
+			{
+				int stack = ingredient.stack;
+
+				recipe.requiredItem[i].ChangeItemType(reforgedType);
+				recipe.requiredItem[i].stack = stack;
+
+				modified = true;
+			}
 		}
+
+		return true;
 	}
 
 	/*public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight) //PreAddContent handles this more accurately
