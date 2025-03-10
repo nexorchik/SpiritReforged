@@ -8,7 +8,7 @@ SmallDriftwoodTile.MapEntry: Small Driftwood
 MediumDriftwoodTile.MapEntry: Medium Driftwood
 LargeDriftwoodTile.MapEntry: Large Driftwood
 BambooBirdCage.MapEntry: Bamboo Bird Cage
-KoiTotem_Tile.MapEntry: Koi Totem
+KoiTotemTile.MapEntry: Koi Totem
 HerosMemorialStatue.MapEntry: A Hero's Memorial
 TermiteJar_Tile.MapEntry: Termite Jar
 GarInAJarTile.MapEntry: Gar In A Jar
