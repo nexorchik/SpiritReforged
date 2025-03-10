@@ -7,7 +7,7 @@ public class SparrowCage : ModTile, IAutoloadTileItem
 {
 	private const int FrameHeight = 54;
 
-	void IAutoloadTileItem.SetItemDefaults(ModItem item) => item.Item.SetShopValues(ItemRarityColor.Blue1, Item.buyPrice(0, 4, 0, 0));
+	public void SetItemDefaults(ModItem item) => item.Item.SetShopValues(ItemRarityColor.Blue1, Item.buyPrice(0, 4, 0, 0));
 
 	public override void SetStaticDefaults()
 	{
@@ -16,11 +16,9 @@ public class SparrowCage : ModTile, IAutoloadTileItem
 		Main.tileLavaDeath[Type] = true;
 		Main.tileSolidTop[Type] = true;
 
-		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3);
-		TileObjectData.newTile.Origin = new Point16(3, 2);
-		TileObjectData.newTile.Width = 6;
-		TileObjectData.newTile.CoordinateHeights = [16, 16, 16];
+		TileObjectData.newTile.CopyFrom(TileObjectData.GetTileData(TileID.BirdCage, 0));
 		TileObjectData.newTile.DrawYOffset = 2;
+		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, TileObjectData.newTile.Width, 0);
 		TileObjectData.addTile(Type);
 
 		DustType = DustID.Glass;
@@ -40,7 +38,7 @@ public class SparrowCage : ModTile, IAutoloadTileItem
 		{
 			frameCounter = 0;
 
-			if (frame is 0 or 6 or 11 or 19 && !Main.rand.NextBool(5))
+			if (frame is 0 or 6 or 11 or 19 && !Main.rand.NextBool(12))
 				return;
 
 			frame = ++frame % numFrames;
