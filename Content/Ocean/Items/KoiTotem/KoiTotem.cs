@@ -96,30 +96,27 @@ public class KoiTotemTile : ModTile, IDrawPreview
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
 		var player = Main.LocalPlayer;
+
 		if (!closer)
 		{
 			player.AddBuff(ModContent.BuffType<KoiTotemBuff>(), 12);
 		}
-		else if (TileObjectData.IsTopLeft(i, j))
+		else if (TileObjectData.IsTopLeft(i, j) && KoiTotem.CursorOpacity > 0) //Create fancy visuals when bait is replenished
 		{
-			//Create fancy visuals when bait is replenished
-			if (KoiTotem.CursorOpacity > 0)
+			var pos = new Vector2(i, j).ToWorldCoordinates(0, 64);
+
+			if (Main.rand.NextBool())
 			{
-				var pos = new Vector2(i, j).ToWorldCoordinates(0, 64);
+				var color = Color.Lerp(Color.LightBlue, Color.Cyan, Main.rand.NextFloat());
+				float magnitude = Main.rand.NextFloat();
 
-				if (Main.rand.NextBool(3))
-				{
-					var color = Color.Lerp(Color.LightBlue, Color.Cyan, Main.rand.NextFloat());
-					float magnitude = Main.rand.NextFloat();
-
-					ParticleHandler.SpawnParticle(new GlowParticle(pos + new Vector2(Main.rand.NextFloat(48), 0), Vector2.UnitY * -magnitude,
-						color, (1f - magnitude) * .25f, Main.rand.Next(30, 120), 5, extraUpdateAction: delegate (Particle p)
-						{ p.Velocity = p.Velocity.RotatedBy(Main.rand.NextFloat(-.1f, .1f)); }));
-				}
-
-				if (KoiTotem.CursorOpacity > .9f)
-					ParticleHandler.SpawnParticle(new DissipatingImage(pos + new Vector2(24, 0), Color.Cyan * .15f, 0, .25f, 1f, "Bloom", 120));
+				ParticleHandler.SpawnParticle(new GlowParticle(pos + new Vector2(Main.rand.NextFloat(32), 0), Vector2.UnitY * -magnitude,
+					color, (1f - magnitude) * .25f, Main.rand.Next(30, 120), 5, extraUpdateAction: delegate (Particle p)
+					{ p.Velocity = p.Velocity.RotatedBy(Main.rand.NextFloat(-.1f, .1f)); }));
 			}
+
+			if (KoiTotem.CursorOpacity > .9f)
+				ParticleHandler.SpawnParticle(new DissipatingImage(pos + new Vector2(18, 0), Color.Cyan * .15f, 0, .25f, 1f, "Bloom", 120));
 		}
 	}
 
@@ -127,10 +124,8 @@ public class KoiTotemTile : ModTile, IDrawPreview
 	{
 		var tile = Main.tile[i, j];
 		var texture = TextureAssets.Tile[tile.TileType].Value;
-
 		var frame = new Point(tile.TileFrameX, tile.TileFrameY);
-		var source = new Rectangle(frame.X, frame.Y, 18, 18);
-
+		var source = new Rectangle(frame.X, frame.Y, 18, (frame.Y == 54) ? 18 : 16);
 		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
 		int offX = (frame.X % TileObjectData.GetTileData(Type, 0).CoordinateFullWidth == 0) ? -2 : 0;
 		var position = new Vector2(i, j) * 16 - Main.screenPosition + zero + new Vector2(offX, 0);
@@ -140,8 +135,27 @@ public class KoiTotemTile : ModTile, IDrawPreview
 		return false;
 	}
 
-	public void DrawPreview(SpriteBatch spriteBatch, TileObjectPreviewData data, Vector2 position)
+	public void DrawPreview(SpriteBatch spriteBatch, TileObjectPreviewData op, Vector2 position)
 	{
+		var texture = TextureAssets.Tile[op.Type].Value;
+		var data = TileObjectData.GetTileData(op.Type, op.Style, op.Alternate);
+		var color = ((op[0, 0] == 1) ? Color.White : Color.Red * .7f) * .5f;
+		
+		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
+		int style = data.CalculatePlacementStyle(op.Style, op.Alternate, op.Random);
 
+		for (int frameX = 0; frameX < 2; frameX++)
+		{
+			for (int frameY = 0; frameY < 4; frameY++)
+			{
+				(int x, int y) = (op.Coordinates.X + frameX, op.Coordinates.Y + frameY);
+
+				var source = new Rectangle(frameX * 20 + style * data.CoordinateFullWidth, frameY * 18, 18, (frameY == 3) ? 18 : 16);
+				int offX = (frameX == 0) ? -2 : 0;
+				var drawPos = new Vector2(x, y) * 16 + zero - Main.screenPosition + new Vector2(offX, 0);
+
+				spriteBatch.Draw(texture, drawPos, source, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+			}
+		}
 	}
 }
