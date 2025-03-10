@@ -347,9 +347,9 @@ internal class SavannaEcotone : EcotoneBase
 				WorldMethods.FindGround(x, ref y);
 
 				int type = types[WorldGen.genRand.Next(types.Length)];
-				int style = alt + WorldGen.genRand.Next(TileObjectData.GetTileData(type, alt).RandomStyleRange);
+				int style = alt + WorldGen.genRand.Next(TileObjectData.GetTileData(type, 0, alt).RandomStyleRange);
 
-				WorldGen.PlaceTile(x, y - 1, type, true, style: WorldGen.genRand.Next(style));
+				WorldGen.PlaceTile(x, y - 1, type, true, style: style);
 			}
 		}
 	}

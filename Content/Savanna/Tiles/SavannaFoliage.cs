@@ -6,6 +6,8 @@ namespace SpiritReforged.Content.Savanna.Tiles;
 
 public class SavannaFoliage : ModTile, IConvertibleTile
 {
+	public const int StyleRange = 15;
+
 	protected virtual int AnchorTile => ModContent.TileType<SavannaGrass>();
 	protected virtual Color MapColor => new(50, 92, 19);
 	protected virtual int Dust => DustID.JunglePlants;
@@ -30,7 +32,7 @@ public class SavannaFoliage : ModTile, IConvertibleTile
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 1, 0);
 		TileObjectData.newTile.AnchorValidTiles = [AnchorTile];
 		TileObjectData.newTile.StyleHorizontal = true;
-		TileObjectData.newTile.RandomStyleRange = 12;
+		TileObjectData.newTile.RandomStyleRange = StyleRange;
 		TileObjectData.addTile(Type);
 
 		AddMapEntry(MapColor);

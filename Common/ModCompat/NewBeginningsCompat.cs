@@ -165,7 +165,7 @@ internal class NewBeginningsCompat : ModSystem
 		{
 			for (int j = pos.Y - 10; j < pos.Y + 60; ++j)
 			{
-				if (Main.tile[i, j].HasTile && Main.tile[i, j].TileType == ModContent.TileType<KoiTotem_Tile>())
+				if (Main.tile[i, j].HasTile && Main.tile[i, j].TileType == ModContent.TileType<KoiTotemTile>())
 				{
 					resultPos = new Point16(i, j);
 					return true;
