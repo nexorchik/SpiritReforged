@@ -1,4 +1,6 @@
-﻿using SpiritReforged.Content.Savanna.Tiles;
+﻿using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Content.Savanna.Tiles;
+using Terraria.GameContent.Personalities;
 
 namespace SpiritReforged.Content.Savanna.Biome;
 
@@ -11,6 +13,8 @@ public class SavannaBiome : ModBiome
 
 		return Main.dayTime ? MusicLoader.GetMusicSlot(Mod, "Assets/Music/Savanna") : MusicLoader.GetMusicSlot(Mod, "Assets/Music/SavannaNight");
 	}
+
+	public override void SetStaticDefaults() => NPCHappinessHelper.SetAverage<SavannaBiome>(ModContent.GetInstance<JungleBiome>(), ModContent.GetInstance<DesertBiome>());
 
 	public override SceneEffectPriority Priority => SceneEffectPriority.BiomeMedium;
 	public override int Music => GetMusic();
