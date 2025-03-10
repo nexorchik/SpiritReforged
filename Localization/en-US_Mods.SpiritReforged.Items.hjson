@@ -1314,3 +1314,8 @@ KillieFishbowl: {
 	DisplayName: Killie Fishbowl
 	Tooltip: "'Maybe a bigger bowl next time?'"
 }
+
+SparrowCageItem: {
+	DisplayName: Sparrow Cage
+	Tooltip: ""
+}

@@ -31,4 +31,7 @@ public class SavannaGlobalItem : GlobalItem
 		if (item.type == Mod.Find<ModItem>("SparrowItem").Type)
 			item.value = Item.sellPrice(0, 0, 5, 0);
 	}
+
+	public override void AddRecipes()
+		=> Recipe.Create(Mod.Find<ModItem>("SparrowCageItem").Type).AddIngredient(ItemID.Terrarium).AddIngredient(Mod.Find<ModItem>("SparrowItem").Type).Register();
 }
