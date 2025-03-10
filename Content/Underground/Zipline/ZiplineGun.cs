@@ -250,23 +250,13 @@ public class ZiplineGun : ModItem
 	{
 		if (player.altFunctionUse == 2)
 		{
-			foreach (var zipline in ZiplineHandler.ziplines)
-			{
-				if (zipline.Owner == player)
-				{
-					FX(zipline);
-					ZiplineHandler.ziplines.Remove(zipline);
-				}
-			}
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				new ZipRemovalData((short)player.whoAmI).Send();
+
+			ZipRemovalData.RemoveZiplines((short)player.whoAmI);
 		}
 
 		return true;
-
-		static void FX(Zipline zipline)
-		{
-			foreach (var p in zipline.points)
-				ZiplineProj.DeathEffects(p);
-		}
 	}
 
 	public override bool CanRightClick() => true;

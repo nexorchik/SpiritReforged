@@ -2,6 +2,15 @@
 
 public static class NPCHelper
 {
+	/// <summary> <see cref="NPC.CanBeChasedBy"/> without checking <see cref="NPC.chaseable"/>. </summary>
+	public static bool CanBeStruck(this NPC npc, bool allowDummy = true)
+	{
+		if (allowDummy && npc.type == NPCID.TargetDummy)
+			return true;
+
+		return npc.active && npc.lifeMax > 5 && !npc.dontTakeDamage && !npc.friendly && !npc.immortal;
+	}
+
 	/// <summary> Applies summon tag of <paramref name="damage"/> to this NPC. </summary>
 	public static void ApplySummonTag(this NPC npc, int damage, bool sync = true)
 	{

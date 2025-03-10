@@ -221,6 +221,15 @@ public class FrostbiteProj : ModProjectile
 		return FrostbiteItem.AttackRange;
 	}
 
+	public override void OnKill(int timeLeft)
+	{
+		if (SoundEngine.TryGetActiveSound(loopedSound, out ActiveSound sound)) //Failsafe
+		{
+			sound.Stop();
+			loopedSound = SlotId.Invalid;
+		}
+	}
+
 	public override bool ShouldUpdatePosition() => false;
 
 	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
