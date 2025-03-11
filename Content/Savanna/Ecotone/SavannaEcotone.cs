@@ -1,4 +1,4 @@
-﻿using SpiritReforged.Common.TileCommon.CustomTree;
+﻿using SpiritReforged.Common.TileCommon.Tree;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Common.WorldGeneration.Ecotones;
 using SpiritReforged.Content.Savanna.Items;

@@ -6,7 +6,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.Metadata;
 
-namespace SpiritReforged.Common.TileCommon.CustomTree;
+namespace SpiritReforged.Common.TileCommon.Tree;
 
 /// <summary> Follows palm tree logic by default. </summary>
 public abstract class CustomTree : ModTile
@@ -194,7 +194,7 @@ public abstract class CustomTree : ModTile
 
 		var source = new Rectangle(tile.TileFrameX % (FrameSize * 12), 0, FrameSize - 2, FrameSize - 2);
 		var offset = Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1 ? Vector2.Zero : Vector2.One * 12;
-		var position = (new Vector2(i, j) + offset) * 16 - Main.screenPosition + TreeHelper.GetPalmTreeOffset(i, j);
+		var position = (new Vector2(i, j) + offset) * 16 - Main.screenPosition + TreeExtensions.GetPalmTreeOffset(i, j);
 
 		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
 		return false;
@@ -203,7 +203,7 @@ public abstract class CustomTree : ModTile
 	/// <summary> Used to draw treetops and tree branches based on coordinates resulting from <see cref="Noise"/>. </summary>
 	public virtual void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
 	{
-		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeHelper.GetPalmTreeOffset(i, j);
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeExtensions.GetPalmTreeOffset(i, j);
 		float rotation = Main.instance.TilesRenderer.GetWindCycle(i, j, TileSwaySystem.Instance.TreeWindCounter) * .1f;
 
 		if (IsTreeTop(i, j) && TopTexture != null) //Draw tops
@@ -235,7 +235,7 @@ public abstract class CustomTree : ModTile
 			if (tile.HasTile && tile.TileType == Type)
 			{
 				tile.TileFrameX = (short)(frameX * FrameSize);
-				tile.TileFrameY = TreeHelper.GetPalmOffset(j, variance, height, ref xOff);
+				tile.TileFrameY = TreeExtensions.GetPalmOffset(j, variance, height, ref xOff);
 			}
 		}
 

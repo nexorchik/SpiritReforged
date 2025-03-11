@@ -1,4 +1,4 @@
-using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.Tree;
 using SpiritReforged.Content.Forest.Stargrass.Items;
 using Terraria.Utilities;
 

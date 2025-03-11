@@ -16,6 +16,7 @@ using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.BuffCommon;
 using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.TileCommon.PresetTiles;
 
 namespace SpiritReforged;
 
@@ -33,6 +34,7 @@ public partial class SpiritReforgedMod : Mod
 
 	public override void Load()
 	{
+		SaplingTile.Autoload(this);
 		RubbleAutoloader.Autoloader.Load(this);
 		NPCUtils.NPCUtils.AutoloadModBannersAndCritters(this);
 		NPCUtils.NPCUtils.TryLoadBestiaryHelper();
