@@ -323,7 +323,8 @@ public class Ostrich : ModNPC
 		NPC.frame.Width = 96; //frameHeight = 90
 		NPC.frame.X = NPC.frame.Width * AIState;
 
-		NPC.frameCounter += frameRate;
+		if (!(AIState is (int)State.Idle2 && (int)NPC.frameCounter == 2 && Counter < 40)) //Hold this idle pose (looking back) specifically
+			NPC.frameCounter += frameRate;
 
 		if (AIState is (int)State.Running or (int)State.Walking) //Running and walking are the only states that loops automatically
 			NPC.frameCounter %= endFrames[AIState];
