@@ -1,7 +1,7 @@
 ﻿using SpiritReforged.Common.SimpleEntity;
 using SpiritReforged.Common.TileCommon.Corruption;
-using SpiritReforged.Common.TileCommon.CustomTree;
 using SpiritReforged.Common.TileCommon.TileSway;
+using SpiritReforged.Common.TileCommon.Tree;
 using SpiritReforged.Content.Savanna.DustStorm;
 using SpiritReforged.Content.Savanna.Items.Drywood;
 using SpiritReforged.Content.Savanna.Items.Food;
@@ -85,7 +85,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 	public override void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
 	{
-		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeHelper.GetPalmTreeOffset(i, j);
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeExtensions.GetPalmTreeOffset(i, j);
 		float rotation = GetSway(i, j) * .08f;
 
 		if (IsTreeTop(i, j)) //Draw treetops
@@ -202,7 +202,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 			if (tile.HasTile && tile.TileType == Type)
 			{
 				Framing.GetTileSafely(i, j - h).TileFrameX = (short)(style * FrameSize * 3 + WorldGen.genRand.Next(3) * FrameSize);
-				Framing.GetTileSafely(i, j - h).TileFrameY = TreeHelper.GetPalmOffset(j, variance, height, ref xOff);
+				Framing.GetTileSafely(i, j - h).TileFrameY = TreeExtensions.GetPalmOffset(j, variance, height, ref xOff);
 			}
 		}
 
@@ -261,7 +261,7 @@ public class AcaciaTreeHallow : AcaciaTree
 
 	public override void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
 	{
-		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeHelper.GetPalmTreeOffset(i, j);
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeExtensions.GetPalmTreeOffset(i, j);
 		float rotation = GetSway(i, j) * .08f;
 
 		if (IsTreeTop(i, j)) //Draw treetops

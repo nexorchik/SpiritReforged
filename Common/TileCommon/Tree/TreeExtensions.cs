@@ -1,7 +1,24 @@
-﻿namespace SpiritReforged.Common.TileCommon.CustomTree;
+﻿namespace SpiritReforged.Common.TileCommon.Tree;
 
-internal static class TreeHelper
+internal static class TreeExtensions
 {
+	public static Vector2 GetRandomTreePosition(this ModTree tree, Tile tile)
+	{
+		var size = tree.GetTreeSize(tile);
+		var halfSize = size / 2f;
+		var offset = new Vector2(Main.rand.NextFloat(-halfSize.X, halfSize.X), -Main.rand.NextFloat(size.Y * 0.1f, size.Y * 0.8f));
+		return offset;
+	}
+
+	public static Vector2 GetTreeSize(this ModTree tree, Tile tile)
+	{
+		int _ = 0;
+		int width = 0;
+		int height = 0;
+		tree.SetTreeFoliageSettings(tile, ref _, ref _, ref _, ref width, ref height);
+		return new Vector2(width, height);
+	}
+
 	/// <summary> Calculates the horizontal offset of a palm tree using the vanilla method. </summary>
 	public static Vector2 GetPalmTreeOffset(int i, int j) => new(Framing.GetTileSafely(i, j).TileFrameY - 2, 0);
 
