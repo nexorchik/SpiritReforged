@@ -1,5 +1,4 @@
 using SpiritReforged.Common.TileCommon;
-using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
@@ -18,7 +17,6 @@ public class SparrowCage : ModTile, IAutoloadTileItem
 		TileID.Sets.CritterCageLidStyle[Type] = 0;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.GetTileData(TileID.BirdCage, 0));
-		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, TileObjectData.newTile.Width, 0);
 		TileObjectData.addTile(Type);
 
 		DustType = DustID.Glass;
