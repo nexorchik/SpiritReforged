@@ -463,7 +463,7 @@ public class Hyena : ModNPC
 		int wall = Framing.GetTileSafely(x, y).WallType;
 
 		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Water && IsValidGround() && wall == WallID.None)
-			return .36f;
+			return (NPC.CountNPCS(Type) > 4) ? .13f : .36f;
 
 		return 0;
 
