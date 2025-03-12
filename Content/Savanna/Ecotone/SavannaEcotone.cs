@@ -15,7 +15,7 @@ namespace SpiritReforged.Content.Savanna.Ecotone;
 
 internal class SavannaEcotone : EcotoneBase
 {
-	private static Rectangle SavannaArea;
+	public static Rectangle SavannaArea;
 	private static int Steps = 0;
 
 	protected override void InternalLoad()
