@@ -9,7 +9,7 @@ public class LeatherHood : ModItem
 	{
 		Item.width = 22;
 		Item.height = 12;
-		Item.value = 3200;
+		Item.value = Item.sellPrice(silver: 30);
 		Item.rare = ItemRarityID.Blue;
 		Item.defense = 1;
 	}

@@ -7,7 +7,7 @@ public class BambooHalberd : ModItem
 		Item.damage = 5;
 		Item.knockBack = 2f;
 		Item.width = Item.height = 24;
-		Item.value = Item.sellPrice(silver: 18);
+		Item.value = Item.sellPrice(silver: 4);
 		Item.rare = ItemRarityID.White;
 		Item.useStyle = ItemUseStyleID.Shoot;
 		Item.useTime = Item.useAnimation = 20;

@@ -25,7 +25,7 @@ public class BambooKendoBlade : ModItem, IDashSword
 		Item.DamageType = DamageClass.Melee;
 		Item.width = Item.height = 46;
 		Item.useStyle = ItemUseStyleID.Swing;
-		Item.value = Item.sellPrice(silver: 18);
+		Item.value = Item.sellPrice(silver: 3);
 		Item.rare = ItemRarityID.White;
 		Item.UseSound = SoundID.Item1;
 		Item.shoot = ModContent.ProjectileType<KendoBladeLunge>();

@@ -24,7 +24,7 @@ public class CascadeHelmet : ModItem
 	{
 		Item.width = 28;
 		Item.height = 24;
-		Item.value = 4800;
+		Item.value = Item.sellPrice(gold: 1);
 		Item.rare = ItemRarityID.Blue;
 		Item.defense = 3;
 	}

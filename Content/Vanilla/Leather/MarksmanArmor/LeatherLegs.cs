@@ -7,7 +7,7 @@ public class LeatherLegs : ModItem
 	{
 		Item.width = 22;
 		Item.height = 18;
-		Item.value = 3500;
+		Item.value = Item.sellPrice(silver: 25);
 		Item.rare = ItemRarityID.Blue;
 		Item.defense = 1;
 	}

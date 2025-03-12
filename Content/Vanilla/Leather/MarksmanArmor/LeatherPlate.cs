@@ -9,7 +9,7 @@ public class LeatherPlate : ModItem
 	{
 		Item.width = 30;
 		Item.height = 18;
-		Item.value = 4000;
+		Item.value = Item.sellPrice(silver: 50);
 		Item.rare = ItemRarityID.Blue;
 		Item.defense = 2;
 	}

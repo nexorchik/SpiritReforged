@@ -16,7 +16,7 @@ public class OceanPendant : AccessoryItem
 		Item.width = 32;
 		Item.height = 36;
 		Item.rare = ItemRarityID.Green;
-		Item.value = Item.buyPrice(0, 0, 80, 0);
+		Item.value = Item.sellPrice(0, 4, 80, 0);
 		Item.accessory = true;
 	}
 
