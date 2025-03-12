@@ -26,7 +26,7 @@ public class PoolNoodle : ModItem
 		Item.DefaultToWhip(ModContent.ProjectileType<PoolNoodleProj>(), 14, 0, 4);
 		Item.width = Item.height = 38;
 		Item.rare = ItemRarityID.Blue;
-		Item.value = Item.sellPrice(silver: 30);
+		Item.value = Item.sellPrice(silver: 45);
 
 		style = (byte)Main.rand.Next(NumStyles);
 	}

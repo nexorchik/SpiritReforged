@@ -18,6 +18,7 @@ public class NightSky : FoodItem
 		Item.useStyle = ItemUseStyleID.DrinkLiquid;
 		Item.UseSound = SoundID.Item3;
 		Item.buffType = BuffID.WellFed2;
+		Item.value = Item.sellPrice(silver: 20);
 	}
 
 	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<MidnightApple>())

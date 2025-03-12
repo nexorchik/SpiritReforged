@@ -11,7 +11,7 @@ public class ButterflyStaff : ModItem
 		Item.damage = 14;
 		Item.width = 40;
 		Item.height = 40;
-		Item.value = Item.sellPrice(0, 0, 25, 0);
+		Item.value = Item.sellPrice(0, 2, 25, 0);
 		Item.rare = ItemRarityID.Blue;
 		Item.mana = 10;
 		Item.knockBack = 1;

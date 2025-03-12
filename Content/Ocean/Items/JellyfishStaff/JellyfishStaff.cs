@@ -18,7 +18,7 @@ public class JellyfishStaff : ModItem
 	{
 		Item.width = 52;
 		Item.height = 46;
-		Item.value = Item.sellPrice(0, 0, 25, 0);
+		Item.value = Item.sellPrice(0, 2, 0, 0);
 		Item.rare = ItemRarityID.Blue;
 		Item.mana = 10;
 		Item.damage = 11;

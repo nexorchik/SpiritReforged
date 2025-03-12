@@ -7,7 +7,7 @@ public class CascadeLeggings : ModItem
 	{
 		Item.width = 38;
 		Item.height = 26;
-		Item.value = 4000;
+		Item.value = Item.sellPrice(silver: 80);
 		Item.rare = ItemRarityID.Blue;
 		Item.defense = 3;
 	}

@@ -32,7 +32,7 @@ public abstract class FoodItem : ModItem
 		Item.height = Size.Y;
 		Item.rare = Rarity;
 		Item.maxStack = Item.CommonMaxStack;
-		Item.value = Item.sellPrice(0, 0, 0, 50);
+		Item.value = Item.sellPrice(0, 0, 5, 0);
 		Item.noUseGraphic = false;
 		Item.useStyle = ItemUseStyleID.EatFood;
 		Item.useTime = Item.useAnimation = 20;
