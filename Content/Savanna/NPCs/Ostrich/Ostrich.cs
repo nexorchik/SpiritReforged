@@ -364,7 +364,7 @@ public class Ostrich : ModNPC
 		int wall = Framing.GetTileSafely(x, y).WallType;
 
 		if (spawnInfo.Player.InModBiome<SavannaBiome>() && !spawnInfo.Water && Main.dayTime && IsValidGround() && wall == WallID.None)
-			return .38f;
+			return (NPC.CountNPCS(Type) > 4) ? .15f : .38f;
 
 		return 0;
 
