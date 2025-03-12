@@ -84,9 +84,10 @@ public class HuntingRifle : ModItem
         Item.shoot = ProjectileID.Bullet;
         Item.useAmmo = AmmoID.Bullet;
         Item.shootSpeed = 10f;
-    }
+		Item.value = Item.sellPrice(0, 3, 0, 0);
+	}
 
-    public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
         var unit = Vector2.Normalize(velocity);
 		float fxDistance = 45;

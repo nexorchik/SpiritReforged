@@ -11,7 +11,7 @@ public class CascadeChestplate : ModItem
 	{
 		Item.width = 38;
 		Item.height = 26;
-		Item.value = 5600;
+		Item.value = Item.sellPrice(gold: 1);
 		Item.rare = ItemRarityID.Blue;
 		Item.defense = 4;
 	}
