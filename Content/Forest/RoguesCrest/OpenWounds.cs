@@ -35,7 +35,10 @@ internal class OpenWoundsNPC : GlobalNPC
 				npc.DelBuff(index);
 
 			if (!Main.dedServ)
+			{
+				SoundEngine.PlaySound(SoundID.Item101 with { Pitch = .5f }, npc.Center);
 				SoundEngine.PlaySound(SoundID.NPCDeath1 with { Pitch = .5f }, npc.Center);
+			}
 
 			return true;
 		}
@@ -45,12 +48,14 @@ internal class OpenWoundsNPC : GlobalNPC
 
 	public override void UpdateLifeRegen(NPC npc, ref int damage)
 	{
+		const int damagePerTick = 10;
+
 		if (_bleedTime > 0)
-			npc.lifeRegen -= 20;
+			npc.lifeRegen -= damagePerTick * 2;
 
 		_bleedTime = (short)Math.Max(_bleedTime - 1, 0);
 
-		if (!Main.dedServ && Main.rand.NextBool(10) && _bleedTime > 0)
+		if (!Main.dedServ && _bleedTime > 0 && Main.rand.NextBool(8))
 			ParticleHandler.SpawnParticle(new RedBubble(npc.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(20f), Color.White, Main.rand.NextFloat(.5f, 1f), 20));
 	}
 
@@ -72,13 +77,15 @@ internal class OpenWoundsPlayer : ModPlayer
 {
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
-		if (hit.DamageType.CountsAsClass(DamageClass.Melee) && target.HasBuff<OpenWounds>())
+		if (DoesMelee() && target.HasBuff<OpenWounds>())
 		{
 			short time = 60 * 5;
 
 			if (OpenWoundsNPC.Proc(target, time) && Main.netMode == NetmodeID.MultiplayerClient)
 				new BleedTimeData((short)target.whoAmI, time).Send();
 		}
+
+		bool DoesMelee() => hit.DamageType.CountsAsClass(DamageClass.Melee) || hit.DamageType.CountsAsClass(DamageClass.SummonMeleeSpeed);
 	}
 }
 

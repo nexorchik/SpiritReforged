@@ -25,9 +25,8 @@ public abstract class MinionAccessory : AccessoryItem
 	{
 		Item.DamageType = DamageClass.Summon;
 		Item.accessory = true;
-
 		Item.damage = Data.Damage;
-		Item.shoot = Data.ProjType;
+		//Item.shoot = Data.ProjType;
 
 		Defaults();
 	}
@@ -37,9 +36,9 @@ public abstract class MinionAccessory : AccessoryItem
 
 	public override void UpdateEquip(Player player)
 	{
-		if (player.whoAmI == Main.myPlayer)
+		if (player.whoAmI == Main.myPlayer && MinionDataByItemId.TryGetValue(Type, out var data))
 		{
-			int projType = Item.shoot;
+			int projType = data.ProjType;
 			int projDamage = player.GetWeaponDamage(Item);
 
 			if (player.ownedProjectileCounts[projType] < 1)
