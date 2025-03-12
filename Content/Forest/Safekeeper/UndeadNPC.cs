@@ -1,5 +1,4 @@
-﻿using SpiritReforged.Common.Multiplayer;
-using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
 using System.IO;
 using Terraria.Audio;
@@ -29,27 +28,27 @@ public class UndeadNPC : GlobalNPC
 		NPCID.BloodMummy, NPCID.DarkMummy, NPCID.LightMummy];
 
 	private static readonly HashSet<NPC> ToDraw = [];
-	private static readonly HashSet<int> CustomUndeadTypes = [];
-
 	private static bool TrackingGore;
+
 	/// <summary> Decreases by <see cref="DecayRate"/>. </summary>
-	private float decayTime = 1;
+	private float _decayTime = 1;
+
+	public override bool InstancePerEntity => true;
 
 	internal static bool AddCustomUndead(params object[] args)
 	{
 		if (args.Length == 2 && args[1] is int customType) //Context, undead type
-			return CustomUndeadTypes.Add(customType);
+			return UndeadTypes.Add(customType);
 
 		return false;
 	}
 
-	internal static bool IsUndeadType(int type) => UndeadTypes.Contains(type) || CustomUndeadTypes.Contains(type) || NPCID.Sets.Zombies[type] || NPCID.Sets.Skeletons[type] || NPCID.Sets.DemonEyes[type];
-
-	private static bool ShouldTrackGore(NPC self) => self.TryGetGlobalNPC(out UndeadNPC _) && self.lastInteraction != 255 && Main.player[self.lastInteraction].HasAccessory<SafekeeperRing>();
-
-	public override bool InstancePerEntity => true;
+	/// <summary> Checks whether the NPC of the given type is considered "undead". </summary>
+	internal static bool IsUndeadType(int type) => UndeadTypes.Contains(type) || NPCID.Sets.Zombies[type] || NPCID.Sets.Skeletons[type] || NPCID.Sets.DemonEyes[type];
+	private static bool ShouldTrackGore(NPC self) => self.TryGetGlobalNPC(out UndeadNPC _) && Interaction(self).HasAccessory<SafekeeperRing>();
 	public override bool AppliesToEntity(NPC entity, bool lateInstantiation) => IsUndeadType(entity.type);
 
+	#region detours
 	public override void Load()
 	{
 		On_NPC.HitEffect_HitInfo += TrackGore;
@@ -57,15 +56,15 @@ public class UndeadNPC : GlobalNPC
 		On_Main.DrawNPCs += DrawNPCsInQueue;
 	}
 
+	/// <summary> Tracks on hit gores for removal according to <see cref="ShouldTrackGore"/>. </summary>
 	private static void TrackGore(On_NPC.orig_HitEffect_HitInfo orig, NPC self, NPC.HitInfo hit)
 	{
 		TrackingGore = ShouldTrackGore(self);
-
 		orig(self, hit);
-
 		TrackingGore = false;
 	}
 
+	/// <summary> Deactivates the spawned gore according to <see cref="TrackGore"/>. </summary>
 	private static int StopGore(On_Gore.orig_NewGore_IEntitySource_Vector2_Vector2_int_float orig, Terraria.DataStructures.IEntitySource source, Vector2 Position, Vector2 Velocity, int Type, float Scale)
 	{
 		int result = orig(source, Position, Velocity, Type, Scale);
@@ -98,7 +97,7 @@ public class UndeadNPC : GlobalNPC
 
 			float decayTime = 0;
 			if (npc.TryGetGlobalNPC(out UndeadNPC gNPC))
-				decayTime = gNPC.decayTime;
+				decayTime = gNPC._decayTime;
 
 			effect.Parameters["power"].SetValue(decayTime * 50f);
 			effect.Parameters["size"].SetValue(new Vector2(1, Main.npcFrameCount[npc.type]) * spotScale);
@@ -113,29 +112,39 @@ public class UndeadNPC : GlobalNPC
 
 		ToDraw.Clear();
 	}
+	#endregion
 
-	public override bool CheckDead(NPC npc)
+	public override void HitEffect(NPC npc, NPC.HitInfo hit)
 	{
-		if (!Main.player[npc.lastInteraction].HasAccessory<SafekeeperRing>())
-			return true;
+		if (npc.life <= 0 && Interaction(npc).HasAccessory<SafekeeperRing>())
+		{
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				npc.NPCLoot();
 
-		npc.NPCLoot();
-		BurnAway(npc);
+				npc.life = 1;
+				npc.dontTakeDamage = true;
+				npc.netUpdate = true;
 
-		npc.life = 1;
-		npc.dontTakeDamage = true;
-		npc.netUpdate = true;
+				_decayTime -= DecayRate;
+			}
 
-		decayTime -= DecayRate;
+			BurnAway(npc);
+		}
+	}
 
-		if (Main.netMode != NetmodeID.SinglePlayer)
-			new BurnUndeadData((byte)npc.whoAmI).Send();
-
-		return false;
+	/// <summary> Returns the index <see cref="NPC.lastInteraction"/> in singleplayer and <see cref="NPC.FindClosestPlayer()"/> in multiplayer. </summary>
+	private static Player Interaction(NPC npc)
+	{
+		//Resort to checking the closest player in mp because lastInteraction is only valid on the server, causing sync difficulties
+		if (Main.netMode == NetmodeID.SinglePlayer)
+			return Main.player[npc.lastInteraction];
+		else
+			return Main.player[npc.FindClosestPlayer()];
 	}
 
 	/// <summary> Visual and sound effects for burning away. </summary>
-	public static void BurnAway(NPC npc)
+	private static void BurnAway(NPC npc)
 	{
 		if (Main.dedServ)
 			return;
@@ -146,6 +155,7 @@ public class UndeadNPC : GlobalNPC
 		var pos = npc.Center;
 		for (int i = 0; i < 3; i++)
 			ParticleOrchestrator.SpawnParticlesDirect(ParticleOrchestraType.AshTreeShake, new ParticleOrchestraSettings() with { PositionInWorld = pos });
+
 		ParticleHandler.SpawnParticle(new Particles.LightBurst(npc.Center, 0, Color.Goldenrod with { A = 0 }, npc.scale * .8f, 10));
 
 		for (int i = 0; i < 15; i++)
@@ -157,10 +167,10 @@ public class UndeadNPC : GlobalNPC
 
 	public override void PostAI(NPC npc)
 	{
-		if (decayTime == 1)
+		if (_decayTime == 1)
 			return;
 
-		if ((decayTime -= DecayRate) <= 0)
+		if ((_decayTime -= DecayRate) <= 0)
 		{
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Dust_1") with { Pitch = .75f, PitchVariance = .25f }, npc.Center);
 			npc.active = false;
@@ -172,12 +182,12 @@ public class UndeadNPC : GlobalNPC
 		dust.color = new Color(25, 20, 20);
 	}
 
-	public override bool CanHitNPC(NPC npc, NPC target) => decayTime == 1;
-	public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot) => decayTime == 1;
+	public override bool CanHitNPC(NPC npc, NPC target) => _decayTime == 1;
+	public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot) => _decayTime == 1;
 
 	public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 	{
-		if (decayTime == 1)
+		if (_decayTime == 1)
 			return true;
 
 		ToDraw.Add(npc);
@@ -186,36 +196,13 @@ public class UndeadNPC : GlobalNPC
 
 	public override void SendExtraAI(NPC npc, BitWriter bitWriter, BinaryWriter binaryWriter)
 	{
-		binaryWriter.Write(decayTime);
+		binaryWriter.Write(_decayTime);
 		binaryWriter.Write(npc.dontTakeDamage); //dontTakeDamage isn't normally synced, so sync it here
 	}
 
 	public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader binaryReader)
 	{
-		decayTime = binaryReader.ReadSingle();
+		_decayTime = binaryReader.ReadSingle();
 		npc.dontTakeDamage = binaryReader.ReadBoolean();
 	}
-}
-
-internal class BurnUndeadData : PacketData
-{
-	private readonly byte _npcIndex;
-
-	public BurnUndeadData() { }
-	public BurnUndeadData(byte npcIndex) => _npcIndex = npcIndex;
-
-	public override void OnReceive(BinaryReader reader, int whoAmI)
-	{
-		byte index = reader.ReadByte();
-
-		if (Main.netMode == NetmodeID.Server)
-		{
-			new BurnUndeadData(index).Send();
-			return;
-		}
-
-		UndeadNPC.BurnAway(Main.npc[index]);
-	}
-
-	public override void OnSend(ModPacket modPacket) => modPacket.Write(_npcIndex);
 }
