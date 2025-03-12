@@ -1,3 +1,4 @@
+using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.ProjectileCommon;
@@ -66,7 +67,7 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 	{
 		var desiredPos = player.MountedCenter + new Vector2(0, -60 + (float)Math.Sin(Main.GameUpdateCount / 30f) * 5);
 
-		AiTimer = 0;
+		AiTimer = 10;
 
 		Projectile.rotation = Projectile.rotation.AngleLerp(0, 0.07f);
 
@@ -127,6 +128,18 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 			}
 
 			animate = true;
+		}
+	}
+
+	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+	{
+		if (Main.rand.NextBool(10))
+		{
+			ParticleHandler.SpawnParticle(new Particles.ImpactLine(Projectile.Center, Projectile.velocity * .1f, Color.Red.Additive(), new Vector2(.75f, 8), 8, Projectile));
+			ParticleHandler.SpawnParticle(new Particles.ImpactLine(Projectile.Center, Projectile.velocity * .1f, Color.White.Additive(), new Vector2(.3f, 5), 8, Projectile));
+
+			target.AddBuff(ModContent.BuffType<OpenWounds>(), 60 * 10);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/BigSwing"), Projectile.Center);
 		}
 	}
 
