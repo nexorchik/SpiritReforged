@@ -31,7 +31,7 @@ public abstract class SavannaShrubsBase : ModTile, IConvertibleTile
 		TileObjectData.newTile.RandomStyleRange = 11;
 		TileObjectData.addTile(Type);
 
-		AddMapEntry(new Color(50, 92, 19));
+		AddMapEntry(new Color(104, 156, 7));
 		DustType = DustID.Grass;
 		HitSound = SoundID.Grass;
 	}
