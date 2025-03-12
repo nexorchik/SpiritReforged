@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.TileCommon.TileSway;
+﻿using SpiritReforged.Common.TileCommon.PresetTiles;
+using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Common.WorldGeneration.Noise;
 using System.Linq;
@@ -51,6 +52,7 @@ public abstract class CustomTree : ModTile
 		return Framing.GetTileSafely(i, j).TileType == instance.Type;
 	}
 
+	#region detours
 	/// <summary> <inheritdoc/><para/>
 	/// Includes detours for tree drawing.
 	/// </summary>
@@ -61,6 +63,7 @@ public abstract class CustomTree : ModTile
 
 		On_TileDrawing.DrawTrees += DrawAllFoliage;
 		On_TileDrawing.PreDrawTiles += ResetPoints;
+		On_WorldGen.IsTileTypeFitForTree += MakeUnfit;
 
 		AppliedDetours = true;
 	}
@@ -83,6 +86,16 @@ public abstract class CustomTree : ModTile
 		if ((intoRenderTargets || Lighting.UpdateEveryFrame) && !solidLayer)
 			drawPoints.Clear();
 	}
+
+	/// <summary> Forces <see cref="CustomModTree"/>s to be unfit for gen. </summary>
+	private static bool MakeUnfit(On_WorldGen.orig_IsTileTypeFitForTree orig, ushort type)
+	{
+		if (SaplingTile.CustomAnchorTypes.Contains(type))
+			return false;
+
+		return orig(type);
+	}
+	#endregion
 
 	public override void SetStaticDefaults()
 	{

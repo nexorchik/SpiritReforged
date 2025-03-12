@@ -9,6 +9,32 @@ namespace SpiritReforged.Common.TileCommon.PresetTiles;
 /// <summary> Simplifies building a sapling tile by automatically setting common data. See <see cref="SaplingTile{T}"/> for <see cref="CustomTree"/>s. </summary>
 public abstract class SaplingTile : ModTile
 {
+	#region custom tree
+	//Excluded from SaplingTile<T> because it is generic
+	/// <summary> Stores tile anchors for custom trees. </summary>
+	public static readonly HashSet<ushort> CustomAnchorTypes = [];
+
+	/// <summary> Autoloads <see cref="CustomModTree"/>s for each <see cref="SaplingTile{T}"/> in the mod. Ensure that this is called after all required tiles are loaded. </summary>
+	public static void Autoload(Mod mod)
+	{
+		var saplings = mod.GetContent<SaplingTile>().ToArray();
+
+		for (int i = saplings.Length - 1; i >= 0; i--)
+		{
+			var c = saplings[i];
+
+			//Use reflection because we can't infer generic type here
+			if (c.GetType().GetProperty("AnchorTypes", BindingFlags.Instance | BindingFlags.Public)?.GetValue(c) is int[] anchors)
+			{
+				mod.AddContent(new CustomModTree(c.Type, anchors));
+
+				foreach (int type in anchors)
+					CustomAnchorTypes.Add((ushort)type);
+			}
+		}
+	}
+	#endregion
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
@@ -61,21 +87,6 @@ public abstract class SaplingTile : ModTile
 	{
 		if (i % 2 == 0)
 			effects = SpriteEffects.FlipHorizontally;
-	}
-
-	/// <summary> Autoloads <see cref="CustomModTree"/>s for each <see cref="SaplingTile{T}"/> in the mod. Ensure that this is called after all required tiles are loaded. </summary>
-	public static void Autoload(Mod mod) //Excluded from SaplingTile<T> because it is generic
-	{
-		var saplings = mod.GetContent<SaplingTile>().ToArray();
-
-		for (int i = saplings.Length - 1; i >= 0; i--)
-		{
-			var c = saplings[i];
-
-			//Use reflection because we can't infer generic type here
-			if (c.GetType().GetProperty("AnchorTypes", BindingFlags.Instance | BindingFlags.Public)?.GetValue(c) is int[] anchors)
-				mod.AddContent(new CustomModTree(c.Type, anchors));
-		}
 	}
 }
 
