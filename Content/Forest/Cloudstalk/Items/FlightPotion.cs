@@ -19,6 +19,7 @@ public class FlightPotion : ModItem
 		Item.buffType = ModContent.BuffType<FlightPotionBuff>();
 		Item.buffTime = 14400;
 		Item.UseSound = SoundID.Item3;
+		Item.value = Item.sellPrice(silver: 2);
 	}
 
 	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BottledWater).AddIngredient(ModContent.ItemType<Cloudstalk>())

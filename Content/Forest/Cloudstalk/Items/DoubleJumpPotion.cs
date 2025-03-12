@@ -27,6 +27,7 @@ public class DoubleJumpPotion : ModItem
 		Item.buffType = ModContent.BuffType<DoubleJumpPotionBuff>();
 		Item.buffTime = 10800;
 		Item.UseSound = SoundID.Item3;
+		Item.value = Item.sellPrice(silver: 2);
 	}
 
 	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BottledWater).AddIngredient(ModContent.ItemType<Cloudstalk>())

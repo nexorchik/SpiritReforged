@@ -24,6 +24,7 @@ public class FishCrate : FloatingItem
 		Item.useAnimation = 15;
 		Item.useTime = 10;
 		Item.consumable = true;
+		Item.value = Item.sellPrice(gold: 1);
 	}
 
 	public override bool CanRightClick() => true;

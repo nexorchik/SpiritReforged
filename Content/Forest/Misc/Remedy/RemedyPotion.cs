@@ -22,6 +22,7 @@ public class RemedyPotion : ModItem
 		Item.buffType = ModContent.BuffType<RemedyPotionBuff>();
 		Item.buffTime = 36000;
 		Item.UseSound = SoundID.Item3;
+		Item.value = Item.sellPrice(silver: 2);
 	}
 
 	public override bool? UseItem(Player player)

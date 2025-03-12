@@ -27,6 +27,7 @@ public class SunkenTreasure : FloatingItem
 		Item.useTime = 10;
 		Item.noMelee = true;
 		Item.autoReuse = false;
+		Item.value = Item.sellPrice(gold: 1);
 	}
 
 	public override bool CanRightClick() => true;
