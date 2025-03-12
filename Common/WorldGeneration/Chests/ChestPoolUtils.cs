@@ -43,13 +43,14 @@ public static class ChestPoolUtils
 			{
 				case int[] itemPool:
 					chest.item[itemIndex].SetDefaults(itemPool[Main.rand.Next(itemPool.Length)]);
-					chest.item[itemIndex].stack = chestInfo.stack;
 					break;
 				case int intItem:
 					chest.item[itemIndex].SetDefaults((int)chestInfo.items);
-					chest.item[itemIndex].stack = chestInfo.stack;
 					break;
 			}
+
+			chest.item[itemIndex].stack = chestInfo.stack;
+			chest.item[itemIndex].Prefix(-1);
 
 			itemIndex++;
 		}
