@@ -10,7 +10,7 @@ public class SailorCap : ModItem
 		Item.width = 22;
 		Item.height = 22;
 		Item.value = Item.sellPrice(0, 0, 6, 0);
-		Item.rare = ItemRarityID.Blue;
+		Item.rare = ItemRarityID.White;
 		Item.vanity = true;
 	}
 }

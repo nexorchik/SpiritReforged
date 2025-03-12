@@ -19,7 +19,7 @@ public class Kelp : FloatingItem
 		Item.height = 24;
 		Item.useStyle = ItemUseStyleID.Swing;
 		Item.value = 0;
-		Item.rare = ItemRarityID.Blue;
+		Item.rare = ItemRarityID.White;
 		Item.createTile = ModContent.TileType<OceanKelp>();
 		Item.maxStack = Item.CommonMaxStack;
 		Item.autoReuse = true;

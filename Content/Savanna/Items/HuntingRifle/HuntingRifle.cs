@@ -78,7 +78,7 @@ public class HuntingRifle : ModItem
         Item.noMelee = true;
         Item.noUseGraphic = true;
         Item.autoReuse = true;
-        Item.rare = ItemRarityID.Green;
+        Item.rare = ItemRarityID.Blue;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.DamageType = DamageClass.Ranged;
         Item.shoot = ProjectileID.Bullet;

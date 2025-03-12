@@ -24,7 +24,7 @@ public class RogueCrest : MinionAccessory
 		Item.width = 38;
 		Item.height = 36;
 		Item.value = Item.buyPrice(0, 3, 0, 0);
-		Item.rare = ItemRarityID.Green;
+		Item.rare = ItemRarityID.Blue;
 		Item.defense = 1;
 		Item.accessory = true;
 	}

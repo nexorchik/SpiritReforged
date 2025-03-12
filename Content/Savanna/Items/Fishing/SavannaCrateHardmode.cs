@@ -6,7 +6,13 @@ namespace SpiritReforged.Content.Savanna.Items.Fishing;
 public class SavannaCrateHardmode : ModItem
 {
 	public override void SetStaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<SavannaCrate>();
-	public override void SetDefaults() => Item.DefaultToPlaceableTile(ModContent.TileType<SavannaCrateHardmodeTile>());
+	
+	public override void SetDefaults()
+	{
+		Item.DefaultToPlaceableTile(ModContent.TileType<SavannaCrateHardmodeTile>());
+		Item.rare = ItemRarityID.Green;
+	}
+
 	public override bool CanRightClick() => true;
 
 	public override void ModifyItemLoot(ItemLoot itemLoot)

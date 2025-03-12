@@ -16,6 +16,6 @@ internal class LivingBaobabLeafWand : ModItem
 		Item.useStyle = ItemUseStyleID.Swing;
 		Item.useTurn = true;
 		Item.autoReuse = true;
-		Item.rare = ItemRarityID.Green;
+		Item.rare = ItemRarityID.Blue;
 	}
 }

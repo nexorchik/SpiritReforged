@@ -210,7 +210,7 @@ public class ZiplineGun : ModItem
 		Item.noMelee = true;
 		Item.noUseGraphic = true;
 		Item.value = Item.sellPrice(0, 1, 0, 0);
-		Item.rare = ItemRarityID.Green;
+		Item.rare = ItemRarityID.Blue;
 		Item.autoReuse = true;
 		Item.shoot = ModContent.ProjectileType<ZiplineProj>();
 		Item.shootSpeed = 8f;

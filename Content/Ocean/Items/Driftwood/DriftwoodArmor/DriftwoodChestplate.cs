@@ -8,7 +8,7 @@ public class DriftwoodChestplate : ModItem
 		Item.width = 38;
 		Item.height = 26;
 		Item.value = Item.sellPrice(0, 0, 0, 0);
-		Item.rare = ItemRarityID.Blue;
+		Item.rare = ItemRarityID.White;
 		Item.defense = 2;
 	}
 }

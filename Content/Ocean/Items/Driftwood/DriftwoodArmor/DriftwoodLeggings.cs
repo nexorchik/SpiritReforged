@@ -8,7 +8,7 @@ public class DriftwoodLeggings : ModItem
 		Item.width = 38;
 		Item.height = 26;
 		Item.value = 0;
-		Item.rare = ItemRarityID.Blue;
+		Item.rare = ItemRarityID.White;
 		Item.defense = 1;
 	}
 }

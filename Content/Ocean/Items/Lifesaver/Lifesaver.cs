@@ -10,7 +10,7 @@ public class Lifesaver : ModItem
 		Item.Size = new Vector2(30);
 		Item.useTime = Item.useAnimation = 20;
 		Item.useStyle = ItemUseStyleID.Swing;
-		Item.rare = ItemRarityID.Blue;
+		Item.rare = ItemRarityID.Yellow;
 		Item.UseSound = SoundID.Item3;
 		Item.noMelee = true;
 		Item.mountType = ModContent.MountType<MantarayMount>();

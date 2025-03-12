@@ -9,8 +9,8 @@ public class CraneFeather : ModItem
 	{
 		Item.width = 30;
 		Item.height = 34;
-		Item.value = Item.sellPrice(gold: 2);
-		Item.rare = ItemRarityID.Green;
+		Item.value = Item.sellPrice(gold: 1);
+		Item.rare = ItemRarityID.Blue;
 		Item.accessory = true;
 	}
 
