@@ -12,7 +12,7 @@ public class WheatgrassSeedPouch : ModItem
 	{
 		Item.width = Item.height = 26;
 		Item.value = Item.sellPrice(0, 0, 0, 5);
-		Item.rare = ItemRarityID.Blue;
+		Item.rare = ItemRarityID.White;
 		Item.shoot = ModContent.ProjectileType<WheatgrassSeedProjectile>();
 		Item.UseSound = SoundID.Item1;
 		Item.useStyle = ItemUseStyleID.Swing;

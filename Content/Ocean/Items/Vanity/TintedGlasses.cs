@@ -14,7 +14,7 @@ public class TintedGlasses : ModItem
 		Item.width = 28;
 		Item.height = 24;
 		Item.value = Item.buyPrice(0, 1, 0, 0);
-		Item.rare = ItemRarityID.Blue;
+		Item.rare = ItemRarityID.White;
 		Item.vanity = true;
 	}
 }

@@ -8,7 +8,7 @@ public class DriftwoodHelmet : ModItem
 		Item.width = 28;
 		Item.height = 24;
 		Item.value = 0;
-		Item.rare = ItemRarityID.Blue;
+		Item.rare = ItemRarityID.White;
 		Item.defense = 2;
 	}
 

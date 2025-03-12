@@ -14,7 +14,7 @@ public class ExplorerTreadsItem : AccessoryItem
 		Item.width = 28;
 		Item.height = 20;
 		Item.value = Item.buyPrice(0, 6, 75, 0);
-		Item.rare = ItemRarityID.Green;
+		Item.rare = ItemRarityID.Blue;
 		Item.accessory = true;
 	}
 

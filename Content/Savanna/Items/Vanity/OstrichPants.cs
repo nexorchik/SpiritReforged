@@ -10,7 +10,7 @@ public class OstrichPants : ModItem
 		Item.width = 34;
 		Item.height = 30;
 		Item.value = Item.sellPrice(0, 1, 0, 0);
-		Item.rare = ItemRarityID.Blue;
+		Item.rare = ItemRarityID.White;
 		Item.vanity = true;
 	}
 }

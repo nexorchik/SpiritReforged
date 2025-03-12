@@ -8,7 +8,7 @@ public class BikiniBottom : ModItem
 		Item.width = 22;
 		Item.height = 12;
 		Item.value = Item.buyPrice(0, 5, 0, 0);
-		Item.rare = ItemRarityID.Blue;
+		Item.rare = ItemRarityID.White;
 		Item.vanity = true;
 	}
 }
