@@ -111,21 +111,20 @@ public class CampfireSlot : SingleSlotEntity
 		return TileID.Sets.Campfire[t.TileType] && TileObjectData.IsTopLeft(x, y);
 	}
 
-	public override bool CanAddItem(Item item) => RoastGlobalTile.AllowedTypes.Contains(item.type);
+	public override bool CanAddItem(Item item) => RoastGlobalTile.AllowedTypes.ContainsKey(item.type);
 
 	public override void Update()
 	{
 		base.Update();
 
-		if (item.type == ModContent.ItemType<RawMeat>() && CampfireLit() && ++cookCounter >= cookCounterMax)
+		if (RoastGlobalTile.AllowedTypes.TryGetValue(item.type, out int value) && CampfireLit() && ++cookCounter >= cookCounterMax)
 		{
-			item = new Item(ModContent.ItemType<CookedMeat>());
+			item = new Item(value);
 			cookCounter = 0;
 
 			for (int i = 0; i < 3; i++)
 			{
 				var pos = Position.ToWorldCoordinates() + new Vector2(16, -4) + Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f);
-				//var pos = Main.rand.NextVector2FromRectangle(new Rectangle(Position.X * 16, Position.Y * 16, 16 * 3, 16 * 2));
 				var settings = new ParticleOrchestraSettings() { PositionInWorld = pos };
 
 				if (Main.netMode == NetmodeID.Server)
@@ -145,7 +144,9 @@ public class CampfireSlot : SingleSlotEntity
 public class RoastGlobalTile : GlobalTile
 {
 	private static Asset<Texture2D> TileTexture;
-	internal static HashSet<int> AllowedTypes;
+
+	/// <summary> Raw to cooked items. </summary>
+	internal static Dictionary<int, int> AllowedTypes;
 
 	private static TileEntity Entity(int i, int j)
 	{
@@ -165,7 +166,7 @@ public class RoastGlobalTile : GlobalTile
 	public override void SetStaticDefaults()
 	{
 		TileTexture = Mod.Assets.Request<Texture2D>("Content/Savanna/Items/CampfireSpit_Tile");
-		AllowedTypes = [ModContent.ItemType<RawMeat>(), ModContent.ItemType<CookedMeat>()];
+		AllowedTypes = new() { { ModContent.ItemType<RawMeat>(), ModContent.ItemType<CookedMeat>() }, { ItemID.Marshmallow, ItemID.CookedMarshmallow } };
 	}
 
 	public override void MouseOver(int i, int j, int type)
@@ -217,7 +218,7 @@ public class RoastGlobalTile : GlobalTile
 				var itemTexture = TextureAssets.Item[slot.item.type];
 				var source = itemTexture.Frame(1, 3, 0, 2);
 
-				spriteBatch.Draw(itemTexture.Value, position + new Vector2(25, 12), source, Lighting.GetColor(i + 1, j + 1), 0, source.Size() / 2, 1, default, 0);
+				spriteBatch.Draw(itemTexture.Value, position + new Vector2(25, 14), source, Lighting.GetColor(i + 1, j + 1), 0, source.Size() / 2, 1, default, 0);
 			}
 		}
 
