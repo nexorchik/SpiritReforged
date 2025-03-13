@@ -70,7 +70,7 @@ TumblerPetBuff: {
 
 Frozen: {
 	DisplayName: Frozen
-	Description: Slows enemy speed
+	Description: Reduced enemy movement speed
 }
 
 GildedScarabBuff: {
@@ -91,4 +91,9 @@ ExplorerSpeed: {
 RemedyPotionBuff: {
 	DisplayName: Remedy
 	Description: Immunity to some harmful effects
+}
+
+OpenWounds: {
+	DisplayName: Open Wounds
+	Description: Susceptible to bleeding
 }

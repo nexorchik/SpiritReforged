@@ -100,6 +100,7 @@ public class KendoBladeSwing : ModProjectile
 	public override void SetDefaults()
 	{
 		Projectile.Size = new Vector2(18);
+		Projectile.DamageType = DamageClass.Melee;
 		Projectile.friendly = true;
 		Projectile.ignoreWater = true;
 		Projectile.tileCollide = false;
@@ -188,6 +189,7 @@ public class KendoBladeLunge : ModProjectile
 	public override void SetDefaults()
 	{
 		Projectile.Size = new Vector2(38);
+		Projectile.DamageType = DamageClass.Melee;
 		Projectile.friendly = true;
 		Projectile.ignoreWater = true;
 		Projectile.tileCollide = false;

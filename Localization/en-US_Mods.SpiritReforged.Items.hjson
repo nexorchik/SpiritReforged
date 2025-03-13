@@ -986,6 +986,7 @@ RogueCrest: {
 		'''
 		Summons a rusted sword to fight for you
 		This sword does not take up minion slots
+		Rarely marks enemies, causing damage over time when struck with melee
 		'''
 }
 
