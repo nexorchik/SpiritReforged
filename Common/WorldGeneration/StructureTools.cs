@@ -21,14 +21,14 @@ internal static class StructureTools
 	public static Point16 PlaceByOrigin(string structure, Point16 position, Vector2 origin, Mod mod = null, bool cullAbove = false)
 	{
 		mod ??= ModContent.GetInstance<SpiritReforgedMod>();
-		var dims = new Point16();
-		StructureHelper.Generator.GetDimensions(structure, mod, ref dims);
+
+		var dims = StructureHelper.API.Generator.GetStructureDimensions(structure, mod);
 		position = (position.ToVector2() - dims.ToVector2() * origin).ToPoint16();
 
 		if (cullAbove)
 			CullLine(position, dims);
 
-		StructureHelper.Generator.GenerateStructure(structure, position, mod);
+		StructureHelper.API.Generator.GenerateStructure(structure, position, mod);
 		return position;
 	}
 

@@ -30,8 +30,8 @@ internal class FishingAreaMicropass : Micropass
 			int subId = WorldGen.genRand.Next(5);
 			string subChar = WorldGen.genRand.NextBool() ? "a" : "b";
 			string structureName = "Assets/Structures/Coves/FishCove" + subId + subChar;
-			Point16 size = new();
-			StructureHelper.Generator.GetDimensions(structureName, ModContent.GetInstance<SpiritReforgedMod>(), ref size);
+
+			Point16 size = StructureHelper.API.Generator.GetStructureDimensions(structureName, ModContent.GetInstance<SpiritReforgedMod>());
 			Point16 position;
 
 			do
