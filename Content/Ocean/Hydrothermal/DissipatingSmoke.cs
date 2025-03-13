@@ -52,7 +52,7 @@ public class DissipatingSmoke : Particle
 
 	public override void CustomDraw(SpriteBatch spriteBatch)
 	{
-		var value = AssetLoader.LoadedTextures["Smoke"];
+		var value = AssetLoader.LoadedTextures["Smoke"].Value;
 		var effect = AssetLoader.LoadedShaders["DistortDissipateTexture"];
 		int stretch = 25;
 
@@ -62,7 +62,7 @@ public class DissipatingSmoke : Particle
 
 			effect.Parameters["uColor"].SetValue(color.ToVector4());
 			effect.Parameters["uTexture"].SetValue(value);
-			effect.Parameters["perlinNoise"].SetValue(AssetLoader.LoadedTextures["noise"]);
+			effect.Parameters["perlinNoise"].SetValue(AssetLoader.LoadedTextures["noise"].Value);
 			effect.Parameters["Progress"].SetValue(Progress);
 			effect.Parameters["xMod"].SetValue(_noiseStretch.X);
 			effect.Parameters["yMod"].SetValue(_noiseStretch.Y);

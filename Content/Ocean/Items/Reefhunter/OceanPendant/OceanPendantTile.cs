@@ -76,10 +76,10 @@ public class OceanPendantTile : ModTile
 		float scale = .1f;
 		float distanceMult = Math.Clamp(1f - Main.LocalPlayer.Distance(worldPos) / (16 * 25), 0, 1);
 
-		spriteBatch.Draw(AssetLoader.LoadedTextures["Star2"], drawPos, null, (Color.Yellow with { A = 0 }) * .5f * distanceMult,
+		spriteBatch.Draw(AssetLoader.LoadedTextures["Star2"].Value, drawPos, null, (Color.Yellow with { A = 0 }) * .5f * distanceMult,
 			rotation, AssetLoader.LoadedTextures["Star2"].Size() / 2, scale, SpriteEffects.None, 0);
 
-		spriteBatch.Draw(AssetLoader.LoadedTextures["Star"], drawPos, null, (Color.White with { A = 0 }) * distanceMult,
+		spriteBatch.Draw(AssetLoader.LoadedTextures["Star"].Value, drawPos, null, (Color.White with { A = 0 }) * distanceMult,
 			rotation, AssetLoader.LoadedTextures["Star"].Size() / 2, scale, SpriteEffects.None, 0);
 	}
 }

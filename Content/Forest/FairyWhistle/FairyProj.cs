@@ -66,7 +66,7 @@ public class FairyProj : ModProjectile
 	public override bool PreDraw(ref Color lightColor)
 	{
 		var color = FairyMinion.StyleColor(ColorStyle).Additive();
-		var bloom = AssetLoader.LoadedTextures["Bloom"];
+		var bloom = AssetLoader.LoadedTextures["Bloom"].Value;
 		Main.spriteBatch.Draw(bloom, Projectile.Center - Main.screenPosition, null, color * Projectile.Opacity, 0, bloom.Size() / 2, Projectile.scale * 0.15f, SpriteEffects.None, 0);
 		
 		Projectile.QuickDrawTrail(Main.spriteBatch, 0.4f, drawColor: color);

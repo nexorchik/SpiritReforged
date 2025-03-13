@@ -41,7 +41,7 @@ internal class ResistanceTextHandler : ILoadable
 
 			if (damage == 0) //Special case where the player resists ALL damage
 			{
-				var ray = AssetLoader.LoadedTextures["GodrayCircle"];
+				var ray = AssetLoader.LoadedTextures["GodrayCircle"].Value;
 
 				Main.spriteBatch.Draw(ray, center, null, Color.CornflowerBlue.Additive(), (float)Main.timeForVisualEffects / 80f, ray.Size() / 2, cText.scale * .075f * span, default, 0);
 				Main.spriteBatch.Draw(shield, center, null, Color.Cyan.Additive(), cText.rotation, shield.Size() / 2, cText.scale * .8f * span, default, 0);

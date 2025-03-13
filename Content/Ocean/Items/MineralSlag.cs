@@ -79,7 +79,7 @@ public class MineralSlagPickup : MineralSlag
 			var texture = TextureAssets.Item[Type].Value;
 			var source = VariantGlobalItem.GetSource(Item);
 
-			Main.EntitySpriteDraw(AssetLoader.LoadedTextures["Bloom"], Item.Center - Main.screenPosition, null,
+			Main.EntitySpriteDraw(AssetLoader.LoadedTextures["Bloom"].Value, Item.Center - Main.screenPosition, null,
 				(Color.Yellow with { A = 0 }) * .35f * intensity, rotation, AssetLoader.LoadedTextures["Bloom"].Size() / 2, Item.scale * .25f, SpriteEffects.None);
 
 			for (int i = 0; i < 3; i++)

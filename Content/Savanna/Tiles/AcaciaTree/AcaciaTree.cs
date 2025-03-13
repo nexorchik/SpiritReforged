@@ -159,7 +159,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 			effect.Parameters["noiseScroll"].SetValue(Main.GameUpdateCount * 0.0015f);
 			effect.Parameters["noiseStretch"].SetValue(3);
 			effect.Parameters["uWorldViewProjection"].SetValue(renderMatrix);
-			effect.Parameters["noiseTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"]);
+			effect.Parameters["noiseTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"].Value);
 			pass.Apply();
 
 			Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2);

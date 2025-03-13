@@ -388,10 +388,10 @@ public class RoyalKhopeshHeld : ModProjectile
 	private static void SetSandtrailParams(out Effect effect, float progress, float swingProgress)
 	{
 		effect = AssetLoader.LoadedShaders["NoiseParticleTrail"];
-		effect.Parameters["baseTexture"].SetValue(AssetLoader.LoadedTextures["noise"]);
+		effect.Parameters["baseTexture"].SetValue(AssetLoader.LoadedTextures["noise"].Value);
 		effect.Parameters["baseColorDark"].SetValue(SAND_DARK.ToVector4());
 		effect.Parameters["baseColorLight"].SetValue(SAND_LIGHT.ToVector4());
-		effect.Parameters["overlayTexture"].SetValue(AssetLoader.LoadedTextures["particlenoise"]);
+		effect.Parameters["overlayTexture"].SetValue(AssetLoader.LoadedTextures["particlenoise"].Value);
 		effect.Parameters["overlayColor"].SetValue(SAND_PARTICLE.ToVector4());
 
 		effect.Parameters["coordMods"].SetValue(new Vector2(1.8f, 0.3f));
@@ -408,10 +408,10 @@ public class RoyalKhopeshHeld : ModProjectile
 	private static void SetRedtrailParams(out Effect effect, float progress, float swingProgress)
 	{
 		effect = AssetLoader.LoadedShaders["NoiseParticleTrail"];
-		effect.Parameters["baseTexture"].SetValue(AssetLoader.LoadedTextures["noiseCrystal"]);
+		effect.Parameters["baseTexture"].SetValue(AssetLoader.LoadedTextures["noiseCrystal"].Value);
 		effect.Parameters["baseColorDark"].SetValue(RUBY_DARK.ToVector4());
 		effect.Parameters["baseColorLight"].SetValue(RUBY_LIGHT.ToVector4());
-		effect.Parameters["overlayTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"]);
+		effect.Parameters["overlayTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"].Value);
 		effect.Parameters["overlayColor"].SetValue(RUBY_PARTICLE.ToVector4());
 
 		effect.Parameters["coordMods"].SetValue(new Vector2(4f, 1f));
@@ -431,7 +431,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		float windupProgress = (progress) / WINDUP_TIME;
 		windupProgress = Min(windupProgress, 1);
 
-		Texture2D starTex = AssetLoader.LoadedTextures["Star"];
+		Texture2D starTex = AssetLoader.LoadedTextures["Star"].Value;
 		GlowmaskProjectile.ProjIdToGlowmask.TryGetValue(Type, out GlowmaskInfo glowmaskInfo);
 		Texture2D glowmaskTex = glowmaskInfo.Glowmask.Value;
 

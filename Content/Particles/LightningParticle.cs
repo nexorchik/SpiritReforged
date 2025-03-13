@@ -32,8 +32,8 @@ public class LightningParticle : Particle
 		var drawColor = Color.Lerp(Color.White, Color, EaseFunction.EaseQuadIn.Ease(Progress)).Additive();
 
 		Effect beamEffect = AssetLoader.LoadedShaders["Lightning"];
-		beamEffect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["Lightning"]);
-		beamEffect.Parameters["perlinNoise"].SetValue(AssetLoader.LoadedTextures["noise"]);
+		beamEffect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["Lightning"].Value);
+		beamEffect.Parameters["perlinNoise"].SetValue(AssetLoader.LoadedTextures["noise"].Value);
 		beamEffect.Parameters["Progress"].SetValue(Progress);
 		beamEffect.Parameters["uTime"].SetValue(EaseFunction.EaseQuadOut.Ease(Progress) / 1.5f);
 

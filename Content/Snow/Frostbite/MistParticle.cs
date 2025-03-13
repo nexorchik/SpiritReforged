@@ -45,12 +45,12 @@ public class MistParticle : Particle
 
 	public override void CustomDraw(SpriteBatch spriteBatch)
 	{
-		var texture = AssetLoader.LoadedTextures["SmokeSimple"];
+		var texture = AssetLoader.LoadedTextures["SmokeSimple"].Value;
 		Effect effect = AssetLoader.LoadedShaders["DistortDissipateTexture"];
 
 		effect.Parameters["uColor"].SetValue(Color.ToVector4());
 		effect.Parameters["uTexture"].SetValue(texture);
-		effect.Parameters["perlinNoise"].SetValue(AssetLoader.LoadedTextures["noise"]);
+		effect.Parameters["perlinNoise"].SetValue(AssetLoader.LoadedTextures["noise"].Value);
 		effect.Parameters["Progress"].SetValue(Progress);
 		effect.Parameters["xMod"].SetValue(_noiseStretch.X);
 		effect.Parameters["yMod"].SetValue(_noiseStretch.Y);

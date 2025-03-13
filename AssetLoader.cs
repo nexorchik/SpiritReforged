@@ -11,7 +11,7 @@ internal static class AssetLoader
 	public static BlendState NonPremultipliedAlphaFix;
 
 	public static BasicEffect BasicShaderEffect;
-	public static IDictionary<string, Texture2D> LoadedTextures = new Dictionary<string, Texture2D>();
+	public static IDictionary<string, Asset<Texture2D>> LoadedTextures = new Dictionary<string, Asset<Texture2D>>();
 	public static IDictionary<string, Effect> LoadedShaders = new Dictionary<string, Effect>();
 
 	public static void Load(Mod mod)
@@ -46,7 +46,7 @@ internal static class AssetLoader
 			{
 				string texturePath = RemoveExtension(kvp.Key, ".rawimg");
 				string textureKey = RemoveDirectory(texturePath, textureDirectory);
-				LoadedTextures.Add(textureKey, mod.Assets.Request<Texture2D>(texturePath, AssetRequestMode.ImmediateLoad).Value);
+				LoadedTextures.Add(textureKey, mod.Assets.Request<Texture2D>(texturePath, AssetRequestMode.ImmediateLoad));
 			}
 
 			string shaderDirectory = assetsDirectory + "Shaders/";
@@ -84,7 +84,7 @@ internal static class AssetLoader
 
 		VertexTrailManager = null;
 		BasicShaderEffect = null;
-		LoadedTextures = new Dictionary<string, Texture2D>();
+		LoadedTextures = new Dictionary<string, Asset<Texture2D>>();
 		LoadedShaders = new Dictionary<string, Effect>();
 	}
 }

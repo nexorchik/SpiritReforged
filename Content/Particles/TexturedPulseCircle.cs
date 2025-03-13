@@ -29,14 +29,14 @@ public class TexturedPulseCircle : PulseCircle
 
 	internal override void EffectExtras(ref Effect curEffect)
 	{
-		if(!AssetLoader.LoadedTextures.TryGetValue(_texture, out Texture2D value))
+		if(!AssetLoader.LoadedTextures.TryGetValue(_texture, out Asset<Texture2D> asset))
 		{
 			throw new ArgumentNullException(_texture, "Given input does not correspond to a loaded asset.");
 		}
 
 		else
 		{
-			curEffect.Parameters["uTexture"].SetValue(value);
+			curEffect.Parameters["uTexture"].SetValue(asset.Value);
 			curEffect.Parameters["textureStretch"].SetValue(new Vector2(_textureStretch.X, _textureStretch.Y));
 			curEffect.Parameters["scroll"].SetValue(Progress / 3);
 		}

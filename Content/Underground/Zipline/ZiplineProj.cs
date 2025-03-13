@@ -81,7 +81,7 @@ public class ZiplineProj : ModProjectile
 
 	public override bool PreDraw(ref Color lightColor)
 	{
-		var trail = AssetLoader.LoadedTextures["Ray"];
+		var trail = AssetLoader.LoadedTextures["Ray"].Value;
 		var scale = new Vector2(.45f, 1f) * Projectile.scale;
 
 		Main.EntitySpriteDraw(trail, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.Orange.Additive()), 

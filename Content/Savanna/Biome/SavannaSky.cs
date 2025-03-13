@@ -48,7 +48,7 @@ public class SavannaSky : AutoloadedSky
 			null,
 			skyColor * dayProgress * FadeOpacity * 0.5f);
 
-		Texture2D gradientTex = AssetLoader.LoadedTextures["SkyGradient"];
+		Texture2D gradientTex = AssetLoader.LoadedTextures["SkyGradient"].Value;
 		float invertedDayProgress(float minValue) => Math.Max((1 - dayProgress), minValue);
 		Color gradientColor = Color.Lerp(skyColor, Color.White * FadeOpacity * dayProgress * invertedDayProgress(0.25f), 0.1f).Additive(170);
 		int verticalOffset = (int)MathHelper.Lerp(0, -100, dayProgress);

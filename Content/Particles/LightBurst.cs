@@ -30,8 +30,8 @@ public class LightBurst : Particle
 
 	public override void CustomDraw(SpriteBatch spriteBatch)
 	{
-		Texture2D rayTexture = AssetLoader.LoadedTextures["Ray"];
-		Texture2D bloomtexture = AssetLoader.LoadedTextures["Bloom"];
+		Texture2D rayTexture = AssetLoader.LoadedTextures["Ray"].Value;
+		Texture2D bloomtexture = AssetLoader.LoadedTextures["Bloom"].Value;
 		var center = Position - Main.screenPosition;
 		Color color = Color * _opacity;
 

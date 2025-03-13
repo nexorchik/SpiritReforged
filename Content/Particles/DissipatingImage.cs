@@ -53,15 +53,15 @@ public class DissipatingImage : Particle
 
 	public override void CustomDraw(SpriteBatch spriteBatch)
 	{
-		if (!AssetLoader.LoadedTextures.TryGetValue(_texture, out Texture2D value))
+		if (!AssetLoader.LoadedTextures.TryGetValue(_texture, out Asset<Texture2D> asset))
 			throw new ArgumentNullException(_texture, "Given input does not correspond to a loaded asset.");
 
 		else
 		{
 			Effect effect = AssetLoader.LoadedShaders["DistortDissipateTexture"];
 			effect.Parameters["uColor"].SetValue(Color.ToVector4());
-			effect.Parameters["uTexture"].SetValue(value);
-			effect.Parameters["perlinNoise"].SetValue(AssetLoader.LoadedTextures["noise"]);
+			effect.Parameters["uTexture"].SetValue(asset.Value);
+			effect.Parameters["perlinNoise"].SetValue(AssetLoader.LoadedTextures["noise"].Value);
 			effect.Parameters["Progress"].SetValue(Progress);
 			effect.Parameters["xMod"].SetValue(_noiseStretch.X);
 			effect.Parameters["yMod"].SetValue(_noiseStretch.Y);
@@ -77,8 +77,8 @@ public class DissipatingImage : Particle
 			var square = new SquarePrimitive
 			{
 				Color = lightColor * _opacity,
-				Height = Scale * value.Height * _scaleMod,
-				Length = Scale * value.Width * _scaleMod,
+				Height = Scale * asset.Height() * _scaleMod,
+				Length = Scale * asset.Width() * _scaleMod,
 				Position = Position - Main.screenPosition,
 				Rotation = Rotation,
 			};

@@ -119,7 +119,7 @@ public abstract class MotionNoiseCone : Particle
 	public override void CustomDraw(SpriteBatch spriteBatch)
 	{
 		Effect effect = AssetLoader.LoadedShaders["MotionNoiseCone"];
-		Texture2D texture = AssetLoader.LoadedTextures["vnoise"];
+		Texture2D texture = AssetLoader.LoadedTextures["vnoise"].Value;
 		effect.Parameters["uTexture"].SetValue(texture);
 
 		Vector2 Tapering = new Vector2(0, 1);

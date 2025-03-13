@@ -62,7 +62,7 @@ public class UIMenuThemeButton : UIElement
 			opacity = 1;
 
 			float fadeIn = (_scale - 1f) / maxScaleIncrease;
-			var bloom = AssetLoader.LoadedTextures["Bloom"];
+			var bloom = AssetLoader.LoadedTextures["Bloom"].Value;
 			spriteBatch.Draw(bloom, pos, null, (Color.Cyan * fadeIn).Additive(), 0, bloom.Size() / 2, .25f, default, 0);
 
 			spriteBatch.Draw(Texture.Value, pos, null, (Color.Cyan * fadeIn).Additive(), 0, Texture.Size() / 2, _scale * 1.05f, default, 0);

@@ -101,7 +101,7 @@ public class ButterflyMinion : BaseMinion
 
 	public override void PostDraw(Color lightColor)
 	{
-		Texture2D bloom = AssetLoader.LoadedTextures["Bloom"];
+		Texture2D bloom = AssetLoader.LoadedTextures["Bloom"].Value;
 		Main.EntitySpriteDraw(bloom, Projectile.Center - Main.screenPosition, null, Color.Pink.Additive() * Projectile.Opacity * 0.6f, 0, bloom.Size() / 2, 0.2f, SpriteEffects.None, 0);
 
 		float opacity = AiState == Moving ? 0.6f : 0f;

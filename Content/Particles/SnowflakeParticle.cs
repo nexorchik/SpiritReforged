@@ -51,7 +51,7 @@ public class SnowflakeParticle : Particle
 	public override void CustomDraw(SpriteBatch spriteBatch)
 	{
 		var tex = ParticleHandler.GetTexture(Type);
-		var bloom = AssetLoader.LoadedTextures["Bloom"];
+		var bloom = AssetLoader.LoadedTextures["Bloom"].Value;
 		var frame = tex.Frame(1, 3, frameY: _style);
 
 		spriteBatch.Draw(bloom, Position - Main.screenPosition, null, (Color * .6f).Additive(), 0, bloom.Size() / 2, Scale / 4f, SpriteEffects.None, 0);

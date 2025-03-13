@@ -127,10 +127,10 @@ internal class PinUIState : AutoUIState
 				float lerp = (float)Math.Sin(Main.timeForVisualEffects / 20f);
 				var glowPos = openButton.GetDimensions().Center() + new Vector2(0, 4);
 
-				spriteBatch.Draw(AssetLoader.LoadedTextures["Bloom"], glowPos, null, 
+				spriteBatch.Draw(AssetLoader.LoadedTextures["Bloom"].Value, glowPos, null, 
 					(Color.White with { A = 0 }) * (.5f - lerp * .025f), 0, AssetLoader.LoadedTextures["Bloom"].Size() / 2, .25f - lerp * .025f, default, 0);
 
-				spriteBatch.Draw(AssetLoader.LoadedTextures["GodrayCircle"], glowPos, null,
+				spriteBatch.Draw(AssetLoader.LoadedTextures["GodrayCircle"].Value, glowPos, null,
 					(Color.Orange with { A = 0 }) * (.5f - lerp * .025f), (float)Main.timeForVisualEffects / 120, AssetLoader.LoadedTextures["GodrayCircle"].Size() / 2, .1f - lerp * .01f, default, 0);
 
 				DrawGodray.DrawGodrays(Main.spriteBatch, glowPos, Color.Goldenrod with { A = 0 }, 22, 10, 5);

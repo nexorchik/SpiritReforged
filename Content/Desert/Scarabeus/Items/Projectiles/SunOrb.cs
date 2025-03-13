@@ -260,7 +260,7 @@ public class SunOrb : ModProjectile
 		Effect effect = AssetLoader.LoadedShaders["LightRay"];
 		GetRayDimensions(out float rayHeight, out float rayWidth, out float rayDist);
 
-		effect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["FlameTrail"]);
+		effect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["FlameTrail"].Value);
 		float scrollAmount = EaseCircularIn.Ease(GetFlashProgress) * 0.4f;
 		effect.Parameters["scroll"].SetValue(new Vector2(0, scrollAmount));
 		effect.Parameters["textureStretch"].SetValue(new Vector2(4, 1) * 0.05f);
@@ -303,17 +303,17 @@ public class SunOrb : ModProjectile
 		Effect effect = AssetLoader.LoadedShaders["SunOrb"];
 		effect.Parameters["lightColor"].SetValue(lightColor.ToVector4());
 		effect.Parameters["darkColor"].SetValue(darkRayColor.ToVector4());
-		effect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["Extra_49"]);
+		effect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["Extra_49"].Value);
 		effect.Parameters["intensity"].SetValue((1.5f + EaseCircularIn.Ease(GetFlashProgress)) * EaseQuadOut.Ease(Projectile.scale));
 
 		//Subtle swirly noise around the main orb- unneccessary flourish but I like it
 		float time = AiTimer / 60f;
-		effect.Parameters["noiseTexture"].SetValue(AssetLoader.LoadedTextures["swirlNoise"]);
+		effect.Parameters["noiseTexture"].SetValue(AssetLoader.LoadedTextures["swirlNoise"].Value);
 		effect.Parameters["scroll"].SetValue(new Vector2(-time / 6, -time / 2));
 		effect.Parameters["textureStretch"].SetValue(new Vector2(1, 0.5f));
 
 		//Godrays around the orb, intensity dramatically increases when the orb flashes
-		effect.Parameters["rayTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"]);
+		effect.Parameters["rayTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"].Value);
 		effect.Parameters["rayScroll"].SetValue(new Vector2(time / 6, -3f * time + EaseCircularIn.Ease(GetFlashProgress) * 2.5f));
 		effect.Parameters["rayStretch"].SetValue(new Vector2(1, 0.03f));
 		float rayIntensity = Max(3 * EaseCircularIn.Ease(EaseQuadIn.Ease(GetFlashProgress)), 0.15f) * EaseCircularIn.Ease(Min(Projectile.scale, 1));
@@ -332,7 +332,7 @@ public class SunOrb : ModProjectile
 
 	private void DrawStar(Color lightColor, Color darkColor)
 	{
-		Texture2D starTex = AssetLoader.LoadedTextures["Star"];
+		Texture2D starTex = AssetLoader.LoadedTextures["Star"].Value;
 		var center = Projectile.Center - Main.screenPosition - new Vector2(Projectile.scale);
 		float maxSize = 0.6f * Projectile.scale;
 		float easedFlashProgress = EaseCircularIn.Ease(GetFlashProgress);

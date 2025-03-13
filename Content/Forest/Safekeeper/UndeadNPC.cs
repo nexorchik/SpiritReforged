@@ -101,7 +101,7 @@ public class UndeadNPC : GlobalNPC
 
 			effect.Parameters["power"].SetValue(decayTime * 50f);
 			effect.Parameters["size"].SetValue(new Vector2(1, Main.npcFrameCount[npc.type]) * spotScale);
-			effect.Parameters["noiseTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"]);
+			effect.Parameters["noiseTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"].Value);
 			effect.CurrentTechnique.Passes[0].Apply();
 
 			Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY), frame, Color.Black, npc.rotation, frame.Size() / 2, npc.scale, effects, 0);
