@@ -135,7 +135,6 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		relativePoint = Projectile.Center - target.Center;
 
 		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_Slimy") with { PitchVariance = 0.2f, Volume = 1.9f, MaxInstances = 2 }, Projectile.Center);
-
 	}
 
 	public static Color OrangeVFXColor(byte alpha = 255)

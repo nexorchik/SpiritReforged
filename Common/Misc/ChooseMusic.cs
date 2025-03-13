@@ -8,7 +8,7 @@ internal class ChooseMusic : ILoadable
 
 	private static int Music = -1;
 
-	/// <summary> Sets the music ID to play. </summary>
+	/// <summary> Temporarily sets the music ID to play. </summary>
 	public static void SetMusic(int id)
 	{
 		Music = id;

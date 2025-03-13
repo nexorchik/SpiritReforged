@@ -5,6 +5,9 @@ namespace SpiritReforged.Content.Particles;
 
 public class ImpactLine : Particle
 {
+	/// <summary> Whether this particle should actually emit light. </summary>
+	public bool noLight;
+
 	private readonly Entity _ent = null;
 
 	private Color _color;
@@ -31,9 +34,11 @@ public class ImpactLine : Particle
 		float opacity = EaseFunction.EaseQuadOut.Ease(EaseFunction.EaseSine.Ease(Progress));
 		Color = _color * opacity;
 		Rotation = Velocity.ToRotation() + MathHelper.PiOver2;
-		Lighting.AddLight(Position, Color.ToVector3() / 2f);
 
-		if(_ent != null)
+		if (!noLight)
+			Lighting.AddLight(Position, Color.ToVector3() / 2f);
+
+		if (_ent != null)
 		{
 			if (!_ent.active)
 			{

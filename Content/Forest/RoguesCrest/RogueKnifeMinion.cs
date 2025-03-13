@@ -89,7 +89,7 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 		AiState = Attacking;
 
 		Projectile.extraUpdates = 1;
-		Projectile.rotation = Utils.AngleLerp(Projectile.rotation, Projectile.AngleTo(target.Center) + 1.57f, 0.2f);
+		Projectile.rotation = Utils.AngleLerp(Projectile.rotation, Projectile.velocity.ToRotation() + 1.57f, 0.2f);//Utils.AngleLerp(Projectile.rotation, Projectile.AngleTo(target.Center) + 1.57f, 0.2f);
 
 		if (Projectile.Distance(target.Center) > 120) //Move closer to the target
 			Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(target.Center) * 8, 0.08f);
@@ -104,6 +104,7 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 
 				AiTimer = attackCooldown;
 				Projectile.velocity = (Projectile.DirectionTo(target.Center) * 24).RotatedByRandom(0.1f);
+				Projectile.netUpdate = true;
 
 				for (int i = 0; i < 10; i++)
 				{
@@ -114,7 +115,7 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 					dust.noLightEmittence = true;
 				}
 
-				Projectile.netUpdate = true;
+				
 
 				for (int i = 0; i < 3; i++)
 				{
@@ -134,11 +135,16 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 	{
 		if (Main.rand.NextBool(10))
 		{
-			ParticleHandler.SpawnParticle(new Particles.ImpactLine(Projectile.Center, Projectile.velocity * .1f, Color.Red.Additive(), new Vector2(.75f, 8), 8, Projectile));
-			ParticleHandler.SpawnParticle(new Particles.ImpactLine(Projectile.Center, Projectile.velocity * .1f, Color.White.Additive(), new Vector2(.3f, 5), 8, Projectile));
-
 			target.AddBuff(ModContent.BuffType<OpenWounds>(), 60 * 10);
+
+			ParticleHandler.SpawnParticle(new Particles.ImpactLine(Projectile.Center, Projectile.velocity * .1f, Color.Red.Additive(), new Vector2(.75f, 8), 8, Projectile) { noLight = true });
+			ParticleHandler.SpawnParticle(new Particles.ImpactLine(Projectile.Center, Projectile.velocity * .1f, Color.White.Additive(), new Vector2(.3f, 5), 8, Projectile) { noLight = true });
+
+			ParticleHandler.SpawnParticle(new Particles.LightBurst(target.Center, 0, Color.Red, .5f, 10) { noLight = true });
+			ParticleHandler.SpawnParticle(new Particles.LightBurst(target.Center, 0, Color.White, .3f, 10) { noLight = true });
+
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/BigSwing"), Projectile.Center);
+			SoundEngine.PlaySound(SoundID.NPCDeath12 with { Volume = .1f, Pitch = .25f }, Projectile.Center);
 		}
 	}
 
@@ -155,9 +161,10 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 		if (Trailing)
 			for (int k = 0; k < Projectile.oldPos.Length; k++)
 			{
-				Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + Projectile.Size / 2 + new Vector2(0f, Projectile.gfxOffY);
-				Color color = Projectile.GetAlpha(lightColor) * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
-				Main.EntitySpriteDraw(texture, drawPos, drawFrame, color * .6f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
+				var drawPos = Projectile.oldPos[k] - Main.screenPosition + Projectile.Size / 2 + new Vector2(0f, Projectile.gfxOffY);
+				var color = Projectile.GetAlpha(lightColor) * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
+
+				Main.EntitySpriteDraw(texture, drawPos, drawFrame, color * .75f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
 			}
 
 		return false;

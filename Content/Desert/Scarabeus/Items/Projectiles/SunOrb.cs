@@ -151,7 +151,7 @@ public class SunOrb : ModProjectile
 		if (Main.dedServ)
 			return;
 
-		ParticleHandler.SpawnParticle(new LightBurst(target.Center, Main.rand.NextFloatDirection(), Color.LightGoldenrodYellow.Additive(), 0.6f, 30));
+		ParticleHandler.SpawnParticle(new LightBurst(target.Center, Main.rand.NextFloatDirection(), Color.LightGoldenrodYellow, 0.6f, 30));
 
 		int numSmoke = 6;
 		for (int i = 0; i < numSmoke; i++)

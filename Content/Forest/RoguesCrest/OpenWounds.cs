@@ -1,6 +1,7 @@
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Multiplayer;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Content.Particles;
 using System.IO;
 using Terraria.Audio;
 
@@ -37,7 +38,10 @@ internal class OpenWoundsNPC : GlobalNPC
 			if (!Main.dedServ)
 			{
 				SoundEngine.PlaySound(SoundID.Item101 with { Pitch = .5f }, npc.Center);
-				SoundEngine.PlaySound(SoundID.NPCDeath1 with { Pitch = .5f }, npc.Center);
+				SoundEngine.PlaySound(SoundID.NPCHit2 with { Pitch = .1f }, npc.Center);
+
+				for (int i = 0; i < 8; i++)
+					ParticleHandler.SpawnParticle(new GlowParticle(npc.Center, Main.rand.NextVector2Unit() * Main.rand.NextFloat(), Color.White, Color.Red, Main.rand.NextFloat(.3f, .75f), 30, 4));
 			}
 
 			return true;
@@ -61,14 +65,19 @@ internal class OpenWoundsNPC : GlobalNPC
 
 	public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 	{
-		if (npc.HasBuff<OpenWounds>())
+		if (!npc.dontTakeDamage && npc.HasBuff<OpenWounds>())
 		{
 			int type = ModContent.ProjectileType<RogueKnifeMinion>();
 			var icon = TextureAssets.Projectile[type].Value;
 			var source = icon.Frame(1, Main.projFrames[type], 0, (int)(Main.timeForVisualEffects / 4 % Main.projFrames[type]), 0, -2);
 
 			for (int i = 0; i < 2; i++)
-				spriteBatch.Draw(icon, npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY), source, Color.Red.Additive(100), MathHelper.Pi, source.Size() / 2, .75f, default, 0);
+			{
+				var c = ((i == 0) ? Color.Red : Color.DarkSlateBlue).Additive();
+				float s = (i == 0) ? .75f : .6f;
+
+				spriteBatch.Draw(icon, npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY), source, c, MathHelper.Pi, source.Size() / 2, s, default, 0);
+			}
 		}
 	}
 }

@@ -156,7 +156,7 @@ public class UndeadNPC : GlobalNPC
 		for (int i = 0; i < 3; i++)
 			ParticleOrchestrator.SpawnParticlesDirect(ParticleOrchestraType.AshTreeShake, new ParticleOrchestraSettings() with { PositionInWorld = pos });
 
-		ParticleHandler.SpawnParticle(new Particles.LightBurst(npc.Center, 0, Color.Goldenrod with { A = 0 }, npc.scale * .8f, 10));
+		ParticleHandler.SpawnParticle(new Particles.LightBurst(npc.Center, 0, Color.Goldenrod, npc.scale * .8f, 10));
 
 		for (int i = 0; i < 15; i++)
 		{

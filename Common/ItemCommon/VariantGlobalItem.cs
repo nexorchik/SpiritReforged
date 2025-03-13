@@ -7,6 +7,7 @@ namespace SpiritReforged.Common.ItemCommon;
 [Autoload(Side = ModSide.Client)]
 internal class VariantGlobalItem : GlobalItem
 {
+	private const byte defaultID = 255;
 	public override bool InstancePerEntity => true;
 
 	private struct VarData(Point[] sizes, bool auto)
@@ -18,7 +19,7 @@ internal class VariantGlobalItem : GlobalItem
 	}
 
 	private static readonly Dictionary<int, VarData> variantData = []; //Type, frame sizes
-	public int subID = -1;
+	public byte subID = defaultID;
 
 	/// <summary> Registers the given item <paramref name="type"/> as having variants of <paramref name="amount"/>.<para/>
 	/// The item texture must be a vertical sheet with 2px padding to work correctly.<br/>
@@ -84,10 +85,10 @@ internal class VariantGlobalItem : GlobalItem
 
 	private Rectangle GetSource(int type)
 	{
-		bool inInventory = subID == -1;
+		bool inInventory = subID == defaultID;
 
 		int frameCount = Main.itemAnimations[type].FrameCount;
-		int frame = Math.Max(subID, 0);
+		int frame = (subID == defaultID) ? 0 : subID;
 
 		var texture = ((variantData[type].worldTexture is null || inInventory) ? TextureAssets.Item[type] : variantData[type].worldTexture).Value;
 		var rectangle = texture.Frame(1, frameCount, 0, frame, 0, -2);
@@ -111,8 +112,8 @@ internal class VariantGlobalItem : GlobalItem
 	{
 		int frameCount = Main.itemAnimations[item.type].FrameCount;
 
-		if (variantData[item.type].auto && subID == -1)
-			subID = Main.rand.Next(frameCount);
+		if (variantData[item.type].auto && subID == defaultID)
+			subID = (byte)Main.rand.Next(frameCount);
 
 		var texture = (variantData[item.type].worldTexture ?? TextureAssets.Item[item.type]).Value;
 		var source = GetSource(item.type);
@@ -124,7 +125,7 @@ internal class VariantGlobalItem : GlobalItem
 	public override bool PreDrawInInventory(Item item, SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
 	{
 		if (variantData[item.type].auto)
-			subID = -1;
+			subID = defaultID;
 
 		var texture = TextureAssets.Item[item.type].Value;
 		var source = GetSource(item.type);

@@ -9,9 +9,9 @@ internal class PreAddContent : ILoadable
 	internal delegate bool orig_AddContent(Mod self, ILoadable instance);
 	private static Hook PreAddContentHook = null;
 
-	/// <summary> The full names of content to disable. Must be formatted as "Mod/Content". </summary>
-	private static readonly HashSet<string> NameToMod = ["SpiritMod/FloatingItemWorld", "SpiritMod/HeroMemorialMicropass", 
-		"SpiritMod/StargrassMicropass", "SpiritMod/ZombieGlobalNPC", "SpiritMod/BoidHost"];
+	/// <summary> The full names of content to disable. Must be formatted as "Content, Mod". </summary>
+	private static readonly Dictionary<string, string> NameToMod = new() { { "FloatingItemWorld", "SpiritMod" }, { "HeroMemorialMicropass", "SpiritMod" }, 
+		{ "StargrassMicropass", "SpiritMod" }, { "ZombieGlobalNPC", "SpiritMod" }, { "BoidHost", "SpiritMod" } };
 
 	/// <summary> Hooks <see cref="Mod.AddContent"/> to control whether content from other mods can be added to the game.<br/>
 	/// Must be called in the mod's constructor to ignore mod load order. </summary>
@@ -23,15 +23,16 @@ internal class PreAddContent : ILoadable
 
 	private static bool HookAddContent(orig_AddContent orig, Mod self, ILoadable instance)
 	{
-		foreach (string str in NameToMod)
+		foreach (string str in NameToMod.Keys)
 		{
-			string[] splitMod = str.Split('/');
-			string modName = splitMod[0];
-			string contentName = splitMod[1];
+			string modName = NameToMod[str];
+			string contentName = str;
 
 			if (self.Name == modName && instance.GetType().Name == contentName)
 			{
-				SpiritReforgedMod.Instance.Logger.Info("Disabled " + str.Replace('/', '.'));
+				SpiritReforgedMod.Instance.Logger.Info("Disabled " + modName + $".{contentName}");
+				NameToMod.Remove(str); //Consume the entry
+
 				return false;
 			}
 		}
