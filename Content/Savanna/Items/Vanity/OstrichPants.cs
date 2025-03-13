@@ -33,7 +33,10 @@ internal class OstrichPantsLayer : PlayerDrawLayer
 			var pos = new Vector2((int)(drawInfo.Position.X - Main.screenPosition.X - player.legFrame.Width / 2 + player.width / 2), 
 				(int)(drawInfo.Position.Y - Main.screenPosition.Y + player.height - player.legFrame.Height + 4f)) + player.legPosition + drawInfo.legVect;
 
-			var data = new DrawData(Texture.Value, pos, player.legFrame, drawInfo.colorArmorLegs, player.legRotation, drawInfo.legVect, 1f, drawInfo.playerEffect);
+			var data = new DrawData(Texture.Value, pos, player.legFrame, drawInfo.colorArmorLegs, player.legRotation, drawInfo.legVect, 1f, drawInfo.playerEffect)
+			{
+				shader = player.cLegs
+			};
 			drawInfo.DrawDataCache.Add(data);
 		}
 	}
