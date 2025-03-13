@@ -21,8 +21,7 @@ internal class ButterflyMicropass : Micropass
 			string subChar = WorldGen.genRand.NextFromList(["a", "b", "c"]);
 			string structureName = "Assets/Structures/Butterfly/Butterfly" + subId + subChar;
 
-			Point16 size = new();
-			StructureHelper.Generator.GetDimensions(structureName, ModContent.GetInstance<SpiritReforgedMod>(), ref size);
+			Point16 size = StructureHelper.API.Generator.GetStructureDimensions(structureName, ModContent.GetInstance<SpiritReforgedMod>());
 			Point16 position;
 
 			do
