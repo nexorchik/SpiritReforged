@@ -11,6 +11,7 @@ internal class AnimateModIconHook : ILoadable
 	private static Hook ModUIInitHook = null;
 	private static FieldInfo IconInfo;
 	private static PropertyInfo ModNameInfo;
+	private static FieldInfo NameUIInfo;
 
 	public void Load(Mod mod)
 	{
@@ -19,6 +20,7 @@ internal class AnimateModIconHook : ILoadable
 		ModUIInitHook = new Hook(info, HookModIcon, true);
 
 		IconInfo = type.GetField("_modIcon", BindingFlags.NonPublic | BindingFlags.Instance);
+		NameUIInfo = type.GetField("_modName", BindingFlags.NonPublic | BindingFlags.Instance);
 		ModNameInfo = type.GetProperty("ModName", BindingFlags.Public | BindingFlags.Instance);
 	}
 
@@ -48,6 +50,9 @@ internal class AnimateModIconHook : ILoadable
 
 				element.Append(menuButton);
 			}
+
+			var nameUI = NameUIInfo.GetValue(self) as UIText;
+			nameUI.TextColor = new Color(255, 199, 130);
 		}
 	}
 
