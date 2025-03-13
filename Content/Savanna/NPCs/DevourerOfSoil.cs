@@ -9,18 +9,18 @@ using Terraria.Audio;
 namespace SpiritReforged.Content.Savanna.NPCs;
 
 /// <summary> Mimics an NPC. </summary>
-public class DevourerOfSoil : SimpleEntity
+public class DevourerOfSoil : SimpleEntity //Use SimpleEntity to avoid appearing on browsers
 {
 	private static readonly Point[] Dimensions = [new Point(30, 38), new Point(22, 18), new Point(14, 22)]; //Excludes 2px(y) padding
 
-	public readonly Vector2[] positions = new Vector2[Length];
+	private readonly Vector2[] positions = new Vector2[Length];
 	private const int Length = 8;
 
-	private bool playingDeathAnimation;
-	private bool justDied = true;
-	private bool justSpawned = true;
-	private float rotation;
-	private int soundDelay;
+	private bool _playingDeathAnimation;
+	private bool _justDied = true;
+	private bool _justSpawned = true;
+	private float _rotation;
+	private int _soundDelay;
 
 	public override void Load()
 	{
@@ -40,7 +40,7 @@ public class DevourerOfSoil : SimpleEntity
 
 	private static bool MeleeCollide(SimpleEntity entity, Rectangle meleeHitbox)
 	{
-		if (entity is not DevourerOfSoil dos || dos.playingDeathAnimation)
+		if (entity is not DevourerOfSoil dos || dos._playingDeathAnimation)
 			return false;
 
 		foreach (var position in dos.positions)
@@ -90,13 +90,13 @@ public class DevourerOfSoil : SimpleEntity
 		UpdatePositions();
 
 		var target = Main.player.Where(x => x.whoAmI != Main.maxPlayers && x.active && !x.dead).OrderBy(x => x.Distance(Center)).FirstOrDefault();
-		if (justSpawned)
+		if (_justSpawned)
 		{
 			velocity = new Vector2(Math.Sign(target.Center.X - Center.X) * 2f, -4f); //Leap upwards on spawn
-			justSpawned = false;
+			_justSpawned = false;
 		}
 
-		if (playingDeathAnimation)
+		if (_playingDeathAnimation)
 			DoDeathAnimation();
 		else
 		{
@@ -114,18 +114,18 @@ public class DevourerOfSoil : SimpleEntity
 				dust.noGravity = true;
 			} //Spawn travel dusts
 
-			if (soundDelay == 0)
+			if (_soundDelay == 0)
 			{
 				int delay = (int)MathHelper.Clamp(Center.Distance(target.Center) / 16f, 10, 20);
-				soundDelay = delay;
+				_soundDelay = delay;
 
 				SoundEngine.PlaySound(SoundID.WormDig, Center);
 			} //Play digging sounds based on distance
 		}
 
-		rotation = velocity.ToRotation();
+		_rotation = velocity.ToRotation();
 		position += velocity;
-		soundDelay = Math.Max(soundDelay - 1, 0);
+		_soundDelay = Math.Max(_soundDelay - 1, 0);
 
 		if (Center.Distance(Main.LocalPlayer.Center) < 1500)
 			ChooseMusic.SetMusic(MusicID.Boss1); //Play Boss 1
@@ -143,9 +143,12 @@ public class DevourerOfSoil : SimpleEntity
 
 	public void OnHit()
 	{
+		if (_justSpawned)
+			return; //Can't be damaged when just spawned
+
 		velocity.Y -= 2f;
 		SoundEngine.PlaySound(SoundID.NPCHit1, Center);
-		playingDeathAnimation = true; //Instantly die
+		_playingDeathAnimation = true; //Instantly die
 	}
 
 	private void UpdatePositions()
@@ -162,7 +165,7 @@ public class DevourerOfSoil : SimpleEntity
 			return dims.ToVector2();
 		}
 
-		if (justSpawned)
+		if (_justSpawned)
 		{
 			for (int i = 0; i < positions.Length; i++)
 				positions[i] = Center + Vector2.UnitY * i * GetSegmentDims(i).Y;
@@ -183,16 +186,18 @@ public class DevourerOfSoil : SimpleEntity
 	private void DoDeathAnimation()
 	{
 		if (InsideTiles())
-			if (justDied)
+		{
+			if (_justDied)
 				velocity.Y = -8f; //Shoot out of the ground before dying
 			else
 			{
 				DoDeathEffects();
 				Kill();
 			}
+		}
 		else
 		{
-			justDied = false;
+			_justDied = false;
 			velocity = new Vector2(velocity.X * .98f, velocity.Y + .2f);
 		}
 
@@ -220,7 +225,7 @@ public class DevourerOfSoil : SimpleEntity
 
 	public override void Draw(SpriteBatch spriteBatch)
 	{
-		if (justSpawned)
+		if (_justSpawned)
 			return; //Don't bother drawing the first frame alive because rotation and segment positions haven't been initialized
 
 		var texture = Texture.Value;
@@ -232,7 +237,7 @@ public class DevourerOfSoil : SimpleEntity
 			var frame = texture.Frame(1, Dimensions.Length, 0, frameY) with { Width = Dimensions[frameY].X, Height = Dimensions[frameY].Y };
 
 			var position = positions[i];
-			float rot = i == 0 ? rotation : positions[i].AngleTo(positions[i - 1]);
+			float rot = i == 0 ? _rotation : positions[i].AngleTo(positions[i - 1]);
 
 			var lightColor = Lighting.GetColor((int)(position.X / 16), (int)(position.Y / 16));
 

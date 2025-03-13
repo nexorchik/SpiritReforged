@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.WorldGeneration.Noise;
+﻿/*using SpiritReforged.Common.WorldGeneration.Noise;
+using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Common.TileCommon;
 
@@ -25,17 +26,20 @@ internal class NoiseTile : GlobalTile
 
 		if (Textures.TryGetValue(type, out Asset<Texture2D> value))
 		{
+			if (!TileDrawing.IsVisible(Main.tile[i, j]))
+				return;
+
 			float noise = NoiseSystem.PerlinStatic(i * mult, j * mult);
 			if (noise < 1f - threshold)
 				return;
 
 			var texture = value.Value;
 
-			/*if (TileLoader.GetTile(type) is INoiseTile nTile)
-			{
-				nTile.DrawNoise(i, j, noise, texture, spriteBatch);
-				return;
-			}*/
+			//if (TileLoader.GetTile(type) is INoiseTile nTile)
+			//{
+			//	nTile.DrawNoise(i, j, noise, texture, spriteBatch);
+			//	return;
+			//}
 
 			int height = texture.Height;
 			int frames = texture.Width / height;
@@ -46,7 +50,7 @@ internal class NoiseTile : GlobalTile
 			spriteBatch.Draw(texture, new Vector2(i, j).ToWorldCoordinates() + offset - Main.screenPosition, source, Lighting.GetColor(i, j), 0, source.Size() / 2, 1, default, 0);
 		}
 	}
-}
+}*/
 
 /*public interface INoiseTile
 {
