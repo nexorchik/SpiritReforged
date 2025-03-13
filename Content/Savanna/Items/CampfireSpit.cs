@@ -166,7 +166,8 @@ public class RoastGlobalTile : GlobalTile
 	public override void SetStaticDefaults()
 	{
 		TileTexture = Mod.Assets.Request<Texture2D>("Content/Savanna/Items/CampfireSpit_Tile");
-		AllowedTypes = new() { { ModContent.ItemType<RawMeat>(), ModContent.ItemType<CookedMeat>() }, { ItemID.Marshmallow, ItemID.CookedMarshmallow } };
+		AllowedTypes = new() { { ModContent.ItemType<RawMeat>(), ModContent.ItemType<CookedMeat>() },
+			{ ItemID.Marshmallow, ItemID.CookedMarshmallow }, { ItemID.Squirrel, ItemID.GrilledSquirrel }};
 	}
 
 	public override void MouseOver(int i, int j, int type)
@@ -216,9 +217,9 @@ public class RoastGlobalTile : GlobalTile
 			if (!slot.item.IsAir)
 			{
 				var itemTexture = TextureAssets.Item[slot.item.type];
-				var source = itemTexture.Frame(1, 3, 0, 2);
+				var source = Item.GetDrawHitbox(slot.item.type, Main.LocalPlayer);
 
-				spriteBatch.Draw(itemTexture.Value, position + new Vector2(25, 14), source, Lighting.GetColor(i + 1, j + 1), 0, source.Size() / 2, 1, default, 0);
+				spriteBatch.Draw(itemTexture.Value, position + new Vector2(24, 16), source, Lighting.GetColor(i + 1, j + 1), 0, source.Size() / 2, 1, default, 0);
 			}
 		}
 

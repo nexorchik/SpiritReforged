@@ -29,7 +29,12 @@ public abstract class SingleSlotEntity : ModTileEntity
 		if (success)
 		{
 			if (CanAddItem(player.HeldItem))
-				item = ItemLoader.TransferWithLimit(player.HeldItem, 1);
+			{
+				item = ItemLoader.TransferWithLimit(player.inventory[player.selectedItem], 1);
+
+				if (player.selectedItem == 58)
+					Main.mouseItem = player.inventory[player.selectedItem].Clone(); //Consume mouseItem like vanilla does
+			}
 
 			if (!item.IsAir)
 				player.PlayDroppedItemAnimation(20);
