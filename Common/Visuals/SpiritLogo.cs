@@ -1,5 +1,7 @@
 ﻿using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 using SpiritReforged.Common.PrimitiveRendering;
+using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 
 namespace SpiritReforged.Common.Visuals;
 
@@ -50,16 +52,13 @@ public class SpiritLogo : ILoadable
 		float logoTimeMultiplier = 1f;
 		if (clickWobbleTimer > 0f)
 		{
-			clickWobbleTimer -= (float)Main.gameTimeCache.ElapsedGameTime.TotalSeconds;
+			clickWobbleTimer -= deltaTime;
 			if (clickWobbleTimer < 0f)
 				clickWobbleTimer = 0f;
 			logoTimeMultiplier += clickWobbleTimer * 8f;
 		}
 
-		if (!visible)
-			logoTime = 0;
-		else
-			logoTime += (float)Main.gameTimeCache.ElapsedGameTime.TotalSeconds * logoTimeMultiplier;
+		logoTime += deltaTime * logoTimeMultiplier;
 	}
 
 	/// <summary>
@@ -147,8 +146,20 @@ public class SpiritLogo : ILoadable
 		effect.Parameters["reforgedColorRight"].SetValue(reforgedColorRight.ToVector4()); 
 	}
 
-	public static void Draw(SpriteBatch spriteBatch, Vector2 logoDrawCenter, float logoScale, GetSpiritPaletteDelegate palette, float paletteLerper = 0f, GetSpiritPaletteDelegate altPalette = null)
+	public static void Draw(SpriteBatch spriteBatch, Vector2 logoDrawCenter, float logoScale, GetSpiritPaletteDelegate palette, float paletteLerper = 0f, GetSpiritPaletteDelegate altPalette = null, bool restartSpriteBatch = true)
 	{
+		if (debugDrawQueued)
+		{
+			DebugCapture();
+			return;
+		}
+
+		if (restartSpriteBatch)
+		{
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
+		}
+
 		if (logoShader == null)
 			LoadAssets();
 
@@ -173,18 +184,23 @@ public class SpiritLogo : ILoadable
 			effect.Parameters["piritOutlineTexture"].SetValue(pirtOutlineTexture.Value);
 		}
 
+		effect.Parameters["time"].SetValue(logoTime);
+		effect.Parameters["wobbleMult"].SetValue(1 + MathF.Pow(clickWobbleTimer, 1.6f) * 3.5f);
 		effect.Parameters["reforgedTexture"].SetValue(reforgedTexture.Value);
 		effect.Parameters["noiseTexture"].SetValue(noiseTrail.Value);
 
 		FillInColorParameters(effect, palette, paletteLerper, altPalette);
 
-		spriteBatch.End();
-		spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
-
 		//Check if the cursor overlaps the logo, and if so check for clicks
 		Rectangle approximateLogoRectangle = new Rectangle((int)(logoDrawCenter.X - sTexture.Width() * logoScale * 0.5f), (int)(logoDrawCenter.Y - sTexture.Height() * logoScale * 0.5f), sTexture.Width(), sTexture.Height());
-		if (approximateLogoRectangle.Contains(Main.MouseScreen.ToPoint()) && Main.mouseLeft && Main.mouseLeftRelease)
-			clickWobbleTimer = 1f;
+		if (approximateLogoRectangle.Contains(Main.MouseScreen.ToPoint()))
+		{
+			if (Main.mouseLeft && Main.mouseLeftRelease)
+				clickWobbleTimer = 1f;
+			//Debug rendering
+			if (false && Main.mouseRight && Main.mouseRightRelease)
+				debugDrawQueued = true;
+		}
 
 		var square = new SquarePrimitive
 		{
@@ -196,8 +212,52 @@ public class SpiritLogo : ILoadable
 		};
 		PrimitiveRenderer.DrawPrimitiveShape(square, effect);
 
-		spriteBatch.End();
-		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
+		if (restartSpriteBatch)
+		{
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
+		}
+	}
+
+	public static bool debugDrawQueued = false;
+	public static RenderTarget2D debug_captureTarget;
+	private static void DebugCapture(int frameCount = 300)
+	{
+		Vector2 rtSize = sTexture.Size() + Vector2.One * 100;
+		if (debug_captureTarget is null || debug_captureTarget.Size() != rtSize)
+			Main.QueueMainThreadAction(() => { debug_captureTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, (int)rtSize.X, (int)rtSize.Y); });
+		if (debug_captureTarget is null || debug_captureTarget.Size() != rtSize)
+			return;
+
+		Main.graphics.GraphicsDevice.SetRenderTarget(debug_captureTarget);
+		Main.spriteBatch.End();
+		Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
+
+		logoTime = 0;
+		debugDrawQueued = false;
+
+		float logoTimeIncrement = 1 / 60f;
+
+		for (int i = 0; i < frameCount; i++)
+		{
+			//Draw our frame to the RT
+			Main.graphics.GraphicsDevice.Clear(Color.Transparent);
+			Draw(Main.spriteBatch, rtSize / 2f, 1f, SavannaMenuTheme.SavannaOrangePalette, 0f, null, false);
+
+			//Save the rendertarget
+			string path = $"{Main.SavePath}/SpiritLogoCapture";
+			Stream saveStream = File.OpenWrite(path + "/Logo" + i.ToString() + ".png");
+			debug_captureTarget.SaveAsPng(saveStream, (int)rtSize.X, (int)rtSize.Y);
+			saveStream.Dispose();
+
+			//Advance time
+			logoTime += logoTimeIncrement;
+		}
+
+		Main.spriteBatch.End();
+		Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
+
+		Main.graphics.GraphicsDevice.SetRenderTargets(null);
 	}
 
 	public void Load(Mod mod) { } // Nothing on load, we load the textures when we need them, and after assetLoader has ran
