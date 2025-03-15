@@ -63,7 +63,7 @@ internal class OpenWoundsNPC : GlobalNPC
 			ParticleHandler.SpawnParticle(new RedBubble(npc.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(20f), Color.White, Main.rand.NextFloat(.5f, 1f), 20));
 	}
 
-	public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+	public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) //Draw the mark icon
 	{
 		if (!npc.dontTakeDamage && npc.HasBuff<OpenWounds>())
 		{

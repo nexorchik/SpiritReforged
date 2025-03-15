@@ -102,7 +102,7 @@ Lifesaver: {
 
 ClawCannon: {
 	DisplayName: Claw Cannon
-	Tooltip: "'Clannon...clawnon...clawanon...'"
+	Tooltip: ""
 }
 
 IridescentScale: {
@@ -986,7 +986,7 @@ RogueCrest: {
 		'''
 		Summons a rusted sword to fight for you
 		This sword does not take up minion slots
-		Rarely marks enemies, causing damage over time when struck with melee
+		Occasionally inflicts Open Wounds, causing enemies to bleed when struck with melee or whip attacks
 		'''
 }
 
