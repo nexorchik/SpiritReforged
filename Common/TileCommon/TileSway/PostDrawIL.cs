@@ -1,4 +1,4 @@
-﻿using Mono.Cecil.Cil;
+﻿/*using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System.Linq;
 using Terraria.DataStructures;
@@ -15,7 +15,7 @@ internal class PostDrawIL : ILoadable
 		IL_TileDrawing.DrawMultiTileVinesInWind += EditMultiTile;
 	}
 
-	private void EditMultiTile(ILContext il)
+	private static void EditMultiTile(ILContext il)
 	{
 		ILCursor c = new(il);
 
@@ -35,7 +35,7 @@ internal class PostDrawIL : ILoadable
 		c.EmitDelegate(ModifyWind);
 	}
 
-	private void ModifyWind(ref float wind, int topLeftX, int topLeftY)
+	private static void ModifyWind(ref float wind, int topLeftX, int topLeftY)
 	{
 		int type = Main.tile[topLeftX, topLeftY].TileType;
 		if (TileLoader.GetTile(type) is ISwayTile sway)
@@ -47,4 +47,4 @@ internal class PostDrawIL : ILoadable
 	}
 
 	public void Unload() { }
-}
+}*/

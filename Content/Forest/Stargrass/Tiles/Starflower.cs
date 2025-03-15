@@ -1,18 +1,20 @@
-﻿using SpiritReforged.Common.Visuals.Glowmasks;
+﻿using SpiritReforged.Common.TileCommon.TileSway;
+using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
 
-[AutoloadGlowmask("230,230,195", true)]
-public class Starflower : ModTile//, ISwayTile
+[AutoloadGlowmask("230,230,195", false)]
+public class Starflower : ModTile, ISwayTile
 {
 	public override void Load() => On_Player.FigureOutWhatToPlace += OverrideSunflower;
 
+	/// <summary> Converts Sunflowers into Starflowers on stargrass. </summary>
 	private static void OverrideSunflower(On_Player.orig_FigureOutWhatToPlace orig, Player self, Tile targetTile, Item sItem, out int tileToCreate, out int previewPlaceStyle, out bool? overrideCanPlace, out int? forcedRandom)
 	{
 		orig(self, targetTile, sItem, out tileToCreate, out previewPlaceStyle, out overrideCanPlace, out forcedRandom);
 
-		if (sItem.type != ItemID.Sunflower)
+		if (tileToCreate != TileID.Sunflower)
 			return;
 
 		var below = Main.tile[Player.tileTargetX, Player.tileTargetY + 1];
@@ -53,7 +55,7 @@ public class Starflower : ModTile//, ISwayTile
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (.3f, .28f, .1f);
 
-	/*public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
+	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
 		var data = TileObjectData.GetTileData(tile);
@@ -75,5 +77,5 @@ public class Starflower : ModTile//, ISwayTile
 			rotation = 0f;
 
 		return rotation * .75f;
-	}*/
+	}
 }
