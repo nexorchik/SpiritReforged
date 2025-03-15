@@ -1,15 +1,11 @@
-﻿using Newtonsoft.Json.Linq;
-using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
-using SpiritReforged.Common.PrimitiveRendering;
-using SpiritReforged.Content.Savanna.Biome;
-using System.Runtime.InteropServices;
+﻿using SpiritReforged.Content.Savanna.Biome;
 
 namespace SpiritReforged.Common.Visuals;
 
 internal class SavannaMenuTheme : ModMenu
 {
 	public override ModSurfaceBackgroundStyle MenuBackgroundStyle => ModContent.GetInstance<SavannaBGStyle>();
-	public override string DisplayName => "Savanna";
+	//public override string DisplayName => "Savanna"; //Uses the mod's display name
 
 	public override void OnSelected() => SpiritLogo.Reset();
 

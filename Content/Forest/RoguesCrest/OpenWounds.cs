@@ -22,6 +22,7 @@ internal class OpenWoundsNPC : GlobalNPC
 {
 	public override bool InstancePerEntity => true;
 
+	private static Asset<Texture2D> icon;
 	private short _bleedTime;
 
 	/// <summary> Causes <paramref name="npc"/> to take custom bleed damage for <paramref name="time"/> and consumes <see cref="OpenWounds"/>. </summary>
@@ -50,6 +51,8 @@ internal class OpenWoundsNPC : GlobalNPC
 		return false;
 	}
 
+	public override void Load() => icon = ModContent.Request<Texture2D>((GetType().Namespace + ".Wound_Icon").Replace('.', '/'));
+
 	public override void UpdateLifeRegen(NPC npc, ref int damage)
 	{
 		const int damagePerTick = 10;
@@ -63,21 +66,12 @@ internal class OpenWoundsNPC : GlobalNPC
 			ParticleHandler.SpawnParticle(new RedBubble(npc.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(20f), Color.White, Main.rand.NextFloat(.5f, 1f), 20));
 	}
 
-	public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+	public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) //Draw the mark icon
 	{
 		if (!npc.dontTakeDamage && npc.HasBuff<OpenWounds>())
 		{
-			int type = ModContent.ProjectileType<RogueKnifeMinion>();
-			var icon = TextureAssets.Projectile[type].Value;
-			var source = icon.Frame(1, Main.projFrames[type], 0, (int)(Main.timeForVisualEffects / 4 % Main.projFrames[type]), 0, -2);
-
-			for (int i = 0; i < 2; i++)
-			{
-				var c = ((i == 0) ? Color.Red : Color.DarkSlateBlue).Additive();
-				float s = (i == 0) ? .75f : .6f;
-
-				spriteBatch.Draw(icon, npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY), source, c, MathHelper.Pi, source.Size() / 2, s, default, 0);
-			}
+			var source = icon.Frame();
+			spriteBatch.Draw(icon.Value, npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY), source, (Color.White * .75f).Additive(), MathHelper.Pi, source.Size() / 2, 1, default, 0);
 		}
 	}
 }
