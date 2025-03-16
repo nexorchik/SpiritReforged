@@ -68,10 +68,17 @@ internal class OpenWoundsNPC : GlobalNPC
 
 	public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) //Draw the mark icon
 	{
+		const int fadeout = 20; //The number of ticks this effect fades out for
+
 		if (!npc.dontTakeDamage && npc.HasBuff<OpenWounds>())
 		{
 			var source = icon.Frame();
-			spriteBatch.Draw(icon.Value, npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY), source, (Color.White * .75f).Additive(), MathHelper.Pi, source.Size() / 2, 1, default, 0);
+
+			int index = npc.FindBuffIndex(ModContent.BuffType<OpenWounds>());
+			int time = (index == -1) ? 0 : npc.buffTime[index];
+			var color = (Color.White * .75f * Math.Min(time / (float)fadeout, 1)).Additive();
+
+			spriteBatch.Draw(icon.Value, npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY), source, color, MathHelper.Pi, source.Size() / 2, 1, default, 0);
 		}
 	}
 }
