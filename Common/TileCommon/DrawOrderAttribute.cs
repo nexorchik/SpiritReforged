@@ -28,18 +28,18 @@ internal class DrawOrderAttribute(params Layer[] layers) : Attribute
 
 internal class DrawOrderSystem : ModSystem
 {
-	/// <summary> Stores tile types and defined layer pairs. </summary>
-	private static readonly Dictionary<int, Layer[]> drawOrderTypes = []; 
+	/// <summary> Stores tile types and defined layer pairs on load. </summary>
+	private static readonly Dictionary<int, Layer[]> DrawOrderTypes = []; 
 
-	/// <summary> Stores drawing coordinates with layer data so our detours know where and when to draw. </summary>
-	internal static readonly Dictionary<Point16, Layer[]> specialDrawPoints = [];
+	/// <summary> Stores drawing coordinates so our detours know where to draw. </summary>
+	internal static readonly HashSet<Point16> SpecialDrawPoints = [];
 
 	/// <summary> Used in conjunction with <see cref="DrawOrderAttribute"/> to tell whether a tile is drawing as a result of the attribute and on what layer. </summary>
 	internal static Layer Order = Layer.Default;
 
 	public static bool TryGetLayers(int type, out Layer[] layers)
 	{
-		if (drawOrderTypes.TryGetValue(type, out Layer[] value))
+		if (DrawOrderTypes.TryGetValue(type, out Layer[] value))
 		{
 			layers = value;
 			return true;
@@ -55,10 +55,12 @@ internal class DrawOrderSystem : ModSystem
 		{
 			Order = layer;
 
-			foreach (var key in specialDrawPoints.Keys)
+			foreach (var pt in SpecialDrawPoints)
 			{
-				if (specialDrawPoints[key].Contains(Order))
-					TileLoader.PreDraw(key.X, key.Y, Framing.GetTileSafely(key).TileType, Main.spriteBatch);
+				int type = Framing.GetTileSafely(pt).TileType;
+
+				if (DrawOrderTypes.TryGetValue(type, out var value) && value.Contains(Order))
+					TileLoader.PreDraw(pt.X, pt.Y, type, Main.spriteBatch);
 			}
 
 			Order = Layer.Default;
@@ -67,7 +69,7 @@ internal class DrawOrderSystem : ModSystem
 		#region detours/il
 		On_TileDrawing.PreDrawTiles += ClearDrawPoints;
 
-		IL_Main.DoDraw_Tiles_Solid += (ILContext il) =>
+		IL_Main.DoDraw_Tiles_Solid += static (ILContext il) =>
 		{
 			var c = new ILCursor(il);
 			for (int i = 0; i < 2; i++)
@@ -82,13 +84,13 @@ internal class DrawOrderSystem : ModSystem
 			c.EmitDelegate(() => Draw(Layer.Solid)); //Emit a delegate so we can draw just before the spritebatch ends
 		};
 
-		On_Main.DoDraw_Tiles_NonSolid += (On_Main.orig_DoDraw_Tiles_NonSolid orig, Main self) =>
+		On_Main.DoDraw_Tiles_NonSolid += static (On_Main.orig_DoDraw_Tiles_NonSolid orig, Main self) =>
 		{
 			orig(self);
 			Draw(Layer.NonSolid);
 		};
 
-		On_Main.DrawPlayers_AfterProjectiles += (On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self) =>
+		On_Main.DrawPlayers_AfterProjectiles += static (On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self) =>
 		{
 			orig(self);
 
@@ -99,13 +101,13 @@ internal class DrawOrderSystem : ModSystem
 		#endregion
 	}
 
-	private void ClearDrawPoints(On_TileDrawing.orig_PreDrawTiles orig, TileDrawing self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets)
+	private static void ClearDrawPoints(On_TileDrawing.orig_PreDrawTiles orig, TileDrawing self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets)
 	{
 		orig(self, solidLayer, forRenderTargets, intoRenderTargets);
 
 		bool flag = intoRenderTargets || Lighting.UpdateEveryFrame;
 		if (!solidLayer && flag) //Does not clear solid points when expected and may cause issues when using them
-			specialDrawPoints.Clear();
+			SpecialDrawPoints.Clear();
 	}
 
 	public override void PostSetupContent()
@@ -116,9 +118,9 @@ internal class DrawOrderSystem : ModSystem
 			var tag = (DrawOrderAttribute)Attribute.GetCustomAttribute(tile.GetType(), typeof(DrawOrderAttribute), false);
 
 			if (tag is not null)
-				drawOrderTypes.Add(tile.Type, tag.Layers);
+				DrawOrderTypes.Add(tile.Type, tag.Layers);
 			else if (tile is ISwayTile sway && sway.Style == -1) //If no layers are defined for this ISwayTile, automatically add a valid layer for sway drawing
-				drawOrderTypes.Add(tile.Type, [Layer.NonSolid]);
+				DrawOrderTypes.Add(tile.Type, [Layer.NonSolid]);
 		}
 	}
 }
@@ -132,7 +134,7 @@ internal class DrawOrderGlobalTile : GlobalTile
 
 		if (DrawOrderSystem.Order == Layer.Default)
 		{
-			DrawOrderSystem.specialDrawPoints.TryAdd(new Point16(i, j), value);
+			DrawOrderSystem.SpecialDrawPoints.Add(new Point16(i, j));
 			return value.Contains(Layer.Default);
 		}
 

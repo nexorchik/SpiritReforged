@@ -8,7 +8,7 @@ internal class TileSwaySystem : ModSystem
 	public static TileSwaySystem Instance;
 
 	public static event Action PreUpdateWind;
-	private static readonly Dictionary<int, int> tileSwayTypes = [];
+	private static readonly Dictionary<int, int> TileSwayTypes = [];
 
 	public double TreeWindCounter { get; private set; }
 	public double GrassWindCounter { get; private set; }
@@ -20,7 +20,7 @@ internal class TileSwaySystem : ModSystem
 	/// <returns> Whether this tile sways (implements ISwayTile) </returns>
 	public static bool DoesSway(int type, out TileCounterType counter)
 	{
-		if (tileSwayTypes.TryGetValue(type, out int value))
+		if (TileSwayTypes.TryGetValue(type, out int value))
 		{
 			counter = (TileCounterType)value;
 			return true;
@@ -61,7 +61,7 @@ internal class TileSwaySystem : ModSystem
 		{
 			if (tile is ISwayTile sway)
 			{
-				tileSwayTypes.Add(tile.Type, sway.Style);
+				TileSwayTypes.Add(tile.Type, sway.Style);
 				var counter = (TileCounterType)sway.Style;
 
 				if (counter is TileCounterType.MultiTileVine or TileCounterType.MultiTileGrass) //Assign required sets

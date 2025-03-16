@@ -156,7 +156,7 @@ public class ReefSpearThrown : ModProjectile
 			Vector2.Normalize(velocity) * 2 * velocityRatio,
 			240,
 			100,
-			velocity.ToRotation() + MathHelper.Pi,
+			velocity.ToRotation(),
 			25,
 			1.2f));
 
@@ -170,7 +170,7 @@ public class ReefSpearThrown : ModProjectile
 				new Vector2(4, 0.75f),
 				EaseFunction.EaseCircularOut,
 				false,
-				0.3f).WithSkew(0.8f, MathHelper.Pi + Projectile.velocity.ToRotation()).UsesLightColor();
+				0.3f).WithSkew(0.8f, Projectile.velocity.ToRotation()).UsesLightColor();
 
 		particle.Velocity = Vector2.Normalize(velocity) * -velocityRatio / 2;
 		ParticleHandler.SpawnParticle(particle);
