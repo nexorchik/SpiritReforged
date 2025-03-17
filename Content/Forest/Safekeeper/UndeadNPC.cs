@@ -25,7 +25,7 @@ public class UndeadNPC : GlobalNPC
 		NPCID.DemonEye, NPCID.DemonEyeOwl, NPCID.DemonEyeSpaceship, NPCID.ServantofCthulhu, NPCID.EyeofCthulhu, NPCID.SkeletronHand, NPCID.SkeletronHead, 
 		NPCID.PossessedArmor, NPCID.Paladin, NPCID.DarkCaster, NPCID.RaggedCaster, NPCID.DiabolistRed, NPCID.DiabolistWhite, NPCID.Eyezor, NPCID.CursedSkull, 
 		NPCID.GiantCursedSkull, NPCID.Frankenstein, NPCID.DD2SkeletonT1, NPCID.DD2SkeletonT3, NPCID.Poltergeist, NPCID.Wraith, NPCID.FloatyGross, NPCID.Mummy, 
-		NPCID.BloodMummy, NPCID.DarkMummy, NPCID.LightMummy];
+		NPCID.BloodMummy, NPCID.DarkMummy, NPCID.LightMummy, NPCID.Ghost];
 
 	private static readonly HashSet<NPC> ToDraw = [];
 	private static bool TrackingGore;
