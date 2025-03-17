@@ -3,6 +3,7 @@ using SpiritReforged.Common.ItemCommon.FloatingItem;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon.DrawPreviewHook;
 using SpiritReforged.Content.Particles;
+using Terraria.Audio;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean.Items.KoiTotem;
@@ -117,7 +118,12 @@ public class KoiTotemTile : ModTile, IDrawPreview
 			}
 
 			if (KoiTotem.CursorOpacity > .9f)
+			{
 				ParticleHandler.SpawnParticle(new DissipatingImage(pos + new Vector2(18, 0), Color.Cyan * .15f, 0, .25f, 1f, "Bloom", 120));
+
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/MagicFeedback1") with { Volume = .3f, PitchRange = (-1, -.75f) }, pos);
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/MagicFeedback2") with { Volume = .4f, PitchRange = (-.35f, -.65f) }, pos);
+			}
 		}
 	}
 
