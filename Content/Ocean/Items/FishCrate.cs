@@ -16,7 +16,7 @@ public class FishCrate : FloatingItem
 	{
 		Item.width = 20;
 		Item.height = 20;
-		Item.rare = ItemRarityID.Orange;
+		Item.rare = ItemRarityID.Blue;
 		Item.useStyle = ItemUseStyleID.Swing;
 		Item.createTile = ModContent.TileType<FishCrateTile>();
 		Item.maxStack = Item.CommonMaxStack;
