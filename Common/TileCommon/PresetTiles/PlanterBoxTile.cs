@@ -2,11 +2,7 @@
 
 public abstract class PlanterBoxTile : ModTile, IAutoloadTileItem
 {
-	public virtual void SetItemDefaults(ModItem item)
-	{
-		item.Item.value = Item.buyPrice(silver: 1);
-		item.Item.ResearchUnlockCount = 25;
-	}
+	public virtual void SetItemDefaults(ModItem item) => item.Item.value = Item.buyPrice(silver: 1);
 
 	public override void SetStaticDefaults()
 	{
@@ -20,6 +16,7 @@ public abstract class PlanterBoxTile : ModTile, IAutoloadTileItem
 		DustType = DustID.WoodFurniture;
 
 		PlanterHandler.PlanterTypes.Add(Type);
+		Mod.Find<ModItem>(Name + "Item").Item.ResearchUnlockCount = 25;
 	}
 
 	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)

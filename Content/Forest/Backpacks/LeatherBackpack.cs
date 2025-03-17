@@ -16,7 +16,7 @@ internal class LeatherBackpack : BackpackItem
 
 	public override void AddRecipes() => CreateRecipe()
 		.AddIngredient(ItemID.Leather, 10)
-		.AddIngredient(RecipeGroupID.IronBar)
+		.AddRecipeGroup("SilverBars")
 		.AddTile(TileID.WorkBenches)
 		.Register();
 }

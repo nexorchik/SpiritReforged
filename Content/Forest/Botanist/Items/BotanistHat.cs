@@ -24,9 +24,10 @@ public class BotanistHat : ModItem
 		player.GetModPlayer<BotanistPlayer>().active = true;
 	}
 
-	public override void AddRecipes() => CreateRecipe()
-			.AddIngredient(ItemID.Sunflower, 1)
-			.AddIngredient(ItemID.Hay, 10)
-			.AddTile(TileID.Loom)
-			.Register();
+	public override void AddRecipes()
+	{
+		CreateRecipe().AddIngredient(ItemID.Sunflower, 1).AddIngredient(ItemID.Hay, 10).AddTile(TileID.Loom).Register();
+		Recipe.Create(ModContent.ItemType<BotanistBody>()).AddIngredient(ItemID.Silk, 10).AddTile(TileID.Loom).Register();
+		Recipe.Create(ModContent.ItemType<BotanistLegs>()).AddIngredient(ItemID.Silk, 6).AddTile(TileID.Loom).Register();
+	}
 }

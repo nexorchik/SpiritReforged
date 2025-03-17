@@ -13,7 +13,7 @@ public class PearlString : AccessoryItem
 		Item.width = Item.height = 20;
 		Item.accessory = true;
 		Item.value = Item.sellPrice(gold: 10);
-		Item.rare = ItemRarityID.Orange;
+		Item.rare = ItemRarityID.Blue;
 	}
 
 	public override void UpdateAccessory(Player player, bool hideVisual)
