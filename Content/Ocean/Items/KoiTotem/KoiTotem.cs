@@ -120,8 +120,9 @@ public class KoiTotemTile : ModTile, IDrawPreview
 			if (KoiTotem.CursorOpacity > .9f)
 			{
 				ParticleHandler.SpawnParticle(new DissipatingImage(pos + new Vector2(18, 0), Color.Cyan * .15f, 0, .25f, 1f, "Bloom", 120));
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/MagicFeedback1") with { Volume = .3f, Pitch = -1f, PitchVariance = 0.25f }, pos);
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/MagicFeedback2") with { Volume = .4f, Pitch = -.5f, PitchVariance = 0.25f }, pos);
+
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/MagicFeedback1") with { Volume = .3f, PitchRange = (-1, -.75f) }, pos);
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/MagicFeedback2") with { Volume = .4f, PitchRange = (-.35f, -.65f) }, pos);
 			}
 		}
 	}
