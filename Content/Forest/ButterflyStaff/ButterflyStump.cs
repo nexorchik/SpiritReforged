@@ -51,12 +51,11 @@ public class ButterflyStump : ModTile, IAutoloadRubble
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
-		var system = ModContent.GetInstance<ButterflySystem>();
-		var thisZone = system.butterflyZones.Where(x => x.Contains(new Point(i, j))).FirstOrDefault();
+		var thisZone = ButterflySystem.ButterflyZones.Where(x => x.Contains(new Point(i, j))).FirstOrDefault();
 
 		if (thisZone != default)
 		{
-			system.butterflyZones.Remove(thisZone); //Remove the zone associated with this stump if it is destroyed
+			ButterflySystem.ButterflyZones.Remove(thisZone); //Remove the zone associated with this stump if it is destroyed
 			NetMessage.SendData(MessageID.WorldData); // and sync it
 		}
 	}

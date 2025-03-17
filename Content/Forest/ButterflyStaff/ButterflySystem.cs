@@ -7,22 +7,24 @@ namespace SpiritReforged.Content.Forest.ButterflyStaff;
 
 internal class ButterflySystem : ModSystem
 {
-	public HashSet<Rectangle> butterflyZones = [];
+	public static HashSet<Rectangle> ButterflyZones = [];
+
+	public override void ClearWorld() => ButterflyZones.Clear();
 
 	public override void SaveWorldData(TagCompound tag)
 	{
-		if (butterflyZones.Count != 0)
-			tag[nameof(butterflyZones)] = butterflyZones.ToList();
+		if (ButterflyZones.Count != 0)
+			tag[nameof(ButterflyZones)] = ButterflyZones.ToList();
 	}
 
 	public override void LoadWorldData(TagCompound tag)
 	{
-		var list = tag.GetList<Rectangle>(nameof(butterflyZones));
-		butterflyZones = [.. list];
+		var list = tag.GetList<Rectangle>(nameof(ButterflyZones));
+		ButterflyZones = [.. list];
 
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
-			foreach (var rect in butterflyZones)
+			foreach (var rect in ButterflyZones)
 				Populate(rect);
 		}
 	}
@@ -49,9 +51,9 @@ internal class ButterflySystem : ModSystem
 
 	public override void NetSend(BinaryWriter writer)
 	{
-		writer.Write((short)butterflyZones.Count);
+		writer.Write((short)ButterflyZones.Count);
 
-		foreach (var zone in butterflyZones)
+		foreach (var zone in ButterflyZones)
 		{
 			writer.Write((short)zone.Location.X);
 			writer.Write((short)zone.Location.Y);
@@ -62,10 +64,10 @@ internal class ButterflySystem : ModSystem
 
 	public override void NetReceive(BinaryReader reader)
 	{
-		butterflyZones.Clear();
+		ButterflyZones.Clear();
 		short count = reader.ReadInt16();
 
 		for (int i = 0; i < count; ++i)
-			butterflyZones.Add(new(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16()));
+			ButterflyZones.Add(new(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16()));
 	}
 }

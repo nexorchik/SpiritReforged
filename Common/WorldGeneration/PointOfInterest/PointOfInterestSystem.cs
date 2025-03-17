@@ -71,6 +71,12 @@ internal class PointOfInterestSystem : ModSystem
 		AddInterestType(type);
 	}
 
+	public override void ClearWorld()
+	{
+		PointsOfInterestByPosition.Clear();
+		WorldGen_PointsOfInterestByPosition.Clear();
+	}
+
 	public override void SaveWorldData(TagCompound tag)
 	{
 		SavePoints(tag, PointsOfInterestByPosition, "");

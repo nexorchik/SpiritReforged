@@ -44,7 +44,7 @@ internal class ButterflyMicropass : Micropass
 				}
 
 				GenVars.structures.AddProtectedStructure(new Rectangle(position.X, position.Y, size.X, size.Y), 4);
-				ModContent.GetInstance<ButterflySystem>().butterflyZones.Add(new Rectangle(position.X, position.Y, size.X, size.Y));
+				ButterflySystem.ButterflyZones.Add(new Rectangle(position.X, position.Y, size.X, size.Y));
 
 				var origin = new Point(position.X + size.X / 2, position.Y + 8); //Centered position
 				bool foundClearing = WorldUtils.Find(origin, Searches.Chain(new Searches.Up(1000), new Conditions.IsSolid().AreaOr(1, 50).Not()), out var top);
@@ -56,7 +56,7 @@ internal class ButterflyMicropass : Micropass
 					ushort[] ignore = [TileID.LivingWood, TileID.LeafBlock, TileID.BlueDungeonBrick, TileID.GreenDungeonBrick, TileID.PinkDungeonBrick];
 
 					//Fill sand-type walls
-					WorldUtils.Gen(new Point(origin.X - 1, top.Y + 10), new Shapes.Rectangle(3, origin.Y - top.Y - 9), Actions.Chain(new Modifiers.Blotches(2, 0.2), new Modifiers.OnlyTiles(TileID.Sand, TileID.HardenedSand, TileID.Sandstone), new Modifiers.OnlyWalls(WallID.None), new Actions.PlaceWall(WallID.HardenedSand)));
+					WorldUtils.Gen(new Point(origin.X - 1, top.Y + 10), new Shapes.Rectangle(3, origin.Y - top.Y - 9), Actions.Chain(new Modifiers.Blotches(2, 0.2), new Modifiers.OnlyTiles(TileID.Sand, TileID.HardenedSand, TileID.Sandstone), new Actions.PlaceWall(WallID.HardenedSand)));
 
 					WorldUtils.Gen(new Point(origin.X, top.Y + 10), new Shapes.Rectangle(1, origin.Y - top.Y - 9), Actions.Chain(new Modifiers.Blotches(2, 0.2), new Modifiers.SkipTiles(ignore), new Actions.ClearTile().Output(data), new Modifiers.Expand(1), new Modifiers.OnlyTiles(53), new Actions.SetTile(397).Output(data)));
 					WorldUtils.Gen(new Point(origin.X, top.Y + 10), new ModShapes.All(data), new Actions.SetFrames(frameNeighbors: true));

@@ -170,7 +170,7 @@ public class ButterflyCritter : ModNPC
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
 		var coord = new Point(spawnInfo.SpawnTileX, spawnInfo.SpawnTileY);
-		foreach (var zone in ModContent.GetInstance<ButterflySystem>().butterflyZones)
+		foreach (var zone in ButterflySystem.ButterflyZones)
 		{
 			if (zone.Contains(coord))
 				return .75f; //Commonly spawn butterflies in the zone

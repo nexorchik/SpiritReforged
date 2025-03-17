@@ -57,17 +57,15 @@ internal class AskForPoIData : PacketData
 		else
 		{
 			bool isWorldGen = reader.ReadBoolean();
+			short count = reader.ReadInt16();
 
 			var inst = PointOfInterestSystem.Instance;
-			Dictionary<InterestType, HashSet<Point16>> dictionary = isWorldGen ? inst.WorldGen_PointsOfInterestByPosition : inst.PointsOfInterestByPosition;
-			dictionary.Clear();
-
-			short count = reader.ReadInt16();
+			(isWorldGen ? inst.WorldGen_PointsOfInterestByPosition : inst.PointsOfInterestByPosition).Clear();
 
 			for (int i = 0; i < count; ++i)
 			{
 				var type = (InterestType)reader.ReadByte();
-				int subCount = reader.ReadInt16();
+				short subCount = reader.ReadInt16();
 
 				for (int j = 0; j < subCount; ++j)
 					PointOfInterestSystem.AddPoint(reader.ReadPoint16(), type);
@@ -118,7 +116,7 @@ internal class RemovePoIData : PacketData
 	public override void OnReceive(BinaryReader reader, int whoAmI)
 	{
 		byte pointType = reader.ReadByte();
-		Point16 point = new(reader.ReadInt16(), reader.ReadInt16());
+		Point16 point = reader.ReadPoint16();
 
 		if (Main.netMode == NetmodeID.Server)
 			new RemovePoIData(pointType, point).Send(ignoreClient: whoAmI);
@@ -129,7 +127,6 @@ internal class RemovePoIData : PacketData
 	public override void OnSend(ModPacket modPacket)
 	{
 		modPacket.Write(_pointType);
-		modPacket.Write(_point.X);
-		modPacket.Write(_point.Y);
+		modPacket.WritePoint16(_point);
 	}
 }
