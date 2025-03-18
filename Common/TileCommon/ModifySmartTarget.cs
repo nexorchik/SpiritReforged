@@ -36,7 +36,7 @@ internal class ModifySmartTarget : ModSystem
 			c.EmitDelegate(Modify);
 		}
 		else
-			SpiritReforgedMod.Instance.Logger.Debug($"IL edit '{nameof(PostCoords)}' failed.");
+			SpiritReforgedMod.Instance.Logger.Debug($"IL edit '{nameof(PostCoords)}' failed");
 	}
 
 	private static void Modify(ref int x, ref int y)
