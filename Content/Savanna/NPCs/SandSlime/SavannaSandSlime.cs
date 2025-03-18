@@ -16,6 +16,7 @@ public class SavannaSandSlime : ModNPC
 	public override void SetDefaults()
 	{
 		NPC.CloneDefaults(NPCID.SandSlime);
+		NPC.lifeMax = 28;
 
 		AIType = NPCID.SandSlime;
 		AnimationType = NPCID.SandSlime;
