@@ -10,7 +10,7 @@ using Terraria.GameContent.Metadata;
 namespace SpiritReforged.Common.TileCommon.Tree;
 
 /// <summary> Follows palm tree logic by default. </summary>
-public abstract class CustomTree : ModTile
+public abstract class CustomTree : ModTile, IModifySmartTarget
 {
 	/// <summary> Common frame size for tree tiles. </summary>
 	public const int FrameSize = 22;
@@ -254,5 +254,11 @@ public abstract class CustomTree : ModTile
 
 		if (Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j + 1 - height, 1, height, TileChangeType.None);
+	}
+
+	public void ModifyTarget(ref int x, ref int y)
+	{
+		while (Main.tile[x, y + 1].HasTile && Main.tile[x, y + 1].TileType == Type && WorldGen.InWorld(x, y + 1))
+			y++;
 	}
 }
