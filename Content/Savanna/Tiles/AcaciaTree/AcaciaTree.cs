@@ -13,8 +13,16 @@ namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
 
 public class AcaciaTree : CustomTree, IConvertibleTile
 {
-	/// <summary> All Acacia treetop platforms. </summary>
-	public static IEnumerable<TreetopPlatform> Platforms => SimpleEntitySystem.entities.Where(x => x is TreetopPlatform).Cast<TreetopPlatform>();
+	/// <summary> All Acacia treetop platforms that exist in the world. </summary>
+	internal static IEnumerable<TreetopPlatform> Platforms
+	{
+		get
+		{
+			var platforms = SimpleEntitySystem.Entities.Where(x => x is TreetopPlatform);
+			return platforms.Cast<TreetopPlatform>();
+		}
+	}
+
 	public override int TreeHeight => WorldGen.genRand.Next(8, 16);
 
 	/// <summary> How much acacia tree tops sway in the wind. Used by the client for drawing and platform logic. </summary>
@@ -49,9 +57,8 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 		if (IsTreeTop(i, j) && !Platforms.Where(x => x.TreePosition == pt).Any())
 		{
-			int type = SimpleEntitySystem.types[typeof(TreetopPlatform)];
 			//Spawn our entity at direct tile coordinates where it can reposition itself after updating
-			SimpleEntitySystem.NewEntity(type, pt.ToVector2());
+			SimpleEntitySystem.NewEntity(typeof(TreetopPlatform), pt.ToVector2());
 		}
 	}
 

@@ -33,7 +33,7 @@ public class DevourerOfSoil : SimpleEntity //Use SimpleEntity to avoid appearing
 	{
 		orig(self, sItem, itemRectangle, originalDamage, knockBack);
 
-		foreach (var entity in SimpleEntitySystem.entities)
+		foreach (var entity in SimpleEntitySystem.Entities)
 			if (MeleeCollide(entity, itemRectangle))
 				return;
 	}
@@ -269,7 +269,7 @@ internal class DoSHitData : PacketData
 		if (Main.netMode == NetmodeID.Server)
 			new DoSHitData(entity).Send(ignoreClient: whoAmI);
 
-		if (SimpleEntitySystem.entities[entity] is DevourerOfSoil dos)
+		if (SimpleEntitySystem.Entities[entity] is DevourerOfSoil dos)
 			dos.OnHit();
 	}
 

@@ -2,6 +2,7 @@ using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.ModCompat.Classic;
 using SpiritReforged.Common.SimpleEntity;
 using SpiritReforged.Common.TileCommon.TileSway;
+using Terraria;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.Buoys;
@@ -50,16 +51,9 @@ public class SmallBuoy : ModItem
 
 	public override bool? UseItem(Player player)
 	{
-		if (player.whoAmI == Main.myPlayer && player.ItemAnimationJustStarted)
+		if (!Main.dedServ && player.whoAmI == Main.myPlayer && player.ItemAnimationJustStarted)
 		{
-			int type = SimpleEntitySystem.types[typeof(SmallBuoyEntity)];
-			var position = Main.MouseWorld;
-
-			SimpleEntitySystem.NewEntity(type, position);
-
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-				new SpawnSimpleEntityData((short)type, position).Send();
-
+			SimpleEntitySystem.NewEntity(typeof(SmallBuoyEntity), Main.MouseWorld);
 			return true;
 		}
 
@@ -106,11 +100,10 @@ public class SmallBuoyEntity : SimpleEntity
 		position += velocity;
 
 		Lighting.AddLight(Top, .3f, .1f, .1f);
+		var player = Main.LocalPlayer;
 
-		if (Hitbox.Contains(Main.MouseWorld.ToPoint()))
+		if (Hitbox.Contains(Main.MouseWorld.ToPoint()) && player.IsTargetTileInItemRange(new Item()))
 		{
-			var player = Main.LocalPlayer;
-
 			player.cursorItemIconEnabled = true;
 			player.cursorItemIconID = ItemType;
 

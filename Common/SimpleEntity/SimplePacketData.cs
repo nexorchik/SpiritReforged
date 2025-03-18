@@ -23,7 +23,7 @@ internal class SpawnSimpleEntityData : PacketData
 		if (Main.netMode == NetmodeID.Server) //Relay to other clients
 			new SpawnSimpleEntityData(entityType, position).Send(ignoreClient: whoAmI);
 
-		SimpleEntitySystem.NewEntity(entityType, position);
+		SimpleEntitySystem.NewEntity(entityType, position, true);
 	}
 
 	public override void OnSend(ModPacket modPacket)
@@ -47,7 +47,7 @@ internal class KillSimpleEntityData : PacketData
 		if (Main.netMode == NetmodeID.Server) //Relay to other clients
 			new KillSimpleEntityData(index).Send(ignoreClient: whoAmI);
 
-		SimpleEntitySystem.entities[index].Kill();
+		SimpleEntitySystem.Entities[index].Kill();
 	}
 
 	public override void OnSend(ModPacket modPacket) => modPacket.Write(_index);

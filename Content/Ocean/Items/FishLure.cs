@@ -52,16 +52,9 @@ public class FishLure : FloatingItem
 
 	public override bool? UseItem(Player player)
 	{
-		if (player.whoAmI == Main.myPlayer && player.ItemAnimationJustStarted)
+		if (!Main.dedServ && player.whoAmI == Main.myPlayer && player.ItemAnimationJustStarted)
 		{
-			int type = SimpleEntitySystem.types[typeof(FishLureEntity)];
-			var position = Main.MouseWorld;
-
-			SimpleEntitySystem.NewEntity(type, position);
-
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-				new SpawnSimpleEntityData((short)type, position).Send();
-
+			SimpleEntitySystem.NewEntity(typeof(FishLureEntity), Main.MouseWorld);
 			return true;
 		}
 
@@ -100,7 +93,7 @@ public class FishLureEntity : SimpleEntity
 		if (distance.X < Main.buffScanAreaWidth * 8 && distance.Y < Main.buffScanAreaHeight * 8)
 			player.GetModPlayer<OceanPlayer>().nearLure = true;
 
-		if (Hitbox.Contains(Main.MouseWorld.ToPoint()))
+		if (Hitbox.Contains(Main.MouseWorld.ToPoint()) && player.IsTargetTileInItemRange(new Item()))
 		{
 			player.cursorItemIconEnabled = true;
 			player.cursorItemIconID = ItemType;

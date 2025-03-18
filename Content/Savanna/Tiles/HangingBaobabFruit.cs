@@ -154,7 +154,7 @@ public class FallingBaobabFruit : ModProjectile
 				break;
 
 			case DropType.Worm:
-				SimpleEntitySystem.NewEntity(SimpleEntitySystem.types[typeof(NPCs.DevourerOfSoil)], Projectile.Center + new Vector2(0, 16));
+				SimpleEntitySystem.NewEntity(SimpleEntitySystem.Types[typeof(NPCs.DevourerOfSoil)], Projectile.Center + new Vector2(0, 16));
 				break;
 		}
 

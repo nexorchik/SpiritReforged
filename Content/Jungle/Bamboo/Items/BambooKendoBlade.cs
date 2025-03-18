@@ -167,7 +167,7 @@ public class KendoBladeSwing : ModProjectile
 		return false;
 	}
 
-	public virtual void DrawSmear(Color lightColor, SpriteEffects effects)
+	private void DrawSmear(Color lightColor, SpriteEffects effects)
 	{
 		Main.instance.LoadProjectile(985);
 		var smear = TextureAssets.Projectile[985].Value;

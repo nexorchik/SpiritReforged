@@ -10,14 +10,10 @@ public class BigBuoy : SmallBuoy
 	{
 		if (player.whoAmI == Main.myPlayer && player.ItemAnimationJustStarted)
 		{
-			int type = SimpleEntitySystem.types[typeof(BigBuoyEntity)];
+			int type = SimpleEntitySystem.Types[typeof(BigBuoyEntity)];
 			var position = Main.MouseWorld;
 
 			SimpleEntitySystem.NewEntity(type, position);
-
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-				new SpawnSimpleEntityData((short)type, position).Send();
-
 			return true;
 		}
 
