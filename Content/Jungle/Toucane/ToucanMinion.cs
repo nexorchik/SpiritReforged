@@ -15,10 +15,11 @@ public class ToucanMinion : BaseMinion
 	private ref float AiTimer => ref Projectile.ai[1];
 
 	private const float STATE_HOVERTORESTSPOT = 0;
-	private const float STATE_RESTING = 1;
-	private const float STATE_HOVERTOTARGET = 2;
-	private const float STATE_FEATHERSHOOT = 3;
-	private const float STATE_GLIDING = 4;
+	private const float STATE_HOVERIDLY = 1;
+	private const float STATE_RESTING = 2;
+	private const float STATE_HOVERTOTARGET = 3;
+	private const float STATE_FEATHERSHOOT = 4;
+	private const float STATE_GLIDING = 5;
 
 	private int _featherShotFrameTime;
 	/// <summary> For how long this minion can select a target without considering collision. </summary>
@@ -99,14 +100,15 @@ public class ToucanMinion : BaseMinion
 	public override void IdleMovement(Player player)
 	{
 		AiTimer++;
+
 		_featherShotFrameTime = 0;
 		_targetMemory = 0;
 		_lastTargetInMemory = -1;
 
-		if (AiState is not STATE_HOVERTORESTSPOT and not STATE_RESTING)
+		if (AiState is not STATE_HOVERTORESTSPOT and not STATE_RESTING and not STATE_HOVERIDLY)
 		{
 			AiTimer = 0;
-			AiState = STATE_HOVERTORESTSPOT;
+			AiState = STATE_HOVERIDLY;
 		}
 
 		Projectile.direction = Projectile.spriteDirection = Projectile.Center.X < player.MountedCenter.X ? -1 : 1;
@@ -151,6 +153,17 @@ public class ToucanMinion : BaseMinion
 				{
 					AiTimer = 0;
 					AiState = STATE_RESTING;
+				}
+
+				break;
+			case STATE_HOVERIDLY:
+				Projectile.tileCollide = false;
+				Projectile.AccelFlyingMovement(player.MountedCenter + new Vector2(20 * player.direction, -50), 0.15f, 0.05f, 15);
+				//check if close enough to and above the rest spot, and not inside a tile, if so, start resting
+				if (AiTimer > 120)
+				{
+					AiTimer = 0;
+					AiState = STATE_HOVERTORESTSPOT;
 				}
 
 				break;
