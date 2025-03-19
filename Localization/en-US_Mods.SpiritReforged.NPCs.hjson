@@ -136,6 +136,7 @@ Cartographer: {
 		1: Say, you got any nice, hardy paper on you? I've done plumb run out.
 		2: Gosh... dropping a pin on the ground is a bad time. Especially the brown ones.
 		3: Hey, do you have a map? Mind if I take a look? Better be well kept!
+		4: Finding the way once is luck. Finding the way twice takes a good map.
 
 		Map: {
 			FloatingIsland: {
