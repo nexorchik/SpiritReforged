@@ -73,11 +73,13 @@ internal class FishingAreaMicropass : Micropass
 				List<Item> cached = [];
 
 				for (int i = 0; i < c.item.Length; i++) //Cache all non-air items
+				{
 					if (c.item[i]?.IsAir == false)
 					{
 						cached.Add(c.item[i].Clone());
 						c.item[i].TurnToAir();
 					}
+				}
 
 				int index = 0;
 				foreach (var item in cached) //Place the cached items in the order they were added
