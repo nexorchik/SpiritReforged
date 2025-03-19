@@ -15,7 +15,7 @@ public class Termite : ModNPC
 		Main.npcFrameCount[Type] = 3;
 		Main.npcCatchable[Type] = true;
 		NPCID.Sets.CountsAsCritter[Type] = true;
-		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Shimmerfly;
+		NPCID.Sets.ShimmerTransformToNPC[Type] = NPCID.Shimmerfly;
 	}
 
 	public override void SetDefaults()
