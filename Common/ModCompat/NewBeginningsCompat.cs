@@ -146,34 +146,16 @@ internal class NewBeginningsCompat : ModSystem
 
 	private static Point16 FindRecluseSpawn()
 	{
-		while (true)
-		{
-			Point16 pos = WorldGen.genRand.Next([.. FishingAreaMicropass.CovePositions]);
+		var area = WorldGen.genRand.Next([.. FishingAreaMicropass.Coves]);
 
-			if (ScanForKoi(pos, out Point16 newPos))
+		for (int x = area.Left; x < area.Right; x++)
+			for (int y = area.Top; x < area.Bottom; y++)
 			{
-				return newPos;
+				if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == ModContent.TileType<KoiTotemTile>())
+					return new Point16(x, y);
 			}
-		}
-	}
 
-	private static bool ScanForKoi(Point16 pos, out Point16 resultPos)
-	{
-		resultPos = Point16.Zero;
-
-		for (int i = pos.X - 10; i < pos.X + 80; ++i)
-		{
-			for (int j = pos.Y - 10; j < pos.Y + 60; ++j)
-			{
-				if (Main.tile[i, j].HasTile && Main.tile[i, j].TileType == ModContent.TileType<KoiTotemTile>())
-				{
-					resultPos = new Point16(i, j);
-					return true;
-				}
-			}
-		}
-
-		return false;
+		return new Point16(Main.spawnTileX, Main.spawnTileY);
 	}
 
 	private static Point16 FindScarecrowSpawnPoint()

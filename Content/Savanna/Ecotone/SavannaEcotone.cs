@@ -15,6 +15,7 @@ namespace SpiritReforged.Content.Savanna.Ecotone;
 
 internal class SavannaEcotone : EcotoneBase
 {
+	[WorldBound]
 	public static Rectangle SavannaArea;
 	private static int Steps = 0;
 
@@ -26,7 +27,7 @@ internal class SavannaEcotone : EcotoneBase
 		On_WorldGen.PlacePot += ConvertPot;
 	}
 
-	private bool PreventSmallPiles(On_WorldGen.orig_PlaceSmallPile orig, int i, int j, int X, int Y, ushort type)
+	private static bool PreventSmallPiles(On_WorldGen.orig_PlaceSmallPile orig, int i, int j, int X, int Y, ushort type)
 	{
 		if (WorldGen.generatingWorld && type == TileID.SmallPiles && (SavannaArea.Contains(new Point(i, j)) || OnBaobab(i, j)))
 			return false; //Skips orig
@@ -34,7 +35,7 @@ internal class SavannaEcotone : EcotoneBase
 		return orig(i, j, X, Y, type);
 	}
 
-	private bool PreventLargePiles(On_WorldGen.orig_PlaceTile orig, int i, int j, int Type, bool mute, bool forced, int plr, int style)
+	private static bool PreventLargePiles(On_WorldGen.orig_PlaceTile orig, int i, int j, int Type, bool mute, bool forced, int plr, int style)
 	{
 		if (WorldGen.generatingWorld && Type == TileID.LargePiles && (SavannaArea.Contains(new Point(i, j)) || OnBaobab(i, j)))
 			return false; //Skips orig
@@ -42,7 +43,7 @@ internal class SavannaEcotone : EcotoneBase
 		return orig(i, j, Type, mute, forced, plr, style);
 	}
 
-	private bool PreventPalmTreeGrowth(On_WorldGen.orig_GrowPalmTree orig, int i, int y)
+	private static bool PreventPalmTreeGrowth(On_WorldGen.orig_GrowPalmTree orig, int i, int y)
 	{
 		if (WorldGen.generatingWorld && SavannaArea.Contains(new Point(i, y)))
 			return false; //Skips orig
@@ -50,7 +51,7 @@ internal class SavannaEcotone : EcotoneBase
 		return orig(i, y);
 	}
 
-	private bool ConvertPot(On_WorldGen.orig_PlacePot orig, int x, int y, ushort type, int style)
+	private static bool ConvertPot(On_WorldGen.orig_PlacePot orig, int x, int y, ushort type, int style)
 	{
 		if (WorldGen.generatingWorld && SavannaArea.Contains(new Point(x, y)))
 			style = WorldGen.genRand.Next(7, 10); //Jungle pots
@@ -60,8 +61,6 @@ internal class SavannaEcotone : EcotoneBase
 
 	public override void AddTasks(List<GenPass> tasks, List<EcotoneSurfaceMapping.EcotoneEntry> entries)
 	{
-		SavannaArea = Rectangle.Empty; //Initialize here in case the player decides to generate multiple worlds in one session
-
 		int pyramidIndex = tasks.FindIndex(x => x.Name == "Pyramids");
 		int grassIndex = tasks.FindIndex(x => x.Name == "Spreading Grass") + 2;
 
@@ -153,6 +152,8 @@ internal class SavannaEcotone : EcotoneBase
 
 					if (i > 90 + depth - noise)
 						type = TileID.Sandstone;
+					else if (i > (sandNoise.GetNoise(x, 0) + 1) * 3 + 30) //Add hardened sand below a certain depth for ease of navigation
+						type = TileID.HardenedSand;
 
 					if (i > noise && TileID.Sets.Ore[tile.TileType])
 						type = tile.TileType; //Keep below-surface ores
