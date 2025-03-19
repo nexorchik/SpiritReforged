@@ -19,6 +19,7 @@ public class SavannaDirt : ModTile, IAutoloadTileItem, ICheckItemUse
 		Main.tileMerge[TileID.Sand][Type] = true;
 
 		TileID.Sets.ChecksForMerge[Type] = true;
+		TileID.Sets.CanBeDugByShovel[Type] = true;
 
 		this.Merge(TileID.Stone, TileID.Dirt, TileID.Mud, TileID.ClayBlock);
 		AddMapEntry(new Color(138, 79, 45));
