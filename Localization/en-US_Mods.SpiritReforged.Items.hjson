@@ -116,7 +116,7 @@ OceanPendant: {
 }
 
 ReefSpear: {
-	DisplayName: Reef Trident
+	DisplayName: Reef Piercer
 	Tooltip: Right click to throw the trident, increasing damage taken by the main attack
 }
 
