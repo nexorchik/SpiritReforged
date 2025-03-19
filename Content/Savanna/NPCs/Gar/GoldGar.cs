@@ -5,6 +5,20 @@ namespace SpiritReforged.Content.Savanna.NPCs.Gar;
 [AutoloadCritter]
 public class GoldGar : Gar
 {
+	public override void AI()
+	{
+		base.AI();
+
+		Lighting.AddLight((int)(NPC.Center.X / 16f), (int)(NPC.Center.Y / 16f), .1f, .1f, .1f);
+
+		if (Main.rand.NextBool(30))
+		{
+			var dust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.GoldCoin);
+			dust.velocity *= 0f;
+			dust.fadeIn += 0.5f;
+		}
+	}
+
 	public override void FindFrame(int frameHeight)
 	{
 		NPC.frameCounter += 0.22f;
@@ -24,5 +38,6 @@ public class GoldGar : Gar
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("GarGore6").Type, Main.rand.NextFloat(.5f, .7f));
 		}
 	}
+
 	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>(2);
 }

@@ -11,7 +11,8 @@ public class GoldKillifish : Killifish
 
 	public override void AI()
 	{
-		base.AI(); //Call base so Killifish AI can run
+		base.AI();
+
 		Lighting.AddLight((int)(NPC.Center.X / 16f), (int)(NPC.Center.Y / 16f), .1f, .1f, .1f);
 
 		if (Main.rand.NextBool(30))

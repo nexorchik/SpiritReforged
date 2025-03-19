@@ -25,7 +25,6 @@ public class Crinoid : ModNPC
 		NPC.knockBackResist = 0f;
 		NPC.aiStyle = -1;
 		NPC.npcSlots = 0;
-		NPC.alpha = 255;
 		AIType = NPCID.WebbedStylist;
 	}
 
@@ -41,8 +40,6 @@ public class Crinoid : ModNPC
 		_pickedType = (byte)Main.rand.Next(3);
 		NPC.netUpdate = true;
 	}
-
-	public override void AI() => NPC.alpha = Math.Max(NPC.alpha - 5, 0); //Fade in
 
 	public override void FindFrame(int frameHeight)
 	{

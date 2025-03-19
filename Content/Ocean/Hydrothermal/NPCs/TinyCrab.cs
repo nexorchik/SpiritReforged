@@ -6,7 +6,7 @@ namespace SpiritReforged.Content.Ocean.Hydrothermal.NPCs;
 [AutoloadCritter]
 public class TinyCrab : ModNPC
 {
-	public override void SetStaticDefaults() => Main.npcFrameCount[NPC.type] = 4;
+	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 4;
 
 	public override void SetDefaults()
 	{
@@ -21,18 +21,15 @@ public class TinyCrab : ModNPC
 		NPC.knockBackResist = .45f;
 		NPC.aiStyle = 67;
 		NPC.npcSlots = 0;
-		NPC.alpha = 255;
 		AIType = NPCID.Bunny;
 	}
 
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Ocean");
 
-	public override void AI() => NPC.alpha = Math.Max(NPC.alpha - 5, 0); //Fade in
-
 	public override void FindFrame(int frameHeight)
 	{
 		NPC.frameCounter += 0.15f;
-		NPC.frameCounter %= Main.npcFrameCount[NPC.type];
+		NPC.frameCounter %= Main.npcFrameCount[Type];
 		int frame = (int)NPC.frameCounter;
 		NPC.frame.Y = frame * frameHeight;
 	}

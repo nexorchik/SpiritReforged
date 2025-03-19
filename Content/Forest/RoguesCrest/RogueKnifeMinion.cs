@@ -51,21 +51,12 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 
 		base.AI();
 
-		if (animate || Projectile.frame != 0)
-		{
-			if (++Projectile.frameCounter >= 6)
-			{
-				Projectile.frameCounter = 0;
-				Projectile.frame = ++Projectile.frame % Main.projFrames[Type];
-			}
-		}
-
 		AiTimer = Math.Max(0, AiTimer - 1);
 	}
 
 	public override void IdleMovement(Player player)
 	{
-		var desiredPos = player.MountedCenter + new Vector2(0, -60 + (float)Math.Sin(Main.GameUpdateCount / 30f) * 5) + Vector2.UnitY * player.gfxOffY;
+		var desiredPos = new Vector2((int)player.MountedCenter.X, (int)player.MountedCenter.Y - 60 + (float)Math.Sin(Main.GameUpdateCount / 30f) * 5 + player.gfxOffY);
 
 		AiTimer = 10;
 		Projectile.rotation = Projectile.rotation.AngleLerp(0, 0.07f);
@@ -89,7 +80,7 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 		AiState = Attacking;
 
 		Projectile.extraUpdates = 1;
-		Projectile.rotation = Utils.AngleLerp(Projectile.rotation, Projectile.velocity.ToRotation() + 1.57f, 0.2f);//Utils.AngleLerp(Projectile.rotation, Projectile.AngleTo(target.Center) + 1.57f, 0.2f);
+		Projectile.rotation = Utils.AngleLerp(Projectile.rotation, Projectile.velocity.ToRotation() + 1.57f, 0.2f);
 
 		if (Projectile.Distance(target.Center) > 120) //Move closer to the target
 			Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(target.Center) * 8, 0.08f);
@@ -148,15 +139,19 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 		}
 	}
 
-	public override bool DoAutoFrameUpdate(ref int framesPerSecond, ref int startFrame, ref int endFrame) => false;
+	public override bool DoAutoFrameUpdate(ref int framesPerSecond, ref int startFrame, ref int endFrame)
+	{
+		framesPerSecond = 22;
+		return animate;
+	}
 
 	public override bool PreDraw(ref Color lightColor)
 	{
-		Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-		var drawFrame = new Rectangle(0, texture.Height / Main.projFrames[Type] * Projectile.frame, texture.Width, texture.Height / Main.projFrames[Type]);
-		var origin = new Vector2(drawFrame.Width / 2, Projectile.height / 2);
+		var texture = TextureAssets.Projectile[Projectile.type].Value;
+		var source = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame, 0, -2);
+		var origin = new Vector2(source.Width / 2, Projectile.height / 2);
 
-		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, drawFrame, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
+		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, source, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
 
 		if (Trailing)
 			for (int k = 0; k < Projectile.oldPos.Length; k++)
@@ -164,7 +159,7 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 				var drawPos = Projectile.oldPos[k] - Main.screenPosition + Projectile.Size / 2 + new Vector2(0f, Projectile.gfxOffY);
 				var color = Projectile.GetAlpha(lightColor) * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
 
-				Main.EntitySpriteDraw(texture, drawPos, drawFrame, color * .75f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
+				Main.EntitySpriteDraw(texture, drawPos, source, color * .75f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
 			}
 
 		return false;
