@@ -29,10 +29,10 @@ internal class CloudGlobalTile : GlobalTile
 		int herbType = ModContent.TileType<CloudstalkTile>();
 		bool validAnchor = TileObjectData.GetTileData(herbType, 0).AnchorValidTiles.Contains(ground.TileType);
 
-		if (validAnchor && ground.Slope == SlopeType.Solid && !ground.IsHalfBlock && tile.LiquidAmount < 100 && TilePlaceHelper.IsReplaceable(i, j) && TilePlaceHelper.CanPlaceHerb(i, j, herbType))
+		if (validAnchor && ground.Slope == SlopeType.Solid && !ground.IsHalfBlock && tile.LiquidAmount < 100 && Placer.IsReplaceable(i, j) && Placer.CanPlaceHerb(i, j, herbType))
 		{
 			tile.ClearTile();
-			TilePlaceHelper.PlaceTile(i, j, herbType);
+			Placer.PlaceTile(i, j, herbType);
 		}
 	}
 }

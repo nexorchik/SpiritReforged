@@ -2,7 +2,8 @@
 
 namespace SpiritReforged.Common.TileCommon;
 
-public static class TilePlaceHelper
+/// <summary> Includes helper methods related to placing tiles. </summary>
+public static class Placer
 {
 	private static readonly int[] Replaceable = [TileID.Plants, TileID.Plants2, TileID.JunglePlants, TileID.JunglePlants2, 
 		TileID.CorruptPlants, TileID.CrimsonPlants, TileID.HallowedPlants, TileID.HallowedPlants2];
@@ -24,7 +25,7 @@ public static class TilePlaceHelper
 	/// <summary> Places a tile of <paramref name="type"/> at the given coordinates and automatically syncs it if necessary. </summary>
 	/// <param name="type"> The tile type to place. </param>
 	/// <param name="style"> The tile style to place. -1 tries to place a random style. </param>
-	public static void PlaceTile(int i, int j, int type, int style = -1)
+	public static bool PlaceTile(int i, int j, int type, int style = -1)
 	{
 		int width = 1;
 		int height = 1;
@@ -38,17 +39,27 @@ public static class TilePlaceHelper
 			height = data.Height;
 
 			if (style == -1)
-				style = data.RandomStyleRange;
+				style = Main.rand.Next(data.RandomStyleRange);
 		}
 
 		WorldGen.PlaceTile(i, j, type, true, style: style);
 
-		if (Main.tile[i, j].TileType == type && Main.netMode != NetmodeID.SinglePlayer)
+		if (Main.tile[i, j].TileType == type)
 		{
-			TileExtensions.GetTopLeft(ref i, ref j);
-			NetMessage.SendTileSquare(-1, i, j, width, height);
+			if (Main.netMode != NetmodeID.SinglePlayer)
+			{
+				TileExtensions.GetTopLeft(ref i, ref j);
+				NetMessage.SendTileSquare(-1, i, j, width, height);
+			}
+
+			return true;
 		}
+
+		return false;
 	}
+
+	///<inheritdoc cref="PlaceTile(int, int, int, int)"/>
+	public static bool PlaceTile<T>(int i, int j, int style = -1) where T : ModTile => PlaceTile(i, j, ModContent.TileType<T>(), style);
 
 	/// <summary> Checks the surrounding area for herbs of <paramref name="type"/>.</summary>
 	/// <returns> true if fewer than 4 herbs are in range. </returns>

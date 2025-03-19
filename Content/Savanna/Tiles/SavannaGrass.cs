@@ -33,25 +33,23 @@ public class SavannaGrass : GrassTile, IConvertibleTile
 
 		if (!above.HasTile && above.LiquidAmount < 80)
 		{
-			int grassChance = GrassAny() ? 6 : 40;
+			int grassChance = GrassAny() ? 6 : 30;
 
-			if (Main.rand.NextBool(grassChance) && WorldGen.PlaceTile(i, j - 1, ModContent.TileType<ElephantGrass>(), true, style: Main.rand.Next(5, 8)))
-				NetMessage.SendTileSquare(-1, i, j - 2, 1, 2);
-
-			if (Main.rand.NextBool(15) && WorldGen.PlaceTile(i, j - 1, ModContent.TileType<SavannaFoliage>(), true, style: Main.rand.Next(SavannaFoliage.StyleRange)))
-				NetMessage.SendTileSquare(-1, i, j - 1);
-
-			if (Main.rand.NextBool(1400) && WorldGen.PlaceTile(i, j - 1, TileID.DyePlants, true, style: 2))
+			if (Main.rand.NextBool(grassChance))
+				Placer.PlaceTile<ElephantGrass>(i, j - 1, Main.rand.Next(5, 8));
+			else if (Main.rand.NextBool(10))
+				Placer.PlaceTile<SavannaFoliage>(i, j - 1);
+			else if (Main.rand.NextBool(1400) && WorldGen.PlaceTile(i, j - 1, TileID.DyePlants, true, style: 2))
 				NetMessage.SendTileSquare(-1, i, j - 1);
 
 			if (Main.rand.NextBool(100) && !WorldGen.PlayerLOS(i, j))
 			{
-				if (Main.rand.NextBool() && WorldGen.PlaceObject(i, j, ModContent.TileType<TermiteMoundSmall>(), true, style: Main.rand.Next(3)))
-					NetMessage.SendTileSquare(-1, i, j - 1, 2, 1);
-				else if (Main.rand.NextBool(3) && WorldGen.PlaceObject(i, j, ModContent.TileType<TermiteMoundMedium>(), true, style: Main.rand.Next(2)))
-					NetMessage.SendTileSquare(-1, i, j - 4, 3, 4);
-				else if (Main.rand.NextBool(5) && WorldGen.PlaceObject(i, j, ModContent.TileType<TermiteMoundLarge>(), true))
-					NetMessage.SendTileSquare(-1, i, j - 5, 3, 5);
+				if (Main.rand.NextBool())
+					Placer.PlaceTile<TermiteMoundSmall>(i, j - 1);
+				else if (Main.rand.NextBool(3))
+					Placer.PlaceTile<TermiteMoundMedium>(i, j - 1);
+				else if (Main.rand.NextBool(5))
+					Placer.PlaceTile<TermiteMoundLarge>(i, j - 1);
 			}
 		}
 
@@ -72,10 +70,7 @@ public class SavannaGrass : GrassTile, IConvertibleTile
 			var pos = ((player.Bottom - new Vector2(0, 8 * player.gravDir)) / 16).ToPoint16();
 
 			if (!Main.tile[pos.X, pos.Y].HasTile)
-			{
-				WorldGen.PlaceTile(pos.X, pos.Y, ModContent.TileType<SavannaFoliage>(), true, style: Main.rand.Next(SavannaFoliage.StyleRange));
-				NetMessage.SendTileSquare(-1, pos.X, pos.Y);
-			}
+				Placer.PlaceTile<SavannaFoliage>(pos.X, pos.Y - 1);
 		}
 	}
 
@@ -112,13 +107,12 @@ public class SavannaGrassCorrupt : SavannaGrass
 		var above = Framing.GetTileSafely(i, j - 1);
 		if (!above.HasTile && above.LiquidAmount < 80)
 		{
-			int grassChance = GrassAny() ? 6 : 50;
+			int grassChance = GrassAny() ? 6 : 35;
 
-			if (Main.rand.NextBool(grassChance) && WorldGen.PlaceTile(i, j - 1, ModContent.TileType<ElephantGrassCorrupt>(), true, style: Main.rand.Next(5, 8)))
-				NetMessage.SendTileSquare(-1, i, j - 2, 1, 2, TileChangeType.None);
-
-			if (Main.rand.NextBool(80) && WorldGen.PlaceTile(i, j - 1, ModContent.TileType<SavannaFoliageCorrupt>(), true, style: Main.rand.Next(SavannaFoliage.StyleRange)))
-				NetMessage.SendTileSquare(-1, i, j - 1);
+			if (Main.rand.NextBool(grassChance))
+				Placer.PlaceTile<ElephantGrassCorrupt>(i, j - 1, Main.rand.Next(5, 8));
+			else if (Main.rand.NextBool(15))
+				Placer.PlaceTile<SavannaFoliageCorrupt>(i, j - 1);
 		}
 
 		bool GrassAny()
@@ -146,13 +140,12 @@ public class SavannaGrassCrimson : SavannaGrass
 		var above = Framing.GetTileSafely(i, j - 1);
 		if (!above.HasTile && above.LiquidAmount < 80)
 		{
-			int grassChance = GrassAny() ? 6 : 50;
+			int grassChance = GrassAny() ? 6 : 35;
 
-			if (Main.rand.NextBool(grassChance) && WorldGen.PlaceTile(i, j - 1, ModContent.TileType<ElephantGrassCrimson>(), true, style: Main.rand.Next(5, 8)))
-				NetMessage.SendTileSquare(-1, i, j - 2, 1, 2, TileChangeType.None);
-
-			if (Main.rand.NextBool(80) && WorldGen.PlaceTile(i, j - 1, ModContent.TileType<SavannaFoliageCrimson>(), true, style: Main.rand.Next(SavannaFoliage.StyleRange)))
-				NetMessage.SendTileSquare(-1, i, j - 1);
+			if (Main.rand.NextBool(grassChance))
+				Placer.PlaceTile<ElephantGrassCrimson>(i, j - 1, Main.rand.Next(5, 8));
+			else if (Main.rand.NextBool(15))
+				Placer.PlaceTile<SavannaFoliageCrimson>(i, j - 1);
 		}
 
 		bool GrassAny()
@@ -180,13 +173,12 @@ public class SavannaGrassHallow : SavannaGrass
 		var above = Framing.GetTileSafely(i, j - 1);
 		if (!above.HasTile && above.LiquidAmount < 80)
 		{
-			int grassChance = GrassAny() ? 6 : 40;
+			int grassChance = GrassAny() ? 6 : 30;
 
-			if (Main.rand.NextBool(grassChance) && WorldGen.PlaceTile(i, j - 1, ModContent.TileType<ElephantGrassHallow>(), true, style: Main.rand.Next(5, 8)))
-				NetMessage.SendTileSquare(-1, i, j - 2, 1, 2, TileChangeType.None);
-
-			if (Main.rand.NextBool(15) && WorldGen.PlaceTile(i, j - 1, ModContent.TileType<SavannaFoliageHallow>(), true, style: Main.rand.Next(SavannaFoliage.StyleRange)))
-				NetMessage.SendTileSquare(-1, i, j - 1);
+			if (Main.rand.NextBool(grassChance))
+				Placer.PlaceTile<ElephantGrassHallow>(i, j - 1, Main.rand.Next(5, 8));
+			else if (Main.rand.NextBool(10))
+				Placer.PlaceTile<SavannaFoliageHallow>(i, j - 1);
 
 			if (Main.rand.NextBool(1400) && WorldGen.PlaceTile(i, j - 1, TileID.DyePlants, true, style: 2))
 				NetMessage.SendTileSquare(-1, i, j - 1, TileChangeType.None);
