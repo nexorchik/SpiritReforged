@@ -15,6 +15,7 @@ namespace SpiritReforged.Content.Savanna.Ecotone;
 
 internal class SavannaEcotone : EcotoneBase
 {
+	[WorldBound]
 	public static Rectangle SavannaArea;
 	private static int Steps = 0;
 
@@ -60,8 +61,6 @@ internal class SavannaEcotone : EcotoneBase
 
 	public override void AddTasks(List<GenPass> tasks, List<EcotoneSurfaceMapping.EcotoneEntry> entries)
 	{
-		SavannaArea = Rectangle.Empty; //Initialize here in case the player decides to generate multiple worlds in one session
-
 		int pyramidIndex = tasks.FindIndex(x => x.Name == "Pyramids");
 		int grassIndex = tasks.FindIndex(x => x.Name == "Spreading Grass") + 2;
 

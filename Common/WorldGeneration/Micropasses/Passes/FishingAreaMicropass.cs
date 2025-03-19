@@ -14,7 +14,8 @@ internal class FishingAreaMicropass : Micropass
 		{ 4, [new Point16(23, 3), new Point16(4, 15), new Point16(51, 2), new Point16(49, 20)] }
 	};
 
-	public static HashSet<Point16> CovePositions = [];
+	[WorldBound]
+	public static HashSet<Rectangle> Coves = [];
 	
 	public override string WorldGenName => "Fishing Coves";
 
@@ -31,7 +32,7 @@ internal class FishingAreaMicropass : Micropass
 			string subChar = WorldGen.genRand.NextBool() ? "a" : "b";
 			string structureName = "Assets/Structures/Coves/FishCove" + subId + subChar;
 
-			Point16 size = StructureHelper.API.Generator.GetStructureDimensions(structureName, ModContent.GetInstance<SpiritReforgedMod>());
+			Point16 size = StructureHelper.API.Generator.GetStructureDimensions(structureName, SpiritReforgedMod.Instance);
 			Point16 position;
 
 			do
@@ -49,11 +50,42 @@ internal class FishingAreaMicropass : Micropass
 					continue;
 				}
 
-				CovePositions.Add(position);
-				GenVars.structures.AddProtectedStructure(new Rectangle(position.X, position.Y, size.X, size.Y), 6);
+				var area = new Rectangle(position.X, position.Y, size.X, size.Y);
+
+				Coves.Add(area);
+				GenVars.structures.AddProtectedStructure(area, 6);
 			}
 			else
 				i--;
+		}
+
+		foreach (var area in Coves)
+			ScanForChests(area);
+	}
+
+	/// <summary> Bandaid fix for barrel inventory slots sometimes being air. </summary>
+	private static void ScanForChests(Rectangle area)
+	{
+		foreach (var c in Main.chest)
+		{
+			if (c != null && area.Contains(new Point(c.x, c.y)))
+			{
+				List<Item> cached = [];
+
+				for (int i = 0; i < c.item.Length; i++) //Cache all non-air items
+					if (c.item[i]?.IsAir == false)
+					{
+						cached.Add(c.item[i].Clone());
+						c.item[i].TurnToAir();
+					}
+
+				int index = 0;
+				foreach (var item in cached) //Place the cached items in the order they were added
+				{
+					c.item[index] = item;
+					index++;
+				}
+			}
 		}
 	}
 }

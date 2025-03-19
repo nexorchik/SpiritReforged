@@ -110,7 +110,7 @@ internal class QuickConversion
 				{
 					tile.TileType = (ushort)turnId;
 
-					if (grassType != -1 && (tile.TileType is TileID.Dirt or TileID.Mud) 
+					if (grassType != -1 && tile.TileType is TileID.Dirt or TileID.Mud 
 						&& OpenTools.GetOpenings(condition.Position.X, condition.Position.Y, false, false) != OpenFlags.None && growGrassIfApplicable)
 						grasses.Add(condition.Position);
 				}
@@ -244,26 +244,26 @@ internal class QuickConversion
 			if (frameX != -1)
 				tile.TileFrameX = (short)(frameX + frameOff);
 		}
-		else if (tile.TileType == TileID.FishingCrate && convertTo != BiomeType.Purity && convertTo != BiomeType.Mushroom)
+		else if (tile.TileType == TileID.FishingCrate && convertTo != BiomeType.Purity && convertTo != BiomeType.Mushroom) //Convert fishing crates
 		{
-			int adjustedFrameX = tile.TileFrameX % 36;
-
-			if (!checkedWood.Contains(position) && adjustedFrameX == 0 && tile.TileFrameY == 0 && WorldGen.genRand.NextBool(4))
+			if (!checkedWood.Contains(position) && TileObjectData.IsTopLeft(position.X, position.Y) && WorldGen.genRand.NextBool(4))
 			{
-				for (int i = 0; i < 2; ++i)
+				for (int i = position.X; i < position.X + 2; ++i)
 				{
-					for (int j = 0; j < 2; ++j)
+					for (int j = position.Y; j < position.Y + 2; ++j)
 					{
-						Tile crate = Main.tile[position.X + i, position.Y + j];
-						crate.TileFrameX = (short)(convertTo switch
+						var crate = Main.tile[i, j];
+						crate.TileFrameX %= 36;
+
+						crate.TileFrameX += convertTo switch
 						{
 							BiomeType.Jungle => 288,
 							BiomeType.Ice => 648,
 							BiomeType.Desert => 720,
 							_ => 0
-						} + adjustedFrameX);
+						};
 
-						checkedWood.Add(new Point16(position.X + i, position.Y + j));
+						checkedWood.Add(new Point16(i, j));
 					}
 				}
 			}
