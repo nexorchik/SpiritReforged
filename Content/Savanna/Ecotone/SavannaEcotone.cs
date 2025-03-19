@@ -152,7 +152,7 @@ internal class SavannaEcotone : EcotoneBase
 
 					if (i > 90 + depth - noise)
 						type = TileID.Sandstone;
-					else if (i > (sandNoise.GetNoise(x, 0) + 1) * 3 + 30) //Add hardened sand below a certain depth for ease of navigation
+					else if (i > (sandNoise.GetNoise(x, 0) + 1) * 3 + 15) //Add hardened sand below a certain depth for ease of navigation
 						type = TileID.HardenedSand;
 
 					if (i > noise && TileID.Sets.Ore[tile.TileType])
