@@ -111,9 +111,10 @@ internal class SavannaEcotone : EcotoneBase
 			float factor = GetBaseLerpFactorForX(startX, endX, xOffsetForFactor, x); //Step height
 
 			int addY = (int)MathHelper.Lerp(startY, endY, curve);
-			int y = addY - (int)(sandNoise.GetNoise(x, 600) * 2);
-			int depth = WorldGen.genRand.Next(20);
-			int minDepth = (int)Main.worldSurface - y;
+			int stepY = addY - (int)(sandNoise.GetNoise(x, 600) * 2);
+
+			int maxDepth = WorldGen.genRand.Next(20);
+			int minDepth = (int)Main.worldSurface - stepY;
 
 			if (curve < factor) //easing (hills)
 			{
@@ -121,46 +122,46 @@ internal class SavannaEcotone : EcotoneBase
 				const float steepness = .05f;
 
 				//Control hill shape using a lazy sine that remains similar between steps
-				float amount = fullHeight == 0 ? 0 : (float)Math.Sin(1f + y % fullHeight / (float)fullHeight * 2) * steepness;
+				float amount = fullHeight == 0 ? 0 : (float)Math.Sin(1f + stepY % fullHeight / (float)fullHeight * 2) * steepness;
 				curve += Math.Max(amount, .008f);
 			}
 
 			float taper = Math.Clamp((float)Math.Sin((float)(x - startX) / (endX - startX) * Math.PI) * 1.75f, 0, 1);
-			int startHeight = Math.Min(HighestSurfacePoint(x) - y, 0);
+			int startHeight = Math.Min(HighestSurfacePoint(x) - stepY, 0);
 
-			for (int i = startHeight; i < (30 + depth + minDepth) * taper; ++i)
+			for (int depth = startHeight; depth < (30 + maxDepth + minDepth) * taper; ++depth)
 			{
-				int realY = y + i;
-				var tile = Main.tile[x, realY];
+				int y = stepY + depth;
+				var tile = Main.tile[x, y];
 
-				if (i >= 0)
+				if (depth >= 0)
 				{
-					if (i < 15 || tile.WallType == WallID.None)
+					if (depth < 15 || tile.WallType == WallID.None)
 						tile.HasTile = true;
 
 					if (tile.HasTile && !validIds.Contains(tile.TileType) && !TileID.Sets.Ore[tile.TileType])
 						continue; //Can this tile be replaced by type?
 
-					if (realY < topBottomY.X)
-						topBottomY.X = realY;
+					if (y < topBottomY.X)
+						topBottomY.X = y;
 
-					if (realY > topBottomY.Y)
-						topBottomY.Y = realY;
+					if (y > topBottomY.Y)
+						topBottomY.Y = y;
 
 					float noise = (sandNoise.GetNoise(x, 0) + 1) * 5 + 6;
-					int type = i <= noise ? ModContent.TileType<SavannaDirt>() : GetSandType(x, realY);
+					int type = depth <= noise ? ModContent.TileType<SavannaDirt>() : GetSandType(x, y);
 
-					if (i > 90 + depth - noise)
+					if (depth > 90 + maxDepth - noise)
 						type = TileID.Sandstone;
-					else if (i > (sandNoise.GetNoise(x, 0) + 1) * 3 + 15) //Add hardened sand below a certain depth for ease of navigation
+					else if (depth > (sandNoise.GetNoise(x, 0) + 1) * 3 + 15) //Add hardened sand below a certain depth for ease of navigation
 						type = TileID.HardenedSand;
 
-					if (i > noise && TileID.Sets.Ore[tile.TileType])
+					if (depth > noise && TileID.Sets.Ore[tile.TileType])
 						type = tile.TileType; //Keep below-surface ores
 
 					tile.TileType = (ushort)type;
 
-					if (i > 1) //Convert walls
+					if (depth > 1) //Convert walls
 					{
 						if (tile.TileType is TileID.Sand or TileID.HardenedSand)
 							tile.WallType = WallID.HardenedSand;
@@ -193,7 +194,7 @@ internal class SavannaEcotone : EcotoneBase
 				off++;
 			}
 
-			return off < 3 ? TileID.Sandstone : TileID.Sand;
+			return off < 3 ? TileID.HardenedSand : TileID.Sand;
 		}
 
 		static int HighestSurfacePoint(int x)
