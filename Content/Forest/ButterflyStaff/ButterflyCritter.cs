@@ -8,14 +8,18 @@ public class ButterflyCritter : ModNPC
 {
 	public ref float SettleCounter => ref NPC.ai[3];
 
-	private float deathCounter = 1f;
-	private int settleCounter;
-	private bool settled;
+	private bool _frameUpdating;
+	/// <summary> Only used if this NPC is a bestiary dummy. </summary>
+	private Vector2 _bestiaryOffset;
+
+	private float _deathCounter = 1f;
+	private int _settleCounter;
+	private bool _settled;
 
 	private float CountDeath()
 	{
 		NPC.dontTakeDamage = true;
-		return deathCounter -= 1f / 20;
+		return _deathCounter -= 1f / 20;
 	}
 
 	public override void SetStaticDefaults()
@@ -44,13 +48,13 @@ public class ButterflyCritter : ModNPC
 		AIType = NPCID.Firefly;
 	}
 
-	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Surface");
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Surface NightTime");
 
 	public override bool PreAI()
 	{
 		NPC.Opacity = MathHelper.Min(NPC.Opacity + .01f, 1); //Fade in
 
-		if (settled)
+		if (_settled)
 		{
 			NPC.TargetClosest(false);
 
@@ -60,15 +64,15 @@ public class ButterflyCritter : ModNPC
 
 				if (target.Distance(NPC.Center) < 90)
 				{
-					settleCounter = 60 * 5;
-					settled = false;
+					_settleCounter = 60 * 5;
+					_settled = false;
 				}
 			}
 
-			if (settleCounter == 0)
+			if (_settleCounter == 0)
 			{
-				settleCounter = 60 * 5;
-				settled = false;
+				_settleCounter = 60 * 5;
+				_settled = false;
 			}
 		}
 		else
@@ -76,13 +80,13 @@ public class ButterflyCritter : ModNPC
 			NPC.rotation = 0;
 		}
 
-		if (settleCounter == 0)
+		if (_settleCounter == 0)
 		{
 			var tile = Framing.GetTileSafely(NPC.Center);
 			if (tile.WallType != WallID.None || tile.HasTile && Main.tileAxe[tile.TileType]) //Just settled
 			{
-				settled = true;
-				settleCounter = 60 * 30;
+				_settled = true;
+				_settleCounter = 60 * 30;
 
 				NPC.rotation = Main.rand.NextFloat(MathHelper.Pi);
 				NPC.velocity = Vector2.Zero;
@@ -90,14 +94,14 @@ public class ButterflyCritter : ModNPC
 			}
 		}
 
-		if (deathCounter < 1) //Expire
+		if (_deathCounter < 1) //Expire
 		{
 			if (CountDeath() <= 0)
 				NPC.active = false;
 		}
 
-		settleCounter = Math.Max(settleCounter - 1, 0);
-		return !settled;
+		_settleCounter = Math.Max(_settleCounter - 1, 0);
+		return !_settled;
 	}
 
 	public override void AI()
@@ -136,18 +140,41 @@ public class ButterflyCritter : ModNPC
 	public override void FindFrame(int frameHeight)
 	{
 		NPC.frame.Width = 22;
-		NPC.frame.X = NPC.frame.Width * (settled ? 1 : 0);
+		NPC.frame.X = NPC.frame.Width * (_settled ? 1 : 0);
 
 		NPC.frameCounter += .15f;
 		NPC.frameCounter %= Main.npcFrameCount[Type];
 
 		NPC.frame.Y = (int)NPC.frameCounter * frameHeight;
+
+		_frameUpdating = true;
 	}
 
 	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 	{
 		const float blurStrength = 2f;
 
+		var origin = NPC.Center - screenPos;
+
+		if (NPC.IsABestiaryIconDummy) //Bestiary fun
+		{
+			if (Main.MouseScreen.Distance(origin + _bestiaryOffset) < 30)
+			{
+				_deathCounter = Math.Max(_deathCounter - .05f, 0);
+
+				if (_deathCounter == 0)
+					_bestiaryOffset = Main.rand.NextVector2Unit() * Main.rand.NextFloat(50f);
+			}
+			else
+				_deathCounter = Math.Min(_deathCounter + .05f, 1);
+
+			if (_frameUpdating)
+				origin += (float)Math.Sin(Main.timeForVisualEffects / 40f) * 3f * Vector2.UnitY;
+
+			origin += _bestiaryOffset;
+		}
+
+		_frameUpdating = false;
 		var texture = TextureAssets.Npc[Type].Value;
 		var frame = NPC.frame with { Width = NPC.frame.Width - 2, Height = NPC.frame.Height - 2 };
 		var effects = (NPC.spriteDirection == 1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
@@ -156,8 +183,8 @@ public class ButterflyCritter : ModNPC
 		for (int i = 0; i < images; i++)
 		{
 			float radians = MathHelper.TwoPi / images * Lerp(50f) * i;
-			var color = Color.Lerp(new Color(90, 70, 255, 50), Color.HotPink with { A = 50 }, Lerp(25f)) * deathCounter;
-			var position = NPC.Center - screenPos + new Vector2(0f, blurStrength * (8f - deathCounter * 7f)).RotatedBy(radians) * Lerp(60f);
+			var color = Color.Lerp(new Color(90, 70, 255, 50), Color.HotPink with { A = 50 }, Lerp(25f)) * _deathCounter;
+			var position = origin + new Vector2(0f, blurStrength * (8f - _deathCounter * 7f)).RotatedBy(radians) * Lerp(60f);
 
 			spriteBatch.Draw(texture, position, frame, color * NPC.Opacity, NPC.rotation, frame.Size() / 2, NPC.scale, effects, 0);
 		}
