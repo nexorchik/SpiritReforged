@@ -14,7 +14,7 @@ public class FrostbiteItem : ModItem
 {
 	public const int AttackRange = 200;
 
-	public override void SetStaticDefaults() => DiscoveryHelper.RegisterType(Type, new SoundStyle("SpiritReforged/Assets/SFX/Ambient/MagicFeedback1"));
+	public override void SetStaticDefaults() => DiscoveryHelper.RegisterPickup(Type, new SoundStyle("SpiritReforged/Assets/SFX/Ambient/MagicFeedback1"));
 
 	public override void SetDefaults()
 	{

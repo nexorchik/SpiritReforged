@@ -9,7 +9,7 @@ public class PearlString : AccessoryItem
 	public override void SetStaticDefaults()
 	{
 		ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.WhitePearl;
-		DiscoveryHelper.RegisterType(Type, SoundID.CoinPickup);
+		DiscoveryHelper.RegisterPickup(Type, SoundID.CoinPickup with { Pitch = .25f });
 	}
 
 	public override void SetDefaults()
