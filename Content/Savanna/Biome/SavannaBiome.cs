@@ -8,7 +8,7 @@ public class SavannaBiome : ModBiome
 {
 	private int GetMusic()
 	{
-		if (Main.LocalPlayer.townNPCs > 2f || Main.LocalPlayer.ZoneGraveyard)
+		if (Main.LocalPlayer.townNPCs > 2f || Main.LocalPlayer.ZoneGraveyard || Main.bloodMoon)
 			return -1;
 
 		return Main.dayTime ? MusicLoader.GetMusicSlot(Mod, "Assets/Music/Savanna") : MusicLoader.GetMusicSlot(Mod, "Assets/Music/SavannaNight");
@@ -16,7 +16,7 @@ public class SavannaBiome : ModBiome
 
 	public override void SetStaticDefaults() => NPCHappinessHelper.SetAverage<SavannaBiome>(ModContent.GetInstance<JungleBiome>(), ModContent.GetInstance<DesertBiome>());
 
-	public override SceneEffectPriority Priority => SceneEffectPriority.BiomeMedium;
+	public override SceneEffectPriority Priority => SceneEffectPriority.Environment;
 	public override int Music => GetMusic();
 	public override ModWaterStyle WaterStyle => ModContent.GetInstance<SavannaWaterStyle>();
 	public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle => ModContent.GetInstance<SavannaBGStyle>();

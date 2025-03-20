@@ -126,6 +126,8 @@ public class MineralSlagPickup : MineralSlag
 		}
 	}
 
+	public override bool CanPickup(Player player) => true;
+
 	public override bool OnPickup(Player player)
 	{
 		player.QuickSpawnItem(Item.GetSource_FromThis(), ModContent.ItemType<MineralSlag>(), Item.stack);
