@@ -41,36 +41,42 @@ public class BaobabPod : ModTile, ISwayTile
 		fail = true;
 		TileExtensions.GetTopLeft(ref i, ref j);
 
-		//Add hitData
-		float random = Main.rand.NextFloat(-1f, 1f) * .5f;
-		var key = new Point16(i, j);
-		if (!hitData.TryAdd(key, random))
-			hitData[key] = random;
+		if (!Main.dedServ)
+		{
+			//Add hitData
+			float random = Main.rand.NextFloat(-1f, 1f) * .5f;
+			var key = new Point16(i, j);
+			if (!hitData.TryAdd(key, random))
+				hitData[key] = random;
 
-		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit") with { Pitch = stage - 1 }, new Vector2(i + 1, j + 1) * 16);
-		for (int d = 0; d < 10; d++)
-			Dust.NewDustDirect(new Vector2(i, j) * 16, 32, 32, DustType, Scale: Main.rand.NextFloat())
-				.velocity = (Vector2.UnitY * -Main.rand.NextFloat(2f)).RotatedByRandom(MathHelper.Pi);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit") with { Pitch = stage - 1 }, new Vector2(i + 1, j + 1) * 16);
+			for (int d = 0; d < 10; d++)
+				Dust.NewDustDirect(new Vector2(i, j) * 16, 32, 32, DustType, Scale: Main.rand.NextFloat())
+					.velocity = (Vector2.UnitY * -Main.rand.NextFloat(2f)).RotatedByRandom(MathHelper.Pi);
+		}
 
 		if (stage == numStages - 1) //Break open
 		{
-			var source = new EntitySource_TileBreak(i, j);
-
-			SoundEngine.PlaySound(SoundID.NPCHit7 with { Pitch = -1 }, new Vector2(i + 1, j + 1) * 16);
-			for (int g = 1; g < 4; g++)
+			if (!Main.dedServ)
 			{
-				Gore.NewGore(source, Main.rand.NextVector2FromRectangle(new Rectangle(i * 16, j * 16, 32, 16)),
-					(Vector2.UnitY * -Main.rand.NextFloat(1f, 4f)).RotatedByRandom(1.5f), Mod.Find<ModGore>("BaobabPod" + g).Type);
-			}
+				var source = new EntitySource_TileBreak(i, j);
 
-			for (int g = 1; g < 4; g++)
-			{
-				var gore = Gore.NewGoreDirect(source, new Vector2(i + 1, j + 1) * 16,
-					Vector2.Zero, GoreID.Smoke1);
+				SoundEngine.PlaySound(SoundID.NPCHit7 with { Pitch = -1 }, new Vector2(i + 1, j + 1) * 16);
+				for (int g = 1; g < 4; g++)
+				{
+					Gore.NewGore(source, Main.rand.NextVector2FromRectangle(new Rectangle(i * 16, j * 16, 32, 16)),
+						(Vector2.UnitY * -Main.rand.NextFloat(1f, 4f)).RotatedByRandom(1.5f), Mod.Find<ModGore>("BaobabPod" + g).Type);
+				}
 
-				gore.velocity = Vector2.UnitX * Main.rand.NextFloat(-1f, 1f);
-				gore.alpha = 200;
-				gore.position -= new Vector2(gore.Width, gore.Height) / 2;
+				for (int g = 1; g < 4; g++)
+				{
+					var gore = Gore.NewGoreDirect(source, new Vector2(i + 1, j + 1) * 16,
+						Vector2.Zero, GoreID.Smoke1);
+
+					gore.velocity = Vector2.UnitX * Main.rand.NextFloat(-1f, 1f);
+					gore.alpha = 200;
+					gore.position -= new Vector2(gore.Width, gore.Height) / 2;
+				}
 			}
 
 			DropItem(i, j, ModContent.ItemType<Items.Tools.LivingBaobabLeafWand>());
@@ -109,19 +115,25 @@ public class BaobabPod : ModTile, ISwayTile
 			for (int frameY = 0; frameY < data.Height; frameY++)
 				Framing.GetTileSafely(i + frameX, j + frameY).TileFrameX += (short)data.CoordinateFullWidth;
 
+		if (Main.netMode == NetmodeID.Server)
+			NetMessage.SendTileSquare(-1, i, j, 2, 2);
+
 		stage = tile.TileFrameX / data.CoordinateFullWidth;
 		return true;
 	}
 
 	private static void DropItem(int i, int j, int type, int stack = 1)
 	{
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+			return;
+
 		var source = new EntitySource_TileBreak(i, j);
 
 		int id = Item.NewItem(source, new Rectangle(i * 16, j * 16, 32, 16), type, stack, true);
 		Main.item[id].velocity = (Vector2.UnitY * -Main.rand.NextFloat(1f, 4f)).RotatedByRandom(1.5f);
 		Main.item[id].noGrabDelay = 100;
 
-		if (Main.netMode != NetmodeID.SinglePlayer)
+		if (Main.netMode == NetmodeID.Server)
 			NetMessage.SendData(MessageID.SyncItem, number: id, number2: 100f);
 	}
 
