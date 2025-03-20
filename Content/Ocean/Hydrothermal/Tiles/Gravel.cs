@@ -26,6 +26,8 @@ public class Gravel : ModTile, IAutoloadTileItem
 		AddMapEntry(new Color(120, 120, 120));
 		DustType = DustID.Asphalt;
 		MineResist = .5f;
+
+		Mod.Find<ModItem>(Name + "Item").Item.ResearchUnlockCount = 100;
 	}
 
 	public override void RandomUpdate(int i, int j)
