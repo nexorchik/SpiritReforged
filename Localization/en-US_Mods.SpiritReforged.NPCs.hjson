@@ -70,7 +70,7 @@ GoldKillifish: {
 
 Termite: {
 	DisplayName: Termite
-	Entry: If a tree falls in a forest and no one is around to hear it, it's probably a termite's fault.
+	Entry: These little bugs swarm together to build massive nests with complex tunnels. They have an acquired taste for the dry, crunchy wood of the Savanna.
 }
 
 SavannaSandSlime: {
@@ -110,7 +110,7 @@ Ostrich: {
 
 ButterflyCritter: {
 	DisplayName: Ethereal Butterfly
-	Entry: Perhaps, just perhaps, if you look up, these are among the stars as well. They flit here and there, a dance as ephemeral as their bodies.
+	Entry: Perhaps, if you look into the night sky, you'll find them among the stars as well. They flutter in a dance as ephemeral as their bodies.
 }
 
 SavannaJungleSlime: {

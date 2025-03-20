@@ -41,13 +41,10 @@ public class Gar : ModNPC
 		NPC.noGravity = true;
 		NPC.npcSlots = 0;
 		NPC.dontCountMe = true;
+		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
 
-	public override void SetBestiary(BestiaryDatabase dataNPC, BestiaryEntry bestiaryEntry)
-	{
-		bestiaryEntry.UIInfoProvider = new CritterUICollectionInfoProvider(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds[Type]);
-		bestiaryEntry.AddInfo(this, "Ocean");
-	}
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
 	public override void AI()
 	{

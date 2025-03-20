@@ -1,6 +1,7 @@
 using SpiritReforged.Content.Savanna.Biome;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.Bestiary;
 
 namespace SpiritReforged.Content.Savanna.NPCs.Termite;
 
@@ -35,6 +36,8 @@ public class Termite : ModNPC
 		NPC.dontTakeDamageFromHostiles = false;
 		SpawnModBiomes = [ModContent.GetInstance<SavannaBiome>().Type];
 	}
+
+	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
