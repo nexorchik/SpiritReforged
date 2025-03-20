@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.ProjectileCommon;
+﻿using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ProjectileCommon;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
@@ -6,6 +7,8 @@ namespace SpiritReforged.Content.Ocean.Items.Blunderbuss;
 
 public class Blunderbuss : ModItem
 {
+	public override void SetStaticDefaults() => DiscoveryHelper.RegisterType(Type, new SoundStyle("SpiritReforged/Assets/SFX/Item/Ring") { Pitch = -.5f });
+
 	public override void SetDefaults()
     {
         Item.width = Item.height = 12;
