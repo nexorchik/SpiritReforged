@@ -39,5 +39,6 @@ public class SavannaCrateTile : ModTile
 
 		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
 		AddMapEntry(new Color(123, 104, 84));
+		DustType = -1;
 	}
 }

@@ -5,20 +5,11 @@ public class DrywoodTile : ModTile
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = true;
-		Main.tileMergeDirt[Type] = true;
 		Main.tileBlockLight[Type] = true;
+		Main.tileBrick[Type] = true;
+		Main.tileMergeDirt[Type] = true;
 
-		Main.tileMerge[Type][TileID.WoodBlock] = true;
-		Main.tileMerge[TileID.WoodBlock][Type] = true;
-
-		Main.tileMerge[Type][TileID.Sand] = true;
-		Main.tileMerge[TileID.Sand][Type] = true;
-
-		Main.tileMerge[Type][ModContent.TileType<SavannaDirt>()] = true;
-		Main.tileMerge[ModContent.TileType<SavannaDirt>()][Type] = true;
-
-		DustType = DustID.WoodFurniture;
-
+		DustType = DustID.t_PearlWood;
 		AddMapEntry(new Color(145, 128, 109));
 	}
 }
