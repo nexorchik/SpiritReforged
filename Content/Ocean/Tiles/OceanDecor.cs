@@ -71,6 +71,11 @@ public class OceanDecor1x2 : ModTile, IAutoloadRubble
 		TileObjectData.newTile.AnchorValidTiles = [TileID.Sand, TileID.Crimsand, TileID.Pearlsand, TileID.Ebonsand];
 		TileObjectData.addTile(Type);
 	}
+
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		yield return new Item(ItemID.Coral, 1);
+	}
 }
 
 public class OceanDecor2x2 : OceanDecor1x2
@@ -102,6 +107,11 @@ public class OceanDecor2x2 : OceanDecor1x2
 			_ => Color.Red * .25f
 		}).ToVector3();
 	}
+
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		yield return new Item(ItemID.Coral, Main.rand.Next(2, 4));
+	}
 }
 
 public class OceanDecor2x3 : OceanDecor1x2
@@ -123,4 +133,9 @@ public class OceanDecor2x3 : OceanDecor1x2
 	}
 
 	protected override Vector3 GlowColor(int x, int y) => Color.Yellow.ToVector3();
+
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		yield return new Item(ItemID.Coral, Main.rand.Next(3, 6));
+	}
 }

@@ -27,6 +27,7 @@ public static class TrailDetours
 
 		orig(self, projCache, startSpriteBatch);
 	}
+
 	private static void Main_DrawProjectiles(On_Main.orig_DrawProjectiles orig, Main self)
 	{
 		if (!Main.dedServ)
@@ -64,7 +65,7 @@ internal class SpawnTrailData : PacketData
 
 	public override void OnReceive(BinaryReader reader, int whoAmI)
 	{
-		int index = reader.Read();
+		int index = reader.ReadInt32();
 
 		if (Main.netMode == NetmodeID.Server)
 		{

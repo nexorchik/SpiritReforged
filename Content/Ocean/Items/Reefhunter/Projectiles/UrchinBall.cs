@@ -9,6 +9,8 @@ using SpiritReforged.Content.Particles;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using System.IO;
 using Terraria.Audio;
+using Terraria.DataStructures;
+using SpiritReforged.Common.Multiplayer;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
@@ -18,7 +20,7 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 	private bool hasTarget = false;
 	private Vector2 relativePoint = Vector2.Zero;
 	private bool stuckInTile = false;
-	private Point stuckTilePos = new(0, 0);
+	private Point16 stuckTilePos = new(0, 0);
 	private int squishTime = 0;
 
 	private const int MAX_LIFETIME = 180;
@@ -61,7 +63,7 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 				if (!Main.tile[stuckTilePos.X, stuckTilePos.Y].HasTile) //If not, update and let the projectile fall again
 				{
 					stuckInTile = false;
-					stuckTilePos = new Point(0, 0);
+					stuckTilePos = Point16.Zero;
 					Projectile.netUpdate = true;
 				}
 			}
@@ -115,7 +117,7 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 
 		Projectile.velocity = Vector2.Zero;
 		stuckInTile = true;
-		stuckTilePos = (Projectile.Center + oldVelocity).ToTileCoordinates();
+		stuckTilePos = (Projectile.Center + oldVelocity).ToTileCoordinates16();
 		Projectile.netUpdate = true;
 		HitEffects(oldVelocity);
 
@@ -159,7 +161,7 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 						Vector2.Normalize(velocity) * velocityRatio,
 						particleLength * 3.5f,
 						particleLength,
-						velocity.ToRotation() + MathHelper.Pi,
+						velocity.ToRotation(),
 						particleLifetime,
 						velocityRatio));
 
@@ -265,7 +267,7 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		writer.Write(hasTarget);
 		writer.Write(stuckInTile);
 		writer.WriteVector2(relativePoint);
-		writer.WriteVector2(stuckTilePos.ToVector2());
+		writer.WritePoint16(stuckTilePos);
 	}
 
 	public override void ReceiveExtraAI(BinaryReader reader)
@@ -273,6 +275,6 @@ public class UrchinBall : ModProjectile, ITrailProjectile
 		hasTarget = reader.ReadBoolean();
 		stuckInTile = reader.ReadBoolean();
 		relativePoint = reader.ReadVector2();
-		stuckTilePos = reader.ReadVector2().ToPoint();
+		stuckTilePos = reader.ReadPoint16();
 	}
 }
