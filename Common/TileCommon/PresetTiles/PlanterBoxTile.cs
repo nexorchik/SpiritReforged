@@ -1,4 +1,6 @@
-﻿namespace SpiritReforged.Common.TileCommon.PresetTiles;
+﻿using SpiritReforged.Common.ItemCommon;
+
+namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
 public abstract class PlanterBoxTile : ModTile, IAutoloadTileItem
 {
@@ -16,7 +18,7 @@ public abstract class PlanterBoxTile : ModTile, IAutoloadTileItem
 		DustType = DustID.WoodFurniture;
 
 		PlanterHandler.PlanterTypes.Add(Type);
-		Mod.Find<ModItem>(Name + "Item").Item.ResearchUnlockCount = 25;
+		this.AutoItem().ResearchUnlockCount = 25;
 	}
 
 	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)

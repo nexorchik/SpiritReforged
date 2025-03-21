@@ -1,8 +1,10 @@
-﻿namespace SpiritReforged.Common.TileCommon.PresetTiles;
+﻿using SpiritReforged.Common.ItemCommon;
+
+namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
 public abstract class FurnitureTile : ModTile, IAutoloadTileItem
 {
-	public ModItem ModItem => Mod.Find<ModItem>(Name + "Item");
+	public ModItem ModItem => this.AutoModItem();
 
 	/// <summary> The defining material in most furniture recipes. </summary>
 	public virtual int CoreMaterial => ItemID.None;

@@ -4,6 +4,7 @@ namespace SpiritReforged.Content.Savanna.Items.Gar;
 
 public class QuenchPotion : ModItem
 {
+	#region detours
 	public override void Load()
 	{
 		On_Player.QuickBuff += FocusQuenchPotion;
@@ -11,11 +12,11 @@ public class QuenchPotion : ModItem
 	}
 
 	/// <summary> Forces this potion to be used before all others with quick buff. </summary>
-	private void FocusQuenchPotion(On_Player.orig_QuickBuff orig, Player self)
+	private static void FocusQuenchPotion(On_Player.orig_QuickBuff orig, Player self)
 	{
 		if (!self.cursed && !self.CCed && !self.dead && !self.HasBuff<QuenchPotion_Buff>() && self.CountBuffs() < Player.MaxBuffs)
 		{
-			int itemIndex = self.FindItemInInventoryOrOpenVoidBag(Type, out bool inVoidBag);
+			int itemIndex = self.FindItemInInventoryOrOpenVoidBag(ModContent.ItemType<QuenchPotion>(), out bool inVoidBag);
 
 			if (itemIndex > 0)
 			{
@@ -33,11 +34,14 @@ public class QuenchPotion : ModItem
 	}
 
 	/// <summary> Improves buff times with <see cref="QuenchPotion_Buff"/>. </summary>
-	private void QuenchifyBuff(int buffType, ref int buffTime, Player player, bool quickBuff)
+	private static void QuenchifyBuff(int buffType, ref int buffTime, Player player, bool quickBuff)
 	{
 		if (!Main.debuff[buffType] && buffType != ModContent.BuffType<QuenchPotion_Buff>() && player.HasBuff<QuenchPotion_Buff>())
 			buffTime = (int)(buffTime * 1.25f);
 	}
+	#endregion
+
+	public override void SetStaticDefaults() => Item.ResearchUnlockCount = 20;
 
 	public override void SetDefaults()
 	{
@@ -55,13 +59,8 @@ public class QuenchPotion : ModItem
 		Item.UseSound = SoundID.Item3;
 	}
 
-	public override void AddRecipes() => CreateRecipe()
-			.AddIngredient(Mod.Find<ModItem>("GarItem").Type, 1)
-			.AddIngredient(ItemID.Blinkroot, 1).AddIngredient(ItemID.Moonglow, 1)
-			.AddIngredient(ItemID.Waterleaf, 1)
-			.AddIngredient(ItemID.BottledWater, 1)
-			.AddTile(TileID.Bottles)
-			.Register();
+	public override void AddRecipes() => CreateRecipe().AddIngredient(Mod.Find<ModItem>("GarItem").Type).AddIngredient(ItemID.Blinkroot)
+		.AddIngredient(ItemID.Moonglow).AddIngredient(ItemID.Waterleaf).AddIngredient(ItemID.BottledWater).AddTile(TileID.Bottles).Register();
 }
 
 public class QuenchPotion_Buff : ModBuff { }

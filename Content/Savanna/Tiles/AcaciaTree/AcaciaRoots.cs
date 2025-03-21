@@ -1,6 +1,6 @@
-﻿using SpiritReforged.Common.TileCommon;
+﻿using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.Corruption;
-using SpiritReforged.Content.Savanna.Items.Drywood;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
@@ -23,7 +23,7 @@ public class AcaciaRootsLarge : ModTile, IConvertibleTile
 		SetObjectData();
 
 		DustType = DustID.WoodFurniture;
-		RegisterItemDrop(ModContent.ItemType<Drywood>());
+		RegisterItemDrop(ItemMethods.AutoItemType<Drywood>());
 		AddMapEntry(new Color(87, 61, 51));
 	}
 

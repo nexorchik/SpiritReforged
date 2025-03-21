@@ -1,4 +1,3 @@
-using SpiritReforged.Content.Ocean.Items.Driftwood;
 using SpiritReforged.Content.Ocean.Items;
 using System.IO;
 using Terraria.DataStructures;
@@ -8,6 +7,8 @@ using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.UI;
 using System.Linq;
 using Terraria.Audio;
+using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Content.Ocean.Tiles;
 
 namespace SpiritReforged.Content.Ocean.NPCs.Pelican;
 
@@ -37,7 +38,7 @@ public class Pelican : ModNPC
 		choice = new(Main.rand);
 		choice.Add(ItemID.None, 6);
 		choice.Add(ModContent.ItemType<Kelp>(), 0.25f);
-		choice.Add(ModContent.ItemType<DriftwoodTileItem>(), 0.1f);
+		choice.Add(ItemMethods.AutoItemType<Driftwood>(), 0.1f);
 		choice.Add(ItemID.RedSnapper, 1f);
 		choice.Add(ItemID.Shrimp, 0.5f);
 		choice.Add(ItemID.Trout, 1.5f);

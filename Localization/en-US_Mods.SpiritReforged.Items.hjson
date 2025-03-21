@@ -36,8 +36,8 @@ SunkenTreasure: {
 		'''
 }
 
-DriftwoodTileItem: {
-	DisplayName: Driftwood Block
+DriftwoodItem: {
+	DisplayName: Driftwood
 	Tooltip: ""
 }
 
@@ -247,7 +247,7 @@ SailorCap: {
 	Tooltip: "'All aboard!'"
 }
 
-StrippedBamboo: {
+StrippedBambooItem: {
 	DisplayName: Stripped Bamboo
 	Tooltip: ""
 }
@@ -356,7 +356,7 @@ FlightPotion: {
 	Tooltip: Increases the duration of flight by 25%
 }
 
-HangingCloudstalk: {
+HangingCloudstalkItem: {
 	DisplayName: Hanging Cloudstalk
 	Tooltip: ""
 }
@@ -557,7 +557,7 @@ OstrichEgg: {
 	Tooltip: "{$BuffDescription.WellFed}"
 }
 
-Drywood: {
+DrywoodItem: {
 	DisplayName: Drywood
 	Tooltip: ""
 }
