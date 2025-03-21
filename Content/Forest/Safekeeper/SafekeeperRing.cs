@@ -10,6 +10,8 @@ namespace SpiritReforged.Content.Forest.Safekeeper;
 //[AutoloadEquip(EquipType.HandsOn)]
 public class SafekeeperRing : AccessoryItem
 {
+	public override void SetStaticDefaults() => DiscoveryHelper.RegisterPickup(Type, SoundID.CoinPickup with { Pitch = .25f });
+
 	public override void SetDefaults()
 	{
 		Item.width = Item.height = 12;

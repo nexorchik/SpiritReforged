@@ -9,7 +9,7 @@ public class SavannaCrate : ModItem
 
 	public override void SetDefaults()
 	{
-		Item.DefaultToPlaceableTile(ModContent.TileType<SavannaCrateHardmodeTile>());
+		Item.DefaultToPlaceableTile(ModContent.TileType<SavannaCrateTile>());
 		Item.rare = ItemRarityID.Green;
 	}
 
@@ -41,5 +41,6 @@ public class SavannaCrateTile : ModTile
 
 		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
 		AddMapEntry(new Color(123, 104, 84));
+		DustType = -1;
 	}
 }

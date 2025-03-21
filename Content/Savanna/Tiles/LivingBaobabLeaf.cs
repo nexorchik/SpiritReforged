@@ -7,8 +7,6 @@ internal class LivingBaobabLeaf : ModTile
 		TileID.Sets.IsSkippedForNPCSpawningGroundTypeCheck[Type] = true;
 
 		Main.tileSolid[Type] = true;
-		Main.tileBlendAll[Type] = true;
-		Main.tileMergeDirt[Type] = true;
 		Main.tileBlockLight[Type] = true;
 
 		AddMapEntry(new Color(140, 156, 55));

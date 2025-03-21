@@ -1,4 +1,5 @@
 using ReLogic.Utilities;
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.ModCompat.Classic;
 using SpiritReforged.Common.Particle;
@@ -12,6 +13,8 @@ namespace SpiritReforged.Content.Snow.Frostbite;
 public class FrostbiteItem : ModItem
 {
 	public const int AttackRange = 200;
+
+	public override void SetStaticDefaults() => DiscoveryHelper.RegisterPickup(Type, new SoundStyle("SpiritReforged/Assets/SFX/Ambient/MagicFeedback1"));
 
 	public override void SetDefaults()
 	{

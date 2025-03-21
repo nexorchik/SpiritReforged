@@ -9,11 +9,11 @@ public class Drywood : ModTile, IAutoloadTileItem
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = true;
-		Main.tileMergeDirt[Type] = true;
 		Main.tileBlockLight[Type] = true;
+		Main.tileBrick[Type] = true;
+		Main.tileMergeDirt[Type] = true;
 
-		DustType = DustID.WoodFurniture;
-		this.Merge(TileID.WoodBlock, TileID.Sand, ModContent.TileType<SavannaDirt>());
+		DustType = DustID.t_PearlWood;
 		AddMapEntry(new Color(145, 128, 109));
 
 		//Set item static defaults

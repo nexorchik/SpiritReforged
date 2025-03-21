@@ -10,11 +10,11 @@ public class Driftwood : ModTile, IAutoloadTileItem
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = true;
-		Main.tileMergeDirt[Type] = true;
 		Main.tileBlockLight[Type] = true;
+		Main.tileBrick[Type] = true;
+		Main.tileMergeDirt[Type] = true;
 
 		AddMapEntry(new Color(138, 79, 45));
-		this.Merge(TileID.WoodBlock, TileID.Sand);
 
 		//Set item StaticDefaults
 		var item = this.AutoItem();
