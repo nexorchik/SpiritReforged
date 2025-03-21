@@ -1,0 +1,2 @@
+v0.1.0.1
+- Fixed issue with the water style loader that caused issues with other mods

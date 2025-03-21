@@ -23,7 +23,8 @@ internal class WaterStyleSystem : ModSystem
 
 		foreach (var scene in ModContent.GetContent<ModSceneEffect>())
 		{
-			if (scene.SurfaceBackgroundStyle != null && scene.WaterStyle != null)
+			// Checks duplicate since not all mods set a surface background style
+			if (scene.SurfaceBackgroundStyle != null && scene.WaterStyle != null && !StyleSets.ContainsKey(scene.SurfaceBackgroundStyle.Slot))
 				StyleSets.Add(scene.SurfaceBackgroundStyle.Slot, scene.WaterStyle.Slot);
 		}
 
