@@ -18,8 +18,6 @@ namespace SpiritReforged.Common.ModCompat;
 
 internal class FablesCompat : ModSystem
 {
-	public static Asset<Texture2D> GetIcon(string name) => ModContent.Request<Texture2D>("SpiritReforged/Common/ModCompat/NewBeginningsOrigins/" + name);
-
 	public static Mod Instance;
 	public static bool Enabled => Instance != null;
 
