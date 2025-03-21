@@ -21,7 +21,7 @@ public class ElephantGrass : ModTile, IConvertibleTile
 		Main.tileBlockLight[Type] = false;
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoFail[Type] = true;
-		Main.tileCut[Type] = true;
+		//Main.tileCut[Type] = true;
 
 		TileID.Sets.BreakableWhenPlacing[Type] = true;
 
@@ -49,8 +49,8 @@ public class ElephantGrass : ModTile, IConvertibleTile
 
 	public override IEnumerable<Item> GetItemDrops(int i, int j)
 	{
-		if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HeldItem.type == ItemID.Sickle)
-			yield return new Item(ItemID.Hay, Main.rand.Next(3, 7));
+		//if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HeldItem.type == ItemID.Sickle)
+		//	yield return new Item(ItemID.Hay, Main.rand.Next(3, 7)); //Tile cannot be cut
 
 		if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HasItem(ItemID.Blowpipe))
 			yield return new Item(ItemID.Seed, Main.rand.Next(1, 3));
@@ -58,11 +58,31 @@ public class ElephantGrass : ModTile, IConvertibleTile
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 
-	public override void NearbyEffects(int i, int j, bool closer)
+	public override void NearbyEffects(int i, int j, bool closer) //Play sounds when walking inside of grass patches
 	{
-		//Play sounds when walking inside grass patches
-		if (Main.LocalPlayer.velocity.Length() > 2f && Main.LocalPlayer.miscCounter % 3 == 0 && new Rectangle(i * 16, j * 16, 16, 16).Intersects(Main.LocalPlayer.getRect()))
-			SoundEngine.PlaySound(SoundID.Grass with { Volume = .5f, PitchVariance = 1 }, Main.LocalPlayer.Center);
+		const string path = "SpiritReforged/Assets/SFX/Tile/SavannaGrass";
+
+		float length = Main.LocalPlayer.velocity.Length();
+		float mag = MathHelper.Clamp(length / 10f, 0, 1);
+		float chance = 1f - mag;
+
+		if (Main.rand.NextFloat(chance) < .1f)
+		{
+			if (Main.LocalPlayer.velocity.Length() < 2 || !new Rectangle(i * 16, j * 16, 16, 16).Intersects(Main.LocalPlayer.getRect()))
+				return;
+
+			float pitch = 0;
+			float volume = MathHelper.Lerp(.25f, .75f, mag);
+
+			if (IsShortgrass(i, j))
+			{
+				volume -= .25f;
+				pitch += .4f;
+			}
+
+			var style = new SoundStyle(path + Main.rand.Next(1, 4)) with { MaxInstances = -1, PitchVariance = .2f, Pitch = pitch, Volume = volume };
+			SoundEngine.PlaySound(style, Main.LocalPlayer.Center);
+		}
 	}
 
 	public override void RandomUpdate(int i, int j) //Grow up; spreading happens in SavannaGrass.RandomUpdate
