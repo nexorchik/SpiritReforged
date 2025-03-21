@@ -1,4 +1,6 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Content.Jungle.Bamboo.Tiles;
 using System.Linq;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -76,7 +78,7 @@ public class BambooKendoBlade : ModItem, IDashSword
 		info.DrawDataCache.Add(new DrawData(texture.Value, drawPos, frame, color, rotation, new Vector2(30), 1, info.playerEffect, 0));
 	}
 
-	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<StrippedBamboo>(), 20).AddTile(TileID.WorkBenches).Register();
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemMethods.AutoItemType<StrippedBamboo>(), 20).AddTile(TileID.WorkBenches).Register();
 }
 
 public class KendoBladeSwing : ModProjectile

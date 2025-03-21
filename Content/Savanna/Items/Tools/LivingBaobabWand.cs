@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Content.Savanna.Tiles;
+﻿using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Content.Savanna.Tiles;
 
 namespace SpiritReforged.Content.Savanna.Items.Tools;
 
@@ -11,7 +12,7 @@ internal class LivingBaobabWand : ModItem
 		Item.CloneDefaults(ItemID.LivingWoodWand);
 
 		Item.Size = new Vector2(36, 28);
-		Item.tileWand = ModContent.ItemType<Drywood.Drywood>();
+		Item.tileWand = ItemMethods.AutoItemType<Drywood>();
 		Item.createTile = ModContent.TileType<LivingBaobab>();
 		Item.useStyle = ItemUseStyleID.Swing;
 		Item.useTurn = true;

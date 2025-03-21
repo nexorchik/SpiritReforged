@@ -1,4 +1,6 @@
-﻿namespace SpiritReforged.Content.Savanna.Tiles;
+﻿using SpiritReforged.Common.ItemCommon;
+
+namespace SpiritReforged.Content.Savanna.Tiles;
 
 internal class LivingBaobab : ModTile
 {
@@ -11,7 +13,7 @@ internal class LivingBaobab : ModTile
 		Main.tileMergeDirt[Type] = true;
 		Main.tileBlockLight[Type] = true;
 
-		RegisterItemDrop(ModContent.ItemType<Items.Drywood.Drywood>());
+		RegisterItemDrop(ItemMethods.AutoItemType<Drywood>());
 		AddMapEntry(new Color(142, 125, 106));
 		HitSound = SoundID.Dig;
 		DustType = DustID.t_PearlWood;

@@ -14,6 +14,8 @@ public class SunkenTreasure : FloatingItem
 	public override float Weight => base.Weight * 0.9f;
 	public override float Bouyancy => base.Bouyancy * 1.08f;
 
+	public override void SetStaticDefaults() => Item.ResearchUnlockCount = 10;
+
 	public override void SetDefaults()
 	{
 		Item.width = Item.height = 16;

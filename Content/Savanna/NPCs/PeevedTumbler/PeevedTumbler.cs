@@ -1,4 +1,6 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Content.Savanna.Biome;
+using SpiritReforged.Content.Savanna.Tiles;
 using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -21,7 +23,7 @@ public class PeevedTumbler : ModNPC
 	{
 		choice = new(Main.rand);
 		choice.Add(ItemID.None, 2);
-		choice.Add(ModContent.ItemType<Items.Drywood.Drywood>(), 1);
+		choice.Add(ItemMethods.AutoItemType<Drywood>(), 1);
 		choice.Add(ModContent.ItemType<Items.Tools.LivingBaobabLeafWand>(), .05f);
 		choice.Add(ModContent.ItemType<Items.Tools.LivingBaobabLeafWand>(), .05f);
 		choice.Add(ModContent.ItemType<Items.WrithingSticks.WrithingSticks>(), .09f);
@@ -108,7 +110,7 @@ public class PeevedTumbler : ModNPC
 
 		if (Main.netMode != NetmodeID.MultiplayerClient && dead && heldItemType != ItemID.None)
 		{
-			int stack = heldItemType == ModContent.ItemType<Items.Drywood.Drywood>() ? Main.rand.Next(5, 11) : 1;
+			int stack = heldItemType == ItemMethods.AutoItemType<Drywood>() ? Main.rand.Next(5, 11) : 1;
 			Item.NewItem(NPC.GetSource_Death(), NPC.getRect(), heldItemType, stack);
 		}
 
