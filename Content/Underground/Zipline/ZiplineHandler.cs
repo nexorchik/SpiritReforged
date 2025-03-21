@@ -4,6 +4,7 @@ using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Content.Particles;
 using System.Linq;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Underground.Zipline;
@@ -109,6 +110,9 @@ internal class ZiplinePlayer : ModPlayer
 			_wasOnZipline = false;
 		}
 	}
+
+	/// <summary> <inheritdoc/><para/> Resets rotation on death. </summary>
+	public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) => Player.fullRotation = 0;
 
 	/// <summary> Zipline visuals and sounds associated with this player. </summary>
 	public void DoEffects(Vector2 start, Vector2 end)

@@ -40,7 +40,6 @@ public class OceanPendantLayer : PlayerDrawLayer
 
 	public override void Load() => glowTexture = ModContent.Request<Texture2D>(GetType().Namespace.Replace(".", "/") + "/OceanPendant_Neck_Glow");
 	public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.NeckAcc);
-	public override bool IsHeadLayer => false;
 
 	public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
 	{
