@@ -21,7 +21,11 @@ internal class DiscoveryHelper : ModPlayer
 	private static readonly Dictionary<int, SoundStyle> TypeToSound = [];
 
 	/// <summary> Register this item type with a sound on first pickup. </summary>
-	public static void RegisterPickup(int type, SoundStyle sound) => TypeToSound.Add(type, sound);
+	public static void RegisterPickup(int type, SoundStyle sound)
+	{
+		if (!Main.dedServ)
+			TypeToSound.Add(type, sound);
+	}
 
 	public override void Load() => IL_Main.DrawItemTextPopups += OnDrawPopup;
 
