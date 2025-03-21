@@ -1,7 +1,7 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
-using SpiritReforged.Content.Jungle.Bamboo.Items;
+using SpiritReforged.Content.Savanna.NPCs.Sparrow;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.ObjectInteractions;
@@ -10,7 +10,7 @@ namespace SpiritReforged.Content.Jungle.Bamboo.Tiles;
 
 public class BambooBirdCage : ModTile, IAutoloadTileItem
 {
-	private int ItemType => Mod.Find<ModItem>(Name + "Item").Type;
+	private int ItemType => this.AutoItem().type;
 
 	internal static HashSet<int> BirdTypes;
 
@@ -34,14 +34,13 @@ public class BambooBirdCage : ModTile, IAutoloadTileItem
 		item.Item.value = 50;
 	}
 
-	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
-		.AddIngredient(ModContent.ItemType<StrippedBamboo>(), 14)
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe().AddIngredient(ItemMethods.AutoItemType<StrippedBamboo>(), 14)
 		.AddTile(TileID.Sawmill).Register();
 
 	public override void SetStaticDefaults()
 	{
 		BirdTypes = [ItemID.Cardinal, ItemID.BlueJay, ItemID.GoldBird, ItemID.Bird, ItemID.Seagull, 
-			ItemID.BlueMacaw, ItemID.GrayCockatiel, Mod.Find<ModItem>("SparrowItem").Type];
+			ItemID.BlueMacaw, ItemID.GrayCockatiel, ItemMethods.AutoItemType<Sparrow>()];
 
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;

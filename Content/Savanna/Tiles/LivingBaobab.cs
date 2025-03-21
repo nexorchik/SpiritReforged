@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.ItemCommon;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
@@ -13,7 +14,7 @@ internal class LivingBaobab : ModTile
 		TileID.Sets.ChecksForMerge[Type] = true;
 		TileID.Sets.IsSkippedForNPCSpawningGroundTypeCheck[Type] = true;
 
-		RegisterItemDrop(ModContent.ItemType<Items.Drywood.Drywood>());
+		RegisterItemDrop(ItemMethods.AutoItemType<Drywood>());
 		AddMapEntry(new Color(142, 125, 106));
 		this.Merge(TileID.Sand, TileID.Dirt, ModContent.TileType<SavannaDirt>());
 

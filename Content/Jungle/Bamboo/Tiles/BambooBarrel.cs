@@ -1,16 +1,13 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
-using SpiritReforged.Content.Jungle.Bamboo.Items;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Jungle.Bamboo.Tiles;
 
 public class BambooBarrel : ChestTile
 {
-	public override void AddItemRecipes(ModItem item) => item.CreateRecipe()
-		.AddIngredient<StrippedBamboo>(9)
-		.AddRecipeGroup(RecipeGroupID.IronBar)
-		.AddTile(TileID.Sawmill)
-		.Register();
+	public override void AddItemRecipes(ModItem item) => item.CreateRecipe().AddIngredient(ItemMethods.AutoItemType<StrippedBamboo>(), 9)
+		.AddRecipeGroup(RecipeGroupID.IronBar).AddTile(TileID.Sawmill).Register();
 
 	public override void StaticDefaults()
 	{

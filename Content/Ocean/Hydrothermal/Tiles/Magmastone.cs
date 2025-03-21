@@ -107,6 +107,8 @@ public class Magmastone : ModTile, IAutoloadTileItem
 
 		DustType = DustID.Asphalt;
 		MineResist = .5f;
+
+		Mod.Find<ModItem>(Name + "Item").Item.ResearchUnlockCount = 100;
 	}
 
 	public override void HitWire(int i, int j)

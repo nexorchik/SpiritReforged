@@ -3,7 +3,7 @@
 internal class BotanistGlobalTile : GlobalTile
 {
 	private readonly int[] VanillaHerbs = [TileID.BloomingHerbs, TileID.MatureHerbs];
-	private static int[] SpiritHerbs => [ModContent.TileType<Cloudstalk.Items.CloudstalkTile>()];
+	private static int[] SpiritHerbs => [ModContent.TileType<Cloud.Items.CloudstalkTile>()];
 
 	public List<int> AllHerbs = null;
 

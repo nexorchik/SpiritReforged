@@ -1,9 +1,9 @@
-﻿using SpiritReforged.Common.SimpleEntity;
+﻿using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.SimpleEntity;
 using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Common.TileCommon.Tree;
 using SpiritReforged.Content.Savanna.DustStorm;
-using SpiritReforged.Content.Savanna.Items.Drywood;
 using SpiritReforged.Content.Savanna.Items.Food;
 using System.Linq;
 using Terraria.DataStructures;
@@ -39,7 +39,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
 
 		AddMapEntry(new Color(120, 80, 75));
-		RegisterItemDrop(ModContent.ItemType<Drywood>());
+		RegisterItemDrop(ItemMethods.AutoItemType<Drywood>());
 		DustType = DustID.WoodFurniture;
 	}
 
@@ -79,7 +79,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		drop.Add(ModContent.ItemType<Caryocar>(), .2f);
 		drop.Add(ModContent.ItemType<CustardApple>(), .2f);
 		drop.Add(ModContent.ItemType<BaobabFruit>(), .2f);
-		drop.Add(ModContent.ItemType<Drywood>(), .8f);
+		drop.Add(ItemMethods.AutoItemType<Drywood>(), .8f);
 		drop.Add(ItemID.Acorn, .7f);
 
 		var position = new Vector2(i, j - 3) * 16;

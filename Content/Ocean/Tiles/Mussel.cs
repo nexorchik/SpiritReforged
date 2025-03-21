@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using Terraria.DataStructures;
 
@@ -46,6 +47,8 @@ public class Mussel : ModTile, IAutoloadTileItem
 		RegisterItemDrop(Mod.Find<ModItem>("MusselItem").Type);
 		AddMapEntry(new Color(200, 200, 200));
 		DustType = DustID.Stone;
+
+		this.AutoItem().ResearchUnlockCount = 100;
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = Main.rand.Next(1, 3);

@@ -19,6 +19,7 @@ public class MineralSlag : ModItem
 	{
 		ItemID.Sets.ExtractinatorMode[Type] = Type;
 		VariantGlobalItem.AddVariants(Type, [new Point(20, 20), new Point(20, 20), new Point(20, 22), new Point(20, 22), new Point(20, 20)]);
+		Item.ResearchUnlockCount = 25;
 	}
 
 	public override void SetDefaults()

@@ -1,6 +1,6 @@
 ﻿using SpiritReforged.Content.Desert.GildedScarab;
 using SpiritReforged.Content.Forest.ArcaneNecklace;
-using SpiritReforged.Content.Forest.Cloudstalk.Items;
+using SpiritReforged.Content.Forest.Cloud.Items;
 using SpiritReforged.Content.Forest.Misc;
 using SpiritReforged.Content.Forest.Misc.Maps;
 using SpiritReforged.Content.Forest.RoguesCrest;

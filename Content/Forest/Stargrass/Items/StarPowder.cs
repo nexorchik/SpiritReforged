@@ -2,9 +2,13 @@
 
 namespace SpiritReforged.Content.Forest.Stargrass.Items;
 
-internal class StarPowder : ModItem
+public class StarPowder : ModItem
 {
-	public override void SetStaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.PurificationPowder;
+	public override void SetStaticDefaults()
+	{
+		ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.PurificationPowder;
+		Item.ResearchUnlockCount = 99;
+	}
 
 	public override void SetDefaults()
 	{
@@ -23,9 +27,7 @@ internal class StarPowder : ModItem
 		Item.shootSpeed = 6f;
 	}
 
-	public override void AddRecipes() => CreateRecipe(5)
-		.AddIngredient(ItemID.FallenStar, 1)
-		.Register();
+	public override void AddRecipes() => CreateRecipe(5).AddIngredient(ItemID.FallenStar, 1).Register();
 }
 
 internal class StarPowderProj : ModProjectile
