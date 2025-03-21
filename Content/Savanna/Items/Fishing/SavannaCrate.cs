@@ -7,7 +7,7 @@ public class SavannaCrate : ModItem
 {
 	public override void SetDefaults()
 	{
-		Item.DefaultToPlaceableTile(ModContent.TileType<SavannaCrateHardmodeTile>());
+		Item.DefaultToPlaceableTile(ModContent.TileType<SavannaCrateTile>());
 		Item.rare = ItemRarityID.Green;
 	}
 
