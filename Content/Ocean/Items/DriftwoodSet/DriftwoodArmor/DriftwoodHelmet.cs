@@ -16,7 +16,7 @@ public class DriftwoodHelmet : ModItem
 	}
 
 	public override bool IsArmorSet(Item head, Item body, Item legs)
-		=> (head.type, body.type, legs.type) == (Type, ModContent.ItemType<DriftwoodHelmet>(), ModContent.ItemType<DriftwoodLeggings>());
+		=> (head.type, body.type, legs.type) == (Type, ModContent.ItemType<DriftwoodChestplate>(), ModContent.ItemType<DriftwoodLeggings>());
 
 	public override void UpdateArmorSet(Player player)
 	{
