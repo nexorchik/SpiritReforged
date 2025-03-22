@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.TileCommon.Tree;
+using SpiritReforged.Common.WallCommon;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Common.WorldGeneration.Ecotones;
 using SpiritReforged.Content.Savanna.Items;
@@ -168,7 +169,7 @@ internal class SavannaEcotone : EcotoneBase
 						else if (tile.TileType is TileID.Sandstone || TileID.Sets.Ore[tile.TileType])
 							tile.WallType = WallID.Sandstone;
 						else if (tile.WallType is WallID.None or WallID.DirtUnsafe)
-							tile.WallType = (ushort)ModContent.WallType<SavannaDirtWall>();
+							tile.WallType = (ushort)AutoloadedWallExtensions.UnsafeWallType<SavannaDirtWall>();
 					}
 					else
 						tile.Clear(TileDataType.Wall); //Clear walls above the Savanna surface
