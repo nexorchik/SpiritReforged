@@ -11,7 +11,7 @@ internal class CollisionPlayer : ModPlayer
 	public bool FallThrough()
 	{
 		_noReset = true;
-		return fallThrough;
+		return fallThrough || Player.grapCount > 0;
 	}
 
 	public override void ResetEffects()
