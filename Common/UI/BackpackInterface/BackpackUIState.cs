@@ -93,12 +93,18 @@ internal class BackpackUIState : AutoUIState
 
 		if (!clear)
 		{
-			const int BaseX = 570;
+			int baseX = 570;
+
+			if (ModLoader.HasMod("PotionSlots"))
+			{
+				baseX += 38;
+			}
+
 			int xOff = 0, yOff = 0;
 
 			Append(new UIText(Language.GetTextValue("Mods.SpiritReforged.SlotContexts.Backpack"), 0.725f, false)
 			{
-				Left = new StyleDimension(BaseX, 0),
+				Left = new StyleDimension(baseX, 0),
 				Top = new StyleDimension(86, 0),
 				Width = StyleDimension.FromPixels(32),
 				Height = StyleDimension.FromPixels(32),
@@ -113,7 +119,7 @@ internal class BackpackUIState : AutoUIState
 			{
 				var newSlot = new BasicItemSlot(items, i, scale: .6f)
 				{
-					Left = new StyleDimension(BaseX + xOff * 32, 0),
+					Left = new StyleDimension(baseX + xOff * 32, 0),
 					Top = new StyleDimension(105 + yOff * 33, 0),
 					Width = StyleDimension.FromPixels(32),
 					Height = StyleDimension.FromPixels(32)
