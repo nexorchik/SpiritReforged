@@ -51,8 +51,6 @@ public class MineralSlag : ModItem
 		choice.Add(new ItemData(ItemID.GoldOre, Main.rand.Next(3) + 1), .5f);
 		choice.Add(new ItemData(ItemID.PlatinumOre, Main.rand.Next(3) + 1), .5f);
 
-		choice.Add(new ItemData(ItemID.AmberMosquito), .01f);
-
 		resultType = ((ItemData)choice).itemType;
 		resultStack = ((ItemData)choice).stack;
 	}

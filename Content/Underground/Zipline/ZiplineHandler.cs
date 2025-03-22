@@ -1,6 +1,6 @@
-﻿using SpiritReforged.Common.ItemCommon.Pins;
-using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
+using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Particles;
 using System.Linq;
 using Terraria.Audio;
@@ -16,21 +16,22 @@ internal class ZiplineHandler : ILoadable
 
 	/// <summary> <see cref="Zipline"/>s belonging to all players.<para/>
 	/// Use <see cref="Add"/> and <see cref="Zipline.RemovePoint"/> instead of directly adding and removing points from this set. </summary>
-	public static readonly HashSet<Zipline> ziplines = [];
+	//[WorldBound]
+	public static readonly HashSet<Zipline> Ziplines = [];
 
 	/// <summary> Creates a new zipline at <paramref name="position"/> or adds to an existing zipline belonging to <paramref name="player"/>. </summary>
 	/// <param name="player"> The zipline owner. </param>
 	/// <param name="position"> The position to deploy at. </param>
 	public static void Add(Player player, Vector2 position)
 	{
-		var line = ziplines.Where(x => x.Owner == player).FirstOrDefault();
+		var line = Ziplines.Where(x => x.Owner == player).FirstOrDefault();
 
 		if (line == default) //Add a new zipline
 		{
 			var newLine = new Zipline(player.whoAmI);
 			newLine.points.Add(position);
 
-			ziplines.Add(newLine);
+			Ziplines.Add(newLine);
 		}
 		else
 		{
@@ -56,14 +57,14 @@ internal class ZiplineHandler : ILoadable
 	{
 		orig(self);
 
-		foreach (var zipline in ziplines)
+		foreach (var zipline in Ziplines)
 			zipline.Draw(Main.spriteBatch);
 	}
 
 	public static bool CheckZipline(Player player, out Zipline thisZipline)
 	{
 		thisZipline = null;
-		foreach (var zipline in ziplines)
+		foreach (var zipline in Ziplines)
 		{
 			if (zipline.OnZipline(player))
 			{

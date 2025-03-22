@@ -49,13 +49,25 @@ public class SavannaDirt : ModTile, IAutoloadTileItem, ICheckItemUse
 
 	public bool? CheckItemUse(int type, int i, int j)
 	{
-		if (type == ItemID.StaffofRegrowth) //Staff of Regrowth functionality
+		switch (type)
 		{
-			WorldGen.PlaceTile(i, j, ModContent.TileType<SavannaGrass>(), forced: true);
-			NetMessage.SendTileSquare(-1, i, j);
-			return true;
+			case ItemID.StaffofRegrowth:
+				WorldGen.PlaceTile(i, j, ModContent.TileType<SavannaGrass>(), forced: true);
+				break;
+			case ItemID.CorruptSeeds:
+				WorldGen.PlaceTile(i, j, ModContent.TileType<SavannaGrassCorrupt>(), forced: true);
+				break;
+			case ItemID.CrimsonSeeds:
+				WorldGen.PlaceTile(i, j, ModContent.TileType<SavannaGrassCrimson>(), forced: true);
+				break;
+			case ItemID.HallowedSeeds:
+				WorldGen.PlaceTile(i, j, ModContent.TileType<SavannaGrassHallow>(), forced: true);
+				break;
+			default:
+				return null;
 		}
 
-		return null;
+		NetMessage.SendTileSquare(-1, i, j);
+		return true;
 	}
 }

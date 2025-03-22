@@ -192,7 +192,7 @@ public class SunkenTreasureTilePlaced : SunkenTreasureTile
 
 		DustType = DustID.Sand;
 		AddMapEntry(new Color(133, 106, 56), Language.GetText("Mods.SpiritReforged.Tiles.SunkenTreasureTilePlaced.MapEntry"));
-		SolidBottomTile.TileTypes.Add(Type);
+		//SolidBottomTile.TileTypes.Add(Type);
 	}
 
 	public override void MouseOver(int i, int j) { }

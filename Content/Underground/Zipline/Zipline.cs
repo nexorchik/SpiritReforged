@@ -70,7 +70,7 @@ internal class Zipline(int owner)
 		points.Remove(point);
 
 		if (points.Count == 0)
-			ZiplineHandler.ziplines.Remove(this);
+			ZiplineHandler.Ziplines.Remove(this);
 	}
 
 	public void Draw(SpriteBatch spriteBatch)

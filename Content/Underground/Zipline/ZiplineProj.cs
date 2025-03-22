@@ -38,7 +38,7 @@ public class ZiplineProj : ModProjectile
 			return; //Don't interact with rails after timing out for whatever reason
 
 		bool removed = false;
-		foreach (var zipline in ZiplineHandler.ziplines)
+		foreach (var zipline in ZiplineHandler.Ziplines)
 		{
 			if (zipline.Owner == Main.player[Projectile.owner])
 				UpdateExisting(zipline, out removed);
@@ -64,7 +64,7 @@ public class ZiplineProj : ModProjectile
 			var last = zipline.points.Last();
 
 			if ((last / 16).Distance(Main.MouseWorld / 16) > ZiplineGun.ExceedDist + .5f)
-				ZiplineHandler.ziplines.Remove(zipline); //Remove the last rail if distance is excessive
+				ZiplineHandler.Ziplines.Remove(zipline); //Remove the last rail if distance is excessive
 		}
 	}
 
