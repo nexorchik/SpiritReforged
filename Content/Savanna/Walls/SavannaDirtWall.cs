@@ -19,7 +19,12 @@ public class SavannaDirtWall : ModWall, IAutoloadWallItem
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
-	public override void SetStaticDefaults() => AddMapEntry(new Color(98, 39, 5));
+
+	public override void SetStaticDefaults()
+	{
+		Main.wallHouse[Type] = true;
+		AddMapEntry(new Color(98, 39, 5));
+	}
 
 	public override bool WallFrame(int i, int j, bool randomizeFrame, ref int style, ref int frameNumber)
 	{
