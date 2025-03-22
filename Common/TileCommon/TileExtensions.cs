@@ -103,6 +103,7 @@ public static class TileExtensions
 	{
 		var tile = Framing.GetTileSafely(i, j);
 		var data = TileObjectData.GetTileData(tile);
+
 		if (data is null)
 			return;
 

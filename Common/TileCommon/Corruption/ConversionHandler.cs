@@ -6,18 +6,30 @@ using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.TileCommon.Corruption;
 
-internal class ConversionHandler : ILoadable
+internal class ConversionHandler : ModSystem
 {
+	/// <summary> Caches all ModTiles using <see cref="IConvertibleTile"/>. </summary>
+	internal static readonly HashSet<int> ConversionTypes = [];
+
 	public static IEntitySource ConversionSource = null;
 
 	private static Hook ProjAIHook = null;
 
-	public void Load(Mod mod)
+	public override void Load()
 	{
 		On_WorldGen.Convert += OnConvert;
 		IL_WorldGen.GERunner += OnHardmodeEvils;
 
 		ProjAIHook = new Hook(typeof(ProjectileLoader).GetMethod(nameof(ProjectileLoader.ProjectileAI)), AddConversionSource);
+	}
+
+	public override void SetStaticDefaults()
+	{
+		foreach (var t in Mod.GetContent<ModTile>())
+		{
+			if (t is IConvertibleTile)
+				ConversionTypes.Add(t.Type);
+		}
 	}
 
 	private void AddConversionSource(On_Projectile.orig_VanillaAI orig, Projectile self)
@@ -27,7 +39,7 @@ internal class ConversionHandler : ILoadable
 		ConversionSource = null;
 	}
 
-	private void OnHardmodeEvils(ILContext il)
+	private static void OnHardmodeEvils(ILContext il)
 	{
 		ILCursor c = new(il);
 
@@ -45,7 +57,7 @@ internal class ConversionHandler : ILoadable
 	/// <param name="i"> The X tile coordinate. </param>
 	/// <param name="j"> The Y tile coordinate. </param>
 	/// <param name="hallow"> Whether this conversion is hallow or <see cref="WorldGen.crimson"/>. </param>
-	private void RunnerConversion(int i, int j, bool hallow)
+	private static void RunnerConversion(int i, int j, bool hallow)
 	{
 		var type = hallow ? ConversionType.Hallow : WorldGen.crimson ? ConversionType.Crimson : ConversionType.Corrupt;
 		TileCorruptor.Convert(null, type, i, j);
@@ -57,7 +69,7 @@ internal class ConversionHandler : ILoadable
 	/// <param name="j"> The Y tile coordinate. </param>
 	/// <param name="conversionType"> The conversion type corresponding to <see cref="BiomeConversionID"/>. </param>
 	/// <param name="size"> The size (in tiles) of the conversion. </param>
-	private void OnConvert(On_WorldGen.orig_Convert orig, int i, int j, int conversionType, int size)
+	private static void OnConvert(On_WorldGen.orig_Convert orig, int i, int j, int conversionType, int size)
 	{
 		orig(i, j, conversionType, size);
 
@@ -97,6 +109,4 @@ internal class ConversionHandler : ILoadable
 			}
 		}
 	}
-
-	public void Unload() { }
 }
