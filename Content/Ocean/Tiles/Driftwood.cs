@@ -1,5 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.ModCompat.Classic;
 using SpiritReforged.Common.TileCommon;
 using Terraria.GameContent.ItemDropRules;
 
@@ -23,5 +24,9 @@ public class Driftwood : ModTile, IAutoloadTileItem
 
 		CrateDatabase.AddCrateRule(ItemID.OceanCrate, ItemDropRule.Common(item.type, 5, 10, 30));
 		CrateDatabase.AddCrateRule(ItemID.OceanCrateHard, ItemDropRule.Common(item.type, 5, 10, 30));
+
+		//Manually include for Classic compatibility because this item is autoloaded
+		if (SpiritClassic.Enabled && SpiritClassic.ClassicMod.TryFind("DriftwoodTileItem", out ModItem driftwood))
+			SpiritClassic.ClassicToReforged.Add(driftwood.Type, this.AutoItem().type);
 	}
 }

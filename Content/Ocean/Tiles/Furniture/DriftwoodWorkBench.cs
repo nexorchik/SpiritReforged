@@ -12,7 +12,7 @@ public class DriftwoodWorkBench : WorkBenchTile
 	{
 		base.StaticDefaults();
 
-		//Manually include for Classic compat because this item is autoloaded
+		//Manually include for Classic compatibility because this item is autoloaded
 		if (SpiritClassic.Enabled && SpiritClassic.ClassicMod.TryFind("DriftwoodWorkbenchItem", out ModItem workbench))
 			SpiritClassic.ClassicToReforged.Add(workbench.Type, this.AutoItem().type);
 	}
