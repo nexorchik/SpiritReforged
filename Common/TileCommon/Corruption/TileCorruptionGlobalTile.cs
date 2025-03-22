@@ -10,6 +10,9 @@ internal class TileCorruptionGlobalTile : GlobalTile
 	/// </summary>
 	public override bool TileFrame(int i, int j, int type, ref bool resetFrame, ref bool noBreak)
 	{
+		if (!ConversionHandler.ConversionTypes.Contains(type))
+			return true; //Only run for registered conversion types
+
 		int x = i;
 		int y = j;
 

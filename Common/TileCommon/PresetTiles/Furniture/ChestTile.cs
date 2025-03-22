@@ -116,8 +116,8 @@ public abstract class ChestTile : FurnitureTile
 		}
 		else if (isLocked && KeyLookup.TryGetValue(Type, out int chestKey))
 		{
-			player.ConsumeItem(chestKey);
-			Chest.Unlock(i, j);
+			if (player.ConsumeItem(chestKey))
+				Chest.Unlock(i, j);
 		}
 		else
 		{

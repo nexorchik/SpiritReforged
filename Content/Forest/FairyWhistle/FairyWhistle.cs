@@ -1,8 +1,10 @@
+using SpiritReforged.Common.ModCompat.Classic;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Forest.FairyWhistle;
 
+[FromClassic("FairyWhistleItem")]
 public class FairyWhistle : ModItem
 {
 	public override void SetDefaults()

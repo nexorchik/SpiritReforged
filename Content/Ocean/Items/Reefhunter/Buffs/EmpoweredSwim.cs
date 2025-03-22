@@ -10,6 +10,7 @@ public class EmpoweredSwim : ModBuff
 		player.accFlipper = true;
 
 		if (player.buffTime[buffIndex] > 2)
+		{
 			if (player.wet && !Collision.SolidCollision(player.BottomLeft, player.width, 4))
 			{
 				player.fullRotationOrigin = player.Size / 2f;
@@ -17,6 +18,7 @@ public class EmpoweredSwim : ModBuff
 			}
 			else
 				player.fullRotation *= 0.8f;
+		}
 		else
 			player.fullRotation = 0f;
 	}
