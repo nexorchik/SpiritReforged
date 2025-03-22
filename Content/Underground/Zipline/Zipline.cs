@@ -109,7 +109,7 @@ internal class Zipline(int owner)
 	{
 		const int width = 6; //Collision line width
 
-		if (!DrawingLine)
+		if (!DrawingLine || player.mount.Active)
 			return false;
 
 		GetRange(out var start, out var end);
