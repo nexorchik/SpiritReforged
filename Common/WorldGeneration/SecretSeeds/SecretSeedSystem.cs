@@ -1,62 +1,139 @@
-﻿using System.Linq;
+﻿using Mono.Cecil.Cil;
+using MonoMod.Cil;
+using System.Linq;
+using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
+using Terraria.IO;
 using Terraria.ModLoader.IO;
+using Terraria.Utilities;
 
 namespace SpiritReforged.Common.WorldGeneration.Seeds;
 
 internal class SecretSeedSystem : ModSystem
 {
-	private const byte Default = byte.MaxValue;
-
+	/// <summary> Whether the current world has a Spirit secret seed. Abbreviated null check for <see cref="WorldSecretSeed"/>. </summary>
+	public static bool HasSecretSeed => WorldSecretSeed != null;
 	/// <summary> The Spirit secret seed currently in use. Returns null if none. </summary>
-	public static SecretSeed WorldSecretSeed
-	{
-		get
-		{
-			if (SelectedSeed == Default)
-				return null;
+	public static SecretSeed WorldSecretSeed { get; private set; }
+	/// <summary> Whether setup has failed at some point. Prevents all functionality if so. </summary>
+	private static bool Failed;
 
-			return SecretSeeds[SelectedSeed];
-		}
-	}
-
-	//[WorldBound]
-	private static byte SelectedSeed = Default;
-
-	private static byte NextIndex;
-	private static readonly Dictionary<byte, SecretSeed> SecretSeeds = [];
+	private static readonly Dictionary<string, SecretSeed> SecretSeeds = [];
 
 	public static SecretSeed GetSeed<T>() where T : SecretSeed => SecretSeeds.Values.Where(x => x.GetType() == typeof(T)).FirstOrDefault();
+	public static void RegisterSeed(SecretSeed seed) => SecretSeeds.Add(seed.Name, seed);
 
-	public static void RegisterSeed(SecretSeed seed)
+	public override void Load()
 	{
-		SecretSeeds.Add(NextIndex, seed);
-		NextIndex++;
+		On_UIWorldCreation.ProcessSpecialWorldSeeds += ProcessCustomSeed;
+		IL_WorldGen.GenerateWorld += InjectCustomSeed;
+		On_AWorldListItem.GetIcon += GetCustomIcon;
 	}
 
-	public override void Load() => On_UIWorldCreation.ProcessSpecialWorldSeeds += ProcessCustom;
-
-	private static void ProcessCustom(On_UIWorldCreation.orig_ProcessSpecialWorldSeeds orig, string processedSeed)
+	private static void ProcessCustomSeed(On_UIWorldCreation.orig_ProcessSpecialWorldSeeds orig, string processedSeed)
 	{
 		orig(processedSeed);
 
-		for (byte i = 0; i < SecretSeeds.Count; i++)
+		if (Failed)
+			return;
+
+		WorldSecretSeed = null;
+
+		foreach (string key in SecretSeeds.Keys)
 		{
-			var seed = SecretSeeds[i];
-			if (processedSeed.Equals(seed.Name, StringComparison.CurrentCultureIgnoreCase))
+			if (processedSeed.Equals(SecretSeeds[key].Name, StringComparison.CurrentCultureIgnoreCase))
 			{
-				SelectedSeed = i;
+				WorldSecretSeed = SecretSeeds[key];
 				break;
 			}
 		}
 	}
 
-	public override void SaveWorldData(TagCompound tag) => tag[nameof(SelectedSeed)] = SelectedSeed;
-	public override void LoadWorldData(TagCompound tag) => SelectedSeed = tag.GetByte(nameof(SelectedSeed));
-
-	public override void Unload()
+	private static void InjectCustomSeed(ILContext il)
 	{
-		SecretSeeds.Clear();
-		NextIndex = 0;
+		ILCursor c = new(il);
+
+		string logName = nameof(InjectCustomSeed);
+		var p_seed = c.Method.Parameters.Where(x => x.Name == "seed").FirstOrDefault();
+
+		if (p_seed == default)
+		{
+			SpiritReforgedMod.Instance.Logger.Info($"IL edit '{logName}' failed; all required parameters not found.");
+			Failed = true;
+
+			return;
+		}
+
+		if (!c.TryGotoNext(MoveType.After, x => x.MatchStsfld<Main>("zenithWorld")))
+		{
+			SpiritReforgedMod.Instance.Logger.Info($"IL edit '{logName}' failed; member 'zenithWorld' not found.");
+			Failed = true;
+
+			return;
+		}
+
+		c.EmitLdarg0(); //seed
+		c.EmitDelegate(ModifyFinalSeed);
+		c.Emit(OpCodes.Starg_S, p_seed);
+	}
+
+	/// <summary> Ensure the world seed still gets randomized when using a custom secret seed, like vanilla does. </summary>
+	private static int ModifyFinalSeed(int seed)
+	{
+		if (HasSecretSeed)
+		{
+			Main.rand = new UnifiedRandom();
+			seed = Main.rand.Next(999999999);
+		}
+
+		return seed;
+	}
+
+	private static Asset<Texture2D> GetCustomIcon(On_AWorldListItem.orig_GetIcon orig, AWorldListItem self)
+	{
+		var value = orig(self);
+
+		if (TryGetHeader(self.Data, out string name) && SecretSeed.NameToTexture.TryGetValue(name, out var texture))
+			return texture;
+
+		return value;
+	}
+
+	public override void ClearWorld()
+	{
+		if (!WorldGen.generatingWorld)
+			WorldSecretSeed = null;
+	}
+
+	public override void SaveWorldData(TagCompound tag) //Not needed
+	{
+		if (HasSecretSeed)
+			tag[nameof(WorldSecretSeed)] = WorldSecretSeed.Name;
+	}
+
+	public override void LoadWorldData(TagCompound tag)
+	{
+		string name = tag.GetString(nameof(WorldSecretSeed));
+
+		if (SecretSeeds.TryGetValue(name, out var value))
+			WorldSecretSeed = value;
+	}
+
+	public override void SaveWorldHeader(TagCompound tag)
+	{
+		if (HasSecretSeed)
+			tag[nameof(WorldSecretSeed)] = WorldSecretSeed.Name;
+	}
+
+	private static bool TryGetHeader(WorldFileData fileData, out string name)
+	{
+		if (fileData.TryGetHeaderData(ModContent.GetInstance<SecretSeedSystem>(), out var data) && data.TryGet(nameof(WorldSecretSeed), out string seed))
+		{
+			name = seed;
+			return true;
+		}
+
+		name = null;
+		return false;
 	}
 }
