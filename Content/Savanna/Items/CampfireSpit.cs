@@ -1,6 +1,7 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
+using SpiritReforged.Content.Jungle.Bamboo.Tiles;
 using SpiritReforged.Content.Vanilla.Food;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -192,16 +193,23 @@ public class RoastGlobalTile : GlobalTile
 
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (!effectOnly && !Main.dedServ && Entity(i, j) is CampfireSlot slot)
+		if (effectOnly || Main.netMode == NetmodeID.MultiplayerClient)
+			return;
+
+		if (Entity(i, j) is CampfireSlot slot)
 		{
 			fail = true;
 			TileExtensions.GetTopLeft(ref i, ref j);
 
 			var pos = new Vector2(i, j).ToWorldCoordinates() + new Vector2(16);
-			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ModContent.ItemType<CampfireSpit>(), pos);
+
+			Item.NewItem(new EntitySource_TileBreak(i, j), pos, ModContent.ItemType<CampfireSpit>());
 
 			if (!slot.item.IsAir)
-				ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), slot.item, pos);
+			{
+				Item.NewItem(new EntitySource_TileBreak(i, j), pos, slot.item);
+				//slot.RemoveItem(); //Unecessary
+			}
 
 			slot.Kill(i, j);
 		}

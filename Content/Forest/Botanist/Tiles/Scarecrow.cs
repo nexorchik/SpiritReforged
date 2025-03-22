@@ -1,5 +1,4 @@
 ﻿using MonoMod.Cil;
-using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.TileCommon.TileSway;
@@ -49,15 +48,18 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (!effectOnly && !Main.dedServ && ScarecrowSlot.GetMe(i, j) is ScarecrowSlot slot && !slot.item.IsAir)
+		if (effectOnly || Main.netMode == NetmodeID.MultiplayerClient)
+			return;
+
+		if (ScarecrowSlot.GetMe(i, j) is ScarecrowSlot slot && !slot.item.IsAir)
 		{
 			fail = true;
 			TileExtensions.GetTopLeft(ref i, ref j);
 
 			var pos = new Vector2(i, j).ToWorldCoordinates();
 
-			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), slot.item, pos);
-			slot.item.TurnToAir();
+			Item.NewItem(new EntitySource_TileBreak(i, j), pos, slot.item);
+			slot.RemoveItem();
 		}
 	}
 
