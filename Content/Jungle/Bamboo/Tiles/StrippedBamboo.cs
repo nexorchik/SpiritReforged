@@ -1,4 +1,5 @@
 using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ModCompat.Classic;
 using SpiritReforged.Common.TileCommon;
 
 namespace SpiritReforged.Content.Jungle.Bamboo.Tiles;
@@ -24,5 +25,9 @@ public class StrippedBamboo : ModTile, IAutoloadTileItem
 		AddMapEntry(new Color(145, 128, 109));
 
 		this.AutoItem().ResearchUnlockCount = 100;
+
+		//Manually include for Classic compatibility because this item is autoloaded
+		if (SpiritClassic.Enabled && SpiritClassic.ClassicMod.TryFind("StrippedBamboo", out ModItem bamboo))
+			SpiritClassic.ClassicToReforged.Add(bamboo.Type, this.AutoItem().type);
 	}
 }
