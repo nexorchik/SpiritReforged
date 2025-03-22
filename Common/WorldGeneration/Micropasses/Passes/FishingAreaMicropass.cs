@@ -51,6 +51,7 @@ internal class FishingAreaMicropass : Micropass
 				}
 
 				var area = new Rectangle(position.X, position.Y, size.X, size.Y);
+				StructureTools.ClearActuators(position.X, position.Y, size.X, size.Y);
 
 				Coves.Add(area);
 				GenVars.structures.AddProtectedStructure(area, 6);

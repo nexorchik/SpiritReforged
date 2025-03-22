@@ -1,2 +1,13 @@
-v0.1.0.1
-- Fixed issue with the water style loader that caused issues with other mods
+v0.1.0.2
+- Reduced Savanna biome priority
+- Made Cactus Staff projectiles draw behind tiles
+- Made Rogue's Crest minion animate continuously
+- Ensured the player's rotation is reset after death
+- Made Fairy Whistle overwrite the Classic version
+- Fixed Pirate Chest being unlockable without a key when Classic is enabled
+- Improved Acacia Treetop grapple detection with the Squirrel Hook
+- Made player-placed Coarse Dirt Walls safe
+- Prevented custom tile corruption logic from running for unrelated tile types
+- Fixed a drawing error with Stone Platforms
+- Add compat for Classic with the Driftwood, Driftwood Workbench and Stripped Bamboo items
+- Forcefully removed actuators from both structures currently
