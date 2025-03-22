@@ -1,4 +1,5 @@
 using Terraria.Audio;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Savanna.Items.Termite;
 
@@ -36,6 +37,7 @@ public class TermiteJar_Tile : ModTile
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.UsesCustomCanPlace = true;
+		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidWithTop | AnchorType.SolidTile | AnchorType.Table | AnchorType.PlatformNonHammered, 1, 0);
 		TileObjectData.addTile(Type);
 
 		DustType = DustID.Glass;
