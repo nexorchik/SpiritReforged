@@ -849,7 +849,7 @@ BotanistHat: {
 
 BotanistLegs: {
 	DisplayName: Botanist Joggers
-	Tooltip: 10% increased move speed
+	Tooltip: 10% increased movement speed
 }
 
 BeachTowel: {
