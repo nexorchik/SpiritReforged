@@ -24,6 +24,7 @@ public class CactusWallProj : ModProjectile
 		Projectile.frame = Main.rand.Next(3);
 		Projectile.tileCollide = false;
 		Projectile.ignoreWater = true;
+		Projectile.hide = true; //Used in conjunction with DrawBehind
 
 		DrawOriginOffsetY = -30;
 	}
@@ -87,6 +88,9 @@ public class CactusWallProj : ModProjectile
 
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 		=> modifiers.HitDirectionOverride = target.Center.X < Projectile.Center.X ? -1 : 1;
+
+	public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+		=> behindNPCsAndTiles.Add(index);
 
 	public override bool PreDraw(ref Color lightColor)
 	{

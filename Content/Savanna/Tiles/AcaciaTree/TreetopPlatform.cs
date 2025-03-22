@@ -110,7 +110,9 @@ internal class AcaciaPlatformDetours : ILoadable
 
 		foreach (var p in AcaciaTree.Platforms)
 		{
-			if (self.getRect().Intersects(p.Hitbox) && !Collision.SolidCollision(self.Bottom, self.width, 8))
+			var hitbox = new Rectangle(p.Hitbox.X, p.Hitbox.Y + 18, p.Hitbox.Width, 1); //Adjust the hitbox to be more grapple friendly
+
+			if (self.getRect().Intersects(hitbox) && !Collision.SolidCollision(self.Bottom, self.width, 8))
 			{
 				var owner = Main.player[self.owner];
 

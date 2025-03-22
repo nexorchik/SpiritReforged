@@ -209,7 +209,7 @@ public class RoastGlobalTile : GlobalTile
 
 	public override bool PreDraw(int i, int j, int type, SpriteBatch spriteBatch)
 	{
-		if (TileObjectData.IsTopLeft(i, j) && Entity(i, j) is CampfireSlot slot)
+		if (TileID.Sets.Campfire[type] && TileObjectData.IsTopLeft(i, j) && Entity(i, j) is CampfireSlot slot)
 		{
 			var position = new Vector2(i, j) * 16 + new Vector2(Main.offScreenRange) - Main.screenPosition - new Vector2(0, 16);
 			spriteBatch.Draw(TileTexture.Value, position, Lighting.GetColor(i + 1, j + 1));

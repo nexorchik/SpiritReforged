@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.WorldGeneration;
+﻿using SpiritReforged.Common.WallCommon;
+using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Savanna.Walls;
 using System.Linq;
@@ -36,8 +37,10 @@ internal static class BaobabGen
 		var opening = new Rectangle(x - openingSize.X / 2, y - openingSize.Y - 1, openingSize.X, openingSize.Y);
 		ShapeData data = new();
 
+		ushort baobabWall = (ushort)AutoloadedWallExtensions.UnsafeWallType<LivingBaobabWall>();
+
 		WorldUtils.Gen(new Point(x - width / 2, y - preCurveHeight), new Shapes.Rectangle(width, preCurveHeight), 
-			Actions.Chain(new Actions.SetTile((ushort)ModContent.TileType<LivingBaobab>()).Output(data), new Actions.PlaceWall((ushort)ModContent.WallType<LivingBaobabWall>()))); //Rectangle body
+			Actions.Chain(new Actions.SetTile((ushort)ModContent.TileType<LivingBaobab>()).Output(data), new Actions.PlaceWall(baobabWall))); //Rectangle body
 
 		WorldUtils.Gen(new Point(x - width / 2, y - preCurveHeight), new ModShapes.InnerOutline(data, false), Actions.Chain(new Modifiers.IsTouchingAir(), new Actions.ClearWall()));
 
@@ -46,7 +49,7 @@ internal static class BaobabGen
 
 		for (int i = 0; i < 2; i++) //Curved top
 			WorldUtils.Gen(new Point(x - 1 + i, y - preCurveHeight - 1), new Shapes.Mound(width / 2, curveHeight), Actions.Chain(new Actions.SetTile((ushort)ModContent.TileType<LivingBaobab>()), 
-				new Modifiers.Offset(0, 1), new Actions.PlaceWall((ushort)ModContent.WallType<LivingBaobabWall>()), new Modifiers.IsTouchingAir(), new Actions.ClearWall()));
+				new Modifiers.Offset(0, 1), new Actions.PlaceWall(baobabWall), new Modifiers.IsTouchingAir(), new Actions.ClearWall()));
 
 		WorldGen.PlaceTile(opening.Center.X - 1, opening.Bottom - 1, ModContent.TileType<BaobabPod>(), true);
 
@@ -83,8 +86,10 @@ internal static class BaobabGen
 			int halfWidth = WorldGen.genRand.Next(7, 13);
 			var last = points.Last().ToPoint();
 
+			ushort baobabLeafWall = (ushort)AutoloadedWallExtensions.UnsafeWallType<LivingBaobabLeafWall>();
+
 			WorldUtils.Gen(last, new Shapes.Mound(halfWidth, WorldGen.genRand.Next(4, 6)), Actions.Chain(new Modifiers.SkipTiles((ushort)ModContent.TileType<LivingBaobab>()), 
-				new Modifiers.Blotches(2, 0.1), new Actions.SetTile((ushort)ModContent.TileType<LivingBaobabLeaf>()).Output(data), new Actions.PlaceWall((ushort)ModContent.WallType<LivingBaobabLeafWall>()))); //Add a canopy
+				new Modifiers.Blotches(2, 0.1), new Actions.SetTile((ushort)ModContent.TileType<LivingBaobabLeaf>()).Output(data), new Actions.PlaceWall(baobabLeafWall))); //Add a canopy
 
 			WorldUtils.Gen(points.Last().ToPoint(), new ModShapes.InnerOutline(data, true), Actions.Chain(new Actions.ClearWall()));
 			WorldUtils.Gen(points.Last().ToPoint(), new ModShapes.InnerOutline(data, false), Actions.Chain(new Modifiers.Dither(), new Actions.Smooth()));

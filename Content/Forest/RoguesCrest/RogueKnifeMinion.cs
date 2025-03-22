@@ -10,8 +10,6 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 {
 	private bool Trailing => Projectile.velocity.Length() >= ProjectileID.Sets.TrailCacheLength[Type] && AiState == Attacking;
 
-	private bool animate = false;
-
 	private const int Returning = 0;
 	private const int Attacking = 1;
 	private const int LockedToPlayer = 2;
@@ -47,10 +45,7 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 
 	public override void AI()
 	{
-		animate = false;
-
 		base.AI();
-
 		AiTimer = Math.Max(0, AiTimer - 1);
 	}
 
@@ -117,8 +112,6 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 					ParticleHandler.SpawnParticle(new Particles.ImpactLine(position, Projectile.velocity * .1f, color, scale, 8, Projectile));
 				}
 			}
-
-			animate = true;
 		}
 	}
 
@@ -141,8 +134,8 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 
 	public override bool DoAutoFrameUpdate(ref int framesPerSecond, ref int startFrame, ref int endFrame)
 	{
-		framesPerSecond = 22;
-		return animate;
+		framesPerSecond = 28;
+		return true;
 	}
 
 	public override bool PreDraw(ref Color lightColor)
