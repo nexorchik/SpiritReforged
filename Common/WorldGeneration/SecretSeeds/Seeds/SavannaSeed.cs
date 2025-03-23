@@ -4,5 +4,5 @@ namespace SpiritReforged.Common.WorldGeneration.SecretSeeds.Seeds;
 
 internal class SavannaSeed : SecretSeed
 {
-	public override string Name => "savanna";
+	public override string Key => "savanna";
 }

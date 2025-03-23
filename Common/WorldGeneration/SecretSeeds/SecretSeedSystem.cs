@@ -12,7 +12,7 @@ namespace SpiritReforged.Common.WorldGeneration.Seeds;
 internal class SecretSeedSystem : ModSystem
 {
 	/// <summary> Whether the current world has a Spirit secret seed. Abbreviated null check for <see cref="WorldSecretSeed"/>. </summary>
-	public static bool HasSecretSeed => WorldSecretSeed != null;
+	public static bool HasSecretSeed => WorldSecretSeed != null && !Failed;
 	/// <summary> The Spirit secret seed currently in use. Returns null if none. </summary>
 	public static SecretSeed WorldSecretSeed { get; private set; }
 	/// <summary> Whether setup has failed at some point. Prevents all functionality if so. </summary>
@@ -41,7 +41,7 @@ internal class SecretSeedSystem : ModSystem
 
 		foreach (string key in SecretSeeds.Keys)
 		{
-			if (processedSeed.Equals(SecretSeeds[key].Name, StringComparison.CurrentCultureIgnoreCase))
+			if (processedSeed.Equals(SecretSeeds[key].Key, StringComparison.CurrentCultureIgnoreCase))
 			{
 				WorldSecretSeed = SecretSeeds[key];
 				break;
@@ -105,7 +105,7 @@ internal class SecretSeedSystem : ModSystem
 			WorldSecretSeed = null;
 	}
 
-	public override void SaveWorldData(TagCompound tag) //Not needed
+	public override void SaveWorldData(TagCompound tag)
 	{
 		if (HasSecretSeed)
 			tag[nameof(WorldSecretSeed)] = WorldSecretSeed.Name;
