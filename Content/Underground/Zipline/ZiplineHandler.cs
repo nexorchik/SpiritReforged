@@ -16,7 +16,7 @@ internal class ZiplineHandler : ILoadable
 
 	/// <summary> <see cref="Zipline"/>s belonging to all players.<para/>
 	/// Use <see cref="Add"/> and <see cref="Zipline.RemovePoint"/> instead of directly adding and removing points from this set. </summary>
-	//[WorldBound]
+	[WorldBound]
 	public static readonly HashSet<Zipline> Ziplines = [];
 
 	/// <summary> Creates a new zipline at <paramref name="position"/> or adds to an existing zipline belonging to <paramref name="player"/>. </summary>
