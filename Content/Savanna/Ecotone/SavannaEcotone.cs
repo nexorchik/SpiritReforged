@@ -2,6 +2,8 @@
 using SpiritReforged.Common.WallCommon;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Common.WorldGeneration.Ecotones;
+using SpiritReforged.Common.WorldGeneration.SecretSeeds.Seeds;
+using SpiritReforged.Common.WorldGeneration.Seeds;
 using SpiritReforged.Content.Savanna.Items;
 using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
@@ -72,28 +74,54 @@ internal class SavannaEcotone : EcotoneBase
 		tasks.Insert(grassIndex, new PassLegacy("Populate Savanna", PopulateSavanna));
 	}
 
+	private static bool CanGenerate(List<EcotoneSurfaceMapping.EcotoneEntry> entries, out (int, int) bounds)
+	{
+		static bool NotOcean(EcotoneSurfaceMapping.EcotoneEntry e) => e.Start.X > GenVars.leftBeachEnd
+			&& e.End.X > GenVars.leftBeachEnd && e.Start.X < GenVars.rightBeachStart && e.End.X < GenVars.rightBeachStart; //Don't generate next to the ocean
+
+		bounds = (0, 0);
+
+		if (SecretSeedSystem.WorldSecretSeed == SecretSeedSystem.GetSeed<SavannaSeed>())
+		{
+			int spawn = Main.maxTilesX / 2;
+			var valid = entries.Where(x => x.Start.X < spawn && x.End.X > spawn);
+
+			if (valid.Any())
+			{
+				var e = valid.First();
+				bounds = (e.Start.X, e.End.X);
+
+				return true;
+			}
+
+			return false;
+		}
+		else
+		{
+			IEnumerable<EcotoneSurfaceMapping.EcotoneEntry> validEntries = entries.Where(x => x.SurroundedBy("Desert", "Jungle") && Math.Abs(x.Start.Y - x.End.Y) < 120 && NotOcean(x));
+			if (!validEntries.Any())
+				return false;
+
+			var entry = validEntries.ElementAt(WorldGen.genRand.Next(validEntries.Count()));
+			if (entry is null)
+				return false;
+
+			bounds = (entry.Start.X, entry.End.X);
+			return true;
+		}
+	}
+
 	private static WorldGenLegacyMethod BaseGeneration(List<EcotoneSurfaceMapping.EcotoneEntry> entries) => (progress, _) =>
 	{
-		//Don't generate next to the ocean
-		static bool NotOcean(EcotoneSurfaceMapping.EcotoneEntry e) => e.Start.X > GenVars.leftBeachEnd
-			&& e.End.X > GenVars.leftBeachEnd && e.Start.X < GenVars.rightBeachStart && e.End.X < GenVars.rightBeachStart;
-
-		IEnumerable<EcotoneSurfaceMapping.EcotoneEntry> validEntries= entries.Where(x => x.SurroundedBy("Desert", "Jungle") 
-			&& Math.Abs(x.Start.Y - x.End.Y) < 120 && NotOcean(x));
-
-		if (!validEntries.Any())
-			return;
-
-		var entry = validEntries.ElementAt(WorldGen.genRand.Next(validEntries.Count()));
-		if (entry is null)
+		if (!CanGenerate(entries, out var bounds))
 			return;
 
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.SavannaTerrain");
 
-		int startX = entry.Start.X - 0;
-		int endX = entry.End.X + 0;
-		short startY = EcotoneSurfaceMapping.TotalSurfaceY[(short)entry.Start.X];
-		short endY = EcotoneSurfaceMapping.TotalSurfaceY[(short)entry.End.X];
+		int startX = bounds.Item1;
+		int endX = bounds.Item2;
+		short startY = EcotoneSurfaceMapping.TotalSurfaceY[(short)startX];
+		short endY = EcotoneSurfaceMapping.TotalSurfaceY[(short)endX];
 
 		//A hash of tile types which can be replaced
 		HashSet<int> validIds = [TileID.Dirt, TileID.Grass, TileID.ClayBlock, TileID.CrimsonGrass, TileID.CorruptGrass, TileID.Stone];
