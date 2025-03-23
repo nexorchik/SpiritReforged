@@ -467,7 +467,12 @@ internal class SavannaEcotone : EcotoneBase
 
 	private static bool OnBaobab(int i, int j)
 	{
-		int belowType = Main.tile[i, j + 1].TileType;
+		var t = Framing.GetTileSafely(i, j + 1);
+
+		if (!t.HasTile)
+			return false;
+
+		int belowType = t.TileType;
 		return belowType == ModContent.TileType<LivingBaobab>() || belowType == ModContent.TileType<LivingBaobabLeaf>();
 	}
 

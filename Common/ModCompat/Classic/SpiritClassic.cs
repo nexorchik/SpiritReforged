@@ -122,17 +122,6 @@ internal class SpiritClassic : ModSystem
 		return true;
 	}
 
-	/*public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight) //PreAddContent handles this more accurately
-	{
-		int memorial = tasks.FindIndex(x => x.Name == "A Hero's Memorial");
-		if (memorial != -1)
-			tasks[memorial].Disable();
-
-		int stargrass = tasks.FindIndex(x => x.Name == "Stargrass Micropass");
-		if (stargrass != -1)
-			tasks[stargrass].Disable();
-	}*/
-
 	public override void PostWorldGen()
 	{
 		foreach (var c in Main.chest)
@@ -154,6 +143,13 @@ internal class SpiritClassic : ModSystem
 			if (!item.IsAir && ClassicToReforged.TryGetValue(item.type, out int reforgedType))
 				item.ChangeItemType(reforgedType);
 		}
+	}
+
+	/// <summary> Manually adds a ModItem replacement entry to <see cref="ClassicToReforged"/>, if loaded. </summary>
+	public static void AddReplacement(string classicName, int reforgedType)
+	{
+		if (Enabled && ClassicMod.TryFind(classicName, out ModItem item))
+			ClassicToReforged.Add(item.Type, reforgedType);
 	}
 }
 

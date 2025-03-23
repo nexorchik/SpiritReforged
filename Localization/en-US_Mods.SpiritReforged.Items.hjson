@@ -24,7 +24,11 @@ PirateKey: {
 
 RawFish: {
 	DisplayName: Raw Fish
-	Tooltip: "'Can be eaten...maybe cook it first?'"
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		'Can be eaten...maybe cook it first?'
+		'''
 }
 
 SunkenTreasure: {
@@ -195,7 +199,11 @@ CrystalFish: {
 
 RawMeat: {
 	DisplayName: Raw Meat
-	Tooltip: "'Can be eaten...maybe cook it first?'"
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		'Can be eaten...maybe cook it first?'
+		'''
 }
 
 CookedMeat: {
@@ -515,12 +523,12 @@ LeatherBackpack: {
 
 Caryocar: {
 	DisplayName: Caryocar
-	Tooltip: ""
+	Tooltip: "{$BuffDescription.WellFed}"
 }
 
 CustardApple: {
 	DisplayName: Custard Apple
-	Tooltip: ""
+	Tooltip: "{$BuffDescription.WellFed}"
 }
 
 BeachUmbrellaItem: {

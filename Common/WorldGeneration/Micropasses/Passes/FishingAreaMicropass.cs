@@ -14,8 +14,8 @@ internal class FishingAreaMicropass : Micropass
 		{ 4, [new Point16(23, 3), new Point16(4, 15), new Point16(51, 2), new Point16(49, 20)] }
 	};
 
-	[WorldBound]
-	public static HashSet<Rectangle> Coves = [];
+	//[WorldBound] //TEMP
+	public static readonly HashSet<Rectangle> Coves = [];
 	
 	public override string WorldGenName => "Fishing Coves";
 

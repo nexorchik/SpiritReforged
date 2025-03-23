@@ -15,7 +15,6 @@ public abstract class SingleSlotEntity : ModTileEntity
 	/// <returns> Whether an interaction has occured. </returns>
 	public virtual bool OnInteract(Player player)
 	{
-		var lastItem = item;
 		bool success = CanAddItem(player.HeldItem);
 
 		if (!item.IsAir)
@@ -42,11 +41,20 @@ public abstract class SingleSlotEntity : ModTileEntity
 			player.releaseUseItem = false;
 			player.mouseInterface = true;
 
-			if (lastItem != item && Main.netMode == NetmodeID.MultiplayerClient)
+			if (Main.netMode == NetmodeID.MultiplayerClient)
 				new SingleSlotData((short)ID, item).Send();
 		}
 
 		return success;
+	}
+
+	/// <summary> Removes <see cref="item"/> and automatically syncs it. </summary>
+	public void RemoveItem()
+	{
+		item.TurnToAir();
+
+		if (Main.netMode != NetmodeID.SinglePlayer)
+			new SingleSlotData((short)ID, item).Send();
 	}
 
 	public virtual bool CanAddItem(Item item) => true;

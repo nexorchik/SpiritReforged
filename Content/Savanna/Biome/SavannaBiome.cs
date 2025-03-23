@@ -17,6 +17,8 @@ public class SavannaBiome : ModBiome
 	public override void SetStaticDefaults() => NPCHappinessHelper.SetAverage<SavannaBiome>(ModContent.GetInstance<JungleBiome>(), ModContent.GetInstance<DesertBiome>());
 
 	public override SceneEffectPriority Priority => SceneEffectPriority.BiomeMedium;
+	public override float GetWeight(Player player) => .75f;
+
 	public override int Music => GetMusic();
 	public override ModWaterStyle WaterStyle => ModContent.GetInstance<SavannaWaterStyle>();
 	public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle => ModContent.GetInstance<SavannaBGStyle>();

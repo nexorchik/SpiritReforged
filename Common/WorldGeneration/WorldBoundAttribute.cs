@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
+using SpiritReforged.Content.Underground.Zipline;
+using System.Reflection;
 
 namespace SpiritReforged.Common.WorldGeneration;
 
@@ -26,5 +28,8 @@ internal class WorldBoundSystem : ModSystem
 	{
 		foreach (var info in Defaults.Keys)
 			info.SetValue(null, Defaults[info]);
+
+		FishingAreaMicropass.Coves.Clear(); //TEMPORARY! WorldBound preserves IEnumerables
+		ZiplineHandler.Ziplines.Clear();
 	}
 }
