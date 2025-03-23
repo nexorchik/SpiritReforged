@@ -93,8 +93,8 @@ internal class SecretSeedSystem : ModSystem
 	{
 		var value = orig(self);
 
-		if (TryGetHeader(self.Data, out string name) && SecretSeed.NameToTexture.TryGetValue(name, out var texture))
-			return texture;
+		if (TryGetHeader(self.Data, out string name) && SecretSeeds.TryGetValue(name, out var seed))
+			return seed.GetIcon(self.Data);
 
 		return value;
 	}
