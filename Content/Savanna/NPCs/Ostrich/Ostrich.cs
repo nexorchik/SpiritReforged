@@ -277,6 +277,16 @@ public class Ostrich : ModNPC
 			NPC.netUpdate = true;
 	}
 
+	public override bool? CanBeHitByItem(Player player, Item item) => (player.dontHurtCritters && !Charging) ? false : null;
+	public override bool? CanBeHitByProjectile(Projectile projectile)
+	{
+		if (projectile.owner == 255)
+			return null;
+
+		var p = Main.player[projectile.owner];
+		return (p.dontHurtCritters && !Charging) ? false : null;
+	}
+
 	public override bool CanHitPlayer(Player target, ref int cooldownSlot) => Charging;
 	public override bool CanHitNPC(NPC target) => Charging;
 
