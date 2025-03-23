@@ -1,0 +1,99 @@
+EmpoweredSwim: {
+	DisplayName: "Водная грация"
+	Description: Теперь вода эта ваша стихия 
+}
+
+MantarayBuff: {
+	DisplayName: "Спасательный скат"
+	Description: "Быстрый, как морской бриз!"
+}
+
+JellyfishMinion_Buff: {
+	DisplayName: "Медуза"
+	Description: "Миленькая, упругая медуза сражается за вас!"
+}
+
+JellyfishBuff: {
+	DisplayName: "Дружелюбная медуза"
+	Description:  Эта медуза просто обожает путешествовать вместе с вами!
+}
+
+DoubleJumpPotionBuff: {
+	DisplayName: "Зифирный прыжок"
+	Description: "Временно даёт двойной прыжок"
+}
+
+FlightPotionBuff: {
+	DisplayName: "Парение"
+	Description: "Увеличивает время полёта на 25%"
+}
+
+BottleMountBuff: {
+	DisplayName: "Плот"
+	Description: "Посылаем сигнал бедствия..."
+}
+
+FairyMinion_Buff: {
+	DisplayName: "Феи"
+	Description: "Эй! Осторожно!"
+}
+
+Impaled: {
+	DisplayName: "Пронзён"
+	Description: "Ай.. больно в ноге!"
+}
+
+KoiTotemBuff: {
+	DisplayName: "Тотем кои"
+	Description: "Повышает мастерство рыбалки"
+}
+
+ButterflyMinion_Buff: {
+	DisplayName: "Эфирная бабочка"
+	Description: "Эфирная бабочка сражается за вас"
+}
+
+ToucanMinion_Buff: {
+	DisplayName: "Тукан"
+	Description: "Тукан сражается за вас"
+}
+
+QuenchPotion_Buff: {
+	DisplayName: "Жажда"
+	Description: "Другие зелья длятся на 25% дольше"
+}
+
+TumblerPetBuff: {
+	DisplayName: "Дружелюбный кувыркун"
+	Description: "Этот игривый клубок ветра не отстаёт ни на шаг!"
+}
+
+Frozen: {
+	DisplayName: "Обморожение"
+	Description: "Снижает скорость передвижения врагов"
+}
+
+GildedScarabBuff: {
+	DisplayName: Золотой скарабей
+	Description: "Защита увеличена на {0}"
+}
+
+PoolNoodleBubbleBuff: {
+	DisplayName: "Пузырьковая тайна"
+	Description: "Древний кодекс знаний Spirit раскрылся перед вами... Грядёт битва с Тёмной Звездой, но готовы ли вы к ней?"
+}
+
+ExplorerSpeed: {
+	DisplayName: "Скорость исследователя"
+	Description: "Ваша скорость значительно увеличена"
+}
+
+RemedyPotionBuff: {
+	DisplayName: "Целебный эффект"
+	Description: "Дает иммунитет к некоторым вредным эффектам"
+}
+
+OpenWounds: {
+	DisplayName: "Открытые раны"
+	Description: "Вы уязвимы к кровотечению"
+}
