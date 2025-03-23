@@ -1,5 +1,6 @@
 ﻿using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
+using Terraria.GameContent.ObjectInteractions;
 using Terraria.Utilities;
 
 namespace SpiritReforged.Common.TileCommon.PresetTiles;
@@ -17,6 +18,7 @@ public abstract class MusicBoxTile : ModTile
 		Main.tileFrameImportant[Type] = true;
 		Main.tileObsidianKill[Type] = true;
 
+        TileID.Sets.HasOutlines[Type] = true;
 		TileID.Sets.DisableSmartCursor[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
@@ -42,12 +44,13 @@ public abstract class MusicBoxTile : ModTile
 
 		int goreType = Main.rand.Next(570, 573);
 		var position = new Vector2(i, j) * 16 + new Vector2(8, -8);
-
-		static float Random() => Main.rand.NextFloat(.5f, 1.5f);
 		var velocity = new Vector2(Main.WindForVisuals * 2f, -0.5f) * new Vector2(Random(), Random());
-
 		var gore = Gore.NewGoreDirect(new EntitySource_TileUpdate(i, j), position, velocity, goreType, .8f);
 		gore.position.X -= gore.Width / 2;
+
+		return;
+
+		static float Random() => Main.rand.NextFloat(.5f, 1.5f);
 	}
 
 	public override void MouseOver(int i, int j)
@@ -57,6 +60,8 @@ public abstract class MusicBoxTile : ModTile
 		player.cursorItemIconEnabled = true;
 		player.cursorItemIconID = Mod.Find<ModItem>(Name + "Item").Type;
 	}
+
+	public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => true;
 }
 
 public sealed class AutoloadedMusicBoxItem(string musicPath, string name, string texture, string tileName) : ModItem
