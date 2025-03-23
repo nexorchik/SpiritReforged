@@ -1,6 +1,9 @@
 --- Spirit Reforged ---
 by Team Spirit
 
+English (by Team Spirit)
+Português Brasileiro (Tradução por Lucas Rotulo)
+
 [c/ffc163:Spirit Reforged] is a general content mod which aims to create a fleshed out, high-quality experience for players at all points of progression. We want to make your world come to life by creating memorable environments, encounters, and high-quality items. 
 
 Spirit Reforged is the latest and main project developed by Team Spirit, also responsible for the original Spirit Mod (now called [c/cffffd:Spirit Classic]). 
