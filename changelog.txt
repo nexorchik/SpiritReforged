@@ -1,13 +1,12 @@
-v0.1.0.2
-- Reduced Savanna biome priority
-- Made Cactus Staff projectiles draw behind tiles
-- Made Rogue's Crest minion animate continuously
-- Ensured the player's rotation is reset after death
-- Made Fairy Whistle overwrite the Classic version
-- Fixed Pirate Chest being unlockable without a key when Classic is enabled
-- Improved Acacia Treetop grapple detection with the Squirrel Hook
-- Made player-placed Coarse Dirt Walls safe
-- Prevented custom tile corruption logic from running for unrelated tile types
-- Fixed a drawing error with Stone Platforms
-- Add compat for Classic with the Driftwood, Driftwood Workbench and Stripped Bamboo items
-- Forcefully removed actuators from both structures currently
+v0.1.0.3
+- Significantly reduced Gold Gar spawn rates
+- Added a Savanna "secret" seed - simply "savanna" will give you a random world with a guaranteed savanna spawn
+- Fixed a crash caused by nearby Koi Totems when fishing
+- Fixed a potential crash when loading mod water styles
+- Included alternate jungle grass types in Ecotone surface mapping
+- Fixed Scarecrow item drops syncing incorrectly in multiplayer
+- Increased Savanna scene weight slightly
+- Included "Well Fed" buff descriptions for several items
+- Rail-Gun rails no longer persist when switching worlds
+- Sunken Treasure no longer modifies framing of surface tiles when placed
+- Added proper Steam Workshop description without chat tags

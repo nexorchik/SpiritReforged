@@ -1,0 +1,50 @@
+ReforgeClientConfig: {
+	DisplayName: Configuração do Cliente de Reforjamento
+
+	OceanShape: {
+		Label: Forma do Oceano
+		Tooltip:
+			'''
+			Modifica a geração do oceano de algumas maneiras
+			O padrão é a geração Piecewise_V
+			A geração Piecewise_V é recomendada para jogatinas com o Espírito
+			'''
+	}
+
+	SurfaceWaterTransparency: {
+		Label: Transparência da Água da Superfície
+		Tooltip:
+			'''
+			Permite que a água do oceano seja transparente quando ativado
+			Isso não afeta nenhum outro bioma
+			'''
+	}
+}
+
+OceanShape: {
+	Tooltip: ""
+	Default.Label: Padrão
+	SlantedSine.Label: Seno Inclinado
+	Piecewise.Label: Piecewise
+	Piecewise_M.Label: Piecewise_ M
+	Piecewise_V.Label: Piecewise_ V
+}
+
+ReforgedServerConfig: {
+	DisplayName: Configuração do Servidor de Reforjamento
+
+	VentCritters: {
+		Label: Criaturas das Ventiladoras
+		Tooltip:
+			'''
+			Ativa o surgimento de várias criaturas ao redor de ventiladoras hidrotermais
+			Essas criaturas não interferem na taxa de surgimento de inimigos regulares
+			No entanto, elas contribuem para o limite máximo de NPCs
+			'''
+	}
+
+	MaxFloatingItemCount: {
+		Label: Limite de Itens Flutuantes
+		Tooltip: Determina quantos itens flutuantes podem estar ativos no mundo ao mesmo tempo.
+	}
+}
