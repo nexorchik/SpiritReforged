@@ -182,7 +182,7 @@ HoneySalmon: {
 	Tooltip:
 		'''
 		{$BuffDescription.WellFed}
-		'A mistura perfeita de doce e salgado!'
+		'A mistura perfeita entre doce e salgado!'
 		'''
 }
 
