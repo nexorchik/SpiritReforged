@@ -2,7 +2,7 @@ ReforgeClientConfig: {
 	DisplayName: Клиентская конфигурация
 
 	OceanShape: {
-		Label: "Генерация океана"
+		Label: Генерация океана
 		Tooltip:
 			'''
 			Изменяет генерацию океана различными способами  
@@ -12,7 +12,7 @@ ReforgeClientConfig: {
 	}
 
 	SurfaceWaterTransparency: {
-		Label: "Прозрачность воды в океане"
+		Label: Прозрачность воды в океане
 		Tooltip:
 			'''
 			Позволяет сделать океанскую воду прозрачной  
@@ -23,18 +23,18 @@ ReforgeClientConfig: {
 
 OceanShape: {
 	Tooltip: ""
-	Default.Label: "Стандартная"
-	SlantedSine.Label: "Синусоидная"
-	Piecewise.Label: "Составная"
-	Piecewise_M.Label: "Составная M"
-	Piecewise_V.Label: "Составная V"
+	Default.Label: Стандартная
+	SlantedSine.Label: Синусоидная
+	Piecewise.Label: Составная
+	Piecewise_M.Label: Составная M
+	Piecewise_V.Label: Составная V
 }
 
 ReforgedServerConfig: {
-	DisplayName: "Серверная конфигурация"
+	DisplayName: Серверная конфигурация
 
 	VentCritters: {
-		Label: "Обитатели гидротермальных источников"
+		Label: Обитатели гидротермальных источников
 		Tooltip:
 			'''
 			Включает появление различных существ вокруг гидротермальных источников.  
