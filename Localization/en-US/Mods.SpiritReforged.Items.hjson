@@ -179,7 +179,7 @@ HoneySalmon: {
 	Tooltip:
 		'''
 		{$BuffDescription.WellFed}
-		Boosts life regeneration
+		'The perfect mix of sweet and salty!'
 		'''
 }
 
