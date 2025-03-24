@@ -3,21 +3,17 @@ using static Terraria.Utilities.NPCUtils;
 
 namespace SpiritReforged.Common.NPCCommon;
 
-internal class AdvancedTargetingNPC : GlobalNPC
-{
-	public override bool CanBeHitByNPC(NPC npc, NPC attacker) => true;
-	public override bool CanHitNPC(NPC npc, NPC target)
-	{
-		if (npc.SupportsNPCTargets && AdvancedTargetingHelper.TargetLookup.TryGetValue(npc.type, out int[] targets))
-			return targets.Contains(target.type);
-
-		return true;
-	}
-}
-
 internal static class AdvancedTargetingHelper
 {
 	internal static readonly Dictionary<int, int[]> TargetLookup = [];
+
+	public static bool IsTarget(this NPC npc)
+	{
+		if (TargetLookup.TryGetValue(npc.type, out int[] targets))
+			return targets.Contains(npc.type);
+
+		return false;
+	}
 
 	/// <summary> Used to set up specific NPC targets for this NPC. </summary>
 	public static void SetNPCTargets(this NPC npc, params int[] targetTypes)
