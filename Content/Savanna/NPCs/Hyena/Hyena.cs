@@ -4,7 +4,6 @@ using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Vanilla.Food;
 using System.Linq;
-using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
 using static Terraria.Utilities.NPCUtils;
@@ -412,11 +411,16 @@ public class Hyena : ModNPC
 		const int aggroRange = 16 * 25;
 		const int searchDist = 400;
 
-		var search = NPC.FindTarget(playerFilter: SearchFilters.OnlyPlayersInCertainDistance(NPC.Center, searchDist), npcFilter: AdvancedTargetingHelper.NPCsByDistanceAndType(NPC, searchDist));
+		var search = NPC.FindTarget(playerFilter: SearchFilters.OnlyPlayersInCertainDistance(NPC.Center, searchDist), npcFilter: NPCsByDistance(NPC));
 		TargetSearchFlag flag;
 
 		if (search.NearestTargetType == TargetType.NPC)
-			flag = TargetSearchFlag.NPCs;
+		{
+			if (AdvancedTargetingHelper.TargetLookup.TryGetValue(Type, out int[] targets) && targets.Contains(search.NearestNPC.type))
+				flag = TargetSearchFlag.NPCs; //Only target the nearest NPC if contained in TargetLookup
+			else
+				return;
+		}
 		else if (NPC.HasPlayerTarget)
 			flag = TargetSearchFlag.Players;
 		else
@@ -431,6 +435,9 @@ public class Hyena : ModNPC
 			}
 		}
 	}
+
+	private static SearchFilter<NPC> NPCsByDistance(NPC thisNPC) => delegate (NPC target)
+	{ return target.Distance(thisNPC.Center) <= 500; };
 
 	public override void FindFrame(int frameHeight)
 	{
