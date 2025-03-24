@@ -4,6 +4,7 @@ using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Vanilla.Food;
 using System.Linq;
+using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
 using static Terraria.Utilities.NPCUtils;
@@ -359,6 +360,16 @@ public class Hyena : ModNPC
 			NPC.frameCounter = 0;
 			Counter = 0;
 		}
+	}
+
+	public override bool? CanBeHitByItem(Player player, Item item) => (player.dontHurtCritters && !dealDamage) ? false : null;
+	public override bool? CanBeHitByProjectile(Projectile projectile)
+	{
+		if (projectile.owner == 255)
+			return null;
+
+		var p = Main.player[projectile.owner];
+		return (p.dontHurtCritters && !dealDamage) ? false : null;
 	}
 
 	public override bool CanHitPlayer(Player target, ref int cooldownSlot) => dealDamage;

@@ -12,6 +12,8 @@ internal class ButterflyMicropass : Micropass
 
 	public override void Run(GenerationProgress progress, Terraria.IO.GameConfiguration config)
 	{
+		const int maxTries = 2000;
+
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Butterfly");
 		int repeats = Main.maxTilesX / WorldGen.WorldSizeSmallX; //1 shrine in small and medium worlds, 2 in large
 
@@ -22,17 +24,28 @@ internal class ButterflyMicropass : Micropass
 			string structureName = "Assets/Structures/Butterfly/Butterfly" + subId + subChar;
 
 			Point16 size = StructureHelper.API.Generator.GetStructureDimensions(structureName, ModContent.GetInstance<SpiritReforgedMod>());
-			Point16 position;
+			Point16 position = Point16.Zero;
 
-			do
+			int tries = 0;
+			while (tries < maxTries)
 			{
 				int third = Main.maxTilesX / 3;
 				int x = WorldGen.genRand.NextBool() ? WorldGen.genRand.Next(GenVars.leftBeachEnd, third) : WorldGen.genRand.Next(Main.maxTilesX - third, GenVars.rightBeachStart);
 				int y = (int)GenVars.worldSurface + WorldGen.genRand.Next(50, 100);
 
 				position = new Point16(x, y);
+
+				if (SolidPerimeter(new Rectangle(position.X, position.Y, size.X, size.Y)))
+					break;
+
+				tries++;
 			}
-			while (!SolidPerimeter(new Rectangle(position.X, position.Y, size.X, size.Y)));
+
+			if (tries == maxTries)
+			{
+				SpiritReforgedMod.Instance.Logger.Info("Generator exceeded maximum tries for structure: Butterfly Shrine" + subId + subChar);
+				return; //Failed
+			}
 
 			if (GenVars.structures.CanPlace(new Rectangle(position.X, position.Y, size.X, size.Y), 4))
 			{
