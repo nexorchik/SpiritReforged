@@ -1,5 +1,5 @@
 ReforgeClientConfig: {
-	DisplayName: Configuração do Cliente de Reforjamento
+	DisplayName: Configuração do Cliente do Reforged
 
 	OceanShape: {
 		Label: Forma do Oceano
@@ -31,7 +31,7 @@ OceanShape: {
 }
 
 ReforgedServerConfig: {
-	DisplayName: Configuração do Servidor de Reforjamento
+	DisplayName: Configuração do Servidor do Reforged
 
 	VentCritters: {
 		Label: Criaturas das Ventiladoras

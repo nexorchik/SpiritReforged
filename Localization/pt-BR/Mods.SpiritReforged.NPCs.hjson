@@ -34,7 +34,7 @@ GoldGar: {
 }
 
 OceanSlime: {
-	DisplayName: Slime de Coco
+	DisplayName: Slime de Côco
 	Entry: Cuidado com o que vem de cima! Esses slimes traiçoeiros vivem na costa, camuflados de forma inconspícua como esta fruta familiar.
 }
 
@@ -294,11 +294,11 @@ Hiker: {
 }
 
 HideZombieBig: {
-	DisplayName: "{$NPCName.Zumbi}"
+	DisplayName: "{$NPCName.Zombie}"
 	Entry: Hienas precisam se esconder de zumbis de pele ou terão suas peles roubadas.
 }
 
 HideZombieSmall: {
-	DisplayName: "{$NPCName.Zumbi}"
+	DisplayName: "{$NPCName.Zombie}"
 	Entry: Seu traje é um sucesso na última moda dos mortos-vivos.
 }
