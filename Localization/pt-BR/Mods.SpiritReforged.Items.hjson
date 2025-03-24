@@ -27,6 +27,7 @@ RawFish: {
 	Tooltip:
 		'''
 		{$BuffDescription.WellFed}
+		{$BuffDescription.WellFed}
 		'Pode ser comido... talvez cozinhar antes seja uma boa ideia?'
 		'''
 }
@@ -159,6 +160,7 @@ Sushi: {
 	Tooltip:
 		'''
 		{$BuffDescription.WellFed}
+		{$BuffDescription.WellFed}
 		Proporciona respiração debaixo d'água
 		'Gelado e fresco!'
 		'''
@@ -168,6 +170,7 @@ Nigiri: {
 	DisplayName: Nigiri
 	Tooltip:
 		'''
+		{$BuffDescription.WellFed}
 		{$BuffDescription.WellFed}
 		Proporciona movimento livre na água
 		'Corte perfeito'
@@ -193,6 +196,7 @@ CrystalFish: {
 	Tooltip:
 		'''
 		{$BuffDescription.WellFed2}
+		{$BuffDescription.WellFed2}
 		Aumenta o poder mágico
 		'''
 }
@@ -201,6 +205,7 @@ RawMeat: {
 	DisplayName: Carne Crua
 	Tooltip:
 		'''
+		{$BuffDescription.WellFed}
 		{$BuffDescription.WellFed}
 		'Pode ser comida... talvez cozinhar antes seja uma boa ideia?'
 		'''
@@ -211,6 +216,7 @@ CookedMeat: {
 	Tooltip:
 		'''
 		{$BuffDescription.WellFed}
+		{$BuffDescription.WellFed}
 		'Assada à perfeição'
 		'''
 }
@@ -220,6 +226,7 @@ GoldenCaviar: {
 	Tooltip:
 		'''
 		{$BuffDescription.WellFed3}
+		{$BuffDescription.WellFed3}
 		'O ápice da gastronomia'
 		'''
 }
@@ -228,8 +235,10 @@ GarBannerItem.DisplayName: Bandeira de Gar
 
 CoconutMilk: {
 	DisplayName: Leite de Côco
+	DisplayName: Leite de Côco
 	Tooltip:
 		'''
+		{$BuffDescription.WellFed}
 		{$BuffDescription.WellFed}
 		'Nem precisa de copo!'
 		'''
@@ -289,6 +298,7 @@ SteamedMussels: {
 	DisplayName: Mexilhões ao Vapor
 	Tooltip:
 		'''
+		{$BuffDescription.WellFed}
 		{$BuffDescription.WellFed}
 		'Frescos e deliciosos'
 		'''
@@ -377,6 +387,7 @@ FloatingDriftwood: {
 FishCrate: {
 	DisplayName: Caixa de Peixes
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
 Ambergris: {
@@ -463,6 +474,7 @@ PoolNoodle: {
 		'''
 		3 de dano de invocação com tag
 		{$CommonItemTooltip.Whips}
+		{$CommonItemTooltip.Whips}
 		Inimigos atingidos podem liberar explosões borbulhantes quando atingidos por invocações
 		'''
 }
@@ -505,6 +517,7 @@ WrithingSticks: {
 BaobabFruit: {
 	DisplayName: Fruta de Baobá
 	Tooltip: "{$BuffDescription.WellFed}"
+	Tooltip: "{$BuffDescription.WellFed}"
 }
 
 SavannaGrassSeeds: {
@@ -517,6 +530,7 @@ LeatherBackpack: {
 	Tooltip:
 		'''
 		{$CommonTooltips.Backpack}
+		{$CommonTooltips.Backpack}
 		'Confortável, prática e ainda estilosa'
 		'''
 }
@@ -524,10 +538,12 @@ LeatherBackpack: {
 Caryocar: {
 	DisplayName: Caryocar
 	Tooltip: "{$BuffDescription.WellFed}"
+	Tooltip: "{$BuffDescription.WellFed}"
 }
 
 CustardApple: {
 	DisplayName: Fruta-do-Conde
+	Tooltip: "{$BuffDescription.WellFed}"
 	Tooltip: "{$BuffDescription.WellFed}"
 }
 
@@ -539,10 +555,12 @@ BeachUmbrellaItem: {
 BigBuoy: {
 	DisplayName: Boia Grande
 	Tooltip: "{$ItemTooltip.CoralTorch}"
+	Tooltip: "{$ItemTooltip.CoralTorch}"
 }
 
 SmallBuoy: {
 	DisplayName: Boia Pequena
+	Tooltip: "{$ItemTooltip.CoralTorch}"
 	Tooltip: "{$ItemTooltip.CoralTorch}"
 }
 
@@ -556,12 +574,14 @@ Omelette: {
 	Tooltip:
 		'''
 		{$BuffDescription.WellFed2}
+		{$BuffDescription.WellFed2}
 		'Cozido à perfeição'
 		'''
 }
 
 OstrichEgg: {
 	DisplayName: Ovo de Avestruz
+	Tooltip: "{$BuffDescription.WellFed}"
 	Tooltip: "{$BuffDescription.WellFed}"
 }
 
@@ -909,6 +929,7 @@ FishLure: {
 	Tooltip:
 		'''
 		{$ItemTooltip.CoralTorch}
+		{$ItemTooltip.CoralTorch}
 		Atrai cardumes de peixes para águas próximas
 		'''
 }
@@ -936,10 +957,12 @@ MagmastoneItem: {
 SavannaCrateHardmode: {
 	DisplayName: Caixa de Safári
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
 SavannaCrate: {
 	DisplayName: Caixa de Campos
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
@@ -953,6 +976,7 @@ OstrichBannerItem.DisplayName: Bandeira de Avestruz
 
 SavannaCampfireItem: {
 	DisplayName: Fogueira da Savana
+	Tooltip: "{$ItemTooltip.Campfire}"
 	Tooltip: "{$ItemTooltip.Campfire}"
 }
 
@@ -1170,6 +1194,7 @@ FashionableBackpack: {
 	Tooltip:
 		'''
 		{$CommonTooltips.Backpack}
+		{$CommonTooltips.Backpack}
 		'Moderna, elegante e ainda assim eficiente'
 		'''
 }
@@ -1178,6 +1203,7 @@ HikingBackpack: {
 	DisplayName: Mochila de Caminhada
 	Tooltip:
 		'''
+		{$CommonTooltips.Backpack}
 		{$CommonTooltips.Backpack}
 		'Utilitária, resistente e, acima de tudo, confortável'
 		'''
@@ -1188,6 +1214,7 @@ Minipack: {
 	Tooltip:
 		'''
 		{$CommonTooltips.Backpack}
+		{$CommonTooltips.Backpack}
 		'Pequena, leve e super compacta'
 		'''
 }
@@ -1196,6 +1223,7 @@ PinkPack: {
 	DisplayName: Mochila Rosa
 	Tooltip:
 		'''
+		{$CommonTooltips.Backpack}
 		{$CommonTooltips.Backpack}
 		'A melhor cor, útil e ótima visibilidade à distância'
 		'''
@@ -1206,6 +1234,7 @@ PouchPack: {
 	Tooltip:
 		'''
 		{$CommonTooltips.Backpack}
+		{$CommonTooltips.Backpack}
 		'Simples, confortável e propensa a derramamentos'
 		'''
 }
@@ -1214,6 +1243,7 @@ DyeCrateItem: {
 	DisplayName: Caixa de Corantes
 	Tooltip:
 		'''
+		{$CommonItemTooltip.RightClickToOpen}
 		{$CommonItemTooltip.RightClickToOpen}
 		'Tem um cheiro... surpreendentemente agradável!'
 		'''
@@ -1245,6 +1275,8 @@ CrescentMelon: {
 		'''
 		{$BuffDescription.WellFed}
 		{$ItemTooltip.ManaRegenerationPotion}
+		{$BuffDescription.WellFed}
+		{$ItemTooltip.ManaRegenerationPotion}
 		'''
 }
 
@@ -1252,6 +1284,8 @@ MidnightApple: {
 	DisplayName: Maçã da Meia-Noite
 	Tooltip:
 		'''
+		{$BuffDescription.WellFed}
+		{$ItemTooltip.ManaRegenerationPotion}
 		{$BuffDescription.WellFed}
 		{$ItemTooltip.ManaRegenerationPotion}
 		'Brilha como o céu noturno'
@@ -1264,6 +1298,8 @@ NightSky: {
 		'''
 		{$BuffDescription.WellFed2}
 		{$ItemTooltip.ManaRegenerationPotion}
+		{$BuffDescription.WellFed2}
+		{$ItemTooltip.ManaRegenerationPotion}
 		'Tem gosto de cosmos'
 		'''
 }
@@ -1272,6 +1308,8 @@ Pearlberry: {
 	DisplayName: Pérola de Fruta
 	Tooltip:
 		'''
+		{$BuffDescription.WellFed}
+		{$ItemTooltip.ManaRegenerationPotion}
 		{$BuffDescription.WellFed}
 		{$ItemTooltip.ManaRegenerationPotion}
 		'Reluz e brilha intensamente...'
@@ -1302,6 +1340,7 @@ CloudstalkBoxItem: {
 	Tooltip: ""
 }
 
+OceanSlimeBannerItem.DisplayName: Bandeira do Slime de Côco
 OceanSlimeBannerItem.DisplayName: Bandeira do Slime de Côco
 
 OceanDepthsBoxItem: {
