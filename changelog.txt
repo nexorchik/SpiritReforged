@@ -1,7 +1,4 @@
-v0.1.0.4
-- Added Portugese translation (thanks to Lucas Rotulo), Russian translation (thanks to RUnion Team) - this includes the Workshop description
-- Adds highlights to Music Boxes
-- Adds smart cursor functionality to Music Boxes
-- Added a failsafe for Butterfly Shrine generation
-- Ostrich and Hyena can no longer be damaged while holding the Guide to Critter Companionship when passive
-- Drywood and Driftwood doors now draw properly when captured with camera mode
+v0.1.0.5
+- Adjusted Portugese translation (thanks again to Lucas Rotulo)
+- Fixed Honey Coated Salmon maybe having a duplicate tooltip (unclear)
+- Actually included 0.1.0.4's fixes
