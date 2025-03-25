@@ -76,9 +76,7 @@ internal class SavannaEcotone : EcotoneBase
 
 	private static bool CanGenerate(List<EcotoneSurfaceMapping.EcotoneEntry> entries, out (int, int) bounds)
 	{
-		static bool NotOcean(EcotoneSurfaceMapping.EcotoneEntry e) => e.Start.X > GenVars.leftBeachEnd
-			&& e.End.X > GenVars.leftBeachEnd && e.Start.X < GenVars.rightBeachStart && e.End.X < GenVars.rightBeachStart; //Don't generate next to the ocean
-
+		const int offX = EcotoneSurfaceMapping.TransitionLength + 1; //Removes forest patches on the left side
 		bounds = (0, 0);
 
 		if (SecretSeedSystem.WorldSecretSeed == SecretSeedSystem.GetSeed<SavannaSeed>())
@@ -89,7 +87,7 @@ internal class SavannaEcotone : EcotoneBase
 			if (valid.Any())
 			{
 				var e = valid.First();
-				bounds = (e.Start.X, e.End.X);
+				bounds = (e.Start.X - offX, e.End.X);
 
 				return true;
 			}
@@ -98,7 +96,7 @@ internal class SavannaEcotone : EcotoneBase
 		}
 		else
 		{
-			IEnumerable<EcotoneSurfaceMapping.EcotoneEntry> validEntries = entries.Where(x => x.SurroundedBy("Desert", "Jungle") && Math.Abs(x.Start.Y - x.End.Y) < 120 && NotOcean(x));
+			var validEntries = entries.Where(x => x.SurroundedBy("Desert", "Jungle") && Math.Abs(x.Start.Y - x.End.Y) < 120);
 			if (!validEntries.Any())
 				return false;
 
@@ -106,7 +104,7 @@ internal class SavannaEcotone : EcotoneBase
 			if (entry is null)
 				return false;
 
-			bounds = (entry.Start.X, entry.End.X);
+			bounds = (entry.Start.X - offX, entry.End.X);
 			return true;
 		}
 	}
