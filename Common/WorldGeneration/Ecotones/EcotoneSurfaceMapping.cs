@@ -92,7 +92,7 @@ internal class EcotoneSurfaceMapping : ModSystem
 				entry.Right = def;
 				Entries.Add(entry);
 
-				if (x <= GenVars.leftBeachEnd + 10 || x >= GenVars.rightBeachStart - 10)
+				if (x <= GenVars.leftBeachEnd || x >= GenVars.rightBeachStart)
 					def = EcotoneEdgeDefinitions.GetEcotone("Ocean");
 				
 				entry = new EcotoneEntry(new Point(x, y), def);
