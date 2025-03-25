@@ -244,6 +244,8 @@ public class AcaciaTreeCorrupt : AcaciaTree
 {
 	public override void PreAddObjectData()
 	{
+		base.PreAddObjectData();
+
 		TileID.Sets.Corrupt[Type] = true;
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrassCorrupt>()];
 	}
@@ -253,6 +255,8 @@ public class AcaciaTreeCrimson : AcaciaTree
 {
 	public override void PreAddObjectData()
 	{
+		base.PreAddObjectData();
+
 		TileID.Sets.Crimson[Type] = true;
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrassCrimson>()];
 	}
@@ -262,6 +266,8 @@ public class AcaciaTreeHallow : AcaciaTree
 {
 	public override void PreAddObjectData()
 	{
+		base.PreAddObjectData();
+
 		TileID.Sets.Hallow[Type] = true;
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrassHallow>()];
 	}
