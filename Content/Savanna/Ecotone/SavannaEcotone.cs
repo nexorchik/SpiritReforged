@@ -175,18 +175,7 @@ internal class SavannaEcotone : EcotoneBase
 					if (y > topBottomY.Y)
 						topBottomY.Y = y;
 
-					float noise = (sandNoise.GetNoise(x, 0) + 1) * 5 + 6;
-					int type = depth <= noise ? ModContent.TileType<SavannaDirt>() : GetSandType(x, y);
-
-					if (depth > 90 + maxDepth - noise)
-						type = TileID.Sandstone;
-					else if (depth > (sandNoise.GetNoise(x, 0) + 1) * 3 + 15) //Add hardened sand below a certain depth for ease of navigation
-						type = TileID.HardenedSand;
-
-					if (depth > noise && TileID.Sets.Ore[tile.TileType])
-						type = tile.TileType; //Keep below-surface ores
-
-					tile.TileType = (ushort)type;
+					tile.TileType = (ushort)GetType();
 
 					if (depth > 1) //Convert walls
 					{
@@ -202,6 +191,29 @@ internal class SavannaEcotone : EcotoneBase
 				}
 				else
 					tile.Clear(TileDataType.All);
+
+				int GetType()
+				{
+					float depthNoise = (sandNoise.GetNoise(x, 0) + 1) * 5 + 6;
+					float spotNoise = sandNoise.GetNoise(x, y);
+
+					int type = ModContent.TileType<SavannaDirt>();
+
+					if (depth > depthNoise && TileID.Sets.Ore[tile.TileType])
+						return tile.TileType; //Keep below-surface ores
+
+					if (depth > (sandNoise.GetNoise(x, 0) + 1) * 3 + 15)
+						type = TileID.HardenedSand; //Add hardened sand below a certain depth for ease of navigation
+					else if (depth > depthNoise)
+						type = (spotNoise < .25f || !WorldGen.SolidTile(x, y + 1)) ? TileID.HardenedSand : TileID.Sand;
+
+					if (depth > 90 + depthNoise)
+						type = TileID.Sandstone;
+					else if (depth > 50 && spotNoise * ((depth - 50f) / 30f) > .25f)
+						type = TileID.Sandstone;
+
+					return type;
+				}
 			}
 
 			xOffsetForFactor += (int)Math.Round(Math.Max(sandNoise.GetNoise(x, 0), 0) * 5);
@@ -210,19 +222,6 @@ internal class SavannaEcotone : EcotoneBase
 		SavannaArea = new Rectangle(startX, topBottomY.X, endX - startX, topBottomY.Y - topBottomY.X);
 		SavannaArea.Inflate(2, 2);
 		StopLava.AddArea(SavannaArea);
-
-		static ushort GetSandType(int x, int y)
-		{
-			int off = 0;
-
-			while (WorldGen.SolidOrSlopedTile(x, y))
-			{
-				y++;
-				off++;
-			}
-
-			return off < 3 ? TileID.HardenedSand : TileID.Sand;
-		}
 
 		static int HighestSurfacePoint(int x)
 		{
@@ -423,41 +422,38 @@ internal class SavannaEcotone : EcotoneBase
 
 	private static void GrowStones()
 	{
-		const int spawnRegion = 80;
+		const int maxAttempts = 200;
 
-		int rocksMax = Math.Min(SavannaArea.Width / 120, 4);
-		int rocks = 0;
+		int numMax = SavannaArea.Width / 150;
+		int num = 0;
 
-		IterateGen(80, RockGen, out int i, out int j);
+		int margin = (int)(SavannaArea.Width * .22f);
 
-		bool RockGen(int i, int j)
+		for (int a = 0; a < maxAttempts; a++)
 		{
-			if (i > SavannaArea.Left + spawnRegion && i < SavannaArea.Right - spawnRegion)
-				return false;
+			var pos = WorldGen.genRand.NextVector2FromRectangle(SavannaArea with { Height = 2 }).ToPoint16();
+			int x = pos.X;
+			int y = pos.Y;
 
-			(int width, int height) = (WorldGen.genRand.Next(3, 10), WorldGen.genRand.Next(3, 6));
-			bool hasMoss = WorldGen.genRand.NextBool(3);
-			var t = Main.tile[i, j];
+			if (pos.X > SavannaArea.Left + margin && pos.X < SavannaArea.Right - margin)
+				continue;
 
-			i -= width / 2; //Automatically center
+			WorldMethods.FindGround(x, ref y);
 
-			for (int x = 0; x < width; x++) //Generate the rock
-			{
-				WorldMethods.FindGround(i + x, ref j);
-				int _height = (int)(Math.Abs(Math.Sin(x / (float)width * Math.PI)) * height) + 1;
+			int halfWidth = WorldGen.genRand.Next(2, 5);
+			ShapeData data = new();
 
-				for (int y = j; y < j + _height; y++)
-				{
-					var tile = Main.tile[i + x, y];
-					if (!tile.HasTile || tile.TileType == ModContent.TileType<SavannaDirt>())
-					{
-						tile.HasTile = true;
-						tile.TileType = (OpenTools.GetOpenings(i + x, y) == OpenFlags.None || !hasMoss) ? TileID.Stone : TileID.BrownMoss;
-					}
-				}
-			}
+			WorldUtils.Gen(new Point(x, y + 1), new Shapes.Mound(halfWidth, 3), Actions.Chain(new Modifiers.Blotches(), new Actions.SetTile(TileID.Stone).Output(data)));
 
-			return ++rocks > rocksMax;
+			if (WorldGen.genRand.NextBool())
+				WorldUtils.Gen(new Point(x, y + 1), new ModShapes.All(data), Actions.Chain(new Modifiers.OnlyTiles(TileID.Stone), new Modifiers.IsTouchingAir(), new Actions.SetTile(TileID.BrownMoss)));
+
+			WorldUtils.Gen(new Point(x, y + 1), new ModShapes.All(data), new Actions.Smooth());
+			WorldUtils.Gen(new Point(x, y + 1), new ModShapes.All(data), Actions.Chain(new Modifiers.Offset(0, 4), new Modifiers.Blotches(), 
+				new Modifiers.OnlyTiles((ushort)ModContent.TileType<SavannaDirt>()), new Actions.SetTile(TileID.Sand)));
+
+			if (++num > numMax)
+				break;
 		}
 	}
 
