@@ -1311,7 +1311,7 @@ OceanDepthsBoxItem: {
 
 OstrichPants: {
 	DisplayName: Ostrich Pants
-	Tooltip: ""
+	Tooltip: "'Almost lifelike!'"
 }
 
 CampfireSpit: {

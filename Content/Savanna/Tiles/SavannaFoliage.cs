@@ -57,6 +57,15 @@ public class SavannaFoliage : ModTile, IConvertibleTile
 
 		return oldId != tile.TileType;
 	}
+
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HeldItem.type == ItemID.Sickle)
+			yield return new Item(ItemID.Hay, Main.rand.Next(1, 3));
+
+		if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HasItem(ItemID.Blowpipe))
+			yield return new Item(ItemID.Seed, Main.rand.Next(1, 3));
+	}
 }
 
 public class SavannaFoliageCorrupt : SavannaFoliage

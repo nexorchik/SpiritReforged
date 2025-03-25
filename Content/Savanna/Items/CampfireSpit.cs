@@ -1,7 +1,5 @@
-using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
-using SpiritReforged.Content.Jungle.Bamboo.Tiles;
 using SpiritReforged.Content.Vanilla.Food;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -39,7 +37,6 @@ public class CampfireSpit : ModItem
 		Item.useStyle = ItemUseStyleID.Swing;
 		Item.useTurn = true;
 		Item.autoReuse = true;
-		Item.consumable = true;
 		Item.value = Item.sellPrice(copper: 4);
 		Item.UseSound = SoundID.Dig;
 	}
@@ -71,6 +68,9 @@ public class CampfireSpit : ModItem
 
 				if (Main.netMode == NetmodeID.MultiplayerClient)
 					NetMessage.SendData(MessageID.TileEntityPlacement, number: i, number2: j, number3: type);
+
+				if (--Item.stack <= 0)
+					Item.TurnToAir(); //Consume
 
 				return true;
 			}
