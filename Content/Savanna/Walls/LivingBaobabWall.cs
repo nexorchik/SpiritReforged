@@ -1,9 +1,20 @@
-﻿using SpiritReforged.Common.WallCommon;
+﻿using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.WallCommon;
+using SpiritReforged.Content.Savanna.Tiles;
 
 namespace SpiritReforged.Content.Savanna.Walls;
 
 public class LivingBaobabWall : ModWall, IAutoloadUnsafeWall, IAutoloadWallItem
 {
+	public void AddItemRecipes(ModItem item)
+	{
+		int drywood = ItemMethods.AutoItemType<Drywood>();
+		int livingBaobabWall = ItemMethods.AutoItemType<LivingBaobabWall>();
+
+		item.CreateRecipe(4).AddIngredient(drywood).AddTile(TileID.LivingLoom).Register();
+		Recipe.Create(drywood).AddIngredient(livingBaobabWall, 4).AddTile(TileID.LivingLoom).Register();
+	}
+
 	public override void SetStaticDefaults()
 	{
 		Main.wallHouse[Type] = true;
