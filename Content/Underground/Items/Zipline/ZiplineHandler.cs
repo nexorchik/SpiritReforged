@@ -7,7 +7,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ModLoader.IO;
 
-namespace SpiritReforged.Content.Underground.Zipline;
+namespace SpiritReforged.Content.Underground.Items.Zipline;
 
 internal class ZiplineHandler : ILoadable
 {
@@ -49,8 +49,8 @@ internal class ZiplineHandler : ILoadable
 	{
 		On_Main.DoDraw_Tiles_NonSolid += DrawAllZiplines;
 
-		hookTexture = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("Content/Underground/Zipline/Zipline_Hook");
-		wireTexture = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("Content/Underground/Zipline/Zipline_Wire");
+		hookTexture = ModContent.Request<Texture2D>((GetType().Namespace + ".Zipline_Hook").Replace('.', '/'));
+		wireTexture = ModContent.Request<Texture2D>((GetType().Namespace + ".Zipline_Wire").Replace('.', '/'));
 	}
 
 	private static void DrawAllZiplines(On_Main.orig_DoDraw_Tiles_NonSolid orig, Main self)

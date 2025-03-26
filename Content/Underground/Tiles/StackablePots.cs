@@ -4,7 +4,7 @@ using SpiritReforged.Common.WorldGeneration;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Underground.Pots;
+namespace SpiritReforged.Content.Underground.Tiles;
 
 /// <summary> Mimics vanilla pots. </summary>
 public class StackablePots : ModTile
@@ -108,7 +108,7 @@ public class StackablePots : ModTile
 		var texture = TextureAssets.Tile[Type].Value;
 		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 16);
 
-		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
+		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
 		var position = new Vector2(i, j) * 16 - Main.screenPosition + zero + new Vector2(0, 2);
 
 		Offsets.TryGetValue(Get(i, j), out var offset);

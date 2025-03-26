@@ -1,6 +1,6 @@
 ﻿using SpiritReforged.Content.Forest.Safekeeper;
 using SpiritReforged.Content.Savanna.Ecotone;
-using SpiritReforged.Content.Underground.Pots;
+using SpiritReforged.Content.Underground.Tiles;
 
 namespace SpiritReforged;
 

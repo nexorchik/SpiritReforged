@@ -1,4 +1,4 @@
-namespace SpiritReforged.Content.Underground.Pots;
+namespace SpiritReforged.Content.Underground.Items;
 
 public class CeramicShard : ModItem
 {

@@ -1,7 +1,8 @@
 ﻿using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Content.Underground.Items;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Underground.Pots;
+namespace SpiritReforged.Content.Underground.Tiles;
 
 /// <summary> Register common pot types in <see cref="PotTypes"/>. </summary>
 internal class PotGlobalTile : GlobalTile

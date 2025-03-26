@@ -1,7 +1,6 @@
 ﻿using SpiritReforged.Common.PlayerCommon;
-using System.Linq;
 
-namespace SpiritReforged.Content.Underground.Zipline;
+namespace SpiritReforged.Content.Underground.Items.Zipline;
 
 internal class Zipline(int owner)
 {
