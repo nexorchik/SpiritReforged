@@ -7,7 +7,7 @@ using Terraria.DataStructures;
 namespace SpiritReforged.Content.Underground.Pots;
 
 /// <summary> Mimics vanilla pots. </summary>
-public class StackablePot : ModTile
+public class StackablePots : ModTile
 {
 	/// <summary> Tile coordinates to offset. </summary>
 	[WorldBound]
@@ -123,8 +123,8 @@ internal class FallingPot : ModProjectile
 {
 	public ref float Style => ref Projectile.ai[0];
 
-	public override LocalizedText DisplayName => Language.GetText(StackablePot.NameKey);
-	public override string Texture => StackablePot.PotTexture;
+	public override LocalizedText DisplayName => Language.GetText(StackablePots.NameKey);
+	public override string Texture => StackablePots.PotTexture;
 
 	public override void SetDefaults()
 	{

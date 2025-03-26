@@ -16,7 +16,7 @@ internal class PotGlobalTile : GlobalTile
 		if (!p.GetModPlayer<CeramicPreservationPlayer>().guideActive)
 			return;
 
-		int type = ItemID.DirtBlock; //TEMP
+		int type = ModContent.ItemType<CeramicShard>();
 		int stack = Main.rand.Next(1, 3);
 
 		if (Main.netMode == NetmodeID.MultiplayerClient)

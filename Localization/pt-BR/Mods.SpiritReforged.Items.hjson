@@ -1346,3 +1346,8 @@ CeramicGuideInactive: {
 		Effects are currently inactive, <right> to reactivate
 		''' */
 }
+
+CeramicShard: {
+	// DisplayName: Ceramic Shard
+	// Tooltip: ""
+}
