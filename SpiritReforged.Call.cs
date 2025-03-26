@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Content.Forest.Safekeeper;
 using SpiritReforged.Content.Savanna.Ecotone;
+using SpiritReforged.Content.Underground.Pots;
 
 namespace SpiritReforged;
 
@@ -27,6 +28,10 @@ public partial class SpiritReforgedMod : Mod
 				case "GetSavannaArea":
 					{
 						return SavannaEcotone.SavannaArea;
+					}
+				case "AddPot":
+					{
+						return args[1] is int value && PotGlobalTile.PotTypes.Add(value);
 					}
 				default:
 					{

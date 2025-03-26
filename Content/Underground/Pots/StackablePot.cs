@@ -46,6 +46,8 @@ public class StackablePot : ModTile
 
 		AddMapEntry(new Color(100, 90, 35), Language.GetText(NameKey));
 		DustType = -1;
+
+		PotGlobalTile.PotTypes.Add(Type);
 	}
 
 	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
@@ -84,6 +86,8 @@ public class StackablePot : ModTile
 
 		bool Stacked(int x, int y, int length) => Framing.GetTileSafely(x, y + 2 * (length + 1)).TileType == Type;
 	}
+
+	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) => noItem = true;
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
@@ -135,6 +139,8 @@ internal class FallingPot : ModProjectile
 		Projectile.rotation += Projectile.velocity.Length() * .05f;
 	}
 
+	public override bool? CanCutTiles() => false;
+
 	public override void OnKill(int timeLeft)
 	{
 		SoundEngine.PlaySound(SoundID.Shatter with { PitchVariance = .5f, MaxInstances = -1 }, Projectile.Center);
@@ -149,6 +155,8 @@ internal class FallingPot : ModProjectile
 
 		var pos = Projectile.Center.ToTileCoordinates();
 		BreakPot(pos.X, pos.Y);
+
+		PotGlobalTile.DropShards(Projectile.GetSource_Death(), Projectile.Center);
 	}
 
 	/// <summary> Mimics pot break effects. </summary>
