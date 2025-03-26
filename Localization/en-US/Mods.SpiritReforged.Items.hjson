@@ -350,7 +350,7 @@ Cloudstalk: {
 }
 
 CloudstalkSeed: {
-	DisplayName: Cloudstalk Seed
+	DisplayName: Cloudstalk Seeds
 	Tooltip: ""
 }
 
