@@ -15,4 +15,12 @@ internal static class PlayerExtensions
 	/// <inheritdoc cref="CollisionPlayer.FallThrough"/>
 	public static bool FallThrough(this Player player) => player.GetModPlayer<CollisionPlayer>().FallThrough();
 	public static bool UsedQuickBuff(this Player player) => player.GetModPlayer<BuffPlayer>().usedQuickBuff;
+	/// <summary> Safely rotates the whole player. Must be continuously set. </summary>
+	public static void Rotate(this Player player, float rotation, Vector2? origin = null)
+	{
+		player.GetModPlayer<CollisionPlayer>().rotation = rotation;
+
+		player.fullRotation = rotation;
+		player.fullRotationOrigin = origin ?? player.fullRotationOrigin;
+	}
 }
