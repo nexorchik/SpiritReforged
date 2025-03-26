@@ -9,6 +9,7 @@ internal class BackpackPlayer : ModPlayer
 {
 	public Item backpack = new();
 	public Item vanityBackpack = new();
+	public Item packDye = new();
 	public bool packVisible = true;
 
 	private int _lastSelectedEquipPage = 0;
@@ -53,6 +54,12 @@ internal class BackpackPlayer : ModPlayer
 	{
 		Player.back = EquipLoader.GetEquipSlot(Mod, backpack.ModItem.Name, EquipType.Back);
 		Player.front = EquipLoader.GetEquipSlot(Mod, backpack.ModItem.Name, EquipType.Front);
+
+		if (!packDye.IsAir) 
+		{
+			Player.cBack = packDye.dye;
+			Player.cFront = packDye.dye;
+		}
 	}
 
 	public override void SaveData(TagCompound tag)
@@ -62,6 +69,9 @@ internal class BackpackPlayer : ModPlayer
 
 		if (vanityBackpack is not null)
 			tag.Add("vanity", ItemIO.Save(vanityBackpack));
+		
+		if (packDye is not null)
+			tag.Add("dye", ItemIO.Save(packDye));
 
 		tag.Add(nameof(packVisible), packVisible);
 	}
@@ -73,6 +83,9 @@ internal class BackpackPlayer : ModPlayer
 
 		if (tag.TryGet("vanity", out TagCompound vanity))
 			vanityBackpack = ItemIO.Load(vanity);
+
+		if (tag.TryGet("dye", out TagCompound dye))
+			packDye = ItemIO.Load(dye);
 
 		packVisible = tag.Get<bool>(nameof(packVisible));
 	}
