@@ -1,11 +1,16 @@
+using Mono.Cecil;
+using RubbleAutoloader;
+using SpiritReforged.Content.Underground.Items;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
-public class CavePots : ModTile
+public class CavePots : ModTile, IAutoloadRubble
 {
-	private enum STYLE : int
+	public virtual IAutoloadRubble.RubbleData Data => new(ModContent.ItemType<CeramicShard>(), IAutoloadRubble.RubbleSize.Medium, [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 13, 14]);
+
+	public enum STYLE : int
 	{
 		PURITY, FANCY, ZENITH_BLUE, ZENITH_GREEN
 	}
@@ -39,14 +44,21 @@ public class CavePots : ModTile
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
-		if (Main.netMode == NetmodeID.MultiplayerClient)
+		if (Main.netMode == NetmodeID.MultiplayerClient || Autoloader.IsRubble(Type))
 			return; //Drops should only occur on the server/singleplayer
 
 		var style = (STYLE)(frameY / 36);
+		var source = new EntitySource_TileBreak(i, j);
+		var position = new Vector2(i, j).ToWorldCoordinates(16, 16);
 
 		switch (style)
 		{
 			case STYLE.PURITY:
+
+				Gore.NewGore(source, position, Vector2.Zero, 51);
+				Gore.NewGore(source, position, Vector2.Zero, 52);
+				Gore.NewGore(source, position, Vector2.Zero, 53);
+
 				break;
 
 			case STYLE.FANCY:
@@ -62,7 +74,7 @@ public class CavePots : ModTile
 
 	public override bool KillSound(int i, int j, bool fail)
 	{
-		if (!fail)
+		if (!fail && !Autoloader.IsRubble(Type))
 		{
 			SoundEngine.PlaySound(SoundID.Shatter, new Vector2(i, j).ToWorldCoordinates());
 			return false;
