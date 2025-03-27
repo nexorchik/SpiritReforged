@@ -59,7 +59,7 @@ internal class PotsMicropass : Micropass
 		int style = -1;
 
 		if (wall is WallID.Dirt or WallID.GrassUnsafe || tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite && y > Main.worldSurface)
-			style = GetRange(BiomePots.STYLE.CAVERN);
+			style = GetRange(WorldGen.genRand.NextBool(100) ? BiomePots.STYLE.GOLD : BiomePots.STYLE.CAVERN);
 
 		if (tile is TileID.SnowBlock or TileID.IceBlock or TileID.BreakableIce)
 			style = GetRange(BiomePots.STYLE.ICE);

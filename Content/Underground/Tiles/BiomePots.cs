@@ -1,7 +1,9 @@
 using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Forest.Cloud.Items;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
@@ -11,6 +13,33 @@ public class BiomePots : ModTile
 	{
 		CAVERN, GOLD, ICE, DESERT, JUNGLE, DUNGEON, CORRUPTION, CRIMSON, MARBLE, HELL
 	}
+
+	private const int DistMod = 200;
+	private static readonly HashSet<Point16> GlowPoints = [];
+
+	#region drawing detours
+	public override void Load()
+	{
+		DrawOrderSystem.DrawTilesNonSolidEvent += DrawGlow;
+		On_TileDrawing.PreDrawTiles += ClearAll;
+	}
+
+	private static void DrawGlow()
+	{
+		foreach (var p in GlowPoints)
+			DrawGlow(p.ToWorldCoordinates(16, 18));
+	}
+
+	private static void ClearAll(On_TileDrawing.orig_PreDrawTiles orig, TileDrawing self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets)
+	{
+		orig(self, solidLayer, forRenderTargets, intoRenderTargets);
+
+		bool flag = intoRenderTargets || Lighting.UpdateEveryFrame;
+
+		if (!solidLayer && flag)
+			GlowPoints.Clear();
+	}
+	#endregion
 
 	public override void SetStaticDefaults()
 	{
@@ -36,15 +65,82 @@ public class BiomePots : ModTile
 		DustType = -1;
 	}
 
+	public override void NearbyEffects(int i, int j, bool closer)
+	{
+		if (closer)
+		{
+			var world = new Vector2(i, j) * 16;
+			float strength = Main.LocalPlayer.DistanceSQ(world) / (DistMod * DistMod);
+
+			if (strength < 1 && Main.rand.NextFloat(5f) < 1f - strength)
+			{
+				var d = Dust.NewDustDirect(world, 16, 16, DustID.TreasureSparkle, 0, 0, Scale: Main.rand.NextFloat());
+				d.noGravity = true;
+				d.velocity = new Vector2(0, -Main.rand.NextFloat(2f));
+			}
+		}
+	}
+
 	public override bool KillSound(int i, int j, bool fail)
 	{
 		if (!fail)
 		{
-			SoundEngine.PlaySound(SoundID.Shatter, new Vector2(i, j).ToWorldCoordinates());
+			var pos = new Vector2(i, j).ToWorldCoordinates(16, 16);
+
+			SoundEngine.PlaySound(SoundID.Shatter, pos);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/PotBreak") with { Volume = .16f, PitchRange = (-.4f, 0), }, pos);
+
 			return false;
 		}
 
 		return true;
+	}
+
+	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
+	{
+		if (TileObjectData.IsTopLeft(i, j))
+			GlowPoints.Add(new Point16(i, j));
+
+		return true;
+	}
+
+	private static void DrawGlow(Vector2 position)
+	{
+		const int squareSize = 32;
+
+		var drawPos = position - Main.screenPosition;
+		var region = new Rectangle((int)drawPos.X - squareSize / 2, (int)drawPos.Y - squareSize / 2, squareSize, squareSize);
+		Color color = Color.White;
+
+		float opacity = MathHelper.Clamp(1f - Main.LocalPlayer.DistanceSQ(position) / (DistMod * DistMod), 0, .5f);
+
+		short[] indices = [0, 1, 2, 1, 3, 2];
+
+		//Note that corner positions are reversed to flip the effect
+		VertexPositionColorTexture[] vertices =
+		[
+			new(new Vector3(region.BottomRight(), 0), color, new Vector2(0, 0)),
+			new(new Vector3(region.BottomLeft(), 0), color, new Vector2(1, 0)),
+			new(new Vector3(region.TopRight(), 0), color, new Vector2(0, 1)),
+			new(new Vector3(region.TopLeft(), 0), color, new Vector2(1, 1)),
+		];
+
+		var projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+		Matrix view = Main.GameViewMatrix.TransformationMatrix;
+		Effect effect = AssetLoader.LoadedShaders["ShadowFade"];
+
+		foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+		{
+			effect.Parameters["baseShadowColor"].SetValue(Color.Goldenrod.ToVector4() * opacity);
+			effect.Parameters["adjustColor"].SetValue(Color.SlateBlue.ToVector4() * opacity);
+			effect.Parameters["noiseScroll"].SetValue(Main.GameUpdateCount * 0.0015f);
+			effect.Parameters["noiseStretch"].SetValue(.5f);
+			effect.Parameters["uWorldViewProjection"].SetValue(view * projection);
+			effect.Parameters["noiseTexture"].SetValue(AssetLoader.LoadedTextures["vnoise"].Value);
+			pass.Apply();
+
+			Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2);
+		}
 	}
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
@@ -71,7 +167,7 @@ public class BiomePots : ModTile
 
 				for (int g = 0; g < 3; g++)
 				{
-					int goreType = Mod.Find<ModGore>("PotCavern" + ((g + variant * 3) + 1)).Type;
+					int goreType = Mod.Find<ModGore>("PotCavern" + (g + variant * 3 + 1)).Type;
 					Gore.NewGore(source, position, Vector2.Zero, goreType);
 				}
 
@@ -81,12 +177,18 @@ public class BiomePots : ModTile
 
 			case STYLE.GOLD:
 
+				for (int g = 1; g < 4; g++)
+				{
+					int goreType = Mod.Find<ModGore>("PotGold" + g).Type;
+					Gore.NewGore(source, position, Vector2.Zero, goreType);
+				}
+
 				dustType = DustID.Gold;
 				break;
 
 			case STYLE.ICE:
 
-				for (int g = 0; g < 3; g++)
+				for (int g = 1; g < 4; g++)
 				{
 					int goreType = Mod.Find<ModGore>("PotIce" + g).Type;
 					Gore.NewGore(source, position, Vector2.Zero, goreType);
@@ -165,7 +267,7 @@ public class BiomePots : ModTile
 		LootTable table = new();
 		if (Player.GetClosestRollLuck(i, j, 100) == 0) //COIN PORTAL
 		{
-			Projectile.NewProjectileDirect(new EntitySource_TileBreak(i, j), center, Vector2.Zero, ProjectileID.CoinPortal, 0, 0);
+			Projectile.NewProjectileDirect(new EntitySource_TileBreak(i, j), center, Vector2.UnitY * -12f, ProjectileID.CoinPortal, 0, 0);
 			return;
 		}
 
@@ -287,6 +389,7 @@ public class BiomePots : ModTile
 
 		float biomeMult = style switch
 		{
+			STYLE.GOLD => 10f,
 			STYLE.ICE => 1.4f,
 			STYLE.DESERT => 2.25f,
 			STYLE.JUNGLE => 2f,
