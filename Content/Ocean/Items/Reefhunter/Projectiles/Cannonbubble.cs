@@ -82,7 +82,7 @@ public class Cannonbubble : ModProjectile
 				Height = primDimensions.X * progress,
 				Length = primDimensions.Y * progress,
 				Position = Projectile.oldPos[i] + Projectile.Size/2 - Main.screenPosition,
-				Rotation = MathHelper.TwoPi - MathHelper.PiOver2 + Projectile.oldRot[i]
+				Rotation = MathHelper.TwoPi + MathHelper.PiOver2 + Projectile.oldRot[i]
 			};
 			bubbleTrail.Add(square);
 		}
@@ -93,7 +93,7 @@ public class Cannonbubble : ModProjectile
 			Height = primDimensions.X,
 			Length = primDimensions.Y,
 			Position = Projectile.Center - Main.screenPosition,
-			Rotation = MathHelper.TwoPi - MathHelper.PiOver2 + Projectile.rotation
+			Rotation = MathHelper.TwoPi + MathHelper.PiOver2 + Projectile.rotation
 		});
 
 		Effect bubbleEffect = AssetLoader.LoadedShaders["TextureMap"];
@@ -224,7 +224,7 @@ public class Cannonbubble : ModProjectile
 		if (!Main.dedServ)
 		{
 			Color color = RINGCOLOR * EaseFunction.EaseCubicOut.Ease(strength);
-			ParticleHandler.SpawnParticle(new PulseCircle(Projectile.Center, color, color * 0.5f, 0.6f, 100 * Projectile.scale * strength, 50, EaseFunction.EaseCircularOut).WithSkew(0.85f, Projectile.velocity.ToRotation()).UsesLightColor());
+			ParticleHandler.SpawnParticle(new PulseCircle(Projectile.Center, color, color * 0.5f, 0.6f, 100 * Projectile.scale * strength, 50, EaseFunction.EaseCircularOut).WithSkew(0.85f, Projectile.velocity.ToRotation() - MathHelper.Pi).UsesLightColor());
 			SoundEngine.PlaySound(SoundID.Item54 with { PitchVariance = 0.3f, Volume = 0.5f * strength }, Projectile.Center);
 		}
 	}
