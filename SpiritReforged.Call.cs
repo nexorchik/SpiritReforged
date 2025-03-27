@@ -29,10 +29,6 @@ public partial class SpiritReforgedMod : Mod
 					{
 						return SavannaEcotone.SavannaArea;
 					}
-				case "AddPot":
-					{
-						return args[1] is int value && PotGlobalTile.PotTypes.Add(value);
-					}
 				default:
 					{
 						Logger.Error($"Call Error: Context '{context}' is invalid.");

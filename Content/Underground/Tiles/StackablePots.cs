@@ -18,6 +18,7 @@ public class StackablePots : ModTile
 
 	public override string Texture => PotTexture;
 
+	/// <summary> Returns final coordinates from <see cref="TileExtensions.GetTopLeft"/>. </summary>
 	private static Point16 Get(int i, int j)
 	{
 		TileExtensions.GetTopLeft(ref i, ref j);
@@ -46,8 +47,6 @@ public class StackablePots : ModTile
 
 		AddMapEntry(new Color(100, 90, 35), Language.GetText(NameKey));
 		DustType = -1;
-
-		PotGlobalTile.PotTypes.Add(Type);
 	}
 
 	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
@@ -86,8 +85,6 @@ public class StackablePots : ModTile
 
 		bool Stacked(int x, int y, int length) => Framing.GetTileSafely(x, y + 2 * (length + 1)).TileType == Type;
 	}
-
-	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) => noItem = true;
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
@@ -155,8 +152,6 @@ internal class FallingPot : ModProjectile
 
 		var pos = Projectile.Center.ToTileCoordinates();
 		BreakPot(pos.X, pos.Y);
-
-		PotGlobalTile.DropShards(Projectile.GetSource_Death(), Projectile.Center);
 	}
 
 	/// <summary> Mimics pot break effects. </summary>

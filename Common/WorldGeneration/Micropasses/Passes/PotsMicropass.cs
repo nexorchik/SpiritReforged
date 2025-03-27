@@ -17,82 +17,55 @@ internal class PotsMicropass : Micropass
 
 	public override void Run(GenerationProgress progress, Terraria.IO.GameConfiguration config)
 	{
+		const int maxTries = 5000; //Failsafe
+
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Pots");
 
-		int maxPots = (int)(Main.maxTilesX * Main.maxTilesY * 0.00025); //Normal weight is 0.0008
+		int maxPots = (int)(Main.maxTilesX * Main.maxTilesY * 0.0005); //Normal weight is 0.0008
 		int pots = 0;
 
-		while (true)
+		for (int t = 0; t < maxTries; t++)
 		{
 			int x = Main.rand.Next(20, Main.maxTilesX - 20);
 			int y = Main.rand.Next((int)GenVars.worldSurfaceHigh, Main.maxTilesY - 20);
 
 			WorldMethods.FindGround(x, ref y);
 
-			if (!PickStyle(x, y, out int style))
-			{
-				if (!PickGeneric(x, y, out int caveStyle))
-					continue;
-
-				WorldGen.PlaceTile(x, y - 1, ModContent.TileType<CavePots>(), true, style: caveStyle);
-			}
-			else
-				WorldGen.PlaceTile(x, y - 1, ModContent.TileType<BiomePots>(), true, style: style);
-
-			if (++pots >= maxPots)
+			if (CreateStack(x, y - 1) && ++pots >= maxPots)
 				break;
 		}
 	}
 
-	/// <summary> Picks a relevant style for cave pots (<see cref="CavePots"/>). </summary>
-	private static bool PickGeneric(int x, int y, out int style)
+	private static bool CreateStack(int x, int y)
 	{
-		int tile = Main.tile[x, y].TileType;
-		int wall = Main.tile[x, y - 1].WallType;
+		int t = Main.tile[x, y + 1].TileType;
+		int w = Main.tile[x, y].WallType;
 
-		style = -1;
-
-		if (tile is TileID.Dirt or TileID.Stone || wall is WallID.Dirt)
+		if (w is WallID.Dirt or WallID.GrassUnsafe || y > Main.worldSurface && y < Main.UnderworldLayer && t is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite)
 		{
-			bool fancyPot = WorldGen.genRand.NextBool(50);
-			style = fancyPot ? WorldGen.genRand.Next(4, 7) : WorldGen.genRand.Next(4);
+			if (Main.rand.NextBool()) //Generate a stack of 3 in a pyramid
+			{
+				if (!WorldMethods.AreaClear(x - 1, y - 3, 4, 4))
+					return false;
+
+				WorldGen.PlaceTile(x - 1, y, ModContent.TileType<StackablePots>(), true, style: GetRandomStyle());
+				WorldGen.PlaceTile(x + 1, y, ModContent.TileType<StackablePots>(), true, style: GetRandomStyle());
+				WorldGen.PlaceTile(x, y - 2, ModContent.TileType<StackablePots>(), true, style: GetRandomStyle());
+			}
+			else //Generate a stack of 2 in a tower
+			{
+				if (!WorldMethods.AreaClear(x, y - 5, 2, 4))
+					return false;
+
+				for (int s = 0; s < 2; s++)
+					WorldGen.PlaceTile(x, y - s * 2, ModContent.TileType<StackablePots>(), true, style: GetRandomStyle());
+			}
+
+			return true;
 		}
 
-		return style != -1;
-	}
+		return false;
 
-	/// <summary> Picks a relevant style for biome pots (<see cref="BiomePots"/>). </summary>
-	private static bool PickStyle(int x, int y, out int style)
-	{
-		int tile = Main.tile[x, y].TileType;
-		int wall = Main.tile[x, y - 1].WallType;
-
-		style = -1;
-
-		if (tile is TileID.SnowBlock or TileID.IceBlock or TileID.BreakableIce)
-			style = GetRange(BiomePots.STYLE.ICE);
-		else if (wall is WallID.Sandstone or WallID.HardenedSand)
-			style = GetRange(BiomePots.STYLE.DESERT);
-		else if (tile is TileID.JungleGrass)
-			style = GetRange(BiomePots.STYLE.JUNGLE);
-		else if (tile is TileID.CorruptGrass or TileID.Ebonstone or TileID.Demonite)
-			style = GetRange(BiomePots.STYLE.CORRUPTION);
-		else if (tile is TileID.CrimsonGrass or TileID.Crimstone or TileID.Crimtane)
-			style = GetRange(BiomePots.STYLE.CRIMSON);
-		else if (tile is TileID.Marble)
-			style = GetRange(BiomePots.STYLE.MARBLE);
-
-		if (y > Main.UnderworldLayer)
-			style = GetRange(BiomePots.STYLE.HELL);
-		else if (tile is TileID.BlueDungeonBrick or TileID.GreenDungeonBrick or TileID.PinkDungeonBrick || Main.wallDungeon[wall])
-			style = GetRange(BiomePots.STYLE.DUNGEON);
-
-		return style != -1;
-
-		static int GetRange(BiomePots.STYLE value)
-		{
-			int v = (int)value * 3;
-			return WorldGen.genRand.Next(v, v + 3);
-		}
+		static int GetRandomStyle() => WorldGen.genRand.Next(12);
 	}
 }
