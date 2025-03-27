@@ -24,7 +24,7 @@ internal class PotsMicropass : Micropass
 		int maxPots = (int)(Main.maxTilesX * Main.maxTilesY * 0.0005); //Normal weight is 0.0008
 		int pots = 0;
 
-		for (int t = 0; t < maxTries; t++)
+		for (int t = 0; t < maxTries; t++) //Generate stacked pots
 		{
 			int x = Main.rand.Next(20, Main.maxTilesX - 20);
 			int y = Main.rand.Next((int)GenVars.worldSurfaceHigh, Main.maxTilesY - 20);
@@ -34,14 +34,74 @@ internal class PotsMicropass : Micropass
 			if (CreateStack(x, y - 1) && ++pots >= maxPots)
 				break;
 		}
+
+		maxPots = (int)(Main.maxTilesX * Main.maxTilesY * 0.00055);
+		pots = 0;
+
+		for (int t = 0; t < maxTries; t++) //Generate uncommon pots
+		{
+			int x = Main.rand.Next(20, Main.maxTilesX - 20);
+			int y = Main.rand.Next((int)GenVars.worldSurfaceHigh, Main.maxTilesY - 20);
+
+			WorldMethods.FindGround(x, ref y);
+
+			if (CreateUncommon(x, y - 1) && ++pots >= maxPots)
+				break;
+		}
+	}
+
+	/// <summary> Picks a relevant biome pot style and places it (<see cref="BiomePots"/>). </summary>
+	private static bool CreateUncommon(int x, int y)
+	{
+		int tile = Main.tile[x, y + 1].TileType;
+		int wall = Main.tile[x, y].WallType;
+
+		int style = -1;
+
+		if (wall is WallID.Dirt or WallID.GrassUnsafe || tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite && y > Main.worldSurface)
+			style = GetRange(WorldGen.genRand.NextBool(100) ? BiomePots.STYLE.GOLD : BiomePots.STYLE.CAVERN);
+
+		if (tile is TileID.SnowBlock or TileID.IceBlock or TileID.BreakableIce)
+			style = GetRange(BiomePots.STYLE.ICE);
+		else if (wall is WallID.Sandstone or WallID.HardenedSand)
+			style = GetRange(BiomePots.STYLE.DESERT);
+		else if (tile is TileID.JungleGrass)
+			style = GetRange(BiomePots.STYLE.JUNGLE);
+		else if (tile is TileID.CorruptGrass or TileID.Ebonstone or TileID.Demonite)
+			style = GetRange(BiomePots.STYLE.CORRUPTION);
+		else if (tile is TileID.CrimsonGrass or TileID.Crimstone or TileID.Crimtane)
+			style = GetRange(BiomePots.STYLE.CRIMSON);
+		else if (tile is TileID.Marble)
+			style = GetRange(BiomePots.STYLE.MARBLE);
+
+		if (y > Main.UnderworldLayer)
+			style = GetRange(BiomePots.STYLE.HELL);
+		else if (tile is TileID.BlueDungeonBrick or TileID.GreenDungeonBrick or TileID.PinkDungeonBrick || Main.wallDungeon[wall])
+			style = GetRange(BiomePots.STYLE.DUNGEON);
+
+		if (style != -1)
+		{
+			int type = ModContent.TileType<BiomePots>();
+			WorldGen.PlaceTile(x, y, type, true, style: style);
+
+			return Main.tile[x, y].TileType == type;
+		}
+
+		return false;
+
+		static int GetRange(BiomePots.STYLE value)
+		{
+			int v = (int)value * 3;
+			return WorldGen.genRand.Next(v, v + 3);
+		}
 	}
 
 	private static bool CreateStack(int x, int y)
 	{
-		int t = Main.tile[x, y + 1].TileType;
-		int w = Main.tile[x, y].WallType;
+		int tile = Main.tile[x, y + 1].TileType;
+		int wall = Main.tile[x, y].WallType;
 
-		if (w is WallID.Dirt or WallID.GrassUnsafe || y > Main.worldSurface && y < Main.UnderworldLayer && t is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite)
+		if (wall is WallID.Dirt or WallID.GrassUnsafe || y > Main.worldSurface && y < Main.UnderworldLayer && tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite)
 		{
 			if (Main.rand.NextBool()) //Generate a stack of 3 in a pyramid
 			{
