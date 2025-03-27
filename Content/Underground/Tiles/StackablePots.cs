@@ -33,6 +33,7 @@ public class StackablePots : ModTile
 		Main.tileBlockLight[Type] = false;
 		Main.tileCut[Type] = true;
 		Main.tileFrameImportant[Type] = true;
+		Main.tileSpelunker[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.Origin = new(0, 1);
