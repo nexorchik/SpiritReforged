@@ -10,9 +10,9 @@ public struct LootData(int type, int stack)
 }
 
 /// <summary> Helper for constructing simple loot tables. </summary>
-public struct LootTable
+public readonly record struct LootTable
 {
-	private IList<WeightedRandom<LootData>> branches = [new()];
+	private readonly IList<WeightedRandom<LootData>> branches = [new()];
 
 	public LootTable() { }
 
