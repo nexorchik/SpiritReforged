@@ -46,10 +46,10 @@ public class BackpackUISlot : UIElement
 			Texture2D texture;
 			Rectangle source;
 
-			if (_isVanity)
+			if (_isVanity || _isDye)
 			{
 				texture = TextureAssets.Extra[54].Value;
-				source = texture.Frame(3, 6, 2, 0, -2, -2);
+				source = texture.Frame(3, 6, _isDye ? 1 : 2, 0, -2, -2);
 			}
 			else
 			{
@@ -84,14 +84,14 @@ public class BackpackUISlot : UIElement
 
 		if (Main.mouseLeft && Main.mouseLeftRelease && CanClickItem(item, _isVanity, _isDye))
 		{
-			ItemSlot.LeftClick(ref item, ItemSlot.Context.InventoryItem); //Don't use Context because it causes issues in multiplayer due to syncing
+			ItemSlot.LeftClick(ref item, _isDye ? ItemSlot.Context.EquipMiscDye : ItemSlot.Context.InventoryItem); //Don't use Context because it causes issues in multiplayer due to syncing
 			ItemSlot.RightClick(ref item, Context);
 		}
 
 		if (item.IsAir)
 		{
 			Main.mouseText = true;
-			Main.hoverItemName = Language.GetTextValue("Mods.SpiritReforged.SlotContexts.Backpack");
+			Main.hoverItemName = _isDye ? Lang.inter[57].Value : Language.GetTextValue("Mods.SpiritReforged.SlotContexts.Backpack");
 		}
 	}
 
@@ -103,8 +103,7 @@ public class BackpackUISlot : UIElement
 
 		if (isDye)
 		{
-			if (currentItem.IsAir)
-				return plr.HeldItem.dye > 0;
+			return plr.HeldItem.dye > 0 || Main.mouseItem.IsAir;
 		}
 		else if (vanity)
 		{

@@ -1,7 +1,6 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
 using SpiritReforged.Common.UI.Misc;
 using SpiritReforged.Common.UI.System;
-using System.Net.NetworkInformation;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
