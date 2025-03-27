@@ -9,8 +9,8 @@ using SpiritReforged.Content.Jungle.Toucane;
 using SpiritReforged.Content.Ocean.Items.PoolNoodle;
 using SpiritReforged.Content.Ocean.Items.Vanity;
 using SpiritReforged.Content.Ocean.Items.Vanity.Towel;
-using SpiritReforged.Content.Underground.ExplorerTreads;
-using SpiritReforged.Content.Underground.Zipline;
+using SpiritReforged.Content.Underground.Items.ExplorerTreads;
+using SpiritReforged.Content.Underground.Items.Zipline;
 using static SpiritReforged.Common.WorldGeneration.Chests.ChestPoolUtils;
 
 namespace SpiritReforged.Common.WorldGeneration.Chests;

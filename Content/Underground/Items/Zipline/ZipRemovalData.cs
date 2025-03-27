@@ -1,6 +1,7 @@
 using SpiritReforged.Common.Multiplayer;
-using SpiritReforged.Content.Underground.Zipline;
 using System.IO;
+
+namespace SpiritReforged.Content.Underground.Items.Zipline;
 
 /// <summary> Syncs removal of all ziplines owned by the given player. </summary>
 internal class ZipRemovalData : PacketData

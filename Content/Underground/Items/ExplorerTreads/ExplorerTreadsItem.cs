@@ -3,7 +3,7 @@ using SpiritReforged.Common.ModCompat.Classic;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Underground.ExplorerTreads;
+namespace SpiritReforged.Content.Underground.Items.ExplorerTreads;
 
 [AutoloadEquip(EquipType.Shoes)]
 [FromClassic("ExplorerTreads")]

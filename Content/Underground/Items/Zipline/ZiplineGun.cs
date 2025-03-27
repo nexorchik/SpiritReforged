@@ -7,7 +7,7 @@ using Terraria.DataStructures;
 using Terraria.UI;
 using System.Collections.ObjectModel;
 
-namespace SpiritReforged.Content.Underground.Zipline;
+namespace SpiritReforged.Content.Underground.Items.Zipline;
 
 public class ZiplineGun : ModItem
 {
