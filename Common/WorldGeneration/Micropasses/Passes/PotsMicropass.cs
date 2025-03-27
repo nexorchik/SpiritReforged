@@ -35,7 +35,7 @@ internal class PotsMicropass : Micropass
 				break;
 		}
 
-		maxPots = (int)(Main.maxTilesX * Main.maxTilesY * 0.00022);
+		maxPots = (int)(Main.maxTilesX * Main.maxTilesY * 0.0004);
 		pots = 0;
 
 		for (int t = 0; t < maxTries; t++) //Generate uncommon pots

@@ -112,7 +112,7 @@ public class BiomePots : ModTile
 		var region = new Rectangle((int)drawPos.X - squareSize / 2, (int)drawPos.Y - squareSize / 2, squareSize, squareSize);
 		Color color = Color.White;
 
-		float opacity = MathHelper.Clamp(1f - Main.LocalPlayer.DistanceSQ(position) / (DistMod * DistMod), 0, .5f);
+		float opacity = MathHelper.Clamp(1f - Main.LocalPlayer.DistanceSQ(position) / (DistMod * DistMod), 0, .5f) * Lighting.Brightness((int)(position.X / 16), (int)(position.Y / 16));
 
 		short[] indices = [0, 1, 2, 1, 3, 2];
 
