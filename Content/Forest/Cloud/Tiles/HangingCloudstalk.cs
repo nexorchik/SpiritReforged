@@ -1,4 +1,5 @@
 using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ModCompat.Classic;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.TileSway;
 using Terraria.DataStructures;
@@ -39,6 +40,8 @@ public class HangingCloudstalk : ModTile, ISwayTile, IAutoloadTileItem
 		RegisterItemDrop(this.AutoItem().type);
 
 		DustType = -1;
+
+		SpiritClassic.AddReplacement("HangingCloudstalk", this.AutoItem().type);
 	}
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.2f, 0.2f, 0.4f);

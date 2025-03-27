@@ -147,8 +147,7 @@ internal class Zipline(int owner)
 		player.velocity.Y = 0;
 
 		player.gfxOffY = 0;
-		player.fullRotation = rotation;
-		player.fullRotationOrigin = new Vector2(0, player.height);
+		player.Rotate(rotation, new Vector2(0, player.height));
 	}
 
 	/// <summary> Orders two <see cref="points"/> by X (ascending, <paramref name="start"/> to <paramref name="end"/>). </summary>

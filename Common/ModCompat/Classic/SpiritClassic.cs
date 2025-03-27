@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Content.Desert.GildedScarab;
+using SpiritReforged.Content.Forest.ArcaneNecklace;
 using SpiritReforged.Content.Ocean.Hydrothermal;
 
 namespace SpiritReforged.Common.ModCompat.Classic;
@@ -67,6 +68,9 @@ internal class SpiritClassic : ModSystem
 	{
 		if (ClassicMod.TryFind("Chitin", out ModItem chitin))
 			Recipe.Create(ModContent.ItemType<GildedScarab>()).AddRecipeGroup("GoldBars", 5).AddIngredient(chitin.Type, 8).AddTile(TileID.Anvils).Register();
+
+		if (ClassicMod.TryFind("SeraphimBulwark", out ModItem bulwark) && ClassicMod.TryFind("ManaShield", out ModItem manaShield) && ClassicMod.TryFind("SoulShred", out ModItem soul))
+			Recipe.Create(bulwark.Type).AddIngredient(ModContent.ItemType<ArcaneNecklacePlatinum>()).AddIngredient(manaShield.Type).AddIngredient(soul.Type, 5).AddTile(TileID.TinkerersWorkbench).Register();
 	}
 
 	public override void PostAddRecipes()
@@ -96,7 +100,7 @@ internal class SpiritClassic : ModSystem
 		SpiritReforgedMod.Instance.Logger.Info(modLog.Remove(modLog.Length - 2, 2));
 	}
 
-	/// <summary> Modifies recipes added by Classic if the result isn't contained in <see cref="ClassicToReforged"/>. </summary>
+	/// <summary> Modifies recipes added by Classic if the result isn't contained in <see cref="ClassicToReforged"/> but ingredients are. </summary>
 	private static bool ModifyRecipe(Recipe recipe, out bool modified)
 	{
 		modified = false;

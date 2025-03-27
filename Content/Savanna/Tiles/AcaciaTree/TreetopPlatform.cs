@@ -51,21 +51,14 @@ public class TreetopPlatform : SimpleEntity
 			entity.position = newPosition;
 
 		if (entity is Player player)
-		{
-			player.fullRotation = rotation * .07f;
-			player.fullRotationOrigin = new Vector2(player.width * .5f, player.height);
-		}
+			player.Rotate(rotation * .07f, new Vector2(player.width * .5f, player.height));
 	}
 }
 
 internal class AcaciaPlatformPlayer : ModPlayer
 {
-	private bool wasOnPlatform;
-
 	public override void PreUpdateMovement()
 	{
-		bool onPlatform = false;
-
 		foreach (var p in AcaciaTree.Platforms)
 		{
 			var lowRect = Player.getRect() with { Height = Player.height / 2, Y = (int)Player.position.Y + Player.height / 2 };
@@ -76,15 +69,8 @@ internal class AcaciaPlatformPlayer : ModPlayer
 				if (Player.controlDown)
 					Player.GetModPlayer<CollisionPlayer>().fallThrough = true;
 
-				onPlatform = wasOnPlatform = true;
 				break; //It would be redundant to check for other platforms when the player is already on one
 			}
-		}
-
-		if (!onPlatform && wasOnPlatform) //Reset rotation when the player just leaves a platform
-		{
-			Player.fullRotation = 0;
-			wasOnPlatform = false;
 		}
 	}
 }

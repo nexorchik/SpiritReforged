@@ -8,7 +8,7 @@ public class SavannaBiome : ModBiome
 {
 	private int GetMusic()
 	{
-		if (Main.LocalPlayer.townNPCs > 2f || Main.LocalPlayer.ZoneGraveyard || Main.bloodMoon)
+		if (Main.LocalPlayer.ZoneGraveyard || Main.bloodMoon)
 			return -1;
 
 		return Main.dayTime ? MusicLoader.GetMusicSlot(Mod, "Assets/Music/Savanna") : MusicLoader.GetMusicSlot(Mod, "Assets/Music/SavannaNight");

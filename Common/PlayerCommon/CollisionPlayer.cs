@@ -2,6 +2,9 @@
 
 internal class CollisionPlayer : ModPlayer
 {
+	/// <summary> Handles rotating the player based on per-tick conditions. See <see cref="PlayerExtensions.Rotate"/>. </summary>
+	public float rotation;
+
 	/// <summary> Set to true if the player should fall through a platform validated by <see cref="FallThrough"/>. </summary>
 	public bool fallThrough;
 	private bool _noReset;
@@ -20,5 +23,13 @@ internal class CollisionPlayer : ModPlayer
 			fallThrough = false;
 
 		_noReset = false;
+
+		if (rotation == 0)
+		{
+			Player.fullRotation = 0;
+			Player.fullRotationOrigin = default;
+		}
+
+		rotation = 0;
 	}
 }

@@ -475,6 +475,9 @@ public class Hyena : ModNPC
 
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
+		if (spawnInfo.Invasion)
+			return 0;
+
 		int x = spawnInfo.SpawnTileX;
 		int y = spawnInfo.SpawnTileY;
 		int wall = Framing.GetTileSafely(x, y).WallType;
