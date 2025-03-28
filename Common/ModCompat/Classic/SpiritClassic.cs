@@ -48,7 +48,12 @@ internal class SpiritClassic : ModSystem
 			HydrothermalVentPlume.DropPool.Add(sulfur.Type, 3);
 
 		if (ClassicMod.TryFind("Cloudstalk", out ModTile cloudstalk)) //Remove Cloudstalk anchors so it can't grow
-			TileObjectData.GetTileData(cloudstalk.Type, 0).AnchorValidTiles = [];
+		{
+			var data = TileObjectData.GetTileData(cloudstalk.Type, 0);
+
+			if (data is not null)
+				TileObjectData.GetTileData(cloudstalk.Type, 0).AnchorValidTiles = [];
+		}
 
 		static int ClassicItem(ModItem modItem)
 		{

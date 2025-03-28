@@ -22,12 +22,13 @@ public abstract class BaseMinion(float TargettingRange, float DeaggroRange, Vect
 		}
 	}
 
+	protected NPC _targetNPC;
+
 	private readonly float TargettingRange = TargettingRange;
 	private readonly float DeaggroRange = DeaggroRange;
 	private readonly Vector2 Size = Size;
 
 	private bool _hadTarget = false;
-	private NPC _targetNPC;
 
 	public override void SetStaticDefaults()
 	{
