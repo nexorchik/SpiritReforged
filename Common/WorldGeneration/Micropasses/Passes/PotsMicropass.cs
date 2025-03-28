@@ -61,15 +61,15 @@ internal class PotsMicropass : Micropass
 		if (wall is WallID.Dirt or WallID.GrassUnsafe || tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite && y > Main.worldSurface)
 			style = GetRange(WorldGen.genRand.NextBool(100) ? BiomePots.STYLE.GOLD : BiomePots.STYLE.CAVERN);
 
-		if (tile is TileID.SnowBlock or TileID.IceBlock or TileID.BreakableIce)
+		if (wall is WallID.SnowWallUnsafe || tile is TileID.SnowBlock or TileID.IceBlock or TileID.BreakableIce && y > Main.worldSurface)
 			style = GetRange(BiomePots.STYLE.ICE);
 		else if (wall is WallID.Sandstone or WallID.HardenedSand)
 			style = GetRange(BiomePots.STYLE.DESERT);
-		else if (tile is TileID.JungleGrass)
+		else if (wall is WallID.MudUnsafe || tile is TileID.JungleGrass && y > Main.worldSurface)
 			style = GetRange(BiomePots.STYLE.JUNGLE);
-		else if (tile is TileID.CorruptGrass or TileID.Ebonstone or TileID.Demonite)
+		else if (tile is TileID.CorruptGrass or TileID.Ebonstone or TileID.Demonite && y > Main.worldSurface)
 			style = GetRange(BiomePots.STYLE.CORRUPTION);
-		else if (tile is TileID.CrimsonGrass or TileID.Crimstone or TileID.Crimtane)
+		else if (tile is TileID.CrimsonGrass or TileID.Crimstone or TileID.Crimtane && y > Main.worldSurface)
 			style = GetRange(BiomePots.STYLE.CRIMSON);
 		else if (tile is TileID.Marble)
 			style = GetRange(BiomePots.STYLE.MARBLE);
