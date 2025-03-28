@@ -1,5 +1,5 @@
 ReforgeClientConfig: {
-	DisplayName: Reforge 客户端配置
+	DisplayName: 魂灵新魄客户端配置
 
 	OceanShape: {
 		Label: 海洋：海洋生成形状
@@ -31,7 +31,7 @@ OceanShape: {
 }
 
 ReforgedServerConfig: {
-	DisplayName: Reforged 服务器配置
+	DisplayName: 魂灵新魄服务器配置
 
 	VentCritters: {
 		Label: 海洋：热液喷口生态系统
