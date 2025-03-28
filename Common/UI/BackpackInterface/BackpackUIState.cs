@@ -142,12 +142,4 @@ internal class BackpackUIState : AutoUIState
 			}
 		}
 	}
-
-	protected override void DrawChildren(SpriteBatch spriteBatch)
-	{
-		float old = Main.inventoryScale;
-		Main.inventoryScale = 0.85f;
-		base.DrawChildren(spriteBatch);
-		Main.inventoryScale = old;
-	}
 }

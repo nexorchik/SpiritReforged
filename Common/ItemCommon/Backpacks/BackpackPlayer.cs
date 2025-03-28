@@ -1,12 +1,20 @@
 ﻿using SpiritReforged.Common.Multiplayer;
 using System.IO;
-using Terraria;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Common.ItemCommon.Backpacks;
 
 internal class BackpackPlayer : ModPlayer
 {
+	[Flags]
+	private enum BackpackState
+	{
+		None = 0,
+		HasBackpack = 1,
+		HasVanity = 2,
+		HasDye = 4
+	}
+
 	public Item backpack = new();
 	public Item vanityBackpack = new();
 	public Item packDye = new();
@@ -14,6 +22,8 @@ internal class BackpackPlayer : ModPlayer
 
 	private int _lastSelectedEquipPage = 0;
 	private bool _hadBackpack = false;
+	private BackpackState _state = BackpackState.None;
+	private BackpackState _oldState = BackpackState.None;
 
 	public override void UpdateEquips()
 	{
@@ -40,6 +50,23 @@ internal class BackpackPlayer : ModPlayer
 				Player.RefreshMechanicalAccsFromItemType(item.type);
 			}
 		}
+
+		// Track current & old state so we can sync as needed
+
+		_oldState = _state;
+		_state = BackpackState.None;
+
+		if (backpack != null && !backpack.IsAir)
+			_state |= BackpackState.HasBackpack;
+
+		if (vanityBackpack != null && !vanityBackpack.IsAir)
+			_state |= BackpackState.HasVanity;
+
+		if (packDye != null && !packDye.IsAir)
+			_state |= BackpackState.HasDye;
+
+		if (_oldState != _state)
+			new BackpackPlayerData(packVisible, (byte)Player.whoAmI).Send();
 	}
 
 	public override void FrameEffects() //This way, players can be seen wearing backpacks in the selection screen
@@ -90,16 +117,16 @@ internal class BackpackPlayer : ModPlayer
 		packVisible = tag.Get<bool>(nameof(packVisible));
 	}
 
-	public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) => new PackVisibilityData(packVisible, (byte)Player.whoAmI).Send();
+	public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) => new BackpackPlayerData(packVisible, (byte)Player.whoAmI).Send();
 }
 
-internal class PackVisibilityData : PacketData
+internal class BackpackPlayerData : PacketData
 {
 	private readonly bool _visibility;
 	private readonly byte _playerIndex;
 
-	public PackVisibilityData() { }
-	public PackVisibilityData(bool value, byte playerIndex)
+	public BackpackPlayerData() { }
+	public BackpackPlayerData(bool value, byte playerIndex)
 	{
 		_visibility = value;
 		_playerIndex = playerIndex;
@@ -110,15 +137,27 @@ internal class PackVisibilityData : PacketData
 		bool visibility = reader.ReadBoolean();
 		byte player = reader.ReadByte();
 
-		if (Main.netMode == NetmodeID.Server)
-			new PackVisibilityData(visibility, player).Send(ignoreClient: whoAmI);
+		Item backpack = ItemIO.Receive(reader);
+		Item vanity = ItemIO.Receive(reader);
+		Item dye = ItemIO.Receive(reader);
 
 		Main.player[player].GetModPlayer<BackpackPlayer>().packVisible = visibility;
+		Main.player[player].GetModPlayer<BackpackPlayer>().backpack = backpack;
+		Main.player[player].GetModPlayer<BackpackPlayer>().vanityBackpack = vanity;
+		Main.player[player].GetModPlayer<BackpackPlayer>().packDye = dye;
+
+		if (Main.netMode == NetmodeID.Server)
+			new BackpackPlayerData(visibility, player).Send(ignoreClient: whoAmI);
 	}
 
 	public override void OnSend(ModPacket modPacket)
 	{
 		modPacket.Write(_visibility);
 		modPacket.Write(_playerIndex);
+
+		BackpackPlayer player = Main.player[_playerIndex].GetModPlayer<BackpackPlayer>();
+		ItemIO.Send(player.backpack, modPacket);
+		ItemIO.Send(player.vanityBackpack, modPacket);
+		ItemIO.Send(player.packDye, modPacket);
 	}
 }
