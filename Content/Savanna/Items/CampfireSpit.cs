@@ -219,7 +219,7 @@ public class RoastGlobalTile : GlobalTile
 	{
 		if (TileID.Sets.Campfire[type] && TileObjectData.IsTopLeft(i, j) && Entity(i, j) is CampfireSlot slot)
 		{
-			var position = new Vector2(i, j) * 16 + new Vector2(Main.offScreenRange) - Main.screenPosition - new Vector2(0, 16);
+			var position = new Vector2(i, j) * 16 - Main.screenPosition - new Vector2(0, 16) + TileExtensions.TileOffset;
 			spriteBatch.Draw(TileTexture.Value, position, Lighting.GetColor(i + 1, j + 1));
 
 			if (!slot.item.IsAir)

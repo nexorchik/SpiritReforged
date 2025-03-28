@@ -989,7 +989,7 @@ FrostbiteItem: {
 }
 
 RogueCrest: {
-	DisplayName:  盗贼饰章
+	DisplayName: 盗贼饰章
 	Tooltip:
 		'''
 		召唤一把生锈的剑为你而战

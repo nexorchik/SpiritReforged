@@ -77,7 +77,6 @@ public abstract class LampTile : FurnitureTile
 		var data = TileObjectData.GetTileData(tile);
 		int height = data.CoordinateHeights[tile.TileFrameY / data.CoordinateFullHeight];
 		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, height);
-		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
 
 		if (BlurGlowmask)
 		{
@@ -88,13 +87,13 @@ public abstract class LampTile : FurnitureTile
 				float shakeY = Utils.RandomInt(ref randSeed, -10, 1) * 0.35f;
 				var offset = new Vector2(shakeX, shakeY);
 
-				var position = new Vector2(i, j) * 16 - Main.screenPosition + offset + zero;
+				var position = new Vector2(i, j) * 16 - Main.screenPosition + offset + TileExtensions.TileOffset;
 				spriteBatch.Draw(texture, position, source, new Color(100, 100, 100, 0), 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
 			}
 		}
 		else
 		{
-			var position = new Vector2(i, j) * 16 - Main.screenPosition + zero;
+			var position = new Vector2(i, j) * 16 - Main.screenPosition + TileExtensions.TileOffset;
 			spriteBatch.Draw(texture, position, source, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 		}
 	}

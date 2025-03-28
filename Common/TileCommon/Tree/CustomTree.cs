@@ -208,8 +208,7 @@ public abstract class CustomTree : ModTile, IModifySmartTarget
 		var texture = TextureAssets.Tile[Type].Value;
 
 		var source = new Rectangle(tile.TileFrameX % (FrameSize * 12), 0, FrameSize - 2, FrameSize - 2);
-		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
-		var position = new Vector2(i, j) * 16 - Main.screenPosition + zero + TreeExtensions.GetPalmTreeOffset(i, j);
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + TileExtensions.TileOffset + TreeExtensions.GetPalmTreeOffset(i, j);
 
 		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
 		return false;

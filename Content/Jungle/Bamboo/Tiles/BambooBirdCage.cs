@@ -139,7 +139,7 @@ public class BambooBirdCage : ModTile, IAutoloadTileItem
 		if (TileObjectData.IsTopLeft(i, j) && Entity(i, j) is BambooBirdCageSlot slot && !slot.item.IsAir)
 		{
 			var bird = TextureAssets.Item[slot.item.type];
-			var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(Main.offScreenRange);
+			var position = new Vector2(i, j) * 16 - Main.screenPosition + TileExtensions.TileOffset;
 
 			position += new Vector2(16, tile.TileFrameX >= 18 * 2 ? 42 : 50);
 

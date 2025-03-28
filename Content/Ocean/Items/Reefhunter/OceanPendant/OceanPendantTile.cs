@@ -2,6 +2,7 @@ using Terraria.DataStructures;
 using SpiritReforged.Content.Ocean.Boids;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Common.TileCommon;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.OceanPendant;
 
@@ -68,9 +69,8 @@ public class OceanPendantTile : ModTile
 
 	public override void SpecialDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
 		var worldPos = new Vector2(i, j) * 16 + new Vector2(8);
-		var drawPos = worldPos - Main.screenPosition + zero;
+		var drawPos = worldPos - Main.screenPosition + TileExtensions.TileOffset;
 
 		float rotation = (float)Main.timeForVisualEffects * .01f;
 		float scale = .1f;
