@@ -51,22 +51,25 @@ internal class BackpackPlayer : ModPlayer
 			}
 		}
 
-		// Track current & old state so we can sync as needed
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+		{
+			// Track current & old state so we can sync as needed
 
-		_oldState = _state;
-		_state = BackpackState.None;
+			_oldState = _state;
+			_state = BackpackState.None;
 
-		if (backpack != null && !backpack.IsAir)
-			_state |= BackpackState.HasBackpack;
+			if (backpack != null && !backpack.IsAir)
+				_state |= BackpackState.HasBackpack;
 
-		if (vanityBackpack != null && !vanityBackpack.IsAir)
-			_state |= BackpackState.HasVanity;
+			if (vanityBackpack != null && !vanityBackpack.IsAir)
+				_state |= BackpackState.HasVanity;
 
-		if (packDye != null && !packDye.IsAir)
-			_state |= BackpackState.HasDye;
+			if (packDye != null && !packDye.IsAir)
+				_state |= BackpackState.HasDye;
 
-		if (_oldState != _state)
-			new BackpackPlayerData(packVisible, (byte)Player.whoAmI).Send();
+			if (_oldState != _state)
+				new BackpackPlayerData(packVisible, (byte)Player.whoAmI).Send();
+		}
 	}
 
 	public override void FrameEffects() //This way, players can be seen wearing backpacks in the selection screen
