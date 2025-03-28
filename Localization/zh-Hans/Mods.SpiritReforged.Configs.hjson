@@ -1,0 +1,50 @@
+ReforgeClientConfig: {
+	DisplayName: Reforge 客户端配置
+
+	OceanShape: {
+		Label: 海洋：海洋生成形状
+		Tooltip:
+			'''
+			以某些方式修改海洋生成
+			默认为分段_V生成
+			仅推荐在游玩魂灵模组时使用分段_V生成
+			'''
+	}
+
+	SurfaceWaterTransparency: {
+		Label: 海洋：海水透明度
+		Tooltip:
+			'''
+			启用后，允许海水透明
+			不会影响任其他生物群落
+			'''
+	}
+}
+
+OceanShape: {
+	Tooltip: ""
+	Default.Label: 默认
+	SlantedSine.Label: 倾斜正弦
+	Piecewise.Label: 分段
+	Piecewise_M.Label: 分段_ M
+	Piecewise_V.Label: 分段_ V
+}
+
+ReforgedServerConfig: {
+	DisplayName: Reforged 服务器配置
+
+	VentCritters: {
+		Label: 海洋：热液喷口生态系统
+		Tooltip:
+			'''
+			启用后，允许小动物在热液喷口附近生成
+			这些生物不会干扰敌人的正常生成
+			然而，它们确实对最大NPC数量限制有所贡献
+			'''
+	}
+
+	MaxFloatingItemCount: {
+		Label: 漂浮物上限
+		Tooltip: 影响一个世界内同时可以有多少漂浮物。
+	}
+}

@@ -1,0 +1,24 @@
+ModName: 魂灵 Reforged
+Salvati: Salvati
+Sbubby: Sbubby
+BySalvati: "{$By} {$Salvati}"
+
+Duststorm: {
+	DisplayName: 漂移草原（主题曲：沙尘暴）
+	Author: "{$By} {$Sbubby}"
+}
+
+Savanna: {
+	DisplayName: 稀树平原
+	Author: "{$BySalvati}, {$Sbubby}"
+}
+
+SavannaNight: {
+	DisplayName: 稀树平原 - 夜
+	Author: "{$BySalvati}"
+}
+
+DeepOcean: {
+	DisplayName: 海洋深处
+	Author: "{$BySalvati}"
+}
