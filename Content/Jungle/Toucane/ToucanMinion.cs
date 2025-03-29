@@ -186,6 +186,8 @@ public class ToucanMinion : BaseMinion
 		{
 			Projectile.Center = targetCenter;
 			Projectile.netUpdate = true;
+
+			AiState = STATE_HOVERIDLY;
 		}
 	}
 
@@ -215,13 +217,17 @@ public class ToucanMinion : BaseMinion
 	{
 		const int FeatherMinRange = 200;
 		const int FeatherMaxRange = 600;
-		const int FeatherShootTime = 30;
+		const int FeatherShootTime = 25;
 		const int FeatherShots = 3;
-		const float GlideStartVelocity = 8;
-		const float GlideMaxVelocity = 12;
+		const float GlideStartVelocity = 9;
+		const float GlideMaxVelocity = 13;
 		const int GlideTime = 45;
 
 		Projectile.tileCollide = AiState is STATE_GLIDING or STATE_FEATHERSHOOT;
+
+		// Force attack if this has a target instead of hovering for a long time between shots
+		if (_targetNPC.active && AiState == STATE_HOVERIDLY)
+			AiState = STATE_HOVERTOTARGET;
 
 		switch (AiState)
 		{
@@ -240,7 +246,7 @@ public class ToucanMinion : BaseMinion
 					Projectile.netUpdate = true;
 				}
 
-				Projectile.AccelFlyingMovement(target.Center, 0.25f, 0.1f, 12);
+				Projectile.AccelFlyingMovement(target.Center, 0.3f, 0.15f, 14);
 				break;
 
 			case STATE_FEATHERSHOOT:

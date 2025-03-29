@@ -16,7 +16,7 @@ public class ToucaneItem : ModItem
 	{
 		Item.width = 46;
 		Item.height = 54;
-		Item.damage = 9;
+		Item.damage = 12;
 		Item.value = Item.sellPrice(0, 2, 0, 0);
 		Item.rare = ItemRarityID.Green;
 		Item.mana = 12;
