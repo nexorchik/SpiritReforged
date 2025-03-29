@@ -32,24 +32,25 @@ public class OreCarts : ModTile
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
-		if (closer || Main.dedServ)
+		if (!TileObjectData.IsTopLeft(i, j) || Main.dedServ)
 			return;
 
-		if (TileObjectData.IsTopLeft(i, j))
+		if (!closer)
 		{
-			var world = new Vector2(i, j).ToWorldCoordinates(0, 0);
-			var area = new Rectangle((int)world.X, (int)world.Y, 64, 48);
+			var world = new Vector2(i, j).ToWorldCoordinates(-8, 0);
+			var area = new Rectangle((int)world.X, (int)world.Y, 72, 48);
 			var p = Main.LocalPlayer;
 
-			if (p.getRect().Intersects(area) && p.velocity.LengthSquared() > 4)
+			if (p.getRect().Intersects(area))
 			{
 				int style = Main.tile[i, j].TileFrameX / FrameWidth;
+				var velocity = new Vector2(p.velocity.X * 1.2f, 0);
 
 				Deactivate(i, j);
 				NetMessage.SendTileSquare(-1, i, j, 3, 2);
 
-				Projectile.NewProjectile(new EntitySource_TileBreak(i, j), new Vector2(i, j).ToWorldCoordinates(32, 32), 
-					p.velocity, ModContent.ProjectileType<RollingCart>(), 0, 0, Main.myPlayer, style);
+				Projectile.NewProjectile(new EntitySource_TileBreak(i, j), new Vector2(i, j).ToWorldCoordinates(32, 32),
+					velocity, ModContent.ProjectileType<RollingCart>(), 0, 0, Main.myPlayer, style);
 			}
 		}
 
@@ -74,6 +75,12 @@ public class OreCarts : ModTile
 		return GetItemsByStyle(frame);
 	}
 
+	public override void KillMultiTile(int i, int j, int frameX, int frameY)
+	{
+		int style = frameX / FrameWidth;
+		EffectsByStyle(new EntitySource_TileBreak(i, j), new Rectangle(i * 16, j * 16, 48, 32), Vector2.Zero, style);
+	}
+
 	public static IEnumerable<Item> GetItemsByStyle(int style)
 	{
 		int itemID = style switch
@@ -92,10 +99,63 @@ public class OreCarts : ModTile
 		yield return new Item(itemID) { stack = Main.rand.Next(22, 31) };
 		yield return new Item(ItemID.Wood) { stack = Main.rand.Next(4, 12) };
 	}
+
+	public static void EffectsByStyle(IEntitySource source, Rectangle area, Vector2 velocity, int style)
+	{
+		SoundEngine.PlaySound(SoundID.Item127 with { PitchVariance = .4f }, area.Center());
+		SoundEngine.PlaySound(SoundID.Item89 with { Pitch = .5f }, area.Center());
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/StoneCrack1") { Volume = .25f, PitchVariance = .3f }, area.Center());
+
+		ParticleHandler.SpawnParticle(new Particles.SmokeCloud(area.Bottom(), Vector2.UnitY * -.5f, Color.SandyBrown * .5f, .15f, Common.Easing.EaseFunction.EaseQuarticInOut, 150));
+
+		for (int i = 0; i < 20; i++)
+		{
+			var vel = new Vector2(0, -Main.rand.NextFloat(2f)).RotatedByRandom(.25f);
+			Dust.NewDustDirect(area.BottomLeft(), area.Width, 4, DustID.WoodFurniture, vel.X, vel.Y, Scale: Main.rand.NextFloat() + .25f);
+		}
+
+		int dustType = style switch
+		{
+			0 => DustID.Copper,
+			1 => DustID.Iron,
+			2 => DustID.Silver,
+			3 => DustID.Gold,
+			4 => DustID.Tin,
+			5 => DustID.Lead,
+			6 => DustID.Tungsten,
+			7 => DustID.Platinum,
+			_ => DustID.GemAmber
+		};
+
+		for (int i = 0; i < 10; i++)
+		{
+			var vel = new Vector2(0, -Main.rand.NextFloat(2f)).RotatedByRandom(.25f);
+			Dust.NewDustDirect(area.BottomLeft(), area.Width, 4, dustType, vel.X, vel.Y, Scale: Main.rand.NextFloat() + .5f);
+		}
+
+		var mod = SpiritReforgedMod.Instance;
+
+		for (int i = 1; i < 6; i++)
+			Gore.NewGore(source, Main.rand.NextVector2FromRectangle(area),
+				velocity * Main.rand.NextFloat(), mod.Find<ModGore>("Cart" + i).Type, 1f);
+
+		for (int a = 0; a < 2; a++)
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				int type = i + 1 + style * 2;
+				var vel = (velocity + new Vector2(0, -Main.rand.NextFloat(3f))) * Main.rand.NextFloat(.5f, 1f);
+
+				Gore.NewGore(source, Main.rand.NextVector2FromRectangle(area), vel, mod.Find<ModGore>("Ore" + type).Type, 1f);
+			}
+		}
+	}
 }
 
 internal class RollingCart : ModProjectile
 {
+	public const int timeLeftMax = 600;
+
 	public ref float Style => ref Projectile.ai[0];
 	public ref float Counter => ref Projectile.ai[1];
 
@@ -103,10 +163,18 @@ internal class RollingCart : ModProjectile
 	private bool _hide = false;
 
 	public override void SetStaticDefaults() => Main.projFrames[Type] = 9; //Frame 9 is not reserved for Style
-	public override void SetDefaults() => Projectile.Size = new Vector2(48, 32);
+	public override void SetDefaults()
+	{
+		Projectile.Size = new Vector2(48, 32);
+		Projectile.penetrate = -1;
+		Projectile.timeLeft = timeLeftMax;
+	}
 
 	public override void AI()
 	{
+		if (Projectile.timeLeft == timeLeftMax) //Play a sound on spawn
+			SoundEngine.PlaySound(SoundID.Item53, Projectile.Center);
+
 		if (Surface())
 		{
 			CheckPlayerCollision();
@@ -115,30 +183,42 @@ internal class RollingCart : ModProjectile
 			Projectile.velocity.Y = 0;
 			Projectile.velocity.X *= .985f;
 
-			Projectile.tileCollide = false;
+			if (Math.Abs(Projectile.velocity.X) > 3)
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					var vel = -Projectile.velocity.RotatedByRandom(1);
+
+					var d = Dust.NewDustDirect(Projectile.BottomLeft - Vector2.UnitX * Projectile.velocity.X, Projectile.width, 0, DustID.MinecartSpark, vel.X, vel.Y);
+					d.noGravity = true;
+					d.fadeIn = 1.5f;
+				}
+			}
 		}
 		else
 		{
 			Projectile.velocity.Y += .5f;
-			Projectile.rotation = Utils.AngleLerp(Projectile.rotation, -(Projectile.velocity.ToRotation() - MathHelper.PiOver2), .1f);
-
-			Projectile.tileCollide = true;
 		}
+
+		Projectile.direction = Projectile.spriteDirection = (Projectile.velocity.X < 0) ? -1 : 1;
+
+		float target = Projectile.velocity.ToRotation() - (Projectile.spriteDirection == -1 ? MathHelper.Pi : 0);
+		Projectile.rotation = Utils.AngleLerp(Projectile.rotation, target, .1f);
 	}
 
 	private void CheckPlayerCollision()
 	{
-		if (++Counter < 10)
-			return;
-
 		foreach (var p in Main.ActivePlayers)
 		{
-			if (p.getRect().Intersects(Projectile.getRect()))
-			{
-				int push = Math.Sign(Projectile.Center.X - (p.Center - p.velocity).X);
+			var hitbox = p.getRect();
 
-				Projectile.velocity.X = p.velocity.X;
-				Projectile.Center = new Vector2(p.Center.X + (Projectile.width / 2 + p.width / 2) * push, Projectile.Center.Y);
+			if (hitbox.Intersects(Projectile.getRect()))
+			{
+				int push = p.direction;
+				Projectile.velocity.X = p.velocity.X * 1.1f;
+
+				int x = (int)(p.Center.X + (Projectile.width + hitbox.Width) / 2 * push);
+				Projectile.Center = new Vector2(x, Projectile.Center.Y);
 
 				break;
 			}
@@ -147,8 +227,11 @@ internal class RollingCart : ModProjectile
 
 	private void TryPlace()
 	{
-		if (_hide)
+		if (_hide && (Projectile.Opacity -= .2f) <= 0)
+		{
 			Projectile.Kill();
+			return;
+		}
 
 		//Revert to a tile if velocity is low enough and squarely in the tile grid
 		if (Projectile.velocity.LengthSquared() > .25f * .25f || (int)Projectile.Center.X % 16 != 8)
@@ -168,15 +251,10 @@ internal class RollingCart : ModProjectile
 
 	private bool Surface()
 	{
-		//Sample the two farthest contact points on the cart
-		var a = Sample(Projectile.Bottom - new Vector2(Projectile.width / 2, 0).RotatedBy(Projectile.rotation), out bool f1);
-		var b = Sample(Projectile.Bottom + new Vector2(Projectile.width / 2, 0).RotatedBy(Projectile.rotation), out bool f2);
+		var a = Sample(Projectile.Bottom, out bool f1);
+		Projectile.Bottom = a;
 
-		float amount = Projectile.Bottom.X / 16f % 1;
-		Projectile.Bottom = Vector2.Lerp(a, b, amount);
-		Projectile.rotation = a.AngleTo(b);
-
-		return !f1 || !f2;
+		return !f1;
 	}
 
 	private static Vector2 Sample(Vector2 origin, out bool failed)
@@ -184,20 +262,24 @@ internal class RollingCart : ModProjectile
 		const int type = TileID.MinecartTrack;
 		failed = true;
 
-		for (int i = -2; i < 3; i++)
+		if (Framing.GetTileSafely(origin).TileType == type)
 		{
-			var p = origin + new Vector2(0, 16 * i);
-
-			if (Framing.GetTileSafely(p).TileType == type)
-			{
-				origin.Y = (int)(p.Y / 16) * 16;
-				failed = false;
-
-				break;
-			}
+			origin.Y = (int)(origin.Y / 16) * 16;
+			failed = false;
 		}
 
 		return origin;
+	}
+
+	public override bool OnTileCollide(Vector2 oldVelocity)
+	{
+		const float capacity = 2f;
+
+		if (oldVelocity.LengthSquared() > capacity * capacity)
+			return true;
+
+		Projectile.velocity = -(oldVelocity * .5f);
+		return false;
 	}
 
 	public override void OnKill(int timeLeft)
@@ -212,16 +294,7 @@ internal class RollingCart : ModProjectile
 		} //Item drops on the server/singleplayer
 
 		if (!Main.dedServ)
-		{
-			SoundEngine.PlaySound(SoundID.Item5 with { PitchVariance = .5f }, Projectile.Center);
-			ParticleHandler.SpawnParticle(new Particles.SmokeCloud(Projectile.Bottom, Vector2.UnitY * -.5f, Color.SandyBrown * .5f, .15f, Common.Easing.EaseFunction.EaseQuarticInOut, 150));
-
-			for (int i = 0; i < 10; i++)
-			{
-				var velocity = new Vector2(0, -Main.rand.NextFloat(2f)).RotatedByRandom(.25f);
-				Dust.NewDustDirect(Projectile.BottomLeft, Projectile.width, 4, DustID.WoodFurniture, velocity.X, velocity.Y, Scale: Main.rand.NextFloat() + .25f);
-			}
-		}
+			OreCarts.EffectsByStyle(Projectile.GetSource_Death(), Projectile.getRect(), Projectile.velocity, (int)Style);
 	}
 
 	public override bool PreDraw(ref Color lightColor)
@@ -229,8 +302,9 @@ internal class RollingCart : ModProjectile
 		var texture = TextureAssets.Projectile[Type].Value;
 		var source = GetSource((int)Style);
 		var gfx = new Vector2(0, Projectile.gfxOffY);
+		var effects = SpriteEffects.None;
 
-		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + gfx, source, Projectile.GetAlpha(lightColor), Projectile.rotation, source.Size() / 2, Projectile.scale, default);
+		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + gfx, source, Projectile.GetAlpha(lightColor), Projectile.rotation, source.Size() / 2, Projectile.scale, effects);
 
 		source = GetSource(8);
 		float rotation = Projectile.velocity.X * -10;
@@ -238,7 +312,7 @@ internal class RollingCart : ModProjectile
 		for (int i = 0; i < 2; i++) //Draw wheels
 		{
 			var position = Projectile.Center + new Vector2((i == 0) ? -10 : 10, 16).RotatedBy(Projectile.rotation);
-			Main.EntitySpriteDraw(texture, position - Main.screenPosition + gfx, source, Projectile.GetAlpha(lightColor), rotation, source.Size() / 2, Projectile.scale, default);
+			Main.EntitySpriteDraw(texture, position - Main.screenPosition + gfx, source, Projectile.GetAlpha(lightColor), rotation, source.Size() / 2, Projectile.scale, effects);
 		}
 
 		return false;
