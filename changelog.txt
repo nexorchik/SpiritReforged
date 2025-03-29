@@ -1,4 +1,22 @@
-v0.1.0.5
-- Adjusted Portugese translation (thanks again to Lucas Rotulo)
-- Fixed Honey Coated Salmon maybe having a duplicate tooltip (unclear)
-- Actually included 0.1.0.4's fixes
+v0.1.0.6
+- Added Chinese localization (thanks to Lin and Lacewing on GitHub!)
+- Adjusted the Savanna generation to stop small patches of forest from spawning between it and desert/jungle
+- Added crafting recipe for Living Baobab Walls
+- Hyena and Ostrich are no longer damageable by hostile NPCs
+- Fixed converted Acacia trees not showing up on the map
+- Stopped Hyenas and Ostriches from spawning during invasions
+- Fixed Jungle/Desert biome themes playing while in a Savanna town with No Town Music mod enabled
+- Arcane Necklace (platinum) now works as an ingredient for Seraphim Bulwark with Classic enabled
+- Fixed Reef Piercer creating client-only effects on servers
+- Merfolk's Treasure now considers platforms solid surfaces for rotation visuals
+- Changed "invigorate" to "imbue" in Starpowder's tooltip
+- Change the Zephyr Potion buff name to Zephyr Jump
+- Prevented some Classic ocean tiles from growing naturally
+- Increased Toucane minion fire rate by ~25%
+- Increased Toucane damage (9 -> 12)
+- Increased Toucane minion glide speed minimum & maximum velocity magnitude by 1
+- Forced Toucane minion to retarget immediately on killing a target instead of flying away for some reason
+- Added Dye slot to backpacks
+- Fixed backpacks not syncing properly in multiplayer
+- Various minor visual tweaks
+- Updated Driftwood Leggings sprite
