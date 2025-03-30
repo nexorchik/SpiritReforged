@@ -1,6 +1,9 @@
-﻿using SpiritReforged.Common.PlayerCommon;
+﻿using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Content.Ocean.Items.Pearl;
+using SpiritReforged.Content.Particles;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 
 namespace SpiritReforged.Content.Underground.WayfarerSet;
@@ -51,11 +54,31 @@ internal class WayfarerTile : GlobalTile
 			// TODO: Add all pot variants here
 			Player player = Main.LocalPlayer;
 			if (player.GetModPlayer<WayfarerPlayer>().active && type == TileID.Pots)
+			{
+				if (!player.HasBuff(ModContent.BuffType<ExplorerPot>()))
+					DoFX();
+
 				player.AddBuff(ModContent.BuffType<ExplorerPot>(), 600);
+			}
 
 			if (player.GetModPlayer<WayfarerPlayer>().active && Main.tileSpelunker[type] && Main.tileSolid[type])
+			{
+				if (!player.HasBuff(ModContent.BuffType<ExplorerMine>()))
+					DoFX();
+
 				player.AddBuff(ModContent.BuffType<ExplorerMine>(), 600);
+			}
 		}
+	}
+	public void DoFX()
+	{
+		Player player = Main.LocalPlayer;
+		SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal with { Pitch = 2f }, player.Center);
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/PositiveOutcome") with { Pitch = -.35f }, player.Center);
+
+		for (int i = 0; i < 12; i++)
+			ParticleHandler.SpawnParticle(new GlowParticle(player.Center, Main.rand.NextVector2CircularEdge(1, 1), Color.PapayaWhip, Main.rand.NextFloat(0.25f, 0.4f), Main.rand.Next(30, 50), 8));
+
 	}
 }
 
