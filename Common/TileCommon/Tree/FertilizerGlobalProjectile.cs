@@ -23,6 +23,8 @@ internal class FertilizerGlobalProjectile : GlobalProjectile
 
 				if (TileLoader.GetTile(t.TileType) is SaplingTile)
 					CustomTree.GrowTree(x, y);
+				else if (t.TileType >= TileID.Count) //Apply to normal ModTree saplings
+					WorldGen.GrowTree(x, y);
 			}
 		}
 	}

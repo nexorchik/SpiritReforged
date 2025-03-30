@@ -94,12 +94,8 @@ public static class CustomSapling
 	/// <summary> Autoloads <see cref="CustomModTree"/>s for each <see cref="SaplingTile{T}"/> in the mod. Ensure that this is called after all required tiles are loaded. </summary>
 	public static void Autoload(Mod mod)
 	{
-		var saplings = mod.GetContent<SaplingTile>().ToArray();
-
-		for (int i = saplings.Length - 1; i >= 0; i--)
+		foreach (var c in mod.GetContent<SaplingTile>().ToArray())
 		{
-			var c = saplings[i];
-
 			//Use reflection because we can't infer generic type here
 			if (c.GetType().GetProperty("AnchorTypes", BindingFlags.Instance | BindingFlags.Public)?.GetValue(c) is int[] anchors)
 			{
