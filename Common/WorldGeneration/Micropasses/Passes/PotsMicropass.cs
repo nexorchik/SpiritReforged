@@ -19,7 +19,7 @@ internal class PotsMicropass : Micropass
 	{
 		const int maxTries = 5000; //Failsafe
 
-		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Pots");
+		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Caves");
 
 		int maxPots = (int)(Main.maxTilesX * Main.maxTilesY * 0.0005); //Normal weight is 0.0008
 		int pots = 0;
