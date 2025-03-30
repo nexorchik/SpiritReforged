@@ -24,3 +24,10 @@ Marksman:
 	Полный заряд гарантирует критический удар с увеличенным уроном 
 	Концентрация сбивается при получении урона, но быстро восстанавливается, если вы не двигаетесь
 	'''
+/* Wayfarer:
+	'''
+	Slain enemies drop more coins
+	Breaking pots grants a stacking movement speed buff
+	Mining ore grants a stacking mining speed buff
+	Buffs stack up to 4 times
+	''' */

@@ -1320,3 +1320,18 @@ SparrowCageItem: {
 	DisplayName: Клетка с воробьём
 	Tooltip: ""
 }
+
+WayfarerHead: {
+	// DisplayName: Wayfarer's Hat
+	// Tooltip: Immunity to darkness
+}
+
+WayfarerBody: {
+	// DisplayName: Wayfarer's Rucksack
+	// Tooltip: 5% increased movement speed
+}
+
+WayfarerLegs: {
+	// DisplayName: Wayfarer's Pants
+	// Tooltip: 7% increased movement speed
+}
