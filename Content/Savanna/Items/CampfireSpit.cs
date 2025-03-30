@@ -193,25 +193,25 @@ public class RoastGlobalTile : GlobalTile
 
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (effectOnly || Main.netMode == NetmodeID.MultiplayerClient)
+		if (effectOnly)
 			return;
 
 		if (Entity(i, j) is CampfireSlot slot)
 		{
 			fail = true;
-			TileExtensions.GetTopLeft(ref i, ref j);
 
-			var pos = new Vector2(i, j).ToWorldCoordinates() + new Vector2(16);
-
-			Item.NewItem(new EntitySource_TileBreak(i, j), pos, ModContent.ItemType<CampfireSpit>());
-
-			if (!slot.item.IsAir)
+			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
-				Item.NewItem(new EntitySource_TileBreak(i, j), pos, slot.item);
-				//slot.RemoveItem(); //Unecessary
-			}
+				TileExtensions.GetTopLeft(ref i, ref j);
 
-			slot.Kill(i, j);
+				var pos = new Vector2(i, j).ToWorldCoordinates() + new Vector2(16);
+				Item.NewItem(new EntitySource_TileBreak(i, j), pos, ModContent.ItemType<CampfireSpit>());
+
+				if (!slot.item.IsAir)
+					Item.NewItem(new EntitySource_TileBreak(i, j), pos, slot.item);
+
+				slot.Kill(i, j);
+			}
 		}
 	}
 
