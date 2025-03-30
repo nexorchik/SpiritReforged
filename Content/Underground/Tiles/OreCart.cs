@@ -251,24 +251,24 @@ internal class RollingCart : ModProjectile
 
 	private bool Surface()
 	{
-		var a = Sample(Projectile.Bottom, out bool f1);
+		var a = GetNearest(Projectile.Bottom, out bool f1);
 		Projectile.Bottom = a;
 
 		return !f1;
-	}
 
-	private static Vector2 Sample(Vector2 origin, out bool failed)
-	{
-		const int type = TileID.MinecartTrack;
-		failed = true;
-
-		if (Framing.GetTileSafely(origin).TileType == type)
+		static Vector2 GetNearest(Vector2 origin, out bool failed) //Rounds the given origin to a rail, if any
 		{
-			origin.Y = (int)(origin.Y / 16) * 16;
-			failed = false;
-		}
+			const int type = TileID.MinecartTrack;
+			failed = true;
 
-		return origin;
+			if (Framing.GetTileSafely(origin).TileType == type)
+			{
+				origin.Y = (int)(origin.Y / 16) * 16;
+				failed = false;
+			}
+
+			return origin;
+		}
 	}
 
 	public override bool OnTileCollide(Vector2 oldVelocity)

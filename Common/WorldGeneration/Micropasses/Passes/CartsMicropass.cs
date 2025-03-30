@@ -20,7 +20,7 @@ internal class CartsMicropass : Micropass
 
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Caves");
 
-		int maxCarts = (int)(Main.maxTilesX * Main.maxTilesY * 0.0000022);
+		int maxCarts = Main.maxTilesX / WorldGen.WorldSizeSmallX * 17;
 		int carts = 0;
 
 		for (int t = 0; t < maxTries; t++) //Generate stacked pots
