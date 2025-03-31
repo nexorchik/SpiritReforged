@@ -29,7 +29,7 @@ internal class AnimateModIconHook : ILoadable
 		orig(self);
 
 		string name = ModNameInfo.GetValue(self) as string;
-		
+
 		if (name == "SpiritReforged")
 		{
 			var icon = IconInfo.GetValue(self) as UIImage;
@@ -39,6 +39,12 @@ internal class AnimateModIconHook : ILoadable
 
 			var tex = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("icon_animated", AssetRequestMode.ImmediateLoad);
 			var scroll = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("icon_scroll", AssetRequestMode.ImmediateLoad);
+
+			if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1)
+			{
+				tex = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("Assets/Textures/AprilFools/FablesReforgedIcon", AssetRequestMode.ImmediateLoad);
+				scroll = SpiritReforgedMod.Instance.Assets.Request<Texture2D>("Assets/Textures/AprilFools/FablesReforgedScroll2", AssetRequestMode.ImmediateLoad);
+			}
 
 			element.Append(new UIScrollingImage(tex, scroll, 0.3f));
 
@@ -53,6 +59,12 @@ internal class AnimateModIconHook : ILoadable
 
 			var nameUI = NameUIInfo.GetValue(self) as UIText;
 			nameUI.TextColor = new Color(255, 199, 130);
+
+			if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1)
+			{
+				nameUI.SetText("Fables Reforged v0.1");
+				nameUI.TextColor = new Color(255, 215, 148);
+			}
 		}
 	}
 
