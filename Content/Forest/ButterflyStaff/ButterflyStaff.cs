@@ -22,6 +22,7 @@ public class ButterflyStaff : ModItem
 		Item.noMelee = true;
 		Item.shoot = ModContent.ProjectileType<ButterflyMinion>();
 		Item.UseSound = SoundID.Item44;
+		Item.autoReuse = true;
 	}
 
 	public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => Lighting.AddLight(Item.position, 0.4f, .18f, .42f);

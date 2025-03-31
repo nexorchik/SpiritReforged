@@ -5,6 +5,7 @@ using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Common.TileCommon.Tree;
 using SpiritReforged.Content.Savanna.DustStorm;
 using SpiritReforged.Content.Savanna.Items.Food;
+using SpiritReforged.Content.Savanna.Items.Tools;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.Utilities;
@@ -80,6 +81,8 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 		drop.Add(ModContent.ItemType<CustardApple>(), .2f);
 		drop.Add(ModContent.ItemType<BaobabFruit>(), .2f);
 		drop.Add(ItemMethods.AutoItemType<Drywood>(), .8f);
+		drop.Add(ModContent.ItemType<LivingBaobabWand>(), .033f);
+		drop.Add(ModContent.ItemType<LivingBaobabLeafWand>(), .03f);
 		drop.Add(ItemID.Acorn, .7f);
 
 		var position = new Vector2(i, j - 3) * 16;
