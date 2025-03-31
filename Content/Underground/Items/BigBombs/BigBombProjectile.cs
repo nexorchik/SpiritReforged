@@ -1,5 +1,6 @@
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 
@@ -18,10 +19,11 @@ public abstract class BigBombProjectile : ModProjectile
 
 	public sealed override void SetDefaults()
 	{
-		Projectile.CloneDefaults(OriginalType);
+		//Projectile.CloneDefaults(OriginalType);
 
+		Projectile.friendly = Projectile.hostile = true;
 		Projectile.timeLeft = _timeLeftMax;
-		Projectile.Size = new Vector2(35);
+		Projectile.Size = new Vector2(32);
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = -1;
 
@@ -30,36 +32,80 @@ public abstract class BigBombProjectile : ModProjectile
 
 	public virtual void PostSetDefaults() { }
 
+	public override void AI()
+	{
+		Projectile.rotation += Projectile.velocity.X / 10;
+		Projectile.velocity.X *= 0.99f;
+		Projectile.velocity.Y += 0.15f;
+
+		FuseVisuals();
+	}
+
+	public virtual void FuseVisuals()
+	{
+		var position = Projectile.Center - (new Vector2(0, Projectile.height / 2 + 10) * Projectile.scale).RotatedBy(Projectile.rotation);
+
+		for (int i = 0; i < 2; i++)
+		{
+			var d = Dust.NewDustPerfect(position, DustID.Torch);
+			d.noGravity = true;
+
+			var d2 = Dust.NewDustPerfect(position, DustID.Smoke, Alpha: 180);
+			d2.noGravity = true;
+			d2.fadeIn = 1.5f;
+		}
+	}
+
 	public override void OnKill(int timeLeft)
 	{
-		int size = _radius;
-		var area = new Rectangle((int)(Projectile.Center.X / 16) - size / 2, (int)(Projectile.Center.Y / 16) - size / 2, size, size);
-		bool doWalls = Projectile.ShouldWallExplode(Projectile.Center, size, area.X, area.X + size, area.Y, area.Y + size);
-
-		Projectile.ExplodeTiles(Projectile.Center, size / 2, area.X, area.X + size, area.Y, area.Y + size, doWalls);
+		Explode();
 
 		if (Main.dedServ)
 			return;
 
 		SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, Projectile.Center);
-		ParticleHandler.SpawnParticle(new TexturedPulseCircle(Projectile.Center, Color.Goldenrod, Color.Orange * .5f, .25f, 30 * size, 20, "SmokeSimple", Vector2.One, Common.Easing.EaseFunction.EaseCircularOut));
-		ParticleHandler.SpawnParticle(new SmokeCloud(Projectile.Center, Vector2.Zero, Color.Gray, .05f * size, Common.Easing.EaseFunction.EaseCubicOut, 40));
+		ParticleHandler.SpawnParticle(new TexturedPulseCircle(Projectile.Center, Color.Goldenrod, Color.Orange * .5f, .25f, 30 * _radius, 20, "SmokeSimple", Vector2.One, Common.Easing.EaseFunction.EaseCircularOut));
+		ParticleHandler.SpawnParticle(new SmokeCloud(Projectile.Center, Vector2.Zero, Color.Gray, .05f * _radius, Common.Easing.EaseFunction.EaseCubicOut, 40));
 
 		const int time = 5;
-		ParticleHandler.SpawnParticle(new ImpactLine(Projectile.Center, Vector2.Zero, Color.Orange * .5f, new Vector2(0.8f, 1.6f) * size, time));
-		ParticleHandler.SpawnParticle(new ImpactLine(Projectile.Center, Vector2.Zero, Color.White, new Vector2(0.5f, 1.2f) * size, time));
+		ParticleHandler.SpawnParticle(new ImpactLine(Projectile.Center, Vector2.Zero, Color.Orange * .5f, new Vector2(0.8f, 1.6f) * _radius, time));
+		ParticleHandler.SpawnParticle(new ImpactLine(Projectile.Center, Vector2.Zero, Color.White, new Vector2(0.5f, 1.2f) * _radius, time));
 
-		for (int i = 0; i < size * 2; i++)
+		for (int i = 0; i < _radius * 2; i++)
 		{
 			ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, Main.rand.NextVector2Unit() * Main.rand.NextFloat(1f, 4f), 
-				Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat()), Main.rand.NextFloat(.05f, .1f) * size, Main.rand.Next(10, 20), 4));
+				Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat()), Main.rand.NextFloat(.05f, .1f) * _radius, Main.rand.Next(10, 20), 4));
 
-			var d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(16f * size), DustID.Torch, Scale: Main.rand.NextFloat() + .5f);
+			var d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(16f * _radius), DustID.Torch, Scale: Main.rand.NextFloat() + .5f);
 			d.noGravity = true;
 		}
 	}
 
+	private void Explode()
+	{
+		//Deal damage
+		int value = _radius * 16;
+		Rectangle oldHitbox = Projectile.Hitbox;
+
+		Projectile.Hitbox.Inflate(value, value);
+
+		Projectile.Damage();
+		Projectile.Hitbox = oldHitbox;
+
+		//Destroy walls and tiles
+		var area = new Rectangle((int)(Projectile.Center.X / 16) - _radius / 2, (int)(Projectile.Center.Y / 16) - _radius / 2, _radius, _radius);
+		bool doWalls = Projectile.ShouldWallExplode(Projectile.Center, _radius, area.X, area.X + _radius, area.Y, area.Y + _radius);
+
+		Projectile.ExplodeTiles(Projectile.Center, _radius / 2, area.X, area.X + _radius, area.Y, area.Y + _radius, doWalls);
+	}
+
 	public override bool? CanCutTiles() => false;
+
+	public override bool OnTileCollide(Vector2 oldVelocity)
+	{
+		Projectile.Bounce(oldVelocity, 0.3f);
+		return false;
+	}
 
 	public override bool PreDraw(ref Color lightColor)
 	{
@@ -70,12 +116,10 @@ public abstract class BigBombProjectile : ModProjectile
 		float lerp = (float)Math.Sin(Main.timeForVisualEffects / (60f - progress * 20)) * progress;
 
 		float scale = Projectile.scale + lerp * .1f;
-
 		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, scale, SpriteEffects.None);
 
 		var color = Projectile.GetAlpha(Color.Red.Additive()) * lerp * 2;
 		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, color, Projectile.rotation, origin, scale, SpriteEffects.None);
-
 		return false;
 	}
 
