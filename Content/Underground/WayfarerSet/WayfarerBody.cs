@@ -11,13 +11,7 @@ public class WayfarerBody : ModItem
 		EquipLoader.AddEquipTexture(Mod, $"{Texture}_{EquipType.Back}", EquipType.Back, this);
 	}
 
-	public override void SetStaticDefaults()
-	{
-		// DisplayName.SetDefault("Wayfarer's Rucksack");
-		// Tooltip.SetDefault("5% increased movement speed");
-
-		ArmorIDs.Body.Sets.NeedsToDrawArm[Item.bodySlot] = true;
-	}
+	public override void SetStaticDefaults() => ArmorIDs.Body.Sets.NeedsToDrawArm[Item.bodySlot] = true;
 
 	public override void SetDefaults()
 	{

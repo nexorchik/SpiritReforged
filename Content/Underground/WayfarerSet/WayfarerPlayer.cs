@@ -70,6 +70,7 @@ internal class WayfarerTile : GlobalTile
 			}
 		}
 	}
+
 	public void DoFX()
 	{
 		Player player = Main.LocalPlayer;

@@ -3,12 +3,6 @@ namespace SpiritReforged.Content.Underground.WayfarerSet;
 [AutoloadEquip(EquipType.Legs)]
 public class WayfarerLegs : ModItem
 {
-	public override void SetStaticDefaults()
-	{
-		// DisplayName.SetDefault("Wayfarer's Pants");
-		// Tooltip.SetDefault("7% increased movement speed");
-	}
-
 	public override void SetDefaults()
 	{
 		Item.width = 22;

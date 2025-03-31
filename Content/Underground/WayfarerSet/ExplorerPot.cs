@@ -2,12 +2,7 @@
 
 class ExplorerPot : ModBuff
 {
-	public override void SetStaticDefaults()
-	{
-		// DisplayName.SetDefault("Explorer's Vigor");
-		// Description.SetDefault("You're eager for more!");
-		Main.buffNoTimeDisplay[Type] = false;
-	}
+	public override void SetStaticDefaults() => Main.buffNoTimeDisplay[Type] = false;
 
 	public override void Update(Player player, ref int buffIndex)
 	{
@@ -29,6 +24,6 @@ class ExplorerPot : ModBuff
 	{
 		WayfarerPlayer wayfarerPlayer = Main.LocalPlayer.GetModPlayer<WayfarerPlayer>();
 		tip += $"\nMovement speed is increased by {wayfarerPlayer.movementStacks * 5 / 4}%";
-		rare = wayfarerPlayer.movementStacks >> 1;
+		rare = wayfarerPlayer.movementStacks;
 	}
 }
