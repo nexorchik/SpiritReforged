@@ -10,6 +10,7 @@ internal class BackpackUIState : AutoUIState
 {
 	private BackpackUISlot _functionalSlot;
 	private BackpackUISlot _vanitySlot;
+	private BackpackUISlot _dyeSlot;
 
 	private Item _lastBackpack;
 	private int _lastAdjustY;
@@ -25,6 +26,10 @@ internal class BackpackUIState : AutoUIState
 		_vanitySlot = new BackpackUISlot(true);
 		_vanitySlot.Left = new StyleDimension(_functionalSlot.Left.Pixels - 48, 1);
 		Append(_vanitySlot);
+
+		_dyeSlot = new BackpackUISlot(false, true);
+		_dyeSlot.Left = new StyleDimension(_vanitySlot.Left.Pixels - 48, 1);
+		Append(_dyeSlot);
 
 		SetVariablePositions();
 
@@ -74,7 +79,7 @@ internal class BackpackUIState : AutoUIState
 		base.Update(gameTime);
 	}
 
-	private void SetVariablePositions() => _functionalSlot.Top = _vanitySlot.Top = new StyleDimension(UIHelper.GetMapHeight() + 174, 0);
+	private void SetVariablePositions() => _functionalSlot.Top = _vanitySlot.Top = _dyeSlot.Top = new StyleDimension(UIHelper.GetMapHeight() + 174, 0);
 
 	/// <summary> Adds or removes backpack slots with items according to the currently equipped backpack.<para/>
 	/// This is a snapshot, and must be called again if the <see cref="BackpackPlayer.backpack"/> instance has changed.<br/>
@@ -93,12 +98,18 @@ internal class BackpackUIState : AutoUIState
 
 		if (!clear)
 		{
-			const int BaseX = 570;
+			int baseX = 570;
+
+			if (ModLoader.HasMod("PotionSlots"))
+			{
+				baseX += 38;
+			}
+
 			int xOff = 0, yOff = 0;
 
 			Append(new UIText(Language.GetTextValue("Mods.SpiritReforged.SlotContexts.Backpack"), 0.725f, false)
 			{
-				Left = new StyleDimension(BaseX, 0),
+				Left = new StyleDimension(baseX, 0),
 				Top = new StyleDimension(86, 0),
 				Width = StyleDimension.FromPixels(32),
 				Height = StyleDimension.FromPixels(32),
@@ -113,7 +124,7 @@ internal class BackpackUIState : AutoUIState
 			{
 				var newSlot = new BasicItemSlot(items, i, scale: .6f)
 				{
-					Left = new StyleDimension(BaseX + xOff * 32, 0),
+					Left = new StyleDimension(baseX + xOff * 32, 0),
 					Top = new StyleDimension(105 + yOff * 33, 0),
 					Width = StyleDimension.FromPixels(32),
 					Height = StyleDimension.FromPixels(32)

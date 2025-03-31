@@ -22,10 +22,12 @@ internal class EcotoneSurfaceMapping : ModSystem
 		public override string ToString() => $"{Start} to {End}; of {Definition}:{SurfacePoints.Count}";
 	}
 
-	private List<EcotoneEntry> Entries = [];
+	public const int TransitionLength = 20;
 
 	internal static readonly HashSet<Point> TotalSurfacePoints = [];
 	internal static readonly Dictionary<short, short> TotalSurfaceY = [];
+
+	private List<EcotoneEntry> Entries = [];
 
 	public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
 	{
@@ -58,7 +60,7 @@ internal class EcotoneSurfaceMapping : ModSystem
 	{
 		const int StartX = 250;
 
-		progress.Message = "Mapping ecotones";
+		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Ecotones");
 
 		Entries.Clear();
 		TotalSurfacePoints.Clear();
@@ -83,14 +85,14 @@ internal class EcotoneSurfaceMapping : ModSystem
 			if (!entry.TileFits(x, y))
 				transitionCount++;
 
-			if (transitionCount > 20 && EcotoneEdgeDefinitions.TryGetEcotoneByTile(Main.tile[x, y].TileType, out var def) && def.Name != entry.Definition.Name)
+			if (transitionCount > TransitionLength && EcotoneEdgeDefinitions.TryGetEcotoneByTile(Main.tile[x, y].TileType, out var def) && def.Name != entry.Definition.Name)
 			{ 
 				EcotoneEdgeDefinition old = entry.Definition;
 				entry.End = new Point(x, y);
 				entry.Right = def;
 				Entries.Add(entry);
 
-				if (x < 390 || x > Main.maxTilesX - 390)
+				if (x <= GenVars.leftBeachEnd || x >= GenVars.rightBeachStart)
 					def = EcotoneEdgeDefinitions.GetEcotone("Ocean");
 				
 				entry = new EcotoneEntry(new Point(x, y), def);

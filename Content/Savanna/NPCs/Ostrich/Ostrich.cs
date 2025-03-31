@@ -8,6 +8,7 @@ using SpiritReforged.Content.Savanna.Items.Food;
 using SpiritReforged.Content.Savanna.Items.Vanity;
 using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Vanilla.Food;
+using System.Linq;
 using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
 using Terraria.Utilities;
@@ -277,8 +278,19 @@ public class Ostrich : ModNPC
 			NPC.netUpdate = true;
 	}
 
+	public override bool CanBeHitByNPC(NPC attacker) => attacker.IsTarget();
+	public override bool? CanBeHitByItem(Player player, Item item) => player.dontHurtCritters ? false : null;
+	public override bool? CanBeHitByProjectile(Projectile projectile)
+	{
+		if (projectile.npcProj || projectile.owner == 255)
+			return projectile.friendly;
+
+		var p = Main.player[projectile.owner];
+		return p.dontHurtCritters ? false : null;
+	}
+
 	public override bool CanHitPlayer(Player target, ref int cooldownSlot) => Charging;
-	public override bool CanHitNPC(NPC target) => Charging;
+	public override bool CanHitNPC(NPC target) => target.IsTarget() && Charging;
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
@@ -359,6 +371,9 @@ public class Ostrich : ModNPC
 
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
+		if (spawnInfo.Invasion)
+			return 0;
+
 		int x = spawnInfo.SpawnTileX;
 		int y = spawnInfo.SpawnTileY;
 		int wall = Framing.GetTileSafely(x, y).WallType;

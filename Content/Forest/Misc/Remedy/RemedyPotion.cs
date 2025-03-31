@@ -96,7 +96,7 @@ public class RemedyPotion : ModItem
 	}
 
 	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BottledWater).AddIngredient(ItemID.Waterleaf)
-		.AddIngredient(ItemID.Blinkroot).AddIngredient(ItemID.RockLobster).AddTile(TileID.Bottles).Register();
+		.AddIngredient(ItemID.Blinkroot).AddIngredient(ItemID.Stinger).AddTile(TileID.Bottles).Register();
 }
 
 public class RemedyPotionBuff : ModBuff

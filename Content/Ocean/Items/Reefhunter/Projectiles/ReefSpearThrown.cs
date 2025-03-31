@@ -124,24 +124,26 @@ public class ReefSpearThrown : ModProjectile
 
 	public override void OnKill(int timeLeft)
 	{
-		if (!HasTarget)
+		if (HasTarget || Main.dedServ)
+			return;
+
+		SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_Hard") with { PitchVariance = 0.2f, Pitch = -2f, Volume = 2.5f }, Projectile.Center);
+
+		Vector2 goreVel = Projectile.oldVelocity / 2;
+		Vector2 pos = Projectile.Center;
+
+		for (int i = 1; i <= 6; i++)
 		{
-			SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Impact_Hard") with { PitchVariance = 0.2f, Pitch = -2f, Volume = 2.5f }, Projectile.Center);
-			Vector2 goreVel = Projectile.oldVelocity / 2;
-			Vector2 pos = Projectile.Center;
-			for (int i = 1; i <= 6; i++)
-			{
-				if (i >= 4)
-					pos -= Vector2.Normalize(Projectile.oldVelocity) * (15 + (i - 3) * 3);
+			if (i >= 4)
+				pos -= Vector2.Normalize(Projectile.oldVelocity) * (15 + (i - 3) * 3);
 
-				var g = Gore.NewGorePerfect(Projectile.GetSource_Death(), pos, goreVel, Mod.Find<ModGore>("Trident" + i).Type);
-				g.timeLeft = 0;
-				g.rotation = Projectile.rotation;
-			}
-
-			MakeParticles(Projectile.oldVelocity);
+			var g = Gore.NewGorePerfect(Projectile.GetSource_Death(), pos, goreVel, Mod.Find<ModGore>("Trident" + i).Type);
+			g.timeLeft = 0;
+			g.rotation = Projectile.rotation;
 		}
+
+		MakeParticles(Projectile.oldVelocity);
 	}
 
 	private void MakeParticles(Vector2 velocity)
@@ -170,9 +172,9 @@ public class ReefSpearThrown : ModProjectile
 				new Vector2(4, 0.75f),
 				EaseFunction.EaseCircularOut,
 				false,
-				0.3f).WithSkew(0.8f, Projectile.velocity.ToRotation()).UsesLightColor();
+				0.3f).WithSkew(0.8f, Projectile.velocity.ToRotation() - MathHelper.Pi).UsesLightColor();
 
-		particle.Velocity = Vector2.Normalize(velocity) * -velocityRatio / 2;
+		particle.Velocity = Vector2.Normalize(velocity) * -velocityRatio / 3;
 		ParticleHandler.SpawnParticle(particle);
 	}
 

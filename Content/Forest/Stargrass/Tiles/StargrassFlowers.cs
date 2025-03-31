@@ -62,4 +62,13 @@ public class StargrassFlowers : ModTile
 		if (frame >= 6)
 			(r, g, b) = (0.025f, 0.1f, 0.25f);
 	}
+
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HeldItem.type == ItemID.Sickle)
+			yield return new Item(ItemID.Hay, Main.rand.Next(1, 3));
+
+		if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HasItem(ItemID.Blowpipe))
+			yield return new Item(ItemID.Seed, Main.rand.Next(2, 4));
+	}
 }

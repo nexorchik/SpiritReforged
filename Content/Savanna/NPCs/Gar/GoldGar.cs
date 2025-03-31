@@ -40,4 +40,5 @@ public class GoldGar : Gar
 	}
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawFish>(2);
+	public override float SpawnChance(NPCSpawnInfo spawnInfo) => base.SpawnChance(spawnInfo) * 0.05f;
 }

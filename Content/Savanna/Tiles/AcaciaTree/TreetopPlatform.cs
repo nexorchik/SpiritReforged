@@ -51,21 +51,14 @@ public class TreetopPlatform : SimpleEntity
 			entity.position = newPosition;
 
 		if (entity is Player player)
-		{
-			player.fullRotation = rotation * .07f;
-			player.fullRotationOrigin = new Vector2(player.width * .5f, player.height);
-		}
+			player.Rotate(rotation * .07f, new Vector2(player.width * .5f, player.height));
 	}
 }
 
 internal class AcaciaPlatformPlayer : ModPlayer
 {
-	private bool wasOnPlatform;
-
 	public override void PreUpdateMovement()
 	{
-		bool onPlatform = false;
-
 		foreach (var p in AcaciaTree.Platforms)
 		{
 			var lowRect = Player.getRect() with { Height = Player.height / 2, Y = (int)Player.position.Y + Player.height / 2 };
@@ -76,15 +69,8 @@ internal class AcaciaPlatformPlayer : ModPlayer
 				if (Player.controlDown)
 					Player.GetModPlayer<CollisionPlayer>().fallThrough = true;
 
-				onPlatform = wasOnPlatform = true;
 				break; //It would be redundant to check for other platforms when the player is already on one
 			}
-		}
-
-		if (!onPlatform && wasOnPlatform) //Reset rotation when the player just leaves a platform
-		{
-			Player.fullRotation = 0;
-			wasOnPlatform = false;
 		}
 	}
 }
@@ -110,24 +96,33 @@ internal class AcaciaPlatformDetours : ILoadable
 
 		foreach (var p in AcaciaTree.Platforms)
 		{
-			if (self.getRect().Intersects(p.Hitbox) && !Collision.SolidCollision(self.Bottom, self.width, 8))
+			const int height = 4;
+			var hitbox = new Rectangle(p.Hitbox.X, p.Hitbox.Y + height + 16, p.Hitbox.Width, height); //Adjust the hitbox to be more grapple friendly
+
+			if (self.getRect().Intersects(hitbox) && !Collision.SolidCollision(self.Bottom, self.width, 8))
 			{
-				var owner = Main.player[self.owner];
-
-				self.ai[0] = 2f;
-				self.velocity *= 0;
-				self.netUpdate = true;
-
-				owner.grappling[0] = self.whoAmI;
-				owner.grapCount++;
-				owner.GrappleMovement();
-
-				if (Main.netMode != NetmodeID.SinglePlayer && self.owner == Main.myPlayer)
-					NetMessage.SendData(MessageID.PlayerControls, -1, -1, null, self.owner);
+				self.Center = new Vector2(self.Center.X, hitbox.Center.Y);
+				Latch(self);
 			}
 		}
 
 		orig(self);
+
+		static void Latch(Projectile p)
+		{
+			var owner = Main.player[p.owner];
+
+			p.ai[0] = 2f;
+			p.velocity *= 0;
+			p.netUpdate = true;
+
+			owner.grappling[0] = p.whoAmI;
+			owner.grapCount++;
+			owner.GrappleMovement();
+
+			if (Main.netMode != NetmodeID.SinglePlayer && p.owner == Main.myPlayer)
+				NetMessage.SendData(MessageID.PlayerControls, -1, -1, null, p.owner);
+		}
 	}
 
 	private static void CheckNPCCollision(On_NPC.orig_UpdateCollision orig, NPC self)

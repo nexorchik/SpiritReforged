@@ -70,7 +70,7 @@ internal class Zipline(int owner)
 		points.Remove(point);
 
 		if (points.Count == 0)
-			ZiplineHandler.ziplines.Remove(this);
+			ZiplineHandler.Ziplines.Remove(this);
 	}
 
 	public void Draw(SpriteBatch spriteBatch)
@@ -109,7 +109,7 @@ internal class Zipline(int owner)
 	{
 		const int width = 6; //Collision line width
 
-		if (!DrawingLine)
+		if (!DrawingLine || player.mount.Active)
 			return false;
 
 		GetRange(out var start, out var end);
@@ -148,8 +148,7 @@ internal class Zipline(int owner)
 		player.velocity.Y = 0;
 
 		player.gfxOffY = 0;
-		player.fullRotation = rotation;
-		player.fullRotationOrigin = new Vector2(0, player.height);
+		player.Rotate(rotation, new Vector2(0, player.height));
 	}
 
 	/// <summary> Orders two <see cref="points"/> by X (ascending, <paramref name="start"/> to <paramref name="end"/>). </summary>

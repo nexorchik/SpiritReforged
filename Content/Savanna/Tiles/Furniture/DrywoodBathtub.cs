@@ -1,8 +1,9 @@
-﻿using SpiritReforged.Common.TileCommon.PresetTiles;
+﻿using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.TileCommon.PresetTiles;
 
 namespace SpiritReforged.Content.Savanna.Tiles.Furniture;
 
 public class DrywoodBathtub : BathtubTile
 {
-	public override int CoreMaterial => ModContent.ItemType<Items.Drywood.Drywood>();
+	public override int CoreMaterial => ItemMethods.AutoItemType<Drywood>();
 }

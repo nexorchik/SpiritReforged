@@ -7,7 +7,11 @@ namespace SpiritReforged.Content.Savanna.Items.Fishing;
 
 public class SavannaCrateHardmode : ModItem
 {
-	public override void SetStaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<SavannaCrate>();
+	public override void SetStaticDefaults()
+	{
+		ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<SavannaCrate>();
+		Item.ResearchUnlockCount = 10;
+	}
 	
 	public override void SetDefaults()
 	{

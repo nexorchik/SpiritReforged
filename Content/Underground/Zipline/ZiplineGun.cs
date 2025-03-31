@@ -56,7 +56,7 @@ public class ZiplineGun : ModItem
 	/// <summary> Checks whether <see cref="Main.MouseWorld"/> is hovering over a removeable zipline. </summary>
 	private static bool CheckRemoveable()
 	{
-		foreach (var zipline in ZiplineHandler.ziplines)
+		foreach (var zipline in ZiplineHandler.Ziplines)
 		{
 			if (zipline.Owner == Main.LocalPlayer && zipline.Contains(Main.MouseWorld.ToPoint(), out _))
 				return true;
@@ -72,7 +72,7 @@ public class ZiplineGun : ModItem
 		const int minDistance = 70;
 
 		exceedsRange = false;
-		var myZipline = ZiplineHandler.ziplines.Where(x => x.Owner == Main.LocalPlayer).FirstOrDefault();
+		var myZipline = ZiplineHandler.Ziplines.Where(x => x.Owner == Main.LocalPlayer).FirstOrDefault();
 
 		if (myZipline == default || myZipline.points.Count == 0)
 			return true;
@@ -90,7 +90,7 @@ public class ZiplineGun : ModItem
 	/// <summary> Checks if the angle of the zipline is within <see cref="Zipline.MaxAngle"/>. </summary>
 	private static bool CheckAngle()
 	{
-		var myZipline = ZiplineHandler.ziplines.Where(x => x.Owner == Main.LocalPlayer).FirstOrDefault();
+		var myZipline = ZiplineHandler.Ziplines.Where(x => x.Owner == Main.LocalPlayer).FirstOrDefault();
 
 		if (myZipline == default || myZipline.points.Count == 0)
 			return true;
@@ -165,7 +165,7 @@ public class ZiplineGun : ModItem
 		{
 			const int chunkWidth = 16;
 
-			var myZipline = ZiplineHandler.ziplines.Where(x => x.Owner == Main.LocalPlayer).FirstOrDefault();
+			var myZipline = ZiplineHandler.Ziplines.Where(x => x.Owner == Main.LocalPlayer).FirstOrDefault();
 			if (myZipline == default || myZipline.points.Count == 0)
 				return;
 
@@ -245,7 +245,7 @@ public class ZiplineGun : ModItem
 		return false;
 	}
 
-	public override bool AltFunctionUse(Player player) => ZiplineHandler.ziplines.Where(x => x.Owner == player).Any();
+	public override bool AltFunctionUse(Player player) => ZiplineHandler.Ziplines.Where(x => x.Owner == player).Any();
 	public override bool? UseItem(Player player)
 	{
 		if (player.altFunctionUse == 2)

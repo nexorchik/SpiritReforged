@@ -1,5 +1,7 @@
 ﻿using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Multiplayer;
+using SpiritReforged.Content.Forest.Botanist.Tiles;
+using SpiritReforged.Content.Jungle.Bamboo.Tiles;
 using System.IO;
 using Terraria.DataStructures;
 using Terraria.ModLoader.IO;
@@ -15,7 +17,6 @@ public abstract class SingleSlotEntity : ModTileEntity
 	/// <returns> Whether an interaction has occured. </returns>
 	public virtual bool OnInteract(Player player)
 	{
-		var lastItem = item;
 		bool success = CanAddItem(player.HeldItem);
 
 		if (!item.IsAir)
@@ -42,11 +43,20 @@ public abstract class SingleSlotEntity : ModTileEntity
 			player.releaseUseItem = false;
 			player.mouseInterface = true;
 
-			if (lastItem != item && Main.netMode == NetmodeID.MultiplayerClient)
+			if (Main.netMode == NetmodeID.MultiplayerClient)
 				new SingleSlotData((short)ID, item).Send();
 		}
 
 		return success;
+	}
+
+	/// <summary> Removes <see cref="item"/> and automatically syncs it. </summary>
+	public void RemoveItem()
+	{
+		item.TurnToAir();
+
+		if (Main.netMode != NetmodeID.SinglePlayer)
+			new SingleSlotData((short)ID, item).Send();
 	}
 
 	public virtual bool CanAddItem(Item item) => true;
@@ -116,5 +126,65 @@ internal class SingleSlotData : PacketData
 	{
 		modPacket.Write(_id);
 		ItemIO.Send(_item, modPacket);
+	}
+}
+
+/// <summary> Helper tile to be used in conjunction with <see cref="SingleSlotEntity"/>. </summary>
+public abstract class SingleSlotTile<T> : ModTile where T : SingleSlotEntity
+{
+	/// <summary> The <b>template</b> instance of the associated tile entity. if instanced data is required, use <see cref="Entity"/> instead. </summary>
+	protected SingleSlotEntity entity;
+
+	public int ItemType => (this is IAutoloadTileItem) ? this.AutoItem().type : ItemID.None;
+
+	public override void SetStaticDefaults() => entity = ModContent.GetInstance<T>();
+
+	/// <returns> Whether the multitile at the given position has a tile entity. </returns>
+	public T Entity(int i, int j)
+	{
+		if (Main.tile[i, j].TileType != Type)
+			return null;
+
+		TileExtensions.GetTopLeft(ref i, ref j);
+		int id = ModContent.GetInstance<T>().Find(i, j);
+
+		return (id == -1) ? null : (T)TileEntity.ByID[id];
+	}
+
+	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
+	{
+		if (effectOnly)
+			return;
+
+		if (Entity(i, j) is T slot && !slot.item.IsAir)
+		{
+			fail = true;
+
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				TileExtensions.GetTopLeft(ref i, ref j);
+
+				var pos = new Vector2(i, j).ToWorldCoordinates();
+
+				Item.NewItem(new EntitySource_TileBreak(i, j), pos, slot.item);
+				slot.RemoveItem();
+			}
+		}
+	}
+
+	public override bool RightClick(int i, int j)
+	{
+		if (Entity(i, j) is T entity)
+			entity.OnInteract(Main.LocalPlayer);
+
+		return true;
+	}
+
+	public override void MouseOver(int i, int j)
+	{
+		Player player = Main.LocalPlayer;
+		player.noThrow = 2;
+		player.cursorItemIconEnabled = true;
+		player.cursorItemIconID = (Entity(i, j) is not T entity || entity.item.IsAir) ? ItemType : entity.item.type;
 	}
 }

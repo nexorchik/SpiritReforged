@@ -121,7 +121,6 @@ public class HuntingRifle : ModItem
 			if (projectile.TryGetGlobalProjectile(out HunterGlobalProjectile hunter))
 			{
 				hunter.firedFromHuntingRifle = true;
-				projectile.extraUpdates = Math.Max(projectile.extraUpdates, 3);
 			}
 		});
 

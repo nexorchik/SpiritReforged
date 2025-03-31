@@ -1,0 +1,24 @@
+ModName: Spirit Reforged
+Salvati: Salvati
+Sbubby: Sbubby
+BySalvati: Автор: {$Salvati}
+
+Duststorm: {
+	DisplayName: Колыхающаяся прерия (Тема песчаной бури)
+	Author: Автор: {$Sbubby}
+}
+
+Savanna: {
+	DisplayName: Саванна
+	Author: "{$BySalvati}, {$Sbubby}"
+}
+
+SavannaNight: {
+	DisplayName: Ночь в саванне
+	Author: "{$BySalvati}"
+}
+
+DeepOcean: {
+	DisplayName: Глубокий океан
+	Author: "{$BySalvati}"
+}

@@ -19,6 +19,7 @@ public class MineralSlag : ModItem
 	{
 		ItemID.Sets.ExtractinatorMode[Type] = Type;
 		VariantGlobalItem.AddVariants(Type, [new Point(20, 20), new Point(20, 20), new Point(20, 22), new Point(20, 22), new Point(20, 20)]);
+		Item.ResearchUnlockCount = 25;
 	}
 
 	public override void SetDefaults()
@@ -49,8 +50,6 @@ public class MineralSlag : ModItem
 		choice.Add(new ItemData(ItemID.TungstenOre, Main.rand.Next(3) + 1), .8f);
 		choice.Add(new ItemData(ItemID.GoldOre, Main.rand.Next(3) + 1), .5f);
 		choice.Add(new ItemData(ItemID.PlatinumOre, Main.rand.Next(3) + 1), .5f);
-
-		choice.Add(new ItemData(ItemID.AmberMosquito), .01f);
 
 		resultType = ((ItemData)choice).itemType;
 		resultStack = ((ItemData)choice).stack;

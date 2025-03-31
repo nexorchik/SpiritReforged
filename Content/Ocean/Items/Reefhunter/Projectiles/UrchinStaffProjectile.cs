@@ -1,10 +1,8 @@
-﻿using Mono.Cecil;
-using SpiritReforged.Common.Easing;
+﻿using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.MathHelpers;
 using SpiritReforged.Common.ProjectileCommon;
 using System.IO;
 using Terraria.Audio;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 
@@ -108,6 +106,5 @@ public class UrchinStaffProjectile : ModProjectile
 	}
 
 	public override void SendExtraAI(BinaryWriter writer) => writer.WriteVector2(ShotTrajectory);
-
 	public override void ReceiveExtraAI(BinaryReader reader) => ShotTrajectory = reader.ReadVector2();
 }

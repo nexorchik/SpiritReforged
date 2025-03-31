@@ -1,4 +1,6 @@
-﻿namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Buffs;
+﻿using SpiritReforged.Common.PlayerCommon;
+
+namespace SpiritReforged.Content.Ocean.Items.Reefhunter.Buffs;
 
 public class EmpoweredSwim : ModBuff
 {
@@ -10,14 +12,17 @@ public class EmpoweredSwim : ModBuff
 		player.accFlipper = true;
 
 		if (player.buffTime[buffIndex] > 2)
-			if (player.wet && !Collision.SolidCollision(player.BottomLeft, player.width, 4))
+		{
+			if (player.wet && !Colliding())
 			{
 				player.fullRotationOrigin = player.Size / 2f;
-				player.fullRotation = player.velocity.ToRotation() + MathHelper.PiOver2;
+				player.Rotate(player.velocity.ToRotation() + MathHelper.PiOver2);
 			}
 			else
-				player.fullRotation *= 0.8f;
-		else
-			player.fullRotation = 0f;
+				player.Rotate(player.fullRotation * .8f);
+		}
+
+		//Check standard solid and platform collision
+		bool Colliding() => Collision.SolidCollision(player.BottomLeft, player.width, 4) || Main.tileSolidTop[Framing.GetTileSafely(player.Bottom).TileType];
 	}
 }

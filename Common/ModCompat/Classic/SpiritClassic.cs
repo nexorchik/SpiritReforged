@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Content.Desert.GildedScarab;
+using SpiritReforged.Content.Forest.ArcaneNecklace;
 using SpiritReforged.Content.Ocean.Hydrothermal;
 
 namespace SpiritReforged.Common.ModCompat.Classic;
@@ -47,7 +48,12 @@ internal class SpiritClassic : ModSystem
 			HydrothermalVentPlume.DropPool.Add(sulfur.Type, 3);
 
 		if (ClassicMod.TryFind("Cloudstalk", out ModTile cloudstalk)) //Remove Cloudstalk anchors so it can't grow
-			TileObjectData.GetTileData(cloudstalk.Type, 0).AnchorValidTiles = [];
+		{
+			var data = TileObjectData.GetTileData(cloudstalk.Type, 0);
+
+			if (data is not null)
+				TileObjectData.GetTileData(cloudstalk.Type, 0).AnchorValidTiles = [];
+		}
 
 		static int ClassicItem(ModItem modItem)
 		{
@@ -67,6 +73,9 @@ internal class SpiritClassic : ModSystem
 	{
 		if (ClassicMod.TryFind("Chitin", out ModItem chitin))
 			Recipe.Create(ModContent.ItemType<GildedScarab>()).AddRecipeGroup("GoldBars", 5).AddIngredient(chitin.Type, 8).AddTile(TileID.Anvils).Register();
+
+		if (ClassicMod.TryFind("SeraphimBulwark", out ModItem bulwark) && ClassicMod.TryFind("ManaShield", out ModItem manaShield) && ClassicMod.TryFind("SoulShred", out ModItem soul))
+			Recipe.Create(bulwark.Type).AddIngredient(ModContent.ItemType<ArcaneNecklacePlatinum>()).AddIngredient(manaShield.Type).AddIngredient(soul.Type, 5).AddTile(TileID.TinkerersWorkbench).Register();
 	}
 
 	public override void PostAddRecipes()
@@ -96,7 +105,7 @@ internal class SpiritClassic : ModSystem
 		SpiritReforgedMod.Instance.Logger.Info(modLog.Remove(modLog.Length - 2, 2));
 	}
 
-	/// <summary> Modifies recipes added by Classic if the result isn't contained in <see cref="ClassicToReforged"/>. </summary>
+	/// <summary> Modifies recipes added by Classic if the result isn't contained in <see cref="ClassicToReforged"/> but ingredients are. </summary>
 	private static bool ModifyRecipe(Recipe recipe, out bool modified)
 	{
 		modified = false;
@@ -122,17 +131,6 @@ internal class SpiritClassic : ModSystem
 		return true;
 	}
 
-	/*public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight) //PreAddContent handles this more accurately
-	{
-		int memorial = tasks.FindIndex(x => x.Name == "A Hero's Memorial");
-		if (memorial != -1)
-			tasks[memorial].Disable();
-
-		int stargrass = tasks.FindIndex(x => x.Name == "Stargrass Micropass");
-		if (stargrass != -1)
-			tasks[stargrass].Disable();
-	}*/
-
 	public override void PostWorldGen()
 	{
 		foreach (var c in Main.chest)
@@ -154,6 +152,13 @@ internal class SpiritClassic : ModSystem
 			if (!item.IsAir && ClassicToReforged.TryGetValue(item.type, out int reforgedType))
 				item.ChangeItemType(reforgedType);
 		}
+	}
+
+	/// <summary> Manually adds a ModItem replacement entry to <see cref="ClassicToReforged"/>, if loaded. </summary>
+	public static void AddReplacement(string classicName, int reforgedType)
+	{
+		if (Enabled && ClassicMod.TryFind(classicName, out ModItem item))
+			ClassicToReforged.Add(item.Type, reforgedType);
 	}
 }
 

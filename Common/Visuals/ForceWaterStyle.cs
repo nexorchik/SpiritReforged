@@ -6,7 +6,6 @@ namespace SpiritReforged.Common.Visuals;
 [Autoload(Side = ModSide.Client)]
 internal class WaterStyleSystem : ModSystem
 {
-	//private static int DeepOceanWaterStyle;
 	private static readonly HashSet<ModBackgroundStyle> Overrides = [];
 	private static readonly Dictionary<int, int> StyleSets = []; //background, water
 
@@ -21,19 +20,19 @@ internal class WaterStyleSystem : ModSystem
 		if (Main.dedServ)
 			return;
 
-		foreach (var scene in ModContent.GetContent<ModSceneEffect>())
+		foreach (var scene in Mod.GetContent<ModSceneEffect>()) //Patch transitions for our water styles
 		{
-			if (scene.SurfaceBackgroundStyle != null && scene.WaterStyle != null)
-				StyleSets.Add(scene.SurfaceBackgroundStyle.Slot, scene.WaterStyle.Slot);
+			if (scene.SurfaceBackgroundStyle == null || scene.WaterStyle == null)
+				continue; //Checks duplicate since not all mods set a surface background style
+
+			StyleSets.TryAdd(scene.SurfaceBackgroundStyle.Slot, scene.WaterStyle.Slot);
 		}
 
-		foreach (var style in SpiritReforgedMod.Instance.GetContent<ModBackgroundStyle>())
+		foreach (var style in Mod.GetContent<ModBackgroundStyle>())
 		{
 			if (style is IWaterStyle)
 				Overrides.Add(style);
 		}
-
-		//DeepOceanWaterStyle = ModContent.GetInstance<DeepOceanBackgroundStyle>().Slot;
 	}
 
 	private static void SetWaterStyleDefault(ILContext il)
@@ -52,9 +51,6 @@ internal class WaterStyleSystem : ModSystem
 	/// <returns> The replacement water style. </returns>
 	private static int Modify(int style)
 	{
-		//if (Main.bgStyle == DeepOceanWaterStyle)
-		//	return DeepOceanBackgroundStyle.ChooseWaterStyle();
-
 		foreach (var set in StyleSets)
 		{
 			if (Main.bgStyle == set.Key)

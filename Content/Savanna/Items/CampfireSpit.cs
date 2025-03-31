@@ -1,4 +1,3 @@
-using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Vanilla.Food;
@@ -38,7 +37,6 @@ public class CampfireSpit : ModItem
 		Item.useStyle = ItemUseStyleID.Swing;
 		Item.useTurn = true;
 		Item.autoReuse = true;
-		Item.consumable = true;
 		Item.value = Item.sellPrice(copper: 4);
 		Item.UseSound = SoundID.Dig;
 	}
@@ -70,6 +68,9 @@ public class CampfireSpit : ModItem
 
 				if (Main.netMode == NetmodeID.MultiplayerClient)
 					NetMessage.SendData(MessageID.TileEntityPlacement, number: i, number2: j, number3: type);
+
+				if (--Item.stack <= 0)
+					Item.TurnToAir(); //Consume
 
 				return true;
 			}
@@ -192,26 +193,33 @@ public class RoastGlobalTile : GlobalTile
 
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (!effectOnly && !Main.dedServ && Entity(i, j) is CampfireSlot slot)
+		if (effectOnly)
+			return;
+
+		if (Entity(i, j) is CampfireSlot slot)
 		{
 			fail = true;
-			TileExtensions.GetTopLeft(ref i, ref j);
 
-			var pos = new Vector2(i, j).ToWorldCoordinates() + new Vector2(16);
-			ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), ModContent.ItemType<CampfireSpit>(), pos);
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				TileExtensions.GetTopLeft(ref i, ref j);
 
-			if (!slot.item.IsAir)
-				ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), slot.item, pos);
+				var pos = new Vector2(i, j).ToWorldCoordinates() + new Vector2(16);
+				Item.NewItem(new EntitySource_TileBreak(i, j), pos, ModContent.ItemType<CampfireSpit>());
 
-			slot.Kill(i, j);
+				if (!slot.item.IsAir)
+					Item.NewItem(new EntitySource_TileBreak(i, j), pos, slot.item);
+
+				slot.Kill(i, j);
+			}
 		}
 	}
 
 	public override bool PreDraw(int i, int j, int type, SpriteBatch spriteBatch)
 	{
-		if (TileObjectData.IsTopLeft(i, j) && Entity(i, j) is CampfireSlot slot)
+		if (TileID.Sets.Campfire[type] && TileObjectData.IsTopLeft(i, j) && Entity(i, j) is CampfireSlot slot)
 		{
-			var position = new Vector2(i, j) * 16 + new Vector2(Main.offScreenRange) - Main.screenPosition - new Vector2(0, 16);
+			var position = new Vector2(i, j) * 16 - Main.screenPosition - new Vector2(0, 16) + TileExtensions.TileOffset;
 			spriteBatch.Draw(TileTexture.Value, position, Lighting.GetColor(i + 1, j + 1));
 
 			if (!slot.item.IsAir)

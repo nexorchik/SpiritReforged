@@ -63,4 +63,16 @@ internal static class StructureTools
 		QuickConversion.SimpleConvert(conditions, biome, biome != QuickConversion.BiomeType.Purity);
 		return true;
 	}
+
+	internal static void ClearActuators(short x, short y, short width, short height)
+	{
+		for (int i = x; i <= x + width; ++i)
+		{
+			for (int j = y; j <= y + height; j++)
+			{
+				Tile tile = Main.tile[i, j];
+				tile.HasActuator = false;
+			}
+		}
+	}
 }

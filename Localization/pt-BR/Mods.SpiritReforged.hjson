@@ -1,0 +1,41 @@
+Biomes: {
+	SavannaBiome: {
+		DisplayName: Savana
+		TownNPCDialogueName: a Savana
+	}
+}
+
+SlotContexts.Backpack: Mochila
+Conditions.InSavanna: Na Savana
+
+Misc: {
+	Pins: {
+		Move: Mover Alfinete
+		Obtained: Você já possui este alfinete
+		UseItem: Clique direito para adicionar este alfinete à sua coleção
+	}
+
+	NoStock: Fora de estoque
+	GraveText: <wavy>O texto é antigo e desbotado; você não consegue distinguir o que está escrito.
+	MenuButton: Usar estilo de menu
+}
+
+DamageSources: {
+	Impaling: {
+		0: "{0} foi empalado."
+		1: "{0} foi espetado."
+	}
+}
+
+GameTips: {
+	ReforgedTip0: Sempre leve comida consigo. Você nunca sabe quando pode ser útil!
+	ReforgedTip1: Raramente, sabe-se que borboletas se escondem em bosques subterrâneos.
+	ReforgedTip2: Alfinetes são úteis! Verifique seu inventário de alfinetes no canto inferior esquerdo do mapa.
+	ReforgedTip3: Animais da savana não podem ser capturados com redes de insetos.
+	ReforgedTip4: Mochilas. Agora você tem mais espaço.
+	ReforgedTip5: O vazio profundo do oceano oferece muitos benefícios.
+	ReforgedTip6: A grama estelar oferece um bom alívio na escuridão da noite.
+	ReforgedTip7: Talos Nuvem sempre crescem sob nuvens.
+	ReforgedTip8: O topo das árvores de acácia pode ser usado como apoio se você precisar de altura.
+	ReforgedTip9: Itens flutuam aleatoriamente no oceano; verifique de vez em quando!
+}

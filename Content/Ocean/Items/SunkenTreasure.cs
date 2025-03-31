@@ -14,6 +14,8 @@ public class SunkenTreasure : FloatingItem
 	public override float Weight => base.Weight * 0.9f;
 	public override float Bouyancy => base.Bouyancy * 1.08f;
 
+	public override void SetStaticDefaults() => Item.ResearchUnlockCount = 10;
+
 	public override void SetDefaults()
 	{
 		Item.width = Item.height = 16;
@@ -190,7 +192,7 @@ public class SunkenTreasureTilePlaced : SunkenTreasureTile
 
 		DustType = DustID.Sand;
 		AddMapEntry(new Color(133, 106, 56), Language.GetText("Mods.SpiritReforged.Tiles.SunkenTreasureTilePlaced.MapEntry"));
-		SolidBottomTile.TileTypes.Add(Type);
+		//SolidBottomTile.TileTypes.Add(Type);
 	}
 
 	public override void MouseOver(int i, int j) { }

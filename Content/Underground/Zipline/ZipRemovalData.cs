@@ -25,12 +25,12 @@ internal class ZipRemovalData : PacketData
 	/// <summary> Removes all ziplines owned by <paramref name="playerIndex"/>. </summary>
 	public static void RemoveZiplines(short playerIndex)
 	{
-		foreach (var zipline in ZiplineHandler.ziplines)
+		foreach (var zipline in ZiplineHandler.Ziplines)
 		{
 			if (zipline.Owner.whoAmI == playerIndex)
 			{
 				FX(zipline);
-				ZiplineHandler.ziplines.Remove(zipline);
+				ZiplineHandler.Ziplines.Remove(zipline);
 			}
 		}
 

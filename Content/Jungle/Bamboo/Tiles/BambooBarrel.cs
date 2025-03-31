@@ -1,16 +1,14 @@
+using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
-using SpiritReforged.Content.Jungle.Bamboo.Items;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Jungle.Bamboo.Tiles;
 
 public class BambooBarrel : ChestTile
 {
-	public override void AddItemRecipes(ModItem item) => item.CreateRecipe()
-		.AddIngredient<StrippedBamboo>(9)
-		.AddRecipeGroup(RecipeGroupID.IronBar)
-		.AddTile(TileID.Sawmill)
-		.Register();
+	public override void AddItemRecipes(ModItem item) => item.CreateRecipe().AddIngredient(ItemMethods.AutoItemType<StrippedBamboo>(), 9)
+		.AddRecipeGroup(RecipeGroupID.IronBar).AddTile(TileID.Sawmill).Register();
 
 	public override void StaticDefaults()
 	{
@@ -47,9 +45,7 @@ public class BambooBarrel : ChestTile
 		var tile = Framing.GetTileSafely(i, j);
 		var texture = TextureAssets.Tile[Type].Value;
 		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, tile.TileFrameY % 36 > 0 ? 18 : 16);
-
-		var offset = Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1 ? Vector2.Zero : Vector2.One * 12;
-		var drawPos = (new Vector2(i, j) + offset) * 16 - Main.screenPosition;
+		var drawPos = new Vector2(i, j) * 16 - Main.screenPosition + TileExtensions.TileOffset;
 
 		spriteBatch.Draw(texture, drawPos, source, Lighting.GetColor(i, j), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 

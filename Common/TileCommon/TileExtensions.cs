@@ -26,8 +26,7 @@ public static class TileExtensions
 		int width = 16;
 		int height = 16;
 		var location = new Vector2(i * 16, j * 16);
-		Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
-		Vector2 offsets = -Main.screenPosition + zero + positionOffset;
+		Vector2 offsets = -Main.screenPosition + TileOffset + positionOffset;
 		Vector2 drawLoc = location + offsets;
 
 		if (tile.Slope == 0 && !tile.IsHalfBlock || Main.tileSolid[tile.TileType] && Main.tileSolidTop[tile.TileType]) //second one should be for platforms
@@ -103,6 +102,7 @@ public static class TileExtensions
 	{
 		var tile = Framing.GetTileSafely(i, j);
 		var data = TileObjectData.GetTileData(tile);
+
 		if (data is null)
 			return;
 

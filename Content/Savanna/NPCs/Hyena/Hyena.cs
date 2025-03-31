@@ -80,7 +80,7 @@ public class Hyena : ModNPC
 		dealDamage = false;
 
 		int searchDist = (focus is TargetSearchFlag.All) ? 350 : 450;
-		var search = NPC.FindTarget(focus, WithinDistanceAndVisible(NPC.Center, searchDist), AdvancedTargetingHelper.NPCsByDistanceAndType(NPC, searchDist));
+		var search = NPC.FindTarget(focus, WithinDistanceAndVisible(NPC.Center, searchDist), NPCsByDistanceAndType(NPC, searchDist));
 		bool wounded = NPC.life < NPC.lifeMax * .25f;
 
 		bool swimming = TrySwim();
@@ -361,8 +361,19 @@ public class Hyena : ModNPC
 		}
 	}
 
+	public override bool CanBeHitByNPC(NPC attacker) => attacker.friendly && dealDamage || attacker.IsTarget();
+	public override bool? CanBeHitByItem(Player player, Item item) => (player.dontHurtCritters && !dealDamage) ? false : null;
+	public override bool? CanBeHitByProjectile(Projectile projectile)
+	{
+		if (projectile.npcProj || projectile.owner == 255)
+			return projectile.friendly && dealDamage;
+
+		var p = Main.player[projectile.owner];
+		return (p.dontHurtCritters && !dealDamage) ? false : null;
+	}
+
 	public override bool CanHitPlayer(Player target, ref int cooldownSlot) => dealDamage;
-	public override bool CanHitNPC(NPC target) => dealDamage;
+	public override bool CanHitNPC(NPC target) => (target.IsTarget() || target.friendly) && dealDamage;
 
 	public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
 	{
@@ -401,7 +412,7 @@ public class Hyena : ModNPC
 		const int aggroRange = 16 * 25;
 		const int searchDist = 400;
 
-		var search = NPC.FindTarget(playerFilter: SearchFilters.OnlyPlayersInCertainDistance(NPC.Center, searchDist), npcFilter: AdvancedTargetingHelper.NPCsByDistanceAndType(NPC, searchDist));
+		var search = NPC.FindTarget(playerFilter: SearchFilters.OnlyPlayersInCertainDistance(NPC.Center, searchDist), npcFilter: NPCsByDistanceAndType(NPC, 500));
 		TargetSearchFlag flag;
 
 		if (search.NearestTargetType == TargetType.NPC)
@@ -420,6 +431,12 @@ public class Hyena : ModNPC
 			}
 		}
 	}
+
+	/// <summary> Modified <see cref="AdvancedTargetingHelper.NPCsByDistanceAndType"/> to include friendly NPCs. </summary>
+	private static SearchFilter<NPC> NPCsByDistanceAndType(NPC thisNPC, int distance) => delegate (NPC target)
+	{
+		return target.Distance(thisNPC.Center) <= distance && (target.friendly || AdvancedTargetingHelper.TargetLookup.TryGetValue(ModContent.NPCType<Hyena>(), out int[] targets) && targets.Contains(target.type));
+	};
 
 	public override void FindFrame(int frameHeight)
 	{
@@ -458,6 +475,9 @@ public class Hyena : ModNPC
 
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
+		if (spawnInfo.Invasion)
+			return 0;
+
 		int x = spawnInfo.SpawnTileX;
 		int y = spawnInfo.SpawnTileY;
 		int wall = Framing.GetTileSafely(x, y).WallType;

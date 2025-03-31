@@ -74,6 +74,8 @@ public class SavannaGrass : GrassTile, IConvertibleTile
 		}
 	}
 
+	public override bool CanReplace(int i, int j, int tileTypeBeingPlaced) => tileTypeBeingPlaced != Mod.Find<ModItem>("SavannaDirtItem").Type;
+
 	public bool Convert(IEntitySource source, ConversionType type, int i, int j)
 	{
 		var tile = Main.tile[i, j];
