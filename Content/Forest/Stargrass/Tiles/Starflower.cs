@@ -70,7 +70,7 @@ public class Starflower : ModTile, ISwayTile
 		var source = new Rectangle(t.TileFrameX, t.TileFrameY, data.CoordinateWidth, heights);
 
 		spriteBatch.Draw(texture, drawPos + offset, source, color, rotation, origin, 1, SpriteEffects.None, 0);
-		spriteBatch.Draw(GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value, drawPos + offset, source, Color.White, rotation, origin, 1, SpriteEffects.None, 0);
+		spriteBatch.Draw(GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value, drawPos + offset, source, TileExtensions.GetTint(i, j, Color.White), rotation, origin, 1, SpriteEffects.None, 0);
 	}
 
 	public float Physics(Point16 topLeft)

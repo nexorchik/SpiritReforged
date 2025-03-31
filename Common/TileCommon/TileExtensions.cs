@@ -6,8 +6,8 @@ namespace SpiritReforged.Common.TileCommon;
 public static class TileExtensions
 {
 	/// <summary> Gets common visual info related to the tile at the given coordinates, such as painted color. </summary>
-	/// <param name="i"> The x coordinate. </param>
-	/// <param name="j"> The y coordinate.</param>
+	/// <param name="i"> The X coordinate. </param>
+	/// <param name="j"> The Y coordinate.</param>
 	/// <param name="color"> The color of the tile affected by coatings. </param>
 	/// <param name="texture"> The default tile texture, painted. </param>
 	/// <returns> Whether the tile should be drawn based on <see cref="TileDrawing.IsVisible"/>. </returns>
@@ -27,6 +27,29 @@ public static class TileExtensions
 		}
 
 		return true;
+	}
+
+	/// <summary> Gets a tint based on the paint type at the given coordinates.<br/>
+	/// Useful for coloring non-default tile textures, like glowmasks. Otherwise, <see cref="GetVisualInfo"/> should be used. </summary>
+	/// <param name="i"> The X coordinate. </param>
+	/// <param name="j"> The Y coordinate.</param>
+	/// <param name="color"> The color to tint. </param>
+	public static Color GetTint(int i, int j, Color color)
+	{
+		var t = Main.tile[i, j];
+		int type = Main.tile[i, j].TileColor;
+		var paint = WorldGen.paintColor(type);
+
+		if (t.IsTileFullbright)
+			color = Color.White;
+		else if (type is >= 13 and <= 24) //Deep paints
+			color = GetIntensity(1f);
+		else
+			color = GetIntensity(0.5f);
+
+		return color;
+
+		Color GetIntensity(float value) => color.MultiplyRGB(Color.Lerp(Color.White, paint, value));
 	}
 
 	public static Vector2 TileOffset => Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
