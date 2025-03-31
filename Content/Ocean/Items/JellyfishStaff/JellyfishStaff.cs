@@ -30,6 +30,7 @@ public class JellyfishStaff : ModItem
 		Item.noMelee = true;
 		Item.shoot = ModContent.ProjectileType<JellyfishMinion>();
 		Item.UseSound = SoundID.Item44;
+		Item.autoReuse = true;
 	}
 
 	public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback) => position = Main.MouseWorld;

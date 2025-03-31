@@ -28,6 +28,7 @@ public class ToucaneItem : ModItem
 		Item.noMelee = true;
 		Item.shoot = ModContent.ProjectileType<ToucanMinion>();
 		Item.UseSound = SoundID.Item44;
+		Item.autoReuse = true;
 	}
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
