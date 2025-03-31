@@ -84,13 +84,14 @@ public class BlunderbussTile : ModTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		var tile = Framing.GetTileSafely(i, j);
-		var texture = TextureAssets.Tile[tile.TileType].Value;
+		if (!TileExtensions.GetVisualInfo(i, j, out var color, out var texture))
+			return false;
 
-		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 18);
+		var t = Main.tile[i, j];
+		var source = new Rectangle(t.TileFrameX, t.TileFrameY, 16, 18);
 		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(0, 2);
 
-		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+		spriteBatch.Draw(texture, position, source, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
 		return false;
 	}

@@ -85,13 +85,16 @@ public class Scarecrow : ModTile, IAutoloadTileItem, ISwayTile
 
 	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
-		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
+		if (!TileExtensions.GetVisualInfo(i, j, out var color, out var texture))
+			return;
+
+		var t = Main.tile[i, j];
+		var data = TileObjectData.GetTileData(t);
 		var dataOffset = new Vector2(data.DrawXOffset - 15, data.DrawYOffset);
 		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + dataOffset;
-		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, data.CoordinateHeights[tile.TileFrameY / 18]);
+		var source = new Rectangle(t.TileFrameX, t.TileFrameY, data.CoordinateWidth, data.CoordinateHeights[t.TileFrameY / 18]);
 
-		spriteBatch.Draw(TextureAssets.Tile[Type].Value, drawPos + offset, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0f);
+		spriteBatch.Draw(texture, drawPos + offset, source, color, rotation, origin, 1, SpriteEffects.None, 0f);
 	}
 
 	public float Physics(Point16 topLeft)

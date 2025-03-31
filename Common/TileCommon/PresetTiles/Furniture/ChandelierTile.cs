@@ -75,16 +75,18 @@ public abstract class ChandelierTile : FurnitureTile, ISwayTile
 
 	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
-		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
+		if (!TileExtensions.GetVisualInfo(i, j, out var color, out var texture))
+			return;
 
-		int height = data.CoordinateHeights[tile.TileFrameY / data.CoordinateFullHeight];
-		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, height);
+		var t = Main.tile[i, j];
+		var data = TileObjectData.GetTileData(t);
+
+		int height = data.CoordinateHeights[t.TileFrameY / data.CoordinateFullHeight];
+		var source = new Rectangle(t.TileFrameX, t.TileFrameY, 16, height);
 		var position = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + offset;
 
 		//Draw normally
-		spriteBatch.Draw(TextureAssets.Tile[Type].Value, position, source, 
-			Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+		spriteBatch.Draw(texture, position, source, color, rotation, origin, 1, SpriteEffects.None, 0);
 
 		var glowTexture = GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value;
 
