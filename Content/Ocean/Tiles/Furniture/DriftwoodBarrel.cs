@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 
 namespace SpiritReforged.Content.Ocean.Tiles.Furniture;
@@ -22,9 +23,7 @@ public class DriftwoodBarrel : ChestTile
 		var tile = Framing.GetTileSafely(i, j);
 		var texture = TextureAssets.Tile[Type].Value;
 		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY % 36, 16, tile.TileFrameY > 0 ? 18 : 16);
-
-		var offset = Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1 ? Vector2.Zero : Vector2.One * 12;
-		var drawPos = (new Vector2(i, j) + offset) * 16 - Main.screenPosition;
+		var drawPos = new Vector2(i, j) * 16 - Main.screenPosition + TileExtensions.TileOffset;
 
 		spriteBatch.Draw(texture, drawPos, source, Lighting.GetColor(i, j), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 

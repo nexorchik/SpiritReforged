@@ -1,0 +1,1330 @@
+CommonTooltips: {
+	Backpack:
+		'''
+		可容纳4个物品
+		取下背包前需要清空背包
+		'''
+	Shimmerable: "{0} 在微光中转化"
+}
+
+Kelp: {
+	DisplayName: 海带
+	Tooltip: 必须放置在水中
+}
+
+PirateChestItem: {
+	DisplayName: 海盗箱
+	Tooltip: ""
+}
+
+PirateKey: {
+	DisplayName: 秘密钥匙
+	Tooltip: “海盗一定把财宝藏在了某处……”
+}
+
+RawFish: {
+	DisplayName: 生鱼
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		“能吃……但你确定不先料理一下？”
+		'''
+}
+
+SunkenTreasure: {
+	DisplayName: 沉没的宝藏
+	Tooltip:
+		'''
+		右键打开
+		“或许它仍然充满了宝贵的财富”
+		'''
+}
+
+DriftwoodItem: {
+	DisplayName: 浮木
+	Tooltip: ""
+}
+
+MusselItem: {
+	DisplayName: 贻贝
+	Tooltip: ""
+}
+
+CrinoidItem: {
+	DisplayName: 海百合
+	Tooltip: ""
+}
+
+PelicanItem: {
+	DisplayName: 鹈鹕
+	Tooltip: ""
+}
+
+SandPiperItem: {
+	DisplayName: 矶鹬
+	Tooltip: ""
+}
+
+TinyCrabItem: {
+	DisplayName: 苍色蟹
+	Tooltip: ""
+}
+
+TubewormItem: {
+	DisplayName: 管虫
+	Tooltip: ""
+}
+
+CascadeChestplate: {
+	DisplayName: 珊瑚猎人胸甲
+	Tooltip: 50%击退抗性
+}
+
+CascadeHelmet: {
+	DisplayName: 珊瑚猎人头盔
+	Tooltip: 使你获得水下呼吸能力
+}
+
+CascadeLeggings: {
+	DisplayName: 珊瑚猎人护胫
+	Tooltip: 在水中时增加15%移动速度
+}
+
+JellyfishStaff: {
+	DisplayName: 水母法杖
+	Tooltip: 召唤一只小水母为你而战！
+}
+
+Lifesaver: {
+	DisplayName: 救生圈
+	Tooltip:
+		'''
+		召唤可骑行的蝠鲼坐骑
+		蝠鲼不能在陆地上移动，但可以漂浮在液体上
+		'''
+}
+
+ClawCannon: {
+	DisplayName: 爪炮
+	Tooltip: ""
+}
+
+IridescentScale: {
+	DisplayName: 虹彩鳞片
+	Tooltip: “在水下闪闪发光”
+}
+
+OceanPendant: {
+	DisplayName: 美人鱼的宝藏
+	Tooltip: 大幅度强化水下行动能力
+}
+
+ReefSpear: {
+	DisplayName: 珊瑚三叉戟
+	Tooltip: 右键投掷三叉戟，增加主攻击造成的伤害
+}
+
+SkullSentry: {
+	DisplayName: 食人颅骨
+	Tooltip: 召唤一个被食人虫感染的颅骨，食人虫会向附近的敌人发射红色粘液
+}
+
+UrchinStaff: {
+	DisplayName: 海胆抛射者
+	Tooltip: ""
+}
+
+GarInAJar: {
+	Tooltip: ""
+	DisplayName: 罐中雀鳝
+}
+
+GarItem: {
+	DisplayName: 雀鳝
+	Tooltip: ""
+}
+
+SavannaDirtItem: {
+	DisplayName: 粗泥
+	Tooltip: ""
+}
+
+GoldGarItem: {
+	DisplayName: 金雀鳝
+	Tooltip: ""
+}
+
+Sushi: {
+	DisplayName: 寿司
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		使你获得水下呼吸能力
+		“口感冰冷而新鲜！”
+		'''
+}
+
+Nigiri: {
+	DisplayName: 生鱼片寿司
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		使你在水中行动不受阻碍
+		“切的恰到好处”
+		'''
+}
+
+HoneySalmon: {
+	DisplayName: 蜜裹三文鱼
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		“甜味与咸味都恰到好处！”
+		'''
+}
+
+FishChips: {
+	DisplayName: 炸鱼薯条
+	Tooltip: "{$BuffDescription.WellFed}"
+}
+
+CrystalFish: {
+	DisplayName: 晶化三文鱼
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed2}
+		强化魔法能力
+		'''
+}
+
+RawMeat: {
+	DisplayName: 生肉
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		 “能吃……但你确定不先料理一下？”
+		'''
+}
+
+CookedMeat: {
+	DisplayName: 熟肉
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		“焙至完美”
+		'''
+}
+
+GoldenCaviar: {
+	DisplayName: 黄金鱼子酱
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed3}
+		“有着精致的光泽”
+		'''
+}
+
+GarBannerItem.DisplayName: 雀鳝旗
+
+CoconutMilk: {
+	DisplayName: 椰汁
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		“不需要杯子！”
+		'''
+}
+
+DiverBody: {
+	DisplayName: 远古潜渊者胸甲
+	Tooltip: ""
+}
+
+DiverHead: {
+	DisplayName: 远古潜渊者头盔
+	Tooltip: ""
+}
+
+DiverLegs: {
+	DisplayName: 远古潜渊者裤
+	Tooltip: ""
+}
+
+SailorCap: {
+	DisplayName: 船长帽
+	Tooltip: “请上船！”
+}
+
+StrippedBambooItem: {
+	DisplayName: 条纹竹
+	Tooltip: ""
+}
+
+BambooBarrelItem: {
+	DisplayName: 条纹竹桶
+	Tooltip: ""
+}
+
+BambooBenchItem: {
+	DisplayName: 条纹竹长凳
+	Tooltip: ""
+}
+
+BambooBirdCageItem: {
+	DisplayName: 条纹竹鸟笼
+	Tooltip: 右键可将一些鸟锁在里面
+}
+
+BambooPikeItem: {
+	DisplayName: 条纹竹刺
+	Tooltip: ""
+}
+
+BambooPotItem: {
+	DisplayName: 条纹竹罐
+	Tooltip: ""
+}
+
+SteamedMussels: {
+	DisplayName: 蒸贻贝
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		“清新宜人”
+		'''
+}
+
+JellyCandle: {
+	DisplayName: 水母蜡烛
+	Tooltip: 召唤漂浮水母跟着你
+}
+
+SmallDriftwoodItem: {
+	DisplayName: 小型浮木
+	Tooltip: “美观”
+}
+
+MediumDriftwoodItem: {
+	DisplayName: 中型浮木
+	Tooltip: “美观”
+}
+
+LargeDriftwoodItem: {
+	DisplayName: 大型浮木
+	Tooltip: “美观”
+}
+
+DriftwoodChestplate: {
+	DisplayName: 浮木胸甲
+	Tooltip: ""
+}
+
+DriftwoodHelmet: {
+	DisplayName: 浮木头盔
+	Tooltip: ""
+}
+
+DriftwoodLeggings: {
+	DisplayName: 浮木护胫
+	Tooltip: ""
+}
+
+DriftwoodPlatformItem: {
+	DisplayName: 浮木平台
+	Tooltip: ""
+}
+
+DriftwoodSword: {
+	DisplayName: 浮木剑
+	Tooltip: ""
+}
+
+DriftwoodWallItem: {
+	DisplayName: 浮木墙
+	Tooltip: ""
+}
+
+Cloudstalk: {
+	DisplayName: 云茎
+	Tooltip: “通常可在高处找到”
+}
+
+CloudstalkSeed: {
+	DisplayName: 云茎种子
+	Tooltip: ""
+}
+
+DoubleJumpPotion: {
+	DisplayName: 西风药水
+	Tooltip: 使你获得临时的二段跳
+}
+
+FlightPotion: {
+	DisplayName: 翱翔药水
+	Tooltip: 增加25%飞行时间
+}
+
+HangingCloudstalkItem: {
+	DisplayName: 吊挂云茎
+	Tooltip: ""
+}
+
+FloatingDriftwood: {
+	DisplayName: 漂浮浮木
+	Tooltip: ""
+}
+
+FishCrate: {
+	DisplayName: 包装宝匣
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+Ambergris: {
+	DisplayName: 龙涎香
+	Tooltip:
+		'''
+		非常有价值
+		“你不会想知道这是从哪来的”
+		'''
+}
+
+MessageBottle: {
+	DisplayName: 瓶中信
+	Tooltip:
+		'''
+		召唤木筏坐骑
+		在木筏上时增加渔力
+		'''
+}
+
+GoldKillifishItem: {
+	DisplayName: 金鳉鱼
+	Tooltip: ""
+}
+
+KillifishItem: {
+	DisplayName: 鳉鱼
+	Tooltip: ""
+}
+
+KillifishBannerItem.DisplayName: 鳉鱼旗
+
+BambooHalberd: {
+	DisplayName: 竹戟
+	Tooltip: ""
+}
+
+BambooKendoBlade: {
+	DisplayName: 竹剑
+	Tooltip: 右键向前冲刺
+}
+
+KoiTotem: {
+	DisplayName: 锦鲤图腾
+	Tooltip:
+		'''
+		佩戴或放置在附近时增加渔力
+		图腾偶尔会吐出用于重复使用的鱼饵
+		'''
+}
+
+FairyWhistle: {
+	DisplayName: 仙灵哨
+	Tooltip: 召唤保护仙灵环绕在你的身边
+}
+
+TermiteItem: {
+	DisplayName: 白蚁
+	Tooltip: ""
+}
+
+StarPowder: {
+	DisplayName: 星之尘
+	Tooltip: 扔在草地上，用星光为草地注能！
+}
+
+TermiteJar: {
+	DisplayName: 白蚁罐
+	Tooltip: “生态噩梦”
+}
+
+ButterflyStaff: {
+	DisplayName: 缥缈幻蝶杖
+	Tooltip:
+		'''
+		召唤魔法幻蝶为你而战
+		“由完美的樱花形成”
+		'''
+}
+
+PoolNoodle: {
+	DisplayName: 游泳浮条
+	Tooltip:
+		'''
+		3点召唤标记伤害
+		{$CommonItemTooltip.Whips}
+		被标记的敌人在受到召唤物的攻击时有几率发生泡沫爆炸
+		'''
+}
+
+ToucaneItem: {
+	DisplayName: 巨嘴鸟手杖
+	Tooltip: 召唤愤怒的巨嘴鸟为你而战
+}
+
+QuenchPotion: {
+	DisplayName: 解渴药水
+	Tooltip: 延长25%其他药水的持续时间
+}
+
+LivingBaobabLeafWallItem: {
+	DisplayName: 活面包树树叶墙
+	Tooltip: ""
+}
+
+LivingBaobabWallItem: {
+	DisplayName: 活面包树墙
+	Tooltip: ""
+}
+
+LivingBaobabLeafWand: {
+	DisplayName: 活面包树树叶魔棒
+	Tooltip: ""
+}
+
+LivingBaobabWand: {
+	DisplayName: 活面包树魔棒
+	Tooltip: ""
+}
+
+WrithingSticks: {
+	DisplayName: 扭形枝
+	Tooltip: 召唤友善的风滚草跟着你
+}
+
+BaobabFruit: {
+	DisplayName: 面包树果实
+	Tooltip: "{$BuffDescription.WellFed}"
+}
+
+SavannaGrassSeeds: {
+	DisplayName: 稀树平原草种
+	Tooltip: ""
+}
+
+LeatherBackpack: {
+	DisplayName: 皮革背包
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		“舒适、实用且时尚”
+		'''
+}
+
+Caryocar: {
+	DisplayName: 巴西栗果酱
+	Tooltip: "{$BuffDescription.WellFed}"
+}
+
+CustardApple: {
+	DisplayName: 南美番荔枝
+	Tooltip: "{$BuffDescription.WellFed}"
+}
+
+BeachUmbrellaItem: {
+	DisplayName: 遮阳伞
+	Tooltip: ""
+}
+
+BigBuoy: {
+	DisplayName: 大浮标
+	Tooltip: "{$ItemTooltip.CoralTorch}"
+}
+
+SmallBuoy: {
+	DisplayName: 小浮标
+	Tooltip: "{$ItemTooltip.CoralTorch}"
+}
+
+LoungeChairItem: {
+	DisplayName: 躺椅
+	Tooltip: ""
+}
+
+Omelette: {
+	DisplayName: 煎蛋
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed2}
+		“煎的正好”
+		'''
+}
+
+OstrichEgg: {
+	DisplayName: 鸵鸟蛋
+	Tooltip: "{$BuffDescription.WellFed}"
+}
+
+DrywoodItem: {
+	DisplayName: 干木
+	Tooltip: ""
+}
+
+DrywoodBow: {
+	DisplayName: 干木弓
+	Tooltip: ""
+}
+
+DrywoodBreastplate: {
+	DisplayName: 干木胸甲
+	Tooltip: ""
+}
+
+DrywoodGreaves: {
+	DisplayName: 干木护胫
+	Tooltip: ""
+}
+
+DrywoodHammer: {
+	DisplayName: 干木锤
+	Tooltip: ""
+}
+
+DrywoodHelmet: {
+	DisplayName: 干木头盔
+	Tooltip: ""
+}
+
+DrywoodSword: {
+	DisplayName: 干木剑
+	Tooltip: ""
+}
+
+HuntingRifle: {
+	DisplayName: 猎枪
+	Tooltip: 对远处的目标和站定不动时造成更多伤害
+}
+
+SafariHat: {
+	DisplayName: 游猎帽
+	Tooltip: ""
+}
+
+SafariShorts: {
+	DisplayName: 游猎短裤
+	Tooltip: ""
+}
+
+SafariVest: {
+	DisplayName: 游猎背心
+	Tooltip: ""
+}
+
+SunStaff: {
+	DisplayName: 日升权杖
+	Tooltip: 将阳光洒在你的面前
+}
+
+SavannaMusicBoxItem: {
+	DisplayName: 音乐盒（稀树平原）
+	Tooltip: ""
+}
+
+DrywoodBathtubItem: {
+	DisplayName: 干木浴缸
+	Tooltip: ""
+}
+
+DrywoodBedItem: {
+	DisplayName: 干木床
+	Tooltip: ""
+}
+
+DrywoodBookcaseItem: {
+	DisplayName: 干木书架
+	Tooltip: ""
+}
+
+DrywoodCandelabraItem: {
+	DisplayName: 干木烛台
+	Tooltip: ""
+}
+
+DrywoodCandleItem: {
+	DisplayName: 干木蜡烛
+	Tooltip: ""
+}
+
+DrywoodChairItem: {
+	DisplayName: 干木椅
+	Tooltip: ""
+}
+
+DrywoodClockItem: {
+	DisplayName: 干木钟
+	Tooltip: ""
+}
+
+DrywoodCouchItem: {
+	DisplayName: 干木沙发
+	Tooltip: ""
+}
+
+DrywoodDresserItem: {
+	DisplayName: 干木梳妆台
+	Tooltip: ""
+}
+
+DrywoodLampItem: {
+	DisplayName: 干木灯
+	Tooltip: ""
+}
+
+DrywoodPianoItem: {
+	DisplayName: 干木钢琴
+	Tooltip: ""
+}
+
+DrywoodSinkItem: {
+	DisplayName: 干木水槽
+	Tooltip: ""
+}
+
+DrywoodTableItem: {
+	DisplayName: 干木桌
+	Tooltip: ""
+}
+
+DrywoodToiletItem: {
+	DisplayName: 干木马桶
+	Tooltip: ""
+}
+
+DrywoodWorkBenchItem: {
+	DisplayName: 干木工作台
+	Tooltip: ""
+}
+
+DrywoodLanternItem: {
+	DisplayName: 干木灯笼
+	Tooltip: ""
+}
+
+DrywoodSofaItem: {
+	DisplayName: 干木沙发
+	Tooltip: ""
+}
+
+DrywoodChestItem: {
+	DisplayName: 干木箱
+	Tooltip: ""
+}
+
+DrywoodDoorItem: {
+	DisplayName: 干木门
+	Tooltip: ""
+}
+
+DriftwoodBarrelItem: {
+	DisplayName: 浮木桶
+	Tooltip: ""
+}
+
+DriftwoodBathtubItem: {
+	DisplayName: 浮木浴缸
+	Tooltip: ""
+}
+
+DriftwoodBedItem: {
+	DisplayName: 浮木床
+	Tooltip: ""
+}
+
+DriftwoodBenchItem: {
+	DisplayName: 浮木长凳
+	Tooltip: ""
+}
+
+DriftwoodBookcaseItem: {
+	DisplayName: 浮木书架
+	Tooltip: ""
+}
+
+DriftwoodCandelabraItem: {
+	DisplayName: 浮木烛台
+	Tooltip: ""
+}
+
+DriftwoodCandleItem: {
+	DisplayName: 浮木蜡烛
+	Tooltip: ""
+}
+
+DriftwoodChairItem: {
+	DisplayName: 浮木椅
+	Tooltip: ""
+}
+
+DriftwoodChandelierItem: {
+	DisplayName: 浮木吊灯
+	Tooltip: ""
+}
+
+DriftwoodClockItem: {
+	DisplayName: 浮木钟
+	Tooltip: ""
+}
+
+DriftwoodDoorItem: {
+	DisplayName: 浮木门
+	Tooltip: ""
+}
+
+DriftwoodDresserItem: {
+	DisplayName: 浮木梳妆台
+	Tooltip: ""
+}
+
+DriftwoodLampItem: {
+	DisplayName: 浮木灯
+	Tooltip: ""
+}
+
+DriftwoodPianoItem: {
+	DisplayName: 浮木钢琴
+	Tooltip: ""
+}
+
+DriftwoodSinkItem: {
+	DisplayName: 浮木水槽
+	Tooltip: ""
+}
+
+DriftwoodTableItem: {
+	DisplayName: 浮木桌
+	Tooltip: ""
+}
+
+DriftwoodToiletItem: {
+	DisplayName: 浮木马桶
+	Tooltip: ""
+}
+
+DriftwoodWorkBenchItem: {
+	DisplayName: 浮木工作台
+	Tooltip: ""
+}
+
+HerosMemorialStatueItem: {
+	DisplayName: 英雄纪念碑
+	Tooltip: 永世长存
+}
+
+DustyFieldsItem: {
+	DisplayName: 扬尘田野
+	Tooltip: "'S. Yaki'"
+}
+
+OrangeSkiesItem: {
+	DisplayName: 橙色天空
+	Tooltip: "'S. Yaki'"
+}
+
+StrongWindsItem: {
+	DisplayName: 强风
+	Tooltip: "'S. Yaki'"
+}
+
+WaningSunItem: {
+	DisplayName: 残阳
+	Tooltip: "'E. Sibellius'"
+}
+
+ScarecrowItem: {
+	DisplayName: 稻草人
+	Tooltip: ""
+}
+
+BotanistBody: {
+	DisplayName: 植物学家围裙
+	Tooltip: ""
+}
+
+BotanistHat: {
+	DisplayName: 向日葵草帽
+	Tooltip: 令你开心
+}
+
+BotanistLegs: {
+	DisplayName: 植物学家慢跑鞋
+	Tooltip: 增加10%移动速度
+}
+
+BeachTowel: {
+	DisplayName: 沙滩浴巾
+	Tooltip: “它能让你保持干燥，但一定不要戴着它跳进水里！”
+}
+
+BikiniBottom: {
+	DisplayName: 比基尼泳裤
+	Tooltip: “当你可以在阳光下自由奔跑时，谁还需要盔甲呢！”
+}
+
+BikiniTop: {
+	DisplayName: 比基尼上衣
+	Tooltip: “不管人们怎么想，它确实不能提供任何形式的防御。”
+}
+
+SwimmingTrunks: {
+	DisplayName: 泳裤
+	Tooltip: “它并没有提供太多的防御，但不可否认的是，它们很时尚。”
+}
+
+TintedGlasses: {
+	DisplayName: 有色眼镜
+	Tooltip: “它们有助于卖相，所以即便是在天黑的时候也最好戴上它们。”
+}
+
+WheatgrassSeedPouch: {
+	DisplayName: 麦草种子袋
+	Tooltip:
+		'''
+		撒下会在草地上长出小麦草的种子
+		“在手中哗啦作响”
+		'''
+}
+
+RoyalKhopesh: {
+	DisplayName: 皇家弯刀
+	Tooltip: ""
+}
+
+SavannaSandstormMusicBoxItem: {
+	Tooltip: ""
+	DisplayName: 音乐盒（沙尘暴）
+}
+
+FishLure: {
+	DisplayName: 鱼饵
+	Tooltip:
+		'''
+		{$ItemTooltip.CoralTorch}
+		吸引鱼群到附近水域
+		'''
+}
+
+DrywoodPlatformItem: {
+	DisplayName: 干木平台
+	Tooltip: ""
+}
+
+SavannaDirtWallItem: {
+	DisplayName: 粗泥墙
+	Tooltip: ""
+}
+
+GravelItem: {
+	DisplayName: 砾石
+	Tooltip: ""
+}
+
+MagmastoneItem: {
+	DisplayName: 熔岩石
+	Tooltip: ""
+}
+
+SavannaCrateHardmode: {
+	DisplayName: 游猎匣
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+SavannaCrate: {
+	DisplayName: 草地匣
+	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+}
+
+MineralSlag: {
+	DisplayName: 矿渣
+	Tooltip: 可以通过提炼机进行拆分
+}
+
+HyenaBannerItem.DisplayName: 鬣狗旗
+OstrichBannerItem.DisplayName: 鸵鸟旗
+
+SavannaCampfireItem: {
+	DisplayName: 稀树平原篝火
+	Tooltip: "{$ItemTooltip.Campfire}"
+}
+
+SavannaFountainItem: {
+	DisplayName: 稀树平原喷泉
+	Tooltip: ""
+}
+
+DrywoodFenceItem: {
+	DisplayName: 干木栅栏
+	Tooltip: ""
+}
+
+DrywoodWallItem: {
+	DisplayName: 干木墙
+	Tooltip: ""
+}
+
+ZiplineGun: {
+	DisplayName: 轨道枪
+	Tooltip:
+		'''
+		在光标位置创建可承载玩家的轨道
+		左键轨道头以移除单个轨道头，右键移除整个轨道
+		“不要与轨道炮混淆”
+		'''
+	AssistantOn: 右键启用辅助
+	AssistantOff: 右键禁用辅助
+}
+
+FrostbiteItem: {
+	DisplayName: 寒霜
+	Tooltip: 在你的前方变出暴雪
+}
+
+RogueCrest: {
+	DisplayName: 盗贼饰章
+	Tooltip:
+		'''
+		召唤一把生锈的剑为你而战
+		剑不会占据召唤栏位
+		偶尔会对敌人造成开放性伤口减益，使其在受到近战或鞭子攻击时流血
+		'''
+}
+
+GildedScarab: {
+	DisplayName: 镀金圣甲虫
+	Tooltip:
+		'''
+		受到攻击时会获得一个短暂的防御增益
+		基于受到的伤害获得更高的防御力加成
+		'''
+}
+
+SparrowItem: {
+	DisplayName: 麻雀
+	Tooltip: ""
+}
+
+Blunderbuss: {
+	DisplayName: 火铳
+	Tooltip: 发射大量子弹
+}
+
+SafekeeperRing: {
+	DisplayName: 保管员戒指
+	Tooltip:
+		'''
+		小幅度增加对亡灵生物的伤害
+		“它散发着诡异的光”
+		'''
+}
+
+PeevedTumblerBannerItem.DisplayName: 恼怒风滚草旗
+
+LeatherHood: {
+	DisplayName: 神射手兜帽
+	Tooltip: 增加5%暴击率
+}
+
+LeatherLegs: {
+	DisplayName: 神射手靴
+	Tooltip: ""
+}
+
+LeatherPlate: {
+	DisplayName: 神射手裤
+	Tooltip: ""
+}
+
+ExplorerTreadsItem: {
+	DisplayName: 探险家的靴子
+	Tooltip:
+		'''
+		每损失10%生命值便会增加5%移动速度
+		50%几率闪避陷阱和危险
+		“让神庙探险变为公园散步”
+		'''
+}
+
+LeatherCloakItem: {
+	DisplayName: 皮革披风
+	Tooltip:
+		'''
+		使你免疫来自沙尘暴的强风减益
+		增加5%移动速度和奔跑15%加速度
+		'''
+}
+
+CactusStaff: {
+	DisplayName: 仙人掌法杖
+	Tooltip: 召唤仙人掌墙来保护你
+}
+
+PearlString: {
+	DisplayName: 珍珠串
+	Tooltip:
+		'''
+		击杀敌人会掉落更多钱币
+		“你觉得很幸运”
+		'''
+}
+
+DrywoodChandelierItem: {
+	DisplayName: 干木吊灯
+	Tooltip: ""
+}
+
+DriftwoodLanternItem: {
+	DisplayName: 浮木灯笼
+	Tooltip: ""
+}
+
+DriftwoodFenceItem: {
+	DisplayName: 浮木栅栏
+	Tooltip: ""
+}
+
+ArcaneNecklaceGold: {
+	DisplayName: 奥术项链
+	Tooltip:
+		'''
+		增加20点最大魔力值
+		击中敌人时有几率掉落魔力星
+		'''
+}
+
+ArcaneNecklacePlatinum: {
+	DisplayName: "{$ArcaneNecklaceGold.DisplayName}"
+	Tooltip: "{$ArcaneNecklaceGold.Tooltip}"
+}
+
+PinBlue: {
+	DisplayName: 蓝色图钉
+	Tooltip: ""
+}
+
+PinGreen: {
+	DisplayName: 绿色图钉
+	Tooltip: ""
+}
+
+PinRed: {
+	DisplayName: 红色图钉
+	Tooltip: ""
+}
+
+PinYellow: {
+	DisplayName: 黄色图钉
+	Tooltip: ""
+}
+
+PinHive: {
+	DisplayName: 蜂巢图钉
+	Tooltip: ""
+}
+
+PinButterfly: {
+	DisplayName: 蝴蝶图钉
+	Tooltip: ""
+}
+
+PinFaeling: {
+	DisplayName: 仙灵图钉
+	Tooltip: ""
+}
+
+PinSavanna: {
+	DisplayName: 稀树平原图钉
+	Tooltip: ""
+}
+
+PinCuriosity: {
+	DisplayName: 好奇图钉
+	Tooltip: ""
+}
+
+PinSky: {
+	DisplayName: 天空图钉
+	Tooltip: ""
+}
+
+PinSword: {
+	DisplayName: 剑图钉
+	Tooltip: ""
+}
+
+TornMapPiece: {
+	DisplayName: 地图残片
+	Tooltip: 揭露周围的地图
+}
+
+FashionableBackpack: {
+	DisplayName: 时尚背包
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		“时尚且现代，但仍然有效”
+		'''
+}
+
+HikingBackpack: {
+	DisplayName: 徒步背包
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		“实用且耐用，最重要的是，舒适”
+		'''
+}
+
+Minipack: {
+	DisplayName: 迷你背包
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		“小巧、轻便且超紧凑”
+		'''
+}
+
+PinkPack: {
+	DisplayName: 粉色背包
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		“最好的颜色，有用，且在一定距离内有着很高的可见性”
+		'''
+}
+
+PouchPack: {
+	DisplayName: 纸袋
+	Tooltip:
+		'''
+		{$CommonTooltips.Backpack}
+		“简单、舒适且容易倒出”
+		'''
+}
+
+DyeCrateItem: {
+	DisplayName: 染料匣
+	Tooltip:
+		'''
+		{$CommonItemTooltip.RightClickToOpen}
+		“闻起来...居然这么好闻！”
+		'''
+}
+
+SavannaNightMusicBoxItem: {
+	DisplayName: 音乐盒（稀树平原 - 夜）
+	Tooltip: ""
+}
+
+SavannaPylonItem: {
+	DisplayName: 稀树平原晶塔
+	Tooltip: "{$CommonItemTooltip.TeleportationPylon}"
+}
+
+CraneFeather: {
+	DisplayName: 鹤羽
+	Tooltip: 增加空中灵活性
+}
+
+TatteredMap: {
+	DisplayName: 破烂地图
+	Tooltip: ""
+}
+
+CrescentMelon: {
+	DisplayName: 新月甜瓜
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		{$ItemTooltip.ManaRegenerationPotion}
+		'''
+}
+
+MidnightApple: {
+	DisplayName: 午夜苹果
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		{$ItemTooltip.ManaRegenerationPotion}
+		“像夜空一样闪闪发光”
+		'''
+}
+
+NightSky: {
+	DisplayName: 夜空
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed2}
+		{$ItemTooltip.ManaRegenerationPotion}
+		“尝起来像宇宙”
+		'''
+}
+
+Pearlberry: {
+	DisplayName: 珍珠莓
+	Tooltip:
+		'''
+		{$BuffDescription.WellFed}
+		{$ItemTooltip.ManaRegenerationPotion}
+		“闪闪发光……”
+		'''
+}
+
+DriftwoodBow: {
+	DisplayName: 浮木弓
+	Tooltip: ""
+}
+
+DriftwoodHammer: {
+	DisplayName: 浮木锤
+	Tooltip: ""
+}
+
+RemedyPotion: {
+	DisplayName: 救济药水
+	Tooltip:
+		'''
+		使你免疫下列效果：
+		[list]
+		'''
+}
+
+CloudstalkBoxItem: {
+	DisplayName: 云茎种植盆
+	Tooltip: ""
+}
+
+OceanSlimeBannerItem.DisplayName: 椰子史莱姆旗
+
+OceanDepthsBoxItem: {
+	DisplayName: 音乐盒（海洋深处）
+	Tooltip: ""
+}
+
+OstrichPants: {
+	DisplayName: 鸵鸟裤
+	Tooltip: “几乎栩栩如生！”
+}
+
+CampfireSpit: {
+	DisplayName: 烤火架
+	Tooltip: 可以放置在篝火上
+}
+
+KillieFishbowl: {
+	DisplayName: 鳉鱼鱼缸
+	Tooltip: “也许下次整个更大的碗？”
+}
+
+SparrowCageItem: {
+	DisplayName: 麻雀笼
+	Tooltip: ""
+}

@@ -51,9 +51,7 @@ public class AcaciaRootsLarge : ModTile, IConvertibleTile
 
 		var frame = new Point(tile.TileFrameX + 18 * FrameOffset.X, tile.TileFrameY + 18 * FrameOffset.Y);
 		var source = new Rectangle(frame.X, frame.Y, 16, 16);
-
-		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
-		var position = new Vector2(i, j) * 16 - Main.screenPosition + zero + new Vector2(0, 2);
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + TileExtensions.TileOffset + new Vector2(0, 2);
 
 		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 		return false;

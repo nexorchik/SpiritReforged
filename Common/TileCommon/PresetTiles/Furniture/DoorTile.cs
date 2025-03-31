@@ -76,9 +76,7 @@ public abstract class DoorTile : FurnitureTile, IDrawPreview
 		var tile = Framing.GetTileSafely(i, j);
 		var texture = TextureAssets.Tile[Type].Value;
 		var source = new Rectangle(18 * 4, tile.TileFrameY, 16, (tile.TileFrameY > 18) ? 18 : 16);
-
-		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
-		var position = new Vector2(i, j) * 16 + zero - Main.screenPosition;
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + TileExtensions.TileOffset;
 
 		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 

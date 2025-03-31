@@ -1,7 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
-using SpiritReforged.Content.Forest.Botanist.Tiles;
 using SpiritReforged.Content.Savanna.NPCs.Sparrow;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -9,23 +8,9 @@ using Terraria.GameContent.ObjectInteractions;
 
 namespace SpiritReforged.Content.Jungle.Bamboo.Tiles;
 
-public class BambooBirdCage : ModTile, IAutoloadTileItem
+public class BambooBirdCage : SingleSlotTile<BambooBirdCageSlot>, IAutoloadTileItem
 {
-	private int ItemType => this.AutoItem().type;
-
 	internal static HashSet<int> BirdTypes;
-
-	/// <returns> Whether the multitile at the given position has a tile entity. </returns>
-	private TileEntity Entity(int i, int j)
-	{
-		if (Main.tile[i, j].TileType != Type)
-			return null;
-
-		TileExtensions.GetTopLeft(ref i, ref j);
-		int id = ModContent.GetInstance<BambooBirdCageSlot>().Find(i, j);
-
-		return (id == -1) ? null : TileEntity.ByID[id];
-	}
 
 	public void SetItemDefaults(ModItem item)
 	{
@@ -35,8 +20,8 @@ public class BambooBirdCage : ModTile, IAutoloadTileItem
 		item.Item.value = 50;
 	}
 
-	public void AddItemRecipes(ModItem item) => item.CreateRecipe().AddIngredient(ItemMethods.AutoItemType<StrippedBamboo>(), 14)
-		.AddTile(TileID.Sawmill).Register();
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+		.AddIngredient(ItemMethods.AutoItemType<StrippedBamboo>(), 14).AddTile(TileID.Sawmill).Register();
 
 	public override void SetStaticDefaults()
 	{
@@ -80,53 +65,6 @@ public class BambooBirdCage : ModTile, IAutoloadTileItem
 
 	public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => true;
 
-	public override void KillMultiTile(int i, int j, int frameX, int frameY)
-	{
-		if (Entity(i, j) is BambooBirdCageSlot slot)
-		{
-			if (!slot.item.IsAir)
-				Item.NewItem(new EntitySource_TileBreak(i, j), new Rectangle(i * 16, j * 16, 16 * 2, 16 * 3), slot.item);
-		}
-	}
-
-	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) //Drop the contained bird, if any
-	{
-		if (effectOnly || Main.netMode == NetmodeID.MultiplayerClient)
-			return;
-
-		if (Entity(i, j) is BambooBirdCageSlot slot && !slot.item.IsAir)
-		{
-			fail = true;
-			TileExtensions.GetTopLeft(ref i, ref j);
-
-			var pos = new Vector2(i, j).ToWorldCoordinates(16, 32);
-
-			Item.NewItem(new EntitySource_TileBreak(i, j), pos, slot.item);
-			slot.RemoveItem();
-		}
-	}
-
-	public override bool RightClick(int i, int j)
-	{
-		if (Entity(i, j) is BambooBirdCageSlot slot)
-			return slot.OnInteract(Main.LocalPlayer);
-
-		return false;
-	}
-
-	public override void MouseOver(int i, int j)
-	{
-		Player player = Main.LocalPlayer;
-
-		if (Entity(i, j) is BambooBirdCageSlot slot && !slot.item.IsAir)
-			player.cursorItemIconID = slot.item.type;
-		else
-			player.cursorItemIconID = ItemType;
-
-		player.noThrow = 2;
-		player.cursorItemIconEnabled = true;
-	}
-
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
 		if (closer && Entity(i, j) is BambooBirdCageSlot slot && !slot.item.IsAir && Main.rand.NextBool(100))
@@ -139,7 +77,7 @@ public class BambooBirdCage : ModTile, IAutoloadTileItem
 		if (TileObjectData.IsTopLeft(i, j) && Entity(i, j) is BambooBirdCageSlot slot && !slot.item.IsAir)
 		{
 			var bird = TextureAssets.Item[slot.item.type];
-			var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(Main.offScreenRange);
+			var position = new Vector2(i, j) * 16 - Main.screenPosition + TileExtensions.TileOffset;
 
 			position += new Vector2(16, tile.TileFrameX >= 18 * 2 ? 42 : 50);
 
