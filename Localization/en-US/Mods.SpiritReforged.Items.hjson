@@ -1351,3 +1351,18 @@ CeramicShard: {
 	DisplayName: Ceramic Shard
 	Tooltip: ""
 }
+
+BoomShroom: {
+	DisplayName: Boom Shroom
+	Tooltip: ""
+}
+
+ClayBomb: {
+	DisplayName: Clay Bomb
+	Tooltip: ""
+}
+
+SandBomb: {
+	DisplayName: Sand Bomb
+	Tooltip: ""
+}

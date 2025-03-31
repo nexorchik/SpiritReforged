@@ -26,3 +26,22 @@ SkullSentrySentry.DisplayName: Череп плотоядки
 ZiplineProj.DisplayName: Канатный снаряд
 FallingBaobabFruit.DisplayName: Падающий плод баобаба
 // RollingCart.DisplayName: Rolling Cart
+// BombBig.DisplayName: Bomb Big
+// Bomb.DisplayName: Bomb
+// BombBouncy.DisplayName: Bomb Bouncy
+// BombDirt.DisplayName: Bomb Dirt
+// BombDirtSticky.DisplayName: Bomb Dirt Sticky
+// BombFish.DisplayName: Bomb Fish
+// BombScarab.DisplayName: Bomb Scarab
+// BombSticky.DisplayName: Bomb Sticky
+// ClayBombProjectile.DisplayName: Clay Bomb Projectile
+// SandBombProjectile.DisplayName: Sand Bomb Projectile
+// BombClay.DisplayName: Bomb Clay
+// BombDry.DisplayName: Bomb Dry
+// BombHoney.DisplayName: Bomb Honey
+// BombLava.DisplayName: Bomb Lava
+// BombSand.DisplayName: Bomb Sand
+// BombWet.DisplayName: Bomb Wet
+// Dynamite.DisplayName: Dynamite
+// DynamiteBouncy.DisplayName: Dynamite Bouncy
+// DynamiteSticky.DisplayName: Dynamite Sticky
