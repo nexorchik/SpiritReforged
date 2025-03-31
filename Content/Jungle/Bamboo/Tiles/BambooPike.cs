@@ -1,5 +1,7 @@
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Jungle.Bamboo.Buffs;
 using Terraria.DataStructures;
+using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Jungle.Bamboo.Tiles;
 
@@ -72,14 +74,15 @@ public class BambooPike : ModTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Tile tile = Framing.GetTileSafely(i, j);
-		Texture2D texture = TextureAssets.Tile[Type].Value;
-		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 16);
+		if (!TileExtensions.GetVisualInfo(i, j, out var color, out var texture))
+			return false;
 
-		Vector2 offset = Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1 ? Vector2.Zero : Vector2.One * 12;
-		Vector2 drawPos = (new Vector2(i, j) + offset) * 16 - Main.screenPosition + new Vector2(tile.TileFrameX / 18 * 2, 2);
+		var t = Main.tile[i, j];
+		var source = new Rectangle(t.TileFrameX, t.TileFrameY, 16, 16);
+		var naturalOffset = new Vector2(t.TileFrameX / 18 * 2, 2);
+		var drawPos = new Vector2(i, j) * 16 - Main.screenPosition + naturalOffset + TileExtensions.TileOffset;
 
-		spriteBatch.Draw(texture, drawPos, source, Lighting.GetColor(i, j), 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
+		spriteBatch.Draw(texture, drawPos, source, color, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
 		return false;
 	}
 }

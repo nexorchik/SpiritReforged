@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.SimpleEntity;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Common.TileCommon.Tree;
@@ -7,6 +8,7 @@ using SpiritReforged.Content.Savanna.DustStorm;
 using SpiritReforged.Content.Savanna.Items.Food;
 using System.Linq;
 using Terraria.DataStructures;
+using Terraria.GameContent.Drawing;
 using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
@@ -92,6 +94,11 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 	public override void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
 	{
+		var t = Main.tile[i, j];
+		if (!TileDrawing.IsVisible(t))
+			return;
+
+		var color = TileExtensions.GetTint(i, j, Lighting.GetColor(i, j));
 		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeExtensions.GetPalmTreeOffset(i, j);
 		float rotation = GetSway(i, j) * .08f;
 
@@ -105,7 +112,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 			
 			DrawShade(position, rotation);
 
-			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(TopTexture.Value, position, source, color, rotation, origin, 1, SpriteEffects.None, 0);
 		}
 		else //Draw branches
 		{
@@ -119,7 +126,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 			position += new Vector2(6 * ((frameX == 0) ? -1 : 1), 8); //Directional offset
 
-			spriteBatch.Draw(BranchTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(BranchTexture.Value, position, source, color, rotation, origin, 1, SpriteEffects.None, 0);
 		}
 	}
 

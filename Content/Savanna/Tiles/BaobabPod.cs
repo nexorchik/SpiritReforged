@@ -4,6 +4,7 @@ using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Savanna.Items.Food;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
@@ -145,16 +146,18 @@ public class BaobabPod : ModTile, ISwayTile
 
 	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
-		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
+		if (!TileExtensions.GetVisualInfo(i, j, out var color, out var texture))
+			return;
 
-		var texture = TextureAssets.Tile[Type].Value;
-		Vector2 position = new Vector2(i, j) * 16 - Main.screenPosition;
-		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, data.CoordinateHeights[tile.TileFrameY / 18]);
+		var t = Main.tile[i, j];
+		var data = TileObjectData.GetTileData(t);
 
-		spriteBatch.Draw(texture, position + origin, source, Lighting.GetColor(i, j), GetRotation(i, j), origin, 1, SpriteEffects.None, 0);
+		var position = new Vector2(i, j) * 16 - Main.screenPosition;
+		var source = new Rectangle(t.TileFrameX, t.TileFrameY, 16, data.CoordinateHeights[t.TileFrameY / 18]);
 
-		if (tile.TileFrameY > 0)
+		spriteBatch.Draw(texture, position + origin, source, color, GetRotation(i, j), origin, 1, SpriteEffects.None, 0);
+
+		if (t.TileFrameY > 0)
 			DrawGrassOverlay(i, j, spriteBatch, offset, rotation, origin);
 
 		//Update hitData
@@ -176,18 +179,19 @@ public class BaobabPod : ModTile, ISwayTile
 		}
 	}
 
-	private void DrawGrassOverlay(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
+	private static void DrawGrassOverlay(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
-		var tile = Framing.GetTileSafely(i, j);
+		if (!TileExtensions.GetVisualInfo(i, j, out var color, out var texture))
+			return;
 
-		var texture = TextureAssets.Tile[Type].Value;
-		var data = TileObjectData.GetTileData(tile);
-		int frameX = tile.TileFrameX % data.CoordinateFullWidth;
+		var t = Main.tile[i, j];
+		var data = TileObjectData.GetTileData(t);
+		int frameX = t.TileFrameX % data.CoordinateFullWidth;
 
 		Vector2 position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2((frameX == 0) ? -2 : 0, 0);
 		var source = new Rectangle(18 * 6, frameX, 18, 18);
 
-		spriteBatch.Draw(texture, position + offset, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+		spriteBatch.Draw(texture, position + offset, source, color, rotation, origin, 1, SpriteEffects.None, 0);
 	}
 
 	public float Physics(Point16 topLeft)

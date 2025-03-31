@@ -232,30 +232,37 @@ public abstract class CustomTree : ModTile, IModifySmartTarget
 		return false;
 	}
 
-	public virtual bool DrawTreeBody(int i, int j, SpriteBatch spriteBatch)
+	public virtual void DrawTreeBody(int i, int j, SpriteBatch spriteBatch)
 	{
-		var tile = Framing.GetTileSafely(i, j);
-		var texture = TextureAssets.Tile[Type].Value;
+		var t = Main.tile[i, j];
+		if (!TileDrawing.IsVisible(t))
+			return;
 
-		var source = new Rectangle(tile.TileFrameX % (FrameSize * 12), 0, FrameSize - 2, FrameSize - 2);
+		var color = TileExtensions.GetTint(i, j, Lighting.GetColor(i, j));
+		var source = new Rectangle(t.TileFrameX % (FrameSize * 12), 0, FrameSize - 2, FrameSize - 2);
 		var position = new Vector2(i, j) * 16 - Main.screenPosition + TileExtensions.TileOffset + TreeExtensions.GetPalmTreeOffset(i, j);
 
-		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
-		return false;
+		spriteBatch.Draw(TextureAssets.Tile[Type].Value, position, source, color, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
+		return;
 	}
 
 	/// <summary> Used to draw treetops and tree branches based on coordinates resulting from <see cref="Noise"/>. </summary>
 	public virtual void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
 	{
-		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeExtensions.GetPalmTreeOffset(i, j);
-		float rotation = Main.instance.TilesRenderer.GetWindCycle(i, j, TileSwaySystem.Instance.TreeWindCounter) * .1f;
+		var t = Main.tile[i, j];
+		if (!TileDrawing.IsVisible(t))
+			return;
 
 		if (IsTreeTop(i, j) && TopTexture != null) //Draw tops
 		{
+			var color = TileExtensions.GetTint(i, j, Lighting.GetColor(i, j));
+			var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeExtensions.GetPalmTreeOffset(i, j);
+			float rotation = Main.instance.TilesRenderer.GetWindCycle(i, j, TileSwaySystem.Instance.TreeWindCounter) * .1f;
+
 			var source = TopTexture.Frame(3, sizeOffsetX: -2, sizeOffsetY: -2);
 			var origin = source.Bottom();
 
-			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(TopTexture.Value, position, source, color, rotation, origin, 1, SpriteEffects.None, 0);
 		}
 	}
 
