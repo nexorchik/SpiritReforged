@@ -24,7 +24,6 @@ Marksman:
 /* Wayfarer:
 	'''
 	Slain enemies drop more coins
-	Breaking pots grants a stacking movement speed buff
-	Mining ore grants a stacking mining speed buff
-	Buffs stack up to 4 times
+	Breaking pots grants a movement speed buff
+	Mining ore grants a mining speed buff
 	''' */

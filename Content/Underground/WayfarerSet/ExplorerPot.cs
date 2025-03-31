@@ -7,23 +7,7 @@ class ExplorerPot : ModBuff
 	public override void Update(Player player, ref int buffIndex)
 	{
 		WayfarerPlayer wayfarerPlayer = player.GetModPlayer<WayfarerPlayer>();
-		player.moveSpeed += wayfarerPlayer.movementStacks * 0.05f / 4;
-		player.runAcceleration += wayfarerPlayer.movementStacks * 0.015f / 4;
-	}
-
-	public override bool ReApply(Player player, int time, int buffIndex)
-	{
-		WayfarerPlayer wayfarerPlayer = player.GetModPlayer<WayfarerPlayer>();
-		if (wayfarerPlayer.movementStacks < 16)
-			wayfarerPlayer.movementStacks++;
-
-		return false;
-	}
-
-	public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
-	{
-		WayfarerPlayer wayfarerPlayer = Main.LocalPlayer.GetModPlayer<WayfarerPlayer>();
-		tip += $"\nMovement speed is increased by {wayfarerPlayer.movementStacks * 5 / 4}%";
-		rare = wayfarerPlayer.movementStacks;
+		player.moveSpeed += wayfarerPlayer.movementStacks * .2f;
+		player.runAcceleration += wayfarerPlayer.movementStacks * .06f;
 	}
 }
