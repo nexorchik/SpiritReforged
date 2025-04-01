@@ -302,3 +302,14 @@ HideZombieSmall: {
 	DisplayName: "{$NPCName.Zombie}"
 	Entry: 它们这身行头可是死灵时尚圈的最新潮流。
 }
+
+PotterySlime: {
+	// DisplayName: Pottery Slime
+
+	Names: {
+		// 0: Potter
+		// 1: Jean
+	}
+
+	// Entry: ""
+}

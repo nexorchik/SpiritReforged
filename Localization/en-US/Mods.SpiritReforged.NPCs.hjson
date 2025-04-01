@@ -302,3 +302,14 @@ HideZombieSmall: {
 	DisplayName: "{$NPCName.Zombie}"
 	Entry: Their outfit is all the vogue in latest undead fashion.
 }
+
+PotterySlime: {
+	DisplayName: Pottery Slime
+
+	Names: {
+		0: Potter
+		1: Jean
+	}
+
+	Entry: ""
+}

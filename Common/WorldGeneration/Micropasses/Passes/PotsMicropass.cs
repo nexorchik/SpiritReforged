@@ -2,6 +2,7 @@
 using SpiritReforged.Common.WorldGeneration.Micropasses;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Underground.Tiles;
+using SpiritReforged.Content.Underground.NPCs;
 
 namespace SpiritMod.World.Micropasses;
 
@@ -48,6 +49,8 @@ internal class PotsMicropass : Micropass
 			if (CreateUncommon(x, y - 1) && ++pots >= maxPots)
 				break;
 		}
+
+		PotteryTracker.Remaining = (ushort)Main.rand.Next(pots);
 	}
 
 	/// <summary> Picks a relevant biome pot style and places it (<see cref="BiomePots"/>). </summary>
