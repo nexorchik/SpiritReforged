@@ -1328,26 +1328,3 @@ SparrowCageItem: {
 	DisplayName: Sparrow Cage
 	Tooltip: ""
 }
-
-CeramicGuide: {
-	DisplayName: Guide to Ceramic Preservation
-	Tooltip:
-		'''
-		Allows the collection of Ceramic Shards from pots
-		<right> to deactivate effects
-		'''
-}
-
-CeramicGuideInactive: {
-	DisplayName: Guide to Ceramic Preservation (Inactive)
-	Tooltip:
-		'''
-		Allows the collection of Ceramic Shards from pots
-		Effects are currently inactive, <right> to reactivate
-		'''
-}
-
-CeramicShard: {
-	DisplayName: Ceramic Shard
-	Tooltip: ""
-}
