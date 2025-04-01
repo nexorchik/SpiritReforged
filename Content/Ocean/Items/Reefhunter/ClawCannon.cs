@@ -44,7 +44,7 @@ public class ClawCannon : ModItem
 			for(int i = 0; i < pulseCircles.Length; i++)
 			{
 				pulseCircles[i].Velocity = 0.5f * Vector2.Normalize(velocity) / (1 + 2*i);
-				ParticleHandler.SpawnParticle(pulseCircles[i].WithSkew(0.85f, velocity.ToRotation()).UsesLightColor());
+				ParticleHandler.SpawnParticle(pulseCircles[i].WithSkew(0.85f, velocity.ToRotation() - MathHelper.Pi).UsesLightColor());
 			}
 
 			for (int i = 0; i < 4; ++i)

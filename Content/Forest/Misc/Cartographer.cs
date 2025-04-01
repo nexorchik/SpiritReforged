@@ -38,6 +38,9 @@ public class Cartographer : WorldNPC
 		NPCID.Sets.AttackType[Type] = -1;
 		NPCID.Sets.AttackTime[Type] = 20;
 		NPCID.Sets.HatOffsetY[Type] = 2;
+
+		NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, new NPCID.Sets.NPCBestiaryDrawModifiers()
+		{ Velocity = 1f });
 	}
 
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Surface");

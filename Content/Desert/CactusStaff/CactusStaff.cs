@@ -22,7 +22,7 @@ public class CactusStaff : ModItem
 		Item.UseSound = SoundID.Item8;
 		Item.shoot = ModContent.ProjectileType<CactusWallProj>();
 		Item.shootSpeed = 8f;
-		Item.autoReuse = false;
+		Item.autoReuse = true;
 	}
 
 	public override bool CanUseItem(Player player) => !Collision.SolidCollision(Main.MouseWorld, 16, 16);

@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.TileCommon.TileSway;
+﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.DataStructures;
 
@@ -57,15 +58,19 @@ public class Starflower : ModTile, ISwayTile
 
 	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
-		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
+		if (!TileExtensions.GetVisualInfo(i, j, out var color, out var texture))
+			return;
+
+		var t = Main.tile[i, j];
+		var data = TileObjectData.GetTileData(t);
+
 		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
-		int heights = (tile.TileFrameY == 54) ? 18 : 16;
+		int heights = (t.TileFrameY == 54) ? 18 : 16;
 
-		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, heights);
+		var source = new Rectangle(t.TileFrameX, t.TileFrameY, data.CoordinateWidth, heights);
 
-		spriteBatch.Draw(TextureAssets.Tile[Type].Value, drawPos + offset, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
-		spriteBatch.Draw(GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value, drawPos + offset, source, Color.White, rotation, origin, 1, SpriteEffects.None, 0);
+		spriteBatch.Draw(texture, drawPos + offset, source, color, rotation, origin, 1, SpriteEffects.None, 0);
+		spriteBatch.Draw(GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value, drawPos + offset, source, TileExtensions.GetTint(i, j, Color.White), rotation, origin, 1, SpriteEffects.None, 0);
 	}
 
 	public float Physics(Point16 topLeft)

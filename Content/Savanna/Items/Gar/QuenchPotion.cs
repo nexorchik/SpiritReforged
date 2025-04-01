@@ -1,4 +1,5 @@
 using SpiritReforged.Common.BuffCommon;
+using SpiritReforged.Common.ItemCommon;
 
 namespace SpiritReforged.Content.Savanna.Items.Gar;
 
@@ -59,8 +60,8 @@ public class QuenchPotion : ModItem
 		Item.UseSound = SoundID.Item3;
 	}
 
-	public override void AddRecipes() => CreateRecipe().AddIngredient(Mod.Find<ModItem>("GarItem").Type).AddIngredient(ItemID.Blinkroot)
-		.AddIngredient(ItemID.Moonglow).AddIngredient(ItemID.Waterleaf).AddIngredient(ItemID.BottledWater).AddTile(TileID.Bottles).Register();
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BottledWater).AddIngredient(ItemMethods.AutoItemType<NPCs.Gar.Gar>())
+		.AddIngredient(ItemID.Blinkroot).AddIngredient(ItemID.Moonglow).AddIngredient(ItemID.Waterleaf).AddTile(TileID.Bottles).Register();
 }
 
 public class QuenchPotion_Buff : ModBuff { }

@@ -21,7 +21,7 @@ public class LightningParticle : Particle
 		MaxTime = maxTime;
 		Scale = scale;
 
-		float distortBase = Main.rand.NextFloat(-1.5f, 1.5f);
+		float distortBase = Main.rand.NextFloat(0.5f, 1.25f) * (Main.rand.NextBool() ? -1 : 1);
 		_distortion = new Vector2(distortBase, -distortBase);
 	}
 
@@ -35,7 +35,7 @@ public class LightningParticle : Particle
 		beamEffect.Parameters["uTexture"].SetValue(AssetLoader.LoadedTextures["Lightning"].Value);
 		beamEffect.Parameters["perlinNoise"].SetValue(AssetLoader.LoadedTextures["noise"].Value);
 		beamEffect.Parameters["Progress"].SetValue(Progress);
-		beamEffect.Parameters["uTime"].SetValue(EaseFunction.EaseQuadOut.Ease(Progress) / 1.5f);
+		beamEffect.Parameters["uTime"].SetValue(-EaseFunction.EaseQuadOut.Ease(Progress) / 1.5f);
 
 		beamEffect.Parameters["textureStretch"].SetValue(new Vector2(length / 150f, 0.25f));
 		beamEffect.Parameters["noiseStretch"].SetValue(new Vector2(length * 0.3f, Scale * 0.15f) / 50);

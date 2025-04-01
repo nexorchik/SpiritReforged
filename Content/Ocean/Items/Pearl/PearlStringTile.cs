@@ -84,15 +84,17 @@ public class PearlStringTile : ModTile, IAutoloadRubble
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		var tile = Framing.GetTileSafely(i, j);
-		var texture = TextureAssets.Tile[tile.TileType].Value;
+		if (!TileExtensions.GetVisualInfo(i, j, out var color, out var texture))
+			return false;
 
-		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 16);
+		var t = Framing.GetTileSafely(i, j);
+
+		var source = new Rectangle(t.TileFrameX, t.TileFrameY, 16, 16);
 		var offset = Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1 ? Vector2.Zero : Vector2.One * 12;
 		var position = (new Vector2(i, j) + offset) * 16 - Main.screenPosition;
 
-		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-		spriteBatch.Draw(GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value, position, source, Lighting.GetColor(i, j) * 2, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+		spriteBatch.Draw(texture, position, source, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+		spriteBatch.Draw(GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value, position, source, color * 2, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
 		var rect = new Rectangle(i * 16, j * 16, 16, 16);
 		if (!Main.gamePaused && Main.rand.NextBool(50) && Main.LocalPlayer.Distance(rect.Center()) < 100) //Nearby dust effects

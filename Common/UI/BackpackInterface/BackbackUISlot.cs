@@ -14,10 +14,13 @@ public class BackpackUISlot : UIElement
 	private static Asset<Texture2D> icon;
 
 	private readonly bool _isVanity;
+	private readonly bool _isDye;
 
-	public BackpackUISlot(bool isVanity)
+	public BackpackUISlot(bool isVanity, bool isDye = false)
 	{
 		_isVanity = isVanity;
+		_isDye = isDye;
+
 		Width = Height = new StyleDimension(52 * Scale, 0f);
 	}
 
@@ -26,7 +29,7 @@ public class BackpackUISlot : UIElement
 	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
 		var mPlayer = Main.LocalPlayer.GetModPlayer<BackpackPlayer>();
-		var item = _isVanity ? mPlayer.vanityBackpack : mPlayer.backpack; //Bind the player's backpack item
+		var item = _isDye ? mPlayer.packDye : _isVanity ? mPlayer.vanityBackpack : mPlayer.backpack; //Bind the player's backpack item
 
 		if (Main.EquipPage != 2 || item is null)
 			return;
@@ -43,10 +46,10 @@ public class BackpackUISlot : UIElement
 			Texture2D texture;
 			Rectangle source;
 
-			if (_isVanity)
+			if (_isVanity || _isDye)
 			{
 				texture = TextureAssets.Extra[54].Value;
-				source = texture.Frame(3, 6, 2, 0, -2, -2);
+				source = texture.Frame(3, 6, _isDye ? 1 : 2, 0, -2, -2);
 			}
 			else
 			{
@@ -62,7 +65,9 @@ public class BackpackUISlot : UIElement
 
 		Main.inventoryScale = oldScale;
 
-		if (_isVanity) //Release the results
+		if (_isDye)
+			mPlayer.packDye = item;
+		else if (_isVanity) //Release the results
 			mPlayer.vanityBackpack = item;
 		else
 			mPlayer.backpack = item;
@@ -77,26 +82,30 @@ public class BackpackUISlot : UIElement
 		ItemSlot.OverrideHover(ref item, Context);
 		ItemSlot.MouseHover(ref item, Context);
 
-		if (Main.mouseLeft && Main.mouseLeftRelease && CanClickItem(item, _isVanity))
+		if (Main.mouseLeft && Main.mouseLeftRelease && CanClickItem(item, _isVanity, _isDye))
 		{
-			ItemSlot.LeftClick(ref item, ItemSlot.Context.InventoryItem); //Don't use Context because it causes issues in multiplayer due to syncing
+			ItemSlot.LeftClick(ref item, _isDye ? ItemSlot.Context.EquipMiscDye : ItemSlot.Context.InventoryItem); //Don't use Context because it causes issues in multiplayer due to syncing
 			ItemSlot.RightClick(ref item, Context);
 		}
 
 		if (item.IsAir)
 		{
 			Main.mouseText = true;
-			Main.hoverItemName = Language.GetTextValue("Mods.SpiritReforged.SlotContexts.Backpack");
+			Main.hoverItemName = _isDye ? Lang.inter[57].Value : Language.GetTextValue("Mods.SpiritReforged.SlotContexts.Backpack");
 		}
 	}
 
 	/// <param name="currentItem"> The item currently in the slot. </param>
 	/// <param name="vanity"> Whether this slot is a vanity slot. </param>
-	internal static bool CanClickItem(Item currentItem, bool vanity = false)
+	internal static bool CanClickItem(Item currentItem, bool vanity = false, bool isDye = false)
 	{
 		var plr = Main.LocalPlayer;
 
-		if (vanity)
+		if (isDye)
+		{
+			return plr.HeldItem.dye > 0 || Main.mouseItem.IsAir;
+		}
+		else if (vanity)
 		{
 			if (currentItem.IsAir)
 				return plr.HeldItem.ModItem is BackpackItem vanityPack && !vanityPack.items.Any(x => !x.IsAir);
@@ -117,7 +126,7 @@ public class BackpackUISlot : UIElement
 	/// <returns> Whether an interaction has occured. </returns>
 	private bool DrawVisibility(SpriteBatch spriteBatch)
 	{
-		if (_isVanity)
+		if (_isVanity || _isDye)
 			return false;
 
 		var mPlayer = Main.LocalPlayer.GetModPlayer<BackpackPlayer>();
@@ -140,7 +149,7 @@ public class BackpackUISlot : UIElement
 				SoundEngine.PlaySound(SoundID.MenuTick);
 
 				if (Main.netMode == NetmodeID.MultiplayerClient)
-					new PackVisibilityData(mPlayer.packVisible, (byte)Main.myPlayer).Send();
+					new BackpackPlayerData(mPlayer.packVisible, (byte)Main.myPlayer).Send();
 				//NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, Main.myPlayer);
 			}
 
