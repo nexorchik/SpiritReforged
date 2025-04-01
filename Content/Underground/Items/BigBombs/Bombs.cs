@@ -1,23 +1,149 @@
+using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
+using SpiritReforged.Common.Visuals.Glowmasks;
+using SpiritReforged.Content.Particles;
 using Terraria.Audio;
-using Terraria.ID;
 
 namespace SpiritReforged.Content.Underground.Items.BigBombs;
 
-public class Bomb : BigBombProjectile
+public class Bomb : BombProjectile, ILargeExplosive
 {
-	public override int OriginalType => ProjectileID.Bomb;
+	public virtual int OriginalType => ProjectileID.Bomb;
+	public override LocalizedText DisplayName => Language.GetText("ProjectileName.Bomb");
+
+	public sealed override void SetDefaults()
+	{
+		base.SetDefaults();
+
+		Projectile.Size = new Vector2(32);
+		SetDamage(150);
+		area = 10;
+
+		PostSetDefaults();
+	}
+
+	public virtual void PostSetDefaults() { }
+
+	public override void OnKill(int timeLeft)
+	{
+		DestroyTiles();
+
+		if (Main.dedServ)
+			return;
+
+		SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
+		SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, Projectile.Center);
+
+		ParticleHandler.SpawnParticle(new TexturedPulseCircle(Projectile.Center, Color.Goldenrod, Color.Orange * .5f, .25f, 30 * area, 20, "SmokeSimple", Vector2.One, Common.Easing.EaseFunction.EaseCircularOut));
+		ParticleHandler.SpawnParticle(new SmokeCloud(Projectile.Center, Vector2.Zero, Color.Gray, .05f * area, Common.Easing.EaseFunction.EaseCubicOut, 40));
+
+		const int time = 5;
+		ParticleHandler.SpawnParticle(new ImpactLine(Projectile.Center, Vector2.Zero, Color.Orange * .5f, new Vector2(0.8f, 1.6f) * area, time));
+		ParticleHandler.SpawnParticle(new ImpactLine(Projectile.Center, Vector2.Zero, Color.White, new Vector2(0.5f, 1.2f) * area, time));
+
+		for (int i = 0; i < area * 2; i++)
+		{
+			ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, Main.rand.NextVector2Unit() * Main.rand.NextFloat(1f, 4f),
+				Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat()), Main.rand.NextFloat(.05f, .1f) * area, Main.rand.Next(10, 20), 4));
+
+			var d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(16f * area), DustID.Torch, Scale: Main.rand.NextFloat() + .5f);
+			d.noGravity = true;
+		}
+	}
+
+	public override bool PreDraw(ref Color lightColor)
+	{
+		var texture = TextureAssets.Projectile[Type].Value;
+		var origin = new Vector2(texture.Width / 2, texture.Height / 2 + 4);
+
+		float lerp = GetLerp();
+		float scale = Projectile.scale + lerp * .1f;
+		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, scale, SpriteEffects.None);
+
+		var color = Projectile.GetAlpha(Color.Red.Additive()) * lerp * 2;
+		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, color, Projectile.rotation, origin, scale, SpriteEffects.None);
+		return false;
+	}
+
+	public float GetLerp()
+	{
+		float progress = 1f - (float)Projectile.timeLeft / timeLeftMax;
+		return (float)Math.Sin(Projectile.timeLeft * 8f / (60f - progress * 20)) * progress;
+	}
 }
 
-public class BombSticky : BigBombProjectile
+public class BombDirt : SpreadBomb, ILargeExplosive
+{
+	public virtual int OriginalType => ProjectileID.DirtBomb;
+	public override LocalizedText DisplayName => Language.GetText("ProjectileName.Bomb");
+
+	public sealed override void SetDefaults()
+	{
+		base.SetDefaults();
+
+		Projectile.Size = new Vector2(30);
+		SetDamage(150);
+		area = 6;
+		dustType = DustID.Dirt;
+		tileType = TileID.Dirt;
+
+		PostSetDefaults();
+	}
+
+	public virtual void PostSetDefaults() { }
+
+	public override bool PreDraw(ref Color lightColor)
+	{
+		var texture = TextureAssets.Projectile[Type].Value;
+		var origin = new Vector2(texture.Width / 2, texture.Height / 2 + 4);
+
+		float lerp = GetLerp();
+		float scale = Projectile.scale + lerp * .1f;
+		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, scale, SpriteEffects.None);
+
+		var color = Projectile.GetAlpha(Color.Red.Additive()) * lerp * 2;
+		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, color, Projectile.rotation, origin, scale, SpriteEffects.None);
+		return false;
+	}
+
+	public float GetLerp()
+	{
+		float progress = 1f - (float)Projectile.timeLeft / timeLeftMax;
+		return (float)Math.Sin(Projectile.timeLeft * 8f / (60f - progress * 20)) * progress;
+	}
+}
+
+public class BombClay : BombDirt
+{
+	public override int OriginalType => ModContent.ProjectileType<ClayBombProjectile>();
+
+	public override void PostSetDefaults()
+	{
+		dustType = DustID.Clay;
+		tileType = TileID.ClayBlock;
+	}
+}
+
+public class BombSand : BombDirt
+{
+	public override int OriginalType => ModContent.ProjectileType<SandBombProjectile>();
+
+	public override void PostSetDefaults()
+	{
+		dustType = DustID.Sand;
+		tileType = TileID.Sand;
+	}
+}
+
+public class BombSticky : Bomb
 {
 	public override int OriginalType => ProjectileID.StickyBomb;
 
 	public override void AI()
 	{
-		const int padding = 2;
-
-		if (Collision.SolidCollision(Projectile.position - new Vector2(padding), Projectile.width + padding * 2, Projectile.height + padding * 2))
+		if (CheckStuck(Projectile.getRect()))
 		{
 			Projectile.velocity = Vector2.Zero;
 			FuseVisuals();
@@ -28,10 +154,16 @@ public class BombSticky : BigBombProjectile
 		}
 	}
 
+	public static bool CheckStuck(Rectangle area)
+	{
+		const int padding = 2;
+		return Collision.SolidCollision(area.TopLeft() - new Vector2(padding), area.Width + padding * 2, area.Height + padding * 2);
+	}
+
 	public override bool OnTileCollide(Vector2 oldVelocity) => false;
 }
 
-public class BombBouncy : BigBombProjectile
+public class BombBouncy : Bomb
 {
 	public override int OriginalType => ProjectileID.BouncyBomb;
 
@@ -42,76 +174,39 @@ public class BombBouncy : BigBombProjectile
 	}
 }
 
-public class BombDirt : BigBombProjectile
-{
-	public override int OriginalType => ProjectileID.DirtBomb;
-
-	public override void OnKill(int timeLeft)
-	{
-		if (Main.netMode != NetmodeID.MultiplayerClient)
-		{
-			var pt = Projectile.Center.ToTileCoordinates();
-			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, _radius, DelegateMethods.SpreadDirt);
-		}
-	}
-}
-
-public class BombClay : BigBombProjectile
-{
-	public override int OriginalType => ModContent.ProjectileType<ClayBombProjectile>();
-
-	public override void OnKill(int timeLeft)
-	{
-		if (Main.netMode != NetmodeID.MultiplayerClient)
-		{
-			var pt = Projectile.Center.ToTileCoordinates();
-
-			SpreadType = TileID.ClayBlock;
-			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, _radius, SpreadTileType);
-		}
-	}
-}
-
-public class BombSand : BigBombProjectile
-{
-	public override int OriginalType => ModContent.ProjectileType<SandBombProjectile>();
-
-	public override void OnKill(int timeLeft)
-	{
-		if (Main.netMode != NetmodeID.MultiplayerClient)
-		{
-			var pt = Projectile.Center.ToTileCoordinates();
-
-			SpreadType = ModContent.TileType<PackedSand>();
-			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, _radius, SpreadTileType);
-		}
-	}
-}
-
-public class BombDirtSticky : BombSticky
+public class BombDirtSticky : BombDirt
 {
 	public override int OriginalType => ProjectileID.DirtStickyBomb;
 
-	public override void OnKill(int timeLeft)
+	public override void AI()
 	{
-		if (Main.netMode != NetmodeID.MultiplayerClient)
+		if (BombSticky.CheckStuck(Projectile.getRect()))
 		{
-			var pt = Projectile.Center.ToTileCoordinates();
-			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, _radius, DelegateMethods.SpreadDirt);
+			Projectile.velocity = Vector2.Zero;
+			FuseVisuals();
+		}
+		else
+		{
+			base.AI();
 		}
 	}
+
+	public override bool OnTileCollide(Vector2 oldVelocity) => false;
 }
 
-public class BombFish : BigBombProjectile
+public class BombFish : Bomb
 {
 	public override int OriginalType => ProjectileID.BombFish;
 }
 
-public class BombScarab : BigBombProjectile
+[AutoloadGlowmask("255,255,255", false)]
+public class BombScarab : Bomb
 {
 	public override int OriginalType => ProjectileID.ScarabBomb;
 
-	public override void PostSetDefaults() => _radius = 5;
+	private bool _wasAttached;
+
+	public override void PostSetDefaults() => area = 5;
 
 	public override void AI()
 	{
@@ -122,11 +217,30 @@ public class BombScarab : BigBombProjectile
 			Projectile.velocity = Vector2.Zero;
 			Projectile.rotation = Projectile.AngleFrom(Main.player[Projectile.owner].Center) - MathHelper.PiOver2;
 
-			FuseVisuals();
+			var position = Projectile.Center - (new Vector2(0, Projectile.height / 2 + 10) * Projectile.scale).RotatedBy(Projectile.rotation);
+			for (int i = 0; i < 2; i++)
+			{
+				var d = Dust.NewDustPerfect(position, DustID.BlueTorch, position.DirectionFrom(Projectile.Center).RotatedByRandom(0.5f), Scale: Main.rand.NextFloat() + 1.5f);
+				d.noGravity = true;
+			}
+
+			if (!_wasAttached)
+			{
+				for (int i = 0; i < 15; i++)
+				{
+					var vel = new Vector2(Main.rand.NextFloat(3f) * (Main.rand.NextBool() ? -1 : 1), 0).RotatedBy(Projectile.rotation);
+					var d = Dust.NewDustPerfect(position, DustID.BlueTorch, vel, Scale: Main.rand.NextFloat() + 1.5f);
+					d.noGravity = true;
+					d.fadeIn = 1.25f;
+				}
+			}
+
+			_wasAttached = true;
 		}
 		else
 		{
 			base.AI();
+			_wasAttached = false;
 		}
 	}
 
@@ -134,11 +248,8 @@ public class BombScarab : BigBombProjectile
 	{
 		var position = Projectile.Center - (new Vector2(0, Projectile.height / 2 + 10) * Projectile.scale).RotatedBy(Projectile.rotation);
 
-		for (int i = 0; i < 2; i++)
-		{
-			var d = Dust.NewDustPerfect(position, DustID.BlueTorch, position.DirectionFrom(Projectile.Center).RotatedByRandom(0.5f), Scale: Main.rand.NextFloat() + 1);
-			d.noGravity = true;
-		}
+		var d = Dust.NewDustPerfect(position, DustID.BlueTorch, Vector2.Zero, Scale: Main.rand.NextFloat() + 1);
+		d.noGravity = true;
 	}
 
 	public override bool OnTileCollide(Vector2 oldVelocity) => false;
@@ -148,101 +259,105 @@ public class BombScarab : BigBombProjectile
 		var scarabBombDigDirectionSnap = ScarabBombSnap();
 		float angle = scarabBombDigDirectionSnap.ToVector2().ToRotation() + (float)Math.PI / 2f;
 
-		#region vfx
-		SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
-		Projectile.Resize(80, 80);
-
-		for (int i = 0; i < 60; i++)
+		if (!Main.dedServ) //VFX
 		{
-			var dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, 0f, 0f, 100, default, 2f);
-			dust.velocity.Y -= 0.5f;
+			SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
+			Projectile.Resize(80, 80);
 
-			var dust2 = dust;
-			dust2.velocity *= 1.2f;
-			dust.color = Color.Black * 0.9f;
-
-			if (Main.rand.NextBool(2))
+			for (int i = 0; i < 60; i++)
 			{
-				dust.scale = 0.5f;
-				dust.fadeIn = 1f + Main.rand.Next(10) * 0.1f;
-				dust.color = Color.Black * 0.8f;
-			}
-		}
+				var dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, 0f, 0f, 100, default, 2f);
+				dust.velocity.Y -= 0.5f;
 
-		for (int num940 = 0; num940 < 30; num940++)
-		{
-			var dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 59, 0f, 0f, 100);
-			dust.noGravity = true;
-			if (Math.Abs(Projectile.velocity.X) > 0.25f)
-			{
-				Projectile.velocity.X *= 0.25f / Math.Abs(Projectile.velocity.X);
+				var dust2 = dust;
+				dust2.velocity *= 1.2f;
+				dust.color = Color.Black * 0.9f;
+
+				if (Main.rand.NextBool(2))
+				{
+					dust.scale = 0.5f;
+					dust.fadeIn = 1f + Main.rand.Next(10) * 0.1f;
+					dust.color = Color.Black * 0.8f;
+				}
 			}
 
-			dust.velocity.Y -= 0.5f;
-			dust.fadeIn = 1.2f;
-			var dust2 = dust;
-			dust2.velocity *= 8f;
-			dust.velocity = dust.velocity.RotatedBy(angle);
-			dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 59, 0f, 0f, 100, default, 1.5f);
-			dust2 = dust;
-			dust2.velocity *= 2f;
-			dust.velocity = dust.velocity.RotatedBy(angle);
-			dust.velocity.Y -= 1.5f;
-			dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 59, 0f, 0f, 100, default, 1.5f);
-			dust.noGravity = true;
-			dust.velocity.Y -= 1f;
-			dust.fadeIn = 2f;
-			dust2 = dust;
-			dust2.velocity *= 4f;
-			dust.velocity = dust.velocity.RotatedBy(angle);
-		}
-
-		bool flag4 = Math.Abs(scarabBombDigDirectionSnap.X) + Math.Abs(scarabBombDigDirectionSnap.Y) == 1;
-		for (int num941 = 1; num941 <= 3; num941++)
-		{
-			float num942 = (float)Math.PI * 2f * Main.rand.NextFloat();
-			for (float num943 = 0f; num943 < 1f; num943 += 1f / 12f)
+			for (int num940 = 0; num940 < 30; num940++)
 			{
-				float f6 = (float)Math.PI * 2f * num943 + num942;
-				Vector2 value13 = f6.ToRotationVector2();
-				value13 *= new Vector2(0.7f, 0.3f);
-				var dust = Dust.NewDustPerfect(Projectile.Center, 59, value13);
-				dust.fadeIn = 2f;
+				var dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.BlueTorch, 0f, 0f, 100);
 				dust.noGravity = true;
-				Dust dust2 = dust;
-				dust2.velocity *= (float)num941 + Main.rand.NextFloat() * 0.6f;
-				dust.velocity.Y -= (float)num941 * 0.8f;
+				if (Math.Abs(Projectile.velocity.X) > 0.25f)
+				{
+					Projectile.velocity.X *= 0.25f / Math.Abs(Projectile.velocity.X);
+				}
+
+				dust.velocity.Y -= 0.5f;
+				dust.fadeIn = 1.2f;
+				var dust2 = dust;
+				dust2.velocity *= 8f;
 				dust.velocity = dust.velocity.RotatedBy(angle);
-				if (flag4)
-				{
-					dust2 = dust;
-					dust2.velocity += scarabBombDigDirectionSnap.ToVector2() * (Main.rand.NextFloat() * 11f + 6f);
-				}
-				else
-				{
-					dust2 = dust;
-					dust2.velocity += scarabBombDigDirectionSnap.ToVector2() * (Main.rand.NextFloat() * 7f + 5f);
-				}
+				dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.BlueTorch, 0f, 0f, 100, default, 1.5f);
+				dust2 = dust;
+				dust2.velocity *= 2f;
+				dust.velocity = dust.velocity.RotatedBy(angle);
+				dust.velocity.Y -= 1.5f;
+				dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.BlueTorch, 0f, 0f, 100, default, 1.5f);
+				dust.noGravity = true;
+				dust.velocity.Y -= 1f;
+				dust.fadeIn = 2f;
+				dust2 = dust;
+				dust2.velocity *= 4f;
+				dust.velocity = dust.velocity.RotatedBy(angle);
 			}
-		}
 
-		Vector2 vector74 = (angle - (float)Math.PI / 2f).ToRotationVector2();
-		for (int num944 = 1; num944 <= 1; num944++)
-		{
-			for (int num945 = -1; num945 <= 1; num945 += 2)
+			bool flag4 = Math.Abs(scarabBombDigDirectionSnap.X) + Math.Abs(scarabBombDigDirectionSnap.Y) == 1;
+			for (int num941 = 1; num941 <= 3; num941++)
 			{
-				for (int num946 = -1; num946 <= 1; num946 += 2)
+				float num942 = (float)Math.PI * 2f * Main.rand.NextFloat();
+				for (float num943 = 0f; num943 < 1f; num943 += 1f / 12f)
 				{
-					var gore14 = Gore.NewGoreDirect(Entity.GetSource_Death(), Projectile.Center - Vector2.One * 20f, Vector2.Zero, Main.rand.Next(61, 64));
-					gore14.velocity = gore14.velocity * 0.5f + vector74 * 3f;
-					Gore gore2 = gore14;
-					gore2.velocity += new Vector2(num945, num946) * 0.2f;
+					float f6 = (float)Math.PI * 2f * num943 + num942;
+					Vector2 value13 = f6.ToRotationVector2();
+					value13 *= new Vector2(0.7f, 0.3f);
+					var dust = Dust.NewDustPerfect(Projectile.Center, 59, value13);
+					dust.fadeIn = 2f;
+					dust.noGravity = true;
+					Dust dust2 = dust;
+					dust2.velocity *= (float)num941 + Main.rand.NextFloat() * 0.6f;
+					dust.velocity.Y -= (float)num941 * 0.8f;
+					dust.velocity = dust.velocity.RotatedBy(angle);
+					if (flag4)
+					{
+						dust2 = dust;
+						dust2.velocity += scarabBombDigDirectionSnap.ToVector2() * (Main.rand.NextFloat() * 11f + 6f);
+					}
+					else
+					{
+						dust2 = dust;
+						dust2.velocity += scarabBombDigDirectionSnap.ToVector2() * (Main.rand.NextFloat() * 7f + 5f);
+					}
 				}
 			}
-		}
 
-		Projectile.Resize(10, 10);
-		#endregion
+			Vector2 vector74 = (angle - (float)Math.PI / 2f).ToRotationVector2();
+			for (int num944 = 1; num944 <= 1; num944++)
+			{
+				for (int num945 = -1; num945 <= 1; num945 += 2)
+				{
+					for (int num946 = -1; num946 <= 1; num946 += 2)
+					{
+						var gore14 = Gore.NewGoreDirect(Entity.GetSource_Death(), Projectile.Center - Vector2.One * 20f, Vector2.Zero, Main.rand.Next(61, 64));
+						gore14.velocity = gore14.velocity * 0.5f + vector74 * 3f;
+						Gore gore2 = gore14;
+						gore2.velocity += new Vector2(num945, num946) * 0.2f;
+					}
+				}
+			}
+
+			Projectile.Resize(10, 10);
+
+			ParticleHandler.SpawnParticle(new TexturedPulseCircle(Projectile.Center, Color.Cyan, Color.Orange * .3f, .4f, 200, 20, "SmokeSimple", Vector2.One, Common.Easing.EaseFunction.EaseCircularOut));
+			ParticleHandler.SpawnParticle(new TexturedPulseCircle(Projectile.Center, Color.White, Color.Orange * .3f, .2f, 200, 20, "SmokeSimple", Vector2.One, Common.Easing.EaseFunction.EaseCircularOut));
+		}
 
 		if (Projectile.owner == Main.myPlayer)
 		{
@@ -250,7 +365,7 @@ public class BombScarab : BigBombProjectile
 			var world = tile.ToWorldCoordinates();
 
 			bool wallSplode = false;
-			int limit = _radius * 5;
+			int limit = area * 5; //The length of the tunnel
 
 			if (scarabBombDigDirectionSnap.X == 0 || scarabBombDigDirectionSnap.Y == 0)
 				limit = (int)(limit * Math.Sqrt(2.0));
@@ -271,7 +386,7 @@ public class BombScarab : BigBombProjectile
 			{
 				var vec2 = world + scarabBombDigDirectionSnap.ToVector2() * 16f * i * 1f;
 				var p3 = vec2.ToTileCoordinates();
-				int half = _radius / 2;
+				int half = area / 2;
 
 				Projectile.ExplodeTiles(p3.ToWorldCoordinates(), 9999, p3.X - half, p3.X + half, p3.Y - half, p3.Y + half, wallSplode);
 			}
@@ -292,101 +407,132 @@ public class BombScarab : BigBombProjectile
 
 		return result;
 	}
+
+	public override void PostDraw(Color lightColor)
+	{
+		var texture = GlowmaskProjectile.ProjIdToGlowmask[Type].Glowmask.Value;
+		var origin = new Vector2(texture.Width / 2, texture.Height / 2 + 4);
+		float scale = Projectile.scale + GetLerp() * .1f;
+
+		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, origin, scale, default);
+	}
 }
 
-public class BombDry : BigBombProjectile
+public class BombDry : Bomb
 {
 	public override int OriginalType => ProjectileID.DryBomb;
 
-	public override void PostSetDefaults() => _radius = 8;
+	public override void PostSetDefaults() => area = 6;
+
+	public override void AI()
+	{
+		base.AI();
+
+		if (Projectile.wet) //Instantly detonate on liquid contact
+			Projectile.Kill();
+	}
 
 	public override void OnKill(int timeLeft)
 	{
+		SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
+
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
 			var pt = Projectile.Center.ToTileCoordinates();
-			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, _radius, DelegateMethods.SpreadDry);
+			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, area, DelegateMethods.SpreadDry);
 		}
 	}
 }
 
-public class BombLava : BigBombProjectile
+public class BombLava : BombDry
 {
 	public override int OriginalType => ProjectileID.LavaBomb;
 
-	public override void PostSetDefaults() => _radius = 6;
-
 	public override void OnKill(int timeLeft)
 	{
+		SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
+
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
 			var pt = Projectile.Center.ToTileCoordinates();
-			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, _radius, DelegateMethods.SpreadLava);
+			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, area, DelegateMethods.SpreadLava);
 		}
 	}
 }
 
-public class BombHoney : BigBombProjectile
+public class BombHoney : BombDry
 {
 	public override int OriginalType => ProjectileID.HoneyBomb;
 
-	public override void PostSetDefaults() => _radius = 6;
-
 	public override void OnKill(int timeLeft)
 	{
+		SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
+
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
 			var pt = Projectile.Center.ToTileCoordinates();
-			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, _radius, DelegateMethods.SpreadHoney);
+			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, area, DelegateMethods.SpreadHoney);
 		}
 	}
 }
 
-public class BombWet : BigBombProjectile
+public class BombWet : BombDry
 {
 	public override int OriginalType => ProjectileID.WetBomb;
 
-	public override void PostSetDefaults() => _radius = 6;
-
 	public override void OnKill(int timeLeft)
 	{
+		SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
+
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
 			var pt = Projectile.Center.ToTileCoordinates();
-			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, _radius, DelegateMethods.SpreadWater);
+			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, area, DelegateMethods.SpreadWater);
 		}
 	}
 }
 
-public class Dynamite : BigBombProjectile
+public class Dynamite : Bomb
 {
 	public override int OriginalType => ProjectileID.Dynamite;
+	public override LocalizedText DisplayName => Language.GetText("ProjectileName.Dynamite");
 
 	public override void PostSetDefaults()
 	{
 		SetTimeLeft(60 * 5);
-		_radius = 20;
+		SetDamage(300, 10);
+
+		area = 20;
 	}
 }
 
-public class DynamiteSticky : BigBombProjectile
+public class DynamiteSticky : Dynamite
 {
 	public override int OriginalType => ProjectileID.StickyDynamite;
 
-	public override void PostSetDefaults()
+	public override void AI()
 	{
-		SetTimeLeft(60 * 5);
-		_radius = 20;
+		if (BombSticky.CheckStuck(Projectile.getRect()))
+		{
+			Projectile.velocity = Vector2.Zero;
+			FuseVisuals();
+		}
+		else
+		{
+			base.AI();
+		}
 	}
+
+	public override bool OnTileCollide(Vector2 oldVelocity) => false;
 }
 
-public class DynamiteBouncy : BigBombProjectile
+public class DynamiteBouncy : Dynamite
 {
 	public override int OriginalType => ProjectileID.BouncyDynamite;
 
-	public override void PostSetDefaults()
+	public override bool OnTileCollide(Vector2 oldVelocity)
 	{
-		SetTimeLeft(60 * 5);
-		_radius = 20;
+		Projectile.Bounce(oldVelocity);
+		return false;
 	}
 }

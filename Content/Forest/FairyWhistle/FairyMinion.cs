@@ -1,10 +1,10 @@
 using Terraria.Audio;
-using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Common.BuffCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 
 namespace SpiritReforged.Content.Forest.FairyWhistle;
 

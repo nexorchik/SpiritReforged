@@ -24,7 +24,7 @@ public class HangingBaobabFruit : ModTile, ISwayTile
 			return; //Check for adequate space
 
 		for (int l = 0; l < length; l++)
-			if (TileExtensions.GrowVine(i, j, type, maxLength, sync: false))
+			if (Placer.GrowVine(i, j, type, maxLength, sync: false))
 			{
 				int y = 0;
 				while (Main.tile[i, j + y].TileType == type)

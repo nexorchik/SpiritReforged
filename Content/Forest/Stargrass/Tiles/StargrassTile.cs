@@ -88,7 +88,7 @@ public class StargrassTile : GrassTile
 			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None);
 
 		if (Main.rand.NextBool(60) && Main.tile[i, j + 1].LiquidType != LiquidID.Lava)
-			TileExtensions.GrowVine(i, j + 1, ModContent.TileType<StargrassVine>());
+			Placer.GrowVine(i, j + 1, ModContent.TileType<StargrassVine>());
 	}
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.05f, 0.2f, 0.5f);

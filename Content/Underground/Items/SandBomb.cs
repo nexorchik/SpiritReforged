@@ -1,4 +1,4 @@
-using SpiritReforged.Content.Underground.Items.BigBombs;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 
 namespace SpiritReforged.Content.Underground.Items;
 
@@ -9,39 +9,20 @@ public class SandBomb : ModItem
 		Item.CloneDefaults(ItemID.DirtBomb);
 		Item.shoot = ModContent.ProjectileType<SandBombProjectile>();
 	}
+
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.Bomb).AddIngredient(ItemID.SandBlock, 25).Register();
 }
 
-public class SandBombProjectile : ModProjectile
+public class SandBombProjectile : SpreadBomb
 {
 	public override string Texture => base.Texture.Replace("Projectile", string.Empty);
-	public override void SetDefaults() => Projectile.CloneDefaults(ProjectileID.DirtBomb);
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.SandBomb.DisplayName");
 
-	public override void OnKill(int timeLeft)
+	public override void SetDefaults()
 	{
-		if (Main.netMode != NetmodeID.MultiplayerClient)
-		{
-			var pt = Projectile.Center.ToTileCoordinates();
+		base.SetDefaults();
 
-			BigBombProjectile.SpreadType = ModContent.TileType<PackedSand>();
-			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, 5, BigBombProjectile.SpreadTileType);
-		}
-	}
-}
-
-/// <summary> Mimics <see cref="TileID.Sand"/> but without gravity-affectedness. </summary>
-public class PackedSand : ModTile
-{
-	public override string Texture => "Terraria/Images/Tiles_" + TileID.Sand;
-
-	public override void SetStaticDefaults()
-	{
-		Main.tileBlockLight[Type] = true;
-		Main.tileSolid[Type] = true;
-
-		TileID.Sets.CanBeDugByShovel[Type] = true;
-		TileID.Sets.Conversion.Sand[Type] = true;
-
-		RegisterItemDrop(ItemID.SandBlock);
-		MineResist = .5f;
+		dustType = DustID.Sand;
+		tileType = TileID.Sand;
 	}
 }

@@ -1,4 +1,4 @@
-using SpiritReforged.Content.Underground.Items.BigBombs;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 
 namespace SpiritReforged.Content.Underground.Items;
 
@@ -9,21 +9,21 @@ public class ClayBomb : ModItem
 		Item.CloneDefaults(ItemID.DirtBomb);
 		Item.shoot = ModContent.ProjectileType<ClayBombProjectile>();
 	}
+
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.Bomb).AddIngredient(ItemID.ClayBlock, 25).Register();
 }
 
-public class ClayBombProjectile : ModProjectile
+public class ClayBombProjectile : SpreadBomb
 {
 	public override string Texture => base.Texture.Replace("Projectile", string.Empty);
-	public override void SetDefaults() => Projectile.CloneDefaults(ProjectileID.DirtBomb);
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.ClayBomb.DisplayName");
 
-	public override void OnKill(int timeLeft)
+	public override void SetDefaults()
 	{
-		if (Main.netMode != NetmodeID.MultiplayerClient)
-		{
-			var pt = Projectile.Center.ToTileCoordinates();
+		base.SetDefaults();
 
-			BigBombProjectile.SpreadType = TileID.ClayBlock;
-			Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks(pt, 5, BigBombProjectile.SpreadTileType);
-		}
+		area = 4;
+		dustType = DustID.Clay;
+		tileType = TileID.ClayBlock;
 	}
 }

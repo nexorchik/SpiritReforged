@@ -1,7 +1,7 @@
 using System.IO;
 using System.Linq;
 
-namespace SpiritReforged.Common.ProjectileCommon;
+namespace SpiritReforged.Common.ProjectileCommon.Abstract;
 
 public abstract class BaseMinion(float TargettingRange, float DeaggroRange, Vector2 Size) : ModProjectile
 {
@@ -84,16 +84,12 @@ public abstract class BaseMinion(float TargettingRange, float DeaggroRange, Vect
 				_targetNPC = null;
 
 			if (CanRetarget)
-			{
 				foreach (NPC npc in validtargets)
-				{
 					if (npc.Distance(Projectile.Center) <= maxdist)
 					{
 						maxdist = npc.Distance(Projectile.Center);
 						_targetNPC = npc;
 					}
-				}
-			}
 		}
 
 		CanRetarget = true;

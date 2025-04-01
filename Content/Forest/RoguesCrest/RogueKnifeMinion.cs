@@ -1,7 +1,7 @@
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
-using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Forest.RoguesCrest;
