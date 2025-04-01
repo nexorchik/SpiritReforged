@@ -96,26 +96,33 @@ internal class AcaciaPlatformDetours : ILoadable
 
 		foreach (var p in AcaciaTree.Platforms)
 		{
-			var hitbox = new Rectangle(p.Hitbox.X, p.Hitbox.Y + 18, p.Hitbox.Width, 1); //Adjust the hitbox to be more grapple friendly
+			const int height = 4;
+			var hitbox = new Rectangle(p.Hitbox.X, p.Hitbox.Y + height + 16, p.Hitbox.Width, height); //Adjust the hitbox to be more grapple friendly
 
 			if (self.getRect().Intersects(hitbox) && !Collision.SolidCollision(self.Bottom, self.width, 8))
 			{
-				var owner = Main.player[self.owner];
-
-				self.ai[0] = 2f;
-				self.velocity *= 0;
-				self.netUpdate = true;
-
-				owner.grappling[0] = self.whoAmI;
-				owner.grapCount++;
-				owner.GrappleMovement();
-
-				if (Main.netMode != NetmodeID.SinglePlayer && self.owner == Main.myPlayer)
-					NetMessage.SendData(MessageID.PlayerControls, -1, -1, null, self.owner);
+				self.Center = new Vector2(self.Center.X, hitbox.Center.Y);
+				Latch(self);
 			}
 		}
 
 		orig(self);
+
+		static void Latch(Projectile p)
+		{
+			var owner = Main.player[p.owner];
+
+			p.ai[0] = 2f;
+			p.velocity *= 0;
+			p.netUpdate = true;
+
+			owner.grappling[0] = p.whoAmI;
+			owner.grapCount++;
+			owner.GrappleMovement();
+
+			if (Main.netMode != NetmodeID.SinglePlayer && p.owner == Main.myPlayer)
+				NetMessage.SendData(MessageID.PlayerControls, -1, -1, null, p.owner);
+		}
 	}
 
 	private static void CheckNPCCollision(On_NPC.orig_UpdateCollision orig, NPC self)

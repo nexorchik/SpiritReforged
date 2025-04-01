@@ -222,7 +222,7 @@ public class ReefSpearProjectile : ModProjectile
 				(int)(35 * scaleMod),
 				"noise",
 				new Vector2(4, 0.75f),
-				EaseFunction.EaseCubicOut).WithSkew(0.75f, _direction.ToRotation() + _rotationOffset * _rotationDirection).UsesLightColor();
+				EaseFunction.EaseCubicOut).WithSkew(0.75f, _direction.ToRotation() + _rotationOffset * _rotationDirection - MathHelper.Pi).UsesLightColor();
 		particle.Velocity = Vector2.Normalize(RealDirection) / 2;
 
 		ParticleHandler.SpawnParticle(particle);

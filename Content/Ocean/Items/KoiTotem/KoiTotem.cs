@@ -1,6 +1,7 @@
 using MonoMod.Cil;
 using SpiritReforged.Common.ItemCommon.FloatingItem;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.DrawPreviewHook;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
@@ -131,15 +132,16 @@ public class KoiTotemTile : ModTile, IDrawPreview
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		var tile = Main.tile[i, j];
-		var texture = TextureAssets.Tile[tile.TileType].Value;
-		var frame = new Point(tile.TileFrameX, tile.TileFrameY);
-		var source = new Rectangle(frame.X, frame.Y, 18, (frame.Y == 54) ? 18 : 16);
-		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
-		int offX = (frame.X % TileObjectData.GetTileData(Type, 0).CoordinateFullWidth == 0) ? -2 : 0;
-		var position = new Vector2(i, j) * 16 - Main.screenPosition + zero + new Vector2(offX, 0);
+		if (!TileExtensions.GetVisualInfo(i, j, out var color, out var texture))
+			return false;
 
-		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+		var t = Main.tile[i, j];
+		var frame = new Point(t.TileFrameX, t.TileFrameY);
+		var source = new Rectangle(frame.X, frame.Y, 18, (frame.Y == 54) ? 18 : 16);
+		int offX = (frame.X % TileObjectData.GetTileData(Type, 0).CoordinateFullWidth == 0) ? -2 : 0;
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + TileExtensions.TileOffset + new Vector2(offX, 0);
+
+		spriteBatch.Draw(texture, position, source, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
 		return false;
 	}
@@ -149,8 +151,7 @@ public class KoiTotemTile : ModTile, IDrawPreview
 		var texture = TextureAssets.Tile[op.Type].Value;
 		var data = TileObjectData.GetTileData(op.Type, op.Style, op.Alternate);
 		var color = ((op[0, 0] == 1) ? Color.White : Color.Red * .7f) * .5f;
-		
-		var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
+
 		int style = data.CalculatePlacementStyle(op.Style, op.Alternate, op.Random);
 
 		for (int frameX = 0; frameX < 2; frameX++)
@@ -161,7 +162,7 @@ public class KoiTotemTile : ModTile, IDrawPreview
 
 				var source = new Rectangle(frameX * 20 + style * data.CoordinateFullWidth, frameY * 18, 18, (frameY == 3) ? 18 : 16);
 				int offX = (frameX == 0) ? -2 : 0;
-				var drawPos = new Vector2(x, y) * 16 + zero - Main.screenPosition + new Vector2(offX, 0);
+				var drawPos = new Vector2(x, y) * 16 - Main.screenPosition + TileExtensions.TileOffset + new Vector2(offX, 0);
 
 				spriteBatch.Draw(texture, drawPos, source, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
 			}

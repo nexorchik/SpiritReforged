@@ -19,7 +19,7 @@ JellyfishBuff: {
 }
 
 DoubleJumpPotionBuff: {
-	DisplayName: Aether Jump
+	DisplayName: Zephyr Jump
 	Description: Temporarily grants an additional jump
 }
 

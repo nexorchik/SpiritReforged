@@ -6,7 +6,11 @@ Biomes: {
 }
 
 SlotContexts.Backpack: Pack
-Conditions.InSavanna: In Savanna
+
+Conditions: {
+	InSavanna: In Savanna
+	PeevedTumbler: When sparkling
+}
 
 Misc: {
 	Pins: {

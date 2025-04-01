@@ -440,7 +440,7 @@ TermiteItem: {
 
 StarPowder: {
 	DisplayName: Starpowder
-	Tooltip: Throw onto grass to invigorate it with starlight!
+	Tooltip: Throw onto grass to imbue it with starlight!
 }
 
 TermiteJar: {

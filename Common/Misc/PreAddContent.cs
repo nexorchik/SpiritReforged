@@ -11,7 +11,7 @@ internal class PreAddContent : ILoadable
 
 	/// <summary> The full names of content to disable. Must be formatted as "Content, Mod". </summary>
 	private static readonly Dictionary<string, string> NameToMod = new() { { "FloatingItemWorld", "SpiritMod" }, { "HeroMemorialMicropass", "SpiritMod" }, 
-		{ "StargrassMicropass", "SpiritMod" }, { "ZombieGlobalNPC", "SpiritMod" }, { "BoidHost", "SpiritMod" } };
+		{ "StargrassMicropass", "SpiritMod" }, { "ZombieGlobalNPC", "SpiritMod" }, { "BoidHost", "SpiritMod" }, { "OceanGlobalTile", "SpiritMod" } };
 
 	/// <summary> Hooks <see cref="Mod.AddContent"/> to control whether content from other mods can be added to the game.<br/>
 	/// Must be called in the mod's constructor to ignore mod load order. </summary>

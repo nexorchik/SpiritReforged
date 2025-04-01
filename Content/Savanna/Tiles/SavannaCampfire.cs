@@ -137,13 +137,12 @@ public class SavannaCampfire : ModTile, IAutoloadTileItem
 
 		if (OnFire(i, j))
 		{
-			var zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
 			int addFrameX = 0, addFrameY = 0;
 
 			TileLoader.SetAnimationFrame(Type, i, j, ref addFrameX, ref addFrameY);
 
 			var source = new Rectangle(tile.TileFrameX, tile.TileFrameY + addFrameY, 16, 16);
-			var position = new Vector2(i, j) * 16 - Main.screenPosition + zero + new Vector2(0, 2);
+			var position = new Vector2(i, j) * 16 - Main.screenPosition + TileExtensions.TileOffset + new Vector2(0, 2);
 
 			spriteBatch.Draw(glowTexture.Value, position, source, Color.White with { A = 0 }, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 		}

@@ -5,7 +5,7 @@ using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
-using Terraria.Utilities;
+using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Savanna.NPCs.PeevedTumbler;
 
@@ -14,20 +14,10 @@ public class PeevedTumbler : ModNPC
 {
 	public ref float Counter => ref NPC.ai[0];
 
-	private static WeightedRandom<int> choice;
-	private int heldItemType;
-
-	public override void Unload() => choice = null;
+	private bool _hasItem;
 
 	public override void SetStaticDefaults()
 	{
-		choice = new(Main.rand);
-		choice.Add(ItemID.None, 2);
-		choice.Add(ItemMethods.AutoItemType<Drywood>(), 1);
-		choice.Add(ModContent.ItemType<Items.Tools.LivingBaobabLeafWand>(), .05f);
-		choice.Add(ModContent.ItemType<Items.Tools.LivingBaobabLeafWand>(), .05f);
-		choice.Add(ModContent.ItemType<Items.WrithingSticks.WrithingSticks>(), .09f);
-
 		NPCID.Sets.TrailCacheLength[Type] = 5;
 		NPCID.Sets.TrailingMode[Type] = 3;
 	}
@@ -50,7 +40,7 @@ public class PeevedTumbler : ModNPC
 	{
 		if (source is not EntitySource_Parent { Entity: Player })
 		{
-			heldItemType = choice;
+			_hasItem = Main.rand.NextBool(3);
 			NPC.netUpdate = true;
 		}
 	}
@@ -100,35 +90,30 @@ public class PeevedTumbler : ModNPC
 			NPC.velocity.X += windPush;
 		}
 
-		if (heldItemType != ItemID.None && Main.rand.NextBool(26)) //Sparkle when carrying an item
+		if (_hasItem && Main.rand.NextBool(26)) //Sparkle when carrying an item
 			Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.TreasureSparkle, Scale: Main.rand.NextFloat(.25f, 1f)).velocity = Vector2.Zero;
 	}
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
-		bool dead = NPC.life <= 0;
-
-		if (Main.netMode != NetmodeID.MultiplayerClient && dead && heldItemType != ItemID.None)
-		{
-			int stack = heldItemType == ItemMethods.AutoItemType<Drywood>() ? Main.rand.Next(5, 11) : 1;
-			Item.NewItem(NPC.GetSource_Death(), NPC.getRect(), heldItemType, stack);
-		}
-
 		if (Main.dedServ)
 			return;
 
-		for (int i = 0; i < (dead ? 20 : 4); i++)
-			Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.WoodFurniture)
-				.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(.5f, 1f);
-		if (dead)
+		bool dead = NPC.life <= 0;
+
+		if (NPC.life <= 0)
+		{
 			for (int i = 1; i < 6; i++)
 				Gore.NewGoreDirect(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()),
 					NPC.velocity * Main.rand.NextFloat(.5f, 1f), Mod.Find<ModGore>("PeevedTumbler" + i).Type);
+		}
+
+		for (int i = 0; i < (dead ? 20 : 4); i++)
+			Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.WoodFurniture).velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(.5f, 1f);
 	}
 
 	//Only damage NPCs and players when moving quickly enough
 	public override bool CanHitPlayer(Player target, ref int cooldownSlot) => Math.Abs(NPC.velocity.X) > 1.5f;
-
 	public override bool CanHitNPC(NPC target) => Math.Abs(NPC.velocity.X) > 1.5f;
 
 	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -157,9 +142,20 @@ public class PeevedTumbler : ModNPC
 		return false;
 	}
 
-	public override void SendExtraAI(BinaryWriter writer) => writer.Write(heldItemType);
+	public override void SendExtraAI(BinaryWriter writer) => writer.Write(_hasItem);
+	public override void ReceiveExtraAI(BinaryReader reader) => _hasItem = reader.ReadBoolean();
 
-	public override void ReceiveExtraAI(BinaryReader reader) => heldItemType = reader.ReadInt32();
+	public override void ModifyNPCLoot(NPCLoot npcLoot)
+	{
+		var rule = new LeadingConditionRule(new HasItem());
+
+		rule.OnSuccess(ItemDropRule.Common(ItemID.Nachos, 26));
+		rule.OnSuccess(ItemDropRule.Common(ItemMethods.AutoItemType<Drywood>(), minimumDropped: 5, maximumDropped: 15));
+		rule.OnSuccess(ItemDropRule.OneFromOptions(25, ModContent.ItemType<Items.Tools.LivingBaobabWand>(), ModContent.ItemType<Items.Tools.LivingBaobabLeafWand>()));
+		rule.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.WrithingSticks.WrithingSticks>(), 20));
+
+		npcLoot.Add(rule);
+	}
 
 	public override float SpawnChance(NPCSpawnInfo spawnInfo)
 	{
@@ -170,5 +166,10 @@ public class PeevedTumbler : ModNPC
 		return 0;
 	}
 
-	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon(ItemID.Nachos, 33);
+	private class HasItem : IItemDropRuleCondition, IProvideItemConditionDescription
+	{
+		public bool CanDrop(DropAttemptInfo info) => info.npc.ModNPC is PeevedTumbler tumblr && tumblr._hasItem;
+		public bool CanShowItemDropInUI() => true;
+		public string GetConditionDescription() => Language.GetTextValue("Mods.SpiritReforged.Conditions.PeevedTumbler");
+	}
 }

@@ -1,4 +1,11 @@
-v0.1.0.5
-- Adjusted Portugese translation (thanks again to Lucas Rotulo)
-- Fixed Honey Coated Salmon maybe having a duplicate tooltip (unclear)
-- Actually included 0.1.0.4's fixes
+v0.1.0.7
+- Reduced the drop rate of Rogue's Crest in fishing crates
+- Fixed player rotation being reset when it shouldn't be
+- Acacia trees are now affected by Fertilizer and Axe of Regrowth
+- Living Baobab and Living Baobab Leaf wands now have a chance to drop from shook Acacia trees
+- Reordered ingredients list for Quench Potion
+- Cartographer and Hiker now animate in the Bestiary
+- Made several summon weapons auto-reusable
+- Included Peeved Tumbler item drops in the Bestiary and adjusted drop rates
+- Fixed various custom-drawn tiles being unaffected by paint
+- Fixed an issue when syncing backpack contents in multiplayer
