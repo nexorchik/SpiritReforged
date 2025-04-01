@@ -42,8 +42,7 @@ public class PotterySlime : ModNPC
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Underground");
 	public override string GetChat() => Language.GetTextValue("SlimeBlueChatter.Chatter_" + Main.rand.Next(1, 4));
 	public override void SetChatButtons(ref string button, ref string button2) => button = Language.GetTextValue("UI.PetTheAnimal"); //Pet
-
-	public override bool CanTownNPCSpawn(int numTownNPCs) => false;
+	public override bool CanTownNPCSpawn(int numTownNPCs) => PotteryTracker.Remaining == 0;
 
 	public override List<string> SetNPCNameList()
 	{
@@ -61,6 +60,13 @@ internal class PotteryTracker : ModSystem
 {
 	[WorldBound]
 	public static ushort Remaining;
+
+	/// <summary> Safely increments <see cref="Remaining"/>. </summary>
+	public static bool TrackOne()
+	{
+		Remaining = (ushort)Math.Max(Remaining - 1, 0);
+		return Remaining == 0;
+	}
 
 	public override void NetSend(BinaryWriter writer) => writer.Write(Remaining);
 	public override void NetReceive(BinaryReader reader) => Remaining = reader.ReadUInt16();

@@ -50,7 +50,7 @@ internal class PotsMicropass : Micropass
 				break;
 		}
 
-		PotteryTracker.Remaining = (ushort)Main.rand.Next(pots);
+		PotteryTracker.Remaining = (ushort)Main.rand.Next(pots / 2);
 	}
 
 	/// <summary> Picks a relevant biome pot style and places it (<see cref="BiomePots"/>). </summary>

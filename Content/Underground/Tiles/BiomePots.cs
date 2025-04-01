@@ -1,6 +1,7 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Forest.Cloud.Items;
+using SpiritReforged.Content.Underground.NPCs;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
@@ -14,6 +15,7 @@ public class BiomePots : ModTile
 		CAVERN, GOLD, ICE, DESERT, JUNGLE, DUNGEON, CORRUPTION, CRIMSON, MARBLE, HELL
 	}
 
+	/// <summary> Unit for distance-based vfx. </summary>
 	private const int DistMod = 200;
 	private static readonly HashSet<Point16> GlowPoints = [];
 
@@ -98,7 +100,7 @@ public class BiomePots : ModTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		if (TileObjectData.IsTopLeft(i, j))
+		if (TileObjectData.IsTopLeft(i, j) && GetStyle(i, j) is STYLE.GOLD)
 			GlowPoints.Add(new Point16(i, j));
 
 		return true;
@@ -112,7 +114,7 @@ public class BiomePots : ModTile
 		var region = new Rectangle((int)drawPos.X - squareSize / 2, (int)drawPos.Y - squareSize / 2, squareSize, squareSize);
 		Color color = Color.White;
 
-		float opacity = MathHelper.Clamp(1f - Main.LocalPlayer.DistanceSQ(position) / (DistMod * DistMod), 0, .5f) * Lighting.Brightness((int)(position.X / 16), (int)(position.Y / 16));
+		float opacity = MathHelper.Clamp(1f - Main.LocalPlayer.DistanceSQ(position) / (DistMod * DistMod), 0, .75f) * Lighting.Brightness((int)(position.X / 16), (int)(position.Y / 16));
 
 		short[] indices = [0, 1, 2, 1, 3, 2];
 
@@ -132,7 +134,7 @@ public class BiomePots : ModTile
 		foreach (EffectPass pass in effect.CurrentTechnique.Passes)
 		{
 			effect.Parameters["baseShadowColor"].SetValue(Color.Goldenrod.ToVector4() * opacity);
-			effect.Parameters["adjustColor"].SetValue(Color.SlateBlue.ToVector4() * opacity);
+			effect.Parameters["adjustColor"].SetValue(Color.White.ToVector4() * opacity);
 			effect.Parameters["noiseScroll"].SetValue(Main.GameUpdateCount * 0.0015f);
 			effect.Parameters["noiseStretch"].SetValue(.5f);
 			effect.Parameters["uWorldViewProjection"].SetValue(view * projection);
@@ -145,17 +147,25 @@ public class BiomePots : ModTile
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
+		if (WorldGen.generatingWorld)
+			return; //Particularly important for not incrementing Remaining
+
 		var style = (STYLE)(frameY / 36);
 		int variant = frameX / 36;
 
 		var source = new EntitySource_TileBreak(i, j);
 		var position = new Vector2(i, j).ToWorldCoordinates(16, 16);
-
 		int dustType = DustID.Pot;
+
+		bool spawnSlime = PotteryTracker.Remaining == 1;
+		PotteryTracker.TrackOne();
 
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
 			HandleLoot(i, j, style); //Drops should only occur on the server/singleplayer
+
+			if (spawnSlime)
+				NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), position, ModContent.NPCType<PotterySlime>());
 
 			if (Main.dedServ)
 				return;
@@ -265,7 +275,7 @@ public class BiomePots : ModTile
 		var p = Main.player[Player.FindClosest(center, 0, 0)];
 
 		LootTable table = new();
-		if (Player.GetClosestRollLuck(i, j, 100) == 0) //COIN PORTAL
+		if (style is STYLE.GOLD || Player.GetClosestRollLuck(i, j, 100) == 0) //COIN PORTAL
 		{
 			Projectile.NewProjectileDirect(new EntitySource_TileBreak(i, j), center, Vector2.UnitY * -12f, ProjectileID.CoinPortal, 0, 0);
 			return;
@@ -382,6 +392,12 @@ public class BiomePots : ModTile
 		}
 	}
 
+	private static STYLE GetStyle(int i, int j)
+	{
+		int frameY = Main.tile[i, j].TileFrameY;
+		return (STYLE)(frameY / 36);
+	}
+
 	/// <summary> Calculates coin values similarly to how vanilla pots do. </summary>
 	private static int CalculateCoinValue(STYLE style)
 	{
@@ -389,7 +405,6 @@ public class BiomePots : ModTile
 
 		float biomeMult = style switch
 		{
-			STYLE.GOLD => 10f,
 			STYLE.ICE => 1.4f,
 			STYLE.DESERT => 2.25f,
 			STYLE.JUNGLE => 2f,
