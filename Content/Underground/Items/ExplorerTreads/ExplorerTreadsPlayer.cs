@@ -1,7 +1,7 @@
 ﻿using SpiritReforged.Common.PlayerCommon;
 using System.Linq;
 
-namespace SpiritReforged.Content.Underground.ExplorerTreads;
+namespace SpiritReforged.Content.Underground.Items.ExplorerTreads;
 
 internal class ExplorerTreadsPlayer : ModPlayer
 {

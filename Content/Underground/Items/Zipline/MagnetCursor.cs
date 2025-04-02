@@ -2,7 +2,7 @@
 using System.Linq;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Content.Underground.Zipline;
+namespace SpiritReforged.Content.Underground.Items.Zipline;
 
 internal static class MagnetCursor
 {

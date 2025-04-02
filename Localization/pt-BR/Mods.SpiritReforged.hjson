@@ -6,7 +6,11 @@ Biomes: {
 }
 
 SlotContexts.Backpack: Mochila
-Conditions.InSavanna: Na Savana
+
+Conditions: {
+	InSavanna: Na Savana
+	// PeevedTumbler: When sparkling
+}
 
 Misc: {
 	Pins: {

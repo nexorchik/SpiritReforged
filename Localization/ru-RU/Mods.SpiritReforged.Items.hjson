@@ -1335,3 +1335,8 @@ WayfarerLegs: {
 	// DisplayName: Wayfarer's Pants
 	// Tooltip: 7% increased movement speed
 }
+
+AncientKoiTotem: {
+	// DisplayName: Ancient Koi Totem
+	// Tooltip: ""
+}

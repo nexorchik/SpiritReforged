@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using Terraria.Audio;
 
-namespace SpiritReforged.Content.Underground.Zipline;
+namespace SpiritReforged.Content.Underground.Items.Zipline;
 
 public class ZiplineProj : ModProjectile
 {

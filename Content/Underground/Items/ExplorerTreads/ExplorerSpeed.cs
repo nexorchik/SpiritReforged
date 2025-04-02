@@ -1,4 +1,4 @@
-﻿namespace SpiritReforged.Content.Underground.ExplorerTreads;
+﻿namespace SpiritReforged.Content.Underground.Items.ExplorerTreads;
 
 public class ExplorerSpeed : ModBuff
 {

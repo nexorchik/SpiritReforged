@@ -24,6 +24,7 @@ public class FairyWhistle : ModItem
 		Item.noUseGraphic = true;
 		Item.shoot = ModContent.ProjectileType<FairyMinion>();
 		Item.UseSound = new SoundStyle("SpiritReforged/Assets/SFX/Item/Whistle") with { PitchVariance = .3f, Volume = 1.2f };
+		Item.autoReuse = true;
 	}
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
