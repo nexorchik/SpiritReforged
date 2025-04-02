@@ -11,8 +11,15 @@ public class OceanPlayer : ModPlayer
 	public bool ZoneDeepOcean => Player.ZoneBeach && Player.GetModPlayer<OceanPlayer>().Submerged(30) && NotInDepths(Player);
 	public bool nearLure;
 
-	private static bool NotInDepths(Player plr) => !ModLoader.TryGetMod("ThoriumMod", out Mod thor) || thor.Call("GetZoneAquaticDepths", plr) is bool depths && !depths;
 	public override void ResetEffects() => nearLure = false;
+
+	private static bool NotInDepths(Player plr)
+	{
+		if (ModLoader.TryGetMod("ThoriumMod", out Mod thor) && thor.TryFind("DepthsBiome", out ModBiome aquaticDepths))
+			return !plr.InModBiome(aquaticDepths);
+
+		return true;
+	}
 
 	public override void CatchFish(FishingAttempt attempt, ref int itemDrop, ref int npcSpawn, ref AdvancedPopupRequest sonar, ref Vector2 sonarPosition)
 	{
@@ -28,7 +35,7 @@ public class OceanPlayer : ModPlayer
 	/// <param name="tileDepth">Depth in tiles for the player to be under.</param>
 	public bool Submerged(int tileDepth, out int realDepth, bool countRealDepth = false)
     {
-        realDepth = 0;
+		realDepth = 0;
 
         if (!Collision.WetCollision(Player.position, Player.width, 8))
             return false;
