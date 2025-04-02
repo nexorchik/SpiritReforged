@@ -1328,3 +1328,58 @@ SparrowCageItem: {
 	DisplayName: 麻雀笼
 	Tooltip: ""
 }
+
+PotteryWheelItem: {
+	// DisplayName: Pottery Wheel
+	// Tooltip: Used for crafting pots
+}
+
+CavernPotItem: {
+	// DisplayName: Cavern Pot
+	// Tooltip: ""
+}
+
+GoldPotItem: {
+	// DisplayName: Ornate Pot
+	// Tooltip: ""
+}
+
+IcePotItem: {
+	// DisplayName: Frozen Pot
+	// Tooltip: ""
+}
+
+DesertPotItem: {
+	// DisplayName: Desert Pot
+	// Tooltip: ""
+}
+
+JunglePotItem: {
+	// DisplayName: Jungle Pot
+	// Tooltip: ""
+}
+
+DungeonPotItem: {
+	// DisplayName: Dungeon Pot
+	// Tooltip: ""
+}
+
+CorruptPotItem: {
+	// DisplayName: Corrupt Pot
+	// Tooltip: ""
+}
+
+CrimsonPotItem: {
+	// DisplayName: Crimson Pot
+	// Tooltip: ""
+}
+
+MarblePotItem: {
+	// DisplayName: Marble Pot
+	// Tooltip: ""
+}
+
+HellPotItem: {
+	// DisplayName: Obsidian Pot
+	// Tooltip: ""
+}
