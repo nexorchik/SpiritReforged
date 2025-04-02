@@ -1328,3 +1328,8 @@ SparrowCageItem: {
 	DisplayName: Sparrow Cage
 	Tooltip: ""
 }
+
+AncientKoiTotem: {
+	DisplayName: Ancient Koi Totem
+	Tooltip: ""
+}
