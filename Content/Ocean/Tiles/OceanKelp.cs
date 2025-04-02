@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.Corruption;
 using Terraria.DataStructures;
+using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Ocean.Tiles;
 
@@ -184,11 +185,13 @@ public class OceanKelp : ModTile, IConvertibleTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Tile tile = Main.tile[i, j];
+		var t = Main.tile[i, j];
+		if (!TileDrawing.IsVisible(t))
+			return false;
 
-		Texture2D tex = TextureAssets.Tile[Type].Value;
-		int clumpAmount = GetClumpNumber(tile.TileFrameY) + 1;
-		Rectangle frame = new(tile.TileFrameX, tile.TileFrameY % 198, 44, 16);
+		int clumpAmount = GetClumpNumber(t.TileFrameY) + 1;
+
+		Rectangle frame = new(t.TileFrameX, t.TileFrameY % 198, 44, 16);
 		Vector2 drawPos = new Vector2(i, j + 1) * 16 - Main.screenPosition + new Vector2(10, 2);
 
 		for (int k = clumpAmount - 1; k >= 0; --k)
@@ -210,10 +213,10 @@ public class OceanKelp : ModTile, IConvertibleTile
 					clump = 1;
 			}
 
-			if (tile.TileFrameX == ClumpX)
+			if (t.TileFrameX == ClumpX)
 				DrawClump(i, j, spriteBatch, clumpAmount, frame, realPos, clump);
 			else
-				DrawSingleKelp(i, j, spriteBatch, tex, clumpAmount, frame, realPos, clump, k);
+				DrawSingleKelp(i, j, spriteBatch, TextureAssets.Tile[Type].Value, clumpAmount, frame, realPos, clump, k);
 		}
 
 		return false;
@@ -221,21 +224,21 @@ public class OceanKelp : ModTile, IConvertibleTile
 
 	private void DrawClump(int i, int j, SpriteBatch spriteBatch, int clumpAmount, Rectangle frame, Vector2 drawPos, int clump)
 	{
-		Color color = Lighting.GetColor(i, j, Color.Lerp(Color.White, Color.Black, clump / (float)clumpAmount));
+		var color = Lighting.GetColor(i, j, Color.Lerp(Color.White, Color.Black, clump / (float)clumpAmount));
 		frame = new Rectangle(GetGroupFrameX(i, j) == 48 ? 76 : 2, frame.Y / 18 * 34, 72, 32);
 
-		spriteBatch.Draw(Clump.Value, drawPos, frame, color, 0f, new Vector2(36, 16), 1f, SpriteEffects.None, 0);
+		spriteBatch.Draw(Clump.Value, drawPos, frame, TileExtensions.GetTint(i, j, color), 0f, new Vector2(36, 16), 1f, SpriteEffects.None, 0);
 	}
 
 	private static void DrawSingleKelp(int i, int j, SpriteBatch spriteBatch, Texture2D tex, int clumpAmount, Rectangle frame, Vector2 drawPos, int clump, int realClump)
 	{
-		Color color = Lighting.GetColor(i, j, Color.Lerp(Color.White, Color.Black, clump / (float)clumpAmount));
+		var color = Lighting.GetColor(i, j, Color.Lerp(Color.White, Color.Black, clump / (float)clumpAmount));
 		frame.X = GetGroupFrameX(i + clump, j);
 
 		if (clump != 0 && GetClumpNumber(Main.tile[i, j - 1]) < realClump)
 			frame.Y = 0;
 
-		spriteBatch.Draw(tex, drawPos, frame, color, 0f, new Vector2(23, 16), 1f, SpriteEffects.None, 0);
+		spriteBatch.Draw(tex, drawPos, frame, TileExtensions.GetTint(i, j, color), 0f, new Vector2(23, 16), 1f, SpriteEffects.None, 0);
 	}
 
 	public float GetOffset(int i, int j, float sOffset = 0f)

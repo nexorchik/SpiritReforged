@@ -3,6 +3,7 @@ using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.TileSway;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
@@ -102,6 +103,11 @@ public class ElephantGrass : ModTile, IConvertibleTile
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch) //Imitates wind sway drawing but with unique dimensions
 	{
 		const int height = 3; //Pseudo tile height
+
+		if (!TileExtensions.GetVisualInfo(i, j, out _, out _))
+			return false;
+
+		var t = Main.tile[i, j];
 		float physics = Physics(new Point16(i, j - (height - 1)));
 
 		for (int y = 0; y < 3; y++)
@@ -112,7 +118,7 @@ public class ElephantGrass : ModTile, IConvertibleTile
 			var rotationOffset = new Vector2(0, Math.Abs(rotation) * 20f);
 			var drawOrigin = new Vector2(8, (height - y) * 16);
 
-			var frame = new Point(Main.tile[i, j].TileFrameX, Main.tile[i, j].TileFrameY + y * 18);
+			var frame = new Point(t.TileFrameX, t.TileFrameY + y * 18);
 			var offset = drawOrigin + rotationOffset + new Vector2(0, y * 16 - 32);
 
 			if (DrawOrderSystem.Order == DrawOrderAttribute.Layer.OverPlayers)
@@ -135,17 +141,23 @@ public class ElephantGrass : ModTile, IConvertibleTile
 
 	public virtual void DrawFront(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin, Point frame)
 	{
+		if (!TileExtensions.GetVisualInfo(i, j, out var color, out var texture))
+			return;
+
 		float seed = (frame.X / 18f + i) * .8f % 1f;
 
 		offset += new Vector2(MathHelper.Lerp(-2, 2, seed), 2);
 		var source = new Rectangle(frame.X, frame.Y, 16, 16);
 		var effects = ((int)(seed * 2) % 2 == 0) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-		spriteBatch.Draw(TextureAssets.Tile[Type].Value, new Vector2(i, j) * 16 - Main.screenPosition + offset, source, Lighting.GetColor(i, j), rotation, origin, 1, effects, 0f);
+		spriteBatch.Draw(texture, new Vector2(i, j) * 16 - Main.screenPosition + offset, source, color, rotation, origin, 1, effects, 0f);
 	}
 
 	public virtual void DrawBack(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin, Point frame)
 	{
+		if (!TileExtensions.GetVisualInfo(i, j, out var color, out var texture))
+			return;
+
 		var data = Main.tile[i, j].SafelyGetData();
 		int amount = i % 2 + 1;
 
@@ -161,9 +173,9 @@ public class ElephantGrass : ModTile, IConvertibleTile
 
 			var source = new Rectangle(frameX, frame.Y, 16, 16);
 			var effects = ((int)(seed * 2) % 2 == 1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-			var color = Color.Lerp(Color.White, SubColor, .9f + (float)Math.Sin(i / 8f) * .3f);
+			var subColor = Color.Lerp(Color.White, SubColor, .9f + (float)Math.Sin(i / 8f) * .3f);
 
-			spriteBatch.Draw(TextureAssets.Tile[Type].Value, new Vector2(i, j) * 16 - Main.screenPosition + offset, source, Lighting.GetColor(i, j).MultiplyRGB(color), rotation * .4f, origin, 1, effects, 0f);
+			spriteBatch.Draw(texture, new Vector2(i, j) * 16 - Main.screenPosition + offset, source, color.MultiplyRGB(subColor), rotation * .4f, origin, 1, effects, 0f);
 		}
 	}
 

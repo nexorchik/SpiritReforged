@@ -64,7 +64,7 @@ QuenchPotion_Buff: {
 }
 
 TumblerPetBuff: {
-	DisplayName: 矛盾的风滚草
+	DisplayName: 矛盾的翻滚怪
 	Description: 一个友善的风滚草正跟着你
 }
 
@@ -75,7 +75,7 @@ Frozen: {
 
 GildedScarabBuff: {
 	DisplayName: 圣甲虫盾
-	Description: 防御增加{0}
+	Description: 防御力增加{0}
 }
 
 PoolNoodleBubbleBuff: {

@@ -69,6 +69,9 @@ public class Hiker : WorldNPC
 
 		stickTexture = ModContent.Request<Texture2D>(Texture + "Stick");
 		npcProfile = new Profiles.StackedNPCProfile(new Profiles.DefaultNPCProfile(Texture, NPCHeadLoader.GetHeadSlot(HeadTexture), Texture + "_Party"));
+
+		NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, new NPCID.Sets.NPCBestiaryDrawModifiers()
+		{ Velocity = 1f });
 	}
 
 	public override void SetDefaults()
