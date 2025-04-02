@@ -1320,3 +1320,8 @@ SparrowCageItem: {
 	DisplayName: Клетка с воробьём
 	Tooltip: ""
 }
+
+AncientKoiTotem: {
+	// DisplayName: Ancient Koi Totem
+	// Tooltip: ""
+}
