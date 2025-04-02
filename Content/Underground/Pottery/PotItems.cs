@@ -1,36 +1,52 @@
-using SpiritReforged.Content.Underground.Tiles;
-
 namespace SpiritReforged.Content.Underground.Pottery;
 
 /// <summary> Specialised pot item autoloader (<see cref="AutoloadedPotItem"/>) for <see cref="PotteryWheel"/>. </summary>
 public class PotItems : ILoadable
 {
-	/// <summary> Sorts style by index. </summary>
-	private static readonly string[] Names = ["Cavern", "Gold", "Ice", "Desert", "Jungle", "Dungeon", "Corrupt", "Crimson", "Marble", "Hell"]; 
+	//Both sort by index
+	private static readonly string[] UncommonNames = ["Cavern", "Gold", "Ice", "Desert", "Jungle", "Dungeon", "Corrupt", "Crimson", "Marble", "Hell"];
+	private static readonly string[] CommonNames = ["Cavern", "Ice", "Jungle", "Dungeon", "Hell", "Corrupt", "Spider", "Crimson", "Pyramid", "Temple", "Marble", "Desert"];
 
 	public void Load(Mod mod)
 	{
-		for (int i = 0; i < Names.Length; i++)
+		for (int i = 0; i < UncommonNames.Length; i++)
 		{
-			string name = Names[i];
-			mod.AddContent(new AutoloadedPotItem(nameof(BiomePots), name, i * 3));
+			string name = UncommonNames[i];
+			mod.AddContent(new AutoloadedPotItem(nameof(BiomePotsEcho), name, i * 3));
+		}
+
+		for (int i = 0; i < CommonNames.Length; i++)
+		{
+			string name = CommonNames[i];
+			int style = i * 9;
+
+			if (style != 0)
+				style += 3; //Account for cavern pot odd style count
+
+			mod.AddContent(new AutoloadedPotItem(nameof(CommonPotsEcho), "Ancient" + name, style, (i == 0) ? 12 : 9));
 		}
 	}
 
 	public void Unload() { }
 }
 
-public sealed class AutoloadedPotItem(string baseName, string name, int style) : ModItem
+/// <param name="baseName"> The internal name of the tile this item places. </param>
+/// <param name="name"></param>
+/// <param name="style"> The base style this item places implicitly affected by RandomStyleRange. </param>
+/// <param name="styleLimit"> The length of styles this item can place, used for calculating drops. </param>
+public sealed class AutoloadedPotItem(string baseName, string name, int style, int styleLimit = 3) : ModItem
 {
 	protected override bool CloneNewInstances => true;
 	public override string Name => _name + "PotItem";
 	public override string Texture => (GetType().Namespace + $".{_name}Pot").Replace('.', '/');
 
+	private readonly int _styleLimit = styleLimit;
+
 	private string _baseName = baseName;
 	private string _name = name;
 	private int _style = style;
 
-	private ModTile Tile => Mod.Find<ModTile>(_baseName + "Echo");
+	private ModTile Tile => Mod.Find<ModTile>(_baseName);
 
 	public override ModItem Clone(Item newEntity)
 	{
@@ -43,10 +59,9 @@ public sealed class AutoloadedPotItem(string baseName, string name, int style) :
 
 	public override void SetStaticDefaults() //Register echo tile drops for all styles
 	{
-		int wrap = TileObjectData.GetTileData(Tile.Type, 0)?.StyleWrapLimit ?? 0;
 		List<int> styles = [];
 
-		for (int i = 0; i < wrap; i++)
+		for (int i = 0; i < _styleLimit; i++)
 			styles.Add(_style + i);
 		
 		if (styles.Count != 0)
