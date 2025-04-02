@@ -302,3 +302,25 @@ HideZombieSmall: {
 	DisplayName: "{$NPCName.Zombie}"
 	Entry: 它们这身行头可是死灵时尚圈的最新潮流。
 }
+
+PotterySlime: {
+	// DisplayName: Pottery Slime
+
+	Names: {
+		// 0: Mason
+		// 1: Chip
+		// 2: Curio
+		// 3: Kint
+		// 4: Vis
+		// 5: Urn
+		// 6: Penny
+		// 7: Callie
+		// 8: Clay
+		// 9: Cass
+		// 10: Tycho
+		// 11: Ash
+		// 12: Cap
+	}
+
+	// Entry: ""
+}
