@@ -2,6 +2,7 @@
 using SpiritReforged.Common.WorldGeneration.Micropasses;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Underground.Tiles;
+using SpiritReforged.Content.Underground.NPCs;
 
 namespace SpiritMod.World.Micropasses;
 
@@ -48,6 +49,8 @@ internal class PotsMicropass : Micropass
 			if (CreateUncommon(x, y - 1) && ++pots >= maxPots)
 				break;
 		}
+
+		PotteryTracker.Remaining = (ushort)Main.rand.Next(pots / 2);
 	}
 
 	/// <summary> Picks a relevant biome pot style and places it (<see cref="BiomePots"/>). </summary>
@@ -59,25 +62,25 @@ internal class PotsMicropass : Micropass
 		int style = -1;
 
 		if (wall is WallID.Dirt or WallID.GrassUnsafe || tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite && y > Main.worldSurface)
-			style = GetRange(WorldGen.genRand.NextBool(100) ? BiomePots.STYLE.GOLD : BiomePots.STYLE.CAVERN);
+			style = GetRange(WorldGen.genRand.NextBool(100) ? BiomePots.Style.Gold : BiomePots.Style.Cavern);
 
 		if (wall is WallID.SnowWallUnsafe || tile is TileID.SnowBlock or TileID.IceBlock or TileID.BreakableIce && y > Main.worldSurface)
-			style = GetRange(BiomePots.STYLE.ICE);
+			style = GetRange(BiomePots.Style.Ice);
 		else if (wall is WallID.Sandstone or WallID.HardenedSand)
-			style = GetRange(BiomePots.STYLE.DESERT);
+			style = GetRange(BiomePots.Style.Desert);
 		else if (wall is WallID.MudUnsafe || tile is TileID.JungleGrass && y > Main.worldSurface)
-			style = GetRange(BiomePots.STYLE.JUNGLE);
+			style = GetRange(BiomePots.Style.Jungle);
 		else if (tile is TileID.CorruptGrass or TileID.Ebonstone or TileID.Demonite && y > Main.worldSurface)
-			style = GetRange(BiomePots.STYLE.CORRUPTION);
+			style = GetRange(BiomePots.Style.Corruption);
 		else if (tile is TileID.CrimsonGrass or TileID.Crimstone or TileID.Crimtane && y > Main.worldSurface)
-			style = GetRange(BiomePots.STYLE.CRIMSON);
+			style = GetRange(BiomePots.Style.Crimson);
 		else if (tile is TileID.Marble)
-			style = GetRange(BiomePots.STYLE.MARBLE);
+			style = GetRange(BiomePots.Style.Marble);
 
 		if (y > Main.UnderworldLayer)
-			style = GetRange(BiomePots.STYLE.HELL);
+			style = GetRange(BiomePots.Style.Hell);
 		else if (tile is TileID.BlueDungeonBrick or TileID.GreenDungeonBrick or TileID.PinkDungeonBrick || Main.wallDungeon[wall])
-			style = GetRange(BiomePots.STYLE.DUNGEON);
+			style = GetRange(BiomePots.Style.Dungeon);
 
 		if (style != -1)
 		{
@@ -89,7 +92,7 @@ internal class PotsMicropass : Micropass
 
 		return false;
 
-		static int GetRange(BiomePots.STYLE value)
+		static int GetRange(BiomePots.Style value)
 		{
 			int v = (int)value * 3;
 			return WorldGen.genRand.Next(v, v + 3);

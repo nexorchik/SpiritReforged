@@ -1321,21 +1321,22 @@ SparrowCageItem: {
 	Tooltip: ""
 }
 
-BoomShroom: {
-	// DisplayName: Boom Shroom
-	/* Tooltip:
-		'''
-		All thrown explosives are much larger... and stronger
-		Downtime between throws is increased
-		''' */
+WayfarerHead: {
+	// DisplayName: Wayfarer's Hat
+	// Tooltip: Immunity to darkness
 }
 
-ClayBomb: {
-	// DisplayName: Clay Bomb
-	// Tooltip: A small explosion that will spread clay
+WayfarerBody: {
+	// DisplayName: Wayfarer's Rucksack
+	// Tooltip: 5% increased movement speed
 }
 
-SandBomb: {
-	// DisplayName: Sand Bomb
-	// Tooltip: A small explosion that will spread sand
+WayfarerLegs: {
+	// DisplayName: Wayfarer's Pants
+	// Tooltip: 7% increased movement speed
+}
+
+AncientKoiTotem: {
+	// DisplayName: Ancient Koi Totem
+	// Tooltip: ""
 }

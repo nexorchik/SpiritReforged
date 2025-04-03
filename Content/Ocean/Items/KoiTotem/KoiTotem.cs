@@ -1,4 +1,3 @@
-using MonoMod.Cil;
 using SpiritReforged.Common.ItemCommon.FloatingItem;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
@@ -11,55 +10,11 @@ namespace SpiritReforged.Content.Ocean.Items.KoiTotem;
 
 public class KoiTotem : FloatingItem
 {
-	private static Asset<Texture2D> CursorTexture;
-	public static float CursorOpacity { get; private set; }
-
 	public override float SpawnWeight => 0.005f;
 	public override float Weight => base.Weight * 0.9f;
 	public override float Bouyancy => base.Bouyancy * 1.07f;
 
-	public override void Load()
-	{
-		if (!Main.dedServ)
-			CursorTexture = ModContent.Request<Texture2D>(Texture.Remove(Texture.Length - Name.Length) + "Cursor_Plus");
-
-		IL_Player.GetItem_FillIntoOccupiedSlot += RemovePickupSound;
-		On_Player.ItemCheck_CheckFishingBobber_PickAndConsumeBait += CheckBait;
-		On_Main.DrawInterface_40_InteractItemIcon += DrawPlusIcon;
-	}
-
-	private static void RemovePickupSound(ILContext il)
-	{
-		var c = new ILCursor(il);
-		if (!c.TryGotoNext(MoveType.After, x => x.MatchLdcI4(7))) //Match the sound id
-			return;
-
-		//Remove the item pickup sound when replenishing bait to an existing stack
-		c.EmitDelegate((int sound) => (CursorOpacity == 1) ? -1 : sound);
-	}
-
-	private static void DrawPlusIcon(On_Main.orig_DrawInterface_40_InteractItemIcon orig, Main self)
-	{
-		orig(self);
-
-		if (CursorOpacity > 0 && Main.LocalPlayer.cursorItemIconID > 0)
-		{
-			var pos = Main.MouseScreen + new Vector2(6) + TextureAssets.Item[Main.LocalPlayer.cursorItemIconID].Size();
-			Main.spriteBatch.Draw(CursorTexture.Value, pos, null, Color.White * CursorOpacity * 2, 0, Vector2.Zero, Main.cursorScale, SpriteEffects.None, 0f);
-			CursorOpacity = MathHelper.Max(CursorOpacity - .025f, 0);
-		}
-	}
-
-	private static void CheckBait(On_Player.orig_ItemCheck_CheckFishingBobber_PickAndConsumeBait orig, Player self, Projectile bobber, out bool pullTheBobber, out int baitTypeUsed)
-	{
-		orig(self, bobber, out pullTheBobber, out baitTypeUsed);
-
-		if (pullTheBobber && self.HasBuff<KoiTotemBuff>() && Main.rand.NextBool(10))
-		{
-			CursorOpacity = 1;
-			self.GetItem(self.whoAmI, new Item(baitTypeUsed), new GetItemSettings(false, true));
-		}
-	}
+	public override void SetStaticDefaults() => ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<AncientKoiTotem>();
 
 	public override void SetDefaults()
 	{
@@ -104,21 +59,22 @@ public class KoiTotemTile : ModTile, IDrawPreview
 			if (!player.dead)
 				player.AddBuff(ModContent.BuffType<KoiTotemBuff>(), 12);
 		}
-		else if (TileObjectData.IsTopLeft(i, j) && KoiTotem.CursorOpacity > 0) //Create fancy visuals when bait is replenished
+		else if (TileObjectData.IsTopLeft(i, j) && KoiTotemBuff.CursorOpacity > 0) //Create fancy visuals when bait is replenished
 		{
-			var pos = new Vector2(i, j).ToWorldCoordinates(0, 64);
+			var t = Main.tile[i, j];
+			int height = TileObjectData.GetTileData(t)?.Height ?? 0;
+			var pos = new Vector2(i, j).ToWorldCoordinates(0, height * 16);
 
 			if (Main.rand.NextBool())
 			{
 				var color = Color.Lerp(Color.LightBlue, Color.Cyan, Main.rand.NextFloat());
 				float magnitude = Main.rand.NextFloat();
 
-				ParticleHandler.SpawnParticle(new GlowParticle(pos + new Vector2(Main.rand.NextFloat(32), 0), Vector2.UnitY * -magnitude,
-					color, (1f - magnitude) * .25f, Main.rand.Next(30, 120), 5, extraUpdateAction: delegate (Particle p)
+				ParticleHandler.SpawnParticle(new GlowParticle(pos + new Vector2(Main.rand.NextFloat(32), 0), Vector2.UnitY * -magnitude, color, (1f - magnitude) * .25f, Main.rand.Next(30, 120), 5, extraUpdateAction: delegate (Particle p)
 					{ p.Velocity = p.Velocity.RotatedBy(Main.rand.NextFloat(-.1f, .1f)); }));
 			}
 
-			if (KoiTotem.CursorOpacity > .9f)
+			if (KoiTotemBuff.CursorOpacity > .9f)
 			{
 				const string path = "SpiritReforged/Assets/SFX/Ambient/MagicFeedback";
 

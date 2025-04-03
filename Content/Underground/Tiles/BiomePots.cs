@@ -1,6 +1,7 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Forest.Cloud.Items;
+using SpiritReforged.Content.Underground.NPCs;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
@@ -9,11 +10,12 @@ namespace SpiritReforged.Content.Underground.Tiles;
 
 public class BiomePots : ModTile
 {
-	public enum STYLE : int
+	public enum Style : int
 	{
-		CAVERN, GOLD, ICE, DESERT, JUNGLE, DUNGEON, CORRUPTION, CRIMSON, MARBLE, HELL
+		Cavern, Gold, Ice, Desert, Jungle, Dungeon, Corruption, Crimson, Marble, Hell
 	}
 
+	/// <summary> Unit for distance-based vfx. </summary>
 	private const int DistMod = 200;
 	private static readonly HashSet<Point16> GlowPoints = [];
 
@@ -98,7 +100,7 @@ public class BiomePots : ModTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		if (TileObjectData.IsTopLeft(i, j))
+		if (TileObjectData.IsTopLeft(i, j) && GetStyle(i, j) is Style.Gold)
 			GlowPoints.Add(new Point16(i, j));
 
 		return true;
@@ -112,7 +114,7 @@ public class BiomePots : ModTile
 		var region = new Rectangle((int)drawPos.X - squareSize / 2, (int)drawPos.Y - squareSize / 2, squareSize, squareSize);
 		Color color = Color.White;
 
-		float opacity = MathHelper.Clamp(1f - Main.LocalPlayer.DistanceSQ(position) / (DistMod * DistMod), 0, .5f) * Lighting.Brightness((int)(position.X / 16), (int)(position.Y / 16));
+		float opacity = MathHelper.Clamp(1f - Main.LocalPlayer.DistanceSQ(position) / (DistMod * DistMod), 0, .75f) * Lighting.Brightness((int)(position.X / 16), (int)(position.Y / 16));
 
 		short[] indices = [0, 1, 2, 1, 3, 2];
 
@@ -132,7 +134,7 @@ public class BiomePots : ModTile
 		foreach (EffectPass pass in effect.CurrentTechnique.Passes)
 		{
 			effect.Parameters["baseShadowColor"].SetValue(Color.Goldenrod.ToVector4() * opacity);
-			effect.Parameters["adjustColor"].SetValue(Color.SlateBlue.ToVector4() * opacity);
+			effect.Parameters["adjustColor"].SetValue(Color.White.ToVector4() * opacity);
 			effect.Parameters["noiseScroll"].SetValue(Main.GameUpdateCount * 0.0015f);
 			effect.Parameters["noiseStretch"].SetValue(.5f);
 			effect.Parameters["uWorldViewProjection"].SetValue(view * projection);
@@ -145,17 +147,25 @@ public class BiomePots : ModTile
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
-		var style = (STYLE)(frameY / 36);
+		if (WorldGen.generatingWorld)
+			return; //Particularly important for not incrementing Remaining
+
+		var style = (Style)(frameY / 36);
 		int variant = frameX / 36;
 
 		var source = new EntitySource_TileBreak(i, j);
 		var position = new Vector2(i, j).ToWorldCoordinates(16, 16);
-
 		int dustType = DustID.Pot;
+
+		bool spawnSlime = PotteryTracker.Remaining == 1;
+		PotteryTracker.TrackOne();
 
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
 			HandleLoot(i, j, style); //Drops should only occur on the server/singleplayer
+
+			if (spawnSlime)
+				NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), position, ModContent.NPCType<PotterySlime>());
 
 			if (Main.dedServ)
 				return;
@@ -163,7 +173,7 @@ public class BiomePots : ModTile
 
 		switch (style)
 		{
-			case STYLE.CAVERN:
+			case Style.Cavern:
 
 				for (int g = 0; g < 3; g++)
 				{
@@ -175,7 +185,7 @@ public class BiomePots : ModTile
 
 				break;
 
-			case STYLE.GOLD:
+			case Style.Gold:
 
 				for (int g = 1; g < 4; g++)
 				{
@@ -186,7 +196,7 @@ public class BiomePots : ModTile
 				dustType = DustID.Gold;
 				break;
 
-			case STYLE.ICE:
+			case Style.Ice:
 
 				for (int g = 1; g < 4; g++)
 				{
@@ -198,7 +208,7 @@ public class BiomePots : ModTile
 
 				break;
 
-			case STYLE.DESERT:
+			case Style.Desert:
 
 				Gore.NewGore(source, GetRandom(), Vector2.Zero, GoreID.DesertPot1);
 				Gore.NewGore(source, GetRandom(), Vector2.Zero, GoreID.DesertPot2);
@@ -207,7 +217,7 @@ public class BiomePots : ModTile
 
 				break;
 
-			case STYLE.JUNGLE:
+			case Style.Jungle:
 
 				Gore.NewGore(source, GetRandom(), Vector2.Zero, 199);
 				Gore.NewGore(source, GetRandom(), Vector2.Zero, 200);
@@ -215,7 +225,7 @@ public class BiomePots : ModTile
 
 				break;
 
-			case STYLE.DUNGEON:
+			case Style.Dungeon:
 
 				Gore.NewGore(source, GetRandom(), Vector2.Zero, 201);
 				Gore.NewGore(source, GetRandom(), Vector2.Zero, 202);
@@ -223,19 +233,19 @@ public class BiomePots : ModTile
 
 				break;
 
-			case STYLE.CORRUPTION:
+			case Style.Corruption:
 
 				dustType = DustID.CorruptGibs;
 
 				break;
 
-			case STYLE.CRIMSON:
+			case Style.Crimson:
 
 				dustType = DustID.Crimson;
 
 				break;
 
-			case STYLE.MARBLE:
+			case Style.Marble:
 
 				Gore.NewGore(source, GetRandom(), Vector2.Zero, GoreID.GreekPot1);
 				Gore.NewGore(source, GetRandom(), Vector2.Zero, GoreID.GreekPot2);
@@ -244,7 +254,7 @@ public class BiomePots : ModTile
 
 				break;
 
-			case STYLE.HELL:
+			case Style.Hell:
 
 				Gore.NewGore(source, GetRandom(), Vector2.Zero, 203);
 				Gore.NewGore(source, GetRandom(), Vector2.Zero, 204);
@@ -259,19 +269,19 @@ public class BiomePots : ModTile
 		Vector2 GetRandom(float distance = 15f) => position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(distance);
 	}
 
-	private static void HandleLoot(int i, int j, STYLE style)
+	private static void HandleLoot(int i, int j, Style style)
 	{
 		var center = new Vector2(i, j).ToWorldCoordinates(16, 16);
 		var p = Main.player[Player.FindClosest(center, 0, 0)];
 
 		LootTable table = new();
-		if (Player.GetClosestRollLuck(i, j, 100) == 0) //COIN PORTAL
+		if (style is Style.Gold || Player.GetClosestRollLuck(i, j, 100) == 0) //COIN PORTAL
 		{
 			Projectile.NewProjectileDirect(new EntitySource_TileBreak(i, j), center, Vector2.UnitY * -12f, ProjectileID.CoinPortal, 0, 0);
 			return;
 		}
 
-		if (style is STYLE.DUNGEON && WorldGen.genRand.NextBool(10))
+		if (style is Style.Dungeon && WorldGen.genRand.NextBool(10))
 			table += LootTable.Create(ItemID.GoldenKey);
 
 		if (WorldGen.genRand.NextBool(15)) //POTIONS
@@ -281,11 +291,11 @@ public class BiomePots : ModTile
 			ItemID.MagicPowerPotion, ItemID.ManaRegenerationPotion, ItemID.BiomeSightPotion, ItemID.HeartreachPotion,
 			ModContent.ItemType<DoubleJumpPotion>(), WorldGen.crimson ? ItemID.RagePotion : ItemID.WrathPotion);
 
-			if (style is STYLE.CAVERN)
+			if (style is Style.Cavern)
 				potions.AddRange(ItemID.SwiftnessPotion, ItemID.RegenerationPotion, ItemID.SwiftnessPotion);
-			else if (style is STYLE.JUNGLE)
+			else if (style is Style.Jungle)
 				potions.Add(ItemID.SummoningPotion);
-			else if (style is STYLE.HELL)
+			else if (style is Style.Hell)
 				potions.AddRange(ItemID.InfernoPotion, ItemID.ObsidianSkinPotion);
 
 			if (WorldGen.genRand.NextBool(3))
@@ -299,9 +309,9 @@ public class BiomePots : ModTile
 		{
 			var flasks = new LootTable().Add(ItemID.FlaskofGold);
 
-			if (style is STYLE.JUNGLE)
+			if (style is Style.Jungle)
 				flasks.Add(ItemID.FlaskofPoison);
-			else if (style is STYLE.HELL)
+			else if (style is Style.Hell)
 				flasks.Add(ItemID.FlaskofFire);
 
 			table += flasks;
@@ -316,13 +326,13 @@ public class BiomePots : ModTile
 			{
 				int type = -1;
 
-				if (style == STYLE.DESERT)
+				if (style == Style.Desert)
 					type = ItemID.FossilOre;
-				else if (style == STYLE.DUNGEON)
+				else if (style == Style.Dungeon)
 					type = ItemID.Bone;
-				else if (style == STYLE.MARBLE)
+				else if (style == Style.Marble)
 					type = ItemID.Javelin;
-				else if (style == STYLE.HELL)
+				else if (style == Style.Hell)
 					type = ItemID.LivingFireBlock;
 
 				if (type != -1)
@@ -340,7 +350,7 @@ public class BiomePots : ModTile
 					break;
 
 				case 2:
-					table += LootTable.Create((style == STYLE.DESERT) ? ItemID.ScarabBomb : ItemID.Dynamite, Main.rand.Next(4, 11));
+					table += LootTable.Create((style == Style.Desert) ? ItemID.ScarabBomb : ItemID.Dynamite, Main.rand.Next(4, 11));
 					break;
 
 				case 3:
@@ -362,19 +372,19 @@ public class BiomePots : ModTile
 			Item.NewItem(new EntitySource_TileBreak(i, j), center, new Item(type, stack), noGrabDelay: true);
 		}); //Always drop coins
 
-		static int GetPair(STYLE style, string context) //Helper for alternatives based on style
+		static int GetPair(Style style, string context) //Helper for alternatives based on style
 		{
-			Dictionary<STYLE, int[]> dict = new()
+			Dictionary<Style, int[]> dict = new()
 			{
-				{ STYLE.CAVERN, [ItemID.UltrabrightTorch, ItemID.WoodenArrow] },
-				{ STYLE.ICE, [ItemID.IceTorch, ItemID.FrostburnArrow] },
-				{ STYLE.DESERT, [ItemID.DesertTorch, ItemID.FlamingArrow] },
-				{ STYLE.JUNGLE, [ItemID.JungleTorch, ItemID.FlamingArrow] },
-				{ STYLE.DUNGEON, [ItemID.BoneTorch, ItemID.BoneArrow] },
-				{ STYLE.CORRUPTION, [ItemID.CorruptTorch, ItemID.UnholyArrow] },
-				{ STYLE.CRIMSON, [ItemID.CrimsonTorch, ItemID.UnholyArrow] },
-				{ STYLE.MARBLE, [ItemID.YellowTorch, ItemID.JestersArrow] },
-				{ STYLE.HELL, [ItemID.DemonTorch, ItemID.HellfireArrow] }
+				{ Style.Cavern, [ItemID.UltrabrightTorch, ItemID.WoodenArrow] },
+				{ Style.Ice, [ItemID.IceTorch, ItemID.FrostburnArrow] },
+				{ Style.Desert, [ItemID.DesertTorch, ItemID.FlamingArrow] },
+				{ Style.Jungle, [ItemID.JungleTorch, ItemID.FlamingArrow] },
+				{ Style.Dungeon, [ItemID.BoneTorch, ItemID.BoneArrow] },
+				{ Style.Corruption, [ItemID.CorruptTorch, ItemID.UnholyArrow] },
+				{ Style.Crimson, [ItemID.CrimsonTorch, ItemID.UnholyArrow] },
+				{ Style.Marble, [ItemID.YellowTorch, ItemID.JestersArrow] },
+				{ Style.Hell, [ItemID.DemonTorch, ItemID.HellfireArrow] }
 			};
 
 			int index = (context == "arrow") ? 1 : 0;
@@ -382,22 +392,27 @@ public class BiomePots : ModTile
 		}
 	}
 
+	private static Style GetStyle(int i, int j)
+	{
+		int frameY = Main.tile[i, j].TileFrameY;
+		return (Style)(frameY / 36);
+	}
+
 	/// <summary> Calculates coin values similarly to how vanilla pots do. </summary>
-	private static int CalculateCoinValue(STYLE style)
+	private static int CalculateCoinValue(Style style)
 	{
 		float value = 200 + WorldGen.genRand.Next(-100, 101);
 
 		float biomeMult = style switch
 		{
-			STYLE.GOLD => 10f,
-			STYLE.ICE => 1.4f,
-			STYLE.DESERT => 2.25f,
-			STYLE.JUNGLE => 2f,
-			STYLE.DUNGEON => 2.25f,
-			STYLE.CORRUPTION => 1.9f,
-			STYLE.CRIMSON => 1.9f,
-			STYLE.MARBLE => 2.2f,
-			STYLE.HELL => 2.5f,
+			Style.Ice => 1.4f,
+			Style.Desert => 2.25f,
+			Style.Jungle => 2f,
+			Style.Dungeon => 2.25f,
+			Style.Corruption => 1.9f,
+			Style.Crimson => 1.9f,
+			Style.Marble => 2.2f,
+			Style.Hell => 2.5f,
 			_ => 1.25f
 		};
 

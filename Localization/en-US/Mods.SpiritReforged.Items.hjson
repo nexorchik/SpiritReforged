@@ -1329,6 +1329,9 @@ SparrowCageItem: {
 	Tooltip: ""
 }
 
+WayfarerHead: {
+	DisplayName: Wayfarer's Hat
+	Tooltip: Immunity to darkness
 BoomShroom: {
 	DisplayName: Boom Shroom
 	Tooltip:
@@ -1338,10 +1341,23 @@ BoomShroom: {
 		'''
 }
 
+WayfarerBody: {
+	DisplayName: Wayfarer's Rucksack
+	Tooltip: 5% increased movement speed
+}
+
+WayfarerLegs: {
+	DisplayName: Wayfarer's Pants
+	Tooltip: 7% increased movement speed
 ClayBomb: {
 	DisplayName: Clay Bomb
 	Tooltip: A small explosion that will spread clay
 }
+
+AncientKoiTotem: {
+	DisplayName: Ancient Koi Totem
+	Tooltip: ""
+	}
 
 SandBomb: {
 	DisplayName: Sand Bomb
