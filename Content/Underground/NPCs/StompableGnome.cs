@@ -25,7 +25,7 @@ public class StompableGnome : ModNPC
 	public override void AI()
 	{
 		var p = Main.player[Player.FindClosest(NPC.Center, 0, 0)];
-		if (p.getRect().Contains(NPC.Center.ToPoint()) && (int)p.velocity.X != 0)
+		if (!p.dontHurtCritters && p.getRect().Contains(NPC.Center.ToPoint()) && (int)p.velocity.X != 0)
 		{
 			SoundEngine.PlaySound(SoundID.NPCDeath1 with { Pitch = .75f }, NPC.Center);
 			NPC.DeathSound = null;
@@ -53,6 +53,8 @@ public class StompableGnome : ModNPC
 		}
 	}
 
+	public override void ModifyHoverBoundingBox(ref Rectangle boundingBox) => boundingBox = Rectangle.Empty;
+
 	public override void HitEffect(NPC.HitInfo hit)
 	{
 		if (NPC.life <= 0 && !Main.dedServ && ChildSafety.Disabled)
@@ -74,7 +76,6 @@ public class StompableGnome : ModNPC
 			int frame = (int)NPC.frameCounter;
 
 			NPC.frame.Y = frame * frameHeight;
-			//NPC.frame.Height -= 2; //Remove padding
 		}
 	}
 }
