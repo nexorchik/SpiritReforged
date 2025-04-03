@@ -34,7 +34,7 @@ public class Cloudstalk : ModItem
 [TileTag(TileTags.HarvestableHerb)]
 public class CloudstalkTile : HerbTile
 {
-	private const float BloomWindSpeed = 14; //Constant for bloom wind speed, in mph
+	private const float BloomWindSpeed = 20; //Constant for bloom wind speed, in mph
 
 	public override void StaticDefaults()
 	{
