@@ -89,10 +89,10 @@ public class BiomePots : ModTile
 		{
 			var pos = new Vector2(i, j).ToWorldCoordinates(16, 16);
 
-			if (GetStyle(i, j) is Style.Mushroom)
+			if (GetStyle(i, j) is Style.Mushroom or Style.Corruption or Style.Crimson)
 			{
-				SoundEngine.PlaySound(SoundID.Shatter with { Volume = .3f, Pitch = .25f }, pos);
-				SoundEngine.PlaySound(SoundID.NPCHit1, pos);
+				SoundEngine.PlaySound(SoundID.NPCHit1 with { Volume = .3f, Pitch = .25f }, pos);
+				SoundEngine.PlaySound(SoundID.NPCDeath1, pos);
 			}
 			else
 			{
