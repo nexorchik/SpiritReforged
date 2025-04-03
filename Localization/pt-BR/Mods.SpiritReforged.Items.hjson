@@ -1348,3 +1348,22 @@ AncientKoiTotem: {
 	// DisplayName: Ancient Koi Totem
 	// Tooltip: ""
 }
+
+BoomShroom: {
+	// DisplayName: Boom Shroom
+	/* Tooltip:
+		'''
+		All thrown explosives are much larger... and stronger
+		Downtime between throws is increased
+		''' */
+}
+
+ClayBomb: {
+	// DisplayName: Clay Bomb
+	// Tooltip: A small explosion that will spread clay
+}
+
+SandBomb: {
+	// DisplayName: Sand Bomb
+	// Tooltip: A small explosion that will spread sand
+}
