@@ -89,8 +89,16 @@ public class BiomePots : ModTile
 		{
 			var pos = new Vector2(i, j).ToWorldCoordinates(16, 16);
 
-			SoundEngine.PlaySound(SoundID.Shatter, pos);
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/PotBreak") with { Volume = .16f, PitchRange = (-.4f, 0), }, pos);
+			if (GetStyle(i, j) is Style.Mushroom)
+			{
+				SoundEngine.PlaySound(SoundID.Shatter with { Volume = .3f, Pitch = .25f }, pos);
+				SoundEngine.PlaySound(SoundID.NPCHit1, pos);
+			}
+			else
+			{
+				SoundEngine.PlaySound(SoundID.Shatter, pos);
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/PotBreak") with { Volume = .16f, PitchRange = (-.4f, 0), }, pos);
+			}
 
 			return false;
 		}
@@ -166,6 +174,14 @@ public class BiomePots : ModTile
 
 			if (spawnSlime)
 				NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), position, ModContent.NPCType<PotterySlime>());
+
+			if (style == Style.Mushroom && NPC.CountNPCS(ModContent.NPCType<StompableGnome>()) < 5)
+			{
+				int count = Main.rand.Next(1, 4);
+
+				for (int c = 0; c < count; c++)
+					NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), ModContent.NPCType<StompableGnome>());
+			}
 
 			if (Main.dedServ)
 				return;
@@ -259,6 +275,18 @@ public class BiomePots : ModTile
 				Gore.NewGore(source, GetRandom(), Vector2.Zero, 203);
 				Gore.NewGore(source, GetRandom(), Vector2.Zero, 204);
 				dustType = DustID.Obsidian;
+
+				break;
+
+			case Style.Mushroom:
+
+				for (int g = 1; g < 4; g++)
+				{
+					int goreType = Mod.Find<ModGore>("PotMushroom" + g).Type;
+					Gore.NewGore(source, position, Vector2.Zero, goreType);
+				}
+
+				dustType = DustID.MushroomSpray;
 
 				break;
 		}
