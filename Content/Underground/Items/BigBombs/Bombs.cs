@@ -19,7 +19,7 @@ public class Bomb : BombProjectile, ILargeExplosive
 
 		Projectile.Size = new Vector2(32);
 		SetDamage(150);
-		area = 10;
+		area = 15;
 
 		PostSetDefaults();
 	}
@@ -197,6 +197,21 @@ public class BombDirtSticky : BombDirt
 public class BombFish : Bomb
 {
 	public override int OriginalType => ProjectileID.BombFish;
+
+	public override void AI()
+	{
+		if (BombSticky.CheckStuck(Projectile.getRect()))
+		{
+			Projectile.velocity = Vector2.Zero;
+			FuseVisuals();
+		}
+		else
+		{
+			base.AI();
+		}
+	}
+
+	public override bool OnTileCollide(Vector2 oldVelocity) => false;
 }
 
 [AutoloadGlowmask("255,255,255", false)]
@@ -502,7 +517,7 @@ public class Dynamite : Bomb
 		SetTimeLeft(60 * 5);
 		SetDamage(300, 10);
 
-		area = 20;
+		area = 30;
 	}
 }
 
