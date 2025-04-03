@@ -1367,3 +1367,8 @@ SandBomb: {
 	// DisplayName: Sand Bomb
 	// Tooltip: A small explosion that will spread sand
 }
+
+WoodenClub: {
+	// DisplayName: Wooden Club
+	// Tooltip: ""
+}
