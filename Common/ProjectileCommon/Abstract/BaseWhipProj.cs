@@ -1,4 +1,4 @@
-namespace SpiritReforged.Common.ProjectileCommon;
+namespace SpiritReforged.Common.ProjectileCommon.Abstract;
 
 public abstract class BaseWhipProj : ModProjectile
 {

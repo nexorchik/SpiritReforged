@@ -9,6 +9,7 @@ using SpiritReforged.Content.Particles;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.BuffCommon;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 
 namespace SpiritReforged.Content.Ocean.Items.JellyfishStaff;
 

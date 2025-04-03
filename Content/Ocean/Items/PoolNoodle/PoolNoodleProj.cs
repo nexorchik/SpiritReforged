@@ -1,5 +1,5 @@
 using SpiritReforged.Common.NPCCommon;
-using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 
 namespace SpiritReforged.Content.Ocean.Items.PoolNoodle;
 
