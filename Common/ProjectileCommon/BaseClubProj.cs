@@ -1,22 +1,25 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using SpiritReforged.Common.Easing;
-using System;
 using System.IO;
-using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.Localization;
-using Terraria.ModLoader;
+using Terraria.Graphics.CameraModifiers;
+using static Microsoft.Xna.Framework.MathHelper;
+using static SpiritReforged.Common.Easing.EaseFunction;
 
 namespace SpiritReforged.Common.ProjectileCommon;
 
 public abstract class BaseClubProj(Vector2 size) : ModProjectile
 {
+	//Todo: make some of these changable per club rather than hardcoded constants
 	private const int MAX_FLICKERTIME = 20;
 	private const int MAX_LINGERTIME = 30;
 	private const int MAX_SWINGTIME = 30;
+	private const int WINDUP_TIME = 25;
+
+	private const float INITIAL_HOLD_ANGLE = PiOver2;
+	private const float FINAL_HOLD_ANGLE = PiOver4 / 2;
+	private const float MAX_SWING_ANGLE = Pi * 1.33f;
+
+	private static Vector2 SWING_PHASE_THRESHOLD = new(0.15f, 0.66f);
 
 	internal readonly Vector2 Size = size;
 
@@ -37,6 +40,7 @@ public abstract class BaseClubProj(Vector2 size) : ModProjectile
 	protected int _lingerTimer = 0;
 	protected int _flickerTime = 0;
 	protected int _swingTimer = 0;
+	protected int _windupTimer = 0;
 	private bool _collided = false;
 
 	public void SetStats(int chargeTime, int minDamage, int maxDamage, float minKnockback, float maxKnockback)
@@ -60,12 +64,14 @@ public abstract class BaseClubProj(Vector2 size) : ModProjectile
 	{
 		Projectile.hostile = false;
 		Projectile.DamageType = DamageClass.Melee;
-		Projectile.width = Projectile.height = 48;
+		Projectile.width = Projectile.height = 16;
 		Projectile.aiStyle = -1;
 		Projectile.friendly = true;
 		Projectile.penetrate = -1;
 		Projectile.tileCollide = false;
 		Projectile.ownerHitCheck = true;
+		Projectile.usesLocalNPCImmunity = true;
+		Projectile.localNPCHitCooldown = -1;
 
 		SafeSetDefaults();
 	}
@@ -91,7 +97,7 @@ public abstract class BaseClubProj(Vector2 size) : ModProjectile
 		else
 			Swinging(owner);
 
-		if (!owner.channel && Charge > 0.33f)
+		if (!owner.channel && _windupTimer >= WINDUP_TIME)
 		{
 			released = true;
 			HasFlickered = false;
@@ -104,8 +110,8 @@ public abstract class BaseClubProj(Vector2 size) : ModProjectile
 
 		owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters, armRotation);
 		owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.ThreeQuarters, armRotation);
-		Projectile.position.X = owner.Center.X - (int)(Math.Cos(armRotation - MathHelper.PiOver2) * Size.X) - Projectile.width / 2;
-		Projectile.position.Y = owner.Center.Y - (int)(Math.Sin(armRotation - MathHelper.PiOver2) * Size.Y) - Projectile.height / 2 - owner.gfxOffY;
+		Projectile.position.X = owner.Center.X - (int)(Math.Cos(armRotation - PiOver2) * Size.X) - Projectile.width / 2;
+		Projectile.position.Y = owner.Center.Y - (int)(Math.Sin(armRotation - PiOver2) * Size.Y) - Projectile.height / 2 - owner.gfxOffY;
 
 		owner.itemAnimation = owner.itemTime = 2;
 	}
@@ -113,11 +119,11 @@ public abstract class BaseClubProj(Vector2 size) : ModProjectile
 	private void TranslateRotation(Player owner, out float clubRotation, out float armRotation)
 	{
 		float output = BaseRotation * owner.gravDir + 1.7f;
-		float clubOffset = MathHelper.Pi + MathHelper.PiOver4;
+		float clubOffset = Pi + PiOver4;
 		if (owner.direction < 0)
 		{
-			output = MathHelper.TwoPi - output;
-			clubOffset -= MathHelper.PiOver2;
+			output = TwoPi - output;
+			clubOffset -= PiOver2;
 		}
 
 		clubRotation = output - clubOffset;
@@ -137,8 +143,13 @@ public abstract class BaseClubProj(Vector2 size) : ModProjectile
 
 		owner.ChangeDir((int)Projectile.velocity.X);
 
-		Charge += 1f / ChargeTime;
-		Charge = MathHelper.Min(Charge, 1);
+		if (_windupTimer < WINDUP_TIME)
+			_windupTimer++;
+		else
+		{
+			Charge += 1f / ChargeTime;
+			Charge = Min(Charge, 1);
+		}
 
 		if(Charge == 1 && !HasFlickered)
 		{
@@ -147,61 +158,60 @@ public abstract class BaseClubProj(Vector2 size) : ModProjectile
 			HasFlickered = true;
 		}
 
-		Projectile.damage = (int)MathHelper.Lerp(MinDamage, MaxDamage, Charge);
-		Projectile.knockBack = MathHelper.Lerp(MinKnockback, MaxKnockback, Charge);
+		Projectile.damage = (int)Lerp(MinDamage, MaxDamage, Charge);
+		Projectile.knockBack = Lerp(MinKnockback, MaxKnockback, Charge);
 
-		BaseRotation = MathHelper.Lerp(MathHelper.PiOver2, MathHelper.PiOver4 / 2, EaseFunction.EaseCircularOut.Ease(Charge));
-		Projectile.scale = MathHelper.Lerp(0.6f, 1f, EaseFunction.EaseQuadOut.Ease(EaseFunction.EaseCircularOut.Ease(Charge)));
+		float windupAnimProgress = _windupTimer / (float)WINDUP_TIME;
+		windupAnimProgress = Lerp(windupAnimProgress, Charge, 0.4f);
+
+		BaseRotation = Lerp(INITIAL_HOLD_ANGLE, FINAL_HOLD_ANGLE, EaseCircularOut.Ease(windupAnimProgress));
+		Projectile.scale = Lerp(0f, 1f, EaseCubicOut.Ease(EaseCircularOut.Ease(windupAnimProgress)));
+		owner.headRotation = Lerp(0f, FINAL_HOLD_ANGLE, windupAnimProgress);
 	}
 
 	private void Swinging(Player owner)
 	{
 		owner.direction = Math.Sign(Projectile.velocity.X);
+		float swingProgress() => _swingTimer / (float)MAX_SWINGTIME;
+
 		bool validTile = Collision.SolidTiles(Projectile.position, Projectile.width, Projectile.height, true);
 		Projectile.scale = 1;
+		if (swingProgress() >= SWING_PHASE_THRESHOLD.Y && !_collided)
+		{
+			float shrinkProgress = (swingProgress() - SWING_PHASE_THRESHOLD.Y) / (1 - SWING_PHASE_THRESHOLD.Y);
+			shrinkProgress = Clamp(shrinkProgress, 0, 1);
+			Projectile.scale = Lerp(1, 0, EaseQuadIn.Ease(shrinkProgress));
+		}
 
 		_swingTimer++;
-		if (_swingTimer > 20)
+		if (swingProgress() >= 1)
 			Projectile.Kill();
 
 		if (_collided)
 		{
 			_lingerTimer--;
+			float lingerProgress = _lingerTimer / (float)MAX_LINGERTIME;
+			BaseRotation += Lerp(0f, 0.01f, EaseQuadIn.Ease(lingerProgress)) * (1 + Charge * 2);
 			if (_lingerTimer <= 0)
 				Projectile.Kill();
 		}
 		else
-			BaseRotation = MathHelper.Lerp(MathHelper.PiOver4 / 2, MathHelper.Pi * 1.25f, EaseFunction.EaseCubicOut.Ease(_swingTimer / (float)20));
+			BaseRotation = Lerp(FINAL_HOLD_ANGLE, MAX_SWING_ANGLE, EaseCircularOut.Ease(swingProgress()));
 
-		if (validTile && !_collided)
+		if (validTile && !_collided && swingProgress() > SWING_PHASE_THRESHOLD.X && swingProgress() < SWING_PHASE_THRESHOLD.Y)
 		{
 			_collided = true;
 			_lingerTimer = MAX_LINGERTIME;
 			Smash(Projectile.Center);
 
-			SoundEngine.PlaySound(SoundID.Item70, Projectile.Center);
-			SoundEngine.PlaySound(SoundID.NPCHit42, Projectile.Center);
+			float volume = Clamp(EaseQuadOut.Ease(Charge), 0.75f, 1f);
+			SoundEngine.PlaySound(SoundID.Item70.WithVolumeScale(volume), Projectile.Center);
+			SoundEngine.PlaySound(SoundID.NPCHit42.WithVolumeScale(volume), Projectile.Center);
+
+			Main.instance.CameraModifiers.Add(new PunchCameraModifier(Main.screenPosition, Vector2.Normalize(Projectile.oldPosition - Projectile.position), 1 + Charge * 2, 6, (int)(20 * (0.5f + Charge/2))));
 		}
 	}
 
-	public sealed override bool PreDraw(ref Color lightColor)
-	{
-		DrawTrail(lightColor);
-
-		Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-		Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value, Main.player[Projectile.owner].Center - Main.screenPosition, texture.Frame(1, Main.projFrames[Type]), Projectile.GetAlpha(lightColor), Projectile.rotation, Origin, Projectile.scale, Effects, 0);
-
-		SafeDraw(Main.spriteBatch, lightColor);
-
-		if (Projectile.ai[0] >= 1 && !released && _flickerTime > 0)
-		{
-			float alpha = EaseFunction.EaseSine.Ease(_flickerTime / (float)MAX_FLICKERTIME);
-
-			Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value, Main.player[Projectile.owner].Center - Main.screenPosition, texture.Frame(1, Main.projFrames[Type], 0, 1, 0, 0), Projectile.GetAlpha(Color.White * alpha), Projectile.rotation, Origin, Projectile.scale, Effects, 0);
-		}
-
-		return false;
-	}
 	public virtual void SafeAI() { }
 	public virtual void SafeDraw(SpriteBatch spriteBatch, Color lightColor) { }
 	public virtual void SafeSetDefaults() { }
@@ -210,6 +220,26 @@ public abstract class BaseClubProj(Vector2 size) : ModProjectile
 
 	public virtual SpriteEffects Effects => Main.player[Projectile.owner].direction * (int)Main.player[Projectile.owner].gravDir < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 	public virtual Vector2 Origin => Effects == SpriteEffects.FlipHorizontally ? Size : new Vector2(0, Size.Y);
+
+	public sealed override bool PreDraw(ref Color lightColor)
+	{
+		DrawTrail(lightColor);
+
+		Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+		Player owner = Main.player[Projectile.owner];
+		Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value, owner.Center - Main.screenPosition + Vector2.UnitY * owner.gfxOffY, texture.Frame(1, Main.projFrames[Type]), Projectile.GetAlpha(lightColor), Projectile.rotation, Origin, Projectile.scale, Effects, 0);
+
+		SafeDraw(Main.spriteBatch, lightColor);
+
+		if (Projectile.ai[0] >= 1 && !released && _flickerTime > 0)
+		{
+			float alpha = EaseQuadIn.Ease(EaseSine.Ease(_flickerTime / (float)MAX_FLICKERTIME));
+
+			Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value, owner.Center - Main.screenPosition + Vector2.UnitY * owner.gfxOffY, texture.Frame(1, Main.projFrames[Type], 0, 1, 0, 0), Projectile.GetAlpha(Color.White * alpha), Projectile.rotation, Origin, Projectile.scale, Effects, 0);
+		}
+
+		return false;
+	}
 
 	public virtual void DrawTrail(Color lightColor)
 	{
