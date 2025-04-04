@@ -37,9 +37,9 @@ class WoodClubProj : BaseClubProj
 		}
 
 		if(Charge == 1)
-			DoShockwaveCircle(Vector2.Lerp(Projectile.Center, Main.player[Projectile.owner].Center, 0.275f), 280, -MathHelper.PiOver4 * Projectile.direction * 1.5f, 0.7f);
+			DoShockwaveCircle(Vector2.Lerp(Projectile.Center, Main.player[Projectile.owner].Center, 0.5f), 250, -MathHelper.PiOver4 * Projectile.direction * 1.5f, 0.75f);
 
-		DoShockwaveCircle(Projectile.Bottom, 180, -MathHelper.PiOver2, MathHelper.Lerp(0.5f, 0.7f, Charge));
+		DoShockwaveCircle(Projectile.Bottom, 180, -MathHelper.PiOver2, MathHelper.Lerp(0.5f, 0.6f, Charge));
 	}
 
 	private static void DoShockwaveCircle(Vector2 pos, float size, float xyRotation, float opacity)

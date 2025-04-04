@@ -1397,3 +1397,8 @@ MudBombSticky: {
 	// DisplayName: Sticky Mud Bomb
 	// Tooltip: "{$Mods.SpiritReforged.Items.MudBomb.Tooltip}"
 }
+
+WoodenClub: {
+	// DisplayName: Wooden Club
+	// Tooltip: ""
+}

@@ -196,7 +196,7 @@ public abstract class BaseClubProj(Vector2 size) : ModProjectile
 				Projectile.Kill();
 		}
 		else
-			BaseRotation = Lerp(FINAL_HOLD_ANGLE, MAX_SWING_ANGLE, EaseCircularOut.Ease(swingProgress()));
+			BaseRotation = Lerp(FINAL_HOLD_ANGLE, MAX_SWING_ANGLE, EaseQuadInOut.Ease(EaseCircularOut.Ease(swingProgress())));
 
 		if (validTile && !_collided && swingProgress() > SWING_PHASE_THRESHOLD.X && swingProgress() < SWING_PHASE_THRESHOLD.Y)
 		{
