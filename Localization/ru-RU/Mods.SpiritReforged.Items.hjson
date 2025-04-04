@@ -1355,7 +1355,37 @@ ClayBomb: {
 	// Tooltip: A small explosion that will spread clay
 }
 
+ClayBombSticky: {
+	// DisplayName: Sticky Clay Bomb
+	// Tooltip: "{$Mods.SpiritReforged.Items.ClayBomb.Tooltip}"
+}
+
 SandBomb: {
 	// DisplayName: Sand Bomb
 	// Tooltip: A small explosion that will spread sand
+}
+
+SandBombSticky: {
+	// DisplayName: Sticky Sand Bomb
+	// Tooltip: "{$Mods.SpiritReforged.Items.SandBomb.Tooltip}"
+}
+
+CoarseBomb: {
+	// DisplayName: Coarse Bomb
+	// Tooltip: A small explosion that will spread coarse dirt
+}
+
+CoarseBombSticky: {
+	// DisplayName: Sticky Coarse Bomb
+	// Tooltip: "{$Mods.SpiritReforged.Items.CoarseBomb.Tooltip}"
+}
+
+MudBomb: {
+	// DisplayName: Mud Bomb
+	// Tooltip: A small explosion that will spread mud
+}
+
+MudBombSticky: {
+	// DisplayName: Sticky Mud Bomb
+	// Tooltip: "{$Mods.SpiritReforged.Items.MudBomb.Tooltip}"
 }

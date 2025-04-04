@@ -11,6 +11,8 @@ public abstract class BombProjectile : ModProjectile
 	public int area = 5;
 	/// <summary> The maximum <see cref="Projectile.timeLeft"/> value, used for visuals. See <see cref="SetTimeLeft"/>. </summary>
 	public int timeLeftMax;
+	/// <summary> Whether this bomb sticks to tiles according to <see cref="CheckStuck"/>. </summary>
+	public bool sticky;
 
 	private int _damage;
 	private float _knockback;
@@ -39,11 +41,18 @@ public abstract class BombProjectile : ModProjectile
 
 	public override void AI()
 	{
-		if (Projectile.velocity.Y == 0)
-			Projectile.velocity.X *= 0.97f;
+		if (sticky && CheckStuck(Projectile.getRect()))
+		{
+			Projectile.velocity = Vector2.Zero;
+		}
+		else
+		{
+			if (Projectile.velocity.Y == 0)
+				Projectile.velocity.X *= 0.97f;
 
-		Projectile.velocity.Y += 0.2f;
-		Projectile.rotation += Projectile.velocity.X * 0.1f;
+			Projectile.velocity.Y += 0.2f;
+			Projectile.rotation += Projectile.velocity.X * 0.1f;
+		}
 
 		if (!Main.dedServ)
 			FuseVisuals();
@@ -53,6 +62,12 @@ public abstract class BombProjectile : ModProjectile
 			DealingDamage = true;
 			Projectile.PrepareBombToBlow();
 		}
+	}
+
+	public static bool CheckStuck(Rectangle area)
+	{
+		const int padding = 2;
+		return Collision.SolidCollision(area.TopLeft() - new Vector2(padding), area.Width + padding * 2, area.Height + padding * 2);
 	}
 
 	public virtual void FuseVisuals()
@@ -99,7 +114,7 @@ public abstract class BombProjectile : ModProjectile
 
 	public override bool OnTileCollide(Vector2 oldVelocity)
 	{
-		if (Projectile.velocity.Y > .08f)
+		if (!sticky && Projectile.velocity.Y > .05f)
 			Projectile.Bounce(oldVelocity, 0.3f);
 
 		return false;
