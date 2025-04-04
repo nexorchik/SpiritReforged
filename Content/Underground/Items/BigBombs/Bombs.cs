@@ -4,6 +4,7 @@ using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Content.Savanna.Tiles;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Underground.Items.BigBombs;
@@ -19,7 +20,7 @@ public class Bomb : BombProjectile, ILargeExplosive
 
 		Projectile.Size = new Vector2(32);
 		SetDamage(150);
-		area = 10;
+		area = 15;
 
 		PostSetDefaults();
 	}
@@ -137,30 +138,33 @@ public class BombSand : BombDirt
 	}
 }
 
+public class BombMud : BombDirt
+{
+	public override int OriginalType => ModContent.ProjectileType<MudBombProjectile>();
+
+	public override void PostSetDefaults()
+	{
+		dustType = DustID.Mud;
+		tileType = TileID.Mud;
+	}
+}
+
+public class BombCoarse : BombDirt
+{
+	public override int OriginalType => ModContent.ProjectileType<CoarseBombProjectile>();
+
+	public override void PostSetDefaults()
+	{
+		dustType = DustID.Dirt;
+		tileType = ModContent.TileType<SavannaDirt>();
+	}
+}
+
 public class BombSticky : Bomb
 {
 	public override int OriginalType => ProjectileID.StickyBomb;
 
-	public override void AI()
-	{
-		if (CheckStuck(Projectile.getRect()))
-		{
-			Projectile.velocity = Vector2.Zero;
-			FuseVisuals();
-		}
-		else
-		{
-			base.AI();
-		}
-	}
-
-	public static bool CheckStuck(Rectangle area)
-	{
-		const int padding = 2;
-		return Collision.SolidCollision(area.TopLeft() - new Vector2(padding), area.Width + padding * 2, area.Height + padding * 2);
-	}
-
-	public override bool OnTileCollide(Vector2 oldVelocity) => false;
+	public override void PostSetDefaults() => sticky = true;
 }
 
 public class BombBouncy : Bomb
@@ -178,25 +182,58 @@ public class BombDirtSticky : BombDirt
 {
 	public override int OriginalType => ProjectileID.DirtStickyBomb;
 
-	public override void AI()
-	{
-		if (BombSticky.CheckStuck(Projectile.getRect()))
-		{
-			Projectile.velocity = Vector2.Zero;
-			FuseVisuals();
-		}
-		else
-		{
-			base.AI();
-		}
-	}
+	public override void PostSetDefaults() => sticky = true;
+}
 
-	public override bool OnTileCollide(Vector2 oldVelocity) => false;
+public class BombClaySticky : BombClay
+{
+	public override int OriginalType => ModContent.ProjectileType<ClayBombStickyProjectile>();
+
+	public override void PostSetDefaults()
+	{
+		base.PostSetDefaults();
+		sticky = true;
+	}
+}
+
+public class BombSandSticky : BombSand
+{
+	public override int OriginalType => ModContent.ProjectileType<SandBombStickyProjectile>();
+
+	public override void PostSetDefaults()
+	{
+		base.PostSetDefaults();
+		sticky = true;
+	}
+}
+
+public class BombMudSticky : BombMud
+{
+	public override int OriginalType => ModContent.ProjectileType<MudBombStickyProjectile>();
+
+	public override void PostSetDefaults()
+	{
+		base.PostSetDefaults();
+		sticky = true;
+	}
+}
+
+public class BombCoarseSticky : BombCoarse
+{
+	public override int OriginalType => ModContent.ProjectileType<CoarseBombStickyProjectile>();
+
+	public override void PostSetDefaults()
+	{
+		base.PostSetDefaults();
+		sticky = true;
+	}
 }
 
 public class BombFish : Bomb
 {
 	public override int OriginalType => ProjectileID.BombFish;
+
+	public override void PostSetDefaults() => sticky = true;
 }
 
 [AutoloadGlowmask("255,255,255", false)]
@@ -206,13 +243,15 @@ public class BombScarab : Bomb
 
 	private bool _wasAttached;
 
-	public override void PostSetDefaults() => area = 5;
+	public override void PostSetDefaults()
+	{
+		area = 5;
+		sticky = true;
+	}
 
 	public override void AI()
 	{
-		const int padding = 2;
-
-		if (Collision.SolidCollision(Projectile.position - new Vector2(padding), Projectile.width + padding * 2, Projectile.height + padding * 2))
+		if (CheckStuck(Projectile.getRect()))
 		{
 			Projectile.velocity = Vector2.Zero;
 			Projectile.rotation = Projectile.AngleFrom(Main.player[Projectile.owner].Center) - MathHelper.PiOver2;
@@ -502,7 +541,7 @@ public class Dynamite : Bomb
 		SetTimeLeft(60 * 5);
 		SetDamage(300, 10);
 
-		area = 20;
+		area = 30;
 	}
 }
 
@@ -510,20 +549,11 @@ public class DynamiteSticky : Dynamite
 {
 	public override int OriginalType => ProjectileID.StickyDynamite;
 
-	public override void AI()
+	public override void PostSetDefaults()
 	{
-		if (BombSticky.CheckStuck(Projectile.getRect()))
-		{
-			Projectile.velocity = Vector2.Zero;
-			FuseVisuals();
-		}
-		else
-		{
-			base.AI();
-		}
+		base.PostSetDefaults();
+		sticky = true;
 	}
-
-	public override bool OnTileCollide(Vector2 oldVelocity) => false;
 }
 
 public class DynamiteBouncy : Dynamite

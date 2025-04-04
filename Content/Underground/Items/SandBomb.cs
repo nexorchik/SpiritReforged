@@ -16,7 +16,7 @@ public class SandBomb : ModItem
 public class SandBombProjectile : SpreadBomb
 {
 	public override string Texture => base.Texture.Replace("Projectile", string.Empty);
-	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items.SandBomb.DisplayName");
+	public override LocalizedText DisplayName => Language.GetText($"Mods.SpiritReforged.Items.{Name.Replace("Projectile", string.Empty)}.DisplayName");
 
 	public override void SetDefaults()
 	{

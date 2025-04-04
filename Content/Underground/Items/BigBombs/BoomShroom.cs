@@ -1,10 +1,12 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
+using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Underground.Items.BigBombs;
 
+[AutoloadGlowmask("255,255,255")]
 public class BoomShroom : AccessoryItem
 {
 	public override void SetStaticDefaults()
@@ -20,6 +22,12 @@ public class BoomShroom : AccessoryItem
 		Item.value = Item.sellPrice(0, 3, 0, 0);
 		Item.rare = ItemRarityID.Blue;
 		Item.accessory = true;
+	}
+
+	public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+	{
+		Lighting.AddLight(Item.Center, new Vector3(.5f, .1f, .1f));
+		return true;
 	}
 }
 
