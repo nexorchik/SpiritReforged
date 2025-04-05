@@ -1,7 +1,7 @@
 using System.IO;
 using System.Linq;
 
-namespace SpiritReforged.Common.ProjectileCommon;
+namespace SpiritReforged.Common.ProjectileCommon.Abstract;
 
 public abstract class BaseMinion(float TargettingRange, float DeaggroRange, Vector2 Size) : ModProjectile
 {

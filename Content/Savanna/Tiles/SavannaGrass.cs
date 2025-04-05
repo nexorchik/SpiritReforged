@@ -54,7 +54,7 @@ public class SavannaGrass : GrassTile, IConvertibleTile
 		}
 
 		if (Main.rand.NextBool(45) && Main.tile[i, j + 1].LiquidType != LiquidID.Lava)
-			TileExtensions.GrowVine(i, j + 1, ModContent.TileType<SavannaVine>());
+			Placer.GrowVine(i, j + 1, ModContent.TileType<SavannaVine>());
 
 		bool GrassAny()
 		{

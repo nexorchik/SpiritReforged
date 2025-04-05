@@ -31,7 +31,7 @@ public class FrostbiteItem : ModItem
 		Item.value = Item.sellPrice(0, 0, 50, 0);
 		Item.rare = ItemRarityID.Blue;
 		Item.UseSound = SoundID.Item20;
-		Item.mana = 24;
+		Item.mana = 2;
 		Item.shootSpeed = AttackRange;
 		Item.shoot = ModContent.ProjectileType<FrostbiteProj>();
 	}
@@ -53,6 +53,7 @@ public class FrostbiteProj : ModProjectile
 		Projectile.Size = new Vector2(20);
 		Projectile.DamageType = DamageClass.Magic;
 		Projectile.penetrate = -1;
+		Projectile.ArmorPenetration = 2;
 		Projectile.friendly = true;
 		Projectile.ignoreWater = true;
 		Projectile.tileCollide = false;
@@ -95,7 +96,7 @@ public class FrostbiteProj : ModProjectile
 		owner.ChangeDir(Projectile.velocity.X < 0 ? -1 : 1);
 		owner.itemTime = owner.itemAnimation = FadeTime;
 
-		if (owner.channel && DrainMana(owner, 20))
+		if (owner.channel && DrainMana(owner, 15))
 			Projectile.timeLeft = FadeTime;
 
 		Projectile.UpdateFrame(5, 1);

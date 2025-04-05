@@ -45,7 +45,7 @@ internal class SnowHouseGen : ModSystem
 					WorldGen.PlaceTile(x, y, TileID.Platforms, style: self.PlatformStyle);
 
 					if (WorldGen.genRand.NextFloat() < .66f)
-						WorldGen.PlaceTile(x, y - 1, TileID.Books, style: WorldGen.genRand.Next(6));
+						WorldGen.PlaceTile(x, y - 1, TileID.Books, style: WorldGen.genRand.Next(5));
 					else
 						safe.Add(new Point(x, y - 1));
 				}
