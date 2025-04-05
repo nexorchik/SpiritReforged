@@ -1397,3 +1397,8 @@ MudBombSticky: {
 	// DisplayName: Sticky Mud Bomb
 	// Tooltip: "{$Mods.SpiritReforged.Items.MudBomb.Tooltip}"
 }
+
+HideTunic: {
+	// DisplayName: Hide Tunic
+	// Tooltip: Increases melee size and knockback by 25%
+}
