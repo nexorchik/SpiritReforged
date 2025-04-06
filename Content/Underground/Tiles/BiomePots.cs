@@ -12,7 +12,7 @@ public class BiomePots : ModTile
 {
 	public enum Style : int
 	{
-		Cavern, Gold, Ice, Desert, Jungle, Dungeon, Corruption, Crimson, Marble, Hell
+		Cavern, Gold, Ice, Desert, Jungle, Dungeon, Corruption, Crimson, Marble, Hell, Mushroom
 	}
 
 	/// <summary> Unit for distance-based vfx. </summary>
@@ -74,7 +74,7 @@ public class BiomePots : ModTile
 			var world = new Vector2(i, j) * 16;
 			float strength = Main.LocalPlayer.DistanceSQ(world) / (DistMod * DistMod);
 
-			if (strength < 1 && Main.rand.NextFloat(5f) < 1f - strength)
+			if (strength < 1 && Main.rand.NextFloat(8f) < 1f - strength)
 			{
 				var d = Dust.NewDustDirect(world, 16, 16, DustID.TreasureSparkle, 0, 0, Scale: Main.rand.NextFloat());
 				d.noGravity = true;
@@ -89,8 +89,16 @@ public class BiomePots : ModTile
 		{
 			var pos = new Vector2(i, j).ToWorldCoordinates(16, 16);
 
-			SoundEngine.PlaySound(SoundID.Shatter, pos);
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/PotBreak") with { Volume = .16f, PitchRange = (-.4f, 0), }, pos);
+			if (GetStyle(i, j) is Style.Mushroom or Style.Corruption or Style.Crimson)
+			{
+				SoundEngine.PlaySound(SoundID.NPCHit1 with { Volume = .3f, Pitch = .25f }, pos);
+				SoundEngine.PlaySound(SoundID.NPCDeath1, pos);
+			}
+			else
+			{
+				SoundEngine.PlaySound(SoundID.Shatter, pos);
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/PotBreak") with { Volume = .16f, PitchRange = (-.4f, 0), }, pos);
+			}
 
 			return false;
 		}
@@ -166,6 +174,14 @@ public class BiomePots : ModTile
 
 			if (spawnSlime)
 				NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), position, ModContent.NPCType<PotterySlime>());
+
+			if (style == Style.Mushroom && NPC.CountNPCS(ModContent.NPCType<StompableGnome>()) < 5)
+			{
+				int count = Main.rand.Next(1, 4);
+
+				for (int c = 0; c < count; c++)
+					NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), ModContent.NPCType<StompableGnome>());
+			}
 
 			if (Main.dedServ)
 				return;
@@ -261,6 +277,18 @@ public class BiomePots : ModTile
 				dustType = DustID.Obsidian;
 
 				break;
+
+			case Style.Mushroom:
+
+				for (int g = 1; g < 4; g++)
+				{
+					int goreType = Mod.Find<ModGore>("PotMushroom" + g).Type;
+					Gore.NewGore(source, position, Vector2.Zero, goreType);
+				}
+
+				dustType = DustID.MushroomSpray;
+
+				break;
 		}
 
 		for (int d = 0; d < 20; d++)
@@ -328,7 +356,7 @@ public class BiomePots : ModTile
 
 				if (style == Style.Desert)
 					type = ItemID.FossilOre;
-				else if (style == Style.Dungeon)
+				else if (style == Style.Dungeon && NPC.downedBoss3)
 					type = ItemID.Bone;
 				else if (style == Style.Marble)
 					type = ItemID.Javelin;
@@ -384,7 +412,8 @@ public class BiomePots : ModTile
 				{ Style.Corruption, [ItemID.CorruptTorch, ItemID.UnholyArrow] },
 				{ Style.Crimson, [ItemID.CrimsonTorch, ItemID.UnholyArrow] },
 				{ Style.Marble, [ItemID.YellowTorch, ItemID.JestersArrow] },
-				{ Style.Hell, [ItemID.DemonTorch, ItemID.HellfireArrow] }
+				{ Style.Hell, [ItemID.DemonTorch, ItemID.HellfireArrow] },
+				{ Style.Mushroom, [ItemID.MushroomTorch, ItemID.WoodenArrow] }
 			};
 
 			int index = (context == "arrow") ? 1 : 0;
