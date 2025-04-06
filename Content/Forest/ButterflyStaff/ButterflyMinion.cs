@@ -2,6 +2,7 @@ using SpiritReforged.Common.BuffCommon;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Content.Particles;
 using System.Linq;
 

@@ -168,7 +168,25 @@ public class RoastGlobalTile : GlobalTile
 	{
 		TileTexture = Mod.Assets.Request<Texture2D>("Content/Savanna/Items/CampfireSpit_Tile");
 		AllowedTypes = new() { { ModContent.ItemType<RawMeat>(), ModContent.ItemType<CookedMeat>() },
-			{ ItemID.Marshmallow, ItemID.CookedMarshmallow }, { ItemID.Squirrel, ItemID.GrilledSquirrel }};
+			{ ItemID.Marshmallow, ItemID.CookedMarshmallow }, 
+			{ ItemID.Squirrel, ItemID.GrilledSquirrel },
+			{ Mod.Find<ModItem>("SparrowItem").Type, ItemID.RoastedBird },
+			{ ModContent.ItemType<RawFish>(), ItemID.CookedFish },
+			{ ItemID.Bass, ItemID.CookedFish }, 
+			{ ItemID.Trout, ItemID.CookedFish }, 
+			{ ItemID.AtlanticCod, ItemID.CookedFish }};
+
+		if (RecipeGroup.recipeGroups.TryGetValue(RecipeGroupID.Birds, out RecipeGroup birdsGroup))
+		{
+			foreach (int birdIDs in birdsGroup.ValidItems)
+				AllowedTypes[birdIDs] = ItemID.RoastedBird;
+		}
+
+		if (RecipeGroup.recipeGroups.TryGetValue(RecipeGroupID.Ducks, out RecipeGroup ducksGroup))
+		{
+			foreach (int duckIDs in ducksGroup.ValidItems)
+				AllowedTypes[duckIDs] = ItemID.RoastedDuck;
+		}
 	}
 
 	public override void MouseOver(int i, int j, int type)

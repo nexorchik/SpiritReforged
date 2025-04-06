@@ -79,7 +79,7 @@ SavannaSandSlime: {
 }
 
 PeevedTumbler: {
-	DisplayName: 恼怒风滚草
+	DisplayName: 恼怒翻滚怪
 	Entry: 稀树平原的日子不好过……但也没那么糟。嘿，换你眼里进沙子也得恼怒。
 }
 
@@ -95,7 +95,7 @@ SafariZombie: {
 
 TumbleZombie: {
 	DisplayName: "{$NPCName.Zombie}"
-	Entry: 在那亡灵的躯壳之下，在鲜血、枝蔓与腐朽的层层包裹之中，藏着一个令人动容的故事，一个风滚草与僵尸，在最不可能相遇的境遇里，结下了真挚的友谊。
+	Entry: 在那亡灵的躯壳之下，在鲜血、枝蔓与腐朽的层层包裹之中，藏着一个令人动容的故事，一个翻滚怪与僵尸，在最不可能相遇的境遇里，结下了真挚的友谊。
 }
 
 Hyena: {
@@ -324,3 +324,5 @@ PotterySlime: {
 
 	// Entry: ""
 }
+
+// StompableGnome.DisplayName: Stompable Gnome

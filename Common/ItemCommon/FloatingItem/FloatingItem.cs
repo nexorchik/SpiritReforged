@@ -8,7 +8,7 @@ public abstract class FloatingItem : ModItem
 
 	public override void Update(ref float gravity, ref float maxFallSpeed)
 	{
-		if (Item.wet)
+		if (Item.wet && !Item.shimmerWet)
 		{
 			gravity = Bouyancy;
 			Item.velocity.Y = Math.Max(Item.velocity.Y, Bouyancy * 7);
