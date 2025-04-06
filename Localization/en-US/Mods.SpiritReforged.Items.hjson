@@ -1398,6 +1398,11 @@ MudBombSticky: {
 	Tooltip: "{$Mods.SpiritReforged.Items.MudBomb.Tooltip}"
 }
 
+HideTunic: {
+	DisplayName: Hide Tunic
+	Tooltip: Increases melee size and knockback by 25%
+}
+
 PotteryWheelItem: {
 	DisplayName: Pottery Wheel
 	Tooltip: Used for crafting decorative pots
@@ -1481,11 +1486,6 @@ PotsHellItem: {
 PotsCorruptionItem: {
 	DisplayName: Ancient Corrupt Pot
 	Tooltip: ""
-}
-
-HideTunic: {
-	DisplayName: Hide Tunic
-	Tooltip: Increases melee size and knockback by 25%
 }
 
 PotsSpiderItem: {
