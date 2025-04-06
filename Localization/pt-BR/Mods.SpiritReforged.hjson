@@ -10,6 +10,7 @@ SlotContexts.Backpack: Mochila
 Conditions: {
 	InSavanna: Na Savana
 	// PeevedTumbler: When sparkling
+	// Discovered: Discovery
 }
 
 Misc: {

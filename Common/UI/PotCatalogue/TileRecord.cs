@@ -3,10 +3,8 @@
 /// <summary> Records details for tile bestiary purposes. </summary>
 public class TileRecord(string key, int tileType, params int[] tileStyles)
 {
-	public const string LocPath = "Mods.SpiritReforged.Tiles.Records.";
-
-	public virtual string Name => Language.GetTextValue(LocPath + "Names." + key);
-	public virtual string Description => Language.GetTextValue(LocPath + "Flavour." + key);
+	public virtual string Name => Language.GetTextValue($"Mods.SpiritReforged.Items.{key}Item.DisplayName");
+	public virtual string Description => Language.GetTextValue("Mods.SpiritReforged.Tiles.Records.Common");
 	public virtual byte Rating => 1;
 
 	/// <summary> The value used for internal reference. For the front-facing name, see <see cref="Name"/>. </summary>
@@ -55,4 +53,16 @@ public class TileRecord(string key, int tileType, params int[] tileStyles)
 
 	public virtual void Load(Mod mod) { }
 	public virtual void Unload() { }
+}
+
+public class BiomeTileRecord(string key, int tileType, params int[] tileStyles) : TileRecord(key, tileType, tileStyles)
+{
+	public override string Description => Language.GetTextValue("Mods.SpiritReforged.Tiles.Records.Biome");
+	public override byte Rating => 2;
+}
+
+public class GoldTileRecord(string key, int tileType, params int[] tileStyles) : TileRecord(key, tileType, tileStyles)
+{
+	public override string Description => Language.GetTextValue("Mods.SpiritReforged.Tiles.Records.CoinPortal");
+	public override byte Rating => 5;
 }

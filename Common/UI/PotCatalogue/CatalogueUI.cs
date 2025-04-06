@@ -36,7 +36,7 @@ public class CatalogueUI : AutoUIState
 	{
 		foreach (var value in CatalogueHandler.Records)
 		{
-			bool locked = !Main.LocalPlayer.GetModPlayer<RecordPlayer>().IsValidated(value.key);
+			bool locked = false; //!Main.LocalPlayer.GetModPlayer<RecordPlayer>().IsValidated(value.key);
 			AddEntry(new(value, locked));
 		}
 	}
@@ -77,7 +77,7 @@ public class CatalogueUI : AutoUIState
 			int fullWidth = (int)(e.Width.Pixels + padding);
 			int fullHeight = (int)(e.Width.Pixels + padding);
 
-			int space = (int)((float)panelWidth / fullWidth);
+			int space = (int)panelWidth / fullWidth;
 
 			float x = padding + fullWidth * (count % space);
 			float y = padding + fullHeight * (count / space);

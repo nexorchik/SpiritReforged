@@ -1354,112 +1354,117 @@ PotteryWheelItem: {
 	Tooltip: Used for crafting decorative pots
 }
 
-CavernPotItem: {
+BiomePotsCavernItem: {
 	DisplayName: Cavern Pot
 	Tooltip: ""
 }
 
-GoldPotItem: {
+BiomePotsGoldItem: {
 	DisplayName: Ornate Pot
 	Tooltip: ""
 }
 
-IcePotItem: {
+BiomePotsIceItem: {
 	DisplayName: Frozen Pot
 	Tooltip: ""
 }
 
-DesertPotItem: {
+BiomePotsDesertItem: {
 	DisplayName: Desert Pot
 	Tooltip: ""
 }
 
-JunglePotItem: {
+BiomePotsJungleItem: {
 	DisplayName: Jungle Pot
 	Tooltip: ""
 }
 
-DungeonPotItem: {
+BiomePotsDungeonItem: {
 	DisplayName: Dungeon Pot
 	Tooltip: ""
 }
 
-CorruptPotItem: {
+BiomePotsCorruptionItem: {
 	DisplayName: Corrupt Pot
 	Tooltip: ""
 }
 
-CrimsonPotItem: {
+BiomePotsCrimsonItem: {
 	DisplayName: Crimson Pot
 	Tooltip: ""
 }
 
-MarblePotItem: {
+BiomePotsMarbleItem: {
 	DisplayName: Marble Pot
 	Tooltip: ""
 }
 
-HellPotItem: {
+BiomePotsHellItem: {
 	DisplayName: Obsidian Pot
 	Tooltip: ""
 }
 
-AncientCavernPotItem: {
+PotsCavernItem: {
 	DisplayName: Ancient Cavern Pot
 	Tooltip: ""
 }
 
-AncientIcePotItem: {
+PotsIceItem: {
 	DisplayName: Ancient Frozen Pot
 	Tooltip: ""
 }
 
-AncientJunglePotItem: {
+PotsJungleItem: {
 	DisplayName: Ancient Jungle Pot
 	Tooltip: ""
 }
 
-AncientDungeonPotItem: {
+PotsDungeonItem: {
 	DisplayName: Ancient Dungeon Pot
 	Tooltip: ""
 }
 
-AncientHellPotItem: {
+PotsHellItem: {
 	DisplayName: Ancient Obsidian Pot
 	Tooltip: ""
 }
 
-AncientCorruptPotItem: {
+PotsCorruptItem: {
 	DisplayName: Ancient Corrupt Pot
 	Tooltip: ""
 }
 
-AncientSpiderPotItem: {
+PotsSpiderItem: {
 	DisplayName: Ancient Spider Pot
 	Tooltip: ""
 }
 
-AncientCrimsonPotItem: {
+PotsCrimsonItem: {
 	DisplayName: Ancient Crimson Pot
 	Tooltip: ""
 }
 
-AncientPyramidPotItem: {
+PotsPyramidItem: {
 	DisplayName: Ancient Pyramid Pot
 	Tooltip: ""
 }
 
-AncientTemplePotItem: {
+PotsTempleItem: {
 	DisplayName: Ancient Temple Pot
 	Tooltip: ""
 }
 
-AncientMarblePotItem: {
+PotsMarbleItem: {
 	DisplayName: Ancient Marble Pot
 	Tooltip: ""
 }
 
-AncientDesertPotItem: {
+PotsDesertItem: {
 	DisplayName: Ancient Desert Pot
+	Tooltip: ""
+}
+
+PotsCorruptionItem: {
+	DisplayName: Pots Corruption Item
 	Tooltip: ""
 }

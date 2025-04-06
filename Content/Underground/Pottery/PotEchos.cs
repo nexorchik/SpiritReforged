@@ -1,3 +1,4 @@
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Underground.Tiles;
 using Terraria.DataStructures;
 
@@ -6,6 +7,16 @@ namespace SpiritReforged.Content.Underground.Pottery;
 public class BiomePotsEcho : BiomePots
 {
 	public override string Texture => (typeof(BiomePots).Namespace + "." + typeof(BiomePots).Name).Replace('.', '/');
+	public override Dictionary<string, int[]> Styles => [];
+
+	public override void Load() => StyleDatabase.OnPopulateStyleGroups += AutoloadFromGroup;
+	private void AutoloadFromGroup()
+	{
+		int baseType = ModContent.TileType<BiomePots>();
+
+		foreach (var c in StyleDatabase.Groups[baseType])
+			Mod.AddContent(new AutoloadedPotItem(nameof(BiomePotsEcho), c.name, c.styles[0]));
+	}
 
 	public override void SetStaticDefaults()
 	{
@@ -22,6 +33,13 @@ public class BiomePotsEcho : BiomePots
 public class CommonPotsEcho : ModTile
 {
 	public override string Texture => StackablePots.PotTexture;
+
+	public override void Load() => StyleDatabase.OnPopulateStyleGroups += AutoloadFromGroup;
+	private void AutoloadFromGroup()
+	{
+		foreach (var c in StyleDatabase.Groups[TileID.Pots])
+			Mod.AddContent(new AutoloadedPotItem(nameof(CommonPotsEcho), c.name, c.styles[0]));
+	}
 
 	public override void SetStaticDefaults()
 	{

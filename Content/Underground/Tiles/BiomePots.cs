@@ -9,8 +9,9 @@ using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
-public class BiomePots : ModTile, INamedStyles
+public class BiomePots : ModTile, IRecordTile
 {
+	/// <summary> Mirrors <see cref="Styles"/>. </summary>
 	public enum Style : int
 	{
 		Cavern, Gold, Ice, Desert, Jungle, Dungeon, Corruption, Crimson, Marble, Hell
@@ -20,7 +21,15 @@ public class BiomePots : ModTile, INamedStyles
 	private const int DistMod = 200;
 	private static readonly HashSet<Point16> GlowPoints = [];
 
-	public Dictionary<string, int[]> Styles => new()
+	public void AddRecord(int type, StyleDatabase.StyleGroup group)
+	{
+		if (group.name == "BiomePotsGold")
+			CatalogueHandler.Records.Add(new GoldTileRecord(group.name, type, group.styles));
+		else
+			CatalogueHandler.Records.Add(new BiomeTileRecord(group.name, type, group.styles));
+	}
+
+	public virtual Dictionary<string, int[]> Styles => new()
 	{
 		{ "Cavern", [0, 1, 2] },
 		{ "Gold", [3, 4, 5] },
@@ -34,19 +43,13 @@ public class BiomePots : ModTile, INamedStyles
 		{ "Hell", [27, 28, 29] }
 	};
 
-	#region drawing detours
-	/// <summary> Prevents static detours from being applied twice when the rubble is autoloaded. </summary>
-	private static bool AppliedDetours;
+	private static Style GetStyle(int frameY) => (Style)(frameY / 36);
 
+	#region drawing detours
 	public override void Load()
 	{
-		if (!AppliedDetours)
-		{
-			DrawOrderSystem.DrawTilesNonSolidEvent += DrawGlow;
-			On_TileDrawing.PreDrawTiles += ClearAll;
-
-			AppliedDetours = true;
-		}
+		DrawOrderSystem.DrawTilesNonSolidEvent += DrawGlow;
+		On_TileDrawing.PreDrawTiles += ClearAll;
 	}
 
 	private static void DrawGlow()
@@ -128,7 +131,7 @@ public class BiomePots : ModTile, INamedStyles
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		if (TileObjectData.IsTopLeft(i, j) && GetStyle(i, j) is Style.Gold)
+		if (TileObjectData.IsTopLeft(i, j) && GetStyle(Main.tile[i, j].TileFrameY) is Style.Gold)
 			GlowPoints.Add(new Point16(i, j));
 
 		return true;
@@ -175,7 +178,7 @@ public class BiomePots : ModTile, INamedStyles
 		if (WorldGen.generatingWorld)
 			return; //Particularly important for not incrementing Remaining
 
-		var style = (Style)(frameY / 36);
+		var style = GetStyle(Main.tile[i, j].TileFrameY);
 		int variant = frameX / 36;
 
 		var source = new EntitySource_TileBreak(i, j);
@@ -415,12 +418,6 @@ public class BiomePots : ModTile, INamedStyles
 			int index = (context == "arrow") ? 1 : 0;
 			return dict[style][index];
 		}
-	}
-
-	private static Style GetStyle(int i, int j)
-	{
-		int frameY = Main.tile[i, j].TileFrameY;
-		return (Style)(frameY / 36);
 	}
 
 	/// <summary> Calculates coin values similarly to how vanilla pots do. </summary>

@@ -1,8 +1,13 @@
-﻿using SpiritReforged.Content.Underground.Tiles;
+﻿using SpiritReforged.Common.TileCommon;
 using System.Linq;
 using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Underground.Pottery;
+
+public interface IRecordTile : INamedStyles
+{
+	public void AddRecord(int type, StyleDatabase.StyleGroup group) => CatalogueHandler.Records.Add(new TileRecord(group.name, type, group.styles));
+}
 
 public class CatalogueHandler : ModSystem
 {
@@ -33,44 +38,28 @@ public class CatalogueHandler : ModSystem
 
 	public static readonly HashSet<TileRecord> Records = [];
 
-	#region handle content
-	public const string CommonPrefix = "Common_";
-	public const string BiomePrefix = "Biome_";
-
-	//Both sort by index
-	public static readonly string[] CommonNames = ["Cavern", "Ice", "Jungle", "Dungeon", "Hell", "Corrupt", "Spider", "Crimson", "Pyramid", "Temple", "Marble", "Desert"];
-	public static readonly string[] BiomeNames = ["Cavern", "Gold", "Ice", "Desert", "Jungle", "Dungeon", "Corrupt", "Crimson", "Marble", "Hell"];
-
 	public override void SetStaticDefaults()
 	{
-		//Common
-		Records.Add(new CommonTileRecord(CommonPrefix + BiomeNames[0], TileID.Pots, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
-		const int length = 9;
-
-		for (int i = 1; i < BiomeNames.Length; i++)
+		foreach (int type in StyleDatabase.Groups.Keys)
 		{
-			int skip = i * length + 12;
-			int[] styles = [skip, skip + 1, skip + 2, skip + 3, skip + 4, skip + 5, skip + 6, skip + 7, skip + 8];
-
-			Records.Add(new CommonTileRecord(CommonPrefix + BiomeNames[i], TileID.Pots, styles));
-		}
-
-		//Biome
-		for (int i = 0; i < BiomeNames.Length; i++)
-		{
-			int skip = i * 3;
-			int[] styles = [skip, skip + 1, skip + 2];
-
-			if (BiomeNames[i] == "Gold")
-			{
-				Records.Add(new GoldTileRecord(BiomePrefix + BiomeNames[i], ModContent.TileType<BiomePots>(), styles)); //Add a specialised record
+			if (TileLoader.GetTile(type) is not IRecordTile r)
 				continue;
-			}
 
-			Records.Add(new UncommonTileRecord(BiomePrefix + BiomeNames[i], ModContent.TileType<BiomePots>(), styles));
+			foreach (var group in StyleDatabase.Groups[type])
+				r.AddRecord(type, group);
 		}
+
+		AddPotRecords();
 	}
-	#endregion
+
+	/// <summary> Adds all records for vanilla pots. </summary>
+	private static void AddPotRecords()
+	{
+		int type = TileID.Pots;
+
+		foreach (var group in StyleDatabase.Groups[type])
+			Records.Add(new TileRecord(group.name, type, group.styles));
+	}
 }
 
 internal class RecordPlayer : ModPlayer

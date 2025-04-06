@@ -1,36 +1,6 @@
 namespace SpiritReforged.Content.Underground.Pottery;
 
-/// <summary> Specialised pot item autoloader (<see cref="AutoloadedPotItem"/>) for <see cref="PotteryWheel"/>. </summary>
-public class PotItems : ILoadable
-{
-	public void Load(Mod mod)
-	{
-		/*for (int i = 0; i < UncommonNames.Length; i++)
-		{
-			string name = UncommonNames[i];
-			mod.AddContent(new AutoloadedPotItem(nameof(BiomePotsEcho), name, i * 3));
-		}
-
-		for (int i = 0; i < CommonNames.Length; i++)
-		{
-			string name = CommonNames[i];
-			int style = i * 9;
-
-			if (style != 0)
-				style += 3; //Account for cavern pot odd style count
-
-			mod.AddContent(new AutoloadedPotItem(nameof(CommonPotsEcho), "Ancient" + name, style, (i == 0) ? 12 : 9));
-		}
-
-		foreach (var echo in CatalogueHandler.Records)
-		{
-
-		}*/
-	}
-
-	public void Unload() { }
-}
-
+/// <summary> Specialised pot item template for <see cref="PotteryWheel"/>. </summary>
 /// <param name="baseName"> The internal name of the tile this item places. </param>
 /// <param name="name"></param>
 /// <param name="style"> The base style this item places implicitly affected by RandomStyleRange. </param>
@@ -38,8 +8,8 @@ public class PotItems : ILoadable
 public sealed class AutoloadedPotItem(string baseName, string name, int style, int styleLimit = 3) : ModItem
 {
 	protected override bool CloneNewInstances => true;
-	public override string Name => _name + "PotItem";
-	public override string Texture => (GetType().Namespace + $".{_name}Pot").Replace('.', '/');
+	public override string Name => _name + "Item";
+	public override string Texture => (GetType().Namespace + $".{_name}").Replace('.', '/');
 
 	private readonly int _styleLimit = styleLimit;
 
@@ -71,5 +41,7 @@ public sealed class AutoloadedPotItem(string baseName, string name, int style, i
 
 	public override void SetDefaults() => Item.DefaultToPlaceableTile(Tile.Type, _style);
 	public override void AddRecipes() => CreateRecipe().AddRecipeGroup("ClayAndMud", 5)
-		.AddTile(ModContent.TileType<PotteryWheel>()).Register();
+		.AddTile(ModContent.TileType<PotteryWheel>()).AddCondition(Language.GetText("Mods.SpiritReforged.Conditions.Discovered"), RecordedPot).Register();
+
+	private bool RecordedPot() => Main.LocalPlayer.GetModPlayer<RecordPlayer>().IsValidated(_name);
 }
