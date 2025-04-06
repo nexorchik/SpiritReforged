@@ -1,4 +1,6 @@
-﻿namespace SpiritReforged.Content.Underground.Pottery;
+﻿using Mono.Cecil;
+
+namespace SpiritReforged.Content.Underground.Pottery;
 
 /// <summary> Records details for tile bestiary purposes. </summary>
 public class TileRecord(string key, int tileType, params int[] tileStyles)
@@ -21,7 +23,7 @@ public class TileRecord(string key, int tileType, params int[] tileStyles)
 		var data = TileObjectData.GetTileData(type, 0);
 		var texture = TextureAssets.Tile[type].Value;
 
-		//Defaults
+		//Defaults- useful for vanilla pots which have no object data
 		int wrapLimit = 3;
 		int width = 2;
 		int height = 2;
@@ -33,21 +35,20 @@ public class TileRecord(string key, int tileType, params int[] tileStyles)
 			height = data.Height;
 		}
 
-		//Expects a horizontal style
-		var source = new Rectangle(tileStyle % wrapLimit * width * tileFrame, tileStyle / wrapLimit * height * tileFrame, 16, 16);
-
-		for (int i = 0; i < 4; i++)
+		for (int x = 0; x < width; x++)
 		{
-			var newSource = source with { X = source.X + i % 2 * tileFrame, Y = source.Y + i / 2 * tileFrame };
-			var origin = i switch
+			for (int y = 0; y < height; y++)
 			{
-				1 => new Vector2(0, 16),
-				2 => new Vector2(16, 0),
-				3 => new Vector2(0, 0),
-				_ => new Vector2(16, 16)
-			};
+				//Expects a horizontal style
+				int startX = (tileStyle % wrapLimit * width + x) * tileFrame;
+				int startY = (tileStyle / wrapLimit * height + y) * tileFrame;
 
-			spriteBatch.Draw(texture, position, newSource, color, 0, origin, 1, default, 0);
+				var source = new Rectangle(startX, startY, 16, 16);
+				var center = new Vector2(width * 16 / 2, height * 16 / 2);
+				var drawPos = position + new Vector2(x * 16, y * 16) - center;
+
+				spriteBatch.Draw(texture, drawPos, source, color, 0, Vector2.Zero, 1, default, 0);
+			}
 		}
 	}
 

@@ -1429,7 +1429,7 @@ PotsHellItem: {
 	Tooltip: ""
 }
 
-PotsCorruptItem: {
+PotsCorruptionItem: {
 	DisplayName: Ancient Corrupt Pot
 	Tooltip: ""
 }
@@ -1461,10 +1461,5 @@ PotsMarbleItem: {
 
 PotsDesertItem: {
 	DisplayName: Ancient Desert Pot
-	Tooltip: ""
-}
-
-PotsCorruptionItem: {
-	DisplayName: Pots Corruption Item
 	Tooltip: ""
 }

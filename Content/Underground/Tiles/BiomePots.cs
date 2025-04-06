@@ -24,9 +24,9 @@ public class BiomePots : ModTile, IRecordTile
 	public void AddRecord(int type, StyleDatabase.StyleGroup group)
 	{
 		if (group.name == "BiomePotsGold")
-			CatalogueHandler.Records.Add(new GoldTileRecord(group.name, type, group.styles));
+			RecordHandler.Records.Add(new GoldTileRecord(group.name, type, group.styles));
 		else
-			CatalogueHandler.Records.Add(new BiomeTileRecord(group.name, type, group.styles));
+			RecordHandler.Records.Add(new BiomeTileRecord(group.name, type, group.styles));
 	}
 
 	public virtual Dictionary<string, int[]> Styles => new()

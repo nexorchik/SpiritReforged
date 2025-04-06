@@ -6,10 +6,10 @@ namespace SpiritReforged.Content.Underground.Pottery;
 
 public interface IRecordTile : INamedStyles
 {
-	public void AddRecord(int type, StyleDatabase.StyleGroup group) => CatalogueHandler.Records.Add(new TileRecord(group.name, type, group.styles));
+	public void AddRecord(int type, StyleDatabase.StyleGroup group) => RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles));
 }
 
-public class CatalogueHandler : ModSystem
+public class RecordHandler : ModSystem
 {
 	/// <summary> Checks whether the tile at the given coordinates corresponds to a record. </summary>
 	public static bool Matching(int i, int j, out string name)
@@ -81,7 +81,7 @@ internal class RecordGlobalTile : GlobalTile
 		if (effectOnly || fail)
 			return;
 
-		if (CatalogueHandler.Matching(i, j, out string name))
+		if (RecordHandler.Matching(i, j, out string name))
 			Main.LocalPlayer.GetModPlayer<RecordPlayer>().Validate(name);
 	}
 }
