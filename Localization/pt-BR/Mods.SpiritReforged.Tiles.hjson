@@ -1,3 +1,36 @@
+Records: {
+	Names: {
+		// Common_Cavern: Cave Pot
+		// Common_Ice: Frozen Pot
+		// Common_Jungle: Jungle Pot
+		// Common_Dungeon: Dungeon Pot
+		// Common_Hell: Obsidian Pot
+		// Common_Corruption: Corrupt Pot
+		// Common_Spider: Spider Pot
+		// Common_Crimson: Crimson Pot
+		// Common_Pyramid: Pyramid Pot
+		// Common_Temple: Temple Pot
+		// Common_Marble: Marble Pot
+		// Common_Desert: Desert Pot
+		// Biome_Cavern: Cave Pot
+		// Biome_Gold: Ornate Pot
+		// Biome_Ice: Frozen Pot
+		// Biome_Desert: Desert Pot
+		// Biome_Jungle: Jungle Pot
+		// Biome_Dungeon: Dungeon Pot
+		// Biome_Corruption: Corrupt Pot
+		// Biome_Crimson: Crimson Pot
+		// Biome_Marble: Marble Pot
+		// Biome_Hell: Obsidian Pot
+	}
+
+	Flavour: {
+		// Biome_Gold: Always contains a coin portal.
+		// CommonBlurb: A common pot which sometimes contains useful goodies.
+		// BiomeBlurb: Contains greater wealth than common pots.
+	}
+}
+
 SunkenTreasureTile.MapEntry: Tesouro Afundado
 HydrothermalVent.MapEntry: Ventiladora Hidrotermal
 CoralMapEntry: Coral

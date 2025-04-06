@@ -1,5 +1,7 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.UI.System;
+using Terraria.GameContent.ObjectInteractions;
 
 namespace SpiritReforged.Content.Underground.Pottery;
 
@@ -16,7 +18,9 @@ public class PotteryWheel : ModTile, IAutoloadTileItem
 		Main.tileFrameImportant[Type] = true;
 		Main.tileWaterDeath[Type] = true;
 		Main.tileLavaDeath[Type] = true;
+
 		TileID.Sets.InteractibleByNPCs[Type] = true;
+		TileID.Sets.HasOutlines[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3);
 		TileObjectData.newTile.DrawYOffset = 2;
@@ -27,6 +31,26 @@ public class PotteryWheel : ModTile, IAutoloadTileItem
 		AnimationFrameHeight = FullFrameHeight;
 	}
 
+	public override bool RightClick(int i, int j)
+	{
+		Main.playerInventory = true;
+		UISystem.SetActive<CatalogueUI>();
+
+		return true;
+	}
+
+	public override void NearbyEffects(int i, int j, bool closer)
+	{
+		if (!TileObjectData.IsTopLeft(i, j))
+			return;
+
+		var world = new Vector2(i, j).ToWorldCoordinates(16, 16);
+
+		if (UISystem.IsActive<CatalogueUI>() && Main.LocalPlayer.Distance(world) > 16 * 5)
+			UISystem.SetInactive<CatalogueUI>();
+	}
+
+	public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => true;
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
 	public override void AnimateTile(ref int frame, ref int frameCounter)
 	{

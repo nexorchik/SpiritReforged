@@ -3,13 +3,9 @@ namespace SpiritReforged.Content.Underground.Pottery;
 /// <summary> Specialised pot item autoloader (<see cref="AutoloadedPotItem"/>) for <see cref="PotteryWheel"/>. </summary>
 public class PotItems : ILoadable
 {
-	//Both sort by index
-	private static readonly string[] UncommonNames = ["Cavern", "Gold", "Ice", "Desert", "Jungle", "Dungeon", "Corrupt", "Crimson", "Marble", "Hell"];
-	private static readonly string[] CommonNames = ["Cavern", "Ice", "Jungle", "Dungeon", "Hell", "Corrupt", "Spider", "Crimson", "Pyramid", "Temple", "Marble", "Desert"];
-
 	public void Load(Mod mod)
 	{
-		for (int i = 0; i < UncommonNames.Length; i++)
+		/*for (int i = 0; i < UncommonNames.Length; i++)
 		{
 			string name = UncommonNames[i];
 			mod.AddContent(new AutoloadedPotItem(nameof(BiomePotsEcho), name, i * 3));
@@ -25,6 +21,11 @@ public class PotItems : ILoadable
 
 			mod.AddContent(new AutoloadedPotItem(nameof(CommonPotsEcho), "Ancient" + name, style, (i == 0) ? 12 : 9));
 		}
+
+		foreach (var echo in CatalogueHandler.Records)
+		{
+
+		}*/
 	}
 
 	public void Unload() { }

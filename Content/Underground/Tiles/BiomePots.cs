@@ -1,15 +1,15 @@
-using RubbleAutoloader;
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Forest.Cloud.Items;
 using SpiritReforged.Content.Underground.NPCs;
+using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
-public class BiomePots : ModTile
+public class BiomePots : ModTile, INamedStyles
 {
 	public enum Style : int
 	{
@@ -19,6 +19,20 @@ public class BiomePots : ModTile
 	/// <summary> Unit for distance-based vfx. </summary>
 	private const int DistMod = 200;
 	private static readonly HashSet<Point16> GlowPoints = [];
+
+	public Dictionary<string, int[]> Styles => new()
+	{
+		{ "Cavern", [0, 1, 2] },
+		{ "Gold", [3, 4, 5] },
+		{ "Ice", [6, 7, 8] },
+		{ "Desert", [9, 10, 11] },
+		{ "Jungle", [12, 13, 14] },
+		{ "Dungeon", [15, 16, 17] },
+		{ "Corruption", [18, 19, 20] },
+		{ "Crimson", [21, 22, 23] },
+		{ "Marble", [24, 25, 26] },
+		{ "Hell", [27, 28, 29] }
+	};
 
 	#region drawing detours
 	/// <summary> Prevents static detours from being applied twice when the rubble is autoloaded. </summary>
@@ -38,7 +52,12 @@ public class BiomePots : ModTile
 	private static void DrawGlow()
 	{
 		foreach (var p in GlowPoints)
-			DrawGlow(p.ToWorldCoordinates(16, 18));
+		{
+			var world = p.ToWorldCoordinates(16, 18);
+
+			float opacity = MathHelper.Clamp(1f - Main.LocalPlayer.DistanceSQ(world) / (DistMod * DistMod), 0, .75f) * Lighting.Brightness(p.X, p.Y);
+			DrawGlow(p.ToWorldCoordinates(16, 18) - Main.screenPosition, opacity);
+		}
 	}
 
 	private static void ClearAll(On_TileDrawing.orig_PreDrawTiles orig, TileDrawing self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets)
@@ -115,15 +134,12 @@ public class BiomePots : ModTile
 		return true;
 	}
 
-	private static void DrawGlow(Vector2 position)
+	public static void DrawGlow(Vector2 drawPosition, float opacity)
 	{
 		const int squareSize = 32;
 
-		var drawPos = position - Main.screenPosition;
-		var region = new Rectangle((int)drawPos.X - squareSize / 2, (int)drawPos.Y - squareSize / 2, squareSize, squareSize);
+		var region = new Rectangle((int)drawPosition.X - squareSize / 2, (int)drawPosition.Y - squareSize / 2, squareSize, squareSize);
 		Color color = Color.White;
-
-		float opacity = MathHelper.Clamp(1f - Main.LocalPlayer.DistanceSQ(position) / (DistMod * DistMod), 0, .75f) * Lighting.Brightness((int)(position.X / 16), (int)(position.Y / 16));
 
 		short[] indices = [0, 1, 2, 1, 3, 2];
 
