@@ -69,7 +69,7 @@ public class CatalogueList : UIElement
 			overflow = fullHeight / (int)GetDimensions().Height;
 		}
 
-		_scrollbar.SetView(1f, Math.Max(overflow - 1, 1f)); //Recalculate maximum scrollbar view
+		_scrollbar?.SetView(1f, Math.Max(overflow - 1, 1f)); //Recalculate maximum scrollbar view
 	}
 
 	public override void Recalculate()

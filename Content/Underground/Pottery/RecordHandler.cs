@@ -11,6 +11,8 @@ public interface IRecordTile : INamedStyles
 
 public class RecordHandler : ModSystem
 {
+	public static readonly HashSet<TileRecord> Records = [];
+
 	/// <summary> Checks whether the tile at the given coordinates corresponds to a record. </summary>
 	public static bool Matching(int i, int j, out string name)
 	{
@@ -35,8 +37,6 @@ public class RecordHandler : ModSystem
 			return record.styles.Contains(style);
 		}
 	}
-
-	public static readonly HashSet<TileRecord> Records = [];
 
 	public override void SetStaticDefaults()
 	{
@@ -82,6 +82,9 @@ internal class RecordGlobalTile : GlobalTile
 			return;
 
 		if (RecordHandler.Matching(i, j, out string name))
-			Main.LocalPlayer.GetModPlayer<RecordPlayer>().Validate(name);
+		{
+			var p = Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(16, 16), 0, 0)];
+			p.GetModPlayer<RecordPlayer>().Validate(name);
+		}
 	}
 }

@@ -10,10 +10,10 @@ public interface INamedStyles
 
 public class StyleDatabase : ModSystem
 {
-	public struct StyleGroup(string name, int[] styles)
+	public readonly record struct StyleGroup(string name, int[] styles)
 	{
-		public string name = name;
-		public int[] styles = styles;
+		public readonly string name = name;
+		public readonly int[] styles = styles;
 	}
 
 	/// <summary> Invoked after <see cref="Groups"/> is fully populated. </summary>
