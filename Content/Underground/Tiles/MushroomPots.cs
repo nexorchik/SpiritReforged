@@ -1,9 +1,11 @@
+using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
+[AutoloadGlowmask("200,200,200")]
 public class MushroomPots : ModTile, IRecordTile
 {
 	public virtual Dictionary<string, int[]> Styles => new() { { string.Empty, [0, 1, 2] } };
@@ -44,6 +46,12 @@ public class MushroomPots : ModTile, IRecordTile
 		t.TileFrameY = t.TileFrameX;
 		WorldGen.CheckPot(i, j);
 		t.TileFrameY = oldFrameY;
+	}
+
+	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
+	{
+		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Blue.ToVector3() * .8f);
+		return true;
 	}
 
 	public override bool KillSound(int i, int j, bool fail)

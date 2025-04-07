@@ -25,7 +25,6 @@ public class BiomePotsEcho : BiomePots
 	public override void KillMultiTile(int i, int j, int frameX, int frameY) { }
 	public override void NearbyEffects(int i, int j, bool closer) { }
 	public override bool KillSound(int i, int j, bool fail) => true;
-	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch) => true;
 }
 
 public class MushroomPotsEcho : MushroomPots

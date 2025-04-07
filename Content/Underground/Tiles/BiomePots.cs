@@ -1,5 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Forest.Cloud.Items;
 using SpiritReforged.Content.Underground.NPCs;
 using SpiritReforged.Content.Underground.Pottery;
@@ -9,6 +10,7 @@ using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
+[AutoloadGlowmask("200,200,200")]
 public class BiomePots : ModTile, IRecordTile
 {
 	/// <summary> Mirrors <see cref="Styles"/>. </summary>
@@ -140,8 +142,13 @@ public class BiomePots : ModTile, IRecordTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		if (TileObjectData.IsTopLeft(i, j) && GetStyle(Main.tile[i, j].TileFrameY) is Style.Gold)
+		var style = GetStyle(Main.tile[i, j].TileFrameY);
+
+		if (TileObjectData.IsTopLeft(i, j) && style is Style.Gold)
 			GlowPoints.Add(new Point16(i, j));
+
+		if (style is Style.Mushroom)
+			Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Blue.ToVector3());
 
 		return true;
 	}
@@ -187,7 +194,7 @@ public class BiomePots : ModTile, IRecordTile
 		if (WorldGen.generatingWorld)
 			return; //Particularly important for not incrementing Remaining
 
-		var style = GetStyle(Main.tile[i, j].TileFrameY);
+		var style = GetStyle(frameY);
 		int variant = frameX / 36;
 
 		var source = new EntitySource_TileBreak(i, j);
@@ -204,7 +211,7 @@ public class BiomePots : ModTile, IRecordTile
 			if (spawnSlime)
 				NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), position, ModContent.NPCType<PotterySlime>());
 
-			if (style == Style.Mushroom && NPC.CountNPCS(ModContent.NPCType<StompableGnome>()) < 5)
+			if (style is Style.Mushroom && NPC.CountNPCS(ModContent.NPCType<StompableGnome>()) < 5)
 			{
 				int count = Main.rand.Next(1, 4);
 
