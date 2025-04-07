@@ -1,21 +1,40 @@
-﻿using Mono.Cecil;
-
-namespace SpiritReforged.Content.Underground.Pottery;
+﻿namespace SpiritReforged.Content.Underground.Pottery;
 
 /// <summary> Records details for tile bestiary purposes. </summary>
-public class TileRecord(string key, int tileType, params int[] tileStyles)
+public struct TileRecord(string key, int tileType, params int[] tileStyles)
 {
-	public virtual string Name => Language.GetTextValue($"Mods.SpiritReforged.Items.{key}Item.DisplayName");
-	public virtual string Description => Language.GetTextValue("Mods.SpiritReforged.Tiles.Records.Common");
-	public virtual byte Rating => 1;
+	/// <summary> The default path localization key for <see cref="description"/>. </summary>
+	public const string DescKey = "Mods.SpiritReforged.Tiles.Records";
 
-	/// <summary> The value used for internal reference. For the front-facing name, see <see cref="Name"/>. </summary>
+	/// <summary> The value used for internal reference. For the front-facing name, see <see cref="name"/>. </summary>
 	public string key = key;
 
 	public int type = tileType;
 	public int[] styles = tileStyles;
 
-	public virtual void DrawIcon(SpriteBatch spriteBatch, Vector2 position, Color color, float scale = 1f)
+	public byte rating = 1;
+	public string name = Language.GetTextValue($"Mods.SpiritReforged.Items.{key}Item.DisplayName");
+	public string description = Language.GetTextValue(DescKey + ".Common");
+
+	public TileRecord AddRating(byte value)
+	{
+		rating = value;
+		return this;
+	}
+
+	public TileRecord AddDisplayName(LocalizedText text)
+	{
+		name = text.Value;
+		return this;
+	}
+
+	public TileRecord AddDescription(LocalizedText text)
+	{
+		description = text.Value;
+		return this;
+	}
+
+	public readonly void DrawIcon(SpriteBatch spriteBatch, Vector2 position, Color color, float scale = 1f)
 	{
 		const int tileFrame = 18;
 
@@ -51,19 +70,4 @@ public class TileRecord(string key, int tileType, params int[] tileStyles)
 			}
 		}
 	}
-
-	public virtual void Load(Mod mod) { }
-	public virtual void Unload() { }
-}
-
-public class BiomeTileRecord(string key, int tileType, params int[] tileStyles) : TileRecord(key, tileType, tileStyles)
-{
-	public override string Description => Language.GetTextValue("Mods.SpiritReforged.Tiles.Records.Biome");
-	public override byte Rating => 2;
-}
-
-public class GoldTileRecord(string key, int tileType, params int[] tileStyles) : TileRecord(key, tileType, tileStyles)
-{
-	public override string Description => Language.GetTextValue("Mods.SpiritReforged.Tiles.Records.CoinPortal");
-	public override byte Rating => 5;
 }

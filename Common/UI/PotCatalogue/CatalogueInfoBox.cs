@@ -33,7 +33,7 @@ public class CatalogueInfoBox : UIElement
 			return;
 
 		//Draw name
-		string name = selected.record.Name;
+		string name = selected.record.name;
 		var namePos = bounds.Top() + new Vector2(0, 20);
 		Utils.DrawBorderString(spriteBatch, name, namePos, Main.MouseTextColorReal, .9f, .5f, .5f);
 
@@ -46,14 +46,14 @@ public class CatalogueInfoBox : UIElement
 
 		for (int i = 0; i < count; i++)
 		{
-			var texture = ((i < entry.record.Rating) ? StarLight : StarDim).Value;
+			var texture = ((i < entry.record.rating) ? StarLight : StarDim).Value;
 
 			var position = bounds.Top() + new Vector2(space * i - space * 2, 50);
 			spriteBatch.Draw(texture, position, null, Color.White, 0, texture.Size() / 2, 1, default, 0);
 		}
 
 		//Draw description
-		string[] wrappingText = Utils.WordwrapString(selected.record.Description, FontAssets.MouseText.Value, bounds.Width, 20, out _);
+		string[] wrappingText = Utils.WordwrapString(selected.record.description, FontAssets.MouseText.Value, bounds.Width, 20, out _);
 
 		for (int i = 0; i < wrappingText.Length; i++)
 		{

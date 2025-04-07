@@ -36,8 +36,9 @@ public class CatalogueEntry : UIElement
 		base.DrawSelf(spriteBatch);
 
 		var center = GetDimensions().Center().ToPoint().ToVector2(); //Round to avoid tearing
+		var backColor = IsMouseHovering ? Color.LightGray : Color.White;
 
-		spriteBatch.Draw(Back.Value, center, null, Color.White, 0, Back.Size() / 2, scale, default, 0);
+		spriteBatch.Draw(Back.Value, center, null, backColor, 0, Back.Size() / 2, scale, default, 0);
 		DrawTile(spriteBatch, center, scale);
 		spriteBatch.Draw(Front.Value, center, null, Color.White, 0, Front.Size() / 2, scale, default, 0);
 

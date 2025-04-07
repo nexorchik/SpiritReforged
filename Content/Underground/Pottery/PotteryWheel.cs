@@ -39,6 +39,18 @@ public class PotteryWheel : ModTile, IAutoloadTileItem
 		return true;
 	}
 
+	public override void MouseOver(int i, int j)
+	{
+		if (UISystem.IsActive<CatalogueUI>())
+			return;
+
+		var p = Main.LocalPlayer;
+
+		p.cursorItemIconEnabled = true;
+		p.cursorItemIconID = this.AutoItem().type;
+		p.noThrow = 2;
+	}
+
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
 		if (!TileObjectData.IsTopLeft(i, j))

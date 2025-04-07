@@ -1,5 +1,7 @@
+using RubbleAutoloader;
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Forest.Cloud.Items;
 using SpiritReforged.Content.Underground.NPCs;
@@ -11,7 +13,7 @@ using Terraria.GameContent.Drawing;
 namespace SpiritReforged.Content.Underground.Tiles;
 
 [AutoloadGlowmask("200,200,200")]
-public class BiomePots : ModTile, IRecordTile
+public class BiomePots : PotTile
 {
 	/// <summary> Mirrors <see cref="Styles"/>. </summary>
 	public enum Style : int
@@ -23,15 +25,17 @@ public class BiomePots : ModTile, IRecordTile
 	private const int DistMod = 200;
 	private static readonly HashSet<Point16> GlowPoints = [];
 
-	public void AddRecord(int type, StyleDatabase.StyleGroup group)
+	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
 	{
+		var record = new TileRecord(group.name, type, group.styles);
+
 		if (group.name == "BiomePotsGold")
-			RecordHandler.Records.Add(new GoldTileRecord(group.name, type, group.styles));
+			RecordHandler.Records.Add(record.AddRating(5).AddDescription(Language.GetText(TileRecord.DescKey + ".CoinPortal")));
 		else
-			RecordHandler.Records.Add(new BiomeTileRecord(group.name, type, group.styles));
+			RecordHandler.Records.Add(record.AddRating(2).AddDescription(Language.GetText(TileRecord.DescKey + ".Biome")));
 	}
 
-	public virtual Dictionary<string, int[]> Styles => new()
+	public override Dictionary<string, int[]> TileStyles => new()
 	{
 		{ "Cavern", [0, 1, 2] },
 		{ "Gold", [3, 4, 5] },
@@ -49,7 +53,7 @@ public class BiomePots : ModTile, IRecordTile
 	private static Style GetStyle(int frameY) => (Style)(frameY / 36);
 
 	#region drawing detours
-	public override void Load()
+	public override void Load(Mod mod)
 	{
 		DrawOrderSystem.DrawTilesNonSolidEvent += DrawGlow;
 		On_TileDrawing.PreDrawTiles += ClearAll;
@@ -77,30 +81,6 @@ public class BiomePots : ModTile, IRecordTile
 	}
 	#endregion
 
-	public override void SetStaticDefaults()
-	{
-		const int row = 3;
-
-		Main.tileSolid[Type] = false;
-		Main.tileBlockLight[Type] = false;
-		Main.tileCut[Type] = true;
-		Main.tileFrameImportant[Type] = true;
-		Main.tileSpelunker[Type] = true;
-
-		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
-		TileObjectData.newTile.Origin = new(0, 1);
-		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, TileObjectData.newTile.Width, 0);
-		TileObjectData.newTile.StyleWrapLimit = row;
-		TileObjectData.newTile.RandomStyleRange = row;
-		TileObjectData.newTile.StyleHorizontal = true;
-		TileObjectData.newTile.UsesCustomCanPlace = true;
-		TileObjectData.newTile.DrawYOffset = 2;
-		TileObjectData.addTile(Type);
-
-		AddMapEntry(new Color(100, 90, 35), Language.GetText("MapObject.Pot"));
-		DustType = -1;
-	}
-
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
 		if (closer)
@@ -119,7 +99,7 @@ public class BiomePots : ModTile, IRecordTile
 
 	public override bool KillSound(int i, int j, bool fail)
 	{
-		if (!fail)
+		if (!fail && !Autoloader.IsRubble(Type))
 		{
 			var pos = new Vector2(i, j).ToWorldCoordinates(16, 16);
 
@@ -191,7 +171,7 @@ public class BiomePots : ModTile, IRecordTile
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
-		if (WorldGen.generatingWorld)
+		if (WorldGen.generatingWorld || Autoloader.IsRubble(Type))
 			return; //Particularly important for not incrementing Remaining
 
 		var style = GetStyle(frameY);
