@@ -1,10 +1,13 @@
+using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
-public class MushroomPots : ModTile
+public class MushroomPots : ModTile, IRecordTile
 {
+	public virtual Dictionary<string, int[]> Styles => new() { { string.Empty, [0, 1, 2] } };
+
 	public override void SetStaticDefaults()
 	{
 		const int row = 3;

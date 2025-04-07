@@ -40,7 +40,8 @@ public class BiomePots : ModTile, IRecordTile
 		{ "Corruption", [18, 19, 20] },
 		{ "Crimson", [21, 22, 23] },
 		{ "Marble", [24, 25, 26] },
-		{ "Hell", [27, 28, 29] }
+		{ "Hell", [27, 28, 29] },
+		{ "Mushroom", [30, 31, 32] }
 	};
 
 	private static Style GetStyle(int frameY) => (Style)(frameY / 36);

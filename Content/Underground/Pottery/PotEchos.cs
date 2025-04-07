@@ -12,9 +12,7 @@ public class BiomePotsEcho : BiomePots
 	public override void Load() => StyleDatabase.OnPopulateStyleGroups += AutoloadFromGroup;
 	private void AutoloadFromGroup()
 	{
-		int baseType = ModContent.TileType<BiomePots>();
-
-		foreach (var c in StyleDatabase.Groups[baseType])
+		foreach (var c in StyleDatabase.Groups[ModContent.TileType<BiomePots>()])
 			Mod.AddContent(new AutoloadedPotItem(nameof(BiomePotsEcho), c.name, c.styles[0]));
 	}
 
@@ -28,6 +26,28 @@ public class BiomePotsEcho : BiomePots
 	public override void NearbyEffects(int i, int j, bool closer) { }
 	public override bool KillSound(int i, int j, bool fail) => true;
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch) => true;
+}
+
+public class MushroomPotsEcho : MushroomPots
+{
+	public override string Texture => (typeof(MushroomPots).Namespace + "." + typeof(MushroomPots).Name).Replace('.', '/');
+	public override Dictionary<string, int[]> Styles => [];
+
+	public override void Load() => StyleDatabase.OnPopulateStyleGroups += AutoloadFromGroup;
+	private void AutoloadFromGroup()
+	{
+		foreach (var c in StyleDatabase.Groups[ModContent.TileType<MushroomPots>()])
+			Mod.AddContent(new AutoloadedPotItem(nameof(MushroomPotsEcho), c.name, c.styles[0]));
+	}
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+		Main.tileCut[Type] = false;
+	}
+
+	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) { }
+	public override bool KillSound(int i, int j, bool fail) => true;
 }
 
 public class CommonPotsEcho : ModTile

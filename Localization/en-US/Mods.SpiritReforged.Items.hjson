@@ -1458,62 +1458,72 @@ BiomePotsHellItem: {
 	Tooltip: ""
 }
 
+BiomePotsMushroomItem: {
+	DisplayName: Mushroom Pot
+	Tooltip: ""
+}
+
 PotsCavernItem: {
-	DisplayName: Ancient Cavern Pot
+	DisplayName: Small Cavern Pot
 	Tooltip: ""
 }
 
 PotsIceItem: {
-	DisplayName: Ancient Frozen Pot
+	DisplayName: Small Frozen Pot
 	Tooltip: ""
 }
 
 PotsJungleItem: {
-	DisplayName: Ancient Jungle Pot
+	DisplayName: Small Jungle Pot
 	Tooltip: ""
 }
 
 PotsDungeonItem: {
-	DisplayName: Ancient Dungeon Pot
+	DisplayName: Small Dungeon Pot
 	Tooltip: ""
 }
 
 PotsHellItem: {
-	DisplayName: Ancient Obsidian Pot
+	DisplayName: Small Obsidian Pot
 	Tooltip: ""
 }
 
 PotsCorruptionItem: {
-	DisplayName: Ancient Corrupt Pot
+	DisplayName: Small Corrupt Pot
 	Tooltip: ""
 }
 
 PotsSpiderItem: {
-	DisplayName: Ancient Spider Pot
+	DisplayName: Small Spider Pot
 	Tooltip: ""
 }
 
 PotsCrimsonItem: {
-	DisplayName: Ancient Crimson Pot
+	DisplayName: Small Crimson Pot
 	Tooltip: ""
 }
 
 PotsPyramidItem: {
-	DisplayName: Ancient Pyramid Pot
+	DisplayName: Small Pyramid Pot
 	Tooltip: ""
 }
 
 PotsTempleItem: {
-	DisplayName: Ancient Temple Pot
+	DisplayName: Small Temple Pot
 	Tooltip: ""
 }
 
 PotsMarbleItem: {
-	DisplayName: Ancient Marble Pot
+	DisplayName: Small Marble Pot
 	Tooltip: ""
 }
 
 PotsDesertItem: {
-	DisplayName: Ancient Desert Pot
+	DisplayName: Small Desert Pot
+	Tooltip: ""
+}
+
+MushroomPotsItem: {
+	DisplayName: Small Mushroom Pot
 	Tooltip: ""
 }
