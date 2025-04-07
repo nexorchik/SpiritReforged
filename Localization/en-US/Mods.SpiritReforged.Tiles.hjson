@@ -1,3 +1,9 @@
+Records: {
+	CoinPortal: A lucky find which always contains a coin portal.
+	Common: A common pot which sometimes contains useful goodies.
+	Biome: Contains greater wealth than common pots.
+}
+
 SunkenTreasureTile.MapEntry: Sunken Treasure
 HydrothermalVent.MapEntry: Hydrothermal Vent
 CoralMapEntry: Coral

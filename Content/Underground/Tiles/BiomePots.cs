@@ -2,14 +2,16 @@ using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Forest.Cloud.Items;
 using SpiritReforged.Content.Underground.NPCs;
+using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
-public class BiomePots : ModTile
+public class BiomePots : ModTile, IRecordTile
 {
+	/// <summary> Mirrors <see cref="Styles"/>. </summary>
 	public enum Style : int
 	{
 		Cavern, Gold, Ice, Desert, Jungle, Dungeon, Corruption, Crimson, Marble, Hell, Mushroom
@@ -18,6 +20,31 @@ public class BiomePots : ModTile
 	/// <summary> Unit for distance-based vfx. </summary>
 	private const int DistMod = 200;
 	private static readonly HashSet<Point16> GlowPoints = [];
+
+	public void AddRecord(int type, StyleDatabase.StyleGroup group)
+	{
+		if (group.name == "BiomePotsGold")
+			RecordHandler.Records.Add(new GoldTileRecord(group.name, type, group.styles));
+		else
+			RecordHandler.Records.Add(new BiomeTileRecord(group.name, type, group.styles));
+	}
+
+	public virtual Dictionary<string, int[]> Styles => new()
+	{
+		{ "Cavern", [0, 1, 2] },
+		{ "Gold", [3, 4, 5] },
+		{ "Ice", [6, 7, 8] },
+		{ "Desert", [9, 10, 11] },
+		{ "Jungle", [12, 13, 14] },
+		{ "Dungeon", [15, 16, 17] },
+		{ "Corruption", [18, 19, 20] },
+		{ "Crimson", [21, 22, 23] },
+		{ "Marble", [24, 25, 26] },
+		{ "Hell", [27, 28, 29] },
+		{ "Mushroom", [30, 31, 32] }
+	};
+
+	private static Style GetStyle(int frameY) => (Style)(frameY / 36);
 
 	#region drawing detours
 	public override void Load()
@@ -29,7 +56,12 @@ public class BiomePots : ModTile
 	private static void DrawGlow()
 	{
 		foreach (var p in GlowPoints)
-			DrawGlow(p.ToWorldCoordinates(16, 18));
+		{
+			var world = p.ToWorldCoordinates(16, 18);
+
+			float opacity = MathHelper.Clamp(1f - Main.LocalPlayer.DistanceSQ(world) / (DistMod * DistMod), 0, .75f) * Lighting.Brightness(p.X, p.Y);
+			DrawGlow(p.ToWorldCoordinates(16, 18) - Main.screenPosition, opacity);
+		}
 	}
 
 	private static void ClearAll(On_TileDrawing.orig_PreDrawTiles orig, TileDrawing self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets)
@@ -89,7 +121,7 @@ public class BiomePots : ModTile
 		{
 			var pos = new Vector2(i, j).ToWorldCoordinates(16, 16);
 
-			if (GetStyle(i, j) is Style.Mushroom or Style.Corruption or Style.Crimson)
+			if (GetStyle(Main.tile[i, j].TileFrameY) is Style.Mushroom or Style.Corruption or Style.Crimson)
 			{
 				SoundEngine.PlaySound(SoundID.NPCHit1 with { Volume = .3f, Pitch = .25f }, pos);
 				SoundEngine.PlaySound(SoundID.NPCDeath1, pos);
@@ -108,21 +140,18 @@ public class BiomePots : ModTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		if (TileObjectData.IsTopLeft(i, j) && GetStyle(i, j) is Style.Gold)
+		if (TileObjectData.IsTopLeft(i, j) && GetStyle(Main.tile[i, j].TileFrameY) is Style.Gold)
 			GlowPoints.Add(new Point16(i, j));
 
 		return true;
 	}
 
-	private static void DrawGlow(Vector2 position)
+	public static void DrawGlow(Vector2 drawPosition, float opacity)
 	{
 		const int squareSize = 32;
 
-		var drawPos = position - Main.screenPosition;
-		var region = new Rectangle((int)drawPos.X - squareSize / 2, (int)drawPos.Y - squareSize / 2, squareSize, squareSize);
+		var region = new Rectangle((int)drawPosition.X - squareSize / 2, (int)drawPosition.Y - squareSize / 2, squareSize, squareSize);
 		Color color = Color.White;
-
-		float opacity = MathHelper.Clamp(1f - Main.LocalPlayer.DistanceSQ(position) / (DistMod * DistMod), 0, .75f) * Lighting.Brightness((int)(position.X / 16), (int)(position.Y / 16));
 
 		short[] indices = [0, 1, 2, 1, 3, 2];
 
@@ -158,7 +187,7 @@ public class BiomePots : ModTile
 		if (WorldGen.generatingWorld)
 			return; //Particularly important for not incrementing Remaining
 
-		var style = (Style)(frameY / 36);
+		var style = GetStyle(Main.tile[i, j].TileFrameY);
 		int variant = frameX / 36;
 
 		var source = new EntitySource_TileBreak(i, j);
@@ -419,12 +448,6 @@ public class BiomePots : ModTile
 			int index = (context == "arrow") ? 1 : 0;
 			return dict[style][index];
 		}
-	}
-
-	private static Style GetStyle(int i, int j)
-	{
-		int frameY = Main.tile[i, j].TileFrameY;
-		return (Style)(frameY / 36);
 	}
 
 	/// <summary> Calculates coin values similarly to how vanilla pots do. </summary>
