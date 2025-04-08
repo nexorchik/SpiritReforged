@@ -1,10 +1,12 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.CheckItemUse;
 using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Dusts;
 using SpiritReforged.Content.Ocean.Tiles;
+using SpiritReforged.Content.Savanna.Tiles;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Moss.Radon;
@@ -12,7 +14,7 @@ namespace SpiritReforged.Content.Underground.Moss.Radon;
 [AutoloadGlowmask("255,255,255")]
 public class RadonMoss : GrassTile
 {
-	protected override int[] DirtType => [TileID.Stone, TileID.GrayBrick];
+	protected override int DirtType => TileID.Stone;
 	protected virtual Color MapColor => new(252, 248, 3);
 
 	public override void SetStaticDefaults()
@@ -36,6 +38,9 @@ public class RadonMoss : GrassTile
 		if (SpreadHelper.Spread(i, j, Type, 1, DirtType) && Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None); //Try spread moss
 
+		if (SpreadHelper.Spread(i, j, ModContent.TileType<RadonMossGrayBrick>(), 1, TileID.GrayBrick) && Main.netMode != NetmodeID.SinglePlayer)
+			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None); //Also spread to gray bricks
+
 		GrowTiles(i, j);
 	}
 
@@ -56,7 +61,7 @@ public class RadonMoss : GrassTile
 [AutoloadGlowmask("255,255,255")]
 public class RadonMossGrayBrick : GrassTile
 {
-	protected override int[] DirtType => [TileID.Stone, TileID.GrayBrick];
+	protected override int DirtType => TileID.GrayBrick;
 	protected virtual Color MapColor => new(252, 248, 3);
 
 	public override void SetStaticDefaults()
@@ -80,6 +85,9 @@ public class RadonMossGrayBrick : GrassTile
 		if (SpreadHelper.Spread(i, j, Type, 1, DirtType) && Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None); //Try spread moss
 
+		if (SpreadHelper.Spread(i, j, ModContent.TileType<RadonMoss>(), 1, TileID.Stone) && Main.netMode != NetmodeID.SinglePlayer)
+			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None); //Also spread to stone
+
 		GrowTiles(i, j);
 	}
 
@@ -98,7 +106,7 @@ public class RadonMossGrayBrick : GrassTile
 }
 
 [AutoloadGlowmask("255, 255, 255")]
-public class RadonPlants : ModTile
+public class RadonPlants : ModTile, ICheckItemUse
 {
 	public const int StyleRange = 3;
 
@@ -158,6 +166,17 @@ public class RadonPlants : ModTile
 	{
 		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Yellow.ToVector3() * .35f);
 		return true;
+	}
+
+	public bool? CheckItemUse(int type, int i, int j)
+	{
+		if (type == ItemID.PaintScraper || type == ItemID.SpectrePaintScraper)
+		{
+			WorldGen.KillTile(i, j);
+			return true;
+		}
+
+		return null;
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = Main.rand.Next(1, 3);
