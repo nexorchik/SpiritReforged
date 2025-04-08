@@ -1,22 +1,19 @@
 ﻿using Terraria.DataStructures;
-using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 
 namespace SpiritReforged.Common.ItemCommon;
 
-public abstract class ClubItem(int chargeTime, int minDamage, int maxDamage, float minKnockback, float maxKnockback) : ModItem
+public abstract class ClubItem(float damageScaling = 2, float knockbackScaling = 1.5f) : ModItem
 {
-	internal readonly int ChargeTime = chargeTime;
-	internal readonly int MinDamage = minDamage;
-	internal readonly int MaxDamage = maxDamage;
-	internal readonly float MinKnockback = minKnockback;
-	internal readonly float MaxKnockback = maxKnockback;
+	internal virtual int ChargeTime { get; set; }
+	internal virtual int SwingTime { get; set; }
+	internal virtual float DamageScaling => damageScaling;
+	internal virtual float KnockbackScaling => knockbackScaling;
 
-	public virtual void Defaults() { }
+	public virtual void SafeSetDefaults() { }
 
 	public sealed override void SetDefaults()
 	{
-		Item.damage = MinDamage;
-		Item.knockBack = MinKnockback;
 		Item.channel = true;
 		Item.useTime = 320;
 		Item.useAnimation = 320;
@@ -29,7 +26,7 @@ public abstract class ClubItem(int chargeTime, int minDamage, int maxDamage, flo
 		Item.shootSpeed = 1f;
 		Item.reuseDelay = 10;
 
-		Defaults();
+		SafeSetDefaults();
 	}
 
 	public override bool? CanAutoReuseItem(Player player) => false;
@@ -37,21 +34,18 @@ public abstract class ClubItem(int chargeTime, int minDamage, int maxDamage, flo
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
-		StatModifier meleeDMG = player.GetTotalDamage(DamageClass.Melee);
-		StatModifier meleeKB = player.GetTotalKnockback(DamageClass.Melee);
-
 		var proj = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI);
 
 		if (proj.ModProjectile is BaseClubProj clubProj)
 		{
 			float speedMult = player.GetTotalAttackSpeed(DamageClass.Melee);
+			float swingSpeedMult = MathHelper.Lerp(speedMult, 1, 0.5f);
 
 			clubProj.SetStats(
-				(int)(ChargeTime * MathHelper.Max(.15f, 2f - (float)speedMult)),
-				(int)meleeDMG.ApplyTo(MinDamage),
-				(int)meleeDMG.ApplyTo(MaxDamage),
-				(int)meleeKB.ApplyTo(MinKnockback),
-				(int)meleeKB.ApplyTo(MaxKnockback));
+				(int)(ChargeTime * MathHelper.Max(.15f, 2 - speedMult)),
+				(int)(SwingTime * MathHelper.Max(.15f, 2 - swingSpeedMult)),
+				DamageScaling,
+				KnockbackScaling);
 		}
 
 		return false;
@@ -63,6 +57,6 @@ public abstract class ClubItem(int chargeTime, int minDamage, int maxDamage, flo
 
 		foreach (TooltipLine line in tooltips)
 			if (line.Mod == "Terraria" && line.Name == "Damage") //Replace the vanilla text with our own
-				line.Text = $"{(int)meleeStat.ApplyTo(MinDamage)}-{(int)meleeStat.ApplyTo(MaxDamage)}" + Language.GetText("LegacyTooltip.2");
+				line.Text = $"{(int)meleeStat.ApplyTo(Item.damage)}-{(int)meleeStat.ApplyTo(Item.damage * DamageScaling)}" + Language.GetText("LegacyTooltip.2");
 	}
 }

@@ -1,9 +1,4 @@
-using SpiritReforged.Common.ProjectileCommon;
-using SpiritReforged.Common.Particle;
-using SpiritReforged.Content.Particles;
-using static SpiritReforged.Common.Easing.EaseFunction;
-using SpiritReforged.Common.Easing;
-using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 
 namespace SpiritReforged.Content.Forest.WoodClub;
 
@@ -11,53 +6,23 @@ class WoodClubProj : BaseClubProj
 {
 	public WoodClubProj() : base(new Vector2(58)) { }
 
-	public override void SafeSetStaticDefaults() => Main.projFrames[Projectile.type] = 2;
+	public override float WindupTimeRatio => 0.6f;
 
-	public override void Smash(Vector2 position)
+	public override void OnSmash(Vector2 position)
 	{
-		float chargeFactor = MathHelper.Clamp(EaseQuadIn.Ease(Charge), 0.33f, 1f);
-		float chargeFactorLerped = MathHelper.Lerp(chargeFactor, 1, 0.5f);
-
 		Collision.HitTiles(Projectile.position, Vector2.UnitY, Projectile.width, Projectile.height);
 
-		for(int i = 0; i < 8 * chargeFactorLerped; i++)
-		{
-			Vector2 smokePos = Projectile.Bottom + Vector2.UnitX * Main.rand.NextFloat(-20, 20);
-
-			float scale = Main.rand.NextFloat(0.06f, 0.07f);
-			scale *= 1 + chargeFactor/2;
-
-			float speed = Main.rand.NextFloat(4);
-			speed *= chargeFactorLerped;
-			speed += 0.5f;
-
-			int lifeTime = (int)(40 + Main.rand.Next(-10, 16) * (1 + chargeFactor));
-
-			ParticleHandler.SpawnParticle(new SmokeCloud(smokePos, -Vector2.UnitY * speed, Color.LightGray, scale, EaseQuadOut, lifeTime));
-		}
+		DustClouds(8);
 
 		if(Charge == 1)
-			DoShockwaveCircle(Vector2.Lerp(Projectile.Center, Main.player[Projectile.owner].Center, 0.5f), 250, -MathHelper.PiOver4 * Projectile.direction * 1.5f, 0.75f);
+		{
+			float angle = MathHelper.PiOver4 * 1.5f;
+			if (Projectile.direction > 0)
+				angle = -angle + MathHelper.Pi;
 
-		DoShockwaveCircle(Projectile.Bottom, 180, -MathHelper.PiOver2, MathHelper.Lerp(0.5f, 0.6f, Charge));
-	}
+			DoShockwaveCircle(Vector2.Lerp(Projectile.Center, Main.player[Projectile.owner].Center, 0.5f), 280, angle, 0.4f);
+		}
 
-	private static void DoShockwaveCircle(Vector2 pos, float size, float xyRotation, float opacity)
-	{
-		var easeFunction = EaseQuadOut;
-		float ringWidth = 0.6f;
-		int lifetime = 20;
-		float zRotation = 0.85f;
-
-		ParticleHandler.SpawnParticle(new TexturedPulseCircle(
-			pos,
-			Color.LightGray * opacity,
-			Color.LightGray * opacity,
-			ringWidth,
-			size,
-			lifetime,
-			"supPerlin",
-			new Vector2(1, 1.5f),
-			easeFunction, false, ringWidth / 3).WithSkew(zRotation, xyRotation).UsesLightColor());
+		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 180, MathHelper.PiOver2, 0.4f);
 	}
 }

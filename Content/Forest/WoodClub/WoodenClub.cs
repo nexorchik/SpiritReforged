@@ -1,14 +1,15 @@
 ﻿using SpiritReforged.Common.ItemCommon;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace SpiritReforged.Content.Forest.WoodClub;
 
-public class WoodenClub() : ClubItem(50, 10, 35, 5, 8)
+public class WoodenClub() : ClubItem(50, 25)
 {
-	public override void Defaults()
+	public override void SafeSetDefaults()
 	{
+		Item.damage = 18;
+		Item.knockBack = 5;
+		ChargeTime = 60;
+		SwingTime = 28;
 		Item.width = 60;
 		Item.height = 60;
 		Item.crit = 4;
