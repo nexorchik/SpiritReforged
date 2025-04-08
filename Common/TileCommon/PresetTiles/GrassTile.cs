@@ -4,7 +4,7 @@ namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
 public abstract class GrassTile : ModTile
 {
-	protected virtual int DirtType => TileID.Dirt;
+	protected virtual int[] DirtType => [TileID.Dirt];
 
 	protected void AllowAnchor(params int[] types)
 	{
@@ -25,11 +25,13 @@ public abstract class GrassTile : ModTile
 		Main.tileBlockLight[Type] = true;
 		Main.tileBlendAll[Type] = true;
 
-		this.Merge(DirtType, TileID.Grass);
+		foreach (int dirt in DirtType)
+			this.Merge(dirt, TileID.Grass);
+
 		AllowAnchor(TileID.Sunflower);
 		TileID.Sets.Grass[Type] = true;
 		TileID.Sets.CanBeDugByShovel[Type] = true;
-		TileID.Sets.NeedsGrassFramingDirt[Type] = DirtType;
+		TileID.Sets.NeedsGrassFramingDirt[Type] = DirtType[0];
 		TileID.Sets.NeedsGrassFraming[Type] = true;
 	}
 
@@ -44,7 +46,7 @@ public abstract class GrassTile : ModTile
 		if (!effectOnly) //Change self into dirt
 		{
 			fail = true;
-			Framing.GetTileSafely(i, j).TileType = (ushort)DirtType;
+			Framing.GetTileSafely(i, j).TileType = (ushort)DirtType[0];
 		}
 	}
 }

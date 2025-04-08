@@ -7,7 +7,7 @@ namespace SpiritReforged.Content.Savanna.Tiles;
 
 public class SavannaGrass : GrassTile, IConvertibleTile
 {
-	protected override int DirtType => ModContent.TileType<SavannaDirt>();
+	protected override int[] DirtType => [ModContent.TileType<SavannaDirt>()];
 	protected virtual Color MapColor => new(104, 156, 70);
 
 	public override void SetStaticDefaults()
