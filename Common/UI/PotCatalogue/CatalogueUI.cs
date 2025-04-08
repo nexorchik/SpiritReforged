@@ -26,23 +26,23 @@ public partial class CatalogueUI : AutoUIState
 
 	public override void OnInitialize()
 	{
-		const float infoMargin = .3f;
 		LoadAssets();
 
-		Width.Set(580, 0);
+		Width.Set(600, 0);
 		Height.Set(400, 0);
 		Left.Set(-Width.Pixels / 2, .5f);
 		Top.Set(-Height.Pixels / 2 - 50, .5f);
 
 		_entries = new();
-		_entries.Width.Set(Width.Pixels - Width.Pixels * infoMargin, 0);
+		_entries.Width.Set(406, 0);
 		_entries.Height.Set(Height.Pixels, 0);
 		_entries.AddScrollbar(new UIScrollbar());
 
 		_info = new();
-		_info.Width.Set(Width.Pixels * infoMargin, 0);
+		_info.Width.Set(194, 0);
 		_info.Height.Set(Height.Pixels, 0);
-		_info.Left.Set(Width.Pixels - _info.Width.Pixels, 0);
+		_info.Left.Set(_entries.Width.Pixels, 0);
+		_info.AddScrollbar(new UIScrollbar());
 
 		Append(_entries);
 		Append(_info);
@@ -78,7 +78,7 @@ public partial class CatalogueUI : AutoUIState
 	}
 
 	/// <summary> Draws a background panel based on vanilla code. </summary>
-	private static void DrawPanel(SpriteBatch spriteBatch, Rectangle area, Color color, Color borderColor = default, int cornerSize = 12)
+	internal static void DrawPanel(SpriteBatch spriteBatch, Rectangle area, Color color, Color borderColor = default, int cornerSize = 12)
 	{
 		const int bar = 4;
 		int corner = cornerSize;

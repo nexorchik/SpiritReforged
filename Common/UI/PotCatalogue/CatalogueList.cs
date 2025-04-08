@@ -12,6 +12,9 @@ public class CatalogueList : UIElement
 
 	public CatalogueList() => OverflowHidden = true;
 
+	/// <summary> The pixel width of this element, considering scrollbar territory. </summary>
+	public float AvailableWidth => GetDimensions().Width - ((_scrollbar is null) ? 0 : _scrollbar.Width.Pixels);
+
 	public void AddScrollbar(UIScrollbar scrollbar)
 	{
 		_scrollbar = scrollbar;
@@ -47,14 +50,13 @@ public class CatalogueList : UIElement
 		float y = 0;
 		float lastHeight = 0;
 
-		int overflow = 0;
-		float scrollbarInfluence = (_scrollbar is null) ? 0 : _scrollbar.GetValue() * -94f;
+		float scrollbarInfluence = (_scrollbar is null) ? 0 : -_scrollbar.GetValue();
 
 		foreach (var e in _listed)
 		{
 			int eFullWidth = (int)e.Width.Pixels;
 
-			if (x + eFullWidth > (int)GetDimensions().Width) //Wrap around
+			if (x + eFullWidth > (int)AvailableWidth) //Wrap around
 			{
 				x = 0;
 				y += lastHeight + listPadding;
@@ -67,19 +69,24 @@ public class CatalogueList : UIElement
 			lastHeight = e.Height.Pixels;
 		}
 
-		_scrollbar?.SetView(1f, Math.Max(overflow - 1, 1f)); //Recalculate maximum scrollbar view
+		_scrollbar?.SetView(1f, Math.Max(y - Height.Pixels * .9f, 1)); //Recalculate maximum scrollbar view
 		RecalculateChildren();
 	}
 
 	public override void ScrollWheel(UIScrollWheelEvent evt)
 	{
 		if (_scrollbar != null)
+		{
 			_scrollbar.ViewPosition -= evt.ScrollWheelValue;
+			RecalculateEntries();
+		}
 	}
 
 	public override void Update(GameTime gameTime)
 	{
 		if (IsMouseHovering)
 			PlayerInput.LockVanillaMouseScroll("ModLoader/UIList");
+
+		RecalculateEntries(); //Only needs to be called during scrollbar interaction
 	}
 }

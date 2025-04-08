@@ -1,68 +1,90 @@
-using System.Linq;
-using Terraria.Utilities;
+using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
-public struct LootData(int type, int stack)
+public interface ILootTile
 {
-	public int type = type;
-	public int stack = stack;
+	public LootTable AddLoot(int objectStyle);
 }
 
-/// <summary> Helper for constructing simple loot tables. </summary>
-public readonly record struct LootTable
+/// <summary> A self-contained loot table. </summary>
+public readonly struct LootTable() : ILoot
 {
-	private readonly IList<WeightedRandom<LootData>> branches = [new()];
+	public readonly List<IItemDropRule> rules = [];
 
-	public LootTable() { }
-
-	public static LootTable operator +(LootTable a, LootTable b)
+	public IItemDropRule Add(IItemDropRule entry)
 	{
-		foreach (var branch in b.branches)
-			a.branches.Add(branch);
-
-		return a;
+		rules.Add(entry);
+		return entry;
 	}
 
-	/// <summary> Creates a new loot table and calls <see cref="Add(int, int, int)"/>. </summary>
-	public static LootTable Create(int itemType, int itemStack = 1, int weight = 1)
+	public IItemDropRule Remove(IItemDropRule entry)
 	{
-		var t = new LootTable();
-		t.branches.Last().Add(new(itemType, itemStack), weight);
-
-		return t;
+		rules.Remove(entry);
+		return entry;
 	}
 
-	/// <summary> Adds to the current branch. </summary>
-	public readonly LootTable Add(int itemType, int itemStack = 1, int weight = 1)
+	public List<IItemDropRule> Get(bool includeGlobalDrops = true) => rules;
+	public void RemoveWhere(Predicate<IItemDropRule> predicate, bool includeGlobalDrops = true)
 	{
-		branches.Last().Add(new(itemType, itemStack), weight);
-		return this;
-	}
-
-	/// <summary> Adds a selection of items to the current branch. Cannot specify weight and stack (each default to 1). </summary>
-	public readonly LootTable AddRange(params int[] itemType)
-	{
-		foreach (int i in itemType)
-			branches.Last().Add(new(i, 1));
-
-		return this;
-	}
-
-	/// <summary> Releases all rolled item drops into an enumerable. </summary>
-	public readonly IEnumerable<Item> Release()
-	{
-		List<Item> output = [];
-
-		foreach (var item in branches)
+		foreach (var entry in Get())
 		{
-			if (item.elements.Count == 0)
-				continue;
+			if (predicate(entry))
+				Remove(entry);
+		}
+	}
+}
 
-			var element = (LootData)item;
-			output.Add(new Item(element.type, element.stack));
+public static class LootTableHelper
+{
+	public static DropAttemptInfo GetInfo(Player player, NPC npc = null)
+	{
+		var info = default(DropAttemptInfo);
+		info.player = player;
+		info.npc = npc;
+		info.IsExpertMode = Main.expertMode;
+		info.IsMasterMode = Main.masterMode;
+		info.IsInSimulation = false;
+		info.rng = Main.rand;
+
+		return info;
+	}
+
+	public static void Resolve(this LootTable t, DropAttemptInfo info)
+	{
+		foreach (var rule in t.Get())
+			ResolveRule(rule, info);
+	}
+
+	private static ItemDropAttemptResult ResolveRule(IItemDropRule rule, DropAttemptInfo info)
+	{
+		if (!rule.CanDrop(info))
+		{
+			ItemDropAttemptResult itemDropAttemptResult = default;
+			itemDropAttemptResult.State = ItemDropAttemptResultState.DoesntFillConditions;
+			ItemDropAttemptResult itemDropAttemptResult2 = itemDropAttemptResult;
+			ResolveRuleChains(ref info, ref itemDropAttemptResult2, rule.ChainedRules);
+
+			return itemDropAttemptResult2;
 		}
 
-		return output;
+		ItemDropAttemptResult itemDropAttemptResult3 = (rule is not INestedItemDropRule nestedItemDropRule) ? rule.TryDroppingItem(info) : nestedItemDropRule.TryDroppingItem(info, ResolveRule);
+		ResolveRuleChains(ref info, ref itemDropAttemptResult3, rule.ChainedRules);
+
+		return itemDropAttemptResult3;
+	}
+
+	private static void ResolveRuleChains(ref DropAttemptInfo info, ref ItemDropAttemptResult parentResult, List<IItemDropRuleChainAttempt> ruleChains)
+	{
+		if (ruleChains == null)
+			return;
+
+		for (int i = 0; i < ruleChains.Count; i++)
+		{
+			IItemDropRuleChainAttempt itemDropRuleChainAttempt = ruleChains[i];
+
+			if (itemDropRuleChainAttempt.CanChainIntoRule(parentResult))
+				ResolveRule(itemDropRuleChainAttempt.RuleToChain, info);
+		}
 	}
 }

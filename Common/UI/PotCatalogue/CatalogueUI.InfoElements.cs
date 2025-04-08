@@ -1,4 +1,6 @@
 ﻿using SpiritReforged.Common.UI.System;
+using SpiritReforged.Content.Underground.Tiles;
+using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Common.UI.PotCatalogue;
 
@@ -41,7 +43,7 @@ public partial class CatalogueUI : AutoUIState
 
 	public void RecalculateInfo()
 	{
-		float width = _info.Width.Pixels;
+		float width = _info.AvailableWidth;
 
 		_info.ClearEntries();
 
@@ -63,6 +65,27 @@ public partial class CatalogueUI : AutoUIState
 		info.Action += DescInfo_Action;
 
 		_info.AddEntry(info);
+
+		//Loot table for ILootTiles
+		if (TileLoader.GetTile(Selected.record.type) is ILootTile loot)
+		{
+			var lootTable = loot.AddLoot(Selected.record.styles[0]);
+
+			List<DropRateInfo> list = [];
+			DropRateInfoChainFeed ratesInfo = new(1f);
+
+			foreach (IItemDropRule item in lootTable.Get())
+				item.ReportDroprates(list, ratesInfo);
+
+			foreach (var rateInfo in list)
+			{
+				info = new CatalogueItemInfo(rateInfo);
+				info.Width.Pixels = width;
+				info.Height.Set(30, 0);
+
+				_info.AddEntry(info);
+			}
+		}
 	}
 
 	private bool NameInfo_Action(SpriteBatch spriteBatch, Rectangle bounds)

@@ -34,7 +34,9 @@ public class CatalogueEntry : UIElement
 		if (IsMouseHovering)
 		{
 			spriteBatch.Draw(CatalogueUI.Selection.Value, center, null, Color.White, 0, CatalogueUI.Front.Size() / 2, scale, default, 0);
-			UISystem.GetState<CatalogueUI>().Select(this);
+
+			if (Main.mouseLeft && Main.mouseLeftRelease)
+				UISystem.GetState<CatalogueUI>().Select(this);
 		}
 	}
 
