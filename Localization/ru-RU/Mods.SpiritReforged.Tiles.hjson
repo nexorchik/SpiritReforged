@@ -1,3 +1,19 @@
+Records: {
+	/* CoinPortal:
+		'''
+		Always contains a coin portal.
+
+		A lucky find!
+		''' */
+	/* Common:
+		'''
+		A common pot which sometimes contains useful goodies.
+
+		Value increases when further underground.
+		''' */
+	// Biome: Contains a greater variety of loot than common pots.
+}
+
 SunkenTreasureTile.MapEntry: Затонувшее сокровище
 HydrothermalVent.MapEntry: Гидротермальный источник
 CoralMapEntry: Коралл

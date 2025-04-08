@@ -10,6 +10,8 @@ SlotContexts.Backpack: 背包
 Conditions: {
 	InSavanna: 于稀树平原
 	PeevedTumbler: 当闪烁时
+	// Discovered: Discovery
+	// Submerged: Submerged
 }
 
 Misc: {

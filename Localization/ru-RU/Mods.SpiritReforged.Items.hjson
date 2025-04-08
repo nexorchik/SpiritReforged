@@ -1338,7 +1338,7 @@ WayfarerLegs: {
 
 AncientKoiTotem: {
 	// DisplayName: Ancient Koi Totem
-	// Tooltip: ""
+	// Tooltip: "{$Mods.SpiritReforged.Items.KoiTotem.Tooltip}"
 }
 
 BoomShroom: {
@@ -1390,7 +1390,132 @@ MudBombSticky: {
 	// Tooltip: "{$Mods.SpiritReforged.Items.MudBomb.Tooltip}"
 }
 
-WoodenClub: {
-	// DisplayName: Wooden Club
+HideTunic: {
+	// DisplayName: Hide Tunic
+	// Tooltip: Increases melee size and knockback by 25%
+}
+
+PotteryWheelItem: {
+	// DisplayName: Pottery Wheel
+	// Tooltip: Used for crafting decorative pots
+}
+
+BiomePotsCavernItem: {
+	// DisplayName: Cavern Pot
+	// Tooltip: ""
+}
+
+BiomePotsGoldItem: {
+	// DisplayName: Ornate Pot
+	// Tooltip: ""
+}
+
+BiomePotsIceItem: {
+	// DisplayName: Frozen Pot
+	// Tooltip: ""
+}
+
+BiomePotsDesertItem: {
+	// DisplayName: Desert Pot
+	// Tooltip: ""
+}
+
+BiomePotsJungleItem: {
+	// DisplayName: Jungle Pot
+	// Tooltip: ""
+}
+
+BiomePotsDungeonItem: {
+	// DisplayName: Dungeon Pot
+	// Tooltip: ""
+}
+
+BiomePotsCorruptionItem: {
+	// DisplayName: Corrupt Pot
+	// Tooltip: ""
+}
+
+BiomePotsCrimsonItem: {
+	// DisplayName: Crimson Pot
+	// Tooltip: ""
+}
+
+BiomePotsMarbleItem: {
+	// DisplayName: Marble Pot
+	// Tooltip: ""
+}
+
+BiomePotsHellItem: {
+	// DisplayName: Obsidian Pot
+	// Tooltip: ""
+}
+
+BiomePotsMushroomItem: {
+	// DisplayName: Mushroom Pot
+	// Tooltip: ""
+}
+
+PotsCavernItem: {
+	// DisplayName: Small Cavern Pot
+	// Tooltip: ""
+}
+
+PotsIceItem: {
+	// DisplayName: Small Frozen Pot
+	// Tooltip: ""
+}
+
+PotsJungleItem: {
+	// DisplayName: Small Jungle Pot
+	// Tooltip: ""
+}
+
+PotsDungeonItem: {
+	// DisplayName: Small Dungeon Pot
+	// Tooltip: ""
+}
+
+PotsHellItem: {
+	// DisplayName: Small Obsidian Pot
+	// Tooltip: ""
+}
+
+PotsCorruptionItem: {
+	// DisplayName: Small Corrupt Pot
+	// Tooltip: ""
+}
+
+PotsSpiderItem: {
+	// DisplayName: Small Spider Pot
+	// Tooltip: ""
+}
+
+PotsCrimsonItem: {
+	// DisplayName: Small Crimson Pot
+	// Tooltip: ""
+}
+
+PotsPyramidItem: {
+	// DisplayName: Small Pyramid Pot
+	// Tooltip: ""
+}
+
+PotsTempleItem: {
+	// DisplayName: Small Temple Pot
+	// Tooltip: ""
+}
+
+PotsMarbleItem: {
+	// DisplayName: Small Marble Pot
+	// Tooltip: ""
+}
+
+PotsDesertItem: {
+	// DisplayName: Small Desert Pot
+	// Tooltip: ""
+}
+
+MushroomPotsItem: {
+	// DisplayName: Small Mushroom Pot
 	// Tooltip: ""
 }
