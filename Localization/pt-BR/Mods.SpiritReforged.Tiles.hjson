@@ -1,7 +1,17 @@
 Records: {
-	// CoinPortal: A lucky find which always contains a coin portal.
-	// Common: A common pot which sometimes contains useful goodies.
-	// Biome: Contains greater wealth than common pots.
+	/* CoinPortal:
+		'''
+		Always contains a coin portal.
+
+		A lucky find!
+		''' */
+	/* Common:
+		'''
+		A common pot which sometimes contains useful goodies.
+
+		Value increases when further underground.
+		''' */
+	// Biome: Contains a greater variety of loot than common pots.
 }
 
 SunkenTreasureTile.MapEntry: Tesouro Afundado

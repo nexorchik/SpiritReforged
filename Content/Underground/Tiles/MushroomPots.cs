@@ -5,7 +5,7 @@ using Terraria.Audio;
 namespace SpiritReforged.Content.Underground.Tiles;
 
 [AutoloadGlowmask("200,200,200")]
-public class MushroomPots : PotTile
+public class MushroomPots : PotTile, ILootTile
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
 
@@ -41,4 +41,6 @@ public class MushroomPots : PotTile
 
 		return true;
 	}
+
+	public LootTable AddLoot(int objectStyle) => ModContent.GetInstance<Pots>().AddLoot(objectStyle);
 }

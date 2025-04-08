@@ -9,11 +9,12 @@ using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
+using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
 [AutoloadGlowmask("200,200,200")]
-public class BiomePots : PotTile
+public class BiomePots : PotTile, ILootTile
 {
 	/// <summary> Mirrors <see cref="Styles"/>. </summary>
 	public enum Style : int
@@ -50,7 +51,22 @@ public class BiomePots : PotTile
 		{ "Mushroom", [30, 31, 32] }
 	};
 
+	/// <summary> Gets the <see cref="Style"/> associated with the given frame. </summary>
 	private static Style GetStyle(int frameY) => (Style)(frameY / 36);
+	/// <summary> Gets the coin multiplier value for this pot. </summary>
+	private static float GetValue(Style style) => style switch
+	{
+		Style.Gold => 0f,
+		Style.Ice => 1.4f,
+		Style.Desert => 2.25f,
+		Style.Jungle => 2f,
+		Style.Dungeon => 2.25f,
+		Style.Corruption => 1.9f,
+		Style.Crimson => 1.9f,
+		Style.Marble => 2.2f,
+		Style.Hell => 2.5f,
+		_ => 1.25f
+	};
 
 	#region drawing detours
 	public override void Load(Mod mod)
@@ -186,17 +202,33 @@ public class BiomePots : PotTile
 
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
-			HandleLoot(i, j, style); //Drops should only occur on the server/singleplayer
+			#region loot
+			var p = Main.player[Player.FindClosest(position, 0, 0)];
+			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)position.X - 16, (int)position.Y - 16, 32, 32), p);
+
+			ItemMethods.SplitCoins((int)(CalculateCoinValue() * GetValue(style)), delegate (int type, int stack)
+			{
+				Item.NewItem(source, position, new Item(type, stack), noGrabDelay: true);
+			}); //Always drop coins
+
+			if (p.statLife < p.statLifeMax2)
+			{
+				int stack = Main.rand.Next(3, 6);
+
+				for (int h = 0; h < stack; h++)
+					Item.NewItem(source, position, ItemID.Heart);
+			}
+			#endregion
 
 			if (spawnSlime)
-				NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), position, ModContent.NPCType<PotterySlime>());
+				NPC.NewNPCDirect(source, position, ModContent.NPCType<PotterySlime>());
 
 			if (style is Style.Mushroom && NPC.CountNPCS(ModContent.NPCType<StompableGnome>()) < 5)
 			{
 				int count = Main.rand.Next(1, 4);
 
 				for (int c = 0; c < count; c++)
-					NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), ModContent.NPCType<StompableGnome>());
+					NPC.NewNPCDirect(source, position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), ModContent.NPCType<StompableGnome>());
 			}
 
 			if (Main.dedServ)
@@ -313,217 +345,106 @@ public class BiomePots : PotTile
 		Vector2 GetRandom(float distance = 15f) => position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(distance);
 	}
 
-	private static void HandleLoot(int i, int j, Style style)
+	public LootTable AddLoot(int objectStyle)
 	{
-		var center = new Vector2(i, j).ToWorldCoordinates(16, 16);
-		var p = Main.player[Player.FindClosest(center, 0, 0)];
+		var loot = new LootTable();
+		var style = GetStyle(objectStyle / 3 * 36);
 
-		LootTable table = new();
-		if (style is Style.Gold || Player.GetClosestRollLuck(i, j, 100) == 0) //COIN PORTAL
-		{
-			Projectile.NewProjectileDirect(new EntitySource_TileBreak(i, j), center, Vector2.UnitY * -12f, ProjectileID.CoinPortal, 0, 0);
-			return;
-		}
+		if (style is Style.Dungeon)
+			loot.AddCommon(ItemID.GoldenKey, 10);
 
-		if (style is Style.Dungeon && WorldGen.genRand.NextBool(10))
-			table += LootTable.Create(ItemID.GoldenKey);
-
-		if (WorldGen.genRand.NextBool(15)) //POTIONS
-		{
-			var potions = new LootTable().AddRange(ItemID.SpelunkerPotion, ItemID.HunterPotion,
+		List<int> potions = [ItemID.SpelunkerPotion, ItemID.HunterPotion,
 			ItemID.GravitationPotion, ItemID.LifeforcePotion, ItemID.TitanPotion, ItemID.BattlePotion,
 			ItemID.MagicPowerPotion, ItemID.ManaRegenerationPotion, ItemID.BiomeSightPotion, ItemID.HeartreachPotion,
-			ModContent.ItemType<DoubleJumpPotion>(), WorldGen.crimson ? ItemID.RagePotion : ItemID.WrathPotion);
+			ModContent.ItemType<DoubleJumpPotion>(), WorldGen.crimson ? ItemID.RagePotion : ItemID.WrathPotion];
 
-			if (style is Style.Cavern)
-				potions.AddRange(ItemID.SwiftnessPotion, ItemID.RegenerationPotion, ItemID.SwiftnessPotion);
-			else if (style is Style.Jungle)
-				potions.Add(ItemID.SummoningPotion);
-			else if (style is Style.Hell)
-				potions.AddRange(ItemID.InfernoPotion, ItemID.ObsidianSkinPotion);
+		if (style is Style.Cavern)
+			potions.AddRange([ItemID.SwiftnessPotion, ItemID.RegenerationPotion, ItemID.SwiftnessPotion]);
+		else if (style is Style.Jungle)
+			potions.Add(ItemID.SummoningPotion);
+		else if (style is Style.Hell)
+			potions.AddRange([ItemID.InfernoPotion, ItemID.ObsidianSkinPotion]);
 
-			if (WorldGen.genRand.NextBool(3))
-				potions += new LootTable().AddRange(ItemID.PotionOfReturn, ItemID.LuckPotionLesser);
-			else if (WorldGen.genRand.NextBool(5))
-				potions += new LootTable().Add(ItemID.LuckPotion);
+		var pCond0 = ItemDropRule.OneFromOptions(15, [.. potions]);
+		var pCond1 = ItemDropRule.OneFromOptions(3, ItemID.PotionOfReturn, ItemID.LuckPotionLesser);
 
-			table += potions;
-		}
-		else if (WorldGen.genRand.NextBool(45)) //FLASKS
+		pCond0.OnSuccess(pCond1);
+		pCond1.OnFailedRoll(ItemDropRule.Common(ItemID.LuckPotion, 5));
+
+		loot.Add(pCond0);
+
+		List<int> flasks = [ItemID.FlaskofGold];
+
+		if (style is Style.Jungle)
+			flasks.Add(ItemID.FlaskofPoison);
+		else if (style is Style.Hell)
+			flasks.Add(ItemID.FlaskofFire);
+
+		loot.AddOneFromOptions(32, [.. flasks]);
+		loot.Add(ItemDropRule.ByCondition(new DropConditions.Standard(Condition.Multiplayer), ItemID.WormholePotion, 30));
+
+		int type = style switch
 		{
-			var flasks = new LootTable().Add(ItemID.FlaskofGold);
-
-			if (style is Style.Jungle)
-				flasks.Add(ItemID.FlaskofPoison);
-			else if (style is Style.Hell)
-				flasks.Add(ItemID.FlaskofFire);
-
-			table += flasks;
-		}
-		else if (WorldGen.genRand.NextBool(30) && Main.dedServ) //WORMHOLE POTION (multiplayer only)
-		{
-			table += LootTable.Create(ItemID.WormholePotion);
-		}
-		else
-		{
-			if (Main.rand.NextBool(4))
-			{
-				int type = -1;
-
-				if (style == Style.Desert)
-					type = ItemID.FossilOre;
-				else if (style == Style.Dungeon && NPC.downedBoss3)
-					type = ItemID.Bone;
-				else if (style == Style.Marble)
-					type = ItemID.Javelin;
-				else if (style == Style.Hell)
-					type = ItemID.LivingFireBlock;
-
-				if (type != -1)
-					table += LootTable.Create(type, Main.rand.Next(10, 16));
-			}
-
-			switch (WorldGen.genRand.Next(4))
-			{
-				case 0:
-					table += LootTable.Create(GetPair(style, "arrow"), Main.rand.Next(20, 41));
-					break;
-
-				case 1:
-					table += LootTable.Create(ItemID.HealingPotion, Main.rand.Next(1, 4));
-					break;
-
-				case 2:
-					table += LootTable.Create((style == Style.Desert) ? ItemID.ScarabBomb : ItemID.Dynamite, Main.rand.Next(4, 11));
-					break;
-
-				case 3:
-					table += LootTable.Create((WorldGen.SavedOreTiers.Silver == TileID.Silver) ? ItemID.SilverBullet : ItemID.TungstenBullet, Main.rand.Next(20, 41));
-					break;
-			}
-		}
-
-		if (p.statLife < p.statLifeMax2)
-			table += LootTable.Create(ItemID.Heart, Main.rand.Next(3, 6));
-		else if (p.CountItem(GetPair(style, "torch"), 20) < 20)
-			table += LootTable.Create(GetPair(style, "torch"), Main.rand.Next(15, 21));
-
-		foreach (var item in table.Release()) //Drop all of our rolled items
-			Item.NewItem(new EntitySource_TileBreak(i, j), center, item, noGrabDelay: true);
-
-		ItemMethods.SplitCoins(CalculateCoinValue(style), delegate (int type, int stack)
-		{
-			Item.NewItem(new EntitySource_TileBreak(i, j), center, new Item(type, stack), noGrabDelay: true);
-		}); //Always drop coins
-
-		static int GetPair(Style style, string context) //Helper for alternatives based on style
-		{
-			Dictionary<Style, int[]> dict = new()
-			{
-				{ Style.Cavern, [ItemID.UltrabrightTorch, ItemID.WoodenArrow] },
-				{ Style.Ice, [ItemID.IceTorch, ItemID.FrostburnArrow] },
-				{ Style.Desert, [ItemID.DesertTorch, ItemID.FlamingArrow] },
-				{ Style.Jungle, [ItemID.JungleTorch, ItemID.FlamingArrow] },
-				{ Style.Dungeon, [ItemID.BoneTorch, ItemID.BoneArrow] },
-				{ Style.Corruption, [ItemID.CorruptTorch, ItemID.UnholyArrow] },
-				{ Style.Crimson, [ItemID.CrimsonTorch, ItemID.UnholyArrow] },
-				{ Style.Marble, [ItemID.YellowTorch, ItemID.JestersArrow] },
-				{ Style.Hell, [ItemID.DemonTorch, ItemID.HellfireArrow] },
-				{ Style.Mushroom, [ItemID.MushroomTorch, ItemID.WoodenArrow] }
-			};
-
-			int index = (context == "arrow") ? 1 : 0;
-			return dict[style][index];
-		}
-	}
-
-	/// <summary> Calculates coin values similarly to how vanilla pots do. </summary>
-	private static int CalculateCoinValue(Style style)
-	{
-		float value = 200 + WorldGen.genRand.Next(-100, 101);
-
-		float biomeMult = style switch
-		{
-			Style.Ice => 1.4f,
-			Style.Desert => 2.25f,
-			Style.Jungle => 2f,
-			Style.Dungeon => 2.25f,
-			Style.Corruption => 1.9f,
-			Style.Crimson => 1.9f,
-			Style.Marble => 2.2f,
-			Style.Hell => 2.5f,
-			_ => 1.25f
+			Style.Desert => ItemID.FossilOre,
+			Style.Dungeon => ItemID.Bone,
+			Style.Marble => ItemID.Javelin,
+			Style.Hell => ItemID.LivingFireBlock,
+			_ => -1
 		};
 
-		value *= biomeMult;
-		value *= 1f + Main.rand.Next(-20, 21) * 0.01f;
+		if (type != -1)
+		{
+			if (style is Style.Dungeon)
+				loot.Add(ItemDropRule.ByCondition(new DropConditions.Standard(Condition.DownedSkeletron), ItemID.Bone, 2, 10, 15));
+			else
+				loot.AddCommon(type, 2, 10, 15);
+		}
 
-		if (Main.hardMode)
-			value *= 2;
+		List<IItemDropRule> branch = [];
 
-		if (Main.rand.NextBool(4))
-			value *= 1f + Main.rand.Next(5, 11) * 0.01f;
+		branch.Add(ItemDropRule.Common((style is Style.Desert) ? ItemID.ScarabBomb : ItemID.Dynamite, 1, 4, 8));
+		branch.Add(ItemDropRule.Common(TorchType(), 1, 15, 20));
+		branch.Add(ItemDropRule.Common(ArrowType(), 1, 20, 40));
+		branch.Add(ItemDropRule.Common((WorldGen.SavedOreTiers.Silver == TileID.Silver) ? ItemID.SilverBullet : ItemID.TungstenBullet, 1, 20, 40));
+		branch.Add(ItemDropRule.Common(ItemID.HealingPotion, 1, 1, 3));
 
-		if (Main.rand.NextBool(8))
-			value *= 1f + Main.rand.Next(10, 21) * 0.01f;
+		loot.Add(new OneFromRulesRule(1, [.. branch]));
+		return loot;
 
-		if (Main.rand.NextBool(12))
-			value *= 1f + Main.rand.Next(20, 41) * 0.01f;
+		int ArrowType()
+		{
+			int result = style switch
+			{
+				Style.Ice => ItemID.FrostburnArrow,
+				Style.Dungeon => ItemID.BoneArrow,
+				Style.Marble => ItemID.JestersArrow,
+				Style.Hell => ItemID.HellfireArrow,
+				_ => ItemID.WoodenArrow
+			};
 
-		if (Main.rand.NextBool(16))
-			value *= 1f + Main.rand.Next(40, 81) * 0.01f;
+			if (style is Style.Desert or Style.Jungle)
+				result = ItemID.FlamingArrow;
+			else if (style is Style.Corruption or Style.Crimson)
+				result = ItemID.UnholyArrow;
 
-		if (Main.rand.NextBool(20))
-			value *= 1f + Main.rand.Next(50, 101) * 0.01f;
+			return result;
+		}
 
-		if (Main.expertMode)
-			value *= 2.5f;
+		int TorchType()
+		{
+			int result = style switch
+			{
+				Style.Ice => ItemID.IceTorch,
+				Style.Desert => ItemID.DesertTorch,
+				Style.Jungle => ItemID.JungleTorch,
+				Style.Dungeon => ItemID.BoneTorch,
+				Style.Marble => ItemID.YellowTorch,
+				Style.Hell => ItemID.DemonTorch,
+				Style.Mushroom => ItemID.MushroomTorch,
+				_ => ItemID.UltrabrightTorch
+			};
 
-		if (Main.expertMode && Main.rand.NextBool(2))
-			value *= 1.25f;
-
-		if (Main.expertMode && Main.rand.NextBool(3))
-			value *= 1.5f;
-
-		if (Main.expertMode && Main.rand.NextBool(4))
-			value *= 1.75f;
-
-		if (NPC.downedBoss1)
-			value *= 1.1f;
-
-		if (NPC.downedBoss2)
-			value *= 1.1f;
-
-		if (NPC.downedBoss3)
-			value *= 1.1f;
-
-		if (NPC.downedMechBoss1)
-			value *= 1.1f;
-
-		if (NPC.downedMechBoss2)
-			value *= 1.1f;
-
-		if (NPC.downedMechBoss3)
-			value *= 1.1f;
-
-		if (NPC.downedPlantBoss)
-			value *= 1.1f;
-
-		if (NPC.downedQueenBee)
-			value *= 1.1f;
-
-		if (NPC.downedGolemBoss)
-			value *= 1.1f;
-
-		if (NPC.downedPirates)
-			value *= 1.1f;
-
-		if (NPC.downedGoblins)
-			value *= 1.1f;
-
-		if (NPC.downedFrost)
-			value *= 1.1f;
-
-		return (int)value;
+			return result;
+		}
 	}
 }
