@@ -3,12 +3,12 @@ using SpiritReforged.Common.ProjectileCommon.Abstract;
 
 namespace SpiritReforged.Common.ItemCommon;
 
-public abstract class ClubItem(float damageScaling = 2, float knockbackScaling = 1.5f) : ModItem
+public abstract class ClubItem() : ModItem
 {
 	internal virtual int ChargeTime { get; set; }
 	internal virtual int SwingTime { get; set; }
-	internal virtual float DamageScaling => damageScaling;
-	internal virtual float KnockbackScaling => knockbackScaling;
+	internal virtual float DamageScaling => 2;
+	internal virtual float KnockbackScaling => 1.5f;
 
 	public virtual void SafeSetDefaults() { }
 

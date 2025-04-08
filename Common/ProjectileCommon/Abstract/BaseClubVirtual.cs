@@ -16,7 +16,7 @@ public abstract partial class BaseClubProj : ModProjectile
 	public virtual float LingerTimeRatio => 0.75f;
 	public virtual float HoldPointRatio => 0.1f;
 
-	public virtual float SwingSpeedMult => Charge == 1 ? 1.33f : 1f;
+	public virtual float SwingSpeedMult => Charge == 1 ? 1.2f : 1f;
 
 	public virtual void Charging(Player owner)
 	{
@@ -61,7 +61,7 @@ public abstract partial class BaseClubProj : ModProjectile
 
 	public virtual void Swinging(Player owner)
 	{
-		const float PHASE_THRESHOLD = 0.33f;
+		const float PHASE_THRESHOLD = 0.25f;
 		const float SHRINK_THRESHOLD = 0.5f;
 
 		float getSwingProgress() => SwingSpeedMult * _swingTimer / SwingTime;
