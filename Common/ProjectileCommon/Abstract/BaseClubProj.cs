@@ -1,4 +1,5 @@
 using System.IO;
+using Terraria.Audio;
 using static Microsoft.Xna.Framework.MathHelper;
 using static SpiritReforged.Common.Easing.EaseFunction;
 
@@ -105,7 +106,12 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		}
 
 		if (!owner.channel && _windupTimer >= WindupTime && CheckAiState(AiStates.CHARGING))
+		{
 			SetAiState(AiStates.SWINGING);
+
+			if (!Main.dedServ)
+				SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing.WithPitchOffset(-0.75f), owner.Center);
+		}
 
 		if(!CheckAiState(AiStates.CHARGING))
 			owner.direction = Math.Sign(Projectile.velocity.X);

@@ -84,7 +84,7 @@ public abstract partial class BaseClubProj : ModProjectile
 			{
 				float volume = Clamp(EaseQuadOut.Ease(Charge), 0.75f, 1f);
 				SoundEngine.PlaySound(SoundID.Item70.WithVolumeScale(volume), Projectile.Center);
-				SoundEngine.PlaySound(SoundID.NPCHit42.WithVolumeScale(volume), Projectile.Center);
+				SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact.WithVolumeScale(volume).WithPitchOffset(-0.5f), Projectile.Center);
 
 				if (Main.LocalPlayer == owner)
 					Main.instance.CameraModifiers.Add(new PunchCameraModifier(Main.screenPosition, Vector2.Normalize(Projectile.oldPosition - Projectile.position), 1 + Charge * 2, 6, (int)(20 * (0.5f + Charge / 2))));
