@@ -1,4 +1,5 @@
 using SpiritReforged.Common.Visuals.Glowmasks;
+using Terraria.GameContent.UI;
 
 namespace SpiritReforged.Content.Underground.Moss.Radon;
 
@@ -22,6 +23,7 @@ public class RadonMossItem : ModItem
 		Item.useTurn = true;
 		Item.autoReuse = true;
 		Item.consumable = true;
+		Item.rare = ItemRarityID.Blue;
 	}
 
 	public override void HoldItem(Player player)

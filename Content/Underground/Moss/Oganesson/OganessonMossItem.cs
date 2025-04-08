@@ -22,6 +22,7 @@ public class OganessonMossItem : ModItem
 		Item.useTurn = true;
 		Item.autoReuse = true;
 		Item.consumable = true;
+		Item.rare = ItemRarityID.Blue;
 	}
 
 	public override void HoldItem(Player player)
