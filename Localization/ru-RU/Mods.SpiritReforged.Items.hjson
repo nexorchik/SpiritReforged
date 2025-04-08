@@ -1524,3 +1524,8 @@ RadonMossItem: {
 	// DisplayName: Radon Moss Item
 	// Tooltip: ""
 }
+
+OganessonMossItem: {
+	// DisplayName: Oganesson Moss Item
+	// Tooltip: ""
+}
