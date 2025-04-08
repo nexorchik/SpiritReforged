@@ -1527,3 +1527,8 @@ MushroomPotsItem: {
 	DisplayName: Small Mushroom Pot
 	Tooltip: ""
 }
+
+RadonMossItem: {
+	DisplayName: Radon Moss Item
+	Tooltip: ""
+}
