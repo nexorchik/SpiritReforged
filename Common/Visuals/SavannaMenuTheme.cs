@@ -5,7 +5,7 @@ namespace SpiritReforged.Common.Visuals;
 internal class SavannaMenuTheme : ModMenu
 {
 	public override ModSurfaceBackgroundStyle MenuBackgroundStyle => ModContent.GetInstance<SavannaBGStyle>();
-	//public override string DisplayName => "Savanna"; //Uses the mod's display name
+	public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Music/TitleTheme");
 
 	public override void OnSelected() => SpiritLogo.Reset();
 
