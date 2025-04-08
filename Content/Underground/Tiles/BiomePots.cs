@@ -51,7 +51,22 @@ public class BiomePots : PotTile, ILootTile
 		{ "Mushroom", [30, 31, 32] }
 	};
 
+	/// <summary> Gets the <see cref="Style"/> associated with the given frame. </summary>
 	private static Style GetStyle(int frameY) => (Style)(frameY / 36);
+	/// <summary> Gets the coin multiplier value for this pot. </summary>
+	private static float GetValue(Style style) => style switch
+	{
+		Style.Gold => 0f,
+		Style.Ice => 1.4f,
+		Style.Desert => 2.25f,
+		Style.Jungle => 2f,
+		Style.Dungeon => 2.25f,
+		Style.Corruption => 1.9f,
+		Style.Crimson => 1.9f,
+		Style.Marble => 2.2f,
+		Style.Hell => 2.5f,
+		_ => 1.25f
+	};
 
 	#region drawing detours
 	public override void Load(Mod mod)
@@ -189,11 +204,9 @@ public class BiomePots : PotTile, ILootTile
 		{
 			#region loot
 			var p = Main.player[Player.FindClosest(position, 0, 0)];
-			var info = LootTableHelper.GetInfo(p);
+			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)position.X - 16, (int)position.Y - 16, 32, 32), p);
 
-			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(info);
-
-			ItemMethods.SplitCoins(CalculateCoinValue(style), delegate (int type, int stack)
+			ItemMethods.SplitCoins((int)(CalculateCoinValue() * GetValue(style)), delegate (int type, int stack)
 			{
 				Item.NewItem(source, position, new Item(type, stack), noGrabDelay: true);
 			}); //Always drop coins
@@ -430,95 +443,5 @@ public class BiomePots : PotTile, ILootTile
 
 			return result;
 		}
-	}
-
-	/// <summary> Calculates coin values similarly to how vanilla pots do. </summary>
-	private static int CalculateCoinValue(Style style)
-	{
-		float value = 200 + WorldGen.genRand.Next(-100, 101);
-
-		float biomeMult = style switch
-		{
-			Style.Ice => 1.4f,
-			Style.Desert => 2.25f,
-			Style.Jungle => 2f,
-			Style.Dungeon => 2.25f,
-			Style.Corruption => 1.9f,
-			Style.Crimson => 1.9f,
-			Style.Marble => 2.2f,
-			Style.Hell => 2.5f,
-			_ => 1.25f
-		};
-
-		value *= biomeMult;
-		value *= 1f + Main.rand.Next(-20, 21) * 0.01f;
-
-		if (Main.hardMode)
-			value *= 2;
-
-		if (Main.rand.NextBool(4))
-			value *= 1f + Main.rand.Next(5, 11) * 0.01f;
-
-		if (Main.rand.NextBool(8))
-			value *= 1f + Main.rand.Next(10, 21) * 0.01f;
-
-		if (Main.rand.NextBool(12))
-			value *= 1f + Main.rand.Next(20, 41) * 0.01f;
-
-		if (Main.rand.NextBool(16))
-			value *= 1f + Main.rand.Next(40, 81) * 0.01f;
-
-		if (Main.rand.NextBool(20))
-			value *= 1f + Main.rand.Next(50, 101) * 0.01f;
-
-		if (Main.expertMode)
-			value *= 2.5f;
-
-		if (Main.expertMode && Main.rand.NextBool(2))
-			value *= 1.25f;
-
-		if (Main.expertMode && Main.rand.NextBool(3))
-			value *= 1.5f;
-
-		if (Main.expertMode && Main.rand.NextBool(4))
-			value *= 1.75f;
-
-		if (NPC.downedBoss1)
-			value *= 1.1f;
-
-		if (NPC.downedBoss2)
-			value *= 1.1f;
-
-		if (NPC.downedBoss3)
-			value *= 1.1f;
-
-		if (NPC.downedMechBoss1)
-			value *= 1.1f;
-
-		if (NPC.downedMechBoss2)
-			value *= 1.1f;
-
-		if (NPC.downedMechBoss3)
-			value *= 1.1f;
-
-		if (NPC.downedPlantBoss)
-			value *= 1.1f;
-
-		if (NPC.downedQueenBee)
-			value *= 1.1f;
-
-		if (NPC.downedGolemBoss)
-			value *= 1.1f;
-
-		if (NPC.downedPirates)
-			value *= 1.1f;
-
-		if (NPC.downedGoblins)
-			value *= 1.1f;
-
-		if (NPC.downedFrost)
-			value *= 1.1f;
-
-		return (int)value;
 	}
 }

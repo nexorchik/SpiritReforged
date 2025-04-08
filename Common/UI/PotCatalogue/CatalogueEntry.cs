@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.UI.System;
 using SpiritReforged.Content.Underground.Pottery;
+using Terraria.Audio;
 using Terraria.UI;
 
 namespace SpiritReforged.Common.UI.PotCatalogue;
@@ -16,6 +17,12 @@ public class CatalogueEntry : UIElement
 
 		Width.Pixels = CatalogueUI.Back.Width();
 		Height.Pixels = CatalogueUI.Back.Height();
+	}
+
+	public override void MouseOver(UIMouseEvent evt)
+	{
+		base.MouseOver(evt);
+		SoundEngine.PlaySound(SoundID.MenuTick);
 	}
 
 	protected override void DrawSelf(SpriteBatch spriteBatch)
@@ -50,6 +57,6 @@ public class CatalogueEntry : UIElement
 			return;
 		}
 
-		record.DrawIcon(spriteBatch, position, color, scale);
+		record.DrawIcon(spriteBatch, position, color);
 	}
 }

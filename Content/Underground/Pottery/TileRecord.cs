@@ -34,7 +34,7 @@ public struct TileRecord(string key, int tileType, params int[] tileStyles)
 		return this;
 	}
 
-	public readonly void DrawIcon(SpriteBatch spriteBatch, Vector2 position, Color color, float scale = 1f)
+	public readonly void DrawIcon(SpriteBatch spriteBatch, Vector2 position, Color color)
 	{
 		const int tileFrame = 18;
 

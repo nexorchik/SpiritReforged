@@ -115,7 +115,7 @@ public partial class CatalogueUI : AutoUIState
 		//Draw description
 		float height = 0;
 		string desc = Selected.record.description;
-		string[] wrappingText = Utils.WordwrapString(desc, FontAssets.MouseText.Value, bounds.Width, 20, out int numLines);
+		string[] wrappingText = UIHelper.WrapText(desc, bounds.Width);
 
 		for (int i = 0; i < wrappingText.Length; i++)
 		{
@@ -128,7 +128,7 @@ public partial class CatalogueUI : AutoUIState
 			Utils.DrawBorderString(spriteBatch, text, bounds.Top() + new Vector2(0, 20 + height * i), Main.MouseTextColorReal, .8f, .5f, 0);
 		}
 
-		bounds.Height = 32 + (numLines + 1) * (int)height;
+		bounds.Height = 32 + wrappingText.Length * (int)height;
 
 		return true;
 	}

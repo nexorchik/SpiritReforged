@@ -75,18 +75,20 @@ public class CatalogueList : UIElement
 
 	public override void ScrollWheel(UIScrollWheelEvent evt)
 	{
+		base.ScrollWheel(evt);
+
 		if (_scrollbar != null)
-		{
 			_scrollbar.ViewPosition -= evt.ScrollWheelValue;
-			RecalculateEntries();
-		}
 	}
 
 	public override void Update(GameTime gameTime)
 	{
-		if (IsMouseHovering)
-			PlayerInput.LockVanillaMouseScroll("ModLoader/UIList");
+		base.Update(gameTime);
 
-		RecalculateEntries(); //Only needs to be called during scrollbar interaction
+		if (IsMouseHovering)
+		{
+			PlayerInput.LockVanillaMouseScroll("ModLoader/UIList");
+			RecalculateEntries(); //Only needs to be called for scrollbar interaction
+		}
 	}
 }

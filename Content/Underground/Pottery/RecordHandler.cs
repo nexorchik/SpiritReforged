@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Content.Underground.Tiles;
 using System.Linq;
 using Terraria.ModLoader.IO;
 
@@ -19,7 +20,12 @@ public class RecordHandler : ModSystem
 		name = null;
 		foreach (var value in Records)
 		{
-			if (value.type == Main.tile[i, j].TileType && HasStyle(i, j, value))
+			int type = value.type;
+
+			if (type == ModContent.TileType<Pots>())
+				type = TileID.Pots; //Pretend type is actually vanilla
+
+			if (type == Main.tile[i, j].TileType && HasStyle(i, j, value))
 			{
 				name = value.key;
 				return true;
@@ -48,17 +54,6 @@ public class RecordHandler : ModSystem
 			foreach (var group in StyleDatabase.Groups[type])
 				r.AddRecord(type, group);
 		}
-
-		AddPotRecords();
-	}
-
-	/// <summary> Adds all records for vanilla pots. </summary>
-	private static void AddPotRecords()
-	{
-		int type = TileID.Pots;
-
-		foreach (var group in StyleDatabase.Groups[type])
-			Records.Add(new TileRecord(group.name, type, group.styles));
 	}
 }
 

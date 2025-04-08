@@ -59,29 +59,8 @@ public class StyleDatabase : ModSystem
 			}
 		}
 
-		AddPotStyles();
 		OnPopulateStyleGroups?.Invoke();
 	}
 
 	public override void Unload() => OnPopulateStyleGroups = null;
-
-	/// <summary> Adds all style groups for vanilla pots. </summary>
-	private static void AddPotStyles()
-	{
-		string[] names = ["Cavern", "Ice", "Jungle", "Dungeon", "Hell", "Corruption", "Spider", "Crimson", "Pyramid", "Temple", "Marble", "Desert"];
-		List<StyleGroup> groups = [];
-
-		groups.Add(new("Pots" + names[0], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]));
-		const int length = 9;
-
-		for (int i = 1; i < names.Length; i++)
-		{
-			int skip = i * length + 3;
-			int[] styles = [skip, skip + 1, skip + 2, skip + 3, skip + 4, skip + 5, skip + 6, skip + 7, skip + 8];
-
-			groups.Add(new("Pots" + names[i], styles));
-		}
-
-		Groups.Add(TileID.Pots, [.. groups]);
-	}
 }

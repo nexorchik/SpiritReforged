@@ -70,4 +70,79 @@ public abstract class PotTile : ModTile, IRecordTile, IAutoloadRubble
 		TileObjectData.newTile.DrawYOffset = 2;
 		TileObjectData.addTile(Type);
 	}
+
+	/// <summary> Calculates coin values similarly to how vanilla pots do. </summary>
+	internal static float CalculateCoinValue()
+	{
+		float value = 200 + WorldGen.genRand.Next(-100, 101);
+		value *= 1f + Main.rand.Next(-20, 21) * 0.01f;
+
+		if (Main.hardMode)
+			value *= 2;
+
+		if (Main.rand.NextBool(4))
+			value *= 1f + Main.rand.Next(5, 11) * 0.01f;
+
+		if (Main.rand.NextBool(8))
+			value *= 1f + Main.rand.Next(10, 21) * 0.01f;
+
+		if (Main.rand.NextBool(12))
+			value *= 1f + Main.rand.Next(20, 41) * 0.01f;
+
+		if (Main.rand.NextBool(16))
+			value *= 1f + Main.rand.Next(40, 81) * 0.01f;
+
+		if (Main.rand.NextBool(20))
+			value *= 1f + Main.rand.Next(50, 101) * 0.01f;
+
+		if (Main.expertMode)
+			value *= 2.5f;
+
+		if (Main.expertMode && Main.rand.NextBool(2))
+			value *= 1.25f;
+
+		if (Main.expertMode && Main.rand.NextBool(3))
+			value *= 1.5f;
+
+		if (Main.expertMode && Main.rand.NextBool(4))
+			value *= 1.75f;
+
+		if (NPC.downedBoss1)
+			value *= 1.1f;
+
+		if (NPC.downedBoss2)
+			value *= 1.1f;
+
+		if (NPC.downedBoss3)
+			value *= 1.1f;
+
+		if (NPC.downedMechBoss1)
+			value *= 1.1f;
+
+		if (NPC.downedMechBoss2)
+			value *= 1.1f;
+
+		if (NPC.downedMechBoss3)
+			value *= 1.1f;
+
+		if (NPC.downedPlantBoss)
+			value *= 1.1f;
+
+		if (NPC.downedQueenBee)
+			value *= 1.1f;
+
+		if (NPC.downedGolemBoss)
+			value *= 1.1f;
+
+		if (NPC.downedPirates)
+			value *= 1.1f;
+
+		if (NPC.downedGoblins)
+			value *= 1.1f;
+
+		if (NPC.downedFrost)
+			value *= 1.1f;
+
+		return value;
+	}
 }
