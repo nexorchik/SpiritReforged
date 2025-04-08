@@ -400,12 +400,15 @@ public class BiomePots : PotTile, ILootTile
 				loot.AddCommon(type, 2, 10, 15);
 		}
 
-		loot.AddCommon((style is Style.Desert) ? ItemID.ScarabBomb : ItemID.Dynamite, 3, 4, 8);
-		loot.AddCommon(TorchType(), 3, 15, 20);
-		loot.AddCommon(ArrowType(), 3, 20, 40);
-		loot.AddCommon((WorldGen.SavedOreTiers.Silver == TileID.Silver) ? ItemID.SilverBullet : ItemID.TungstenBullet, 3, 20, 40);
-		loot.AddCommon(ItemID.HealingPotion, 3, 1, 3);
+		List<IItemDropRule> branch = [];
 
+		branch.Add(ItemDropRule.Common((style is Style.Desert) ? ItemID.ScarabBomb : ItemID.Dynamite, 1, 4, 8));
+		branch.Add(ItemDropRule.Common(TorchType(), 1, 15, 20));
+		branch.Add(ItemDropRule.Common(ArrowType(), 1, 20, 40));
+		branch.Add(ItemDropRule.Common((WorldGen.SavedOreTiers.Silver == TileID.Silver) ? ItemID.SilverBullet : ItemID.TungstenBullet, 1, 20, 40));
+		branch.Add(ItemDropRule.Common(ItemID.HealingPotion, 1, 1, 3));
+
+		loot.Add(new OneFromRulesRule(1, [.. branch]));
 		return loot;
 
 		int ArrowType()

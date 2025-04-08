@@ -38,8 +38,10 @@ public class Pots : PotTile, ILootTile
 		string styleName = StyleDatabase.GetName(Type, (byte)objectStyle);
 		var loot = new LootTable();
 
+		List<IItemDropRule> branch = []; //Full branch to select ONE option from
+
 		if (styleName == "PotsDungeon")
-			loot.AddCommon(ItemID.GoldenKey, 35);
+			branch.Add(ItemDropRule.Common(ItemID.GoldenKey, 35));
 
 		List<int> potions = [ItemID.IronskinPotion, ItemID.ShinePotion, ItemID.NightOwlPotion, ItemID.SwiftnessPotion,
 			ItemID.MiningPotion, ItemID.CalmingPotion, ItemID.BuilderPotion, ItemID.RecallPotion, ItemID.ArcheryPotion,
@@ -52,32 +54,27 @@ public class Pots : PotTile, ILootTile
 		if (styleName == "PotsHell")
 			pCond0.OnSuccess(ItemDropRule.Common(ItemID.PotionOfReturn, 5));
 
-		loot.Add(pCond0);
-		loot.Add(ItemDropRule.ByCondition(new DropConditions.Standard(Condition.Multiplayer), ItemID.WormholePotion, 30));
+		branch.Add(pCond0);
+		branch.Add(ItemDropRule.ByCondition(new DropConditions.Standard(Condition.Multiplayer), ItemID.WormholePotion, 30));
 
-		const int branchSize = 5;
-
-		if (styleName == "PotsIce")
-			loot.AddCommon(ItemID.IceTorch, branchSize, 3, 12);
-		else
-			loot.AddCommon(TorchType(), branchSize, 5, 18);
+		var subCondition = new DropConditions.Dynamic(() => false, "Mods.SpiritReforged.Conditions.Submerged");
+		branch.Add((styleName == "PotsIce") ? ItemDropRule.Common(ItemID.IceTorch, 1, 3, 12) : ItemDropRule.Common(TorchType(), 1, 3, 12));
+		branch.Add((styleName == "PotsIce") ? ItemDropRule.ByCondition(subCondition, ItemID.StickyGlowstick, 1, 3, 12) : ItemDropRule.ByCondition(subCondition, ItemID.Glowstick, 1, 3, 12));
 
 		if (styleName == "PotsHell")
-			loot.AddCommon(ItemID.HellfireArrow, branchSize, 10, 20);
+			branch.Add(ItemDropRule.Common(ItemID.HellfireArrow, 1, 10, 20));
 		else if (Main.hardMode)
-			loot.AddOneFromOptions(1, ItemID.UnholyArrow, ItemID.Grenade, (WorldGen.SavedOreTiers.Silver == TileID.Silver) ? ItemID.SilverBullet : ItemID.TungstenBullet);
+			branch.Add(ItemDropRule.OneFromOptions(1, ItemID.UnholyArrow, ItemID.Grenade, (WorldGen.SavedOreTiers.Silver == TileID.Silver) ? ItemID.SilverBullet : ItemID.TungstenBullet));
 		else
-		{
-			loot.AddCommon(ItemID.WoodenArrow, branchSize * 2, 10, 20);
-			loot.AddCommon(ItemID.Shuriken, branchSize * 2, 10, 20);
-		}
+			branch.Add(DropRules.LootPoolDrop.SameStack(10, 20, 1, 1, 1, ItemID.WoodenArrow, ItemID.Shuriken));
 
-		loot.AddCommon(Main.hardMode ? ItemID.HealingPotion : ItemID.LesserHealingPotion, branchSize);
-		loot.AddCommon((styleName == "PotsDesert") ? ItemID.ScarabBomb : ItemID.Bomb, branchSize, 1, 4);
+		branch.Add(ItemDropRule.Common(Main.hardMode ? ItemID.HealingPotion : ItemID.LesserHealingPotion));
+		branch.Add(ItemDropRule.Common((styleName == "PotsDesert") ? ItemID.ScarabBomb : ItemID.Bomb, 1, 1, 4));
 
 		if (!Main.hardMode)
-			loot.AddCommon(ItemID.Rope, branchSize, 20, 40);
+			branch.Add(ItemDropRule.Common(ItemID.Rope, 1, 20, 40));
 
+		loot.Add(new OneFromRulesRule(1, [.. branch]));
 		return loot;
 
 		int TorchType()
