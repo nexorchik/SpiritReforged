@@ -22,7 +22,6 @@ public class ElephantGrass : ModTile, IConvertibleTile
 		Main.tileBlockLight[Type] = false;
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoFail[Type] = true;
-		//Main.tileCut[Type] = true;
 
 		TileID.Sets.BreakableWhenPlacing[Type] = true;
 
@@ -50,9 +49,6 @@ public class ElephantGrass : ModTile, IConvertibleTile
 
 	public override IEnumerable<Item> GetItemDrops(int i, int j)
 	{
-		//if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HeldItem.type == ItemID.Sickle)
-		//	yield return new Item(ItemID.Hay, Main.rand.Next(3, 7)); //Tile cannot be cut
-
 		if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HasItem(ItemID.Blowpipe))
 			yield return new Item(ItemID.Seed, Main.rand.Next(1, 3));
 	}
@@ -62,6 +58,9 @@ public class ElephantGrass : ModTile, IConvertibleTile
 	public override void NearbyEffects(int i, int j, bool closer) //Play sounds when walking inside of grass patches
 	{
 		const string path = "SpiritReforged/Assets/SFX/Tile/SavannaGrass";
+
+		if (Main.gamePaused)
+			return;
 
 		float length = Main.LocalPlayer.velocity.Length();
 		float mag = MathHelper.Clamp(length / 10f, 0, 1);
