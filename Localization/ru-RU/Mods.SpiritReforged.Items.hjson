@@ -1530,7 +1530,12 @@ StuffedPotsItem: {
 	// Tooltip: ""
 }
 
-WormPotsItem: {
+WormPotItem: {
 	// DisplayName: Worm Pot
+	// Tooltip: ""
+}
+
+AetherShipmentItem: {
+	// DisplayName: Aether Shipment
 	// Tooltip: ""
 }

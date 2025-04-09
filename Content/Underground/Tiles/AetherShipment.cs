@@ -1,6 +1,7 @@
 using RubbleAutoloader;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
+using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
@@ -10,6 +11,7 @@ public class AetherShipment : PotTile, ILootTile
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
 
+	public override void AddRecord(int type, StyleDatabase.StyleGroup group) => RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddRating(5));
 	public override void AddObjectData()
 	{
 		Main.tileCut[Type] = false;
@@ -29,7 +31,7 @@ public class AetherShipment : PotTile, ILootTile
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (effectOnly)
+		if (effectOnly || Autoloader.IsRubble(Type))
 			return;
 
 		fail = AdjustFrame(i, j);
@@ -71,16 +73,23 @@ public class AetherShipment : PotTile, ILootTile
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
+		if (Main.netMode != NetmodeID.MultiplayerClient)
+		{
+			var position = new Vector2(i, j).ToWorldCoordinates(12, 12);
+
+			var p = Main.player[Player.FindClosest(position, 0, 0)];
+			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)position.X - 16, (int)position.Y - 16, 32, 32), p);
+		}
+
 		if (Main.dedServ)
 			return;
 
 		var source = new EntitySource_TileBreak(i, j);
-		var position = new Vector2(i, j).ToWorldCoordinates(16, 16);
 
-		for (int g = 1; g < 4; g++)
+		for (int g = 1; g < 6; g++)
 		{
-			int goreType = Mod.Find<ModGore>("PotWorm" + g).Type;
-			Gore.NewGore(source, position, Vector2.Zero, goreType);
+			int goreType = Mod.Find<ModGore>("Aether" + g).Type;
+			Gore.NewGore(source, Main.rand.NextVector2FromRectangle(new Rectangle(i * 16, j * 16, 32, 32)), Vector2.Zero, goreType);
 		}
 	}
 
