@@ -7,4 +7,5 @@ v0.1.0.8
 - Adjusted Cloudstalk blooming conditions
 - Allowed more item types to be cooked on the Fire Spit
 - Fixed Recluse Origin using the wrong description with New Beginnings enabled
+- Floating items no longer float in Shimmer
 - Chlorophyte Bullets no longer linger on enemies when fired by the Hunting Rifle
