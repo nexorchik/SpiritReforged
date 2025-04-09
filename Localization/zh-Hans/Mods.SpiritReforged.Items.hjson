@@ -1527,3 +1527,18 @@ MushroomPotsItem: {
 	// DisplayName: Small Mushroom Pot
 	// Tooltip: ""
 }
+
+SilverPlattersItem: {
+	// DisplayName: Silver Platter
+	// Tooltip: ""
+}
+
+StuffedPotsItem: {
+	// DisplayName: Stuffed Pot
+	// Tooltip: ""
+}
+
+WormPotsItem: {
+	// DisplayName: Worm Pot
+	// Tooltip: ""
+}

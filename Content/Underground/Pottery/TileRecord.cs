@@ -40,19 +40,18 @@ public struct TileRecord(string key, int tileType, params int[] tileStyles)
 
 		int tileStyle = styles[0];
 		var data = TileObjectData.GetTileData(type, 0);
+
+		if (data is null)
+			return;
+
 		var texture = TextureAssets.Tile[type].Value;
 
-		//Defaults- useful for vanilla pots which have no object data
-		int wrapLimit = 3;
-		int width = 2;
-		int height = 2;
+		int wrapLimit = data.StyleWrapLimit;
+		int width = data.Width;
+		int height = data.Height;
 
-		if (data != null)
-		{
-			wrapLimit = data.StyleWrapLimit;
-			width = data.Width;
-			height = data.Height;
-		}
+		if (wrapLimit == 0)
+			wrapLimit = data.RandomStyleRange;
 
 		for (int x = 0; x < width; x++)
 		{
