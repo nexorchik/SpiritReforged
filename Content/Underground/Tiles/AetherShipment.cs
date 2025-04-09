@@ -1,6 +1,8 @@
 using RubbleAutoloader;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
+using SpiritReforged.Content.Particles;
 using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -28,26 +30,39 @@ public class AetherShipment : PotTile, ILootTile
 		DustType = DustID.ShimmerSpark;
 	}
 
+	public override void NearbyEffects(int i, int j, bool closer)
+	{
+		const int distance = 200;
+
+		if (!closer || Main.gamePaused || Autoloader.IsRubble(Type))
+			return;
+
+		var world = new Vector2(i, j) * 16;
+		float strength = Main.LocalPlayer.DistanceSQ(world) / (distance * distance);
+
+		if (strength < 1 && Main.rand.NextFloat(15f) < 1f - strength)
+		{
+			var spawn = Main.rand.NextVector2FromRectangle(new Rectangle(i * 16, j * 16, 16, 16));
+			float scale = Main.rand.NextFloat(.5f, 1f);
+			var velocity = -Vector2.UnitY * Main.rand.NextFloat();
+
+			ParticleHandler.SpawnParticle(new ShimmerStar(spawn, Color.Magenta * (1f - strength), scale, 60, velocity));
+			ParticleHandler.SpawnParticle(new ShimmerStar(spawn, Color.White * (1f - strength), scale * .8f, 60, velocity));
+		}
+	}
+
+	public override bool CreateDust(int i, int j, ref int type)
+	{
+		return false;
+	}
+
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (effectOnly || Autoloader.IsRubble(Type))
+		if (effectOnly || !fail || Autoloader.IsRubble(Type))
 			return;
 
 		fail = AdjustFrame(i, j);
-	}
-
-	public override bool KillSound(int i, int j, bool fail)
-	{
-		if (fail || Autoloader.IsRubble(Type))
-			return true;
-
-		var pos = new Vector2(i, j).ToWorldCoordinates(16, 16);
-
-		SoundEngine.PlaySound(SoundID.Shatter, pos);
-		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/PotBreak") with { Volume = .16f, PitchRange = (-.4f, 0), }, pos);
-
-		return true;
 	}
 
 	private static bool AdjustFrame(int i, int j)
@@ -71,19 +86,8 @@ public class AetherShipment : PotTile, ILootTile
 		return true;
 	}
 
-	public override void KillMultiTile(int i, int j, int frameX, int frameY)
+	public override void DeathEffects(int i, int j, int frameX, int frameY)
 	{
-		if (Main.netMode != NetmodeID.MultiplayerClient)
-		{
-			var position = new Vector2(i, j).ToWorldCoordinates(12, 12);
-
-			var p = Main.player[Player.FindClosest(position, 0, 0)];
-			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)position.X - 16, (int)position.Y - 16, 32, 32), p);
-		}
-
-		if (Main.dedServ)
-			return;
-
 		var source = new EntitySource_TileBreak(i, j);
 
 		for (int g = 1; g < 6; g++)
@@ -91,6 +95,22 @@ public class AetherShipment : PotTile, ILootTile
 			int goreType = Mod.Find<ModGore>("Aether" + g).Type;
 			Gore.NewGore(source, Main.rand.NextVector2FromRectangle(new Rectangle(i * 16, j * 16, 32, 32)), Vector2.Zero, goreType);
 		}
+
+		var pos = new Vector2(i, j).ToWorldCoordinates(16, 16);
+
+		SoundEngine.PlaySound(SoundID.Shatter, pos);
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/PotBreak") with { Volume = .16f, PitchRange = (-.4f, 0), }, pos);
+	}
+
+	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
+	{
+		if (TileObjectData.IsTopLeft(i, j))
+		{
+			var color = Color.Lerp(Color.Magenta, Color.CadetBlue, (float)(Math.Sin(Main.timeForVisualEffects / 40f) / 2f) + .5f);
+			GlowTileHandler.AddGlowPoint(new Rectangle(i, j + 1, 32, 16), color, 200);
+		}
+
+		return true;
 	}
 
 	public LootTable AddLoot(int objectStyle)

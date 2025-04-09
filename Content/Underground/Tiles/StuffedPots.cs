@@ -2,10 +2,11 @@ using RubbleAutoloader;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.UI;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
-public class StuffedPots : PotTile, ILootTile
+public class StuffedPots : PotTile
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
 
@@ -22,11 +23,28 @@ public class StuffedPots : PotTile, ILootTile
 		return true;
 	}
 
-	public override void KillMultiTile(int i, int j, int frameX, int frameY)
+	public override void NearbyEffects(int i, int j, bool closer)
 	{
-		if (Main.dedServ)
+		if (!closer || !TileObjectData.IsTopLeft(i, j))
 			return;
 
+		var position = new Vector2(i, j).ToWorldCoordinates(16, 0);
+		float chance = Main.LocalPlayer.DistanceSQ(position) / (200 * 200) + 5;
+
+		if (Main.rand.NextFloat(chance) < .1f)
+			EmoteBubble.NewBubble(EmoteID.EmotionAnger, new WorldUIAnchor(position + new Vector2(12, 0)), 60);
+	}
+
+	public override void KillMultiTile(int i, int j, int frameX, int frameY)
+	{
+		if (!Autoloader.IsRubble(Type))
+			NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), new Vector2(i, j).ToWorldCoordinates(16, 16), NPCID.SkeletonMerchant);
+
+		base.KillMultiTile(i, j, frameX, frameY);
+	}
+
+	public override void DeathEffects(int i, int j, int frameX, int frameY)
+	{
 		var source = new EntitySource_TileBreak(i, j);
 		var position = new Vector2(i, j).ToWorldCoordinates(16, 16);
 
@@ -35,11 +53,5 @@ public class StuffedPots : PotTile, ILootTile
 			int goreType = 51 + g;
 			Gore.NewGore(source, position, Vector2.Zero, goreType);
 		}
-	}
-
-	public LootTable AddLoot(int objectStyle)
-	{
-		var loot = new LootTable();
-		return loot;
 	}
 }

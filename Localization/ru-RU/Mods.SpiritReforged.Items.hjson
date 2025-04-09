@@ -1539,3 +1539,13 @@ AetherShipmentItem: {
 	// DisplayName: Aether Shipment
 	// Tooltip: ""
 }
+
+PotionVatsAntiqueItem: {
+	// DisplayName: Potion Vats Antique Item
+	// Tooltip: ""
+}
+
+PotionVatsCloningItem: {
+	// DisplayName: Potion Vats Cloning Item
+	// Tooltip: ""
+}

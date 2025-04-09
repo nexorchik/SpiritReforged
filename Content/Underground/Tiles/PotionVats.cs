@@ -5,12 +5,15 @@ using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using SpiritReforged.Common.Misc;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
 [AutoloadGlowmask("200,200,200")]
 public class PotionVats : PotTile
 {
+	private static Asset<Texture2D> FluidTexture;
+
 	public override Dictionary<string, int[]> TileStyles => new()
 	{
 		{ "Antique", [0, 1, 2, 3] },
@@ -34,13 +37,16 @@ public class PotionVats : PotTile
 		TileObjectData.addTile(Type);
 
 		DustType = DustID.Glass;
+		FluidTexture = ModContent.Request<Texture2D>(Texture + "_Fluid");
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (effectOnly || fail)
+		if (effectOnly || Autoloader.IsRubble(Type))
 			return;
+
+		fail = AdjustFrame(i, j);
 	}
 
 	public override bool KillSound(int i, int j, bool fail)
@@ -62,12 +68,12 @@ public class PotionVats : PotTile
 
 		TileExtensions.GetTopLeft(ref i, ref j);
 
-		if (Main.tile[i, j].TileFrameX > fullWidth)
-			return false; //Frame has already been adjusted
+		if (Main.tile[i, j].TileFrameX > fullWidth * 2)
+			return false; //Frame has already been adjusted to capacity
 
-		for (int x = i; x < i + 2; x++)
+		for (int x = i; x < i + 3; x++)
 		{
-			for (int y = j; y < j + 2; y++)
+			for (int y = j; y < j + 5; y++)
 			{
 				var t = Main.tile[x, y];
 				t.TileFrameX += fullWidth;
@@ -83,6 +89,24 @@ public class PotionVats : PotTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
+		var texture = FluidTexture.Value;
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + TileExtensions.TileOffset + new Vector2(0, 2);
+
+		var t = Main.tile[i, j];
+		var frame = new Rectangle(t.TileFrameX, t.TileFrameY, 16, 16);
+
+		var color = Lighting.GetColor(i, j).MultiplyRGBA(Main.DiscoColor.Additive(150));
+		spriteBatch.Draw(texture, position, frame, color);
+
+		/*var square = new SquarePrimitive()
+		{
+			Color = Color.White,
+			Height = 30,
+			Length = 20,
+			Position = new Vector2(i, j).ToWorldCoordinates() - Main.screenPosition
+		};
+
+		PrimitiveRenderer.DrawPrimitiveShapeBatched([square]);*/
 		return true;
 	}
 }

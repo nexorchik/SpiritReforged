@@ -4,6 +4,8 @@ using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
@@ -31,7 +33,7 @@ public class WormPot : PotTile, ILootTile
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (effectOnly)
+		if (effectOnly || !fail || Autoloader.IsRubble(Type))
 			return;
 
 		fail = AdjustFrame(i, j);
@@ -73,9 +75,26 @@ public class WormPot : PotTile, ILootTile
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
-		if (Main.dedServ)
-			return;
+		if (Main.netMode != NetmodeID.MultiplayerClient && !Autoloader.IsRubble(Type))
+		{
+			var position = new Vector2(i, j).ToWorldCoordinates(16, 16);
 
+			WeightedRandom<int> type = new();
+			type.Add(NPCID.Worm);
+			type.Add(NPCID.EnchantedNightcrawler, .25);
+			type.Add(NPCID.GoldWorm, .05);
+
+			int wormCount = Main.rand.Next(3, 7);
+
+			for (int w = 0; w < wormCount; w++)
+				NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), (int)type);
+		}
+
+		base.KillMultiTile(i, j, frameX, frameY);
+	}
+
+	public override void DeathEffects(int i, int j, int frameX, int frameY)
+	{
 		var source = new EntitySource_TileBreak(i, j);
 		var position = new Vector2(i, j).ToWorldCoordinates(16, 16);
 
@@ -89,6 +108,10 @@ public class WormPot : PotTile, ILootTile
 	public LootTable AddLoot(int objectStyle)
 	{
 		var loot = new LootTable();
+
+		loot.Add(ItemDropRule.NotScalingWithLuckWithNumerator(ItemID.WhoopieCushion, 10, 6));
+		loot.AddCommon(ItemID.CanOfWorms, 1, 1, 2);
+
 		return loot;
 	}
 }

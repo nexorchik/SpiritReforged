@@ -62,6 +62,10 @@ public struct TileRecord(string key, int tileType, params int[] tileStyles)
 				int startY = (tileStyle / wrapLimit * height + y) * tileFrame;
 
 				var source = new Rectangle(startX, startY, 16, 16);
+
+				if (y == 4)
+					source.Height = 8; //Avoid clipping
+
 				var center = new Vector2(width * 16 / 2, height * 16 / 2);
 				var drawPos = position + new Vector2(x * 16, y * 16) - center;
 
