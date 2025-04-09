@@ -15,8 +15,8 @@ global using NPCUtils;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.BuffCommon;
-using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.TileCommon.PresetTiles;
+using SpiritReforged.Common.ModCompat;
 
 namespace SpiritReforged;
 

@@ -36,6 +36,7 @@ public abstract class SofaTile : FurnitureTile
 		TileID.Sets.DisableSmartCursor[Type] = true;
 		TileID.Sets.HasOutlines[Type] = true;
 
+		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsChair);
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Bench"));
 		AdjTiles = [TileID.Benches];
 		DustType = -1;

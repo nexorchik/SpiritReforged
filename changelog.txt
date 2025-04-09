@@ -1,11 +1,11 @@
-v0.1.0.7
-- Reduced the drop rate of Rogue's Crest in fishing crates
-- Fixed player rotation being reset when it shouldn't be
-- Acacia trees are now affected by Fertilizer and Axe of Regrowth
-- Living Baobab and Living Baobab Leaf wands now have a chance to drop from shook Acacia trees
-- Reordered ingredients list for Quench Potion
-- Cartographer and Hiker now animate in the Bestiary
-- Made several summon weapons auto-reusable
-- Included Peeved Tumbler item drops in the Bestiary and adjusted drop rates
-- Fixed various custom-drawn tiles being unaffected by paint
-- Fixed an issue when syncing backpack contents in multiplayer
+v0.1.0.8
+- Increased Frostbite armor penetration by 2 and reduced overall mana usage
+- Drywood Sofa, Driftwood Bench, and Bamboo Bench now count as chairs for NPC housing
+- Stopped Waterbolt from spawning in underground tundra houses
+- Elephant Grass no longer rustles when the game is paused
+- Reordered Gravitation and Featherfall potion recipes including Cloudstalk
+- Adjusted Cloudstalk blooming conditions
+- Allowed more item types to be cooked on the Fire Spit
+- Fixed Recluse Origin using the wrong description with New Beginnings enabled
+- Floating items no longer float in Shimmer
+- Chlorophyte Bullets no longer linger on enemies when fired by the Hunting Rifle

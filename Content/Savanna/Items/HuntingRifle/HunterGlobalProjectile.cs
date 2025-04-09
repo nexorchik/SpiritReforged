@@ -27,7 +27,9 @@ public class HunterGlobalProjectile : GlobalProjectile
 		if (firedFromHuntingRifle && !_applied)
 		{
 			projectile.extraUpdates = Math.Max(projectile.extraUpdates, 3);
-			projectile.penetrate = Math.Max(projectile.penetrate, 3);
+
+			if (projectile.type != ProjectileID.ChlorophyteBullet)
+				projectile.penetrate = Math.Max(projectile.penetrate, 3); //Don't apply piercing for homing rounds
 
 			projectile.usesLocalNPCImmunity = true;
 			projectile.localNPCHitCooldown = -1;
