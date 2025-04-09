@@ -7,7 +7,7 @@ public class DustStormGlobalTile : GlobalTile
 {
 	public override void NearbyEffects(int i, int j, int type, bool closer)
 	{
-		if (!Main.LocalPlayer.GetModPlayer<DustStormPlayer>().ZoneDustStorm)
+		if (!closer || !Main.LocalPlayer.GetModPlayer<DustStormPlayer>().ZoneDustStorm || !WorldGen.InWorld(i, j - 1))
 			return;
 
 		var tileAbove = Main.tile[i, j - 1];
