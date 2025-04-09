@@ -23,11 +23,11 @@ public class Cloudstalk : ModItem
 
 	public override void AddRecipes()
 	{
-		Recipe.Create(ItemID.FeatherfallPotion, 1).AddIngredient(ItemID.Blinkroot).AddIngredient(ItemID.Daybloom).
-			AddIngredient(ItemID.BottledWater).AddIngredient(Type).AddTile(TileID.Bottles).Register();
+		Recipe.Create(ItemID.FeatherfallPotion, 1).AddIngredient(ItemID.Blinkroot)
+			.AddIngredient(ItemID.Daybloom).AddIngredient(Type).AddIngredient(ItemID.BottledWater).AddTile(TileID.Bottles).Register();
 
-		Recipe.Create(ItemID.GravitationPotion).AddIngredient(ItemID.Blinkroot).AddIngredient(ItemID.Fireblossom).
-			AddIngredient(ItemID.Deathweed).AddIngredient(ItemID.BottledWater).AddIngredient(Type).AddTile(TileID.Bottles).Register();
+		Recipe.Create(ItemID.GravitationPotion).AddIngredient(ItemID.Blinkroot).AddIngredient(ItemID.Fireblossom)
+			.AddIngredient(ItemID.Deathweed).AddIngredient(Type).AddIngredient(ItemID.BottledWater).AddTile(TileID.Bottles).Register();
 	}
 }
 
