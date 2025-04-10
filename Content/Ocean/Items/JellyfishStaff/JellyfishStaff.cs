@@ -21,7 +21,7 @@ public class JellyfishStaff : ModItem
 		Item.value = Item.sellPrice(0, 2, 0, 0);
 		Item.rare = ItemRarityID.Blue;
 		Item.mana = 10;
-		Item.damage = 11;
+		Item.damage = 12;
 		Item.knockBack = 2.5f;
 		Item.useStyle = ItemUseStyleID.Swing;
 		Item.useTime = 30;

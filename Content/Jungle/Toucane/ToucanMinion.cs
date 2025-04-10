@@ -217,10 +217,10 @@ public class ToucanMinion : BaseMinion
 	{
 		const int FeatherMinRange = 200;
 		const int FeatherMaxRange = 600;
-		const int FeatherShootTime = 25;
+		const int FeatherShootTime = 18;
 		const int FeatherShots = 3;
 		const float GlideStartVelocity = 9;
-		const float GlideMaxVelocity = 13;
+		const float GlideMaxVelocity = 14;
 		const int GlideTime = 45;
 
 		Projectile.tileCollide = AiState is STATE_GLIDING or STATE_FEATHERSHOOT;
@@ -279,7 +279,7 @@ public class ToucanMinion : BaseMinion
 					if (Main.netMode != NetmodeID.Server)
 						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/SmallProjectileWoosh_1") with { PitchVariance = 0.3f, Volume = 1.25f }, Projectile.Center);
 
-					Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.DirectionTo(target.Center) * 8, ModContent.ProjectileType<ToucanFeather>(), (int)(Projectile.damage * 0.8), Projectile.knockBack, Projectile.owner);
+					Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.DirectionTo(target.Center) * 8, ModContent.ProjectileType<ToucanFeather>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
 					for (int j = 0; j < 6; j++)
 					{
 						var dust = Dust.NewDustPerfect(Projectile.Center, 90, Projectile.DirectionTo(target.Center).RotatedByRandom(MathHelper.Pi / 3) * Main.rand.NextFloat(1f, 2f), 100, default, Main.rand.NextFloat(0.15f, 0.3f));

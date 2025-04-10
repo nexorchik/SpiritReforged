@@ -16,7 +16,7 @@ public class JellyfishBolt : ModProjectile
 		set => Projectile.ai[0] = value ? 1 : 0;
 	}
 
-	public static int MAX_CHAIN_DISTANCE => (int)(JellyfishMinion.SHOOT_RANGE * 0.66f);
+	public static int MAX_CHAIN_DISTANCE => (int)(JellyfishMinion.SHOOT_RANGE * 0.75f);
 	public static int HITSCAN_STEP { get; set; } = 5;
 
 	public Vector2 startPos;
@@ -29,7 +29,7 @@ public class JellyfishBolt : ModProjectile
 	{
 		Projectile.friendly = true;
 		Projectile.hostile = false;
-		Projectile.penetrate = 3; //Number of chains between enemies
+		Projectile.penetrate = 4; //Number of chains between enemies
 		Projectile.timeLeft = JellyfishMinion.SHOOT_RANGE / HITSCAN_STEP;
 		Projectile.height = 4;
 		Projectile.width = 4;
@@ -67,7 +67,7 @@ public class JellyfishBolt : ModProjectile
 				Projectile.velocity = Projectile.DirectionTo(newTarget.Center) * HITSCAN_STEP;
 				startPos = target.Center;
 				Projectile.netUpdate = true;
-				Projectile.damage = (int)(Projectile.damage * 0.8f);
+				Projectile.damage = (int)(Projectile.damage * 0.9f);
 			}
 			else
 				Projectile.penetrate = 0;
@@ -77,7 +77,6 @@ public class JellyfishBolt : ModProjectile
 	/// <summary> Can be shared between all clients in multiplayer for synced hit effects. </summary>
 	public void SharedOnHitNPC(NPC target)
 	{
-		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricSting") with { PitchVariance = 0.5f, Pitch = .65f, Volume = 0.8f, MaxInstances = 3 }, Projectile.Center);
 		ParticleHandler.SpawnParticle(new LightningParticle(startPos, target.Center, ParticleColor, 30, 30f));
 
 		HitEffects(target.Center);
