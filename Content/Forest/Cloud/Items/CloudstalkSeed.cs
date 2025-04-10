@@ -9,5 +9,7 @@ public class CloudstalkSeed : ModItem
 		Item.DefaultToPlaceableTile(ModContent.TileType<CloudstalkTile>());
 		Item.width = 22;
 		Item.height = 18;
+		Item.shopCustomPrice = 1000;
+		Item.value = 0;
 	}
 }

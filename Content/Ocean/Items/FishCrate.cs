@@ -1,5 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.ItemCommon.FloatingItem;
+using SpiritReforged.Common.ModCompat;
 using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Ocean.Items;
@@ -44,6 +45,16 @@ public class FishCrate : FloatingItem
 
 		itemLoot.AddCommon(ItemID.SilverCoin, 3, 40, 91);
 		itemLoot.AddCommon(ItemID.GoldCoin, 7, 2, 5);
+
+		// Thorium Crossmod
+		if (ThoriumCompat.Enabled)
+		{
+			if (ThoriumCompat.Instance.TryFind("HatFish", out ModItem hatfish))
+				itemLoot.AddCommon(hatfish.Type, 25);
+
+			if (ThoriumCompat.Instance.TryFind("SubterraneanBulb", out ModItem anglerBulb))
+				itemLoot.AddCommon(anglerBulb.Type, 100);
+		}
 	}
 }
 
