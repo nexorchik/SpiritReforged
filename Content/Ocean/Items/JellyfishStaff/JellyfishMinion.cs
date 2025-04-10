@@ -31,9 +31,9 @@ public class JellyfishMinion : BaseMinion
 	private const int AISTATE_SHOOT = 5; //when near target, hover in place and shoot lightning
 
 	//Constants used in drawing methods and for the ai pattern
-	private const int SHOOTTIME = 60; //Time between shots
+	private const int SHOOTTIME = 45; //Time between shots
 	private const int DASHTIME = 30; //Time the dash takes
-	private const int AIMTIME = 60; //Time it takes to aim the dash
+	private const int AIMTIME = 50; //Time it takes to aim the dash
 	private const int BOUNCETIME = 90; //General time between bounces
 	private const int RISETIME = 20; //Time it takes to rise upwards after the dash
 
@@ -214,8 +214,8 @@ public class JellyfishMinion : BaseMinion
 				if (AiTimer % SHOOTTIME == 0)
 				{
 					Color particleColor = IsPink ? new Color(255, 161, 225) : new Color(156, 255, 245);
-					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricZap") with { PitchVariance = 0.3f, Pitch = 0.3f, Volume = .55f, MaxInstances = 3 }, Projectile.Center);
-					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricZap2") with { Pitch = -.45f, Volume = .35f, MaxInstances = 3 }, Projectile.Center);
+					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricZap") with { Pitch = -.55f, Volume = .55f, MaxInstances = 3 }, Projectile.Center);
+					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/ElectricZap2") with { Pitch = -.65f, Volume = .35f, MaxInstances = 3 }, Projectile.Center);
 					ParticleHandler.SpawnParticle(new TexturedPulseCircle(
 						Projectile.Center + aimDirection * 10,
 						Color.White.Additive(),
