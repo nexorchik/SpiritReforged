@@ -1,11 +1,16 @@
 ﻿
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Content.Forest.Cloud.Items;
+using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Content.Ocean.Items.JellyfishStaff;
+using SpiritReforged.Content.Savanna.Items.Food;
+using SpiritReforged.Content.Savanna.Tiles;
 using SpiritReforged.Content.Savanna.Tiles.Paintings;
 using SpiritReforged.Content.Underground.ExplorerTreads;
 using SpiritReforged.Content.Vanilla.Food;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 namespace SpiritReforged.Common.ModCompat;
@@ -58,6 +63,18 @@ internal class ThoriumGlobalNPC : GlobalNPC
 				if (shop.NpcType == druid.Type)
 					shop.Add(ModContent.ItemType<CloudstalkSeed>(), Condition.DownedEyeOfCthulhu);
 			}
+		}
+	}
+}
+
+internal class ThoriumGlobalTile : GlobalTile
+{
+	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
+	{
+		if (ThoriumCompat.Enabled && ThoriumCompat.Instance.TryFind("LivingLeaf", out ModItem livingLeaf))
+		{
+			if (type == ModContent.TileType<LivingBaobabLeaf>() && Main.rand.NextBool(3))
+				ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), livingLeaf.Type, new Rectangle(i * 16, j * 16, 16, 16).Center(), true);
 		}
 	}
 }
