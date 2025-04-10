@@ -1,14 +1,17 @@
 ﻿namespace SpiritReforged.Common.ModCompat;
 
-internal class FablesCompat : ModSystem
+internal class FablesCompat : ILoadable
 {
-	public static Mod Instance;
-	public static bool Enabled => Instance != null;
+	private const string FablesName = "CalamityFables";
 
-	public override void Load()
+	internal static Mod Instance = null;
+	public static bool Enabled => Instance != null || ModLoader.HasMod(FablesName);
+
+	public void Load(Mod mod)
 	{
-		Instance = null;
-		if (!ModLoader.TryGetMod("CalamityFables", out Instance))
+		if (!ModLoader.TryGetMod(FablesName, out Instance))
 			return;
 	}
+
+	public void Unload() { }
 }

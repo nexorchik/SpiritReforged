@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.TileCommon;
+﻿using SpiritReforged.Common.ModCompat;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.WorldGeneration.Chests;
 using SpiritReforged.Common.WorldGeneration.PointOfInterest;
 using SpiritReforged.Content.Forest.Botanist.Tiles;
@@ -47,6 +48,8 @@ internal class SpecialPointMappingMicropass : Micropass
 						PointOfInterestSystem.AddPoint(new(i, j), InterestType.EnchantedSword);
                     else if (tile.TileType == ModContent.TileType<ButterflyStump>() && tile.TileFrameX == 0 && tile.TileFrameY == 0)
 						PointOfInterestSystem.AddPoint(new(i, j), InterestType.ButterflyShrine);
+					else if (FablesCompat.Enabled && TryGetWulfrumVaultType(out int type) && type == tile.TileType)
+						PointOfInterestSystem.AddPoint(new(i, j), InterestType.WulfrumBunker);
 					else
 					{
 						HashSet<int> curiosityTypes = [ModContent.TileType<BlunderbussTile>(), ModContent.TileType<PearlStringTile>(), 
@@ -59,7 +62,29 @@ internal class SpecialPointMappingMicropass : Micropass
 			}
 		}
 
+		if (ThoriumCompat.Enabled && ThoriumCompat.Instance.Call("GetBloodChamberBounds") is Rectangle bounds)
+			PointOfInterestSystem.AddPoint(bounds.Center().ToPoint16(), InterestType.BloodAltar);
+
 		PointOfInterestSystem.Instance.WorldGen_PointsOfInterestByPosition = PointOfInterestSystem.Instance.PointsOfInterestByPosition;
 		PointOfInterestSystem.Instance.WorldGen_TakenInterestTypes = PointOfInterestSystem.Instance.TakenInterestTypes;
+	}
+
+	private static int WulfrumVaultType = -1;
+	private static bool TryGetWulfrumVaultType(out int type) //Fables compatibility
+	{
+		if (WulfrumVaultType != -1)
+		{
+			type = WulfrumVaultType;
+			return true;
+		}
+
+		if (FablesCompat.Instance.TryFind("WulfrumVault", out ModTile tile))
+		{
+			type = WulfrumVaultType = tile.Type;
+			return true;
+		}
+
+		type = 0;
+		return false;
 	}
 }

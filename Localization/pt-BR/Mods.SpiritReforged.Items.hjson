@@ -1328,3 +1328,13 @@ SparrowCageItem: {
 	DisplayName: Gaiola de Pardal
 	Tooltip: ""
 }
+
+PinBlood: {
+	// DisplayName: Pin Blood
+	// Tooltip: ""
+}
+
+PinWulfrum: {
+	// DisplayName: Pin Wulfrum
+	// Tooltip: ""
+}

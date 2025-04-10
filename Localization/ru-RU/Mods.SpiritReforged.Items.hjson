@@ -1320,3 +1320,13 @@ SparrowCageItem: {
 	DisplayName: Клетка с воробьём
 	Tooltip: ""
 }
+
+PinBlood: {
+	// DisplayName: Pin Blood
+	// Tooltip: ""
+}
+
+PinWulfrum: {
+	// DisplayName: Pin Wulfrum
+	// Tooltip: ""
+}

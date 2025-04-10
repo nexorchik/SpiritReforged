@@ -10,6 +10,7 @@ using SpiritReforged.Common.WorldGeneration.PointOfInterest;
 using SpiritReforged.Common.NPCCommon.Abstract;
 using SpiritReforged.Common.PlayerCommon;
 using System.IO;
+using SpiritReforged.Common.ModCompat;
 
 namespace SpiritReforged.Content.Forest.Misc;
 
@@ -113,6 +114,11 @@ public class Cartographer : WorldNPC
 
 		static int GetPinType(InterestType interest)
 		{
+			if (interest is InterestType.BloodAltar && ThoriumCompat.Enabled)
+				return ModContent.ItemType<PinBlood>();
+			else if (interest is InterestType.WulfrumBunker && FablesCompat.Enabled)
+				return ModContent.ItemType<PinWulfrum>();
+
 			int type = interest switch
 			{
 				InterestType.FloatingIsland => ModContent.ItemType<PinSky>(),

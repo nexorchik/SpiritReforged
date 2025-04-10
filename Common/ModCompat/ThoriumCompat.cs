@@ -8,13 +8,14 @@ namespace SpiritReforged.Common.ModCompat;
 
 internal class ThoriumCompat : ILoadable
 {
-	internal static Mod Instance;
-	public static bool Enabled => Instance != null;
+	private const string ThoriumName = "ThoriumMod";
+
+	internal static Mod Instance = null;
+	public static bool Enabled => Instance != null || ModLoader.HasMod(ThoriumName);
 
 	public void Load(Mod mod)
 	{
-		Instance = null;
-		if (!ModLoader.TryGetMod("ThoriumMod", out Instance))
+		if (!ModLoader.TryGetMod(ThoriumName, out Instance))
 			return;
 	}
 

@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.ItemCommon.Pins;
 using SpiritReforged.Common.UI.System;
 using SpiritReforged.Common.Visuals;
+using SpiritReforged.Content.Forest.Misc.Pins;
 using Terraria.GameInput;
 using Terraria.UI;
 
@@ -99,8 +100,6 @@ internal class PinUIState : AutoUIState
 			}
 		}
 	}
-
-	public override void Draw(SpriteBatch spriteBatch) => base.Draw(spriteBatch);
 
 	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
