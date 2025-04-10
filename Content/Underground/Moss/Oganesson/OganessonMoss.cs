@@ -1,12 +1,8 @@
-using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.CheckItemUse;
-using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Dusts;
-using SpiritReforged.Content.Ocean.Tiles;
-using SpiritReforged.Content.Savanna.Tiles;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Moss.Oganesson;
@@ -21,10 +17,14 @@ public class OganessonMoss : GrassTile
 	{
 		base.SetStaticDefaults();
 
+		Main.tileMoss[Type] = true;
+
 		RegisterItemDrop(ItemID.StoneBlock);
 		AddMapEntry(MapColor);
 		this.Merge(TileID.Stone, TileID.GrayBrick);
+
 		DustType = ModContent.DustType<OganessonMossDust>();
+		HitSound = SoundID.Grass;
 	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
@@ -47,10 +47,20 @@ public class OganessonMoss : GrassTile
 	protected virtual void GrowTiles(int i, int j)
 	{
 		Point16[] offset = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
-		var coords = new Point16(i, j) + offset[Main.rand.Next(4)];
-
+		int offsetDir = Main.rand.Next(4);
+		var coords = new Point16(i, j) + offset[offsetDir];
+		var self = Framing.GetTileSafely(i, j);
 		var current = Framing.GetTileSafely(coords);
-		if (!current.HasTile)
+
+		bool noSlope = self.Slope == SlopeType.Solid || offsetDir switch
+		{
+			0 => self.TopSlope,
+			1 => self.LeftSlope,
+			2 => self.RightSlope,
+			_ => self.BottomSlope
+		};
+
+		if (!current.HasTile && noSlope)
 		{
 			Placer.PlaceTile<OganessonPlants>(coords.X, coords.Y, Main.rand.Next(OganessonPlants.StyleRange));
 			return;
@@ -71,7 +81,9 @@ public class OganessonMossGrayBrick : GrassTile
 		RegisterItemDrop(ItemID.GrayBrick);
 		AddMapEntry(MapColor);
 		this.Merge(TileID.Stone, TileID.GrayBrick);
+
 		DustType = ModContent.DustType<OganessonMossDust>();
+		HitSound = SoundID.Grass;
 	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
@@ -94,10 +106,20 @@ public class OganessonMossGrayBrick : GrassTile
 	protected virtual void GrowTiles(int i, int j)
 	{
 		Point16[] offset = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
-		var coords = new Point16(i, j) + offset[Main.rand.Next(4)];
-
+		int offsetDir = Main.rand.Next(4);
+		var coords = new Point16(i, j) + offset[offsetDir];
+		var self = Framing.GetTileSafely(i, j);
 		var current = Framing.GetTileSafely(coords);
-		if (!current.HasTile)
+
+		bool badSlope = self.Slope == SlopeType.Solid || offsetDir switch
+		{
+			0 => self.TopSlope,
+			1 => self.LeftSlope,
+			2 => self.RightSlope,
+			_ => self.BottomSlope
+		};
+
+		if (!current.HasTile && !badSlope)
 		{
 			Placer.PlaceTile<OganessonPlants>(coords.X, coords.Y, Main.rand.Next(OganessonPlants.StyleRange));
 			return;
@@ -142,7 +164,9 @@ public class OganessonPlants : ModTile, ICheckItemUse
 		TileObjectData.addTile(Type);
 
 		AddMapEntry(new Color(180, 180, 180));
+
 		DustType = ModContent.DustType<OganessonMossDust>();
+		HitSound = SoundID.Grass;
 	}
 
 	public override IEnumerable<Item> GetItemDrops(int i, int j)
