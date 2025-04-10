@@ -15,17 +15,19 @@ using Terraria.ModLoader;
 
 namespace SpiritReforged.Common.ModCompat;
 
-internal class ThoriumCompat : ModSystem
+internal class ThoriumCompat : ILoadable
 {
 	public static Mod Instance;
 	public static bool Enabled => Instance != null;
 
-	public override void Load()
+	public void Load(Mod mod)
 	{
 		Instance = null;
 		if (!ModLoader.TryGetMod("ThoriumMod", out Instance))
 			return;
 	}
+
+	public void Unload() { }
 }
 
 internal class ThoriumGlobalNPC : GlobalNPC
@@ -69,12 +71,21 @@ internal class ThoriumGlobalNPC : GlobalNPC
 
 internal class ThoriumGlobalTile : GlobalTile
 {
+	private static int? livingLeafCache;
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (ThoriumCompat.Enabled && ThoriumCompat.Instance.TryFind("LivingLeaf", out ModItem livingLeaf))
+		if (ThoriumCompat.Enabled)
 		{
-			if (type == ModContent.TileType<LivingBaobabLeaf>() && Main.rand.NextBool(3))
-				ItemMethods.NewItemSynced(new EntitySource_TileBreak(i, j), livingLeaf.Type, new Rectangle(i * 16, j * 16, 16, 16).Center(), true);
+			if (!livingLeafCache.HasValue && ThoriumCompat.Instance.TryFind("LivingLeaf", out ModItem livingLeaf))
+			{
+				livingLeafCache = livingLeaf.Type;
+			}
+
+			if (type == ModContent.TileType<LivingBaobabLeaf>() && !fail && !effectOnly)
+			{
+				if (Main.rand.NextBool(3))
+					Item.NewItem(new EntitySource_TileBreak(i, j), new Rectangle(i * 16, j * 16, 16, 16).Center(), livingLeafCache.Value, 1);
+			}
 		}
 	}
 }
