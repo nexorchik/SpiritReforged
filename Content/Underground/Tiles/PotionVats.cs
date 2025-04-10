@@ -6,11 +6,12 @@ using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using SpiritReforged.Common.Misc;
+using SpiritReforged.Content.Forest.Cloud.Items;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
 [AutoloadGlowmask("200,200,200")]
-public class PotionVats : PotTile
+public class PotionVats : PotTile, ICutAttempt
 {
 	private static Asset<Texture2D> FluidTexture;
 
@@ -23,7 +24,7 @@ public class PotionVats : PotTile
 	public override void AddRecord(int type, StyleDatabase.StyleGroup group) => RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddRating(4));
 	public override void AddObjectData()
 	{
-		Main.tileCut[Type] = false;
+		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3);
 		TileObjectData.newTile.Height = 5;
@@ -49,17 +50,36 @@ public class PotionVats : PotTile
 		fail = AdjustFrame(i, j);
 	}
 
+	public bool OnCutAttempt(int i, int j)
+	{
+		bool fail = AdjustFrame(i, j);
+
+		var cache = Main.tile[i, j];
+		WorldGen.KillTile_MakeTileDust(i, j, cache);
+		WorldGen.KillTile_PlaySounds(i, j, true, cache);
+
+		return !fail;
+	}
+
 	public override bool KillSound(int i, int j, bool fail)
 	{
-		if (fail || Autoloader.IsRubble(Type))
+		if (Autoloader.IsRubble(Type))
 			return true;
 
 		var pos = new Vector2(i, j).ToWorldCoordinates(16, 16);
 
-		SoundEngine.PlaySound(SoundID.Shatter with { Pitch = .5f }, pos);
-		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/PotBreak") with { Volume = .16f, Pitch = .8f, }, pos);
+		if (!fail)
+		{
+			SoundEngine.PlaySound(SoundID.Shatter with { Pitch = .5f }, pos);
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/PotBreak") with { Volume = .16f, Pitch = .8f, }, pos);
+		}
+		else
+		{
+			int phase = Main.tile[i, j].TileFrameX / 54;
+			SoundEngine.PlaySound(SoundID.Shatter with { Pitch = phase / 4f }, pos);
+		}
 
-		return true;
+		return false;
 	}
 
 	private static bool AdjustFrame(int i, int j)
@@ -83,10 +103,6 @@ public class PotionVats : PotTile
 		return true;
 	}
 
-	public override void KillMultiTile(int i, int j, int frameX, int frameY)
-	{
-	}
-
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		var texture = FluidTexture.Value;
@@ -98,15 +114,38 @@ public class PotionVats : PotTile
 		var color = Lighting.GetColor(i, j).MultiplyRGBA(Main.DiscoColor.Additive(150));
 		spriteBatch.Draw(texture, position, frame, color);
 
-		/*var square = new SquarePrimitive()
-		{
-			Color = Color.White,
-			Height = 30,
-			Length = 20,
-			Position = new Vector2(i, j).ToWorldCoordinates() - Main.screenPosition
-		};
-
-		PrimitiveRenderer.DrawPrimitiveShapeBatched([square]);*/
 		return true;
+	}
+}
+
+public class VatSlot : SingleSlotEntity
+{
+	public static readonly Dictionary<int, Color> BrewColor = new()
+	{
+		{ ItemID.GravitationPotion, Color.Purple },
+		{ ItemID.FeatherfallPotion, Color.White },
+		{ ItemID.BattlePotion, Color.White },
+		{ ItemID.CalmingPotion, new Color(102, 101, 201) },
+		{ ItemID.EndurancePotion, Color.White },
+		{ ItemID.TrapsightPotion, Color.White },
+		{ ItemID.HunterPotion, Color.White },
+		{ ItemID.ShinePotion, Color.White },
+		{ ItemID.MiningPotion, Color.White },
+		{ ItemID.SpelunkerPotion, Color.Goldenrod },
+		{ ItemID.SwiftnessPotion, Color.LightSeaGreen },
+		{ ItemID.WrathPotion, Color.White },
+		{ ItemID.ObsidianSkinPotion, Color.White },
+		{ ModContent.ItemType<DoubleJumpPotion>(), Color.White },
+		{ ItemID.LuckPotion, Color.White },
+		{ ItemID.IronskinPotion, Color.White },
+		{ ItemID.LifeforcePotion, new Color(250, 64, 188) }
+	};
+
+	public override bool CanAddItem(Item item) => false;
+
+	public override bool IsTileValidForEntity(int x, int y)
+	{
+		var t = Framing.GetTileSafely(x, y);
+		return t.HasTile && t.TileType == ModContent.TileType<SilverFoodPlatter>() && TileObjectData.IsTopLeft(x, y);
 	}
 }

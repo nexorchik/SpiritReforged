@@ -51,10 +51,10 @@ public abstract class PotTile : ModTile, IRecordTile, IAutoloadRubble
 		Main.tileFrameImportant[Type] = true;
 		Main.tileSpelunker[Type] = true;
 
-		AddObjectData();
-
 		AddMapEntry(new Color(100, 90, 35), Language.GetText("MapObject.Pot"));
 		DustType = -1;
+
+		AddObjectData();
 	}
 
 	/// <summary> Adds object data for this pot. By default, assumes <see cref="TileObjectData.Style2x2"/> with <see cref="TileObjectData.StyleWrapLimit"/> of 3. </summary>

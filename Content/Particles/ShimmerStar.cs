@@ -16,7 +16,7 @@ public class ShimmerStar : Particle
 		Velocity = velocity;
 	}
 
-	public override void Update() { }
+	public override void Update() => Rotation += .01f;
 
 	public override void CustomDraw(SpriteBatch spriteBatch)
 	{

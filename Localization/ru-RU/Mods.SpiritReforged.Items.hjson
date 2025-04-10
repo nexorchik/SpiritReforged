@@ -1541,11 +1541,16 @@ AetherShipmentItem: {
 }
 
 PotionVatsAntiqueItem: {
-	// DisplayName: Potion Vats Antique Item
+	// DisplayName: Antique Potion Vat
 	// Tooltip: ""
 }
 
 PotionVatsCloningItem: {
-	// DisplayName: Potion Vats Cloning Item
+	// DisplayName: Cloning Potion Vat
+	// Tooltip: ""
+}
+
+SilverFoodPlatterItem: {
+	// DisplayName: Silver Food Platter
 	// Tooltip: ""
 }

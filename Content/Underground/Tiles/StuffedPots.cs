@@ -28,7 +28,7 @@ public class StuffedPots : PotTile
 		if (!closer || !TileObjectData.IsTopLeft(i, j))
 			return;
 
-		var position = new Vector2(i, j).ToWorldCoordinates(16, 0);
+		var position = new Vector2(i, j).ToWorldCoordinates(16, 8);
 		float chance = Main.LocalPlayer.DistanceSQ(position) / (200 * 200) + 5;
 
 		if (Main.rand.NextFloat(chance) < .1f)
@@ -37,7 +37,7 @@ public class StuffedPots : PotTile
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
-		if (!Autoloader.IsRubble(Type))
+		if (Main.netMode != NetmodeID.MultiplayerClient && !Autoloader.IsRubble(Type))
 			NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), new Vector2(i, j).ToWorldCoordinates(16, 16), NPCID.SkeletonMerchant);
 
 		base.KillMultiTile(i, j, frameX, frameY);

@@ -21,7 +21,7 @@ public class GlowTileHandler : ILoadable
 		float lighting = Math.Min(Lighting.Brightness(r.X, r.Y) * 3f, 1);
 		color *= MathHelper.Clamp(1f - Main.LocalPlayer.DistanceSQ(world) / (proximity * proximity), 0, 1) * lighting;
 
-		GlowPoints.Add(r, color);
+		GlowPoints.TryAdd(r, color);
 	}
 
 	public void Load(Mod mod)
@@ -49,7 +49,9 @@ public class GlowTileHandler : ILoadable
 			GlowPoints.Clear();
 	}
 
-	private static void DrawGlow(Vector2 drawPosition, Color color, int width, int height)
+	/// <summary> Draws a fancy glow effect at the given tile region. <para/>
+	/// If a point doesn't need to be queued using <see cref="AddGlowPoint"/> due to batching, call this directly.</summary>
+	public static void DrawGlow(Vector2 drawPosition, Color color, int width, int height)
 	{
 		const int spread = 5;
 
