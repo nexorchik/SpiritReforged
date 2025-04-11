@@ -203,7 +203,7 @@ internal class NullBombProjectile : GlobalProjectile
 	public override void Load() => On_Projectile.ExplodeTiles += PreventTileDamage;
 	private static void PreventTileDamage(On_Projectile.orig_ExplodeTiles orig, Projectile self, Vector2 compareSpot, int radius, int minI, int maxI, int minJ, int maxJ, bool wallSplode)
 	{
-		if (self.GetGlobalProjectile<NullBombProjectile>().noExplode)
+		if (self.TryGetGlobalProjectile(out NullBombProjectile n) && n.noExplode)
 			return;
 
 		orig(self, compareSpot, radius, minI, maxI, minJ, maxJ, wallSplode);
