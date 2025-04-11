@@ -1562,3 +1562,13 @@ SilverFoodPlatterItem: {
 	DisplayName: Silver Food Platter
 	Tooltip: ""
 }
+
+RadonMossItem: {
+	DisplayName: Radon Moss
+	Tooltip: 'A sight to dwell upon and never forget'
+}
+
+OganessonMossItem: {
+	DisplayName: Oganesson Moss
+	Tooltip: 'A sight to dwell upon and never forget'
+}
