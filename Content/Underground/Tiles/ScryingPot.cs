@@ -1,8 +1,10 @@
 using RubbleAutoloader;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Forest.Misc.Maps;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
 
@@ -11,6 +13,12 @@ namespace SpiritReforged.Content.Underground.Tiles;
 public class ScryingPot : PotTile
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0] } };
+
+	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
+	{
+		var record = new TileRecord(group.name, type, group.styles);
+		RecordHandler.Records.Add(record.AddRating(3).AddDescription(Language.GetText(TileRecord.DescKey + ".Scrying")));
+	}
 
 	public override void AddObjectData()
 	{
@@ -26,6 +34,8 @@ public class ScryingPot : PotTile
 		TileObjectData.newTile.DrawXOffset = 1;
 		TileObjectData.newTile.DrawYOffset = 2;
 		TileObjectData.addTile(Type);
+
+		DustType = DustID.Pot;
 	}
 
 	public override bool KillSound(int i, int j, bool fail)
@@ -49,7 +59,7 @@ public class ScryingPot : PotTile
 			return;
 
 		var spawn = new Vector2(i, j).ToWorldCoordinates(16, 16);
-		TornMapPiece.LightMap(i, j, 300, out _, .5f);
+		TornMapPiece.LightMap(i, j, 280, out _, .5f);
 
 		ParticleHandler.SpawnParticle(new TexturedPulseCircle(spawn, Color.MediumPurple * .15f, .25f, 400, 20, "supPerlin", Vector2.One, Common.Easing.EaseFunction.EaseQuadOut));
 		SoundEngine.PlaySound(SoundID.NPCDeath6 with { Pitch = .5f }, spawn);
