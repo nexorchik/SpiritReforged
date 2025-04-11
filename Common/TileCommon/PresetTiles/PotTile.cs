@@ -80,7 +80,7 @@ public abstract class PotTile : ModTile, IRecordTile, IAutoloadRubble
 
 		if (Main.netMode != NetmodeID.MultiplayerClient && this is ILootTile loot)
 		{
-			var position = new Vector2(i, j).ToWorldCoordinates(12, 12);
+			var position = new Vector2(i, j).ToWorldCoordinates(16, 16);
 
 			var p = Main.player[Player.FindClosest(position, 0, 0)];
 			loot.AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)position.X - 16, (int)position.Y - 16, 32, 32), p);

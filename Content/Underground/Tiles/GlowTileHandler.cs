@@ -15,11 +15,11 @@ public class GlowTileHandler : ILoadable
 		var world = r.Location.ToWorldCoordinates(r.Width / 2, r.Height / 2);
 		float value = Main.LocalPlayer.DistanceSQ(world) / (proximity * proximity);
 
-		if (value > .99f)
+		if (value > 1)
 			return;
 
 		float lighting = Math.Min(Lighting.Brightness(r.X, r.Y) * 3f, 1);
-		color *= MathHelper.Clamp(1f - Main.LocalPlayer.DistanceSQ(world) / (proximity * proximity), 0, 1) * lighting;
+		color *= (1f - value) * lighting;
 
 		GlowPoints.TryAdd(r, color);
 	}
@@ -35,7 +35,7 @@ public class GlowTileHandler : ILoadable
 		foreach (var p in GlowPoints.Keys)
 		{
 			var world = p.Location.ToWorldCoordinates(p.Width / 2, p.Height / 2 + 2);
-			DrawGlow(world - Main.screenPosition, (GlowPoints[p] == default) ? Color.Goldenrod : GlowPoints[p], p.Width, p.Height);
+			DrawGlow(world - Main.screenPosition, GlowPoints[p], p.Width, p.Height);
 		}
 	}
 
@@ -53,7 +53,7 @@ public class GlowTileHandler : ILoadable
 	/// If a point doesn't need to be queued using <see cref="AddGlowPoint"/> due to batching, call this directly.</summary>
 	public static void DrawGlow(Vector2 drawPosition, Color color, int width, int height)
 	{
-		const int spread = 5;
+		const int spread = 10;
 
 		var region = new Rectangle((int)drawPosition.X - width / 2, (int)drawPosition.Y - height / 2, width, height);
 		var c = Color.White;

@@ -15,7 +15,12 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
 
 	private static Color GlowColor => Color.Lerp(Color.Magenta, Color.CadetBlue, (float)(Math.Sin(Main.timeForVisualEffects / 40f) / 2f) + .5f);
-	public override void AddRecord(int type, StyleDatabase.StyleGroup group) => RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddRating(5));
+	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
+	{
+		var desc = Language.GetText("Mods.SpiritReforged.Tiles.Records.Aether");
+		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(5));
+	}
+
 	public override void AddObjectData()
 	{
 		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
@@ -85,7 +90,6 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 		if (!fail)
 		{
-			SoundEngine.PlaySound(SoundID.Shatter, pos);
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/PotBreak") with { Volume = .12f, PitchRange = (.4f, .8f), }, pos);
 		}
 		else
@@ -122,17 +126,20 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 	{
 		var source = new EntitySource_TileBreak(i, j);
 
-		for (int g = 1; g < 6; g++)
+		for (int g = 1; g < 7; g++)
 		{
 			int goreType = Mod.Find<ModGore>("Aether" + g).Type;
-			Gore.NewGore(source, Main.rand.NextVector2FromRectangle(new Rectangle(i * 16, j * 16, 32, 32)), Vector2.Zero, goreType);
+			Gore.NewGore(source, new Vector2(i, j) * 16, Vector2.Zero, goreType);
 		}
 	}
 
 	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		if (TileObjectData.IsTopLeft(i, j))
-			GlowTileHandler.AddGlowPoint(new Rectangle(i, j - 1, 32, 48), GlowColor, 200);
+		{
+			GlowTileHandler.AddGlowPoint(new Rectangle(i, j + 1, 32, 16), GlowColor, 200);
+			Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(16, 16), new Vector3(.1f, .075f, .1f));
+		}
 	}
 
 	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)

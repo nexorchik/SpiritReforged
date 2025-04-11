@@ -1,7 +1,10 @@
 using RubbleAutoloader;
+using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.TileCommon.TileSway;
+using SpiritReforged.Content.Particles;
 using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -14,7 +17,12 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1] } };
 
-	public override void AddRecord(int type, StyleDatabase.StyleGroup group) => RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddRating(4));
+	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
+	{
+		var desc = Language.GetText("Mods.SpiritReforged.Tiles.Records.Worm");
+		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(3));
+	}
+
 	public override void AddObjectData()
 	{
 		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
@@ -90,7 +98,10 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
-		if (Main.netMode != NetmodeID.MultiplayerClient && !Autoloader.IsRubble(Type))
+		if (Autoloader.IsRubble(Type) || WorldGen.generatingWorld)
+			return;
+
+		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
 			var position = new Vector2(i, j).ToWorldCoordinates(16, 16);
 
@@ -106,20 +117,29 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 				var npc = NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), (int)type);
 				npc.velocity = (Vector2.UnitY * -Main.rand.NextFloat(.5f, 2f)).RotatedByRandom(2f);
 			}
+
+			var p = Main.player[Player.FindClosest(position, 0, 0)];
+			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)position.X - 16, (int)position.Y - 16, 32, 32), p);
+
+			ItemMethods.SplitCoins(Main.rand.Next(30000, 50000), delegate (int type, int stack)
+			{
+				Item.NewItem(new EntitySource_TileBreak(i, j), position, new Item(type, stack), noGrabDelay: true);
+			});
 		}
 
-		base.KillMultiTile(i, j, frameX, frameY);
-	}
-
-	public override void DeathEffects(int i, int j, int frameX, int frameY)
-	{
-		var source = new EntitySource_TileBreak(i, j);
-		var position = new Vector2(i, j) * 16;
-
-		for (int g = 1; g < 4; g++)
+		if (!Main.dedServ)
 		{
-			int goreType = Mod.Find<ModGore>("PotWorm" + g).Type;
-			Gore.NewGore(source, position, Vector2.Zero, goreType);
+			var source = new EntitySource_TileBreak(i, j);
+			var position = new Vector2(i, j) * 16;
+
+			for (int g = 1; g < 4; g++)
+			{
+				int goreType = Mod.Find<ModGore>("PotWorm" + g).Type;
+				Gore.NewGore(source, position, Vector2.Zero, goreType);
+			}
+
+			ParticleHandler.SpawnParticle(new SmokeCloud(new Vector2(i, j).ToWorldCoordinates(16, 16),
+				-Vector2.UnitY, Color.LightSeaGreen, .2f, Common.Easing.EaseFunction.EaseSine, 60));
 		}
 	}
 

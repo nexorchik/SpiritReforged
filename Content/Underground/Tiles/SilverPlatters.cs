@@ -1,7 +1,9 @@
 using RubbleAutoloader;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Content.Underground.Pottery;
 using SpiritReforged.Content.Vanilla.Food;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -12,6 +14,11 @@ namespace SpiritReforged.Content.Underground.Tiles;
 public class SilverPlatters : PotTile, ILootTile
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
+	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
+	{
+		var desc = Language.GetText("Mods.SpiritReforged.Tiles.Records.Platter");
+		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(3));
+	}
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{

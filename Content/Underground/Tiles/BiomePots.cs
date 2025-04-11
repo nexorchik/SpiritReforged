@@ -73,7 +73,7 @@ public class BiomePots : PotTile, ILootTile
 		var world = new Vector2(i, j) * 16;
 		float strength = Main.LocalPlayer.DistanceSQ(world) / (distance * distance);
 
-		if (strength < 1 && Main.rand.NextFloat(8f) < 1f - strength)
+		if (strength < 1 && Main.rand.NextFloat(10f) < 1f - strength)
 		{
 			var d = Dust.NewDustDirect(world, 16, 16, DustID.TreasureSparkle, 0, 0, Scale: Main.rand.NextFloat());
 			d.noGravity = true;
@@ -109,7 +109,7 @@ public class BiomePots : PotTile, ILootTile
 		var style = GetStyle(Main.tile[i, j].TileFrameY);
 
 		if (TileObjectData.IsTopLeft(i, j) && style is Style.Gold)
-			GlowTileHandler.AddGlowPoint(new Rectangle(i, j, 32, 32), default, 200);
+			GlowTileHandler.AddGlowPoint(new Rectangle(i, j, 32, 32), Color.Goldenrod, 200);
 
 		if (style is Style.Mushroom)
 			Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Blue.ToVector3());
