@@ -1529,11 +1529,31 @@ MushroomPotsItem: {
 }
 
 RadonMossItem: {
-	// DisplayName: Radon Moss Item
-	// Tooltip: ""
+	// DisplayName: Radon Moss
+	// Tooltip: A sight to dwell upon and never forget
 }
 
 OganessonMossItem: {
-	// DisplayName: Oganesson Moss Item
+	// DisplayName: Oganesson Moss
+	// Tooltip: A sight to dwell upon and never forget
+}
+
+RadonMossBrickItem: {
+	// DisplayName: Radon Moss Brick Item
+	// Tooltip: ""
+}
+
+RadonMossBrickWallItem: {
+	// DisplayName: Radon Moss Brick Wall Item
+	// Tooltip: ""
+}
+
+OganessonMossBrickItem: {
+	// DisplayName: Oganesson Moss Brick Item
+	// Tooltip: ""
+}
+
+OganessonMossBrickWallItem: {
+	// DisplayName: Oganesson Moss Brick Wall Item
 	// Tooltip: ""
 }
