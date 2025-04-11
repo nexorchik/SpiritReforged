@@ -1532,5 +1532,9 @@ OganessonMossItem: {
 
 BombCannon: {
 	// DisplayName: Bomb Cannon
-	// Tooltip: ""
+	/* Tooltip:
+		'''
+		Uses bombs as ammo
+		'A groundbreaking invention'
+		''' */
 }
