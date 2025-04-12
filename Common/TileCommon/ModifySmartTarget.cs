@@ -15,16 +15,6 @@ internal class ModifySmartTarget : ModSystem
 	private static readonly HashSet<IModifySmartTarget> Loaded = [];
 
 	public override void Load() => IL_SmartCursorHelper.SmartCursorLookup += PostCoords;
-
-	public override void SetStaticDefaults()
-	{
-		foreach (var tile in Mod.GetContent<ModTile>())
-		{
-			if (tile is IModifySmartTarget target)
-				Loaded.Add(target);
-		}
-	}
-
 	private static void PostCoords(ILContext il)
 	{
 		var c = new ILCursor(il);
@@ -37,6 +27,15 @@ internal class ModifySmartTarget : ModSystem
 		}
 		else
 			SpiritReforgedMod.Instance.Logger.Debug($"IL edit '{nameof(PostCoords)}' failed");
+	}
+
+	public override void SetStaticDefaults()
+	{
+		foreach (var tile in Mod.GetContent<ModTile>())
+		{
+			if (tile is IModifySmartTarget target)
+				Loaded.Add(target);
+		}
 	}
 
 	private static void Modify(ref int x, ref int y)

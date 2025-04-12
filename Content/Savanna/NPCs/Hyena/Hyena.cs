@@ -192,7 +192,9 @@ public class Hyena : ModNPC
 			}
 			else if (NPC.Distance(target.Center) > spotDistance)
 			{
-				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(target.Center.X - NPC.Center.X) * 1.5f, .05f); //Move toward the target
+				if (!FoundPickup())
+					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(target.Center.X - NPC.Center.X) * 1.5f, .05f); //Move toward the target
+
 				ChangeAnimationState(State.Walking, true);
 			}
 			else
