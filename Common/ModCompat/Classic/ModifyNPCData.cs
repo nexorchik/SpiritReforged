@@ -10,6 +10,9 @@ internal class ModifyNPCData : GlobalNPC
 	{
 		if (npc.type == NPCID.PirateShip && SpiritClassic.ClassicMod.TryFind("PirateKey", out ModItem key))
 			npcLoot.RemoveWhere(rule => rule is CommonDrop drop && drop.itemId == key.Type);
+
+		if (SpiritClassic.ClassicMod.TryFind("RawFish", out ModItem fish))
+			npcLoot.RemoveWhere(rule => rule is CommonDrop drop && drop.itemId == fish.Type);
 	}
 
 	public override void ModifyShop(NPCShop shop)
