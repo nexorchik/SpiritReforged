@@ -1,4 +1,6 @@
-﻿namespace SpiritReforged.Common.ModCompat;
+﻿using SpiritReforged.Content.Ocean.Items.Blunderbuss;
+
+namespace SpiritReforged.Common.ModCompat;
 
 internal class FablesCompat : ModSystem
 {
@@ -12,3 +14,17 @@ internal class FablesCompat : ModSystem
 			return;
 	}
 }
+
+internal class FablesRecipes : ModSystem
+{
+	public override void AddRecipes()
+	{
+		if (FablesCompat.Enabled)
+		{
+			if (FablesCompat.Instance.TryFind("WulfrumBlunderbuss", out ModItem wulfrumBlunderbuss) && FablesCompat.Instance.TryFind("WulfrumMetalScrap", out ModItem wulfrumScrap))
+				Recipe.Create(wulfrumBlunderbuss.Type).AddIngredient(ModContent.ItemType<Blunderbuss>()).AddIngredient(wulfrumScrap.Type, 3)
+					.AddTile(TileID.Anvils).Register();
+		}
+	}
+}
+
