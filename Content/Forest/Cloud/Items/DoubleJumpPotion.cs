@@ -9,8 +9,8 @@ public class DoubleJumpPotion : ModItem
 	{
 		Item.ResearchUnlockCount = 20;
 
-		CrateDatabase.AddCrateRule(ItemID.WoodenCrate, new CommonDrop(Type, 100, 1, 3, 35));
-		CrateDatabase.AddCrateRule(ItemID.WoodenCrateHard, new CommonDrop(Type, 100, 1, 3, 35));
+		ItemLootDatabase.AddItemRule(ItemID.WoodenCrate, new CommonDrop(Type, 100, 1, 3, 35));
+		ItemLootDatabase.AddItemRule(ItemID.WoodenCrateHard, new CommonDrop(Type, 100, 1, 3, 35));
 	}
 
 	public override void SetDefaults()

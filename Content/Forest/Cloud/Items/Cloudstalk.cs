@@ -1,14 +1,37 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.ModCompat.Classic;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.TileCommon.TileTag;
 using SpiritReforged.Content.Jungle.Bamboo.Tiles;
+using System.Linq;
+using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Forest.Cloud.Items;
 
 [FromClassic("CloudstalkItem")]
 public class Cloudstalk : ModItem
 {
-	public override void SetStaticDefaults() => Item.ResearchUnlockCount = 25;
+	public override void SetStaticDefaults()
+	{
+		ItemLootDatabase.ModifyItemRule(ItemID.HerbBag, AddTypesToList);
+		Item.ResearchUnlockCount = 25;
+	}
+
+	/// <summary> Adds Cloudstalk and Cloudstalk Seeds to the Herb Bag drop pool. </summary>
+	private static void AddTypesToList(ref ItemLoot loot)
+	{
+		foreach (var rule in loot.Get())
+		{
+			if (rule is HerbBagDropsItemDropRule herbRule)
+			{
+				var drops = herbRule.dropIds.ToList();
+				drops.AddRange([ModContent.ItemType<Cloudstalk>(), ModContent.ItemType<CloudstalkSeed>()]);
+
+				herbRule.dropIds = [.. drops];
+				return;
+			}
+		}
+	}
 
 	public override void SetDefaults()
 	{

@@ -22,8 +22,8 @@ public class Driftwood : ModTile, IAutoloadTileItem
 		Recipes.AddToGroup(RecipeGroupID.Wood, item.type);
 		item.ResearchUnlockCount = 100;
 
-		CrateDatabase.AddCrateRule(ItemID.OceanCrate, ItemDropRule.Common(item.type, 5, 10, 30));
-		CrateDatabase.AddCrateRule(ItemID.OceanCrateHard, ItemDropRule.Common(item.type, 5, 10, 30));
+		ItemLootDatabase.AddItemRule(ItemID.OceanCrate, ItemDropRule.Common(item.type, 5, 10, 30));
+		ItemLootDatabase.AddItemRule(ItemID.OceanCrateHard, ItemDropRule.Common(item.type, 5, 10, 30));
 
 		SpiritClassic.AddReplacement("DriftwoodTileItem", this.AutoItem().type);
 		ItemID.Sets.ShimmerTransformToItem[this.AutoItem().type] = ItemID.Wood;

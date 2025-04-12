@@ -8,8 +8,8 @@ public class ToucaneItem : ModItem
 {
 	public override void SetStaticDefaults()
 	{
-		CrateDatabase.AddCrateRule(ItemID.JungleFishingCrate, ItemDropRule.Common(Type, 4));
-		CrateDatabase.AddCrateRule(ItemID.JungleFishingCrateHard, ItemDropRule.Common(Type, 8));
+		ItemLootDatabase.AddItemRule(ItemID.JungleFishingCrate, ItemDropRule.Common(Type, 4));
+		ItemLootDatabase.AddItemRule(ItemID.JungleFishingCrateHard, ItemDropRule.Common(Type, 8));
 	}
 
 	public override void SetDefaults()

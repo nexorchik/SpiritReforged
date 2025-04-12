@@ -132,7 +132,7 @@ public class Hyena : ModNPC
 					ChangeAnimationState(State.Trotting, true);
 				}
 				else*/
-				{
+				//{
 					if (!FoundPickup() && Counter % 250 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
 					{
 						float oldTargetSpeed = TargetSpeed;
@@ -149,7 +149,7 @@ public class Hyena : ModNPC
 						ChangeAnimationState(State.Laugh);
 						SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 2 }, NPC.Center);
 					}
-				}
+				//}
 			}
 		}
 		else //Targeting

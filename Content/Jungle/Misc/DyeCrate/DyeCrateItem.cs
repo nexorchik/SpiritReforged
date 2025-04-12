@@ -9,8 +9,8 @@ public class DyeCrateItem : ModItem
 	{
 		Item.ResearchUnlockCount = 10;
 
-		CrateDatabase.AddCrateRule(ItemID.JungleFishingCrate, ItemDropRule.Common(Type, 3));
-		CrateDatabase.AddCrateRule(ItemID.JungleFishingCrateHard, ItemDropRule.Common(Type, 2));
+		ItemLootDatabase.AddItemRule(ItemID.JungleFishingCrate, ItemDropRule.Common(Type, 3));
+		ItemLootDatabase.AddItemRule(ItemID.JungleFishingCrateHard, ItemDropRule.Common(Type, 2));
 	}
 
 	public override void SetDefaults()
