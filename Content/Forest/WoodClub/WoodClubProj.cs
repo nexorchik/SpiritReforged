@@ -1,20 +1,36 @@
+using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.PrimitiveRendering;
+using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 
 namespace SpiritReforged.Content.Forest.WoodClub;
 
-class WoodClubProj : BaseClubProj
+class WoodClubProj : BaseClubProj, IManualTrailProjectile
 {
 	public WoodClubProj() : base(new Vector2(58)) { }
 
-	public override float WindupTimeRatio => 0.6f;
+	public override float WindupTimeRatio => 0.8f;
+	 
+	public void DoTrailCreation(TrailManager tM)
+	{
+		float trailDist = 38;
+		float trailWidth = 38;
+		tM.CreateCustomTrail(new SwingTrail(Projectile, Color.Beige, AngleRange, -HoldAngle_Final, trailDist, trailWidth, GetSwingProgressStatic, BasicSwingShaderParams));
+
+		if(FullCharge)
+			tM.CreateCustomTrail(new SwingTrail(Projectile, Color.Beige * 0.75f, AngleRange * 1.3f, -HoldAngle_Final, 1.1f * trailDist, trailWidth, GetSwingProgressStatic, BasicSwingShaderParams));
+	}
+
+	public override void OnSwingStart() => TrailManager.ManualTrailSpawn(Projectile);
 
 	public override void OnSmash(Vector2 position)
 	{
+		TrailManager.TryTrailKill(Projectile);
 		Collision.HitTiles(Projectile.position, Vector2.UnitY, Projectile.width, Projectile.height);
 
 		DustClouds(8);
 
-		if(Charge == 1)
+		if(FullCharge)
 		{
 			float angle = MathHelper.PiOver4 * 1.5f;
 			if (Projectile.direction > 0)

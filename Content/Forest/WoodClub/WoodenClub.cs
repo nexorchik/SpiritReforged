@@ -8,7 +8,7 @@ public class WoodenClub() : ClubItem()
 	{
 		Item.damage = 18;
 		Item.knockBack = 5;
-		ChargeTime = 60;
+		ChargeTime = 40;
 		SwingTime = 24;
 		Item.width = 60;
 		Item.height = 60;

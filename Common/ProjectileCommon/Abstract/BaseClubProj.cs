@@ -62,7 +62,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 	{
-		if(Charge == 1)
+		if(FullCharge)
 		{
 			modifiers.FinalDamage *= DamageScaling;
 			modifiers.Knockback *= KnockbackScaling;
@@ -71,7 +71,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 
 	public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
 	{
-		if (Charge == 1)
+		if (FullCharge)
 		{
 			modifiers.FinalDamage *= DamageScaling;
 			modifiers.Knockback *= KnockbackScaling;
@@ -108,6 +108,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		if (!owner.channel && _windupTimer >= WindupTime && CheckAiState(AiStates.CHARGING))
 		{
 			SetAiState(AiStates.SWINGING);
+			OnSwingStart();
 
 			if (!Main.dedServ)
 				SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing.WithPitchOffset(-0.75f), owner.Center);
@@ -167,7 +168,11 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 	//Multiplayer syncing
 	public override void SendExtraAI(BinaryWriter writer)
 	{
+		writer.Write(DamageScaling);
+		writer.Write(KnockbackScaling);
+
 		writer.Write(ChargeTime);
+		writer.Write(SwingTime);
 
 		writer.Write(_lingerTimer);
 		writer.Write(_swingTimer);
@@ -179,7 +184,11 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 
 	public override void ReceiveExtraAI(BinaryReader reader)
 	{
+		DamageScaling = reader.ReadSingle();
+		KnockbackScaling = reader.ReadSingle();
+
 		ChargeTime = reader.ReadInt32();
+		SwingTime = reader.ReadInt32();
 
 		_lingerTimer = reader.ReadInt32();
 		_swingTimer = reader.ReadInt32();

@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.PrimitiveRendering.Trail_Components;
+﻿using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
+using SpiritReforged.Common.PrimitiveRendering.Trail_Components;
 
 namespace SpiritReforged.Common.PrimitiveRendering;
 
@@ -21,6 +22,7 @@ public class TrailManager
 		//Contained data originally for determining faster trail dissipation speeds for certain projectiles
 		//But it was all hardcoded for spirit projectiles in this specific file and was a big if else chain and sucked
 		//
+		AssetLoader.VertexTrailManager.TryEndTrail(projectile, 1);
 	}
 
 	public void CreateTrail(Projectile projectile, ITrailColor trailType, ITrailCap trailCap, ITrailPosition trailPosition, float widthAtFront, float maxLength, ITrailShader shader = null, TrailLayer layer = TrailLayer.UnderProjectile, float dissolveSpeed = -1)
@@ -71,6 +73,9 @@ public class TrailManager
 				t.DissolveSpeed = dissolveSpeed;
 				t.StartDissolve();
 			}
+
+			if(trail is SwingTrail swingTrail)
+				swingTrail.StartDissolve();
 		}
 	}
 

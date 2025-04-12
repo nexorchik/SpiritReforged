@@ -13,7 +13,7 @@ public abstract partial class BaseClubProj : ModProjectile
 	public virtual float SwingAngle_Max => Pi * 1.75f;
 
 	public virtual float WindupTimeRatio => 0.5f;
-	public virtual float LingerTimeRatio => 0.75f;
+	public virtual float LingerTimeRatio => 1f;
 	public virtual float HoldPointRatio => 0.1f;
 
 	public virtual float SwingSpeedMult => Charge == 1 ? 1.2f : 1f;
@@ -76,13 +76,13 @@ public abstract partial class BaseClubProj : ModProjectile
 		BaseRotation = Lerp(HoldAngle_Final, SwingAngle_Max, swingEase.Ease(swingProgress));
 
 		//If the club is touching a tile and isn't currently meant to phase through tiles, do the smash
-		if (validTile && swingProgress > PHASE_THRESHOLD)
+		if (validTile && swingProgress > PHASE_THRESHOLD && swingProgress < SHRINK_THRESHOLD)
 		{
 			SetAiState(AiStates.POST_SMASH);
 			OnSmash(Projectile.Center);
 			if (!Main.dedServ)
 			{
-				float volume = Clamp(EaseQuadOut.Ease(Charge), 0.75f, 1f);
+				float volume = Clamp(EaseQuadOut.Ease(Charge), 0.66f, 1f);
 				SoundEngine.PlaySound(SoundID.Item70.WithVolumeScale(volume), Projectile.Center);
 				SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact.WithVolumeScale(volume).WithPitchOffset(-0.5f), Projectile.Center);
 
@@ -125,6 +125,7 @@ public abstract partial class BaseClubProj : ModProjectile
 	public virtual void SafeSetStaticDefaults() { }
 	public virtual void SafeSetDefaults() { }
 	public virtual void SafeAI() { }
+	public virtual void OnSwingStart() { }
 	public virtual void OnSmash(Vector2 position) { }
 	public virtual void SafeDraw(SpriteBatch spriteBatch, Color lightColor) { }
 

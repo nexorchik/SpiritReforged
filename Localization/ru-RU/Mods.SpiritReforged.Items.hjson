@@ -1519,3 +1519,8 @@ MushroomPotsItem: {
 	// DisplayName: Small Mushroom Pot
 	// Tooltip: ""
 }
+
+WoodenClub: {
+	// DisplayName: Wooden Club
+	// Tooltip: ""
+}
