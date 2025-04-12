@@ -96,8 +96,9 @@ public abstract partial class BaseClubProj : ModProjectile
 
 	public static float GetSwingProgressStatic(Projectile Proj) => Proj.ModProjectile is WoodClubProj woodClub ? EaseQuadOut.Ease(woodClub.GetSwingProgress) : 0;
 
-	public static void BasicSwingShaderParams(Effect effect, SwingTrail swingTrail)
+	public static Effect BasicSwingShaderParams(SwingTrail swingTrail)
 	{
+		Effect effect;
 		effect = AssetLoader.LoadedShaders["SwingTrails"];
 		effect.Parameters["baseTexture"].SetValue(AssetLoader.LoadedTextures["supPerlin"].Value);
 		effect.Parameters["baseColorLight"].SetValue(swingTrail.Color.ToVector4());
@@ -110,6 +111,7 @@ public abstract partial class BaseClubProj : ModProjectile
 		effect.Parameters["progress"].SetValue(swingTrail.GetSwingProgress());
 		effect.Parameters["intensity"].SetValue(1.25f);
 		effect.Parameters["opacity"].SetValue(1);
+		return effect;
 	}
 
 	public float AngleRange => SwingAngle_Max - HoldAngle_Final;

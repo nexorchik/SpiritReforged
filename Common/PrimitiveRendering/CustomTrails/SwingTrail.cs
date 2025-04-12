@@ -5,9 +5,9 @@ using static SpiritReforged.Common.Easing.EaseFunction;
 
 namespace SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 
-public class SwingTrail(Projectile Projectile, Color Color, float Radians, float Rotation, Vector2 Dist, Vector2 Width, EaseFunction DistanceEasing, Func<Projectile, float> SwingProgress, Action<Effect, SwingTrail> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile) : BaseTrail(Projectile, layer)
+public class SwingTrail(Projectile Projectile, Color Color, float Radians, float Rotation, Vector2 Dist, Vector2 Width, EaseFunction DistanceEasing, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile) : BaseTrail(Projectile, layer)
 {
-	public SwingTrail(Projectile Projectile, Color Color, float Radians, float Rotation, float Dist, float Width, Func<Projectile, float> SwingProgress, Action<Effect, SwingTrail> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile) 
+	public SwingTrail(Projectile Projectile, Color Color, float Radians, float Rotation, float Dist, float Width, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile) 
 		: this(Projectile, Color, Radians, Rotation, new Vector2(Dist), new Vector2(Width), Linear, SwingProgress, ShaderParams, layer) { }
 
 	public float DissolveSpeed { get; set; }
@@ -56,7 +56,7 @@ public class SwingTrail(Projectile Projectile, Color Color, float Radians, float
 		if (Dead || _timeLeft <= 1) 
 			return;
 
-		ShaderParams(effect, this);
+		effect = ShaderParams(this);
 
 		float minDist = Dist.X;
 		float maxDist = Dist.Y;

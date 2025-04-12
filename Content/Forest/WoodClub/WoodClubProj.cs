@@ -13,8 +13,8 @@ class WoodClubProj : BaseClubProj, IManualTrailProjectile
 	 
 	public void DoTrailCreation(TrailManager tM)
 	{
-		float trailDist = 38;
-		float trailWidth = 38;
+		float trailDist = 52;
+		float trailWidth = 40;
 		tM.CreateCustomTrail(new SwingTrail(Projectile, Color.Beige, AngleRange, -HoldAngle_Final, trailDist, trailWidth, GetSwingProgressStatic, BasicSwingShaderParams));
 
 		if(FullCharge)
