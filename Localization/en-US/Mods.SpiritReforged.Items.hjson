@@ -1530,10 +1530,15 @@ MushroomPotsItem: {
 
 RadonMossItem: {
 	DisplayName: Radon Moss
-	Tooltip: 'A sight to dwell upon and never forget'
+	Tooltip: "{$ItemTooltip.XenonMoss}"
 }
 
 OganessonMossItem: {
 	DisplayName: Oganesson Moss
-	Tooltip: 'A sight to dwell upon and never forget'
+	Tooltip: "{$ItemTooltip.XenonMoss}"
+}
+
+ScryingPotItem: {
+	DisplayName: Scrying Pot
+	Tooltip: ""
 }

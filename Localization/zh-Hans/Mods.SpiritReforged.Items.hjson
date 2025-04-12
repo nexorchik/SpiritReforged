@@ -1529,11 +1529,16 @@ MushroomPotsItem: {
 }
 
 RadonMossItem: {
-	// DisplayName: Radon Moss Item
-	// Tooltip: ""
+	// DisplayName: Radon Moss
+	// Tooltip: "{$ItemTooltip.XenonMoss}"
 }
 
 OganessonMossItem: {
-	// DisplayName: Oganesson Moss Item
+	// DisplayName: Oganesson Moss
+	// Tooltip: "{$ItemTooltip.XenonMoss}"
+}
+
+ScryingPotItem: {
+	// DisplayName: Scrying Pot
 	// Tooltip: ""
 }

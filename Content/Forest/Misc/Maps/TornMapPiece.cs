@@ -45,7 +45,13 @@ public class TornMapPiece : ModItem
 			}
 
 			var point = (player.Center / 16).ToPoint16();
-			LightMap(point.X, point.Y, Radius); //Only light up the user's map
+			LightMap(point.X, point.Y, Radius, out bool ping); //Only light up the user's map
+
+			if (ping)
+			{
+				SoundEngine.PlaySound(SoundID.CoinPickup with { Pitch = -.5f });
+				SoundEngine.PlaySound(SoundID.Coins with { Pitch = 1 });
+			}
 
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/PageFlip") { Pitch = .5f }, player.Center);
 		}
@@ -53,10 +59,11 @@ public class TornMapPiece : ModItem
 		return true;
 	}
 
-	private static void LightMap(int x, int y, int radius)
+	/// <summary> Lights the given tile region on the map, affected by perlin noise. </summary>
+	public static void LightMap(int x, int y, int radius, out bool pingedValuable, float opacity = 1f)
 	{
 		int size = radius / 2;
-		bool playSound = false;
+		pingedValuable = false;
 
 		for (int i = x - size; i <= x + size; ++i)
 		{
@@ -73,23 +80,18 @@ public class TornMapPiece : ModItem
 				if (WorldGen.SolidTile(i, j))
 					addedLight = (byte)(addedLight * .5f);
 
+				addedLight = (byte)(addedLight * opacity); //Final lighting adjustment
 				if (addedLight > 0)
 				{
 					Main.Map.UpdateLighting(i, j, addedLight);
 
 					if (ScanForTreasure(i, j))
-						playSound = true;
+						pingedValuable = true;
 				}
 			}
 		}
 
 		Main.refreshMap = true;
-
-		if (playSound)
-		{
-			SoundEngine.PlaySound(SoundID.CoinPickup with { Pitch = -.5f });
-			SoundEngine.PlaySound(SoundID.Coins with { Pitch = 1 });
-		}
 	}
 
 	/// <returns> Whether a treasure was found at the given coordinates. </returns>
