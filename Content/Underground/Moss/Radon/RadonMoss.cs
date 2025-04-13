@@ -1,12 +1,9 @@
-using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.CheckItemUse;
-using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Dusts;
-using SpiritReforged.Content.Ocean.Tiles;
-using SpiritReforged.Content.Savanna.Tiles;
+using SpiritReforged.Content.Underground.Moss.Oganesson;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Moss.Radon;
@@ -24,7 +21,9 @@ public class RadonMoss : GrassTile
 		RegisterItemDrop(ItemID.StoneBlock);
 		AddMapEntry(MapColor);
 		this.Merge(TileID.Stone, TileID.GrayBrick);
+
 		DustType = ModContent.DustType<RadonMossDust>();
+		HitSound = SoundID.Grass;
 	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
@@ -44,18 +43,7 @@ public class RadonMoss : GrassTile
 		GrowTiles(i, j);
 	}
 
-	protected virtual void GrowTiles(int i, int j)
-	{
-		Point16[] offset = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
-		var coords = new Point16(i, j) + offset[Main.rand.Next(4)];
-
-		var current = Framing.GetTileSafely(coords);
-		if (!current.HasTile)
-		{
-			Placer.PlaceTile<RadonPlants>(coords.X, coords.Y, Main.rand.Next(RadonPlants.StyleRange));
-			return;
-		}
-	}
+	protected virtual void GrowTiles(int i, int j) => TileExtensions.PlacePlant<RadonPlants>(i, j, Main.rand.Next(RadonPlants.StyleRange));
 }
 
 [AutoloadGlowmask("255,255,255")]
@@ -68,9 +56,13 @@ public class RadonMossGrayBrick : GrassTile
 	{
 		base.SetStaticDefaults();
 
+		Main.tileMoss[Type] = true;
+
 		RegisterItemDrop(ItemID.GrayBrick);
 		AddMapEntry(MapColor);
 		this.Merge(TileID.Stone, TileID.GrayBrick);
+		
+		HitSound = SoundID.Grass;
 		DustType = ModContent.DustType<RadonMossDust>();
 	}
 
@@ -91,18 +83,7 @@ public class RadonMossGrayBrick : GrassTile
 		GrowTiles(i, j);
 	}
 
-	protected virtual void GrowTiles(int i, int j)
-	{
-		Point16[] offset = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
-		var coords = new Point16(i, j) + offset[Main.rand.Next(4)];
-
-		var current = Framing.GetTileSafely(coords);
-		if (!current.HasTile)
-		{
-			Placer.PlaceTile<RadonPlants>(coords.X, coords.Y, Main.rand.Next(RadonPlants.StyleRange));
-			return;
-		}
-	}
+	protected virtual void GrowTiles(int i, int j) => TileExtensions.PlacePlant<RadonPlants>(i, j, Main.rand.Next(RadonPlants.StyleRange));
 }
 
 [AutoloadGlowmask("255, 255, 255")]
@@ -120,7 +101,7 @@ public class RadonPlants : ModTile, ICheckItemUse
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
-		TileObjectData.newTile.AnchorAlternateTiles = [ModContent.TileType<RadonMoss>(), ModContent.TileType<RadonMossGrayBrick>()];
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<RadonMoss>(), ModContent.TileType<RadonMossGrayBrick>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = StyleRange;
 
@@ -142,7 +123,9 @@ public class RadonPlants : ModTile, ICheckItemUse
 		TileObjectData.addTile(Type);
 
 		AddMapEntry(new Color(206, 209, 23));
+		
 		DustType = ModContent.DustType<RadonMossDust>();
+		HitSound = SoundID.Grass;
 	}
 
 	public override IEnumerable<Item> GetItemDrops(int i, int j)
