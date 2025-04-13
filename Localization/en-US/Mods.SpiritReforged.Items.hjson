@@ -1530,10 +1530,44 @@ MushroomPotsItem: {
 
 RadonMossItem: {
 	DisplayName: Radon Moss
-	Tooltip: A sight to dwell upon and never forget
+	Tooltip: "{$ItemTooltip.XenonMoss}"
 }
 
 OganessonMossItem: {
 	DisplayName: Oganesson Moss
 	Tooltip: A sight to dwell upon and never forget
+}
+
+RadonMossBrickItem: {
+	DisplayName: Radon Moss Brick
+	Tooltip: ""
+}
+
+RadonMossBrickWallItem: {
+	DisplayName: Radon Moss Brick Wall
+	Tooltip: ""
+}
+
+OganessonMossBrickItem: {
+	DisplayName: Oganesson Moss Brick
+	Tooltip: ""
+}
+
+OganessonMossBrickWallItem: {
+	DisplayName: Oganesson Moss Brick Wall
+	Tooltip: ""
+}
+
+ScryingPotItem: {
+	DisplayName: Scrying Pot
+	Tooltip: ""
+}
+
+BombCannon: {
+	DisplayName: Bomb Cannon
+	Tooltip:
+		'''
+		Uses bombs as ammo
+		'A groundbreaking invention'
+		'''
 }
