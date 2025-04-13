@@ -3,6 +3,7 @@ using SpiritReforged.Common.TileCommon.CheckItemUse;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Dusts;
+using SpiritReforged.Content.Underground.Moss.Radon;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Moss.Oganesson;
@@ -44,28 +45,7 @@ public class OganessonMoss : GrassTile
 		GrowTiles(i, j);
 	}
 
-	protected virtual void GrowTiles(int i, int j)
-	{
-		Point16[] offset = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
-		int offsetDir = Main.rand.Next(4);
-		var coords = new Point16(i, j) + offset[offsetDir];
-		var self = Framing.GetTileSafely(i, j);
-		var current = Framing.GetTileSafely(coords);
-
-		bool noSlope = self.Slope == SlopeType.Solid || offsetDir switch
-		{
-			0 => self.TopSlope,
-			1 => self.LeftSlope,
-			2 => self.RightSlope,
-			_ => self.BottomSlope
-		};
-
-		if (!current.HasTile && noSlope)
-		{
-			Placer.PlaceTile<OganessonPlants>(coords.X, coords.Y, Main.rand.Next(OganessonPlants.StyleRange));
-			return;
-		}
-	}
+	protected virtual void GrowTiles(int i, int j) => TileExtensions.PlacePlant<OganessonPlants>(i, j, Main.rand.Next(OganessonPlants.StyleRange));
 }
 
 [AutoloadGlowmask("255,255,255")]
@@ -103,28 +83,7 @@ public class OganessonMossGrayBrick : GrassTile
 		GrowTiles(i, j);
 	}
 
-	protected virtual void GrowTiles(int i, int j)
-	{
-		Point16[] offset = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
-		int offsetDir = Main.rand.Next(4);
-		var coords = new Point16(i, j) + offset[offsetDir];
-		var self = Framing.GetTileSafely(i, j);
-		var current = Framing.GetTileSafely(coords);
-
-		bool badSlope = self.Slope == SlopeType.Solid || offsetDir switch
-		{
-			0 => self.TopSlope,
-			1 => self.LeftSlope,
-			2 => self.RightSlope,
-			_ => self.BottomSlope
-		};
-
-		if (!current.HasTile && !badSlope)
-		{
-			Placer.PlaceTile<OganessonPlants>(coords.X, coords.Y, Main.rand.Next(OganessonPlants.StyleRange));
-			return;
-		}
-	}
+	protected virtual void GrowTiles(int i, int j) => TileExtensions.PlacePlant<OganessonPlants>(i, j, Main.rand.Next(OganessonPlants.StyleRange));
 }
 
 [AutoloadGlowmask("255, 255, 255")]
@@ -142,7 +101,7 @@ public class OganessonPlants : ModTile, ICheckItemUse
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
-		TileObjectData.newTile.AnchorAlternateTiles = [ModContent.TileType<OganessonMoss>(), ModContent.TileType<OganessonMossGrayBrick>()];
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<OganessonMoss>(), ModContent.TileType<OganessonMossGrayBrick>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = StyleRange;
 
@@ -204,4 +163,12 @@ public class OganessonPlants : ModTile, ICheckItemUse
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = Main.rand.Next(1, 3);
+}
+
+public class TestPlayerTT : ModPlayer
+{
+	public override void PreUpdate()
+	{
+		Main.NewText(Main.tile[Main.MouseWorld.ToTileCoordinates()].TopSlope);
+	}
 }

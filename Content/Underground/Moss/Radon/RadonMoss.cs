@@ -3,6 +3,7 @@ using SpiritReforged.Common.TileCommon.CheckItemUse;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Dusts;
+using SpiritReforged.Content.Underground.Moss.Oganesson;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Moss.Radon;
@@ -42,28 +43,7 @@ public class RadonMoss : GrassTile
 		GrowTiles(i, j);
 	}
 
-	protected virtual void GrowTiles(int i, int j)
-	{
-		Point16[] offset = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
-		int offsetDir = Main.rand.Next(4);
-		var coords = new Point16(i, j) + offset[offsetDir];
-		var self = Framing.GetTileSafely(i, j);
-		var current = Framing.GetTileSafely(coords);
-
-		bool validSlope = self.Slope == SlopeType.Solid || !(offsetDir switch
-		{
-			0 => self.BottomSlope,
-			1 => self.RightSlope,
-			2 => self.LeftSlope,
-			_ => self.TopSlope
-		});
-
-		if (!current.HasTile && validSlope)
-		{
-			Placer.PlaceTile<RadonPlants>(coords.X, coords.Y, Main.rand.Next(RadonPlants.StyleRange));
-			return;
-		}
-	}
+	protected virtual void GrowTiles(int i, int j) => TileExtensions.PlacePlant<RadonPlants>(i, j, Main.rand.Next(RadonPlants.StyleRange));
 }
 
 [AutoloadGlowmask("255,255,255")]
@@ -103,28 +83,7 @@ public class RadonMossGrayBrick : GrassTile
 		GrowTiles(i, j);
 	}
 
-	protected virtual void GrowTiles(int i, int j)
-	{
-		Point16[] offset = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
-		int offsetDir = Main.rand.Next(4);
-		var coords = new Point16(i, j) + offset[offsetDir];
-		var self = Framing.GetTileSafely(i, j);
-		var current = Framing.GetTileSafely(coords);
-
-		bool noSlope = self.Slope == SlopeType.Solid || offsetDir switch
-		{
-			0 => self.TopSlope,
-			1 => self.LeftSlope,
-			2 => self.RightSlope,
-			_ => self.BottomSlope
-		};
-
-		if (!current.HasTile && noSlope)
-		{
-			Placer.PlaceTile<RadonPlants>(coords.X, coords.Y, Main.rand.Next(RadonPlants.StyleRange));
-			return;
-		}
-	}
+	protected virtual void GrowTiles(int i, int j) => TileExtensions.PlacePlant<RadonPlants>(i, j, Main.rand.Next(RadonPlants.StyleRange));
 }
 
 [AutoloadGlowmask("255, 255, 255")]
@@ -142,7 +101,7 @@ public class RadonPlants : ModTile, ICheckItemUse
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
-		TileObjectData.newTile.AnchorAlternateTiles = [ModContent.TileType<RadonMoss>(), ModContent.TileType<RadonMossGrayBrick>()];
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<RadonMoss>(), ModContent.TileType<RadonMossGrayBrick>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = StyleRange;
 
