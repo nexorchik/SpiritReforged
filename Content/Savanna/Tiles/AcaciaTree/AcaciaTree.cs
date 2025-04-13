@@ -41,7 +41,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 	{
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
 
-		AddMapEntry(new Color(120, 80, 75));
+		AddMapEntry(new Color(120, 80, 75), Language.GetText("MapObject.Tree"));
 		RegisterItemDrop(ItemMethods.AutoItemType<Drywood>());
 		DustType = DustID.WoodFurniture;
 	}
