@@ -80,6 +80,8 @@ internal class PotsMicropass : Micropass
 
 		int type = ModContent.TileType<ScryingPot>();
 		WorldGen.PlaceTile(x, y, type, true);
+
+		return Main.tile[x, y].TileType == type;
 	}
 
     private static bool CreateStuffed(int x, int y)

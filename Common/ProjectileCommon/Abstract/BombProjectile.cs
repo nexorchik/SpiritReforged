@@ -32,6 +32,7 @@ public abstract class BombProjectile : ModProjectile
 	{
 		Projectile.friendly = Projectile.hostile = true;
 		Projectile.Size = new Vector2(15);
+		Projectile.penetrate = -1;
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = -1;
 		
@@ -62,6 +63,8 @@ public abstract class BombProjectile : ModProjectile
 			DealingDamage = true;
 			Projectile.PrepareBombToBlow();
 		}
+
+		Projectile.TryShimmerBounce();
 	}
 
 	public static bool CheckStuck(Rectangle area)
