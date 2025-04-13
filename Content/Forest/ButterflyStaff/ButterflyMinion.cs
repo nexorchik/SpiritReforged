@@ -92,7 +92,7 @@ public class ButterflyMinion : BaseMinion
 	{
 		AiState = Moving;
 
-		if (Math.Abs(MathHelper.WrapAngle(Projectile.velocity.ToRotation() - Projectile.AngleTo(target.Center))) < MathHelper.PiOver4) // If close enough in desired angle, accelerate and home accurately
+		if (Math.Abs(MathHelper.WrapAngle(Projectile.velocity.ToRotation() - Projectile.AngleTo(target.Center))) < MathHelper.PiOver2) // If close enough in desired angle, accelerate and home accurately
 			Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(target.Center) * 18, 0.1f);
 		else // If too much of an angle, circle around
 		{

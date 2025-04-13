@@ -17,8 +17,8 @@ public class PoolNoodle : ModItem
 	{
 		VariantGlobalItem.AddVariants(Type, NumStyles, false);
 
-		CrateDatabase.AddCrateRule(ItemID.OceanCrate, ItemDropRule.Common(Type, 8));
-		CrateDatabase.AddCrateRule(ItemID.OceanCrateHard, ItemDropRule.Common(Type, 8));
+		ItemLootDatabase.AddItemRule(ItemID.OceanCrate, ItemDropRule.Common(Type, 8));
+		ItemLootDatabase.AddItemRule(ItemID.OceanCrateHard, ItemDropRule.Common(Type, 8));
 	}
 
 	public override void SetDefaults()

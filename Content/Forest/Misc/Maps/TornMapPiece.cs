@@ -13,8 +13,8 @@ public class TornMapPiece : ModItem
 	{
 		Item.ResearchUnlockCount = 3;
 
-		CrateDatabase.AddCrateRule(ItemID.WoodenCrate, ItemDropRule.Common(Type, 5));
-		CrateDatabase.AddCrateRule(ItemID.WoodenCrateHard, ItemDropRule.Common(Type, 5));
+		ItemLootDatabase.AddItemRule(ItemID.WoodenCrate, ItemDropRule.Common(Type, 5));
+		ItemLootDatabase.AddItemRule(ItemID.WoodenCrateHard, ItemDropRule.Common(Type, 5));
 	}
 
 	public override void SetDefaults()

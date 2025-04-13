@@ -40,10 +40,7 @@ internal class SpiritClassic : ModSystem
 			if (id == -1)
 				continue;
 
-			ClassicToReforged.Add(id, item.Type);
-			ItemID.Sets.ShimmerTransformToItem[id] = item.Type; //Populate shimmer transformations
-
-			ClassicMod.Call("AddItemDefinition", id, item.Type);
+			AddReplacement(id, item.Type);
 		}
 
 		if (ClassicMod.TryFind("SulfurDeposit", out ModItem sulfur)) //Add Sulfur to our Hydrothermal vent pool
@@ -152,7 +149,17 @@ internal class SpiritClassic : ModSystem
 	public static void AddReplacement(string classicName, int reforgedType)
 	{
 		if (Enabled && ClassicMod.TryFind(classicName, out ModItem item))
-			ClassicToReforged.Add(item.Type, reforgedType);
+			AddReplacement(item.Type, reforgedType);
+	}
+
+	/// <summary> Manually adds a ModItem replacement entry to <see cref="ClassicToReforged"/> <para/>
+	/// Only use this method after checking if Classic is enabled. </summary>
+	public static void AddReplacement(int classicType, int reforgedType)
+	{
+		ClassicToReforged.Add(classicType, reforgedType);
+		ItemID.Sets.ShimmerTransformToItem[classicType] = reforgedType; //Populate shimmer transformations
+
+		ClassicMod.Call("AddItemDefinition", classicType, reforgedType);
 	}
 }
 
