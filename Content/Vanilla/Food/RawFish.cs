@@ -1,9 +1,7 @@
 using SpiritReforged.Common.ItemCommon;
-using SpiritReforged.Common.ModCompat.Classic;
 
 namespace SpiritReforged.Content.Vanilla.Food;
 
-[FromClassic("RawFish")]
 public class RawFish : FoodItem
 {
 	internal override Point Size => new(34, 22);
