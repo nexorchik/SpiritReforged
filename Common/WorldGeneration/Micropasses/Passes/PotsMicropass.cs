@@ -1,11 +1,9 @@
-﻿using Terraria.WorldBuilding;
-using SpiritReforged.Common.WorldGeneration.Micropasses;
+﻿using SpiritReforged.Common.WorldGeneration.Micropasses;
 using SpiritReforged.Common.WorldGeneration;
-using SpiritReforged.Content.Underground.Tiles;
 using SpiritReforged.Content.Underground.NPCs;
+using SpiritReforged.Content.Underground.Tiles;
 using System.Linq;
-
-namespace SpiritMod.World.Micropasses;
+using Terraria.WorldBuilding;
 
 internal class PotsMicropass : Micropass
 {
@@ -42,7 +40,8 @@ internal class PotsMicropass : Micropass
 	{
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Caves");
 
-		Generate(CreateStuffed, Main.maxTilesX / WorldGen.WorldSizeSmallX * 9, out _);
+        Generate(CreateScrying, Main.maxTilesX / WorldGen.WorldSizeSmallX * 9, out _);
+        Generate(CreateStuffed, Main.maxTilesX / WorldGen.WorldSizeSmallX * 9, out _);
 		Generate(CreateWorm, Main.maxTilesX / WorldGen.WorldSizeSmallX * 24, out _);
 		Generate(CreatePlatter, Main.maxTilesX / WorldGen.WorldSizeSmallX * 28, out _);
 		Generate(CreateAether, Main.maxTilesX / WorldGen.WorldSizeSmallX * 3, out _);
@@ -74,8 +73,17 @@ internal class PotsMicropass : Micropass
 		generated = pots;
 	}
 
-	private static bool CreateStuffed(int x, int y)
+	private static bool CreateScrying(int x, int y)
 	{
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
+			return false;
+
+		int type = ModContent.TileType<ScryingPot>();
+		WorldGen.PlaceTile(x, y, type, true);
+	}
+
+    private static bool CreateStuffed(int x, int y)
+    {
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || Main.tile[x, y].LiquidAmount > 100 || !CommonSurface(x, y))
 			return false;
 
