@@ -164,11 +164,3 @@ public class OganessonPlants : ModTile, ICheckItemUse
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = Main.rand.Next(1, 3);
 }
-
-public class TestPlayerTT : ModPlayer
-{
-	public override void PreUpdate()
-	{
-		Main.NewText(Main.tile[Main.MouseWorld.ToTileCoordinates()].TopSlope);
-	}
-}
