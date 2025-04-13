@@ -104,20 +104,26 @@ public class OganessonPlants : ModTile, ICheckItemUse
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<OganessonMoss>(), ModContent.TileType<OganessonMossGrayBrick>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = StyleRange;
+		TileObjectData.newTile.DrawYOffset = 2;
 
 		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
 		TileObjectData.newAlternate.AnchorRight = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide | AnchorType.AlternateTile, TileObjectData.newTile.Height, 0);
 		TileObjectData.newAlternate.AnchorBottom = AnchorData.Empty;
+		TileObjectData.newAlternate.DrawXOffset = 2;
+		TileObjectData.newAlternate.DrawYOffset = 0;
 		TileObjectData.addAlternate(StyleRange);
 
 		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
 		TileObjectData.newAlternate.AnchorLeft = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide | AnchorType.AlternateTile, TileObjectData.newTile.Height, 0);
 		TileObjectData.newAlternate.AnchorBottom = AnchorData.Empty;
+		TileObjectData.newAlternate.DrawXOffset = -2;
+		TileObjectData.newAlternate.DrawYOffset = 0;
 		TileObjectData.addAlternate(StyleRange * 2);
 
 		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
 		TileObjectData.newAlternate.AnchorTop = new AnchorData(AnchorType.SolidTile | AnchorType.SolidBottom | AnchorType.AlternateTile, TileObjectData.newTile.Width, 0);
 		TileObjectData.newAlternate.AnchorBottom = AnchorData.Empty;
+		TileObjectData.newAlternate.DrawYOffset = -2;
 		TileObjectData.addAlternate(StyleRange * 3);
 
 		TileObjectData.addTile(Type);
@@ -142,9 +148,11 @@ public class OganessonPlants : ModTile, ICheckItemUse
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY)
 	{
 		int style = tileFrameX / 18;
-		if (style < StyleRange * 3)
-			offsetY = 2;
+
+		if (style >= StyleRange * 3)
+			offsetY = -2;
 	}
+
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.White.ToVector3() * .35f);

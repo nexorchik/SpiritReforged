@@ -1,7 +1,7 @@
 ﻿using SpiritReforged.Content.Forest.Cloud.Items;
 using SpiritReforged.Content.Ocean.Items.JellyfishStaff;
 using SpiritReforged.Content.Savanna.Tiles;
-using SpiritReforged.Content.Underground.ExplorerTreads;
+using SpiritReforged.Content.Underground.Items.ExplorerTreads;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.ModCompat;

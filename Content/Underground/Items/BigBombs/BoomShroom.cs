@@ -12,8 +12,8 @@ public class BoomShroom : AccessoryItem
 {
 	public override void SetStaticDefaults()
 	{
-		CrateDatabase.AddCrateRule(ItemID.WoodenCrate, new CommonDrop(Type, 13));
-		CrateDatabase.AddCrateRule(ItemID.WoodenCrateHard, new CommonDrop(Type, 13));
+		ItemLootDatabase.AddItemRule(ItemID.WoodenCrate, new CommonDrop(Type, 13));
+		ItemLootDatabase.AddItemRule(ItemID.WoodenCrateHard, new CommonDrop(Type, 13));
 	}
 
 	public override void SetDefaults()
