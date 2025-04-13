@@ -27,7 +27,7 @@ public class OreCarts : ModTile
 
 		DustType = DustID.WoodFurniture;
 
-		AddMapEntry(new Color(152, 107, 73));
+		AddMapEntry(new Color(152, 107, 73), CreateMapEntryName());
 	}
 
 	public override void NearbyEffects(int i, int j, bool closer)
