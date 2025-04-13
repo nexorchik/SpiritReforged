@@ -1562,3 +1562,12 @@ ScryingPotItem: {
 	// DisplayName: Scrying Pot
 	// Tooltip: ""
 }
+
+BombCannon: {
+	// DisplayName: Bomb Cannon
+	/* Tooltip:
+		'''
+		Uses bombs as ammo
+		'A groundbreaking invention'
+		''' */
+}
