@@ -138,7 +138,7 @@ public abstract class HerbTile : ModTile, ICheckItemUse
 		Tile tile = Framing.GetTileSafely(i, j);
 		PlantStage stage = GetStage(i, j);
 
-		if (stage == PlantStage.Planted) //Grow only if just planted
+		if (stage == PlantStage.Planted && Main.rand.NextBool(2)) //Grow only if just planted
 		{
 			tile.TileFrameX += FrameWidth;
 
