@@ -246,8 +246,9 @@ public class OceanGeneration : ModSystem
 				sunkenX = innerEdge + WorldGen.genRand.Next(133, Main.maxTilesX - innerEdge - 40);
 
 			var pos = new Point(sunkenX, (int)(Main.maxTilesY * 0.35f / 16f));
-			while (!WorldGen.SolidTile(pos.X, pos.Y))
-				pos.Y++;
+
+			if (!ScanDown(pos.X, ref pos.Y))
+				continue;
 
 			if (WorldMethods.AreaClear(pos.X - 1, pos.Y - 2, 3, 2))
 			{
@@ -274,8 +275,9 @@ public class OceanGeneration : ModSystem
 				x = innerEdge + WorldGen.genRand.Next(100, Main.maxTilesX - innerEdge - 60);
 
 			int y = (int)(Main.maxTilesY * 0.35f / 16f);
-			while (!WorldGen.SolidTile(x, y))
-				y++;
+
+			if (!ScanDown(x, ref y))
+				continue;
 
 			if (WorldMethods.AreaClear(x, y - 2, 2, 2) && GenVars.structures.CanPlace(new Rectangle(x, y - 2, 2, 2)))
 			{
@@ -322,8 +324,9 @@ public class OceanGeneration : ModSystem
 		{
 			int x = GetBound();
 			int y = (int)(Main.maxTilesY * 0.35f / 16f);
-			while (!WorldGen.SolidTile(x, y))
-				y++;
+
+			if (!ScanDown(x, ref y))
+				continue;
 
 			if (WorldMethods.AreaClear(x, y - 2, 2, 2) && WorldMethods.Submerged(x, y - 2, 2, 2) && GenVars.structures.CanPlace(new Rectangle(x, y - 2, 2, 2)))
 			{
@@ -348,12 +351,12 @@ public class OceanGeneration : ModSystem
 			if (WorldGen.genRand.NextBool())
 			{
 				int start = rightBounds.Left;
-				return WorldGen.genRand.Next(start, start + length);
+				return WorldGen.genRand.Next(start, Math.Min(start + length, Main.maxTilesX - 20));
 			}
 			else
 			{
 				int end = leftBounds.Right;
-				return WorldGen.genRand.Next(end - length, end);
+				return WorldGen.genRand.Next(Math.Max(end - length, 20), end);
 			}
 		}
 	}
@@ -538,8 +541,9 @@ public class OceanGeneration : ModSystem
 				x = WorldGen.genRand.Next(Main.maxTilesX - WorldGen.oceanDistance, Main.maxTilesX - 40);
 
 			int y = WorldGen.genRand.Next((int)(Main.maxTilesY * 0.35f / 16f), (int)WorldGen.oceanLevel);
-			while (!WorldGen.SolidTile(x, y))
-				y++;
+
+			if (!ScanDown(x, ref y))
+				continue;
 
 			y--;
 			if (Framing.GetTileSafely(x, y).LiquidType == LiquidID.Water && Framing.GetTileSafely(x, y).LiquidAmount >= 255)
@@ -551,6 +555,18 @@ public class OceanGeneration : ModSystem
 					break;
 			}
 		}
+	}
+
+	/// <summary> Moves down to the next solid tile. </summary>
+	/// <returns> Whether the final coordinates are safely in world bounds. </returns>
+	private static bool ScanDown(int x, ref int y)
+	{
+		const int fluff = 10;
+
+		while (WorldGen.InWorld(x, y, fluff) && !WorldGen.SolidTile(x, y))
+			y++;
+
+		return WorldGen.InWorld(x, y, fluff);
 	}
 
 	public enum OceanShape

@@ -1,7 +1,5 @@
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Jungle.Bamboo.Buffs;
-using Terraria.DataStructures;
-using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Jungle.Bamboo.Tiles;
 
@@ -10,17 +8,9 @@ public class BambooPike : ModTile
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = false;
-		Main.tileMergeDirt[Type] = false;
 		Main.tileBlockLight[Type] = false;
 		Main.tileNoFail[Type] = true;
 		Main.tileFrameImportant[Type] = true;
-
-		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
-		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.AlternateTile, 1, 0);
-		TileObjectData.newTile.AnchorAlternateTiles = [Type];
-		TileObjectData.newTile.RandomStyleRange = 3;
-		TileObjectData.newTile.StyleHorizontal = true;
-		TileObjectData.addTile(Type);
 
 		RegisterItemDrop(ModContent.ItemType<BambooPikeItem>());
 		AddMapEntry(new Color(80, 140, 35));
@@ -29,24 +19,29 @@ public class BambooPike : ModTile
 
 	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
 	{
-		Tile tile = Framing.GetTileSafely(i, j);
+		var t = Framing.GetTileSafely(i, j);
+		var tUp = Framing.GetTileSafely(i, j - 1);
+		var tDown = Framing.GetTileSafely(i, j + 1);
 
-		bool hasTileAbove = Framing.GetTileSafely(i, j - 1).TileType == Type;
-		bool hasTileBelow = Framing.GetTileSafely(i, j + 1).TileType == Type;
+		bool hasTileAbove = tUp.TileType == Type;
+		bool hasTileBelow = tDown.TileType == Type;
 
-		if (!Framing.GetTileSafely(i, j + 1).HasTile) //Has any tile below
+		if (!tDown.HasTile) //Has any tile below
 		{
 			WorldGen.KillTile(i, j, false, false, false);
 			return false;
 		}
 
+		if (!hasTileAbove && !hasTileBelow && resetFrame)
+			t.TileFrameX = (short)(18 * Main.rand.Next(3));
+
 		if (hasTileAbove) //Pick the appropriate frame depending on tile stack
-			tile.TileFrameY = (short)(18 * (hasTileBelow ? 1 : 2));
+			t.TileFrameY = (short)(18 * (hasTileBelow ? 1 : 2));
 		else
-			tile.TileFrameY = 0;
+			t.TileFrameY = 0;
 
 		if (hasTileBelow) //Inherit the same horizontal tile frame as the rest of the stack
-			tile.TileFrameX = Framing.GetTileSafely(i, j + 1).TileFrameX;
+			t.TileFrameX = tDown.TileFrameX;
 
 		return false;
 	}
@@ -96,27 +91,35 @@ public class BambooPikeItem : ModItem
 		Item.value = Item.sellPrice(copper: 5);
 	}
 
-	public override bool CanUseItem(Player player)
+	public override bool CanUseItem(Player player) //Allow pikes to be placed when used on any tile in the stack
 	{
-		//Allow pikes to be placed when used on any tile in the stack
-		var tilePos = new Point((int)(Main.MouseWorld.X / 16), (int)(Main.MouseWorld.Y / 16));
+		var tilePos = new Point(Player.tileTargetX, Player.tileTargetY);
 
-		if (Framing.GetTileSafely(tilePos).TileType != Item.createTile) //Avoid this custom logic if possible
-			return base.CanUseItem(player);
+		if (Framing.GetTileSafely(tilePos).TileType == Item.createTile)
+		{
+			while (Framing.GetTileSafely(tilePos).TileType == Item.createTile)
+				tilePos.Y--;
 
-		while (Framing.GetTileSafely(tilePos).TileType == Item.createTile)
-			tilePos.Y--;
+			var t = Framing.GetTileSafely(tilePos);
 
-		WorldGen.PlaceTile(tilePos.X, tilePos.Y, Item.createTile);
-		if (Main.netMode != NetmodeID.SinglePlayer)
-			NetMessage.SendTileSquare(-1, tilePos.X, tilePos.Y, 1);
+			if (WorldGen.SolidOrSlopedTile(t))
+				return true;
 
-		if (Item.stack == 1)
-			Item.TurnToAir();
-		else
-			Item.stack--;
+			WorldGen.PlaceTile(tilePos.X, tilePos.Y, Item.createTile);
 
-		return base.CanUseItem(player);
+			if (t.TileType == Item.createTile) //Success!
+			{
+				if (Main.netMode != NetmodeID.SinglePlayer)
+					NetMessage.SendTileSquare(-1, tilePos.X, tilePos.Y, 1);
+
+				if (Item.stack == 1)
+					Item.TurnToAir();
+				else
+					Item.stack--;
+			}
+		}
+
+		return true;
 	}
 
 	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.BambooBlock, 2).AddTile(TileID.WorkBenches).Register();
