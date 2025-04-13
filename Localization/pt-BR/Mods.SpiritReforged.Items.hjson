@@ -1530,7 +1530,7 @@ MushroomPotsItem: {
 
 RadonMossItem: {
 	// DisplayName: Radon Moss
-	// Tooltip: A sight to dwell upon and never forget
+	// Tooltip: "{$ItemTooltip.XenonMoss}"
 }
 
 OganessonMossItem: {
@@ -1539,21 +1539,26 @@ OganessonMossItem: {
 }
 
 RadonMossBrickItem: {
-	// DisplayName: Radon Moss Brick Item
+	// DisplayName: Radon Moss Brick
 	// Tooltip: ""
 }
 
 RadonMossBrickWallItem: {
-	// DisplayName: Radon Moss Brick Wall Item
+	// DisplayName: Radon Moss Brick Wall
 	// Tooltip: ""
 }
 
 OganessonMossBrickItem: {
-	// DisplayName: Oganesson Moss Brick Item
+	// DisplayName: Oganesson Moss Brick
 	// Tooltip: ""
 }
 
 OganessonMossBrickWallItem: {
-	// DisplayName: Oganesson Moss Brick Wall Item
+	// DisplayName: Oganesson Moss Brick Wall
+	// Tooltip: ""
+}
+
+ScryingPotItem: {
+	// DisplayName: Scrying Pot
 	// Tooltip: ""
 }
