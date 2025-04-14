@@ -5,6 +5,7 @@ using SpiritReforged.Common.TileCommon;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using SpiritReforged.Common.ModCompat.Classic;
+using SpiritReforged.Common.ModCompat;
 
 namespace SpiritReforged.Content.Ocean.Items;
 
@@ -52,6 +53,13 @@ public class SunkenTreasure : FloatingItem
 
 		if (SpiritClassic.Enabled && SpiritClassic.ClassicMod.TryFind("ExplosiveRum", out ModItem rum))
 			itemLoot.AddCommon(rum.Type, 1, 45, 71); //Spirit Classic compatibility; temporary until Explosive Rum is added to Reforged
+
+		//Thorium Crossmod
+		if (ThoriumCompat.Enabled)
+		{
+			if (ThoriumCompat.Instance.TryFind("Opal", out ModItem opal) && ThoriumCompat.Instance.TryFind("Aquamarine", out ModItem aquamarine))
+				itemLoot.Add(DropRules.LootPoolDrop.SameStack(5, 7, 1, 4, 1, opal.Type, aquamarine.Type));
+		}
 
 		var goldCoins = ItemDropRule.Common(ItemID.GoldCoin, 2, 1, 4);
 		goldCoins.OnFailedRoll(ItemDropRule.Common(ItemID.Cobweb, 1, 8, 13));

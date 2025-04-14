@@ -14,7 +14,7 @@ internal class GlowmaskItem : GlobalItem
 			Main.GetItemDrawFrame(item.type, out _, out var frame);
 			var position = item.Bottom - new Vector2(0, frame.Height / 2) - Main.screenPosition; //Do some odd math because of how visual and item rectangles relate
 
-			Main.EntitySpriteDraw(glow.Glowmask.Value, position, frame, glow.GetDrawColor(item), rotation, frame.Size() / 2f, scale, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(glow.Glowmask.Value, position, frame, item.GetAlpha(glow.GetDrawColor(item)), rotation, frame.Size() / 2f, scale, SpriteEffects.None, 0);
 		}
 	}
 

@@ -10,8 +10,8 @@ public class RogueCrest : MinionAccessory
 
 	public override void StaticDefaults()
 	{
-		CrateDatabase.AddCrateRule(ItemID.WoodenCrate, ItemDropRule.Common(Type, 8));
-		CrateDatabase.AddCrateRule(ItemID.WoodenCrateHard, ItemDropRule.Common(Type, 8));
+		ItemLootDatabase.AddItemRule(ItemID.WoodenCrate, ItemDropRule.Common(Type, 8));
+		ItemLootDatabase.AddItemRule(ItemID.WoodenCrateHard, ItemDropRule.Common(Type, 8));
 	}
 
 	public override void Defaults()

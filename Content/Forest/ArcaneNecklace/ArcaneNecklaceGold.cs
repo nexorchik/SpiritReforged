@@ -12,8 +12,8 @@ public class ArcaneNecklaceGold : AccessoryItem
 	{
 		ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<ArcaneNecklacePlatinum>();
 
-		CrateDatabase.AddCrateRule(ItemID.WoodenCrate, ItemDropRule.OneFromOptions(8, Type, ModContent.ItemType<ArcaneNecklacePlatinum>()));
-		CrateDatabase.AddCrateRule(ItemID.WoodenCrateHard, ItemDropRule.OneFromOptions(8, Type, ModContent.ItemType<ArcaneNecklacePlatinum>()));
+		ItemLootDatabase.AddItemRule(ItemID.WoodenCrate, ItemDropRule.OneFromOptions(8, Type, ModContent.ItemType<ArcaneNecklacePlatinum>()));
+		ItemLootDatabase.AddItemRule(ItemID.WoodenCrateHard, ItemDropRule.OneFromOptions(8, Type, ModContent.ItemType<ArcaneNecklacePlatinum>()));
 	}
 
 	public override void SetDefaults()

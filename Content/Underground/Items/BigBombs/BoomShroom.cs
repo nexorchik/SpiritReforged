@@ -11,8 +11,8 @@ public class BoomShroom : AccessoryItem
 {
 	public override void SetStaticDefaults()
 	{
-		CrateDatabase.AddCrateRule(ItemID.WoodenCrate, new CommonDrop(Type, 13));
-		CrateDatabase.AddCrateRule(ItemID.WoodenCrateHard, new CommonDrop(Type, 13));
+		ItemLootDatabase.AddItemRule(ItemID.WoodenCrate, new CommonDrop(Type, 13));
+		ItemLootDatabase.AddItemRule(ItemID.WoodenCrateHard, new CommonDrop(Type, 13));
 	}
 
 	public override void SetDefaults()
@@ -34,6 +34,14 @@ public class BoomShroom : AccessoryItem
 internal class BoomShroomPlayer : ModPlayer
 {
 	private static readonly Dictionary<int, int> SmallToLarge = [];
+
+	public static int MakeLarge(int type)
+	{
+		if (SmallToLarge.TryGetValue(type, out int value))
+			return value;
+
+		return type;
+	}
 
 	public override void SetStaticDefaults()
 	{

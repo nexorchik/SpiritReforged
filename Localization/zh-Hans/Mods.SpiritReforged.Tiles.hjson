@@ -11,6 +11,11 @@ Records: {
 
 		Value increases when further underground.
 		''' */
+	// Worm: Scatters a variety of worms when destroyed.
+	// Platter: A hot meal ready for the taking. Who would leave this behind?
+	// Aether: Provides various useful, sparkly upgrades.
+	// Stuffed: What a strange place to find a merchant. They're just asking to be bothered.
+	// Scrying: Reveals a large portion of the map upon being destroyed.
 	// Biome: Contains a greater variety of loot than common pots.
 }
 
@@ -29,3 +34,4 @@ HerosMemorialStatue.MapEntry: 英雄纪念碑
 TermiteJar_Tile.MapEntry: 白蚁罐
 GarInAJarTile.MapEntry: 罐中雀鳝
 KillieFishbowlTile.MapEntry: 鳉鱼鱼缸
+// OreCarts.MapEntry: Minecart
