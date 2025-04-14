@@ -1552,7 +1552,7 @@ PotionVatsCloningItem: {
 
 SilverFoodPlatterItem: {
 	// DisplayName: Silver Food Platter
-	// Tooltip: ""
+	// Tooltip: <right> to place item on platter
 }
 
 RadonMossItem: {
