@@ -159,10 +159,9 @@ public class OganessonPlants : ModTile, ICheckItemUse
 			offsetY = 2;
 	}
 
-
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.White.ToVector3() * .15f);
+		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.White.ToVector3() * .2f);
 		return true;
 	}
 
