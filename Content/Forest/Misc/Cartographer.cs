@@ -74,7 +74,7 @@ public class Cartographer : WorldNPC
 	}
 
 	public override void AddShops() => new NPCShop(Type).Add<PinRed>().Add<PinYellow>().Add<PinGreen>().Add<PinBlue>()
-		.AddLimited<TornMapPiece>(4, 6).Add(ItemID.Binoculars).Add(ItemID.Compass, Condition.InBelowSurface).Register();
+		.AddLimited<TornMapPiece>(4, 6).Add(ItemID.Binoculars).Add(ItemID.Compass, Condition.InBelowSurface).AddLimited(ItemID.TrifoldMap, 1, Condition.Hardmode).Register();
 
 	private void MapFunctionality()
 	{

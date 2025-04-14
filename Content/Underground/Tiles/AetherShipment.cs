@@ -47,7 +47,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 		var world = new Vector2(i, j) * 16;
 		float strength = Main.LocalPlayer.DistanceSQ(world) / (distance * distance);
 
-		if (strength < 1 && Main.rand.NextFloat(10f) < 1f - strength)
+		if (strength < 1 && Main.rand.NextFloat(16f) < 1f - strength)
 		{
 			var spawn = Main.rand.NextVector2FromRectangle(new Rectangle(i * 16, (j + 2) * 16, 32, 2));
 			float scale = Main.rand.NextFloat(.5f, 1.25f);

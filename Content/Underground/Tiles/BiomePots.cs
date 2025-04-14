@@ -73,7 +73,7 @@ public class BiomePots : PotTile, ILootTile
 		var world = new Vector2(i, j) * 16;
 		float strength = Main.LocalPlayer.DistanceSQ(world) / (distance * distance);
 
-		if (strength < 1 && Main.rand.NextFloat(10f) < 1f - strength)
+		if (strength < 1 && Main.rand.NextFloat(28f) < 1f - strength)
 		{
 			var d = Dust.NewDustDirect(world, 16, 16, DustID.TreasureSparkle, 0, 0, Scale: Main.rand.NextFloat());
 			d.noGravity = true;

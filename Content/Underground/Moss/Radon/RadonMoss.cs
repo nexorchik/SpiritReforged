@@ -28,7 +28,7 @@ public class RadonMoss : GrassTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Yellow.ToVector3() * .3f);
+		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Yellow.ToVector3() * .2f);
 		return true;
 	}
 
@@ -68,7 +68,7 @@ public class RadonMossGrayBrick : GrassTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Yellow.ToVector3() * .3f);
+		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Yellow.ToVector3() * .2f);
 		return true;
 	}
 
@@ -155,7 +155,7 @@ public class RadonPlants : ModTile, ICheckItemUse
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Yellow.ToVector3() * .35f);
+		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Yellow.ToVector3() * .15f);
 		return true;
 	}
 
