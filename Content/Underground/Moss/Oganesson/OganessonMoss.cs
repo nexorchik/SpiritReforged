@@ -151,7 +151,14 @@ public class OganessonPlants : ModTile, ICheckItemUse
 
 		if (style >= StyleRange * 3)
 			offsetY = -2;
+		else if (style >= StyleRange * 2)
+			width += 2;
+		else if (style >= StyleRange)
+			width -= 2;
+		else
+			offsetY = 2;
 	}
+
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{

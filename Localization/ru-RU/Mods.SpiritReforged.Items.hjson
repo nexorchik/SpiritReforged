@@ -1598,3 +1598,13 @@ BombCannon: {
 		'A groundbreaking invention'
 		''' */
 }
+
+RadonMossBobberItem: {
+	// DisplayName: Radon Moss Bobber Item
+	// Tooltip: ""
+}
+
+OganessonMossBobberItem: {
+	// DisplayName: Oganesson Moss Bobber Item
+	// Tooltip: ""
+}
