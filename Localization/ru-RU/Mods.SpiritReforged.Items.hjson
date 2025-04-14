@@ -1598,3 +1598,18 @@ BombCannon: {
 		'A groundbreaking invention'
 		''' */
 }
+
+WoodenClub: {
+	// DisplayName: Wooden Club
+	// Tooltip: ""
+}
+
+GoldClub: {
+	// DisplayName: Gold Club
+	// Tooltip: ""
+}
+
+PlatinumClub: {
+	// DisplayName: Platinum Club
+	// Tooltip: ""
+}

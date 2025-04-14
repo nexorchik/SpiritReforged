@@ -15,10 +15,10 @@ class WoodClubProj : BaseClubProj, IManualTrailProjectile
 	{
 		float trailDist = 52;
 		float trailWidth = 40;
-		tM.CreateCustomTrail(new SwingTrail(Projectile, Color.Beige, AngleRange, -HoldAngle_Final, trailDist, trailWidth, GetSwingProgressStatic, BasicSwingShaderParams));
+		tM.CreateCustomTrail(new SwingTrail(Projectile, Color.Beige, 3, AngleRange, -HoldAngle_Final, trailDist, trailWidth, GetSwingProgressStatic, SwingTrail.BasicSwingShaderParams));
 
-		if(FullCharge)
-			tM.CreateCustomTrail(new SwingTrail(Projectile, Color.Beige * 0.75f, AngleRange * 1.3f, -HoldAngle_Final, 1.1f * trailDist, trailWidth, GetSwingProgressStatic, BasicSwingShaderParams));
+		if (FullCharge)
+			tM.CreateCustomTrail(new SwingTrail(Projectile, Color.Beige, 2, AngleRange * 1.3f, -HoldAngle_Final, 1.2f * trailDist, trailWidth * 1.2f, GetSwingProgressStatic, SwingTrail.BasicSwingShaderParams));
 	}
 
 	public override void OnSwingStart() => TrailManager.ManualTrailSpawn(Projectile);

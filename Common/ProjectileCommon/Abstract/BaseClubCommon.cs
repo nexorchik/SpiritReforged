@@ -1,7 +1,9 @@
+using Microsoft.Xna.Framework.Graphics;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Content.Forest.WoodClub;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Content.Underground.Items.OreClubs;
 using static Microsoft.Xna.Framework.MathHelper;
 using static SpiritReforged.Common.Easing.EaseFunction;
 
@@ -9,16 +11,16 @@ namespace SpiritReforged.Common.ProjectileCommon.Abstract;
 
 public abstract partial class BaseClubProj : ModProjectile
 {
-	private enum AiStates
+	public enum AiStates
 	{
 		CHARGING,
 		SWINGING,
 		POST_SMASH
 	}
 
-	private bool CheckAiState(AiStates checkState) => AiState == (float)checkState;
+	public bool CheckAiState(AiStates checkState) => AiState == (float)checkState;
 
-	private void SetAiState(AiStates setState)
+	public void SetAiState(AiStates setState)
 	{
 		AiState = (float)setState;
 		Projectile.netUpdate = true;
@@ -92,27 +94,33 @@ public abstract partial class BaseClubProj : ModProjectile
 		}
 	}
 
+	internal void DrawAftertrail(Color lightColor)
+	{
+		Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+		Player owner = Main.player[Projectile.owner];
+		Vector2 handPos = owner.GetFrontHandPosition(owner.compositeFrontArm.stretch, owner.compositeFrontArm.rotation);
+		Vector2 drawPos = handPos - Main.screenPosition + Vector2.UnitY * owner.gfxOffY;
+		Color drawColor = Projectile.GetAlpha(lightColor);
+
+		Rectangle topFrame = texture.Frame(1, Main.projFrames[Type]);
+
+		for (int k = 0; k < Projectile.oldPos.Length; k++)
+		{
+			//Don't draw if rotation would be the default value
+			if (CheckAiState(AiStates.CHARGING) && Projectile.oldRot[k] == 0)
+				continue;
+
+			float progress = (Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length;
+			Color trailColor = drawColor * progress * .125f;
+			Main.EntitySpriteDraw(texture, drawPos, topFrame, trailColor, Projectile.oldRot[k], HoldPoint, Projectile.scale, Effects, 0);
+		}
+	}
+
 	public float GetSwingProgress => SwingSpeedMult * _swingTimer / SwingTime;
 
-	public static float GetSwingProgressStatic(Projectile Proj) => Proj.ModProjectile is WoodClubProj woodClub ? EaseQuadOut.Ease(woodClub.GetSwingProgress) : 0;
+	public float GetWindupProgress => (ChargeTime > 0) ? _windupTimer / (float)WindupTime : 0;
 
-	public static Effect BasicSwingShaderParams(SwingTrail swingTrail)
-	{
-		Effect effect;
-		effect = AssetLoader.LoadedShaders["SwingTrails"];
-		effect.Parameters["baseTexture"].SetValue(AssetLoader.LoadedTextures["supPerlin"].Value);
-		effect.Parameters["baseColorLight"].SetValue(swingTrail.Color.ToVector4());
-		effect.Parameters["baseColorDark"].SetValue(swingTrail.Color.ToVector4());
-
-		effect.Parameters["coordMods"].SetValue(new Vector2(0.7f, 1f));
-		effect.Parameters["textureExponent"].SetValue(new Vector2(0.5f, 1.25f));
-
-		effect.Parameters["timer"].SetValue(Main.GlobalTimeWrappedHourly);
-		effect.Parameters["progress"].SetValue(swingTrail.GetSwingProgress());
-		effect.Parameters["intensity"].SetValue(1.25f);
-		effect.Parameters["opacity"].SetValue(1);
-		return effect;
-	}
+	public static float GetSwingProgressStatic(Projectile Proj) => Proj.ModProjectile is BaseClubProj baseClub ? EaseQuadOut.Ease(baseClub.GetSwingProgress) : 0;
 
 	public float AngleRange => SwingAngle_Max - HoldAngle_Final;
 

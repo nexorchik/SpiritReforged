@@ -5,13 +5,14 @@ using static SpiritReforged.Common.Easing.EaseFunction;
 
 namespace SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 
-public class SwingTrail(Projectile Projectile, Color Color, float Radians, float Rotation, Vector2 Dist, Vector2 Width, EaseFunction DistanceEasing, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile) : BaseTrail(Projectile, layer)
+public class SwingTrail(Projectile Projectile, Color Color, float Intensity, float Radians, float Rotation, Vector2 Dist, Vector2 Width, EaseFunction DistanceEasing, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile) : BaseTrail(Projectile, layer)
 {
-	public SwingTrail(Projectile Projectile, Color Color, float Radians, float Rotation, float Dist, float Width, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile) 
-		: this(Projectile, Color, Radians, Rotation, new Vector2(Dist), new Vector2(Width), Linear, SwingProgress, ShaderParams, layer) { }
+	public SwingTrail(Projectile Projectile, Color Color, float Intensity, float Radians, float Rotation, float Dist, float Width, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile) 
+		: this(Projectile, Color, Intensity, Radians, Rotation, new Vector2(Dist), new Vector2(Width), Linear, SwingProgress, ShaderParams, layer) { }
 
 	public float DissolveSpeed { get; set; }
 	public Color Color { get; } = Color;
+	public float Intensity { get; } = Intensity;
 
 	private readonly Player _owner = Main.player[Projectile.owner];
 
@@ -82,5 +83,23 @@ public class SwingTrail(Projectile Projectile, Color Color, float Radians, float
 			RectangleCount = 30
 		};
 		PrimitiveRenderer.DrawPrimitiveShape(slash, effect);
+	}
+
+	public static Effect BasicSwingShaderParams(SwingTrail swingTrail)
+	{
+		Effect effect;
+		effect = AssetLoader.LoadedShaders["SwingTrails"];
+		effect.Parameters["baseTexture"].SetValue(AssetLoader.LoadedTextures["supPerlin"].Value);
+		effect.Parameters["baseColorLight"].SetValue(swingTrail.Color.ToVector4());
+		effect.Parameters["baseColorDark"].SetValue(swingTrail.Color.ToVector4());
+
+		effect.Parameters["coordMods"].SetValue(new Vector2(0.7f, 1f));
+		effect.Parameters["textureExponent"].SetValue(new Vector2(0.5f, 1.25f));
+
+		effect.Parameters["timer"].SetValue(Main.GlobalTimeWrappedHourly);
+		effect.Parameters["progress"].SetValue(swingTrail.GetSwingProgress());
+		effect.Parameters["intensity"].SetValue(swingTrail.Intensity);
+		effect.Parameters["opacity"].SetValue(1);
+		return effect;
 	}
 }

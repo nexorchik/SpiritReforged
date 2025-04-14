@@ -56,7 +56,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		SafeSetDefaults();
 	}
 
-	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Main.player[Projectile.owner].Center, Projectile.Center) ? true : base.Colliding(projHitbox, targetHitbox);
+	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Main.player[Projectile.owner].Center, Vector2.Lerp(Main.player[Projectile.owner].Center, Projectile.Center, Projectile.scale)) ? true : false;
 
 	public override bool? CanDamage() => CheckAiState(AiStates.SWINGING) ? null : false;
 
@@ -90,7 +90,24 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		Projectile.scale = 1;
 		owner.heldProj = Projectile.whoAmI;
 
-		switch(AiState)
+		if (AllowUseTurn)
+		{
+			if (owner == Main.LocalPlayer)
+			{
+				int newDir = Math.Sign(Main.MouseWorld.X - owner.Center.X);
+				Projectile.velocity.X = newDir == 0 ? owner.direction : newDir;
+
+				if (newDir != owner.direction)
+					Projectile.netUpdate = true;
+			}
+
+			owner.ChangeDir((int)Projectile.velocity.X);
+		}
+
+		else
+			owner.direction = Math.Sign(Projectile.velocity.X);
+
+		switch (AiState)
 		{
 			case (float)AiStates.CHARGING: 
 				Charging(owner);
@@ -113,9 +130,6 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 			if (!Main.dedServ)
 				SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing.WithPitchOffset(-0.75f), owner.Center);
 		}
-
-		if(!CheckAiState(AiStates.CHARGING))
-			owner.direction = Math.Sign(Projectile.velocity.X);
 
 		TranslateRotation(owner, out float clubRotation, out float armRotation);
 		Projectile.rotation = clubRotation;
@@ -141,14 +155,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 
 		//Aftertrail during swing
 		if (CheckAiState(AiStates.SWINGING))
-		{
-			for (int k = 0; k < Projectile.oldPos.Length; k++)
-			{
-				float progress = (Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length;
-				Color trailColor = drawColor * progress * .125f;
-				Main.EntitySpriteDraw(texture, drawPos, topFrame, trailColor, Projectile.oldRot[k], HoldPoint, Projectile.scale, Effects, 0);
-			}
-		}
+			DrawAftertrail(lightColor);
 
 		Main.EntitySpriteDraw(texture, drawPos, topFrame, drawColor, Projectile.rotation, HoldPoint, Projectile.scale, Effects, 0);
 
