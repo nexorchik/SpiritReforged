@@ -17,8 +17,8 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 	public int ChargeTime { get; private set; }
 	public int SwingTime { get; private set; }
 
-	private int WindupTime => (int)(ChargeTime * WindupTimeRatio);
-	private int LingerTime => (int)(SwingTime * LingerTimeRatio);
+	internal int WindupTime => (int)(ChargeTime * WindupTimeRatio);
+	internal int LingerTime => (int)(SwingTime * LingerTimeRatio);
 
 	public float Charge { get => Projectile.ai[0]; set => Projectile.ai[0] = value; }
 	public float AiState { get => Projectile.ai[1]; set => Projectile.ai[1] = value; }
