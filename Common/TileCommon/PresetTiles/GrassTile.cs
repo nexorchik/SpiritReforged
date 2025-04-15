@@ -39,11 +39,22 @@ public abstract class GrassTile : ModTile
 		return true;
 	}
 
+	//Behavior for playing dust despite not killing the tile
+	public virtual void DoDust(int i, int j, int amount = 5, int dustType = -1, float scale = 1f)
+	{
+		if (!Main.dedServ)
+		{
+			for(int d = 0; d < amount; d++)
+				Dust.NewDust(new Vector2(i * 16, j * 16), 16, 16, dustType == -1 ? DustType : dustType, 0f, 0f, 0, default, scale);
+		}
+	}
+
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
 		if (!effectOnly) //Change self into dirt
 		{
 			fail = true;
+			DoDust(i, j);
 			Framing.GetTileSafely(i, j).TileType = (ushort)DirtType;
 		}
 	}
