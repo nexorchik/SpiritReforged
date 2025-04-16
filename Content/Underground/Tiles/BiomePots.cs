@@ -92,6 +92,12 @@ public class BiomePots : PotTile, ILootTile
 				SoundEngine.PlaySound(SoundID.NPCHit1 with { Volume = .3f, Pitch = .25f }, pos);
 				SoundEngine.PlaySound(SoundID.NPCDeath1, pos);
 			}
+			else if (GetStyle(Main.tile[i, j].TileFrameY) is Style.Jungle)
+			{
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Squish") with { Volume = .25f }, pos);
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit") with { Volume = .5f, PitchRange = (0f, .3f), }, pos);
+				SoundEngine.PlaySound(SoundID.Dig, pos);
+			}
 			else
 			{
 				SoundEngine.PlaySound(SoundID.Shatter, pos);
