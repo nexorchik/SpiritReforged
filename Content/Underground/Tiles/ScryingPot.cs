@@ -40,6 +40,8 @@ public class ScryingPot : PotTile
 		DustType = DustID.Pot;
 	}
 
+	public override void AddMapData() => AddMapEntry(new Color(146, 76, 77), CreateMapEntryName());
+
 	public override bool KillSound(int i, int j, bool fail)
 	{
 		if (!fail)

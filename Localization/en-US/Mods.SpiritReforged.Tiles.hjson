@@ -35,3 +35,13 @@ TermiteJar_Tile.MapEntry: Termite Jar
 GarInAJarTile.MapEntry: Gar In A Jar
 KillieFishbowlTile.MapEntry: Killie Fishbowl
 OreCarts.MapEntry: Minecart
+AetherShipment.MapEntry: Aether Shipment
+ScryingPot.MapEntry: Scrying Pot
+SilverPlatters.MapEntry: Silver Platter
+StuffedPots.MapEntry: Stuffed Pot
+WormPot.MapEntry: Worm Pot
+AetherShipmentRubble.MapEntry: Aether Shipment 
+ScryingPotRubble.MapEntry: Scrying Pot 
+SilverPlattersRubble.MapEntry: Silver Platter
+StuffedPotsRubble.MapEntry: Stuffed Pot
+WormPotRubble.MapEntry: Worm Pot

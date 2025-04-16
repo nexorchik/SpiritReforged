@@ -35,3 +35,13 @@ TermiteJar_Tile.MapEntry: Банка с термитами
 GarInAJarTile.MapEntry: Щука в банке
 KillieFishbowlTile.MapEntry: Аквариум с килли рыбкой
 // OreCarts.MapEntry: Minecart
+// AetherShipment.MapEntry: Aether Shipment
+// ScryingPot.MapEntry: Scrying Pot
+// SilverPlatters.MapEntry: Silver Platters
+// StuffedPots.MapEntry: Stuffed Pots
+// WormPot.MapEntry: Worm Pot
+// AetherShipmentRubble.MapEntry: Aether Shipment Rubble
+// ScryingPotRubble.MapEntry: Scrying Pot Rubble
+// SilverPlattersRubble.MapEntry: Silver Platters Rubble
+// StuffedPotsRubble.MapEntry: Stuffed Pots Rubble
+// WormPotRubble.MapEntry: Worm Pot Rubble

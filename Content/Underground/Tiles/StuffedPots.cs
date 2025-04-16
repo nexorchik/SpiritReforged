@@ -19,6 +19,8 @@ public class StuffedPots : PotTile
 
 	public override void AddObjectData() => Main.tileOreFinderPriority[Type] = 575;
 
+	public override void AddMapData() => AddMapEntry(new Color(146, 76, 77), CreateMapEntryName());
+
 	public override bool KillSound(int i, int j, bool fail)
 	{
 		if (fail || Autoloader.IsRubble(Type))

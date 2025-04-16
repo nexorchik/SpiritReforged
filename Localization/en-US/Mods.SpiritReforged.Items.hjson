@@ -1609,16 +1609,16 @@ BombCannon: {
 
 RadonMossBobberItem: {
 	DisplayName: Radon Moss Fishing Bobber
-	Tooltip: 
+	Tooltip:
 		'''
 		Increases fishing power by 10
 		Your bobber now glows
-		'''			 
+		'''
 }
 
 OganessonMossBobberItem: {
 	DisplayName: Oganesson Moss Fishing Bobber
-	Tooltip: 		
+	Tooltip:
 		'''
 		Increases fishing power by 10
 		Your bobber now glows
