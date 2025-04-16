@@ -30,7 +30,7 @@ public class OganessonMoss : GrassTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.White.ToVector3() * .2f);
+		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.White.ToVector3() * .15f);
 		return true;
 	}
 
@@ -68,7 +68,7 @@ public class OganessonMossGrayBrick : GrassTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.White.ToVector3() * .2f);
+		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.White.ToVector3() * .15f);
 		return true;
 	}
 
@@ -98,6 +98,7 @@ public class OganessonPlants : ModTile, ICheckItemUse
 		Main.tileNoAttach[Type] = true;
 		Main.tileNoFail[Type] = true;
 		Main.tileCut[Type] = true;
+		TileID.Sets.SwaysInWindBasic[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
@@ -123,7 +124,6 @@ public class OganessonPlants : ModTile, ICheckItemUse
 		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
 		TileObjectData.newAlternate.AnchorTop = new AnchorData(AnchorType.SolidTile | AnchorType.SolidBottom | AnchorType.AlternateTile, TileObjectData.newTile.Width, 0);
 		TileObjectData.newAlternate.AnchorBottom = AnchorData.Empty;
-		TileObjectData.newAlternate.DrawYOffset = -2;
 		TileObjectData.addAlternate(StyleRange * 3);
 
 		TileObjectData.addTile(Type);

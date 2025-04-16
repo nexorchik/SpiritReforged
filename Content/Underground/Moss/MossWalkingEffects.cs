@@ -15,7 +15,7 @@ internal class MossWalkingEffects : GlobalTile
 {
 	public override void FloorVisuals(int type, Player player)
 	{
-		int chance = (int)Math.Clamp(25 - 7.5f * player.velocity.Length(), 1, 25);
+		int chance = (int)Math.Clamp(45 - 7.5f * player.velocity.Length(), 1, 45);
 
 		if (chance >= 1 && Main.rand.NextBool(chance))
 		{

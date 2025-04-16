@@ -30,7 +30,7 @@ internal class MossAmbientParticles : GlobalTile
 	{
 		if (MossCounts.InNeonMoss)
 		{
-			if (closer && Main.rand.NextBool(2000))
+			if (closer && Main.rand.NextBool(2400))
 			{
 				if (type == TileID.XenonMoss)
 					SpawnMossAmbientParticles(i, j, new Color(0, 184, 255));

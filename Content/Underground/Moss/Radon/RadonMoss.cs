@@ -8,7 +8,7 @@ using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Moss.Radon;
 
-[AutoloadGlowmask("255,255,255")]
+[AutoloadGlowmask("224, 232, 70")]
 public class RadonMoss : GrassTile
 {
 	protected override int DirtType => TileID.Stone;
@@ -28,7 +28,7 @@ public class RadonMoss : GrassTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Yellow.ToVector3() * .2f);
+		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), new Color(184, 170, 11).ToVector3() * .25f);
 		return true;
 	}
 
@@ -46,7 +46,7 @@ public class RadonMoss : GrassTile
 	protected virtual void GrowTiles(int i, int j) => TileExtensions.PlacePlant<RadonPlants>(i, j, Main.rand.Next(RadonPlants.StyleRange));
 }
 
-[AutoloadGlowmask("255,255,255")]
+[AutoloadGlowmask("224, 232, 70")]
 public class RadonMossGrayBrick : GrassTile
 {
 	protected override int DirtType => TileID.GrayBrick;
@@ -68,7 +68,7 @@ public class RadonMossGrayBrick : GrassTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Yellow.ToVector3() * .2f);
+		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), new Color(184, 170, 11).ToVector3() * .25f);
 		return true;
 	}
 
@@ -86,7 +86,7 @@ public class RadonMossGrayBrick : GrassTile
 	protected virtual void GrowTiles(int i, int j) => TileExtensions.PlacePlant<RadonPlants>(i, j, Main.rand.Next(RadonPlants.StyleRange));
 }
 
-[AutoloadGlowmask("255, 255, 255")]
+[AutoloadGlowmask("224, 232, 70")]
 public class RadonPlants : ModTile, ICheckItemUse
 {
 	public const int StyleRange = 3;
@@ -97,33 +97,28 @@ public class RadonPlants : ModTile, ICheckItemUse
 		Main.tileSolid[Type] = false;
 		Main.tileNoAttach[Type] = true;
 		Main.tileNoFail[Type] = true;
-		Main.tileCut[Type] = true;	
+		Main.tileCut[Type] = true;
+		TileID.Sets.SwaysInWindBasic[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<RadonMoss>(), ModContent.TileType<RadonMossGrayBrick>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = StyleRange;
-		TileObjectData.newTile.DrawYOffset = 2;
 
 		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
 		TileObjectData.newAlternate.AnchorRight = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide | AnchorType.AlternateTile, TileObjectData.newTile.Height, 0);
 		TileObjectData.newAlternate.AnchorBottom = AnchorData.Empty;
-		TileObjectData.newAlternate.DrawXOffset = 2;
-		TileObjectData.newAlternate.DrawYOffset = 0;
 		TileObjectData.addAlternate(StyleRange);
 
 		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
 		TileObjectData.newAlternate.AnchorLeft = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide | AnchorType.AlternateTile, TileObjectData.newTile.Height, 0);
 		TileObjectData.newAlternate.AnchorBottom = AnchorData.Empty;
-		TileObjectData.newAlternate.DrawXOffset = -2;
-		TileObjectData.newAlternate.DrawYOffset = 0;
 		TileObjectData.addAlternate(StyleRange * 2);
 
 		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
 		TileObjectData.newAlternate.AnchorTop = new AnchorData(AnchorType.SolidTile | AnchorType.SolidBottom | AnchorType.AlternateTile, TileObjectData.newTile.Width, 0);
 		TileObjectData.newAlternate.AnchorBottom = AnchorData.Empty;
-		TileObjectData.newAlternate.DrawYOffset = -2;
 		TileObjectData.addAlternate(StyleRange * 3);
 
 		TileObjectData.addTile(Type);
@@ -154,14 +149,14 @@ public class RadonPlants : ModTile, ICheckItemUse
 		else if (style >= StyleRange * 2)
 			width += 2;
 		else if (style >= StyleRange)
-			width -= 2;
+			width -= 3;
 		else
 			offsetY = 2;
 	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Yellow.ToVector3() * .2f);
+		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), new Color(184, 170, 11).ToVector3() * .35f);
 		return true;
 	}
 
