@@ -24,6 +24,8 @@ public class ScryingPot : PotTile
 	{
 		const int row = 1;
 
+		Main.tileOreFinderPriority[Type] = 575;
+
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.Origin = new(0, 1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, TileObjectData.newTile.Width, 0);

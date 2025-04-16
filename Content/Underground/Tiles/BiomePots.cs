@@ -9,6 +9,7 @@ using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
+using static SpiritReforged.Content.Underground.Tiles.BiomePots;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
@@ -62,6 +63,30 @@ public class BiomePots : PotTile, ILootTile
 		Style.Hell => 2.5f,
 		_ => 1.25f
 	};
+
+	/// <summary> Gets the map
+	private static Color GetColor(Style style) => style switch
+	{
+		Style.Cavern => new Color(150, 150, 150),
+		Style.Gold => Color.Gold,
+		Style.Ice => new Color(90, 139, 140),
+		Style.Desert => new Color(226, 122, 47),
+		Style.Jungle => new Color(192, 136, 70),
+		Style.Dungeon => new Color(203, 185, 151),
+		Style.Corruption => new Color(148, 159, 67),
+		Style.Crimson => new Color(198, 87, 93),
+		Style.Marble => new Color(201, 183, 149),
+		Style.Hell => new Color(73, 56, 41),
+		Style.Mushroom => new Color(172, 155, 110),
+		_ => new Color(146, 76, 77) // default color
+	};
+
+	public override void AddMapData()
+	{
+		var style = GetStyle(Type);
+		Color color = GetColor(style);
+		AddMapEntry(color, Language.GetText($"MapObject.Pot"));
+	}
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{

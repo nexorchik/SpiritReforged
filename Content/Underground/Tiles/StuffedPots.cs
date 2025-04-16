@@ -17,6 +17,8 @@ public class StuffedPots : PotTile
 		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(5));
 	}
 
+	public override void AddObjectData() => Main.tileOreFinderPriority[Type] = 575;
+
 	public override bool KillSound(int i, int j, bool fail)
 	{
 		if (fail || Autoloader.IsRubble(Type))
