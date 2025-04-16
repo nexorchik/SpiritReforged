@@ -82,8 +82,15 @@ public class ScryingPot : PotTile
 			Gore.NewGore(new EntitySource_TileBreak(i, j), new Vector2(i, j) * 16, Vector2.Zero, x);
 	}
 
-	public LootTable AddLoot(int objectStyle) => ModContent.GetInstance<Pots>().AddLoot(objectStyle);
+	public LootTable AddLoot(int objectStyle)
+	{
+		var loot = new LootTable();
+		loot.AddOneFromOptions(1, ItemID.NightOwlPotion, ItemID.ShinePotion, ItemID.BiomeSightPotion, ItemID.TrapsightPotion, ItemID.HunterPotion, ItemID.SpelunkerPotion);
 
+		loot.AddCommon(ItemID.SilverCoin, 1, 15, 50);
+
+		return loot;
+	}
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		if (TileObjectData.IsTopLeft(i, j))
