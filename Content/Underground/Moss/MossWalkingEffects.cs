@@ -74,7 +74,6 @@ internal class MossWalkingEffects : GlobalTile
 				Vector2 toCenter = (center - p.Position).SafeNormalize(Vector2.Zero);
 				p.Velocity = p.Velocity.RotatedBy(0.2f * rotationDir) * 0.97f;
 				p.Velocity += toCenter * 0.09f;
-
 			}));
 	}
 
@@ -94,7 +93,6 @@ internal class MossWalkingEffects : GlobalTile
 					p.Velocity.X *= .9f;
 
 				p.Velocity *= .96f;
-
 			}));
 	}
 
@@ -139,7 +137,6 @@ internal class MossWalkingEffects : GlobalTile
 			new Color(252, 90, 3) * 0.85f, Main.rand.NextFloat(0.25f, 0.45f), 90, 4, p =>
 			{
 				p.Velocity.Y += Main.rand.NextFloat(.02f, .03f);
-
 			}));
 	}
 
@@ -173,7 +170,6 @@ internal class MossWalkingEffects : GlobalTile
 					for (int i = 0; i < 2; i++)
 						ParticleHandler.SpawnParticle(new GlowParticle(p.Position, new Vector2(Main.rand.NextFloat(-1f, 1f), Main.rand.NextFloat(-1f, 1f)), new Color(255, 255, 255) * 0.25f, Main.rand.NextFloat(0.25f, 0.3f), 30, 8));
 				}
-
 			}));
 	}
 }
