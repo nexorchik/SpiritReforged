@@ -82,6 +82,8 @@ public class ScryingPot : PotTile
 			Gore.NewGore(new EntitySource_TileBreak(i, j), new Vector2(i, j) * 16, Vector2.Zero, x);
 	}
 
+	public LootTable AddLoot(int objectStyle) => ModContent.GetInstance<Pots>().AddLoot(objectStyle);
+
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		if (TileObjectData.IsTopLeft(i, j))
