@@ -35,3 +35,13 @@ TermiteJar_Tile.MapEntry: 白蚁罐
 GarInAJarTile.MapEntry: 罐中雀鳝
 KillieFishbowlTile.MapEntry: 鳉鱼鱼缸
 // OreCarts.MapEntry: Minecart
+// AetherShipment.MapEntry: "{$AetherShipmentItem.DisplayName}"
+// ScryingPot.MapEntry: "{$ScryingPotItem.DisplayName}"
+// SilverPlatters.MapEntry: "{$SilverPlattersItem.DisplayName}"
+// StuffedPots.MapEntry: "{$StuffedPotsItem.DisplayName}"
+// WormPot.MapEntry: "{$WormPotItem.DisplayName}"
+// AetherShipmentRubble.MapEntry: "{$AetherShipmentItem.DisplayName}"
+// ScryingPotRubble.MapEntry: "{$ScryingPotItem.DisplayName}"
+// SilverPlattersRubble.MapEntry: "{$SilverPlattersItem.DisplayName}"
+// StuffedPotsRubble.MapEntry: "{$StuffedPotsItem.DisplayName}"
+// WormPotRubble.MapEntry: "{$WormPotItem.DisplayName}"

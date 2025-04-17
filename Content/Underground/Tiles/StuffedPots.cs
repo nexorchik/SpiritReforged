@@ -17,6 +17,14 @@ public class StuffedPots : PotTile
 		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(5));
 	}
 
+	public override void AddObjectData()
+	{
+		Main.tileOreFinderPriority[Type] = 575;
+		base.AddObjectData();
+	}
+
+	public override void AddMapData() => AddMapEntry(new Color(146, 76, 77), CreateMapEntryName());
+
 	public override bool KillSound(int i, int j, bool fail)
 	{
 		if (fail || Autoloader.IsRubble(Type))

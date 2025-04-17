@@ -24,6 +24,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 	public override void AddObjectData()
 	{
 		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
+		Main.tileOreFinderPriority[Type] = 575;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.Origin = new(0, 1);
@@ -36,6 +37,8 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 		DustType = DustID.ShimmerTorch;
 	}
+
+	public override void AddMapData() => AddMapEntry(new Color(225, 174, 252), CreateMapEntryName());
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{

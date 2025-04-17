@@ -41,7 +41,7 @@ public abstract class PotTile : ModTile, IRecordTile, IAutoloadRubble
 	}
 
 	/// <summary> <inheritdoc cref="ModType.SetStaticDefaults"/><para/>
-	/// Automatically sets common pot data by type. See <see cref="AddObjectData"/>.
+	/// Automatically sets common pot data by type. See <see cref="AddObjectData"/> and <see cref="=AddMapData">
 	/// </summary>
 	public override void SetStaticDefaults()
 	{
@@ -50,12 +50,14 @@ public abstract class PotTile : ModTile, IRecordTile, IAutoloadRubble
 		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
 		Main.tileFrameImportant[Type] = true;
 		Main.tileSpelunker[Type] = true;
-
-		AddMapEntry(new Color(100, 90, 35), Language.GetText("MapObject.Pot"));
 		DustType = -1;
 
 		AddObjectData();
+		AddMapData();
 	}
+
+	/// <summary> Adds map data for the pot. Defaults to vanilla pot map entry and color.
+	public virtual void AddMapData() => AddMapEntry(new Color(146, 76, 77), Language.GetText("MapObject.Pot"));
 
 	/// <summary> Adds object data for this pot. By default, assumes <see cref="TileObjectData.Style2x2"/> with <see cref="TileObjectData.StyleWrapLimit"/> of 3. </summary>
 	public virtual void AddObjectData()
