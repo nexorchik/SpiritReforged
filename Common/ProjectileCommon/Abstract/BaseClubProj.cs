@@ -56,7 +56,14 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		SafeSetDefaults();
 	}
 
-	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Main.player[Projectile.owner].Center, Vector2.Lerp(Main.player[Projectile.owner].Center, Projectile.Center, Projectile.scale)) ? true : false;
+	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+	{
+		float dummy = 0;
+		float lineWidth = Size.Length() / 2;
+		var endPoint = Vector2.Lerp(Main.player[Projectile.owner].Center, Projectile.Center, Projectile.scale);
+
+		return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Main.player[Projectile.owner].Center, endPoint, lineWidth, ref dummy);
+	}
 
 	public override bool? CanDamage() => CheckAiState(AiStates.SWINGING) ? null : false;
 
@@ -87,7 +94,6 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		if (owner.dead)
 			Projectile.Kill();
 
-		Projectile.scale = 1;
 		owner.heldProj = Projectile.whoAmI;
 
 		if (AllowUseTurn)
@@ -122,7 +128,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 				break;
 		}
 
-		if (!owner.channel && _windupTimer >= WindupTime && CheckAiState(AiStates.CHARGING))
+		if (!owner.controlUseItem && _windupTimer >= WindupTime && CheckAiState(AiStates.CHARGING) && AllowRelease)
 		{
 			SetAiState(AiStates.SWINGING);
 			OnSwingStart();
@@ -187,6 +193,8 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 
 		writer.Write(_flickerTime);
 		writer.Write(_hasFlickered);
+
+		SendExtraDataSafe(writer);
 	}
 
 	public override void ReceiveExtraAI(BinaryReader reader)
@@ -203,5 +211,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 
 		_flickerTime = reader.ReadInt32();
 		_hasFlickered = reader.ReadBoolean();
+
+		ReceiveExtraDataSafe(reader);
 	}
 }

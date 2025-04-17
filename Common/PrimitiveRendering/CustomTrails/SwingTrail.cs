@@ -5,10 +5,10 @@ using static SpiritReforged.Common.Easing.EaseFunction;
 
 namespace SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 
-public class SwingTrail(Projectile Projectile, Color Color, float Intensity, float Radians, float Rotation, Vector2 Dist, Vector2 Width, EaseFunction DistanceEasing, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile) : BaseTrail(Projectile, layer)
+public class SwingTrail(Projectile Projectile, Color Color, float Intensity, float Radians, float Rotation, Vector2 Dist, Vector2 Width, EaseFunction DistanceEasing, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile, float dissolveThreshold = 0.9f) : BaseTrail(Projectile, layer)
 {
-	public SwingTrail(Projectile Projectile, Color Color, float Intensity, float Radians, float Rotation, float Dist, float Width, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile) 
-		: this(Projectile, Color, Intensity, Radians, Rotation, new Vector2(Dist), new Vector2(Width), Linear, SwingProgress, ShaderParams, layer) { }
+	public SwingTrail(Projectile Projectile, Color Color, float Intensity, float Radians, float Rotation, float Dist, float Width, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile, float dissolveThreshold = 0.9f) 
+		: this(Projectile, Color, Intensity, Radians, Rotation, new Vector2(Dist), new Vector2(Width), Linear, SwingProgress, ShaderParams, layer, dissolveThreshold) { }
 
 	public float DissolveSpeed { get; set; }
 	public Color Color { get; } = Color;
@@ -43,7 +43,7 @@ public class SwingTrail(Projectile Projectile, Color Color, float Intensity, flo
 		_direction = _owner.direction;
 		MyProjectile = Projectile;
 
-		if (_swingProgress > 0.9f)
+		if (_swingProgress > dissolveThreshold)
 		{
 			StartDissolve();
 			_timeLeft -= 10;

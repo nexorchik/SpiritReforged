@@ -1,3 +1,4 @@
+using System.IO;
 using Terraria.Audio;
 using Terraria.Graphics.CameraModifiers;
 using static Microsoft.Xna.Framework.MathHelper;
@@ -50,7 +51,11 @@ public abstract partial class BaseClubProj : ModProjectile
 	public virtual void Charging(Player owner)
 	{
 		if (_windupTimer < WindupTime)
+		{
 			_windupTimer++;
+			if (_windupTimer == WindupTime)
+				WindupComplete(owner);
+		}
 		else
 		{
 			Charge += 1f / ChargeTime;
@@ -59,7 +64,10 @@ public abstract partial class BaseClubProj : ModProjectile
 
 		if (Charge == 1 && !_hasFlickered)
 		{
-			SoundEngine.PlaySound(SoundID.NPCDeath7, Projectile.Center);
+			ChargeComplete(owner);
+
+			if (!Main.dedServ)
+				SoundEngine.PlaySound(SoundID.NPCDeath7, Projectile.Center);
 			_flickerTime = MAX_FLICKERTIME;
 			_hasFlickered = true;
 			Projectile.netUpdate = true;
@@ -165,13 +173,24 @@ public abstract partial class BaseClubProj : ModProjectile
 	internal virtual bool CanCollide(float progress) => progress > SwingPhaseThreshold && progress < SwingShrinkThreshold;
 
 	internal virtual bool AllowUseTurn => CheckAiState(AiStates.CHARGING);
+	internal virtual bool AllowRelease => true;
 
 	public virtual void SafeSetStaticDefaults() { }
 	public virtual void SafeSetDefaults() { }
 	public virtual void SafeAI() { }
+
+	internal virtual void DuringCharge(Player owner, float windupProgress, float chargeProgress) { }
+
+	internal virtual void WindupComplete(Player owner) { }
+
+	internal virtual void ChargeComplete(Player owner) { }
+
 	public virtual void OnSwingStart() { }
 	public virtual void OnSmash(Vector2 position) { }
 	public virtual void SafeDraw(SpriteBatch spriteBatch, Color lightColor) { }
+
+	internal virtual void SendExtraDataSafe(BinaryWriter writer) { }
+	internal virtual void ReceiveExtraDataSafe(BinaryReader reader) { }
 
 	public virtual SpriteEffects Effects => Main.player[Projectile.owner].direction * (int)Main.player[Projectile.owner].gravDir < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 	public virtual Vector2 HoldPoint => Effects == SpriteEffects.FlipHorizontally ? Size * (1 - HoldPointRatio) : new Vector2(Size.X * HoldPointRatio, Size.Y * (1 - HoldPointRatio));

@@ -74,7 +74,7 @@ public class TrailManager
 				t.StartDissolve();
 			}
 
-			if(trail is SwingTrail swingTrail)
+			if(trail.MyProjectile.whoAmI == projectile.whoAmI && trail is SwingTrail swingTrail)
 				swingTrail.StartDissolve();
 		}
 	}

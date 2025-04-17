@@ -8,13 +8,13 @@ public class GoldClub() : ClubItem()
 {
 	private int _combo;
 
-	internal override float DamageScaling => 3f;
+	internal override float DamageScaling => 2f;
 	internal override float KnockbackScaling => 2f;
 
 	public override void SafeSetDefaults()
 	{
-		Item.damage = 25;
-		Item.knockBack = 5;
+		Item.damage = 35;
+		Item.knockBack = 8;
 		ChargeTime = 60;
 		SwingTime = 24;
 		Item.width = 60;
