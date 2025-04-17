@@ -12,7 +12,6 @@ public class DunceCrab : ModNPC
 {
 	private enum State : byte
 	{
-		Idle,
 		Crawl,
 		Hide,
 		UnHide,
@@ -28,7 +27,7 @@ public class DunceCrab : ModNPC
 		Left
 	}
 
-	private static readonly int[] endFrames = [1, 4, 6, 7, 1, 4];
+	private static readonly int[] endFrames = [4, 6, 7, 1, 4];
 
 	public ref float Animation => ref NPC.ai[0];
 	public ref float Surface => ref NPC.ai[1];
@@ -52,10 +51,11 @@ public class DunceCrab : ModNPC
 	public override void SetDefaults()
 	{
 		NPC.aiStyle = -1;
-		NPC.noGravity = true;
-		NPC.Size = new Vector2(16);
+		NPC.noGravity = !NPC.IsABestiaryIconDummy;
+		NPC.Size = new Vector2(16); //Hitbox size directly affects tile collision accuracy
 		NPC.damage = 20;
 		NPC.lifeMax = 50;
+		NPC.defense = 8;
 		NPC.direction = 1;
 		NPC.DeathSound = SoundID.NPCDeath16;
 		NPC.HitSound = SoundID.NPCHit33;
@@ -77,6 +77,14 @@ public class DunceCrab : ModNPC
 		NPC.behindTiles = false;
 		NPC.height = 16;
 
+		NPC.aiStyle = NPC.wet ? NPCAIStyleID.Fighter : -1;
+
+		if (NPC.wet)
+		{
+			NPC.rotation = 0;
+			return;
+		}
+
 		if ((State)Animation is State.Fall or State.Flail)
 		{
 			NPC.noGravity = true;
@@ -92,6 +100,7 @@ public class DunceCrab : ModNPC
 		}
 		else
 		{
+			NPC.frameCounter = 0;
 		}
 
 		bool Colliding()
@@ -168,7 +177,7 @@ public class DunceCrab : ModNPC
 		if (!NPC.collideX && !NPC.collideY && !IntersectsSlope()) //If not colliding with anything (after crawling over an edge, for example), make a turn
 			ResolveSide();
 
-		if (Colliding(true) /*|| IntersectsSlope() && (Side)Surface is Side.Right or Side.Left*/) //If colliding on the side, make a reverse turn
+		if (Colliding(true)) //If colliding on the side, make a reverse turn
 			ResolveSide(true);
 
 		if (NPC.velocity.Length() < .05f) //Turn around
@@ -186,7 +195,7 @@ public class DunceCrab : ModNPC
 
 		float gravity = 2;
 		NPC.spriteDirection = NPC.direction;
-		NPC.rotation = Utils.AngleLerp(NPC.rotation, MathHelper.WrapAngle(Angle), .1f);
+		NPC.rotation = Utils.AngleLerp(NPC.rotation, MathHelper.WrapAngle(Angle), .13f);
 		NPC.velocity = new Vector2(NPC.direction, gravity).RotatedBy(Angle);
 
 		void ResolveSide(bool reverse = false)
@@ -329,9 +338,8 @@ public class DunceCrab : ModNPC
 		var texture = TextureAssets.Npc[Type].Value;
 		var origin = new Vector2(NPC.frame.Width / 2, NPC.frame.Height - NPC.height / 2 - 4);
 		var effects = (NPC.spriteDirection == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-		var offset = new Vector2(0, NPC.IsABestiaryIconDummy ? NPC.height + NPC.gfxOffY : NPC.gfxOffY);
 
-		Main.EntitySpriteDraw(texture, NPC.Center - screenPos + offset,
+		Main.EntitySpriteDraw(texture, NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY),
 			NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, effects);
 
 		return false;
