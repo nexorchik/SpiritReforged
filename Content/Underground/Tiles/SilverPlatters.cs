@@ -20,6 +20,14 @@ public class SilverPlatters : PotTile, ILootTile
 		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(3));
 	}
 
+	public override void AddObjectData()
+	{
+		Main.tileOreFinderPriority[Type] = 575;
+		base.AddObjectData();
+	}
+
+	public override void AddMapData() => AddMapEntry(Color.Silver, CreateMapEntryName());
+
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
 		const int distance = 200;

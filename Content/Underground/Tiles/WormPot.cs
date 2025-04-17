@@ -26,6 +26,7 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 	public override void AddObjectData()
 	{
 		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
+		Main.tileOreFinderPriority[Type] = 575;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.Origin = new(0, 1);
@@ -38,6 +39,8 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 		DustType = DustID.Plantera_Pink;
 	}
+
+	public override void AddMapData() => AddMapEntry(Color.MediumVioletRed, CreateMapEntryName());
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)

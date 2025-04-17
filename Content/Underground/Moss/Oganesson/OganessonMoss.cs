@@ -30,7 +30,7 @@ public class OganessonMoss : GrassTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.White.ToVector3() * .3f);
+		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.White.ToVector3() * .15f);
 		return true;
 	}
 
@@ -68,7 +68,7 @@ public class OganessonMossGrayBrick : GrassTile
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.White.ToVector3() * .3f);
+		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.White.ToVector3() * .15f);
 		return true;
 	}
 
@@ -98,21 +98,27 @@ public class OganessonPlants : ModTile, ICheckItemUse
 		Main.tileNoAttach[Type] = true;
 		Main.tileNoFail[Type] = true;
 		Main.tileCut[Type] = true;
+		TileID.Sets.SwaysInWindBasic[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<OganessonMoss>(), ModContent.TileType<OganessonMossGrayBrick>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.RandomStyleRange = StyleRange;
+		TileObjectData.newTile.DrawYOffset = 2;
 
 		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
 		TileObjectData.newAlternate.AnchorRight = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide | AnchorType.AlternateTile, TileObjectData.newTile.Height, 0);
 		TileObjectData.newAlternate.AnchorBottom = AnchorData.Empty;
+		TileObjectData.newAlternate.DrawXOffset = 2;
+		TileObjectData.newAlternate.DrawYOffset = 0;
 		TileObjectData.addAlternate(StyleRange);
 
 		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
 		TileObjectData.newAlternate.AnchorLeft = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide | AnchorType.AlternateTile, TileObjectData.newTile.Height, 0);
 		TileObjectData.newAlternate.AnchorBottom = AnchorData.Empty;
+		TileObjectData.newAlternate.DrawXOffset = -2;
+		TileObjectData.newAlternate.DrawYOffset = 0;
 		TileObjectData.addAlternate(StyleRange * 2);
 
 		TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
@@ -142,12 +148,20 @@ public class OganessonPlants : ModTile, ICheckItemUse
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY)
 	{
 		int style = tileFrameX / 18;
-		if (style < StyleRange * 3)
+
+		if (style >= StyleRange * 3)
+			offsetY = -2;
+		else if (style >= StyleRange * 2)
+			width += 2;
+		else if (style >= StyleRange)
+			width -= 2;
+		else
 			offsetY = 2;
 	}
+
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.White.ToVector3() * .35f);
+		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.White.ToVector3() * .2f);
 		return true;
 	}
 

@@ -9,6 +9,7 @@ using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
+using static SpiritReforged.Content.Underground.Tiles.BiomePots;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
@@ -63,6 +64,30 @@ public class BiomePots : PotTile, ILootTile
 		_ => 1.25f
 	};
 
+	/// <summary> Gets the map
+	private static Color GetColor(Style style) => style switch
+	{
+		Style.Cavern => new Color(150, 150, 150),
+		Style.Gold => Color.Gold,
+		Style.Ice => new Color(90, 139, 140),
+		Style.Desert => new Color(226, 122, 47),
+		Style.Jungle => new Color(192, 136, 70),
+		Style.Dungeon => new Color(203, 185, 151),
+		Style.Corruption => new Color(148, 159, 67),
+		Style.Crimson => new Color(198, 87, 93),
+		Style.Marble => new Color(201, 183, 149),
+		Style.Hell => new Color(73, 56, 41),
+		Style.Mushroom => new Color(172, 155, 110),
+		_ => new Color(146, 76, 77) // default color
+	};
+
+	public override void AddMapData()
+	{
+		var style = GetStyle(Type);
+		Color color = GetColor(style);
+		AddMapEntry(color, Language.GetText($"MapObject.Pot"));
+	}
+
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
 		const int distance = 200;
@@ -73,7 +98,7 @@ public class BiomePots : PotTile, ILootTile
 		var world = new Vector2(i, j) * 16;
 		float strength = Main.LocalPlayer.DistanceSQ(world) / (distance * distance);
 
-		if (strength < 1 && Main.rand.NextFloat(10f) < 1f - strength)
+		if (strength < 1 && Main.rand.NextFloat(28f) < 1f - strength)
 		{
 			var d = Dust.NewDustDirect(world, 16, 16, DustID.TreasureSparkle, 0, 0, Scale: Main.rand.NextFloat());
 			d.noGravity = true;
@@ -91,6 +116,12 @@ public class BiomePots : PotTile, ILootTile
 			{
 				SoundEngine.PlaySound(SoundID.NPCHit1 with { Volume = .3f, Pitch = .25f }, pos);
 				SoundEngine.PlaySound(SoundID.NPCDeath1, pos);
+			}
+			else if (GetStyle(Main.tile[i, j].TileFrameY) is Style.Jungle)
+			{
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Squish") with { Volume = .25f }, pos);
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit") with { Volume = .5f, PitchRange = (0f, .3f), }, pos);
+				SoundEngine.PlaySound(SoundID.Dig, pos);
 			}
 			else
 			{

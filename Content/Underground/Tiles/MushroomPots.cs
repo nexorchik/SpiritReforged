@@ -1,6 +1,7 @@
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.Audio;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
@@ -11,6 +12,8 @@ public class MushroomPots : PotTile, ILootTile
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
+		DustType = DustID.Pot;
+
 		if (effectOnly || fail)
 			return;
 

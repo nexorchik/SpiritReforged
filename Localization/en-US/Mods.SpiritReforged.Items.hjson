@@ -1560,7 +1560,7 @@ PotionVatsCloningItem: {
 
 SilverFoodPlatterItem: {
 	DisplayName: Silver Food Platter
-	Tooltip: ""
+	Tooltip: <right> to place item on platter
 }
 
 RadonMossItem: {
@@ -1605,6 +1605,26 @@ BombCannon: {
 		Uses bombs as ammo
 		'A groundbreaking invention'
 		'''
+}
+
+RadonMossBobberItem: {
+	DisplayName: Radon Moss Fishing Bobber
+	Tooltip: "{$ItemTooltip.FishingBobberGlowingArgon}"
+}
+
+OganessonMossBobberItem: {
+	DisplayName: Oganesson Moss Fishing Bobber
+	Tooltip: "{$ItemTooltip.FishingBobberGlowingArgon}"
+}
+
+PotHead: {
+	DisplayName: Pot Head
+	Tooltip: ""
+}
+
+UpsideDownPotItem: {
+	DisplayName: Upside Down Pot
+	Tooltip: ""
 }
 
 DunceCrabBannerItem.DisplayName: Dunce Crab Banner
