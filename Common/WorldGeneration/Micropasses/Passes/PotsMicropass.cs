@@ -45,6 +45,7 @@ internal class PotsMicropass : Micropass
 		Generate(CreateWorm, Main.maxTilesX / WorldGen.WorldSizeSmallX * 24, out _);
 		Generate(CreatePlatter, Main.maxTilesX / WorldGen.WorldSizeSmallX * 28, out _);
 		Generate(CreateAether, Main.maxTilesX / WorldGen.WorldSizeSmallX * 3, out _);
+		Generate(CreateUpsideDown, Main.maxTilesX / WorldGen.WorldSizeSmallX * 4, out _);
 
 		Generate(CreateStack, (int)(Main.maxTilesX * Main.maxTilesY * 0.0005), out _); //Normal pot generation weight is 0.0008
 		Generate(CreateUncommon, (int)(Main.maxTilesX * Main.maxTilesY * 0.00055), out int pots);
@@ -130,6 +131,17 @@ internal class PotsMicropass : Micropass
 		return Main.tile[x, y].TileType == type;
 
 		bool NearShimmer() => Math.Abs(x - GenVars.shimmerPosition.X) < Main.maxTilesX * .2f && Math.Abs(y - GenVars.shimmerPosition.Y) < Main.maxTilesY * .2f;
+	}
+
+	private static bool CreateUpsideDown(int x, int y)
+	{
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
+			return false;
+
+		int type = ModContent.TileType<UpsideDownPot>();
+		WorldGen.PlaceTile(x, y, type, true);
+
+		return Main.tile[x, y].TileType == type;
 	}
 
 	/// <summary> Picks a relevant biome pot style and places it (<see cref="BiomePots"/>). </summary>

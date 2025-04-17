@@ -1608,3 +1608,13 @@ OganessonMossBobberItem: {
 	// DisplayName: Oganesson Moss Fishing Bobber
 	// Tooltip: "{$ItemTooltip.FishingBobberGlowingArgon}"
 }
+
+PotHead: {
+	// DisplayName: Pot Head
+	// Tooltip: ""
+}
+
+UpsideDownPotItem: {
+	// DisplayName: Upside Down Pot
+	// Tooltip: ""
+}
