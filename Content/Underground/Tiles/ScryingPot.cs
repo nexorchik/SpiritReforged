@@ -60,25 +60,10 @@ public class ScryingPot : PotTile, ILootTile
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
-		if (WorldGen.generatingWorld || Main.dedServ || Autoloader.IsRubble(Type))
+		if (WorldGen.generatingWorld || Autoloader.IsRubble(Type))
 			return;
 
 		var spawn = new Vector2(i, j).ToWorldCoordinates(16, 16);
-		TornMapPiece.LightMap(i, j, 280, out _, .5f);
-
-		ParticleHandler.SpawnParticle(new TexturedPulseCircle(spawn, Color.MediumPurple * .15f, .25f, 400, 20, "supPerlin", Vector2.One, Common.Easing.EaseFunction.EaseQuadOut));
-		SoundEngine.PlaySound(SoundID.NPCDeath6 with { Pitch = .5f }, spawn);
-
-		for (int x = 0; x < 12; x++)
-		{
-			var newSpawn = spawn + Main.rand.NextVector2Unit() * Main.rand.NextFloat(20);
-			int time = Main.rand.Next(20, 50);
-			float speed = Main.rand.NextFloat(4f);
-
-			ParticleHandler.SpawnParticle(new GlowParticle(newSpawn, spawn.DirectionTo(newSpawn) * speed, Color.Purple, .5f, time));
-			ParticleHandler.SpawnParticle(new GlowParticle(newSpawn, spawn.DirectionTo(newSpawn) * speed, Color.White, .2f, time));
-		}
-
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
 			ItemMethods.SplitCoins(Main.rand.Next(6000, 9000), delegate (int type, int stack)
@@ -90,8 +75,26 @@ public class ScryingPot : PotTile, ILootTile
 			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)spawn.X - 16, (int)spawn.Y - 16, 32, 32), p);
 		}
 
-		for (int x = 51; x < 54; x++)
-			Gore.NewGore(new EntitySource_TileBreak(i, j), new Vector2(i, j) * 16, Vector2.Zero, x);
+		if (!Main.dedServ)
+		{
+			TornMapPiece.LightMap(i, j, 280, out _, .5f);
+
+			ParticleHandler.SpawnParticle(new TexturedPulseCircle(spawn, Color.MediumPurple * .15f, .25f, 400, 20, "supPerlin", Vector2.One, Common.Easing.EaseFunction.EaseQuadOut));
+			SoundEngine.PlaySound(SoundID.NPCDeath6 with { Pitch = .5f }, spawn);
+
+			for (int x = 0; x < 12; x++)
+			{
+				var newSpawn = spawn + Main.rand.NextVector2Unit() * Main.rand.NextFloat(20);
+				int time = Main.rand.Next(20, 50);
+				float speed = Main.rand.NextFloat(4f);
+
+				ParticleHandler.SpawnParticle(new GlowParticle(newSpawn, spawn.DirectionTo(newSpawn) * speed, Color.Purple, .5f, time));
+				ParticleHandler.SpawnParticle(new GlowParticle(newSpawn, spawn.DirectionTo(newSpawn) * speed, Color.White, .2f, time));
+			}
+
+			for (int x = 51; x < 54; x++)
+				Gore.NewGore(new EntitySource_TileBreak(i, j), new Vector2(i, j) * 16, Vector2.Zero, x);
+		}
 	}
 
 	public LootTable AddLoot(int objectStyle)
