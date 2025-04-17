@@ -1,7 +1,5 @@
 ﻿using SpiritReforged.Common.TileCommon.CheckItemUse;
-using SpiritReforged.Common.TileCommon.TileTag;
 using SpiritReforged.Content.Forest.Botanist.Items;
-using System.Linq;
 using Terraria.GameContent.Metadata;
 
 namespace SpiritReforged.Common.TileCommon.PresetTiles;
@@ -44,19 +42,12 @@ public abstract class HerbTile : ModTile, ICheckItemUse
 
 	public bool? CheckItemUse(int type, int i, int j)
 	{
-		if (type == ItemID.StaffofRegrowth)
+		if (type is ItemID.StaffofRegrowth or ItemID.AcornAxe)
 		{
-			int herbType = TagGlobalTile.HarvestableHerbs.FirstOrDefault(x => x == Main.tile[i, j].TileType);
-
-			if (herbType != default)
+			if (ModContent.GetModTile(Main.tile[i, j].TileType) is HerbTile herb && herb.CanBeHarvested(i, j))
 			{
-				var herb = ModContent.GetModTile(type) as HerbTile;
-
-				if (herb.CanBeHarvested(i, j))
-				{
-					WorldGen.KillTile(i, j);
-					return true;
-				}
+				WorldGen.KillTile(i, j);
+				return true;
 			}
 		}
 
@@ -147,7 +138,7 @@ public abstract class HerbTile : ModTile, ICheckItemUse
 		Tile tile = Framing.GetTileSafely(i, j);
 		PlantStage stage = GetStage(i, j);
 
-		if (stage == PlantStage.Planted) //Grow only if just planted
+		if (stage == PlantStage.Planted && Main.rand.NextBool(2)) //Grow only if just planted
 		{
 			tile.TileFrameX += FrameWidth;
 

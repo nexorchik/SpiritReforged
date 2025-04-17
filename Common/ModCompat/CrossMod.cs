@@ -47,5 +47,5 @@ internal static class CrossMod
 	//public static readonly ModEntry Classic = new("SpiritMod"); //Classic is handled entirely in its own series of classes
 
 	/// <summary> The names and instances of loaded crossmod mods per <see cref="ModEntry"/>. </summary>
-	internal static readonly Dictionary<string, Mod> LoadedMods = [];
+	private static readonly Dictionary<string, Mod> LoadedMods = [];
 }

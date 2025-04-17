@@ -51,7 +51,10 @@ public class TreetopPlatform : SimpleEntity
 			entity.position = newPosition;
 
 		if (entity is Player player)
+		{
 			player.Rotate(rotation * .07f, new Vector2(player.width * .5f, player.height));
+			player.gfxOffY = 0;
+		}
 	}
 }
 

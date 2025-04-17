@@ -11,7 +11,11 @@ public class CactusWallProj : ModProjectile
 	private const int MaxHits = 10;
 	private const int MaxTimeLeft = 15 * 60;
 
-	public override void SetStaticDefaults() => Main.projFrames[Type] = 3;
+	public override void SetStaticDefaults()
+	{
+		ProjectileID.Sets.DontAttachHideToAlpha[Type] = true;
+		Main.projFrames[Type] = 3;
+	}
 
 	public override void SetDefaults()
 	{

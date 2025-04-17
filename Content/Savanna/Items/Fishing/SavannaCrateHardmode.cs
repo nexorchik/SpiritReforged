@@ -29,8 +29,13 @@ public class SavannaCrateHardmode : ModItem
 			ItemID.MysticCoilSnake,
 			ItemID.FeralClaws];
 
-		if (CrossMod.Fables.Enabled && CrossMod.Fables.Instance.TryFind("ToxicBlowpipe", out ModItem toxicBlowpipe))
-			dropOptions = dropOptions.Append(toxicBlowpipe.Type).ToArray();
+		if (CrossMod.Fables.Enabled)
+		{
+			if (CrossMod.Fables.Instance.TryFind("ToxicBlowpipe", out ModItem toxicBLowpipe))
+				dropOptions = dropOptions.Append(toxicBLowpipe.Type).ToArray();
+			if (CrossMod.Fables.Instance.TryFind("CrackshotColt", out ModItem crackshotColt))
+				dropOptions = dropOptions.Append(crackshotColt.Type).ToArray();
+		}
 
 		var main = ItemDropRule.OneFromOptions(1, dropOptions);
 

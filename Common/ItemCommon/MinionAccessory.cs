@@ -45,4 +45,13 @@ public abstract class MinionAccessory : AccessoryItem
 				Projectile.NewProjectile(Terraria.Entity.GetSource_NaturalSpawn(), player.Center, Vector2.Zero, projType, projDamage, 0f, player.whoAmI);
 		}
 	}
+
+	public override bool WeaponPrefix() => false;
+
+	public override bool MeleePrefix() => false;
+
+	public override bool MagicPrefix() => false;
+
+	public override bool RangedPrefix() => false;
+
 }
