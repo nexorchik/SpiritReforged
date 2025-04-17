@@ -1,4 +1,5 @@
 using RubbleAutoloader;
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
@@ -10,7 +11,7 @@ using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
-public class ScryingPot : PotTile
+public class ScryingPot : PotTile, ILootTile
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0] } };
 
@@ -78,6 +79,17 @@ public class ScryingPot : PotTile
 			ParticleHandler.SpawnParticle(new GlowParticle(newSpawn, spawn.DirectionTo(newSpawn) * speed, Color.White, .2f, time));
 		}
 
+		if (Main.netMode != NetmodeID.MultiplayerClient)
+		{
+			ItemMethods.SplitCoins(Main.rand.Next(6000, 9000), delegate (int type, int stack)
+			{
+				Item.NewItem(new EntitySource_TileBreak(i, j), spawn, new Item(type, stack), noGrabDelay: true);
+			});
+
+			var p = Main.player[Player.FindClosest(spawn, 0, 0)];
+			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)spawn.X - 16, (int)spawn.Y - 16, 32, 32), p);
+		}
+
 		for (int x = 51; x < 54; x++)
 			Gore.NewGore(new EntitySource_TileBreak(i, j), new Vector2(i, j) * 16, Vector2.Zero, x);
 	}
@@ -86,9 +98,6 @@ public class ScryingPot : PotTile
 	{
 		var loot = new LootTable();
 		loot.AddOneFromOptions(1, ItemID.NightOwlPotion, ItemID.ShinePotion, ItemID.BiomeSightPotion, ItemID.TrapsightPotion, ItemID.HunterPotion, ItemID.SpelunkerPotion);
-
-		loot.AddCommon(ItemID.SilverCoin, 1, 15, 50);
-
 		return loot;
 	}
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
