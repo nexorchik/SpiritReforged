@@ -1626,3 +1626,8 @@ UpsideDownPotItem: {
 	// DisplayName: Upside Down Pot
 	// Tooltip: ""
 }
+
+PotionVatsAlchemyItem: {
+	// DisplayName: Alchemy Potion Vat
+	// Tooltip: ""
+}
