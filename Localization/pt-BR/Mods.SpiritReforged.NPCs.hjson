@@ -231,6 +231,12 @@ Cartographer: {
 				// 2: There it is! Hard to forget it after all. You don't often find industry out here, which is good for me. I don't much care for all of the noise. Especially once an energy field appeared and scrap was flying towards me.
 			}
 
+			BloodAltar: {
+				// 0: And... there! Charting the surface is only, well, the surface. I find a lot of strange things underground, and many of them I steer clear from... What? I'm a cartographer, not an adventurer!
+				// 1: Should be it! You seem like the capable type. I'd found this undead fellow who actually listened to reason, which was strange enough, but he sold me this... hand. I followed where it pointed to and found myself at an unsettling crypt... Maybe you can get something out of all this, I'm not going back there.
+				// 2: You up for a challenge? I'm not, that's for sure. There's this dungeon with a room that reeks of blood... And with that strange altar in the middle, yeah I didn't stay for long.
+			}
+
 			FirstPin: Adicionei este alfinete à sua "Coleção de Alfinetes". Você pode acessá-lo a qualquer momento no canto inferior esquerdo do seu mapa.
 		}
 	}
