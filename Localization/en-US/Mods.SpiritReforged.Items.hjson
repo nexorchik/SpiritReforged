@@ -1328,3 +1328,13 @@ SparrowCageItem: {
 	DisplayName: Sparrow Cage
 	Tooltip: ""
 }
+
+PinBlood: {
+	DisplayName: Blood Pin
+	Tooltip: ""
+}
+
+PinWulfrum: {
+	DisplayName: Wulfrum Pin
+	Tooltip: ""
+}

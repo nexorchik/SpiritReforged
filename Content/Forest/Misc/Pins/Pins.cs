@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.ItemCommon.Pins;
+using SpiritReforged.Common.ModCompat;
 
 namespace SpiritReforged.Content.Forest.Misc.Pins;
 
@@ -23,3 +24,13 @@ public class PinSky : PinItem { }
 public class PinSword : PinItem { }
 
 public class PinCuriosity : PinItem { }
+
+public class PinBlood : PinItem
+{
+	public override bool IsLoadingEnabled(Mod mod) => CrossMod.Thorium.Enabled;
+}
+
+public class PinWulfrum : PinItem
+{
+	public override bool IsLoadingEnabled(Mod mod) => CrossMod.Fables.Enabled;
+}

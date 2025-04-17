@@ -28,11 +28,12 @@ public class SavannaCrateHardmode : ModItem
 			ItemID.AnkletoftheWind,
 			ItemID.MysticCoilSnake,
 			ItemID.FeralClaws];
-		if (FablesCompat.Enabled)
+
+		if (CrossMod.Fables.Enabled)
 		{
-			if (FablesCompat.Instance.TryFind("ToxicBlowpipe", out ModItem toxicBLowpipe))
+			if (CrossMod.Fables.Instance.TryFind("ToxicBlowpipe", out ModItem toxicBLowpipe))
 				dropOptions = dropOptions.Append(toxicBLowpipe.Type).ToArray();
-			if (FablesCompat.Instance.TryFind("CrackshotColt", out ModItem crackshotColt))
+			if (CrossMod.Fables.Instance.TryFind("CrackshotColt", out ModItem crackshotColt))
 				dropOptions = dropOptions.Append(crackshotColt.Type).ToArray();
 		}
 
