@@ -27,10 +27,10 @@ public class PinCuriosity : PinItem { }
 
 public class PinBlood : PinItem
 {
-	public override bool IsLoadingEnabled(Mod mod) => ThoriumCompat.Enabled;
+	public override bool IsLoadingEnabled(Mod mod) => CrossMod.Thorium.Enabled;
 }
 
 public class PinWulfrum : PinItem
 {
-	public override bool IsLoadingEnabled(Mod mod) => FablesCompat.Enabled;
+	public override bool IsLoadingEnabled(Mod mod) => CrossMod.Fables.Enabled;
 }

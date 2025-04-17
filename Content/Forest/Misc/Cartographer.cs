@@ -114,9 +114,9 @@ public class Cartographer : WorldNPC
 
 		static int GetPinType(InterestType interest)
 		{
-			if (interest is InterestType.BloodAltar && ThoriumCompat.Enabled)
+			if (interest is InterestType.BloodAltar && CrossMod.Thorium.Enabled)
 				return ModContent.ItemType<PinBlood>();
-			else if (interest is InterestType.WulfrumBunker && FablesCompat.Enabled)
+			else if (interest is InterestType.WulfrumBunker && CrossMod.Fables.Enabled)
 				return ModContent.ItemType<PinWulfrum>();
 
 			int type = interest switch

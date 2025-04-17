@@ -24,8 +24,9 @@ public class SavannaCrate : ModItem
 			ItemID.AnkletoftheWind,
 			ItemID.MysticCoilSnake,
 			ItemID.FeralClaws];
-		if (FablesCompat.Enabled && FablesCompat.Instance.TryFind("CalamityFables/ToxicBlowpipe", out ModItem toxicBLowpipe))
-			dropOptions = dropOptions.Append(toxicBLowpipe.Type).ToArray();
+
+		if (CrossMod.Fables.Enabled && CrossMod.Fables.Instance.TryFind("ToxicBlowpipe", out ModItem toxicBlowpipe))
+			dropOptions = dropOptions.Append(toxicBlowpipe.Type).ToArray();
 
 		var main = ItemDropRule.OneFromOptions(1, dropOptions);
 
