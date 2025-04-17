@@ -100,6 +100,7 @@ public class ScryingPot : PotTile, ILootTile
 		loot.AddOneFromOptions(1, ItemID.NightOwlPotion, ItemID.ShinePotion, ItemID.BiomeSightPotion, ItemID.TrapsightPotion, ItemID.HunterPotion, ItemID.SpelunkerPotion);
 		return loot;
 	}
+
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		if (TileObjectData.IsTopLeft(i, j))

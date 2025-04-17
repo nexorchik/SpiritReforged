@@ -41,7 +41,7 @@ public abstract class PotTile : ModTile, IRecordTile, IAutoloadRubble
 	}
 
 	/// <summary> <inheritdoc cref="ModType.SetStaticDefaults"/><para/>
-	/// Automatically sets common pot data by type. See <see cref="AddObjectData"/> and <see cref="=AddMapData">
+	/// Automatically sets common pot data by type. See <see cref="AddObjectData"/> and <see cref="AddMapData">
 	/// </summary>
 	public override void SetStaticDefaults()
 	{
