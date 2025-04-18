@@ -1330,11 +1330,11 @@ SparrowCageItem: {
 }
 
 PinBlood: {
-	// DisplayName: Blood Pin
-	// Tooltip: ""
+	DisplayName: 血图钉
+	Tooltip: ""
 }
 
 PinWulfrum: {
-	// DisplayName: Wulfrum Pin
-	// Tooltip: ""
+	DisplayName: 钨钢图钉
+	Tooltip: ""
 }
