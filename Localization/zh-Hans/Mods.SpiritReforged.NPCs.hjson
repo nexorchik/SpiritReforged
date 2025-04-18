@@ -226,15 +226,15 @@ Cartographer: {
 			}
 
 			WulfrumBunker: {
-				// 0: Hopefully this is right. I was walking around as I do, and behind a copse of trees I see this weird green mechanical site. The top has all these things and from below I hear a mechanical whirring...no thanks!
-				// 1: This was were my camp was, right there. I was taking a rest from a nice, long day of walking around, when this little machine guy with a big hand STOLE my bag. Good thing I had rested a bit, because that little guy kept me running for a while.
-				// 2: There it is! Hard to forget it after all. You don't often find industry out here, which is good for me. I don't much care for all of the noise. Especially once an energy field appeared and scrap was flying towards me.
+				0: 希望我没记错……我像往常一样闲逛时，发现树林后藏着一处诡异的绿色机械设施。顶部布满奇怪装置，我还从下面听到了机械嗡鸣声……谢了，我可不想靠近！
+				1: 我的营地原本在这儿！我在长途跋涉后正休息呢，结果一个有着大手的小机器怪抢走了我的包！幸好我休息够了，不然真追不上那家伙。
+				2: 就是这儿！想忘都难。在这里工业设施可不多见——对我来说倒是好事，毕竟我讨厌噪音。尤其当能量场突然出现，然后废料朝我飞来的时候。
 			}
 
 			BloodAltar: {
-				// 0: And... there! Charting the surface is only, well, the surface. I find a lot of strange things underground, and many of them I steer clear from... What? I'm a cartographer, not an adventurer!
-				// 1: Should be it! You seem like the capable type. I'd found this undead fellow who actually listened to reason, which was strange enough, but he sold me this... hand. I followed where it pointed to and found myself at an unsettling crypt... Maybe you can get something out of all this, I'm not going back there.
-				// 2: You up for a challenge? I'm not, that's for sure. There's this dungeon with a room that reeks of blood... And with that strange altar in the middle, yeah I didn't stay for long.
+				0: 还有……这里！地表测绘只是皮毛，大多怪东西都在地下，不过我都绕着它们走……什么？我只是个测绘师，又不是冒险家！
+				1: 应该是这儿！你看起来是个靠谱的。我曾遇到个能沟通的亡灵，够奇怪了吧？而且他居然卖给我一只……断手。跟着它指引的方向，我找到个阴森的墓室……或许你能发现点啥，反正我是不回去那儿了。
+				2: 准备好迎接挑战了吗？反正我没有。地牢里有个房间弥漫着血腥味……并且房间正中央摆着古怪的祭坛，是的，我没待多久就溜了。
 			}
 
 			FirstPin: 我已将这个图钉加入了“图钉收藏”，你随时可从地图左下角查看。
