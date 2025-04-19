@@ -2,6 +2,9 @@ using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.ModCompat.Classic;
 using SpiritReforged.Common.WorldGeneration.Noise;
 using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.GameContent.Biomes;
+using Terraria.GameContent.Biomes.CaveHouse;
 using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Forest.Misc.Maps;
@@ -30,6 +33,11 @@ public class TornMapPiece : ModItem
 
 	public override bool? UseItem(Player player)
 	{
+		Point16 pos = Main.MouseWorld.ToTileCoordinates16();
+		var builder = HouseUtils.CreateBuilder(pos.ToPoint(), new());
+		builder.Place(new(), new());
+		return true;
+
 		const int Radius = 170;
 
 		if (Main.myPlayer == player.whoAmI && !Main.dedServ)
