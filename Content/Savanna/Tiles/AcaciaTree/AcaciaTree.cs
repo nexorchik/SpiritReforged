@@ -9,7 +9,6 @@ using SpiritReforged.Content.Savanna.Items.Food;
 using SpiritReforged.Content.Savanna.Items.Tools;
 using System.Linq;
 using Terraria.DataStructures;
-using Terraria.GameContent.Drawing;
 using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Savanna.Tiles.AcaciaTree;
@@ -97,39 +96,35 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 	public override void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
 	{
-		var t = Main.tile[i, j];
-		if (!TileDrawing.IsVisible(t))
+		if (!TileExtensions.GetVisualInfo(i, j, out Color color, out Texture2D texture))
 			return;
 
-		var color = TileExtensions.GetTint(i, j, Lighting.GetColor(i, j));
-		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeExtensions.GetPalmTreeOffset(i, j);
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + TreeExtensions.GetPalmTreeOffset(i, j);
 		float rotation = GetSway(i, j) * .08f;
 
 		if (IsTreeTop(i, j)) //Draw treetops
 		{
-			const int framesY = 2;
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % 2;
 
-			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
-			var source = TopTexture.Frame(1, framesY, 0, frameY, sizeOffsetY: -2);
-			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
+			Point size = new(330, 118);
+			var source = new Rectangle(68, 24 + (size.Y + 2) * frameY, size.X, size.Y);
+			var origin = new Vector2(source.Width / 2, source.Height);
 			
 			DrawShade(position, rotation);
-
-			spriteBatch.Draw(TopTexture.Value, position, source, color, rotation, origin, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(texture, position + new Vector2(9, 3), source, color, rotation, origin, 1, SpriteEffects.None, 0);
 		}
 		else //Draw branches
 		{
-			const int framesX = 2;
-			const int framesY = 3;
-
 			int frameX = (Noise(new Vector2(i, j)) > 0) ? 1 : 0;
-			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
-			var source = BranchTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % 3;
+
+			Point size = new(32, 52);
+			var source = new Rectangle((size.X + 2) * frameX, 23 + (size.Y + 2) * frameY, size.X, size.Y);
 			var origin = new Vector2(frameX == 0 ? source.Width : 0, 44);
 
 			position += new Vector2(6 * ((frameX == 0) ? -1 : 1), 8); //Directional offset
 
-			spriteBatch.Draw(BranchTexture.Value, position, source, color, rotation, origin, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(texture, position + new Vector2(10, 0), source, color, rotation, origin, 1, SpriteEffects.None, 0);
 		}
 	}
 
@@ -284,37 +279,37 @@ public class AcaciaTreeHallow : AcaciaTree
 
 	public override void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
 	{
-		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeExtensions.GetPalmTreeOffset(i, j);
+		if (!TileExtensions.GetVisualInfo(i, j, out Color color, out Texture2D texture))
+			return;
+
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + TreeExtensions.GetPalmTreeOffset(i, j);
 		float rotation = GetSway(i, j) * .08f;
 
 		if (IsTreeTop(i, j)) //Draw treetops
 		{
-			const int framesX = 8;
-			const int framesY = 2;
-
 			int frameX = i % 8;
-			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
-			var source = TopTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
-			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % 2;
+
+			Point size = new(330, 118);
+			var source = new Rectangle((size.X + 2) * frameX, 186 + (size.Y + 2) * frameY, size.X, size.Y);
+			var origin = new Vector2(source.Width / 2, source.Height);
 
 			DrawShade(position, rotation);
-
-			spriteBatch.Draw(TopTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(texture, position + new Vector2(9, 3), source, color, rotation, origin, 1, SpriteEffects.None, 0);
 		}
 		else //Draw branches
 		{
-			const int framesX = 16;
-			const int framesY = 3;
-
 			int frameX = ((Noise(new Vector2(i, j)) > 0) ? 1 : 0) + j % 8 * 2;
-			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % framesY;
-			bool flip = frameX % 2 == 0;
-			var source = BranchTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
-			var origin = new Vector2(flip ? source.Width : 0, 44);
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / FrameSize % 3;
 
+			bool flip = frameX % 2 == 0;
+			Point size = new(32, 52);
+
+			var source = new Rectangle((size.X + 2) * frameX, 23 + (size.Y + 2) * frameY, size.X, size.Y);
+			var origin = new Vector2(flip ? source.Width : 0, 44);
 			position += new Vector2(6 * (flip ? -1 : 1), 8); //Directional offset
 
-			spriteBatch.Draw(BranchTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+			spriteBatch.Draw(texture, position + new Vector2(10, 0), source, color, rotation, origin, 1, SpriteEffects.None, 0);
 		}
 	}
 }

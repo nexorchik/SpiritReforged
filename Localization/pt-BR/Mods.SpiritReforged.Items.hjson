@@ -1329,6 +1329,16 @@ SparrowCageItem: {
 	Tooltip: ""
 }
 
+PinBlood: {
+	// DisplayName: Blood Pin
+	// Tooltip: ""
+}
+
+PinWulfrum: {
+	// DisplayName: Wulfrum Pin
+	// Tooltip: ""
+}
+
 WayfarerHead: {
 	// DisplayName: Wayfarer's Hat
 	// Tooltip: Immunity to darkness
