@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using SpiritReforged.Common.ModCompat;
+using System.Linq;
 using Terraria.DataStructures;
 using Terraria.ModLoader.IO;
 using Terraria.Utilities;
@@ -14,6 +15,8 @@ public enum InterestType : byte
 	Savanna,
 	Hive,
 	Curiosity,
+	BloodAltar, //Thorium Mod exclusive
+	WulfrumBunker, //Fables Mod exclusive
 	Count
 }
 
@@ -91,6 +94,7 @@ internal class PointOfInterestSystem : ModSystem
 		for (int i = 0; i < typesCount; ++i)
 		{
 			var pair = dictionary.ElementAt(i);
+
 			tag.Add("type" + keyPrefix + i, (byte)pair.Key);
 			tag.Add("points" + keyPrefix + i, pair.Value.ToArray());
 		}

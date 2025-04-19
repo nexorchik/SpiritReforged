@@ -14,7 +14,9 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
 
+	private const int FullHeight = 36;
 	private static Color GlowColor => Color.Lerp(Color.Magenta, Color.CadetBlue, (float)(Math.Sin(Main.timeForVisualEffects / 40f) / 2f) + .5f);
+
 	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
 	{
 		var desc = Language.GetText("Mods.SpiritReforged.Tiles.Records.Aether");
@@ -36,6 +38,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 		TileObjectData.addTile(Type);
 
 		DustType = DustID.ShimmerTorch;
+		AnimationFrameHeight = FullHeight;
 	}
 
 	public override void AddMapData() => AddMapEntry(new Color(225, 174, 252), CreateMapEntryName());
@@ -72,6 +75,15 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 		ISwayTile.SetInstancedRotation(i, j, Main.rand.NextFloat(-1f, 1f) * 4f, fail);
 	}
 
+	public override void AnimateTile(ref int frame, ref int frameCounter)
+	{
+		if (++frameCounter >= 4)
+		{
+			frameCounter = 0;
+			frame = ++frame % 8;
+		}
+	}
+
 	public bool OnCutAttempt(int i, int j)
 	{
 		bool fail = AdjustFrame(i, j);
@@ -106,7 +118,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 	private static bool AdjustFrame(int i, int j)
 	{
-		const int fullWidth = 36;
+		const int fullWidth = FullHeight;
 
 		TileExtensions.GetTopLeft(ref i, ref j);
 
@@ -151,7 +163,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 		var data = TileObjectData.GetTileData(tile);
 
 		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
-		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, data.CoordinateHeights[tile.TileFrameY / 18]);
+		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY + Main.tileFrame[Type] * FullHeight, data.CoordinateWidth, data.CoordinateHeights[tile.TileFrameY / 18]);
 		var dataOffset = new Vector2(data.DrawXOffset, data.DrawYOffset);
 
 		spriteBatch.Draw(TextureAssets.Tile[tile.TileType].Value, drawPos + origin + dataOffset,

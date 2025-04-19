@@ -1329,6 +1329,16 @@ SparrowCageItem: {
 	Tooltip: ""
 }
 
+PinBlood: {
+	DisplayName: 血图钉
+	Tooltip: ""
+}
+
+PinWulfrum: {
+	DisplayName: 钨钢图钉
+	Tooltip: ""
+}
+
 WayfarerHead: {
 	// DisplayName: Wayfarer's Hat
 	// Tooltip: Immunity to darkness

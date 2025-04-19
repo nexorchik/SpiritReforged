@@ -157,7 +157,7 @@ public class BiomePots : PotTile, ILootTile
 		int variant = frameX / 36;
 
 		var source = new EntitySource_TileBreak(i, j);
-		var position = new Vector2(i, j).ToWorldCoordinates(16, 16);
+		var center = new Vector2(i, j).ToWorldCoordinates(16, 16);
 		int dustType = DustID.Pot;
 
 		bool spawnSlime = PotteryTracker.Remaining == 1;
@@ -166,12 +166,12 @@ public class BiomePots : PotTile, ILootTile
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
 			#region loot
-			var p = Main.player[Player.FindClosest(position, 0, 0)];
-			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)position.X - 16, (int)position.Y - 16, 32, 32), p);
+			var p = Main.player[Player.FindClosest(center, 0, 0)];
+			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)center.X - 16, (int)center.Y - 16, 32, 32), p);
 
 			ItemMethods.SplitCoins((int)(CalculateCoinValue() * GetValue(style)), delegate (int type, int stack)
 			{
-				Item.NewItem(source, position, new Item(type, stack), noGrabDelay: true);
+				Item.NewItem(source, center, new Item(type, stack), noGrabDelay: true);
 			}); //Always drop coins
 
 			if (p.statLife < p.statLifeMax2)
@@ -179,20 +179,23 @@ public class BiomePots : PotTile, ILootTile
 				int stack = Main.rand.Next(3, 6);
 
 				for (int h = 0; h < stack; h++)
-					Item.NewItem(source, position, ItemID.Heart);
+					Item.NewItem(source, center, ItemID.Heart);
 			}
 			#endregion
 
 			if (spawnSlime)
-				NPC.NewNPCDirect(source, position, ModContent.NPCType<PotterySlime>());
+				NPC.NewNPCDirect(source, center, ModContent.NPCType<PotterySlime>());
 
 			if (style is Style.Mushroom && NPC.CountNPCS(ModContent.NPCType<StompableGnome>()) < 5)
 			{
 				int count = Main.rand.Next(1, 4);
 
 				for (int c = 0; c < count; c++)
-					NPC.NewNPCDirect(source, position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), ModContent.NPCType<StompableGnome>());
+					NPC.NewNPCDirect(source, center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), ModContent.NPCType<StompableGnome>());
 			}
+
+			if (style is Style.Gold)
+				Projectile.NewProjectile(source, center, Vector2.UnitY * -4f, ProjectileID.CoinPortal, 0, 0);
 
 			if (Main.dedServ)
 				return;
@@ -205,7 +208,7 @@ public class BiomePots : PotTile, ILootTile
 				for (int g = 0; g < 3; g++)
 				{
 					int goreType = Mod.Find<ModGore>("PotCavern" + (g + variant * 3 + 1)).Type;
-					Gore.NewGore(source, position, Vector2.Zero, goreType);
+					Gore.NewGore(source, center, Vector2.Zero, goreType);
 				}
 
 				dustType = DustID.Pot;
@@ -217,7 +220,7 @@ public class BiomePots : PotTile, ILootTile
 				for (int g = 1; g < 4; g++)
 				{
 					int goreType = Mod.Find<ModGore>("PotGold" + g).Type;
-					Gore.NewGore(source, position, Vector2.Zero, goreType);
+					Gore.NewGore(source, center, Vector2.Zero, goreType);
 				}
 
 				dustType = DustID.Gold;
@@ -228,7 +231,7 @@ public class BiomePots : PotTile, ILootTile
 				for (int g = 1; g < 4; g++)
 				{
 					int goreType = Mod.Find<ModGore>("PotIce" + g).Type;
-					Gore.NewGore(source, position, Vector2.Zero, goreType);
+					Gore.NewGore(source, center, Vector2.Zero, goreType);
 				}
 
 				dustType = DustID.Ice;
@@ -294,7 +297,7 @@ public class BiomePots : PotTile, ILootTile
 				for (int g = 1; g < 4; g++)
 				{
 					int goreType = Mod.Find<ModGore>("PotMushroom" + g).Type;
-					Gore.NewGore(source, position, Vector2.Zero, goreType);
+					Gore.NewGore(source, center, Vector2.Zero, goreType);
 				}
 
 				dustType = DustID.MushroomSpray;
@@ -305,7 +308,7 @@ public class BiomePots : PotTile, ILootTile
 		for (int d = 0; d < 20; d++)
 			Dust.NewDustPerfect(GetRandom(), dustType, Main.rand.NextVector2Unit(), Scale: Main.rand.NextFloat() + .25f);
 
-		Vector2 GetRandom(float distance = 15f) => position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(distance);
+		Vector2 GetRandom(float distance = 15f) => center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(distance);
 	}
 
 	public LootTable AddLoot(int objectStyle)

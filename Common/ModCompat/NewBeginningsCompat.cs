@@ -22,8 +22,10 @@ internal class NewBeginningsCompat : ModSystem
 
 	public override void Load()
 	{
-		if (!ModLoader.TryGetMod("NewBeginnings", out Mod beginnings))
+		if (!CrossMod.NewBeginnings.Enabled)
 			return;
+
+		var beginnings = CrossMod.NewBeginnings.Instance;
 
 		beginnings.Call("Delay", () =>
 		{
