@@ -51,7 +51,7 @@ public class DunceCrab : ModNPC
 	public override void SetDefaults()
 	{
 		NPC.aiStyle = -1;
-		NPC.noGravity = !NPC.IsABestiaryIconDummy;
+		NPC.noGravity = !NPC.IsABestiaryIconDummy; //Ensures the bestiary portrait is visually grounded
 		NPC.Size = new Vector2(16); //Hitbox size directly affects tile collision accuracy
 		NPC.damage = 20;
 		NPC.lifeMax = 50;
@@ -73,17 +73,10 @@ public class DunceCrab : ModNPC
 	{
 		NPC.TargetClosest(false);
 
+		NPC.spriteDirection = NPC.direction;
 		NPC.noGravity = false;
 		NPC.behindTiles = false;
 		NPC.height = 16;
-
-		NPC.aiStyle = NPC.wet ? NPCAIStyleID.Fighter : -1;
-
-		if (NPC.wet)
-		{
-			NPC.rotation = 0;
-			return;
-		}
 
 		if ((State)Animation is State.Fall or State.Flail)
 		{
@@ -92,6 +85,10 @@ public class DunceCrab : ModNPC
 			NPC.height = 48; //Extend the hitbox for more convincing falling collision
 
 			FallAndEmbed();
+		}
+		else if (NPC.wet)
+		{
+			CrawlInWater();
 		}
 		else if (Colliding())
 		{
@@ -108,6 +105,16 @@ public class DunceCrab : ModNPC
 			const int fluff = 2;
 			return Collision.SolidCollision(NPC.position - new Vector2(fluff), NPC.width + fluff * 2, NPC.height + fluff * 2) || NPC.collideX || NPC.collideY;
 		}
+	}
+
+	private void CrawlInWater()
+	{
+		TryTurnAround();
+
+		NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * 1.5f, .09f);
+
+		Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
+		NPC.rotation = Utils.AngleLerp(NPC.rotation, Math.Min(NPC.velocity.X, 3f) * .07f, .15f);
 	}
 
 	private void FallAndEmbed()
@@ -180,21 +187,9 @@ public class DunceCrab : ModNPC
 		if (Colliding(true)) //If colliding on the side, make a reverse turn
 			ResolveSide(true);
 
-		if (NPC.velocity.Length() < .05f) //Turn around
-		{
-			if (++NPC.localAI[0] > 10)
-			{
-				NPC.direction = -NPC.direction;
-				NPC.localAI[0] = 0;
-			}
-		}
-		else
-		{
-			NPC.localAI[0] = 0;
-		}
+		TryTurnAround();
 
 		float gravity = 2;
-		NPC.spriteDirection = NPC.direction;
 		NPC.rotation = Utils.AngleLerp(NPC.rotation, MathHelper.WrapAngle(Angle), .13f);
 		NPC.velocity = new Vector2(NPC.direction, gravity).RotatedBy(Angle);
 
@@ -210,6 +205,22 @@ public class DunceCrab : ModNPC
 				return ((Side)Surface is Side.Up or Side.Down) ? NPC.collideX : NPC.collideY;
 			else //The y axis
 				return ((Side)Surface is Side.Up or Side.Down) ? NPC.collideY : NPC.collideX;
+		}
+	}
+
+	private void TryTurnAround(int time = 10)
+	{
+		if (NPC.velocity.Length() < .05f) //Turn around
+		{
+			if (++NPC.localAI[0] > time)
+			{
+				NPC.direction = -NPC.direction;
+				NPC.localAI[0] = 0;
+			}
+		}
+		else
+		{
+			NPC.localAI[0] = 0;
 		}
 	}
 
@@ -320,6 +331,18 @@ public class DunceCrab : ModNPC
 			return .09f;
 
 		return 0;
+	}
+
+	public override int SpawnNPC(int tileX, int tileY)
+	{
+		int y = tileY;
+		while (WorldGen.InWorld(tileX, y, 20) && !WorldGen.SolidOrSlopedTile(tileX, y - 1)) //Attempt to spawn on a ceiling
+			y--;
+
+		if (!WorldGen.PlayerLOS(tileX, y))
+			tileY = y;
+
+		return NPC.NewNPC(new EntitySource_SpawnNPC(), tileX * 16, tileY * 16, Type);
 	}
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
