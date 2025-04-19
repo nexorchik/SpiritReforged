@@ -19,6 +19,6 @@ public class PotionVatsBroken : ModTile
 		TileObjectData.addTile(Type);
 
 		AddMapEntry(new Color(100, 90, 35), Language.GetText("MapObject.Pot"));
-		DustType = -1;
+		DustType = DustID.Glass;
 	}
 }

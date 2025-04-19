@@ -8,6 +8,7 @@ using SpiritReforged.Common.Misc;
 using SpiritReforged.Content.Forest.Cloud.Items;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
+using System.Linq;
 
 namespace SpiritReforged.Content.Underground.Tiles.Potion;
 
@@ -22,9 +23,9 @@ public class PotionVats : PotTile, ICutAttempt
 		{ "Alchemy", [6, 7, 8] }
 	};
 
-	public VatSlot Entity(int i, int j)
+	public VatSlot Entity(int i, int j, bool skipTypeCheck = false)
 	{
-		if (Main.tile[i, j].TileType != Type)
+		if (!skipTypeCheck && Main.tile[i, j].TileType != Type)
 			return null;
 
 		TileExtensions.GetTopLeft(ref i, ref j);
@@ -33,7 +34,12 @@ public class PotionVats : PotTile, ICutAttempt
 		return (id == -1) ? null : (VatSlot)TileEntity.ByID[id];
 	}
 
-	public override void AddRecord(int type, StyleDatabase.StyleGroup group) => RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddRating(4));
+	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
+	{
+		var desc = Language.GetText(TileRecord.DescKey + ".Potion");
+		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(4));
+	}
+
 	public override void AddObjectData()
 	{
 		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
@@ -53,6 +59,8 @@ public class PotionVats : PotTile, ICutAttempt
 		DustType = Autoloader.IsRubble(Type) ? -1 : DustID.Glass;
 		FluidTexture = ModContent.Request<Texture2D>(Texture + "_Fluid");
 	}
+
+	public override void AddMapData() => AddMapEntry(new Color(146, 76, 77), Language.GetText("Mods.SpiritReforged.Tiles.PotionVats.MapEntry"));
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
@@ -115,27 +123,53 @@ public class PotionVats : PotTile, ICutAttempt
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
+		if (Autoloader.IsRubble(Type) || WorldGen.generatingWorld)
+			return;
+
 		WorldGen.PlaceTile(i + 1, j + 4, ModContent.TileType<PotionVatsBroken>(), true, style: frameY / 90);
+		var center = new Vector2(i, j).ToWorldCoordinates(24, 24);
 
-		if (Main.netMode != NetmodeID.MultiplayerClient && !Autoloader.IsRubble(Type) && Entity(i, j) is VatSlot slot && !slot.item.IsAir)
+		PlayerKnockback(center, 120);
+
+		if (Main.netMode != NetmodeID.MultiplayerClient && Entity(i, j, true) is VatSlot slot && !slot.item.IsAir)
 		{
-			var center = new Vector2(i, j).ToWorldCoordinates(24, 24);
 			int potion = slot.item.type;
-
 			Projectile.NewProjectile(new EntitySource_TileBreak(i, j), center, Vector2.Zero, ModContent.ProjectileType<BuffAura>(), 0, 0, -1, potion);
 		}
 
 		base.KillMultiTile(i, j, frameX, frameY);
 	}
 
+	private static void PlayerKnockback(Vector2 origin, int size)
+	{
+		foreach (var player in Main.ActivePlayers)
+		{
+			float distance = player.DistanceSQ(origin) / (size * size);
+
+			if (distance < 1)
+				player.velocity = player.DirectionFrom(origin) * (1f - distance) * 2.5f;
+		}
+	}
+
 	public override void DeathEffects(int i, int j, int frameX, int frameY)
 	{
-		return;
+		int style = frameY / 90;
 
 		for (int g = 1; g < 4; g++)
 		{
-			int goreType = Mod.Find<ModGore>("Vat" + g).Type;
+			int goreType = Mod.Find<ModGore>("Vat" + (g + style * 3)).Type;
 			Gore.NewGore(new EntitySource_TileBreak(i, j), Main.rand.NextVector2FromRectangle(new Rectangle(i * 16, j * 16, 32, 32)), Vector2.Zero, goreType);
+		}
+
+		if (Entity(i, j, true) is VatSlot slot)
+		{
+			ParticleHandler.SpawnParticle(new PulseCircle(new Vector2(i, j).ToWorldCoordinates(24, 40), slot.GetColor() * .025f, .25f, 200, 15, null, false, .1f));
+
+			for (int d = 0; d < 50; d++)
+			{
+				var dust = Dust.NewDustDirect(new Vector2(i, j) * 16, 48, 80, DustID.FoodPiece, 0, 0, 0, slot.GetColor().Additive(120), Main.rand.NextFloat(.75f, 1.5f));
+				dust.fadeIn = 1f;
+			}
 		}
 	}
 
@@ -175,16 +209,16 @@ public class PotionVats : PotTile, ICutAttempt
 
 		spriteBatch.Draw(texture, position, frame, color);
 
-		if (TileObjectData.IsTopLeft(i, j) && !Main.gamePaused)
+		/*if (TileObjectData.IsTopLeft(i, j) && !Main.gamePaused) //Bubble effects
 		{
 			float scale = Main.rand.NextFloat(1.1f);
 			var velocity = Vector2.UnitY * -.15f;
 
-			ParticleHandler.SpawnParticle(new SteamParticle(Spawn(), velocity, scale, 40) { Color = Color.White.Additive() * .25f });
+			ParticleHandler.SpawnParticle(new SteamParticle(Spawn(), velocity, scale, 40) { Color = Color.White.Additive() * .2f });
 			ParticleHandler.SpawnParticle(new GlowParticle(Spawn(), velocity * .5f, Color.White, scale * .2f, 80).OverrideDrawLayer(ParticleLayer.BelowSolids));
 
 			Vector2 Spawn() => new Vector2(i, j).ToWorldCoordinates(24, 55) + Main.rand.NextVector2Unit() * Main.rand.NextFloat(12f);
-		}
+		}*/
 
 		return true;
 	}
@@ -220,6 +254,13 @@ public class VatSlot : SingleSlotEntity
 			return value;
 
 		return Color.Transparent;
+	}
+
+	/// <summary> Returns a random potion type from those registered for this tile entity. </summary>
+	public static int GetRandomPotion()
+	{
+		var list = BrewColor.Keys.ToList();
+		return list[Main.rand.Next(list.Count)];
 	}
 
 	public override bool CanAddItem(Item item) => BrewColor.ContainsKey(item.type);

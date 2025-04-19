@@ -1630,6 +1630,6 @@ UpsideDownPotItem: {
 }
 
 PotionVatsAlchemyItem: {
-	// DisplayName: Alchemy Potion Vat
+	// DisplayName: Alchemical Potion Vat
 	// Tooltip: ""
 }
