@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Common.TileCommon.PresetTiles;
-using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Common.WorldGeneration.Noise;
 using System.Linq;
@@ -15,15 +14,8 @@ public abstract class CustomTree : ModTile, IModifySmartTarget
 	/// <summary> Common frame size for tree tiles. </summary>
 	public const int FrameSize = 22;
 
-	public Asset<Texture2D> TopTexture => topsTextureByType[Type];
-	public Asset<Texture2D> BranchTexture => branchesTextureByType[Type];
-
 	/// <summary> Controls growth height without the need to override <see cref="CreateTree"/>. </summary>
 	public virtual int TreeHeight => WorldGen.genRand.Next(10, 21);
-
-	// Textures are set as lookups, keyed by type - this means we can have one static instance (bypassing instancing issues) while keeping data easy to access
-	private static readonly Dictionary<int, Asset<Texture2D>> branchesTextureByType = [];
-	private static readonly Dictionary<int, Asset<Texture2D>> topsTextureByType = [];
 
 	private static readonly HashSet<Point16> drawPoints = [];
 	private static readonly HashSet<Point16> treeShakes = [];
@@ -129,15 +121,6 @@ public abstract class CustomTree : ModTile, IModifySmartTarget
 
 	public override void SetStaticDefaults()
 	{
-		if (!Main.dedServ)
-		{
-			if (ModContent.RequestIfExists(Texture + "_Tops", out Asset<Texture2D> tops))
-				topsTextureByType.Add(Type, tops);
-
-			if (ModContent.RequestIfExists(Texture + "_Branches", out Asset<Texture2D> branches))
-				branchesTextureByType.Add(Type, branches);
-		}
-
 		Main.tileSolid[Type] = false;
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoAttach[Type] = true;
@@ -234,37 +217,19 @@ public abstract class CustomTree : ModTile, IModifySmartTarget
 
 	public virtual void DrawTreeBody(int i, int j, SpriteBatch spriteBatch)
 	{
-		var t = Main.tile[i, j];
-		if (!TileDrawing.IsVisible(t))
+		if (!TileExtensions.GetVisualInfo(i, j, out Color color, out Texture2D texture))
 			return;
 
-		var color = TileExtensions.GetTint(i, j, Lighting.GetColor(i, j));
+		var t = Main.tile[i, j];
 		var source = new Rectangle(t.TileFrameX % (FrameSize * 12), 0, FrameSize - 2, FrameSize - 2);
 		var position = new Vector2(i, j) * 16 - Main.screenPosition + TileExtensions.TileOffset + TreeExtensions.GetPalmTreeOffset(i, j);
 
-		spriteBatch.Draw(TextureAssets.Tile[Type].Value, position, source, color, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
+		spriteBatch.Draw(texture, position, source, color, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
 		return;
 	}
 
 	/// <summary> Used to draw treetops and tree branches based on coordinates resulting from <see cref="Noise"/>. </summary>
-	public virtual void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
-	{
-		var t = Main.tile[i, j];
-		if (!TileDrawing.IsVisible(t))
-			return;
-
-		if (IsTreeTop(i, j) && TopTexture != null) //Draw tops
-		{
-			var color = TileExtensions.GetTint(i, j, Lighting.GetColor(i, j));
-			var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeExtensions.GetPalmTreeOffset(i, j);
-			float rotation = Main.instance.TilesRenderer.GetWindCycle(i, j, TileSwaySystem.Instance.TreeWindCounter) * .1f;
-
-			var source = TopTexture.Frame(3, sizeOffsetX: -2, sizeOffsetY: -2);
-			var origin = source.Bottom();
-
-			spriteBatch.Draw(TopTexture.Value, position, source, color, rotation, origin, 1, SpriteEffects.None, 0);
-		}
-	}
+	public virtual void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch) { }
 
 	protected virtual void CreateTree(int i, int j, int height)
 	{

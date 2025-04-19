@@ -4,9 +4,10 @@ internal class MusicDisplayCompat : ModSystem
 {
 	public override void PostSetupContent()
 	{
-		if (!ModLoader.TryGetMod("MusicDisplay", out Mod display))
+		if (!CrossMod.MusicDisplay.Enabled)
 			return;
 
+		var display = CrossMod.MusicDisplay.Instance;
 		LocalizedText modName = Language.GetText("Mods.SpiritReforged.MusicDisplay.ModName");
 
 		void AddMusic(string name)

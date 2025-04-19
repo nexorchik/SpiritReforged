@@ -225,6 +225,18 @@ Cartographer: {
 				2: 图钉在这儿。我摔过的坑比吃过的饭还多，但发紫光的洞？这辈子头回见。这种邪术玩意儿我可不想沾边，建议绕道走。
 			}
 
+			WulfrumBunker: {
+				// 0: Hopefully this is right. I was walking around as I do, and behind a copse of trees I see this weird green mechanical site. The top has all these things and from below I hear a mechanical whirring...no thanks!
+				// 1: This was were my camp was, right there. I was taking a rest from a nice, long day of walking around, when this little machine guy with a big hand STOLE my bag. Good thing I had rested a bit, because that little guy kept me running for a while.
+				// 2: There it is! Hard to forget it after all. You don't often find industry out here, which is good for me. I don't much care for all of the noise. Especially once an energy field appeared and scrap was flying towards me.
+			}
+
+			BloodAltar: {
+				// 0: And... there! Charting the surface is only, well, the surface. I find a lot of strange things underground, and many of them I steer clear from... What? I'm a cartographer, not an adventurer!
+				// 1: Should be it! You seem like the capable type. I'd found this undead fellow who actually listened to reason, which was strange enough, but he sold me this... hand. I followed where it pointed to and found myself at an unsettling crypt... Maybe you can get something out of all this, I'm not going back there.
+				// 2: You up for a challenge? I'm not, that's for sure. There's this dungeon with a room that reeks of blood... And with that strange altar in the middle, yeah I didn't stay for long.
+			}
+
 			FirstPin: 我已将这个图钉加入了“图钉收藏”，你随时可从地图左下角查看。
 		}
 	}

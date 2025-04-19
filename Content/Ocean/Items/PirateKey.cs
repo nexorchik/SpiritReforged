@@ -1,19 +1,10 @@
 ﻿using SpiritReforged.Common.ModCompat.Classic;
-using SpiritReforged.Common.NPCCommon;
-using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Ocean.Items;
 
 public class PirateKey : ModItem
 {
 	public override bool IsLoadingEnabled(Mod mod) => SpiritClassic.Enabled;
-
-	public override void SetStaticDefaults()
-	{
-		Item.ResearchUnlockCount = 1;
-		NPCLootDatabase.AddLoot(new(NPCLootDatabase.MatchId(NPCID.PirateShip), ItemDropRule.Common(Type)));
-	}
-
 	public override void SetDefaults()
 	{
 		Item.width = 14;

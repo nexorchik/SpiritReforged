@@ -42,10 +42,13 @@ internal class PinMapLayer : ModMapLayer
 
 	private void DrawPin(ref MapOverlayDrawContext context, ref string text, string name, Vector2 position)
 	{
+		if (!Textures.TryGetValue(name, out var texture))
+			return;
+
 		float scale = 1;
 		UpdatePin(name, ref position, ref scale, ref text); //Adjusts position and scale of held pins
 
-		if (context.Draw(Textures[name].Value, position, Color.White, new SpriteFrame(1, 1, 0, 0), scale, scale, Alignment.Bottom).IsMouseOver)
+		if (context.Draw(texture.Value, position, Color.White, new SpriteFrame(1, 1, 0, 0), scale, scale, Alignment.Bottom).IsMouseOver)
 		{
 			if (!Main.mapFullscreen)
 				return;
