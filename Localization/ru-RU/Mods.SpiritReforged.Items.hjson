@@ -1629,4 +1629,11 @@ UpsideDownPotItem: {
 	// Tooltip: ""
 }
 
+PotionVatsAlchemyItem: {
+	// DisplayName: Alchemical Potion Vat
+	// Tooltip: ""
+}
+
+// DunceCrabBannerItem.DisplayName: Dunce Crab Banner
+
 // WheezerBannerItem.DisplayName: Wheezer Banner
