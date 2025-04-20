@@ -1,5 +1,7 @@
 using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Common.ProjectileCommon;
 using System.IO;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
@@ -47,7 +49,7 @@ public class Wheezer : ModNPC
 
 	public override void SetDefaults()
 	{
-		NPC.Size = new(36);
+		NPC.Size = new(30, 36);
 		NPC.damage = 18;
 		NPC.defense = 9;
 		NPC.lifeMax = 50;
@@ -60,7 +62,7 @@ public class Wheezer : ModNPC
 
 	public override void OnSpawn(IEntitySource source)
 	{
-		_style = (byte)Main.rand.Next(4);
+		_style = (byte)(Main.rand.NextBool(10) ? 0 : Main.rand.Next(1, 4));
 		NPC.netUpdate = true;
 	}
 
@@ -68,17 +70,7 @@ public class Wheezer : ModNPC
 	{
 		if (_explosiveDeath)
 		{
-			NPC.velocity.X *= .9f;
-			ChangeState(State.Wheeze);
-
-			if (NPC.frameCounter > 3.8f)
-			{
-				if (Main.netMode != NetmodeID.MultiplayerClient)
-					Projectile.NewProjectile(Entity.GetSource_FromAI(), NPC.Center, Vector2.Zero, ProjectileID.GasTrap, 10, 1);
-
-				NPC.active = false;
-			}
-
+			ExplodeOnDeath();
 			return;
 		}
 
@@ -86,17 +78,51 @@ public class Wheezer : ModNPC
 		var target = Main.player[NPC.target];
 		bool canHit = Collision.CanHit(NPC, target);
 
-		if (TrySleeping(canHit))
-		{
-		}
-		else
-		{
+		if (!TrySleeping(canHit))
 			WalkingBehaviour(canHit);
-		}
 
 		NPC.spriteDirection = NPC.direction;
 		LocalCounter = ++LocalCounter;
 		_cooldown = Math.Max(_cooldown - 1, 0);
+	}
+
+	private void ExplodeOnDeath()
+	{
+		const int images = 6;
+
+		NPC.velocity.X *= .9f;
+		ChangeState(State.Wheeze);
+
+		if (NPC.frameCounter > 3.8f)
+		{
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				int type = ModContent.ProjectileType<WheezerCloud>();
+
+				for (int i = 0; i < images; i++)
+				{
+					var velocity = Vector2.UnitX.RotatedBy(MathHelper.TwoPi / images * i);
+
+					PreNewProjectile.New(Entity.GetSource_FromAI(), NPC.Center + velocity * 2, velocity * 5f, type, preSpawnAction: delegate (Projectile p)
+					{ p.scale *= 1.5f; });
+				}
+
+				PreNewProjectile.New(Entity.GetSource_FromAI(), NPC.Center, Vector2.Zero, type, preSpawnAction: delegate (Projectile p)
+				{ p.scale *= 2f; });
+
+				NPC.NPCLoot();
+			}
+
+			if (!Main.dedServ)
+			{
+				SoundEngine.PlaySound(SoundID.Item95 with { Pitch = 1f }, NPC.Center);
+				SoundEngine.PlaySound(SoundID.NPCDeath63 with { Pitch = 1f }, NPC.Center);
+
+				SpawnGores();
+			}
+
+			NPC.active = false;
+		}
 	}
 
 	private void WalkingBehaviour(bool canHit)
@@ -111,8 +137,16 @@ public class Wheezer : ModNPC
 		{
 			NPC.velocity.X *= .9f;
 
-			if (Main.netMode != NetmodeID.MultiplayerClient && (int)NPC.frameCounter > 4 && LocalCounter % 10 == 0)
-				Projectile.NewProjectile(Entity.GetSource_FromAI(), NPC.Center, NPC.DirectionTo(target.Center) * 3f, ProjectileID.GasTrap, 10, 1);
+			if ((int)NPC.frameCounter == 6)
+				SoundEngine.PlaySound(SoundID.NPCHit36 with { PitchRange = (-.2f, .2f), SoundLimitBehavior = SoundLimitBehavior.IgnoreNew }, NPC.Center);
+
+			if (Main.netMode != NetmodeID.MultiplayerClient && NPC.frameCounter > 5f && LocalCounter % 6 == 0)
+			{
+				var vel = (Vector2.UnitX * NPC.direction * Main.rand.NextFloat(3f, 12f)).RotatedByRandom(.5f);
+				var source = NPC.Center + new Vector2(24 * NPC.direction, 0);
+
+				Projectile.NewProjectile(Entity.GetSource_FromAI(), source, vel, ModContent.ProjectileType<WheezerCloud>(), 10, 1);
+			}
 
 			if (OnTransitionFrame)
 			{
@@ -210,18 +244,21 @@ public class Wheezer : ModNPC
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hit.HitDirection, -1f, 0, default, .61f);
 
 		if (NPC.life <= 0 && !Main.expertMode)
-		{
-			string name = _style switch
-			{
-				1 => "Purple",
-				2 => "Red",
-				3 => "Teal",
-				_ => "Albino"
-			};
+			SpawnGores();
+	}
 
-			for (int i = 1; i < 5; i++)
-				Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Wheezer" + name + i).Type);
-		}
+	private void SpawnGores()
+	{
+		string name = _style switch
+		{
+			1 => "Purple",
+			2 => "Red",
+			3 => "Teal",
+			_ => "Albino"
+		};
+
+		for (int i = 1; i < 5; i++)
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Wheezer" + name + i).Type);
 	}
 
 	public override bool CheckDead()
@@ -268,6 +305,7 @@ public class Wheezer : ModNPC
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
+		npcLoot.Add(ItemDropRule.Common(ItemID.PotatoChips, 35));
 		npcLoot.Add(ItemDropRule.Common(ItemID.DepthMeter, 80));
 		npcLoot.Add(ItemDropRule.Common(ItemID.Compass, 80));
 		npcLoot.Add(ItemDropRule.Common(ItemID.Rally, 20));
