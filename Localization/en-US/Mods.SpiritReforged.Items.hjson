@@ -1641,3 +1641,5 @@ PotionVatsAlchemyItem: {
 	DisplayName: Alchemical Potion Vat
 	Tooltip: ""
 }
+
+DunceCrabBannerItem.DisplayName: Dunce Crab Banner
