@@ -33,11 +33,6 @@ public class TornMapPiece : ModItem
 
 	public override bool? UseItem(Player player)
 	{
-		Point16 pos = Main.MouseWorld.ToTileCoordinates16();
-		var builder = HouseUtils.CreateBuilder(pos.ToPoint(), new());
-		builder.Place(new(), new());
-		return true;
-
 		const int Radius = 170;
 
 		if (Main.myPlayer == player.whoAmI && !Main.dedServ)

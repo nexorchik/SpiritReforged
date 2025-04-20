@@ -16,13 +16,13 @@ Signs: {
 		Common: {
 			// 0: <wavy>Pots hold the secret...
 			// 1: <wavy>The text is too faded to read.
-			// 2: <dark red> The sign is covered in unintelligible scrawling from a dubious liquid.
-			// 3: <wavy> _____'s Wares/Tavern/Blacksmith
-			// 4: <wavy> The old sign has almost crumbled to dust.
+			// 2: <colorful:255,80,80>The sign is covered in unintelligible scrawling from a dubious liquid.
+			// 3: <wavy>......er's Wares
+			// 4: <wavy>The old sign has almost crumbled to dust.
 			// 5: <wavy>A crudely drawn skeleton beckons.
 			// 6: <wavy>If you're reading this, I'm already dead.
 			// 7: If you're reading this, I'm doing great!
-			// 8: <wavy> Beware: Worms
+			// 8: <wavy>Beware: Worms
 			// 9: The sign rambles on about something you can't quite understand. It's not worth reading further.
 			// 10: Dwarven scripture is scrawled all over the sign. You can read none of it.
 		}
