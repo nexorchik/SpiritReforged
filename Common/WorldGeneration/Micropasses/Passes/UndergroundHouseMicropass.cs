@@ -49,13 +49,13 @@ internal class UndergroundHouseMicropass : ModSystem
 		{
 			int y = room.Height - 1 + room.Y;
 
-			if (!skipFlags.HasFlag(AddedHouseFlags.Sign) && WorldGen.genRand.NextBool(3) && PlaceDecorInRoom(room, y, TileID.Signs))
+			if (!skipFlags.HasFlag(AddedHouseFlags.Sign) && WorldGen.genRand.NextBool(1) && PlaceDecorInRoom(room, room.Y + 1, TileID.Signs))
 			{
 				hasPlaced = true;
 				skipFlags |= AddedHouseFlags.Sign;
 			}
 
-			if (!skipFlags.HasFlag(AddedHouseFlags.Mannequin) && WorldGen.genRand.NextBool(1) 
+			if (!skipFlags.HasFlag(AddedHouseFlags.Mannequin) && WorldGen.genRand.NextBool(4) 
 				&& PlaceDecorInRoom(room, y, WorldGen.genRand.NextBool() ? TileID.Womannequin : TileID.Mannequin, Main.rand.Next(2)))
 			{
 				hasPlaced = true;
@@ -207,18 +207,15 @@ internal class UndergroundHouseMicropass : ModSystem
 		if (dolls.Count == 0)
 			return;
 
-		Item[] inv = [new(ModContent.ItemType<WayfarerHead>()), new(ModContent.ItemType<WayfarerBody>()), new(ModContent.ItemType<WayfarerLegs>()),
-			new(), new(), new(), new(), new()];
-
 		WeightedRandom<int> accType = new(WorldGen.genRand);
 		accType.Add(ItemID.Aglet, 0.5f);
-		accType.Add(ItemID.HermesBoots, 0.05f);
-		accType.Add(ItemID.FartinaJar, 0.005f);
-		accType.Add(ItemID.FrogLeg, 0.1f);
-		accType.Add(ItemID.ClimbingClaws, 0.1f);
-		accType.Add(ItemID.ShoeSpikes, 0.1f);
-		accType.Add(ItemID.BandofRegeneration, 0.3f);
-		accType.Add(GenVars.gold == TileID.Gold ? ItemID.GoldWatch : ItemID.PlatinumWatch, 0.3f);
+		accType.Add(ItemID.HermesBoots, 0.1f);
+		accType.Add(ItemID.FartinaJar, 0.01f);
+		accType.Add(ItemID.FrogLeg, 0.3f);
+		accType.Add(ItemID.ClimbingClaws, 0.25f);
+		accType.Add(ItemID.ShoeSpikes, 0.25f);
+		accType.Add(ItemID.BandofRegeneration, 0.4f);
+		accType.Add(GenVars.gold == TileID.Gold ? ItemID.GoldWatch : ItemID.PlatinumWatch, 0.4f);
 
 		if (CrossMod.Thorium.Enabled)
 		{
@@ -240,6 +237,9 @@ internal class UndergroundHouseMicropass : ModSystem
 
 		foreach (var position in dolls.Keys)
 		{
+			Item[] inv = [new(ModContent.ItemType<WayfarerHead>()), new(ModContent.ItemType<WayfarerBody>()), new(ModContent.ItemType<WayfarerLegs>()),
+				new(), new(), new(), new(), new()];
+
 			if (!TileEntity.ByPosition.TryGetValue(position, out TileEntity te) || te is not TEDisplayDoll mannequin)
 			{
 				int id = TEDisplayDoll.Place(position.X, position.Y);
@@ -249,7 +249,6 @@ internal class UndergroundHouseMicropass : ModSystem
 			int slot = WorldGen.genRand.Next(5) + 3;
 			inv[slot] = new Item(accType);
 			teDollInventory.SetValue(mannequin, inv);
-			inv[slot] = new();
 		}
 
 		dolls.Clear();
