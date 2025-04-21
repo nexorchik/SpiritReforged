@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Common.WorldGeneration.Chests;
-using SpiritReforged.Content.Underground.Moss.Oganesson;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 
@@ -54,6 +53,17 @@ public static class TileExtensions
 		return color;
 
 		Color GetIntensity(float value) => color.MultiplyRGB(Color.Lerp(Color.White, paint, value));
+	}
+
+	public static Color GetSpelunkerTint(Color color)
+	{
+		if (color.R < 200)
+			color.R = 200;
+
+		if (color.G < 170)
+			color.G = 170;
+
+		return color;
 	}
 
 	public static Vector2 TileOffset => Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
