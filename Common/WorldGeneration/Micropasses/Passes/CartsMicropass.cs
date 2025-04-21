@@ -22,10 +22,10 @@ internal class CartsMicropass : Micropass
 		int maxCarts = Main.maxTilesX / WorldGen.WorldSizeSmallX * 17;
 		int carts = 0;
 
-		for (int t = 0; t < maxTries; t++) //Generate stacked pots
+		for (int t = 0; t < maxTries; t++)
 		{
-			int x = Main.rand.Next(20, Main.maxTilesX - 20);
-			int y = Main.rand.Next((int)GenVars.worldSurfaceHigh, Main.maxTilesY - 20);
+			int x = WorldGen.genRand.Next(20, Main.maxTilesX - 20);
+			int y = WorldGen.genRand.Next((int)GenVars.worldSurfaceHigh, Main.maxTilesY - 20);
 
 			while (Main.tile[x, y].TileType != TileID.MinecartTrack && y < Main.maxTilesY - 20)
 				y++;
@@ -38,7 +38,7 @@ internal class CartsMicropass : Micropass
 	private static bool CreateCart(int x, int y)
 	{
 		int type = ModContent.TileType<OreCarts>();
-		WorldGen.PlaceTile(x, y, type, true, style: Main.rand.Next(8));
+		WorldGen.PlaceTile(x, y, type, true, style: WorldGen.genRand.Next(8));
 
 		return Main.tile[x, y].TileType == type;
 	}

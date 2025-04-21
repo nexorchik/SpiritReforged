@@ -1644,3 +1644,8 @@ PotionVatsAlchemyItem: {
 
 DunceCrabBannerItem.DisplayName: Dunce Crab Banner
 WheezerBannerItem.DisplayName: Wheezer Banner
+
+WheezerStatueItem: {
+	DisplayName: Wheezer Statue
+	Tooltip: ""
+}
