@@ -9,7 +9,6 @@ using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
-using static SpiritReforged.Content.Underground.Tiles.BiomePots;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
@@ -21,6 +20,23 @@ public class BiomePots : PotTile, ILootTile
 	{
 		Cavern, Gold, Ice, Desert, Jungle, Dungeon, Corruption, Crimson, Marble, Hell, Mushroom
 	}
+
+	public static readonly SoundStyle Break = new("SpiritReforged/Assets/SFX/Tile/PotBreak")
+	{
+		Volume = .16f,
+		PitchRange = (-.4f, 0)
+	};
+
+	public static readonly SoundStyle JungleBreak = new("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit")
+	{
+		Volume = .5f,
+		PitchRange = (0f, .3f)
+	};
+
+	public static readonly SoundStyle Squish = new("SpiritReforged/Assets/SFX/NPCDeath/Squish")
+	{
+		Volume = .25f
+	};
 
 	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
 	{
@@ -119,14 +135,14 @@ public class BiomePots : PotTile, ILootTile
 			}
 			else if (GetStyle(Main.tile[i, j].TileFrameY) is Style.Jungle)
 			{
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Squish") with { Volume = .25f }, pos);
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit") with { Volume = .5f, PitchRange = (0f, .3f), }, pos);
+				SoundEngine.PlaySound(Squish, pos);
+				SoundEngine.PlaySound(JungleBreak, pos);
 				SoundEngine.PlaySound(SoundID.Dig, pos);
 			}
 			else
 			{
 				SoundEngine.PlaySound(SoundID.Shatter, pos);
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/PotBreak") with { Volume = .16f, PitchRange = (-.4f, 0), }, pos);
+				SoundEngine.PlaySound(Break, pos);
 			}
 
 			return false;
@@ -140,7 +156,7 @@ public class BiomePots : PotTile, ILootTile
 		var style = GetStyle(Main.tile[i, j].TileFrameY);
 
 		if (TileObjectData.IsTopLeft(i, j) && style is Style.Gold)
-			GlowTileHandler.AddGlowPoint(new Rectangle(i, j, 32, 32), Color.Goldenrod, 200);
+			GlowTileHandler.AddGlowPoint(new Rectangle(i, j, 32, 32), Color.Goldenrod * .5f, 200);
 
 		if (style is Style.Mushroom)
 			Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Blue.ToVector3());
