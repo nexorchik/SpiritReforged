@@ -20,7 +20,7 @@ internal class PotsMicropass : Micropass
 	/// <summary> 50% chance to replace regular pots placed on mushroom grass. </summary>
 	private static bool MushroomPotConversion(On_WorldGen.orig_PlacePot orig, int x, int y, ushort type, int style)
 	{
-		if (WorldGen.generatingWorld && Main.rand.NextBool())
+		if (WorldGen.generatingWorld && WorldGen.genRand.NextBool())
 		{
 			var ground = Main.tile[x, y + 1];
 			if (ground.HasTile && ground.TileType == TileID.MushroomGrass)
@@ -66,8 +66,8 @@ internal class PotsMicropass : Micropass
 
 		for (int t = 0; t < maxTries; t++) //Generate uncommon pots
 		{
-			int x = Main.rand.Next(20, Main.maxTilesX - 20);
-			int y = Main.rand.Next((int)GenVars.worldSurfaceHigh, Main.maxTilesY - 20);
+			int x = WorldGen.genRand.Next(20, Main.maxTilesX - 20);
+			int y = WorldGen.genRand.Next((int)GenVars.worldSurfaceHigh, Main.maxTilesY - 20);
 
 			WorldMethods.FindGround(x, ref y);
 
