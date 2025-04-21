@@ -28,7 +28,7 @@ internal class NewStatuesMicropass : Micropass
 		for (int t = 0; t < maxTries; t++)
 		{
 			int x = WorldGen.genRand.Next(20, Main.maxTilesX - 20);
-			int y = WorldGen.genRand.Next((int)GenVars.worldSurfaceHigh, Main.UnderworldLayer - 20);
+			int y = WorldGen.genRand.Next((int)Main.worldSurface, Main.UnderworldLayer - 20);
 
 			WorldMethods.FindGround(x, ref y);
 
