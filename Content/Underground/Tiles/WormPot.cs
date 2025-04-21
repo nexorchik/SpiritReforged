@@ -26,6 +26,7 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 	public override void AddObjectData()
 	{
 		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
+		Main.tileSpelunker[Type] = true;
 		Main.tileOreFinderPriority[Type] = 575;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
@@ -163,7 +164,7 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 	{
 		var loot = new LootTable();
 
-		loot.Add(ItemDropRule.NotScalingWithLuckWithNumerator(ItemID.WhoopieCushion, 10, 6));
+		loot.Add(ItemDropRule.NotScalingWithLuckWithNumerator(ItemID.WhoopieCushion, 100, 15));
 		loot.AddCommon(ItemID.CanOfWorms, 1, 1, 2);
 
 		return loot;

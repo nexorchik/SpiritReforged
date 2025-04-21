@@ -56,6 +56,8 @@ public abstract class PotTile : ModTile, IRecordTile, IAutoloadRubble
 		AddMapData();
 	}
 
+	public override bool IsTileSpelunkable(int i, int j) => true;
+
 	/// <summary> Adds map data for the pot. Defaults to vanilla pot map entry and color.
 	public virtual void AddMapData() => AddMapEntry(new Color(146, 76, 77), Language.GetText("MapObject.Pot"));
 

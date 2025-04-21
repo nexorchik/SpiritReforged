@@ -240,6 +240,21 @@ internal class UndergroundHouseMicropass : ModSystem
 			Item[] inv = [new(ModContent.ItemType<WayfarerHead>()), new(ModContent.ItemType<WayfarerBody>()), new(ModContent.ItemType<WayfarerLegs>()),
 				new(), new(), new(), new(), new()];
 
+			float chance = Main.rand.NextFloat();
+
+			if (chance < .10f)
+			{
+				inv[0] = new(ItemID.AncientGoldHelmet);
+				inv[1] = new();
+				inv[2] = new();
+			}
+			else if (chance < .15f)
+			{
+				inv[0] = new(ItemID.AncientIronHelmet);
+				inv[1] = new();
+				inv[2] = new();
+			}
+
 			if (!TileEntity.ByPosition.TryGetValue(position, out TileEntity te) || te is not TEDisplayDoll mannequin)
 			{
 				int id = TEDisplayDoll.Place(position.X, position.Y);

@@ -26,6 +26,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 	public override void AddObjectData()
 	{
 		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
+		Main.tileSpelunker[Type] = true;
 		Main.tileOreFinderPriority[Type] = 575;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
