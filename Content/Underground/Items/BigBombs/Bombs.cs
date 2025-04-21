@@ -11,6 +11,8 @@ namespace SpiritReforged.Content.Underground.Items.BigBombs;
 
 public class Bomb : BombProjectile, ILargeExplosive
 {
+	public const int CommonSize = 32;
+
 	public virtual int OriginalType => ProjectileID.Bomb;
 	public override LocalizedText DisplayName => Language.GetText("ProjectileName.Bomb");
 
@@ -18,7 +20,8 @@ public class Bomb : BombProjectile, ILargeExplosive
 	{
 		base.SetDefaults();
 
-		Projectile.Size = new Vector2(32);
+		Projectile.Size = new Vector2(CommonSize);
+		Projectile.scale = 0;
 		SetDamage(150);
 		area = 15;
 
@@ -26,6 +29,20 @@ public class Bomb : BombProjectile, ILargeExplosive
 	}
 
 	public virtual void PostSetDefaults() { }
+
+	public override void AI()
+	{
+		base.AI();
+
+		float oldScale = Projectile.scale; //Resize logic
+		Projectile.scale = Math.Min(Projectile.scale + .1f, 1);
+
+		if (Projectile.scale != oldScale)
+		{
+			int size = (int)Math.Max(CommonSize * Projectile.scale, 2);
+			Projectile.Resize(size, size);
+		}
+	}
 
 	public override void OnKill(int timeLeft)
 	{
@@ -84,7 +101,7 @@ public class BombDirt : SpreadBomb, ILargeExplosive
 	{
 		base.SetDefaults();
 
-		Projectile.Size = new Vector2(30);
+		Projectile.Size = new Vector2(Bomb.CommonSize);
 		SetDamage(150);
 		area = 6;
 		dustType = DustID.Dirt;

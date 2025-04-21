@@ -1638,6 +1638,6 @@ PotionVatsAlchemyItem: {
 // WheezerBannerItem.DisplayName: Wheezer Banner
 
 WheezerStatueItem: {
-	// DisplayName: Wheezer Statue Item
+	// DisplayName: Wheezer Statue
 	// Tooltip: ""
 }
