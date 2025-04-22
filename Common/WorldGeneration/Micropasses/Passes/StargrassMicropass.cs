@@ -1,5 +1,4 @@
 ﻿using Terraria.WorldBuilding;
-using SpiritReforged.Common.WorldGeneration.Micropasses;
 using SpiritReforged.Content.Forest.Stargrass;
 
 namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes;

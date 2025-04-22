@@ -15,9 +15,13 @@ public class ObsidianShroom : ModTile
 
 	public override void SetStaticDefaults()
 	{
-		Main.tileOreFinderPriority[Type] = 600;
 		Main.tileFrameImportant[Type] = true;
+		Main.tileOreFinderPriority[Type] = 600;
+		Main.tileSpelunker[Type] = true;
 		Main.tileNoFail[Type] = true;
+
+		TileID.Sets.PreventsTileReplaceIfOnTopOfIt[Type] = true;
+		TileID.Sets.PreventsTileRemovalIfOnTopOfIt[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.Origin = new(0, 1);
