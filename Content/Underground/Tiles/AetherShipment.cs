@@ -1,4 +1,5 @@
 using RubbleAutoloader;
+using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
@@ -15,7 +16,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
 
 	private const int FullHeight = 36;
-	private static Color GlowColor => Color.Lerp(Color.Magenta, Color.CadetBlue, (float)(Math.Sin(Main.timeForVisualEffects / 40f) / 2f) + .5f);
+	private static Color GlowColor => Main.DiscoColor;//Color.Lerp(Color.Magenta, Color.CadetBlue, (float)(Math.Sin(Main.timeForVisualEffects / 40f) / 2f) + .5f);
 
 	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
 	{
@@ -166,8 +167,17 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY + Main.tileFrame[Type] * FullHeight, data.CoordinateWidth, data.CoordinateHeights[tile.TileFrameY / 18]);
 		var dataOffset = new Vector2(data.DrawXOffset, data.DrawYOffset);
 
-		spriteBatch.Draw(TextureAssets.Tile[tile.TileType].Value, drawPos + origin + dataOffset,
-			source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+		spriteBatch.Draw(TextureAssets.Tile[tile.TileType].Value, drawPos + origin + dataOffset, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+
+		if (tile.TileFrameX % 36 == 18 && tile.TileFrameY % 36 == 18) //Bottom right frame
+		{
+			var bloom = TextureAssets.Extra[60].Value;
+
+			float value = Main.LocalPlayer.DistanceSQ(new Vector2(i, j) * 16) / (200 * 200);
+			Color glow = GlowColor.Additive() * (1f - value) * .5f;
+
+			spriteBatch.Draw(bloom, drawPos + new Vector2(0, 16), null, glow, rotation, bloom.Size() / 2, new Vector2(1, .5f) * .4f, SpriteEffects.None, 0);
+		}
 	}
 
 	public LootTable AddLoot(int objectStyle)
