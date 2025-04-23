@@ -1415,7 +1415,11 @@ HideTunic: {
 
 PotteryWheelItem: {
 	DisplayName: Pottery Wheel
-	Tooltip: Used for crafting decorative pots
+	Tooltip:
+		'''
+		Used for crafting decorative pots
+		<right> when placed to view available recipes
+		'''
 }
 
 BiomePotsCavernItem: {
