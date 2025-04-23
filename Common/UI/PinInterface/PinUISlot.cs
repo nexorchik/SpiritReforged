@@ -34,7 +34,7 @@ public class PinUISlot : UIElement
 	{
 		base.DrawSelf(spriteBatch);
 
-		var item = PinSystem.ItemByName[_name];
+		var item = PinSystem.DataByName[_name].Item;
 
 		var center = GetDimensions().Center();
 		var fadeOffset = Vector2.UnitX * (float)Math.Sin((1f - _fadein) * 1.5f) * 5f;

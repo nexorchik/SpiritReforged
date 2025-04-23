@@ -5,11 +5,13 @@ namespace SpiritReforged.Common.ItemCommon.Pins;
 
 internal class PinPlayer : ModPlayer
 {
-	public HashSet<string> unlockedPins = []; //Remember that this data isn't synced
+	/// <summary> The internal names of pins unlocked by the player. </summary>
+	public HashSet<string> unlockedPins = [];
+	/// <summary> The internal names of unlocked pins for 'new and shiny' effects. Not saved or synced. </summary>
 	public readonly HashSet<string> newPins = [];
 
 	/// <summary> 0-1 based on unlocked pin count/total pins. </summary>
-	public float PinProgress => (float)unlockedPins.Count / PinSystem.ItemByName.Count;
+	public float PinProgress => (float)unlockedPins.Count / PinSystem.DataByName.Count;
 
 	public override void SaveData(TagCompound tag) => tag["unlockedPins"] = unlockedPins.ToList();
 	public override void LoadData(TagCompound tag) => unlockedPins = tag.GetList<string>("unlockedPins").ToHashSet();
