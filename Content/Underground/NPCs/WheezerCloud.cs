@@ -1,0 +1,65 @@
+using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.ProjectileCommon;
+
+namespace SpiritReforged.Content.Underground.NPCs;
+
+public class WheezerCloud : ModProjectile
+{
+	public const int Size = 40;
+	public const int TimeLeftMax = 280;
+	public float Progress => Projectile.timeLeft / (float)TimeLeftMax;
+
+	public override void SetStaticDefaults() => Main.projFrames[Type] = 8;
+	public override void SetDefaults()
+	{
+		Projectile.Size = new Vector2(Size);
+		Projectile.timeLeft = TimeLeftMax;
+		Projectile.hostile = true;
+		Projectile.tileCollide = false;
+		Projectile.penetrate = -1;
+		Projectile.Opacity = 0;
+	}
+
+	public override void AI()
+	{
+		Projectile.Opacity = Progress;
+		Projectile.scale += 1f / TimeLeftMax;
+		Projectile.rotation += Projectile.velocity.X * .01f;
+
+		Projectile.velocity *= .9f;
+		Projectile.UpdateFrame(15);
+
+		int square = (int)(Size * Projectile.scale);
+		Projectile.Resize(square, square);
+		var area = Projectile.getRect();
+
+		foreach (var p in Main.ActivePlayers)
+		{
+			if (area.Contains(p.Center.ToPoint()))
+				p.AddBuff(BuffID.Poisoned, 300);
+		}
+	}
+
+	public override bool CanHitPlayer(Player target) => false;
+	public override bool? CanHitNPC(NPC target) => false;
+
+	public override bool PreDraw(ref Color lightColor)
+	{
+		const int images = 3;
+
+		var texture = TextureAssets.Projectile[Type].Value;
+		var source = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
+		var color = Projectile.GetAlpha(lightColor).Additive(170) * .75f;
+
+		for (int i = 0; i < images; i++)
+		{
+			var position = Projectile.Center - Main.screenPosition + (Vector2.UnitX * (20 * (1f - Progress)) * Projectile.scale).RotatedBy(MathHelper.TwoPi / images * i);
+			Main.EntitySpriteDraw(texture, position, source, color, Projectile.rotation + i, source.Size() / 2, Projectile.scale, default);
+		}
+
+		return false;
+	}
+
+	public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+		=> overPlayers.Add(index);
+}

@@ -30,7 +30,7 @@ internal class NewNeonsMicropass : Micropass
 
 	public override void Run(GenerationProgress progress, Terraria.IO.GameConfiguration config)
 	{
-		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Butterfly");
+		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.NeonMosses");
 
 		for (int i = 40; i < Main.maxTilesX - 40; i++)
 		{

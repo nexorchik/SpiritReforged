@@ -1,8 +1,7 @@
 using SpiritReforged.Common.ItemCommon;
-using SpiritReforged.Common.TileCommon;
 using Terraria.GameContent.Drawing;
 
-namespace SpiritReforged.Content.Savanna.Tiles;
+namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
 public abstract class CageTile : ModTile, IAutoloadTileItem
 {

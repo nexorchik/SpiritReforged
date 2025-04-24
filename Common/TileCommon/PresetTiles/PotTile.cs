@@ -1,6 +1,7 @@
 ﻿using RubbleAutoloader;
 using SpiritReforged.Content.Underground.Pottery;
 using SpiritReforged.Content.Underground.Tiles;
+using SpiritReforged.Content.Underground.WayfarerSet;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.TileCommon.PresetTiles;
@@ -50,7 +51,11 @@ public abstract class PotTile : ModTile, IRecordTile, IAutoloadRubble
 		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
 		Main.tileFrameImportant[Type] = true;
 		Main.tileSpelunker[Type] = true;
+
 		DustType = -1;
+		
+		if (!Autoloader.IsRubble(Type))
+			WayfarerGlobalTile.PotTypes.Add(Type);
 
 		AddObjectData();
 		AddMapData();

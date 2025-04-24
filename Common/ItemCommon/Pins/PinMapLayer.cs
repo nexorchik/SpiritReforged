@@ -7,13 +7,16 @@ namespace SpiritReforged.Common.ItemCommon.Pins;
 
 internal class PinMapLayer : ModMapLayer
 {
-	public static Dictionary<string, Asset<Texture2D>> Textures = null;
+	public static readonly SoundStyle MapPin = new("SpiritReforged/Assets/SFX/Item/MapPin")
+	{
+		PitchVariance = .3f
+	};
 
 	private string _heldPinName;
 	private float _heldOffset;
 
-	/// <summary> Holds a pin of the given name on the cursor. </summary>
-	/// <returns> Whether a pin of the given name exists. </returns>
+	/// <summary> Holds a pin of <paramref name="name"/> on the cursor. </summary>
+	/// <returns> Whether this pin exists. </returns>
 	public static bool HoldPin(string name)
 	{
 		var pins = ModContent.GetInstance<PinSystem>().pins;
@@ -23,8 +26,8 @@ internal class PinMapLayer : ModMapLayer
 			ModContent.GetInstance<PinMapLayer>()._heldPinName = name;
 			return true;
 		}
-		else
-			return false;
+		
+		return false;
 	}
 
 	public override void Draw(ref MapOverlayDrawContext context, ref string text)
@@ -42,13 +45,14 @@ internal class PinMapLayer : ModMapLayer
 
 	private void DrawPin(ref MapOverlayDrawContext context, ref string text, string name, Vector2 position)
 	{
-		if (!Textures.TryGetValue(name, out var texture))
+		if (!PinSystem.DataByName.TryGetValue(name, out var data))
 			return;
 
+		Texture2D texture = data.Texture.Value;
 		float scale = 1;
 		UpdatePin(name, ref position, ref scale, ref text); //Adjusts position and scale of held pins
 
-		if (context.Draw(texture.Value, position, Color.White, new SpriteFrame(1, 1, 0, 0), scale, scale, Alignment.Bottom).IsMouseOver)
+		if (context.Draw(texture, position, Color.White, new SpriteFrame(1, 1, 0, 0), scale, scale, Alignment.Bottom).IsMouseOver)
 		{
 			if (!Main.mapFullscreen)
 				return;
@@ -73,7 +77,7 @@ internal class PinMapLayer : ModMapLayer
 				_heldOffset = 0;
 				PinSystem.Place(name, GetCursor());
 
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Item/MapPin") with { PitchVariance = 0.3f });
+				SoundEngine.PlaySound(MapPin);
 			}
 		}
 		else if (hovering)

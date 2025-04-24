@@ -2,6 +2,9 @@ using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.ModCompat.Classic;
 using SpiritReforged.Common.WorldGeneration.Noise;
 using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.GameContent.Biomes;
+using Terraria.GameContent.Biomes.CaveHouse;
 using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Forest.Misc.Maps;

@@ -88,7 +88,7 @@ internal class PinUIState : AutoUIState
 		else
 		{
 			int count = 0;
-			foreach (string name in PinSystem.ItemByName.Keys)
+			foreach (string name in PinSystem.DataByName.Keys)
 			{
 				Append(new PinUISlot(name)
 				{
