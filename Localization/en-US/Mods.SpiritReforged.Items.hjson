@@ -1653,3 +1653,38 @@ WheezerStatueItem: {
 	DisplayName: Wheezer Statue
 	Tooltip: ""
 }
+
+FlaskArgon: {
+	DisplayName: Argon Moss Flask
+	Tooltip: Spreads glowing moss on impact
+}
+
+FlaskHelium: {
+	DisplayName: Helium Moss Flask
+	Tooltip: "{$Mods.SpiritReforged.Items.FlaskArgon.Tooltip}"
+}
+
+FlaskKrypton: {
+	DisplayName: Krypton Moss Flask
+	Tooltip: "{$Mods.SpiritReforged.Items.FlaskArgon.Tooltip}"
+}
+
+FlaskNeon: {
+	DisplayName: Neon Moss Flask
+	Tooltip: "{$Mods.SpiritReforged.Items.FlaskArgon.Tooltip}"
+}
+
+FlaskOganesson: {
+	DisplayName: Oganesson Moss Flask
+	Tooltip: "{$Mods.SpiritReforged.Items.FlaskArgon.Tooltip}"
+}
+
+FlaskRadon: {
+	DisplayName: Radon Moss Flask
+	Tooltip: "{$Mods.SpiritReforged.Items.FlaskArgon.Tooltip}"
+}
+
+FlaskXenon: {
+	DisplayName: Xenon Moss Flask
+	Tooltip: "{$Mods.SpiritReforged.Items.FlaskArgon.Tooltip}"
+}
