@@ -2,7 +2,10 @@
 
 namespace SpiritReforged.Content.Underground.Items.MossFlasks;
 
-public class FlaskOganesson : MossFlask { }
+public class FlaskOganesson : MossFlask
+{
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<OganessonMossItem>(), 3).AddIngredient(ItemID.Bottle).Register();
+}
 
 public class FlaskOganessonProjectile : MossFlaskProjectile
 {

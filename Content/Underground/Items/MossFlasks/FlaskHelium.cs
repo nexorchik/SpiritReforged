@@ -12,6 +12,8 @@ public class FlaskHelium : MossFlask
 		var glow = GlowmaskItem.ItemIdToGlowmask[Type].Glowmask.Value;
 		spriteBatch.Draw(glow, position, frame, Item.GetAlpha(Glow(null)), 0, origin, scale, default, 0);
 	}
+
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.RainbowMoss, 3).AddIngredient(ItemID.Bottle).Register();
 }
 
 public class FlaskHeliumProjectile : MossFlaskProjectile

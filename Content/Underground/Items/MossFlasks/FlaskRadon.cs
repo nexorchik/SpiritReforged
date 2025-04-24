@@ -2,7 +2,10 @@
 
 namespace SpiritReforged.Content.Underground.Items.MossFlasks;
 
-public class FlaskRadon : MossFlask { }
+public class FlaskRadon : MossFlask
+{
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<RadonMossItem>(), 3).AddIngredient(ItemID.Bottle).Register();
+}
 
 public class FlaskRadonProjectile : MossFlaskProjectile
 {
