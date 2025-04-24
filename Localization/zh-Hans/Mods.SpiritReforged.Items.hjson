@@ -1537,7 +1537,7 @@ PotsDesertItem: {
 	// Tooltip: ""
 }
 
-MushroomPotsItem: {
+CommonPotsMushroomItem: {
 	// DisplayName: Small Mushroom Pot
 	// Tooltip: ""
 }
@@ -1687,4 +1687,14 @@ FlaskRadon: {
 FlaskXenon: {
 	// DisplayName: Xenon Moss Flask
 	// Tooltip: "{$Mods.SpiritReforged.Items.FlaskArgon.Tooltip}"
+}
+
+BiomePotsGraniteItem: {
+	// DisplayName: Granite Pot
+	// Tooltip: ""
+}
+
+CommonPotsGraniteItem: {
+	// DisplayName: Small Granite Pot
+	// Tooltip: ""
 }
