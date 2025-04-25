@@ -80,7 +80,6 @@ public class BiomePots : PotTile, ILootTile
 		var name = Language.GetText($"MapObject.Pot");
 
 		AddMapEntry(new Color(150, 150, 150), name);
-		AddMapEntry(Color.Gold, name);
 		AddMapEntry(new Color(90, 139, 140), name);
 		AddMapEntry(new Color(226, 122, 47), name);
 		AddMapEntry(new Color(192, 136, 70), name);
