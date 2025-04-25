@@ -75,10 +75,10 @@ public abstract class MossFlaskProjectile : ModProjectile
 			var pt = Projectile.Center.ToTileCoordinates();
 			ShapeData data = new();
 
-			WorldUtils.Gen(pt, new Shapes.Circle(area), Actions.Chain(new Modifiers.OnlyTiles(StoneTypes), new Modifiers.IsTouchingAir(true), new ReplaceType(Types.Item1).Output(data)));
-			WorldUtils.Gen(pt, new Shapes.Circle(area), Actions.Chain(new Modifiers.OnlyTiles(BrickTypes), new Modifiers.IsTouchingAir(true), new ReplaceType(Types.Item2).Output(data)));
+			WorldUtils.Gen(pt, new Shapes.Circle(area), Actions.Chain(new Modifiers.OnlyTiles(StoneTypes), new SolidIsTouchingAir(true), new ReplaceType(Types.Item1).Output(data)));
+			WorldUtils.Gen(pt, new Shapes.Circle(area), Actions.Chain(new Modifiers.OnlyTiles(BrickTypes), new SolidIsTouchingAir(true), new ReplaceType(Types.Item2).Output(data)));
 
-			WorldUtils.Gen(pt, new ModShapes.All(data), Actions.Chain(new Actions.SetFrames(), new Send()));
+			WorldUtils.Gen(pt, new ModShapes.All(data), Actions.Chain(new Actions.SetFrames(true), new Send()));
 		}
 
 		SoundEngine.PlaySound(SoundID.Shatter, Projectile.Center);
