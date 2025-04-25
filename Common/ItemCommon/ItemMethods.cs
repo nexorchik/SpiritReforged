@@ -55,4 +55,14 @@ internal static class ItemMethods
 		var mod = SpiritReforgedMod.Instance;
 		return mod.Find<ModItem>(ModContent.GetInstance<T>().Name + "Item").Type;
 	}
+
+	public static void DrawInWorld(this Item item, Color light, float rotation = 0, float scale = 1, Texture2D texture = null)
+	{
+		texture ??= TextureAssets.Item[item.type].Value;
+
+		Main.GetItemDrawFrame(item.type, out _, out var frame);
+		var position = item.Bottom - new Vector2(0, frame.Height / 2) - Main.screenPosition; //Do some odd math because of how visual and item rectangles relate
+
+		Main.EntitySpriteDraw(texture, position, frame, item.GetAlpha(light), rotation, frame.Size() / 2f, scale, default, 0);
+	}
 }

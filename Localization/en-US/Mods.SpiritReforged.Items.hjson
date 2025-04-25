@@ -1621,16 +1621,6 @@ BombCannon: {
 		'''
 }
 
-RadonMossBobberItem: {
-	DisplayName: Radon Moss Fishing Bobber
-	Tooltip: "{$ItemTooltip.FishingBobberGlowingArgon}"
-}
-
-OganessonMossBobberItem: {
-	DisplayName: Oganesson Moss Fishing Bobber
-	Tooltip: "{$ItemTooltip.FishingBobberGlowingArgon}"
-}
-
 PotHead: {
 	DisplayName: Pot Head
 	Tooltip: ""
@@ -1697,4 +1687,14 @@ BiomePotsGraniteItem: {
 CommonPotsGraniteItem: {
 	DisplayName: Small Granite Pot
 	Tooltip: ""
+}
+
+OganessonBobber: {
+	DisplayName: Oganesson Bobber
+	Tooltip: "{$ItemTooltip.FishingBobberGlowingArgon}"
+}
+
+RadonBobber: {
+	DisplayName: Radon Bobber
+	Tooltip: "{$ItemTooltip.FishingBobberGlowingArgon}"
 }

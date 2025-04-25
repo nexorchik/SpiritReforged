@@ -1,10 +1,11 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
+using SpiritReforged.Content.Underground.Moss.Oganesson;
 
 namespace SpiritReforged.Content.Underground.Moss.Radon;
 
-[AutoloadGlowmask("255, 255, 255")]
-public class RadonMossBobberItem : AccessoryItem
+[AutoloadGlowmask("255,255,255")]
+public class RadonBobber : AccessoryItem
 {
 	public override void SetDefaults()
 	{
@@ -19,29 +20,23 @@ public class RadonMossBobberItem : AccessoryItem
 	{
 		player.fishingSkill += 10;
 		player.accFishingBobber = true;
-		player.overrideFishingBobber = ModContent.ProjectileType<RadonMossBobber>();
+		player.overrideFishingBobber = ModContent.ProjectileType<RadonBobberProjectile>();
 	}
 
-	public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => Lighting.AddLight(Item.Center, Color.Yellow.ToVector3() * 0.25f);
+	public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
+		=> Lighting.AddLight(Item.Center, Color.Yellow.ToVector3() * 0.25f);
 
-	public void AddItemRecipes(ModItem item) => item.CreateRecipe(1).AddIngredient(ItemID.FishingBobberGlowingStar).AddIngredient(ModContent.ItemType<RadonMossItem>(), 5).AddTile(TileID.TinkerersWorkbench).Register();
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.FishingBobberGlowingStar)
+		.AddIngredient(ModContent.ItemType<RadonMossItem>(), 5).AddTile(TileID.TinkerersWorkbench).Register();
 }
 
-[AutoloadGlowmask("255,255,255")]
-public class RadonMossBobber : ModProjectile
+public class RadonBobberProjectile : OganessonBobberProjectile
 {
-	public override void SetDefaults()
-	{
-		Projectile.CloneDefaults(ProjectileID.BobberWooden);
-		Projectile.aiStyle = 61;
-		Projectile.bobber = true;
-		AIType = ProjectileID.FishingBobber;
-		DrawOriginOffsetY = -8;
-	}
+	public override ModItem Item => ModContent.GetInstance<RadonBobber>();
 
 	public override void AI()
 	{
 		if (!Main.dedServ)
-			Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * 0.25f);
+			Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * 0.3f);
 	}
 }
