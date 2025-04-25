@@ -66,7 +66,27 @@ public class PotionVats : PotTile, ICutAttempt
 
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (effectOnly || !fail || Autoloader.IsRubble(Type))
+		if (!effectOnly && Autoloader.IsRubble(Type))
+		{
+			if (Entity(i, j) is VatSlot slot && !slot.item.IsAir)
+			{
+				fail = true;
+
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+				{
+					TileExtensions.GetTopLeft(ref i, ref j);
+
+					var pos = new Vector2(i, j).ToWorldCoordinates();
+
+					Item.NewItem(new EntitySource_TileBreak(i, j), pos, slot.item);
+					slot.RemoveItem();
+				}
+			}
+
+			return;
+		}
+
+		if (effectOnly || !fail)
 			return;
 
 		fail = AdjustFrame(i, j);
@@ -207,20 +227,12 @@ public class PotionVats : PotTile, ICutAttempt
 
 		var t = Main.tile[i, j];
 		var frame = new Rectangle(t.TileFrameX, t.TileFrameY, 16, 16);
-		var color = (Lighting.GetColor(i, j) * 2).MultiplyRGBA(slot.GetColor().Additive(200));
 
-		spriteBatch.Draw(texture, position, frame, color);
+		float alpha = 200 + (float)Math.Sin((Main.timeForVisualEffects + i) / 30f) * 40f;
+		var color = (Lighting.GetColor(i, j) * 2).MultiplyRGBA(slot.GetColor().Additive((byte)alpha));
 
-		/*if (TileObjectData.IsTopLeft(i, j) && !Main.gamePaused) //Bubble effects
-		{
-			float scale = Main.rand.NextFloat(1.1f);
-			var velocity = Vector2.UnitY * -.15f;
-
-			ParticleHandler.SpawnParticle(new SteamParticle(Spawn(), velocity, scale, 40) { Color = Color.White.Additive() * .2f });
-			ParticleHandler.SpawnParticle(new GlowParticle(Spawn(), velocity * .5f, Color.White, scale * .2f, 80).OverrideDrawLayer(ParticleLayer.BelowSolids));
-
-			Vector2 Spawn() => new Vector2(i, j).ToWorldCoordinates(24, 55) + Main.rand.NextVector2Unit() * Main.rand.NextFloat(12f);
-		}*/
+		for (int x = 0; x < 2; x++)
+			spriteBatch.Draw(texture, position, frame, color);
 
 		return true;
 	}

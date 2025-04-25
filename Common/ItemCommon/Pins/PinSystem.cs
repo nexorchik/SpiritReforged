@@ -6,7 +6,9 @@ namespace SpiritReforged.Common.ItemCommon.Pins;
 /// <summary> Stores the pins for the world, and gives helper methods to place and remove them. </summary>
 public class PinSystem : ModSystem
 {
-	public static readonly Dictionary<string, Item> ItemByName = []; //Pin items by internal name
+	public readonly record struct PinStruct(Item Item, Asset<Texture2D> Texture);
+	/// <summary> Pin data by internal name. </summary>
+	public static readonly Dictionary<string, PinStruct> DataByName = [];
 
 	public TagCompound pins = [];
 
@@ -34,8 +36,8 @@ public class PinSystem : ModSystem
 	public void SetPin(string name, Vector2 pos) => pins[name] = pos;
 	public void RemovePin(string name) => pins.Remove(name);
 
-	public override void SaveWorldData(TagCompound tag) => tag.Add("pins", pins);
-	public override void LoadWorldData(TagCompound tag) => pins = tag.Get<TagCompound>("pins");
+	public override void SaveWorldData(TagCompound tag) => tag.Add(nameof(pins), pins);
+	public override void LoadWorldData(TagCompound tag) => pins = tag.Get<TagCompound>(nameof(pins));
 
 	public override void NetSend(BinaryWriter writer)
 	{

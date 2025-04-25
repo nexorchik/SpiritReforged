@@ -16,16 +16,26 @@ internal class PotsMicropass : Micropass
 
 	public override string WorldGenName => "Pots";
 
-	public override void Load(Mod mod) => On_WorldGen.PlacePot += MushroomPotConversion;
-	/// <summary> 50% chance to replace regular pots placed on mushroom grass. </summary>
-	private static bool MushroomPotConversion(On_WorldGen.orig_PlacePot orig, int x, int y, ushort type, int style)
+	public override void Load(Mod mod) => On_WorldGen.PlacePot += PotConversion;
+	/// <summary> 50% chance to replace regular pots placed on mushroom grass.<br/>
+	/// 100% chance to replace regular pots placed on granite. </summary>
+	private static bool PotConversion(On_WorldGen.orig_PlacePot orig, int x, int y, ushort type, int style)
 	{
-		if (WorldGen.generatingWorld && Main.rand.NextBool())
+		if (WorldGen.generatingWorld)
 		{
 			var ground = Main.tile[x, y + 1];
+
 			if (ground.HasTile && ground.TileType == TileID.MushroomGrass)
 			{
-				WorldGen.PlaceTile(x, y, ModContent.TileType<MushroomPots>(), true, style: Main.rand.Next(3));
+				if (WorldGen.genRand.NextBool())
+				{
+					WorldGen.PlaceTile(x, y, ModContent.TileType<CommonPots>(), true, style: Main.rand.Next(3));
+					return false; //Skips orig
+				}
+			}
+			else if (ground.HasTile && ground.TileType == TileID.Granite)
+			{
+				WorldGen.PlaceTile(x, y, ModContent.TileType<CommonPots>(), true, style: Main.rand.Next([3, 4, 5]));
 				return false; //Skips orig
 			}
 		}
@@ -67,8 +77,8 @@ internal class PotsMicropass : Micropass
 
 		for (int t = 0; t < maxTries; t++) //Generate uncommon pots
 		{
-			int x = Main.rand.Next(20, Main.maxTilesX - 20);
-			int y = Main.rand.Next((int)GenVars.worldSurfaceHigh, Main.maxTilesY - 20);
+			int x = WorldGen.genRand.Next(20, Main.maxTilesX - 20);
+			int y = WorldGen.genRand.Next((int)GenVars.worldSurfaceHigh, Main.maxTilesY - 20);
 
 			WorldMethods.FindGround(x, ref y);
 
@@ -207,6 +217,8 @@ internal class PotsMicropass : Micropass
 			style = GetRange(BiomePots.Style.Marble);
 		else if (tile is TileID.MushroomGrass)
 			style = GetRange(BiomePots.Style.Mushroom);
+		else if (tile is TileID.Granite)
+			style = GetRange(BiomePots.Style.Granite);
 
 		if (y > Main.UnderworldLayer)
 			style = GetRange(BiomePots.Style.Hell);

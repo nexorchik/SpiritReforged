@@ -1407,7 +1407,11 @@ HideTunic: {
 
 PotteryWheelItem: {
 	// DisplayName: Pottery Wheel
-	// Tooltip: Used for crafting decorative pots
+	/* Tooltip:
+		'''
+		Used for crafting decorative pots
+		<right> when placed to view available recipes
+		''' */
 }
 
 BiomePotsCavernItem: {
@@ -1525,7 +1529,7 @@ PotsDesertItem: {
 	// Tooltip: ""
 }
 
-MushroomPotsItem: {
+CommonPotsMushroomItem: {
 	// DisplayName: Small Mushroom Pot
 	// Tooltip: ""
 }
@@ -1636,3 +1640,53 @@ PotionVatsAlchemyItem: {
 
 // DunceCrabBannerItem.DisplayName: Dunce Crab Banner
 // WheezerBannerItem.DisplayName: Wheezer Banner
+
+WheezerStatueItem: {
+	// DisplayName: Wheezer Statue
+	// Tooltip: ""
+}
+
+FlaskArgon: {
+	// DisplayName: Argon Moss Flask
+	// Tooltip: Spreads glowing moss on impact
+}
+
+FlaskHelium: {
+	// DisplayName: Helium Moss Flask
+	// Tooltip: "{$Mods.SpiritReforged.Items.FlaskArgon.Tooltip}"
+}
+
+FlaskKrypton: {
+	// DisplayName: Krypton Moss Flask
+	// Tooltip: "{$Mods.SpiritReforged.Items.FlaskArgon.Tooltip}"
+}
+
+FlaskNeon: {
+	// DisplayName: Neon Moss Flask
+	// Tooltip: "{$Mods.SpiritReforged.Items.FlaskArgon.Tooltip}"
+}
+
+FlaskOganesson: {
+	// DisplayName: Oganesson Moss Flask
+	// Tooltip: "{$Mods.SpiritReforged.Items.FlaskArgon.Tooltip}"
+}
+
+FlaskRadon: {
+	// DisplayName: Radon Moss Flask
+	// Tooltip: "{$Mods.SpiritReforged.Items.FlaskArgon.Tooltip}"
+}
+
+FlaskXenon: {
+	// DisplayName: Xenon Moss Flask
+	// Tooltip: "{$Mods.SpiritReforged.Items.FlaskArgon.Tooltip}"
+}
+
+BiomePotsGraniteItem: {
+	// DisplayName: Granite Pot
+	// Tooltip: ""
+}
+
+CommonPotsGraniteItem: {
+	// DisplayName: Small Granite Pot
+	// Tooltip: ""
+}

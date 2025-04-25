@@ -1,29 +1,31 @@
 using RubbleAutoloader;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.Visuals.Glowmasks;
-using Terraria.Audio;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
 [AutoloadGlowmask("200,200,200")]
-public class MushroomPots : PotTile, ILootTile
+public class CommonPots : PotTile, ILootTile
 {
-	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
-
-	public override void SetStaticDefaults()
+	public override Dictionary<string, int[]> TileStyles => new()
 	{
-		base.SetStaticDefaults();
-		DustType = DustID.Pot;
-	}
+		{ "Mushroom", [0, 1, 2] },
+		{ "Granite", [3, 4, 5] }
+	};
 
-	public override bool KillSound(int i, int j, bool fail)
+	private static int GetStyle(Tile t) => t.TileFrameY / 36;
+	public override void SetStaticDefaults() => base.SetStaticDefaults();
+
+	public override bool CreateDust(int i, int j, ref int type)
 	{
-		if (!fail && !Autoloader.IsRubble(Type))
+		if (!Autoloader.IsRubble(Type))
 		{
-			var pos = new Vector2(i, j).ToWorldCoordinates(16, 16);
-			SoundEngine.PlaySound(SoundID.Shatter, pos);
-
-			return false;
+			type = GetStyle(Main.tile[i, j]) switch
+			{
+				0 => DustID.Pot,
+				1 => DustID.Granite,
+				_ => -1,
+			};
 		}
 
 		return true;
@@ -38,14 +40,16 @@ public class MushroomPots : PotTile, ILootTile
 		var t = Main.tile[i, j];
 		short oldFrameY = t.TileFrameY;
 
-		t.TileFrameY = t.TileFrameX;
+		t.TileFrameY = (GetStyle(t) == 0) ? t.TileFrameX : (short)2000; //2000 means no additional gores or effects
 		WorldGen.CheckPot(i, j);
 		t.TileFrameY = oldFrameY;
 	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Blue.ToVector3() * .8f);
+		if (GetStyle(Main.tile[i, j]) == 0)
+			Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Blue.ToVector3() * .8f);
+
 		return true;
 	}
 

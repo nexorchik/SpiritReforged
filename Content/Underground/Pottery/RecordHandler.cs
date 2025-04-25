@@ -61,8 +61,19 @@ internal class RecordPlayer : ModPlayer
 {
 	/// <summary> The list of unlocked entries saved per player. </summary>
 	private IList<string> _validated = [];
+	/// <summary> The list of entries newly discovered by the player. Not saved. </summary>
+	private readonly HashSet<string> _newAndShiny = [];
 
-	public void Validate(string name) => _validated.Add(name);
+	//public void AddNew(string name) => _newAndShiny.Add(name);
+	public bool IsNew(string name) => _newAndShiny.Contains(name);
+	public bool RemoveNew(string name) => _newAndShiny.Remove(name);
+
+	public void Validate(string name)
+	{
+		_newAndShiny.Add(name);
+		_validated.Add(name);
+	}
+
 	public bool IsValidated(string name) => _validated.Contains(name);
 
 	public override void SaveData(TagCompound tag) => tag[nameof(_validated)] = _validated;

@@ -62,6 +62,7 @@ public struct TileRecord(string key, int tileType, params int[] tileStyles)
 				int startY = (tileStyle / wrapLimit * height + y) * tileFrame;
 
 				var source = new Rectangle(startX, startY, 16, 16);
+				source.Y += Main.tileFrame[type] * data.CoordinateFullHeight; //Animation
 
 				if (y == 4)
 					source.Height = 8; //Avoid clipping

@@ -18,8 +18,25 @@ public class BiomePots : PotTile, ILootTile
 	/// <summary> Mirrors <see cref="Styles"/>. </summary>
 	public enum Style : int
 	{
-		Cavern, Ice, Desert, Jungle, Dungeon, Corruption, Crimson, Marble, Hell, Mushroom
+		Cavern, Ice, Desert, Jungle, Dungeon, Corruption, Crimson, Marble, Hell, Mushroom, Granite
 	}
+
+	public static readonly SoundStyle Break = new("SpiritReforged/Assets/SFX/Tile/PotBreak")
+	{
+		Volume = .16f,
+		PitchRange = (-.4f, 0)
+	};
+
+	public static readonly SoundStyle JungleBreak = new("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit")
+	{
+		Volume = .5f,
+		PitchRange = (0f, .3f)
+	};
+
+	public static readonly SoundStyle Squish = new("SpiritReforged/Assets/SFX/NPCDeath/Squish")
+	{
+		Volume = .25f
+	};
 
 	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
 	{
@@ -38,8 +55,9 @@ public class BiomePots : PotTile, ILootTile
 		{ "Crimson", [18, 19, 20] },
 		{ "Marble", [21, 22, 23] },
 		{ "Hell", [24, 25, 26] },
-		{ "Mushroom", [27, 28, 29] }
-	};
+		{ "Mushroom", [27, 28, 29] },
+        { "Granite", [30, 31, 32] }
+    };
 
 	/// <summary> Gets the <see cref="Style"/> associated with the given frame. </summary>
 	private static Style GetStyle(int frameY) => (Style)(frameY / 36);
@@ -57,27 +75,24 @@ public class BiomePots : PotTile, ILootTile
 		_ => 1.25f
 	};
 
-	private static Color GetColor(Style style) => style switch
-	{
-		Style.Cavern => new Color(150, 150, 150),
-		Style.Ice => new Color(90, 139, 140),
-		Style.Desert => new Color(226, 122, 47),
-		Style.Jungle => new Color(192, 136, 70),
-		Style.Dungeon => new Color(203, 185, 151),
-		Style.Corruption => new Color(148, 159, 67),
-		Style.Crimson => new Color(198, 87, 93),
-		Style.Marble => new Color(201, 183, 149),
-		Style.Hell => new Color(73, 56, 41),
-		Style.Mushroom => new Color(172, 155, 110),
-		_ => new Color(146, 76, 77) // default color
-	};
-
 	public override void AddMapData()
 	{
-		var style = GetStyle(Type);
-		Color color = GetColor(style);
-		AddMapEntry(color, Language.GetText($"MapObject.Pot"));
+		var name = Language.GetText($"MapObject.Pot");
+
+		AddMapEntry(new Color(150, 150, 150), name);
+		AddMapEntry(Color.Gold, name);
+		AddMapEntry(new Color(90, 139, 140), name);
+		AddMapEntry(new Color(226, 122, 47), name);
+		AddMapEntry(new Color(192, 136, 70), name);
+		AddMapEntry(new Color(203, 185, 151), name);
+		AddMapEntry(new Color(148, 159, 67), name);
+		AddMapEntry(new Color(198, 87, 93), name);
+		AddMapEntry(new Color(201, 183, 149), name);
+		AddMapEntry(new Color(73, 56, 41), name);
+		AddMapEntry(new Color(172, 155, 110), name);
+		AddMapEntry(new Color(69, 66, 121), name);
 	}
+	public override ushort GetMapOption(int i, int j) => (ushort)GetStyle(Main.tile[i, j].TileFrameY);
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
@@ -89,11 +104,12 @@ public class BiomePots : PotTile, ILootTile
 		var world = new Vector2(i, j) * 16;
 		float strength = Main.LocalPlayer.DistanceSQ(world) / (distance * distance);
 
-		if (strength < 1 && Main.rand.NextFloat(28f) < 1f - strength)
+		if (strength < 1 && Main.rand.NextFloat(35f) < 1f - strength)
 		{
 			var d = Dust.NewDustDirect(world, 16, 16, DustID.TreasureSparkle, 0, 0, Scale: Main.rand.NextFloat());
 			d.noGravity = true;
 			d.velocity = new Vector2(0, -Main.rand.NextFloat(2f));
+			d.fadeIn = 1f;
 		}
 	}
 
@@ -110,14 +126,14 @@ public class BiomePots : PotTile, ILootTile
 			}
 			else if (GetStyle(Main.tile[i, j].TileFrameY) is Style.Jungle)
 			{
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Squish") with { Volume = .25f }, pos);
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit") with { Volume = .5f, PitchRange = (0f, .3f), }, pos);
+				SoundEngine.PlaySound(Squish, pos);
+				SoundEngine.PlaySound(JungleBreak, pos);
 				SoundEngine.PlaySound(SoundID.Dig, pos);
 			}
 			else
 			{
 				SoundEngine.PlaySound(SoundID.Shatter, pos);
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/PotBreak") with { Volume = .16f, PitchRange = (-.4f, 0), }, pos);
+				SoundEngine.PlaySound(Break, pos);
 			}
 
 			return false;
@@ -240,12 +256,14 @@ public class BiomePots : PotTile, ILootTile
 			case Style.Corruption:
 
 				dustType = DustID.CorruptGibs;
+				Gore.NewGore(source, center, Vector2.Zero, Mod.Find<ModGore>("PotCorrupt1").Type);
 
 				break;
 
 			case Style.Crimson:
 
 				dustType = DustID.Crimson;
+				Gore.NewGore(source, center, Vector2.Zero, Mod.Find<ModGore>("PotCrimson1").Type);
 
 				break;
 
@@ -275,6 +293,18 @@ public class BiomePots : PotTile, ILootTile
 				}
 
 				dustType = DustID.MushroomSpray;
+
+				break;
+
+			case Style.Granite:
+
+				for (int g = 1; g < 4; g++)
+				{
+					int goreType = Mod.Find<ModGore>("PotGranite" + g).Type;
+					Gore.NewGore(source, center, Vector2.Zero, goreType);
+				}
+
+				dustType = DustID.Granite;
 
 				break;
 		}
@@ -329,6 +359,7 @@ public class BiomePots : PotTile, ILootTile
 			Style.Dungeon => ItemID.Bone,
 			Style.Marble => ItemID.Javelin,
 			Style.Hell => ItemID.LivingFireBlock,
+			Style.Granite => ItemID.Geode,
 			_ => -1
 		};
 
@@ -336,6 +367,8 @@ public class BiomePots : PotTile, ILootTile
 		{
 			if (style is Style.Dungeon)
 				loot.Add(ItemDropRule.ByCondition(new DropConditions.Standard(Condition.DownedSkeletron), ItemID.Bone, 2, 10, 15));
+			if (style is Style.Granite)
+				loot.AddCommon(ItemID.Geode, 3);
 			else
 				loot.AddCommon(type, 2, 10, 15);
 		}

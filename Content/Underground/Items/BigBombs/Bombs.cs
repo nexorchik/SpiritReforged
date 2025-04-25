@@ -1,3 +1,4 @@
+using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.ProjectileCommon;
@@ -11,6 +12,8 @@ namespace SpiritReforged.Content.Underground.Items.BigBombs;
 
 public class Bomb : BombProjectile, ILargeExplosive
 {
+	public const int CommonSize = 32;
+
 	public virtual int OriginalType => ProjectileID.Bomb;
 	public override LocalizedText DisplayName => Language.GetText("ProjectileName.Bomb");
 
@@ -18,7 +21,8 @@ public class Bomb : BombProjectile, ILargeExplosive
 	{
 		base.SetDefaults();
 
-		Projectile.Size = new Vector2(32);
+		Projectile.Size = new Vector2(CommonSize);
+		Projectile.scale = 0;
 		SetDamage(150);
 		area = 15;
 
@@ -26,6 +30,20 @@ public class Bomb : BombProjectile, ILargeExplosive
 	}
 
 	public virtual void PostSetDefaults() { }
+
+	public override void AI()
+	{
+		base.AI();
+
+		float oldScale = Projectile.scale; //Resize logic
+		Projectile.scale = Math.Min(Projectile.scale + .1f, 1);
+
+		if (Projectile.scale != oldScale)
+		{
+			int size = (int)Math.Max(CommonSize * Projectile.scale, 2);
+			Projectile.Resize(size, size);
+		}
+	}
 
 	public override void OnKill(int timeLeft)
 	{
@@ -36,18 +54,28 @@ public class Bomb : BombProjectile, ILargeExplosive
 
 		SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
 		SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, Projectile.Center);
+		var ease = new PolynomialEase((float x) => (float)(0.5 + 0.5 * Math.Pow(x, 0.5)));
+		var stretch = Vector2.One;
 
-		ParticleHandler.SpawnParticle(new TexturedPulseCircle(Projectile.Center, Color.Goldenrod, Color.Orange * .5f, .25f, 30 * area, 20, "SmokeSimple", Vector2.One, Common.Easing.EaseFunction.EaseCircularOut));
-		ParticleHandler.SpawnParticle(new SmokeCloud(Projectile.Center, Vector2.Zero, Color.Gray, .05f * area, Common.Easing.EaseFunction.EaseCubicOut, 40));
+		ParticleHandler.SpawnParticle(new TexturedPulseCircle(Projectile.Center, Color.Goldenrod.Additive(), Color.OrangeRed.Additive(), 1f, 30 * area, 20, "Smoke", stretch, ease));
+		ParticleHandler.SpawnParticle(new TexturedPulseCircle(Projectile.Center, Color.White.Additive(), Color.OrangeRed.Additive(), .5f, 30 * area, 20, "Smoke", stretch, ease));
+
+		ParticleHandler.SpawnParticle(new SmokeCloud(Projectile.Center, Vector2.Zero, Color.Gray, .04f * area, EaseFunction.EaseCubicOut, 40));
 
 		const int time = 5;
-		ParticleHandler.SpawnParticle(new ImpactLine(Projectile.Center, Vector2.Zero, Color.Orange * .5f, new Vector2(0.8f, 1.6f) * area, time));
-		ParticleHandler.SpawnParticle(new ImpactLine(Projectile.Center, Vector2.Zero, Color.White, new Vector2(0.5f, 1.2f) * area, time));
+		ParticleHandler.SpawnParticle(new ImpactLine(Projectile.Center, Vector2.Zero, Color.Orange.Additive(), new Vector2(0.2f, 1f) * area, time));
+		ParticleHandler.SpawnParticle(new ImpactLine(Projectile.Center, Vector2.Zero, Color.White.Additive(), new Vector2(0.1f, 1f) * area, time));
 
 		for (int i = 0; i < area * 2; i++)
 		{
-			ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center, Main.rand.NextVector2Unit() * Main.rand.NextFloat(1f, 4f),
-				Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat()), Main.rand.NextFloat(.05f, .1f) * area, Main.rand.Next(10, 20), 4));
+			float magnitude = Main.rand.NextFloat();
+
+			var color = Color.OrangeRed.Additive();
+			var velocity = Main.rand.NextVector2Unit() * magnitude * 10f;
+			float scale = (1f - magnitude) * 0.08f * area;
+
+			ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center + velocity * 10, velocity, color, scale, 10, 3));
+			ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center + velocity * 10, velocity, Color.White.Additive(), scale * .5f, 10, 3));
 
 			var d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(16f * area), DustID.Torch, Scale: Main.rand.NextFloat() + .5f);
 			d.noGravity = true;
@@ -84,7 +112,7 @@ public class BombDirt : SpreadBomb, ILargeExplosive
 	{
 		base.SetDefaults();
 
-		Projectile.Size = new Vector2(30);
+		Projectile.Size = new Vector2(Bomb.CommonSize);
 		SetDamage(150);
 		area = 6;
 		dustType = DustID.Dirt;
