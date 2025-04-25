@@ -22,7 +22,9 @@ public class OganessonBobber : AccessoryItem
 		player.overrideFishingBobber = ModContent.ProjectileType<OganessonBobberProjectile>();
 	}
 
-	public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI) => Lighting.AddLight(Item.Center, Color.White.ToVector3() * 0.25f);
+	public override void UpdateVanity(Player player) => player.overrideFishingBobber = ModContent.ProjectileType<OganessonBobberProjectile>();
+	public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
+		=> Lighting.AddLight(Item.Center, Color.White.ToVector3() * 0.25f);
 
 	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.FishingBobberGlowingStar)
 		.AddIngredient(ModContent.ItemType<OganessonMossItem>(), 5).AddTile(TileID.TinkerersWorkbench).Register();

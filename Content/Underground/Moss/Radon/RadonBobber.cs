@@ -23,6 +23,7 @@ public class RadonBobber : AccessoryItem
 		player.overrideFishingBobber = ModContent.ProjectileType<RadonBobberProjectile>();
 	}
 
+	public override void UpdateVanity(Player player) => player.overrideFishingBobber = ModContent.ProjectileType<RadonBobberProjectile>();
 	public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
 		=> Lighting.AddLight(Item.Center, Color.Yellow.ToVector3() * 0.25f);
 
