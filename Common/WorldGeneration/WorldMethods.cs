@@ -38,6 +38,32 @@ public class WorldMethods
 		return j;
 	}
 
+	/// <summary> Scans up, then down for the nearest surface tile. Breaks if near any world edge and returns false. </summary>
+	public static bool SafeFindGround(int i, ref int j)
+	{
+		while (WorldGen.SolidOrSlopedTile(i, j - 1))
+		{
+			if (!WorldGen.InWorld(i, j, 5))
+			{
+				return false;
+			}
+
+			j--; //Up
+		}
+
+		while (!WorldGen.SolidOrSlopedTile(i, j))
+		{
+			if (!WorldGen.InWorld(i, j, 5))
+			{
+				return false;
+			}
+
+			j++; //Down
+		}
+
+		return true;
+	}
+
 	public static void CragSpike(int X, int Y, int length, int height, ushort type2, float slope, float sloperight)
 	{
 		float trueslope = 1 / slope;
