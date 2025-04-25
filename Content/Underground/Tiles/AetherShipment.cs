@@ -26,7 +26,6 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 	public override void AddObjectData()
 	{
-		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
 		Main.tileOreFinderPriority[Type] = 575;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
@@ -167,7 +166,12 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY + Main.tileFrame[Type] * FullHeight, data.CoordinateWidth, data.CoordinateHeights[tile.TileFrameY / 18]);
 		var dataOffset = new Vector2(data.DrawXOffset, data.DrawYOffset);
 
-		spriteBatch.Draw(TextureAssets.Tile[tile.TileType].Value, drawPos + origin + dataOffset, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+        var color = Lighting.GetColor(i, j);
+
+        if (Main.LocalPlayer.findTreasure)
+            color = TileExtensions.GetSpelunkerTint(color);
+
+        spriteBatch.Draw(TextureAssets.Tile[tile.TileType].Value, drawPos + origin + dataOffset, source, color, rotation, origin, 1, SpriteEffects.None, 0);
 
 		if (tile.TileFrameX % 36 == 18 && tile.TileFrameY % 36 == 18) //Bottom right frame
 		{

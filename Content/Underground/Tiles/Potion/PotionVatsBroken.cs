@@ -18,7 +18,7 @@ public class PotionVatsBroken : ModTile
 		TileObjectData.newTile.DrawYOffset = 2;
 		TileObjectData.addTile(Type);
 
-		AddMapEntry(new Color(100, 90, 35), Language.GetText("MapObject.Pot"));
+		AddMapEntry(new Color(146, 76, 77), Language.GetText("Mods.SpiritReforged.Tiles.PotionVats.MapEntry"));
 		DustType = DustID.Glass;
 	}
 }

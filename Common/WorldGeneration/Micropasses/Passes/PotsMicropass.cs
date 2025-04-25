@@ -53,6 +53,7 @@ internal class PotsMicropass : Micropass
 	{
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Caves");
 
+		Generate(CreateOrnate, Main.maxTilesX / WorldGen.WorldSizeSmallX * 10, out _);
 		Generate(CreatePotion, Main.maxTilesX / WorldGen.WorldSizeSmallX * 10, out _);
 		Generate(CreateScrying, Main.maxTilesX / WorldGen.WorldSizeSmallX * 9, out _);
         Generate(CreateStuffed, Main.maxTilesX / WorldGen.WorldSizeSmallX * 9, out _);
@@ -86,6 +87,17 @@ internal class PotsMicropass : Micropass
 		}
 
 		generated = pots;
+	}
+
+	private static bool CreateOrnate(int x, int y)
+	{
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
+			return false;
+
+		int type = ModContent.TileType<OrnatePots>();
+		WorldGen.PlaceTile(x, y, type, true, style: Main.rand.Next(3));
+
+		return Main.tile[x, y].TileType == type;
 	}
 
 	private static bool CreatePotion(int x, int y)
@@ -189,7 +201,7 @@ internal class PotsMicropass : Micropass
 		int style = -1;
 
 		if (wall is WallID.Dirt or WallID.GrassUnsafe || tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite && y > Main.worldSurface)
-			style = GetRange(WorldGen.genRand.NextBool(100) ? BiomePots.Style.Gold : BiomePots.Style.Cavern);
+			style = GetRange(BiomePots.Style.Cavern);
 
 		if (wall is WallID.SnowWallUnsafe || tile is TileID.SnowBlock or TileID.IceBlock or TileID.BreakableIce && y > Main.worldSurface)
 			style = GetRange(BiomePots.Style.Ice);

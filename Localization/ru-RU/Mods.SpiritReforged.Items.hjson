@@ -1419,7 +1419,7 @@ BiomePotsCavernItem: {
 	// Tooltip: ""
 }
 
-BiomePotsGoldItem: {
+OrnatePotsItem: {
 	// DisplayName: Ornate Pot
 	// Tooltip: ""
 }
