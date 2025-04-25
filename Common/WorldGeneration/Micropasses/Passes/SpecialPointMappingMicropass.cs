@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.TileCommon;
+﻿using SpiritReforged.Common.ModCompat;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.WorldGeneration.Chests;
 using SpiritReforged.Common.WorldGeneration.PointOfInterest;
 using SpiritReforged.Content.Forest.Botanist.Tiles;
@@ -15,6 +16,26 @@ namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
 internal class SpecialPointMappingMicropass : Micropass
 {
 	public override string WorldGenName => "Points of Interest";
+
+	//Fables compatibility
+	private static int WulfrumVaultType = -1;
+	private static bool TryGetWulfrumVaultType(out int type)
+	{
+		if (WulfrumVaultType != -1)
+		{
+			type = WulfrumVaultType;
+			return true;
+		}
+
+		if (CrossMod.Fables.Instance.TryFind("WulfrumVault", out ModTile tile))
+		{
+			type = WulfrumVaultType = tile.Type;
+			return true;
+		}
+
+		type = 0;
+		return false;
+	}
 
 	public override int GetWorldGenIndexInsert(List<GenPass> passes, ref bool afterIndex)
 	{
@@ -47,6 +68,8 @@ internal class SpecialPointMappingMicropass : Micropass
 						PointOfInterestSystem.AddPoint(new(i, j), InterestType.EnchantedSword);
                     else if (tile.TileType == ModContent.TileType<ButterflyStump>() && tile.TileFrameX == 0 && tile.TileFrameY == 0)
 						PointOfInterestSystem.AddPoint(new(i, j), InterestType.ButterflyShrine);
+					else if (CrossMod.Fables.Enabled && TryGetWulfrumVaultType(out int type) && type == tile.TileType && TileObjectData.IsTopLeft(i, j))
+						PointOfInterestSystem.AddPoint(new(i, j), InterestType.WulfrumBunker);
 					else
 					{
 						HashSet<int> curiosityTypes = [ModContent.TileType<BlunderbussTile>(), ModContent.TileType<PearlStringTile>(), 
@@ -58,6 +81,9 @@ internal class SpecialPointMappingMicropass : Micropass
                 }
 			}
 		}
+
+		if (CrossMod.Thorium.Enabled && CrossMod.Thorium.Instance.Call("GetBloodChamberBounds") is Rectangle bounds)
+			PointOfInterestSystem.AddPoint(bounds.Center().ToPoint16(), InterestType.BloodAltar);
 
 		PointOfInterestSystem.Instance.WorldGen_PointsOfInterestByPosition = PointOfInterestSystem.Instance.PointsOfInterestByPosition;
 		PointOfInterestSystem.Instance.WorldGen_TakenInterestTypes = PointOfInterestSystem.Instance.TakenInterestTypes;

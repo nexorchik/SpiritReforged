@@ -47,12 +47,12 @@ public class FishCrate : FloatingItem
 		itemLoot.AddCommon(ItemID.GoldCoin, 7, 2, 5);
 
 		// Thorium Crossmod
-		if (ThoriumCompat.Enabled)
+		if (CrossMod.Thorium.Enabled)
 		{
-			if (ThoriumCompat.Instance.TryFind("HatFish", out ModItem hatfish))
+			if (CrossMod.Thorium.Instance.TryFind("HatFish", out ModItem hatfish))
 				itemLoot.AddCommon(hatfish.Type, 25);
 
-			if (ThoriumCompat.Instance.TryFind("SubterraneanBulb", out ModItem anglerBulb))
+			if (CrossMod.Thorium.Instance.TryFind("SubterraneanBulb", out ModItem anglerBulb))
 				itemLoot.AddCommon(anglerBulb.Type, 100);
 		}
 	}
