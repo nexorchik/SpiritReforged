@@ -4,6 +4,7 @@ using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
+using Terraria.ModLoader.Utilities;
 
 namespace SpiritReforged.Content.Underground.NPCs;
 
@@ -150,7 +151,7 @@ public class DunceCrab : ModNPC
 		var target = Main.player[NPC.target];
 		int distanceX = (int)Math.Abs(NPC.Center.X - target.Center.X);
 
-		if ((Side)Surface is Side.Down && target.Center.Y > NPC.Center.Y && distanceX < 16 * 8)
+		if ((Side)Surface is Side.Down && (target.Center.Y > NPC.Center.Y && distanceX < 16 * 8 || NPC.Distance(target.Center) > 16 * 20))
 		{
 			ChangeState(State.Hide);
 			NPC.rotation = MathHelper.Pi;
@@ -159,7 +160,7 @@ public class DunceCrab : ModNPC
 			if ((int)NPC.frameCounter == 3)
 				SoundEngine.PlaySound(ShellHide, NPC.Center);
 
-			if (distanceX < 16)
+			if (distanceX < 16 && Collision.CanHit(NPC, target))
 			{
 				ChangeState(State.Fall);
 				NPC.velocity.Y = .5f;
@@ -328,21 +329,26 @@ public class DunceCrab : ModNPC
 		int y = spawnInfo.SpawnTileY;
 
 		if (y > Main.worldSurface && spawnInfo.Player.ZonePurity && !spawnInfo.Water && NPC.IsValidSpawningGroundTile(x, y))
-			return .09f;
+			return Main.hardMode ? .06f : .12f;
 
 		return 0;
 	}
 
 	public override int SpawnNPC(int tileX, int tileY)
 	{
+		int surface = 0;
 		int y = tileY;
-		while (WorldGen.InWorld(tileX, y, 20) && !WorldGen.SolidOrSlopedTile(tileX, y - 1)) //Attempt to spawn on a ceiling
+
+		while (WorldGen.InWorld(tileX, y, 20) && !WorldGen.SolidOrSlopedTile(tileX, y - 2)) //Attempt to spawn on a ceiling
 			y--;
 
 		if (!WorldGen.PlayerLOS(tileX, y))
+		{
 			tileY = y;
+			surface = (int)Side.Down;
+		}
 
-		return NPC.NewNPC(new EntitySource_SpawnNPC(), tileX * 16, tileY * 16, Type);
+		return NPC.NewNPC(new EntitySource_SpawnNPC(), tileX * 16, tileY * 16, Type, ai1: surface);
 	}
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
