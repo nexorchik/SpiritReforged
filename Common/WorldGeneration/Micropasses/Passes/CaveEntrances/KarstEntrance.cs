@@ -34,21 +34,21 @@ internal class KarstEntrance : CaveEntrance
 
 		foreach (var pos in data.GetData())
 		{
-			if (pos.Y > 5)
+			if (pos.Y > 0)
 			{
 				Tile tile = Main.tile[new Point16(pos.X + x, pos.Y + y)];
 				tile.LiquidAmount = 255;
 				tile.LiquidType = LiquidID.Water;
-
-				TryAddGrassAndPlants(pos.X + x, pos.Y + y + 1);
-				TryAddGrassAndPlants(pos.X + x, pos.Y + y - 1);
-				TryAddGrassAndPlants(pos.X + x + 1, pos.Y + y);
-				TryAddGrassAndPlants(pos.X + x - 1, pos.Y + y);
 			}
+
+			GrowGrass(pos.X + x, pos.Y + y + 1);
+			GrowGrass(pos.X + x, pos.Y + y - 1);
+			GrowGrass(pos.X + x + 1, pos.Y + y);
+			GrowGrass(pos.X + x - 1, pos.Y + y);
 		}
 	}
 
-	private static void TryAddGrassAndPlants(int x, int y)
+	private static void GrowGrass(int x, int y)
 	{
 		Tile tile = Main.tile[x, y];
 
