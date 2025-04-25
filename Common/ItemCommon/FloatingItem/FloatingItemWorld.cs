@@ -38,10 +38,12 @@ public class FloatingItemWorld : ModSystem
 
 		int y = (int)(Main.worldSurface * 0.35) + 400;
 
-		for (; Framing.GetTileSafely(x / 16, y / 16).LiquidAmount < 200; y += 16)
+		while (Framing.GetTileSafely(x / 16, y / 16).LiquidAmount < 200)
 		{
-			if (y / 16 > Main.worldSurface) //If we somehow miss all water, exit
+			if (y / 16 > Main.worldSurface) // If we somehow miss all water, exit
 				return;
+
+			y += 16;
 		}
 
 		y += 40;
