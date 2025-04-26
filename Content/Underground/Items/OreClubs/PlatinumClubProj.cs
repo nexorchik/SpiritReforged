@@ -1,16 +1,21 @@
-using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using static SpiritReforged.Common.Easing.EaseFunction;
 using static Microsoft.Xna.Framework.MathHelper;
 using System.IO;
+using SpiritReforged.Common.Particle;
+using SpiritReforged.Content.Particles;
+using Terraria.Audio;
 
 namespace SpiritReforged.Content.Underground.Items.OreClubs;
 
 class PlatinumClubProj : BaseClubProj, ITrailProjectile
 {
+	private const int HIT_VFX_COOLDOWN_MAX = 30;
+
 	private bool _inputHeld = true;
+	private int _hitVfxCooldown = 0;
 
 	public PlatinumClubProj() : base(new Vector2(84)) { }
 
@@ -22,31 +27,40 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 
 	public override bool? CanDamage() => (GetWindupProgress < 0.5f || CheckAiState(AiStates.SWINGING)) ? null : false;
 
+	public override void SafeAI() => _hitVfxCooldown = (int)Max(_hitVfxCooldown - 1, 0);
+
 	public void DoTrailCreation(TrailManager tM)
 	{
-		float trailDist = 76;
-		float trailWidth = 50;
+		float trailDist = 82;
+		float trailWidth = 26;
 		static float windupSwingProgress(Projectile proj) => (proj.ModProjectile is BaseClubProj club) ? EaseCubicInOut.Ease(EaseCircularOut.Ease(Lerp(club.GetWindupProgress, 0, club.PullbackWindupRatio))) : 0;
 
 		Func<Projectile, float> uSwingFunc = CheckAiState(AiStates.SWINGING) ? GetSwingProgressStatic : windupSwingProgress;
 		int swingDirection = CheckAiState(AiStates.SWINGING) ? 1 : -1;
 		float uRange = AngleRange;
-		float uRot = HoldAngle_Final;
+		float uRot = HoldAngle_Final - PiOver4 / 2;
 		float dissolveThreshold = 0.9f;
+		float uLength = 0.8f;
 
 		if (CheckAiState(AiStates.CHARGING))
 		{
 			trailWidth *= 0.8f;
 			trailDist *= 0.7f;
-			uRot = HoldAngle_Intial - PiOver4;
+			uLength *= 0.33f;
+			uRot += PiOver2 - PiOver4 / 2;
 			uRange = Math.Abs(HoldAngle_Final - HoldAngle_Intial);
 			dissolveThreshold *= EaseCubicInOut.Ease(EaseCircularOut.Ease(1 - PullbackWindupRatio));
 		}
 
-		tM.CreateCustomTrail(new SwingTrail(Projectile, Color.White, 2, swingDirection * uRange, uRot, trailDist, trailWidth, uSwingFunc, SwingTrail.BasicSwingShaderParams, TrailLayer.UnderProjectile, dissolveThreshold));
+		if(FullCharge)
+		{
+			trailWidth *= 1.2f;
+			trailDist *= 1.1f;
+			uRange *= 1.1f;
+		}
 
-		if (FullCharge)
-			tM.CreateCustomTrail(new SwingTrail(Projectile, Color.White, 2, AngleRange, HoldAngle_Final, 1.2f * trailDist, trailWidth * 1.2f, GetSwingProgressStatic, SwingTrail.BasicSwingShaderParams));
+		tM.CreateCustomTrail(new SwingTrail(Projectile, new Color(246, 216, 235, 160), new Color(178, 188, 220), 2.5f, swingDirection * uRange, uLength, uRot, trailDist, trailWidth, uSwingFunc, s => SwingTrail.NoiseSwingShaderParams(s, "FlameTrail", new Vector2(3f, 0.25f)), TrailLayer.UnderProjectile, dissolveThreshold));
+		tM.CreateCustomTrail(new SwingTrail(Projectile, new Color(246, 216, 235, 160), new Color(178, 188, 220), 2.5f, swingDirection * uRange, uLength, uRot, trailDist, trailWidth, uSwingFunc, s => SwingTrail.NoiseSwingShaderParams(s, "supPerlin", new Vector2(1.5f, 1.25f)), TrailLayer.UnderProjectile, dissolveThreshold));
 	}
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -58,6 +72,74 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 
 			target.velocity.Y -= Projectile.knockBack * target.knockBackResist * 0.25f;
 			target.velocity.X -= Projectile.knockBack * Projectile.direction * target.knockBackResist * 0.8f;
+		}
+
+		if (!Main.dedServ && _hitVfxCooldown == 0)
+		{
+			_hitVfxCooldown = HIT_VFX_COOLDOWN_MAX / 6;
+			if (FullCharge)
+				_hitVfxCooldown /= 2;
+
+			var direction = BaseRotation.ToRotationVector2();
+
+			var position = Vector2.Lerp(Projectile.Center, target.Center, 0.75f);
+			SoundEngine.PlaySound(SoundID.Item70.WithVolumeScale(0.5f), position);
+
+			if (CheckAiState(AiStates.CHARGING))
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					float width = Main.rand.NextFloat(80, 120);
+
+					var pos = position;
+					float rotation = -Vector2.UnitY.RotatedByRandom(PiOver4 / 3).ToRotation();
+
+					var p = new TexturedPulseCircle(pos, Color.White, Color.Silver * 0.7f, 0.8f, width, Main.rand.Next(15, 20), "FlameTrail", new Vector2(2, 0.5f), EaseCircularOut, false, 0.4f).WithSkew(.7f, rotation + Pi);
+					p.Velocity = -Vector2.UnitY / 3;
+					p.UseLightColor = true;
+					ParticleHandler.SpawnParticle(p);
+				}
+
+				for(int i = 0; i < 8; i++)
+				{
+					float maxOffset = 15;
+					float xOffset = Main.rand.NextFloat(-maxOffset, maxOffset);
+
+					float yVel = Lerp(5, 2, EaseQuadOut.Ease(Math.Abs(xOffset) / maxOffset)) * Main.rand.NextFloat(0.9f, 1.1f);
+
+					var p = new ImpactLine(position + Vector2.UnitX * xOffset, -Vector2.UnitY * yVel, Color.White * 0.5f, new Vector2(0.15f, 0.3f), Main.rand.Next(15, 20), 0.92f);
+					p.UseLightColor = true;
+					ParticleHandler.SpawnParticle(p);
+				}
+			}
+
+			if(CheckAiState(AiStates.SWINGING))
+			{
+				var pos = position + direction;
+				float width = 230;
+				float rotation = direction.ToRotation();
+
+				var p = new TexturedPulseCircle(pos, Color.White, Color.Silver, 0.6f, width, Main.rand.Next(20, 25), "Star2", new Vector2(4, 1), EaseCircularOut, false, 0.2f).WithSkew(.5f, rotation);
+				ParticleHandler.SpawnParticle(p);
+
+				float shineRotation = Main.rand.NextFloatDirection();
+				for(int i = 0; i < 3; i++)
+					ParticleHandler.SpawnParticle(new DissipatingImage(pos, Color.White, shineRotation, 0.12f, 0, "GodrayCircle", new Vector2(0), new Vector2(4f, 1.5f), 18));
+				
+				ParticleHandler.SpawnParticle(new Shatter(position, Color.Silver, 40));
+
+				float numLines = 16;
+				for(int i = 0; i < numLines; i++)
+				{
+					Vector2 velocity = Vector2.UnitX.RotatedBy(TwoPi * i / numLines);
+					velocity = velocity.RotatedByRandom(PiOver4);
+					velocity *= Main.rand.NextFloat(4, 7);
+
+					var line = new ImpactLine(position, velocity, Color.White * 0.5f, new Vector2(0.15f, 0.4f), Main.rand.Next(15, 20), 0.9f);
+					line.UseLightColor = true;
+					ParticleHandler.SpawnParticle(line);
+				}
+			}
 		}
 	}
 
@@ -97,6 +179,7 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 	{
 		TrailManager.TryTrailKill(Projectile);
 		Projectile.ResetLocalNPCHitImmunity();
+		_hitVfxCooldown = 0;
 		TrailManager.ManualTrailSpawn(Projectile);
 
 		Player owner = Main.player[Projectile.owner];

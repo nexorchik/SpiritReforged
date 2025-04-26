@@ -58,7 +58,7 @@ public abstract partial class BaseClubProj : ModProjectile
 		var easeFunction = EaseCubicOut;
 		float ringWidth = 0.4f;
 		int lifetime = 24;
-		float zRotation = 0.85f;
+		float zRotation = 0.9f;
 
 		ParticleHandler.SpawnParticle(new TexturedPulseCircle(
 			pos,

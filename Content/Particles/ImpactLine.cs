@@ -6,17 +6,20 @@ namespace SpiritReforged.Content.Particles;
 public class ImpactLine : Particle
 {
 	/// <summary> Whether this particle should actually emit light. </summary>
-	public bool noLight;
+	public bool NoLight { get; set; }
+
+	public bool UseLightColor { get; set; }
 
 	private readonly Entity _ent = null;
 
 	private Color _color;
 	private Vector2 _scaleMod;
 	private Vector2 _offset;
+	private float _acceleration;
 
 	public override ParticleDrawType DrawType => ParticleDrawType.Custom;
 
-	public ImpactLine(Vector2 position, Vector2 velocity, Color color, Vector2 scale, int timeLeft, Entity attatchedEntity = null)
+	public ImpactLine(Vector2 position, Vector2 velocity, Color color, Vector2 scale, int timeLeft, float acceleration, Entity attatchedEntity = null)
 	{
 		Position = position;
 		Velocity = velocity;
@@ -24,10 +27,13 @@ public class ImpactLine : Particle
 		_scaleMod = scale;
 		MaxTime = timeLeft;
 		_ent = attatchedEntity;
+		_acceleration = acceleration;
 
 		if(_ent != null)
 			_offset = Position - _ent.Center;
 	}
+
+	public ImpactLine(Vector2 position, Vector2 velocity, Color color, Vector2 scale, int timeLeft, Entity attatchedEntity = null) : this(position, velocity, color, scale, timeLeft, 1, attatchedEntity) { }
 
 	public override void Update()
 	{
@@ -35,7 +41,7 @@ public class ImpactLine : Particle
 		Color = _color * opacity;
 		Rotation = Velocity.ToRotation() + MathHelper.PiOver2;
 
-		if (!noLight)
+		if (!NoLight)
 			Lighting.AddLight(Position, Color.ToVector3() / 2f);
 
 		if (_ent != null)
@@ -49,6 +55,8 @@ public class ImpactLine : Particle
 			Position = _ent.Center + _offset;
 			_offset += Velocity;
 		}
+
+		Velocity *= _acceleration;
 	}
 
 	public override void CustomDraw(SpriteBatch spriteBatch)
@@ -59,6 +67,10 @@ public class ImpactLine : Particle
 		var tex = ParticleHandler.GetTexture(Type);
 		var origin = new Vector2(tex.Width / 2, tex.Height / 2);
 
-		spriteBatch.Draw(tex, Position + offset - Main.screenPosition, null, Color * (progress / 5 + 0.8f), Rotation, origin, scale, SpriteEffects.None, 0);
+		Color uColor = Color;
+		if (UseLightColor)
+			uColor = Color.MultiplyRGBA(Lighting.GetColor(Position.ToTileCoordinates()));
+
+		spriteBatch.Draw(tex, Position + offset - Main.screenPosition, null, uColor * (progress / 5 + 0.8f), Rotation, origin, scale, SpriteEffects.None, 0);
 	}
 }

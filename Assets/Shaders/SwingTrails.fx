@@ -16,8 +16,10 @@ float2 textureExponent;
 float2 coordMods;
 float timer;
 float progress;
+float trailLength;
+float taperStrength;
+float fadeStrength;
 float intensity;
-float opacity;
 
 struct VertexShaderInput
 {
@@ -47,60 +49,117 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 };
 
 const float FadeOutRangeX = 0.9f;
-const float FadeOutRangeY = 1;
 
-float4 FadeOutColor(float4 inputColor, float inputStrength, float fadeAmount)
+float EaseCircOut(float x)
 {
-    return inputColor * lerp(1, inputStrength, fadeAmount);
+    return sqrt(1 - pow(x - 1, 2));
 }
 
-float4 MainPS(VertexShaderOutput input) : COLOR0
+float adjustYCoord(float yCoord, float multFactor, float anchorCoord = 0.5f)
 {
-    float4 color = input.Color;
-    float4 textureColor;
-    float strength = 1;
+    float temp = yCoord - anchorCoord;
+    temp /= multFactor + 0.0001f;
+    return temp + anchorCoord;
+}
+
+float4 CleanStreak(VertexShaderOutput input) : COLOR0
+{
+    float strength = 0;
     
-    float2 baseTexCoords = float2((input.TextureCoordinates.x - timer) * coordMods.x, input.TextureCoordinates.y * coordMods.y);
-    
-    //add base texture color
-    float samplerStrength = tex2D(baseSampler, baseTexCoords).r;
-    float texExponent = lerp(textureExponent.x, textureExponent.y, progress);
-    textureColor = lerp(baseColorLight, baseColorDark, 1 - samplerStrength) * pow(samplerStrength, texExponent);
+    float trailEnd = max(progress - trailLength, 0);
+    float frontFade = progress * FadeOutRangeX;
+    float yCoord = input.TextureCoordinates.y;
     
     //fade out based on position
     if (input.TextureCoordinates.x < progress) //horizontal
     {
-        float fadeProgress = input.TextureCoordinates.x / progress;
-        strength *= pow(fadeProgress, 1.5f);
-        textureColor = FadeOutColor(textureColor, samplerStrength.r, pow(1 - fadeProgress, 0.5f));
+        float trailProgress = (input.TextureCoordinates.x - trailEnd) / (progress - trailEnd);
+        strength = pow(trailProgress, fadeStrength);
+        yCoord = adjustYCoord(yCoord, pow(trailProgress, taperStrength), 1);
+        
+        if (input.TextureCoordinates.x < trailEnd)
+            return 0;
+        
+        float fadeStart = progress * FadeOutRangeX;
+        if (input.TextureCoordinates.x > fadeStart)
+        {
+            float frontFade = (input.TextureCoordinates.x - fadeStart) / (progress - fadeStart);
+            frontFade = 1 - frontFade;
+            
+            strength *= pow(frontFade, 1.75f);
+        }
     }
     
-    //fade out at the other horizontal edge
-    if (input.TextureCoordinates.x > (progress * FadeOutRangeX))
+    strength = min(strength, 1);
+    if (yCoord > 1 || yCoord < 0)
+        return 0;
+    
+    if (yCoord > 0.8f)
     {
-        float fadeFactor = 1 - ((input.TextureCoordinates.x - (progress * FadeOutRangeX)) / (progress * (1 - FadeOutRangeX)));
-        strength *= pow(fadeFactor, 0.75f);
-        textureColor = FadeOutColor(textureColor, samplerStrength, 1 - fadeFactor);
+        float yAbsDist = abs(yCoord - 0.9f) * 10;
+        yAbsDist = 1 - yAbsDist;
+        strength *= pow(EaseCircOut(yAbsDist), 2) / 2 + 0.5f;
+    }
+    else
+        strength *= (yCoord * 0.8f) * 0.5f;
+
+    float4 finalColor = input.Color * strength * lerp(baseColorDark, baseColorLight, strength);
+    return finalColor * intensity;
+}
+
+float4 NoiseStreak(VertexShaderOutput input) : COLOR0
+{
+    float4 color = input.Color;
+    float strength = 0;
+    
+    float trailEnd = max(progress - trailLength, 0);
+    float frontFade = progress * FadeOutRangeX;
+    float yCoord = input.TextureCoordinates.y;
+    
+    //fade out based on position
+    if (input.TextureCoordinates.x < progress) //horizontal
+    {
+        float trailProgress = (input.TextureCoordinates.x - trailEnd) / (progress - trailEnd);
+        strength = pow(trailProgress, fadeStrength);
+        yCoord = adjustYCoord(yCoord, pow(trailProgress, taperStrength));
+        
+        if (input.TextureCoordinates.x < trailEnd)
+            strength = 0;
+        
+        float fadeStart = progress * FadeOutRangeX;
+        if (input.TextureCoordinates.x > fadeStart)
+        {
+            float frontFade = (input.TextureCoordinates.x - fadeStart) / (progress - fadeStart);
+            frontFade = 1 - frontFade;
+            
+            strength *= pow(frontFade, 1.75f);
+        }
     }
     
-    //vertical
-    float yAbsDist = 1 - (2 * abs(input.TextureCoordinates.y - 0.5f));
-    float fadeProgressY = 1 - pow(yAbsDist - 1, 2);
-    strength *= pow(fadeProgressY, 1.75f);
-    strength *= pow(input.TextureCoordinates.y, 2);
+    strength = min(strength, 1);
+    float absYDist = abs(yCoord - 0.5f) * 2;
+    if (absYDist > 1)
+        strength = 0;
+    
+    strength *= pow(EaseCircOut(1 - absYDist), 2);
+    float uExponent = lerp(textureExponent.x, textureExponent.y, 1 - strength);
+    strength *= pow(tex2D(baseSampler, float2((input.TextureCoordinates.x - timer) * coordMods.x, adjustYCoord(yCoord, 1 / coordMods.y))).r, uExponent);
 
-    textureColor = FadeOutColor(textureColor, samplerStrength.r, pow(1 - fadeProgressY, 0.75f));
-    textureColor *= pow(opacity, lerp(2, 0.33f, strength));
-
-    float4 finalColor = color * textureColor * strength;
+    float4 finalColor = color * strength * lerp(baseColorDark, baseColorLight, strength);
     return finalColor * intensity;
 }
 
 technique BasicColorDrawing
 {
-    pass DefaultPass
-	{
+    pass CleanStreakPass
+    {
         VertexShader = compile vs_3_0 MainVS();
-        PixelShader = compile ps_3_0 MainPS();
+        PixelShader = compile ps_3_0 CleanStreak();
+    }
+
+    pass NoiseStreakPass
+    {
+        VertexShader = compile vs_3_0 MainVS();
+        PixelShader = compile ps_3_0 NoiseStreak();
     }
 };

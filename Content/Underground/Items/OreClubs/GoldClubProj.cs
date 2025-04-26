@@ -1,7 +1,10 @@
 using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
+using SpiritReforged.Content.Particles;
+using Terraria.Audio;
 using static Microsoft.Xna.Framework.MathHelper;
 using static SpiritReforged.Common.Easing.EaseFunction;
 
@@ -9,6 +12,14 @@ namespace SpiritReforged.Content.Underground.Items.OreClubs;
 
 class GoldClubProj : BaseClubProj, IManualTrailProjectile
 {
+	private const int HIT_VFX_COOLDOWN_MAX = 30;
+
+	private int _hitVfxCooldown = 0;
+
+	private static Color LightGold => new(255, 249, 181);
+	private static Color DarkGold => new(227, 197, 105);
+	private static Color Ruby => new(216, 13, 13);
+
 	public GoldClubProj() : base(new Vector2(82)) { }
 
 	public int Direction { get; set; } = 1;
@@ -16,23 +27,32 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 	public override float WindupTimeRatio => 0.8f;
 
 	public override float HoldAngle_Intial => (Direction * base.HoldAngle_Intial) - (Direction < 0 ? PiOver4 : 0);
-	public override float HoldAngle_Final => (Direction * base.HoldAngle_Final) - (Direction < 0 ? PiOver4 : 0);
-	public override float SwingAngle_Max => (Direction * base.SwingAngle_Max) - (Direction < 0 ? PiOver4 : 0);
+	public override float HoldAngle_Final => (Direction * -base.HoldAngle_Final) - (Direction < 0 ? PiOver4 : 0);
+	public override float SwingAngle_Max => (Direction * base.SwingAngle_Max * 1.1f) - (Direction < 0 ? PiOver4 : 0);
 	public override float LingerTimeRatio => 1.5f;
+
+	public override void SafeAI() => _hitVfxCooldown = (int)Max(_hitVfxCooldown - 1, 0);
 
 	public void DoTrailCreation(TrailManager tM)
 	{
-		float trailDist = 72;
-		float trailWidth = 60;
-		float rotation = HoldAngle_Final - PiOver4/2;
+		float trailDist = 78;
+		float trailWidth = 25;
+		float intensity = 3;
+		float trailLengthMod = 1f;
+		float rotation = HoldAngle_Final + PiOver4 / 2;
 		if (Direction < 0)
-			rotation += PiOver2 - PiOver4/2;
+			rotation -= PiOver4/2;
 
-		tM.CreateCustomTrail(new SwingTrail(Projectile, new Color(227, 197, 105), 3, AngleRange, rotation, trailDist, trailWidth, GetSwingProgressStatic, SwingTrail.BasicSwingShaderParams));
 		if (FullCharge)
-			tM.CreateCustomTrail(new SwingTrail(Projectile, Color.LightGoldenrodYellow, 3, AngleRange, rotation, 1.2f * trailDist, trailWidth, GetSwingProgressStatic, SwingTrail.BasicSwingShaderParams));
+		{
+			trailWidth *= 1.6f;
+			intensity *= 1.4f;
+			trailLengthMod *= 1.6f;
+		}
 
-		tM.CreateCustomTrail(new SwingTrail(Projectile, new Color(216, 13, 13, 160), 3, AngleRange, rotation, trailDist, trailWidth / 2f, GetSwingProgressStatic, SwingTrail.BasicSwingShaderParams));
+		tM.CreateCustomTrail(new SwingTrail(Projectile, LightGold, DarkGold, intensity, AngleRange, 0.3f * trailLengthMod, rotation, trailDist, trailWidth, GetSwingProgressStatic, s => SwingTrail.NoiseSwingShaderParams(s, "swirlNoise", new Vector2(2, 1)), TrailLayer.UnderProjectile, 0.85f));
+
+		tM.CreateCustomTrail(new SwingTrail(Projectile, Color.Pink, Ruby, intensity, AngleRange, 0.35f * trailLengthMod, rotation, trailDist, trailWidth / 3, GetSwingProgressStatic, s => SwingTrail.NoiseSwingShaderParams(s, "noiseCrystal", new Vector2(3f, 0.5f)), TrailLayer.UnderProjectile, 0.85f));
 	}
 
 	public override void OnSwingStart() => TrailManager.ManualTrailSpawn(Projectile);
@@ -72,6 +92,47 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 		if (_lingerTimer <= 0)
 			Projectile.Kill();
 
-		BaseRotation = Lerp(BaseRotation, SwingAngle_Max * 1.2f, EaseQuadIn.Ease(lingerProgress) / 5f);
+		BaseRotation = Lerp(BaseRotation, SwingAngle_Max, EaseQuadIn.Ease(lingerProgress) / 5f);
+	}
+
+	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+	{
+		if (!Main.dedServ && _hitVfxCooldown == 0)
+		{
+			_hitVfxCooldown = HIT_VFX_COOLDOWN_MAX / 6;
+			if (FullCharge)
+				_hitVfxCooldown /= 2;
+
+			var direction = -Vector2.UnitY.RotatedByRandom(Pi / 8);
+
+			var position = Vector2.Lerp(Projectile.Center, target.Center, 0.75f);
+			SoundEngine.PlaySound(SoundID.Item70.WithVolumeScale(0.5f), position);
+
+			float width = 260;
+
+			var pos = position + direction;
+			float rotation = direction.ToRotation();
+
+			var p = new TexturedPulseCircle(pos, Ruby, Color.LightPink, 0.6f, width, Main.rand.Next(20, 25), "Star2", new Vector2(2, 1), EaseCircularOut, false, 0.2f).WithSkew(.5f, rotation);
+			ParticleHandler.SpawnParticle(p);
+
+			float shineRotation = Main.rand.NextFloatDirection();
+			for(int i = 0; i < 3; i++)
+				ParticleHandler.SpawnParticle(new DissipatingImage(pos, DarkGold, shineRotation, 0.12f, 0, "GodrayCircle", new Vector2(0), new Vector2(3, 1.5f), 18));
+
+			ParticleHandler.SpawnParticle(new Shatter(position, DarkGold, 40));
+
+			float numLines = 16;
+			for (int i = 0; i < numLines; i++)
+			{
+				Vector2 velocity = Vector2.UnitX.RotatedBy(TwoPi * i / numLines);
+				velocity = velocity.RotatedByRandom(PiOver4);
+				velocity *= Main.rand.NextFloat(4, 7);
+
+				var line = new ImpactLine(position, velocity, DarkGold.Additive() * 0.5f, new Vector2(0.2f, 0.6f), Main.rand.Next(15, 20), 0.9f);
+				line.UseLightColor = true;
+				ParticleHandler.SpawnParticle(line);
+			}
+		}
 	}
 }

@@ -15,8 +15,8 @@ public class GoldClub() : ClubItem()
 	{
 		Item.damage = 35;
 		Item.knockBack = 8;
-		ChargeTime = 60;
-		SwingTime = 24;
+		ChargeTime = 45;
+		SwingTime = 35;
 		Item.width = 60;
 		Item.height = 60;
 		Item.crit = 4;
@@ -36,10 +36,7 @@ public class GoldClub() : ClubItem()
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
-		_combo++;
-		_combo %= 2;
-
-		Projectile proj = Projectile.NewProjectileDirect(source, player.Center, velocity, type, damage, knockback, player.whoAmI);
+		var proj = Projectile.NewProjectileDirect(source, player.Center, velocity, type, damage, knockback, player.whoAmI);
 
 		if (proj.ModProjectile is BaseClubProj clubProj)
 		{
@@ -60,6 +57,9 @@ public class GoldClub() : ClubItem()
 			if(Main.netMode != NetmodeID.SinglePlayer)
 				NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, proj.whoAmI);
 		}
+
+		_combo++;
+		_combo %= 2;
 
 		return false;
 	}

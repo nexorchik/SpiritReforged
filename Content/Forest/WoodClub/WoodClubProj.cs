@@ -1,7 +1,10 @@
+using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
+using SpiritReforged.Content.Particles;
 
 namespace SpiritReforged.Content.Forest.WoodClub;
 
@@ -10,15 +13,23 @@ class WoodClubProj : BaseClubProj, IManualTrailProjectile
 	public WoodClubProj() : base(new Vector2(58)) { }
 
 	public override float WindupTimeRatio => 0.8f;
-	 
+
 	public void DoTrailCreation(TrailManager tM)
 	{
 		float trailDist = 52;
-		float trailWidth = 40;
-		tM.CreateCustomTrail(new SwingTrail(Projectile, Color.Beige, 3, AngleRange, -HoldAngle_Final, trailDist, trailWidth, GetSwingProgressStatic, SwingTrail.BasicSwingShaderParams));
+		float trailWidth = 30;
+		float angleRangeMod = 1f;
+		float rotOffset = 0;
 
 		if (FullCharge)
-			tM.CreateCustomTrail(new SwingTrail(Projectile, Color.Beige, 2, AngleRange * 1.3f, -HoldAngle_Final, 1.2f * trailDist, trailWidth * 1.2f, GetSwingProgressStatic, SwingTrail.BasicSwingShaderParams));
+		{
+			trailDist *= 1.1f;
+			trailWidth *= 1.1f;
+			angleRangeMod = 1.2f;
+			rotOffset = -MathHelper.PiOver4 / 2;
+		}
+
+		tM.CreateCustomTrail(new SwingTrail(Projectile, Color.White, Color.LightGray, 0.5f, AngleRange * angleRangeMod, 0.33f, -HoldAngle_Final + rotOffset, trailDist, trailWidth, GetSwingProgressStatic, SwingTrail.BasicSwingShaderParams));
 	}
 
 	public override void OnSwingStart() => TrailManager.ManualTrailSpawn(Projectile);
@@ -30,7 +41,7 @@ class WoodClubProj : BaseClubProj, IManualTrailProjectile
 
 		DustClouds(8);
 
-		if(FullCharge)
+		if (FullCharge)
 		{
 			float angle = MathHelper.PiOver4 * 1.5f;
 			if (Projectile.direction > 0)
@@ -40,5 +51,37 @@ class WoodClubProj : BaseClubProj, IManualTrailProjectile
 		}
 
 		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 180, MathHelper.PiOver2, 0.4f);
+	}
+
+	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+	{
+		Player owner = Main.player[Projectile.owner];
+		var basePosition = Vector2.Lerp(Projectile.Center, target.Center, 0.6f);
+		Vector2 directionUnit = basePosition.DirectionFrom(owner.MountedCenter);
+
+		int numParticles = FullCharge ? 12 : 8;
+		for(int i = 0; i < numParticles; i++)
+		{
+			float maxOffset = 15;
+			float offset = Main.rand.NextFloat(-maxOffset, maxOffset);
+			Vector2 position = basePosition + directionUnit.RotatedBy(MathHelper.PiOver2) * offset;
+			float velocity = MathHelper.Lerp(12, 2, Math.Abs(offset) / maxOffset) * Main.rand.NextFloat(0.9f, 1.1f);
+			if (FullCharge)
+				velocity *= 1.5f;
+
+			float rotationOffset = MathHelper.PiOver4 * offset / maxOffset;
+			rotationOffset *= Main.rand.NextFloat(0.9f, 1.1f);
+
+			Vector2 particleVel = directionUnit.RotatedBy(rotationOffset) * velocity;
+			var p = new ImpactLine(position, particleVel, Color.White * 0.5f, new Vector2(0.15f, 0.6f), Main.rand.Next(15, 20), 0.8f);
+			p.UseLightColor = true;
+			ParticleHandler.SpawnParticle(p);
+
+			if (!Main.rand.NextBool(3))
+				Dust.NewDustPerfect(position, DustID.t_LivingWood, particleVel / 3, Scale: 0.5f);
+		}
+
+		ParticleHandler.SpawnParticle(new SmokeCloud(basePosition, directionUnit * 3, Color.LightGray, 0.06f, EaseFunction.EaseCubicOut, 30));
+		ParticleHandler.SpawnParticle(new SmokeCloud(basePosition, directionUnit * 6, Color.LightGray, 0.08f, EaseFunction.EaseCubicOut, 30));
 	}
 }
