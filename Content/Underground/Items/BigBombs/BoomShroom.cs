@@ -2,19 +2,12 @@ using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Common.Visuals.Glowmasks;
-using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Underground.Items.BigBombs;
 
 [AutoloadGlowmask("255,255,255")]
 public class BoomShroom : AccessoryItem
 {
-	public override void SetStaticDefaults()
-	{
-		ItemLootDatabase.AddItemRule(ItemID.WoodenCrate, new CommonDrop(Type, 13));
-		ItemLootDatabase.AddItemRule(ItemID.WoodenCrateHard, new CommonDrop(Type, 13));
-	}
-
 	public override void SetDefaults()
 	{
 		Item.width = 28;

@@ -19,7 +19,7 @@ internal class FishingAreaMicropass : Micropass
 	
 	public override string WorldGenName => "Fishing Coves";
 
-	public override int GetWorldGenIndexInsert(List<GenPass> passes, ref bool afterIndex) => passes.FindIndex(genpass => genpass.Name.Equals("Sunflowers"));
+	public override int GetWorldGenIndexInsert(List<GenPass> passes, ref bool afterIndex) => passes.FindIndex(genpass => genpass.Name.Equals("Gem Caves"));
 
 	public override void Run(GenerationProgress progress, Terraria.IO.GameConfiguration config)
 	{

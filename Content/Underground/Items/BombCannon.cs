@@ -43,6 +43,8 @@ public class BombCannon : ModItem
 		return false;
 	}
 
+	public override bool CanConsumeAmmo(Item ammo, Player player) => !player.channel; //Ammo consumption happens in BombCannonHeld
+
 	public override void AddRecipes() => CreateRecipe().AddRecipeGroup(RecipeGroupID.IronBar, 8)
 		.AddIngredient(ItemID.Timer3Second).AddTile(TileID.Anvils).Register();
 }
@@ -95,6 +97,10 @@ internal class BombCannonHeld : ModProjectile
 				Projectile.netUpdate = true;
 			}
 
+			int limit = (int)(ChargeTimeMax / 3f);
+			if ((int)Charge % limit == limit - 1)
+				SoundEngine.PlaySound(SoundID.MenuTick with { Pitch = Progress * .5f }, Projectile.Center);
+
 			if (Charge == ChargeTimeMax / 3)
 			{
 				var start = Projectile.Center + new Vector2(8, 10 * Projectile.direction).RotatedBy(Projectile.rotation);
@@ -103,7 +109,6 @@ internal class BombCannonHeld : ModProjectile
 				ParticleHandler.SpawnParticle(new ImpactLine(start, Vector2.Zero, (Color.White * .3f).Additive(), new Vector2(1, 2) * .7f, 10, Projectile));
 
 				ParticleHandler.SpawnParticle(new PulseCircle(Projectile, Color.Red, .1f, 50, 15, Common.Easing.EaseFunction.EaseQuadOut, start));
-				SoundEngine.PlaySound(SoundID.MenuTick with { Pitch = Progress }, Projectile.Center);
 			}
 
 			Charge = Math.Min(Charge + 1, ChargeTimeMax);
@@ -139,6 +144,9 @@ internal class BombCannonHeld : ModProjectile
 
 	private void Fire()
 	{
+		var p = Main.player[Projectile.owner];
+		p.PickAmmo(p.HeldItem, out _, out _, out _, out _, out _); //Consume relevant ammo
+
 		if (Projectile.owner == Main.myPlayer)
 		{
 			var velocity = Projectile.velocity * Progress;

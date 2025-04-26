@@ -25,6 +25,6 @@ public class PearlString : AccessoryItem
 		base.UpdateAccessory(player, hideVisual);
 
 		player.luck += .15f;
-		player.GetModPlayer<CoinLootPlayer>().enemyCoinMultiplier = 1.1f;
+		player.GetModPlayer<CoinLootPlayer>().AddMult(10);
 	}
 }

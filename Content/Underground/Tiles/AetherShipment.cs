@@ -1,4 +1,5 @@
 using RubbleAutoloader;
+using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
@@ -14,16 +15,18 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
 
-	private static Color GlowColor => Color.Lerp(Color.Magenta, Color.CadetBlue, (float)(Math.Sin(Main.timeForVisualEffects / 40f) / 2f) + .5f);
+	private const int FullHeight = 36;
+	private static Color GlowColor => Main.DiscoColor;//Color.Lerp(Color.Magenta, Color.CadetBlue, (float)(Math.Sin(Main.timeForVisualEffects / 40f) / 2f) + .5f);
+
 	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
 	{
 		var desc = Language.GetText("Mods.SpiritReforged.Tiles.Records.Aether");
-		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(5));
+		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(6));
 	}
 
 	public override void AddObjectData()
 	{
-		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
+		Main.tileOreFinderPriority[Type] = 575;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.Origin = new(0, 1);
@@ -35,7 +38,10 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 		TileObjectData.addTile(Type);
 
 		DustType = DustID.ShimmerTorch;
+		AnimationFrameHeight = FullHeight;
 	}
+
+	public override void AddMapData() => AddMapEntry(new Color(225, 174, 252), Language.GetText("Mods.SpiritReforged.Items.AetherShipmentItem.DisplayName"));
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
@@ -47,7 +53,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 		var world = new Vector2(i, j) * 16;
 		float strength = Main.LocalPlayer.DistanceSQ(world) / (distance * distance);
 
-		if (strength < 1 && Main.rand.NextFloat(10f) < 1f - strength)
+		if (strength < 1 && Main.rand.NextFloat(16f) < 1f - strength)
 		{
 			var spawn = Main.rand.NextVector2FromRectangle(new Rectangle(i * 16, (j + 2) * 16, 32, 2));
 			float scale = Main.rand.NextFloat(.5f, 1.25f);
@@ -67,6 +73,15 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 		fail = AdjustFrame(i, j);
 		ISwayTile.SetInstancedRotation(i, j, Main.rand.NextFloat(-1f, 1f) * 4f, fail);
+	}
+
+	public override void AnimateTile(ref int frame, ref int frameCounter)
+	{
+		if (++frameCounter >= 4)
+		{
+			frameCounter = 0;
+			frame = ++frame % 8;
+		}
 	}
 
 	public bool OnCutAttempt(int i, int j)
@@ -103,7 +118,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 	private static bool AdjustFrame(int i, int j)
 	{
-		const int fullWidth = 36;
+		const int fullWidth = FullHeight;
 
 		TileExtensions.GetTopLeft(ref i, ref j);
 
@@ -148,11 +163,25 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 		var data = TileObjectData.GetTileData(tile);
 
 		var drawPos = new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y);
-		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, data.CoordinateHeights[tile.TileFrameY / 18]);
+		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY + Main.tileFrame[Type] * FullHeight, data.CoordinateWidth, data.CoordinateHeights[tile.TileFrameY / 18]);
 		var dataOffset = new Vector2(data.DrawXOffset, data.DrawYOffset);
 
-		spriteBatch.Draw(TextureAssets.Tile[tile.TileType].Value, drawPos + origin + dataOffset,
-			source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+        var color = Lighting.GetColor(i, j);
+
+        if (Main.LocalPlayer.findTreasure)
+            color = TileExtensions.GetSpelunkerTint(color);
+
+        spriteBatch.Draw(TextureAssets.Tile[tile.TileType].Value, drawPos + origin + dataOffset, source, color, rotation, origin, 1, SpriteEffects.None, 0);
+
+		if (tile.TileFrameX % 36 == 18 && tile.TileFrameY % 36 == 18) //Bottom right frame
+		{
+			var bloom = TextureAssets.Extra[60].Value;
+
+			float value = Main.LocalPlayer.DistanceSQ(new Vector2(i, j) * 16) / (200 * 200);
+			Color glow = GlowColor.Additive() * (1f - value) * .5f;
+
+			spriteBatch.Draw(bloom, drawPos + new Vector2(0, 16), null, glow, rotation, bloom.Size() / 2, new Vector2(1, .5f) * .4f, SpriteEffects.None, 0);
+		}
 	}
 
 	public LootTable AddLoot(int objectStyle)

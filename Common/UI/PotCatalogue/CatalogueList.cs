@@ -9,6 +9,7 @@ public class CatalogueList : UIElement
 	/// <summary> Specifically contains elements added with <see cref="AddEntry"/>. </summary>
 	private readonly List<UIElement> _listed = [];
 	private UIScrollbar _scrollbar;
+	private bool _draggingScrollbar;
 
 	public CatalogueList() => OverflowHidden = true;
 
@@ -21,6 +22,8 @@ public class CatalogueList : UIElement
 		_scrollbar.Left.Set(Width.Pixels - _scrollbar.Width.Pixels, 0);
 		_scrollbar.Height.Set(Height.Pixels - 12, 0);
 		_scrollbar.Top.Set(6, 0);
+		_scrollbar.OnLeftMouseDown += (UIMouseEvent evt, UIElement listeningElement) => _draggingScrollbar = true;
+		_scrollbar.OnLeftMouseUp += (UIMouseEvent evt, UIElement listeningElement) => _draggingScrollbar = false;
 
 		Append(_scrollbar);
 	}
@@ -69,7 +72,9 @@ public class CatalogueList : UIElement
 			lastHeight = e.Height.Pixels;
 		}
 
-		_scrollbar?.SetView(1f, Math.Max(y - Height.Pixels * .8f, 1)); //Recalculate maximum scrollbar view
+		float barWidth = y * .1f;
+		_scrollbar?.SetView(barWidth, Math.Max(y - Height.Pixels * .8f + barWidth, 1)); //Recalculate maximum scrollbar view
+
 		RecalculateChildren();
 	}
 
@@ -79,6 +84,8 @@ public class CatalogueList : UIElement
 
 		if (_scrollbar != null)
 			_scrollbar.ViewPosition -= evt.ScrollWheelValue;
+
+		RecalculateEntries();
 	}
 
 	public override void Update(GameTime gameTime)
@@ -86,9 +93,9 @@ public class CatalogueList : UIElement
 		base.Update(gameTime);
 
 		if (IsMouseHovering)
-		{
 			PlayerInput.LockVanillaMouseScroll("ModLoader/UIList");
-			RecalculateEntries(); //Only needs to be called for scrollbar interaction
-		}
+
+		if (_draggingScrollbar)
+			RecalculateEntries();
 	}
 }

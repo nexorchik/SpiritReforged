@@ -37,7 +37,7 @@ public class CutAttemptTile : ModSystem
 		ushort GetCooldown()
 		{
 			if (context == TileCuttingContext.AttackProjectile)
-				return 12;
+				return 8;
 
 			var p = Main.player[Player.FindClosest(new Vector2(x, y) * 16, 16, 16)];
 			return (ushort)(p.HeldItem?.useAnimation ?? 30);

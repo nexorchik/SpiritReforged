@@ -338,3 +338,13 @@ PotterySlime: {
 }
 
 StompableGnome.DisplayName: Stompable Gnome
+
+DunceCrab: {
+	DisplayName: Dunce Crab
+	Entry: ""
+}
+
+Wheezer: {
+	DisplayName: Wheezer
+	Entry: A weezer is an extremely toxic relative of the salamander, known for aggressive behavior. Oddly enough, their favorite food is a budding holly plant, contradictory to their carnivorous tendencies.
+}

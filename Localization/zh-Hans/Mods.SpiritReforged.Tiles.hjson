@@ -11,6 +11,8 @@ Records: {
 
 		Value increases when further underground.
 		''' */
+	// Potion: Contains a potent brew.
+	// UpsideDown: `Manufacturing error`
 	// Worm: Scatters a variety of worms when destroyed.
 	// Platter: A hot meal ready for the taking. Who would leave this behind?
 	// Aether: Provides various useful, sparkly upgrades.
@@ -35,3 +37,5 @@ TermiteJar_Tile.MapEntry: 白蚁罐
 GarInAJarTile.MapEntry: 罐中雀鳝
 KillieFishbowlTile.MapEntry: 鳉鱼鱼缸
 // OreCarts.MapEntry: Minecart
+// PotionVats.MapEntry: Potion Vat
+// ObsidianShroom.MapEntry: Obsidian Shroom

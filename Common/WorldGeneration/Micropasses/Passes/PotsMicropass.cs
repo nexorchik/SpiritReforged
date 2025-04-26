@@ -1,9 +1,12 @@
-﻿using SpiritReforged.Common.WorldGeneration.Micropasses;
-using SpiritReforged.Common.WorldGeneration;
-using SpiritReforged.Content.Underground.NPCs;
+﻿using SpiritReforged.Content.Underground.NPCs;
 using SpiritReforged.Content.Underground.Tiles;
 using System.Linq;
 using Terraria.WorldBuilding;
+using SpiritReforged.Content.Underground.Tiles.Potion;
+using SpiritReforged.Common.TileCommon;
+using Terraria.DataStructures;
+
+namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
 
 internal class PotsMicropass : Micropass
 {
@@ -13,16 +16,26 @@ internal class PotsMicropass : Micropass
 
 	public override string WorldGenName => "Pots";
 
-	public override void Load(Mod mod) => On_WorldGen.PlacePot += MushroomPotConversion;
-	/// <summary> 50% chance to replace regular pots placed on mushroom grass. </summary>
-	private static bool MushroomPotConversion(On_WorldGen.orig_PlacePot orig, int x, int y, ushort type, int style)
+	public override void Load(Mod mod) => On_WorldGen.PlacePot += PotConversion;
+	/// <summary> 50% chance to replace regular pots placed on mushroom grass.<br/>
+	/// 100% chance to replace regular pots placed on granite. </summary>
+	private static bool PotConversion(On_WorldGen.orig_PlacePot orig, int x, int y, ushort type, int style)
 	{
-		if (WorldGen.generatingWorld && Main.rand.NextBool())
+		if (WorldGen.generatingWorld)
 		{
 			var ground = Main.tile[x, y + 1];
+
 			if (ground.HasTile && ground.TileType == TileID.MushroomGrass)
 			{
-				WorldGen.PlaceTile(x, y, ModContent.TileType<MushroomPots>(), true, style: Main.rand.Next(3));
+				if (WorldGen.genRand.NextBool())
+				{
+					WorldGen.PlaceTile(x, y, ModContent.TileType<CommonPots>(), true, style: Main.rand.Next(3));
+					return false; //Skips orig
+				}
+			}
+			else if (ground.HasTile && ground.TileType == TileID.Granite)
+			{
+				WorldGen.PlaceTile(x, y, ModContent.TileType<CommonPots>(), true, style: Main.rand.Next([3, 4, 5]));
 				return false; //Skips orig
 			}
 		}
@@ -40,11 +53,14 @@ internal class PotsMicropass : Micropass
 	{
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Caves");
 
-        Generate(CreateScrying, Main.maxTilesX / WorldGen.WorldSizeSmallX * 9, out _);
+		Generate(CreateOrnate, Main.maxTilesX / WorldGen.WorldSizeSmallX * 10, out _);
+		Generate(CreatePotion, Main.maxTilesX / WorldGen.WorldSizeSmallX * 10, out _);
+		Generate(CreateScrying, Main.maxTilesX / WorldGen.WorldSizeSmallX * 9, out _);
         Generate(CreateStuffed, Main.maxTilesX / WorldGen.WorldSizeSmallX * 9, out _);
 		Generate(CreateWorm, Main.maxTilesX / WorldGen.WorldSizeSmallX * 24, out _);
 		Generate(CreatePlatter, Main.maxTilesX / WorldGen.WorldSizeSmallX * 28, out _);
 		Generate(CreateAether, Main.maxTilesX / WorldGen.WorldSizeSmallX * 3, out _);
+		Generate(CreateUpsideDown, Main.maxTilesX / WorldGen.WorldSizeSmallX * 4, out _);
 
 		Generate(CreateStack, (int)(Main.maxTilesX * Main.maxTilesY * 0.0005), out _); //Normal pot generation weight is 0.0008
 		Generate(CreateUncommon, (int)(Main.maxTilesX * Main.maxTilesY * 0.00055), out int pots);
@@ -61,8 +77,8 @@ internal class PotsMicropass : Micropass
 
 		for (int t = 0; t < maxTries; t++) //Generate uncommon pots
 		{
-			int x = Main.rand.Next(20, Main.maxTilesX - 20);
-			int y = Main.rand.Next((int)GenVars.worldSurfaceHigh, Main.maxTilesY - 20);
+			int x = WorldGen.genRand.Next(20, Main.maxTilesX - 20);
+			int y = WorldGen.genRand.Next((int)GenVars.worldSurfaceHigh, Main.maxTilesY - 20);
 
 			WorldMethods.FindGround(x, ref y);
 
@@ -71,6 +87,39 @@ internal class PotsMicropass : Micropass
 		}
 
 		generated = pots;
+	}
+
+	private static bool CreateOrnate(int x, int y)
+	{
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
+			return false;
+
+		int type = ModContent.TileType<OrnatePots>();
+		WorldGen.PlaceTile(x, y, type, true, style: Main.rand.Next(3));
+
+		return Main.tile[x, y].TileType == type;
+	}
+
+	private static bool CreatePotion(int x, int y)
+	{
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
+			return false;
+
+		int type = ModContent.TileType<PotionVats>();
+		WorldGen.PlaceTile(x, y, type, true, style: Main.rand.Next([0, 3, 6]));
+
+		if (Main.tile[x, y].TileType == type)
+		{
+			TileExtensions.GetTopLeft(ref x, ref y);
+			TileEntity.PlaceEntityNet(x, y, ModContent.TileEntityType<VatSlot>());
+
+			if (TileEntity.ByPosition.TryGetValue(new Point16(x, y), out var value) && value is VatSlot slot)
+				slot.item = new Item(VatSlot.GetRandomPotion());
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private static bool CreateScrying(int x, int y)
@@ -132,6 +181,17 @@ internal class PotsMicropass : Micropass
 		bool NearShimmer() => Math.Abs(x - GenVars.shimmerPosition.X) < Main.maxTilesX * .2f && Math.Abs(y - GenVars.shimmerPosition.Y) < Main.maxTilesY * .2f;
 	}
 
+	private static bool CreateUpsideDown(int x, int y)
+	{
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
+			return false;
+
+		int type = ModContent.TileType<UpsideDownPot>();
+		WorldGen.PlaceTile(x, y, type, true);
+
+		return Main.tile[x, y].TileType == type;
+	}
+
 	/// <summary> Picks a relevant biome pot style and places it (<see cref="BiomePots"/>). </summary>
 	private static bool CreateUncommon(int x, int y)
 	{
@@ -141,7 +201,7 @@ internal class PotsMicropass : Micropass
 		int style = -1;
 
 		if (wall is WallID.Dirt or WallID.GrassUnsafe || tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite && y > Main.worldSurface)
-			style = GetRange(WorldGen.genRand.NextBool(100) ? BiomePots.Style.Gold : BiomePots.Style.Cavern);
+			style = GetRange(BiomePots.Style.Cavern);
 
 		if (wall is WallID.SnowWallUnsafe || tile is TileID.SnowBlock or TileID.IceBlock or TileID.BreakableIce && y > Main.worldSurface)
 			style = GetRange(BiomePots.Style.Ice);
@@ -157,6 +217,8 @@ internal class PotsMicropass : Micropass
 			style = GetRange(BiomePots.Style.Marble);
 		else if (tile is TileID.MushroomGrass)
 			style = GetRange(BiomePots.Style.Mushroom);
+		else if (tile is TileID.Granite)
+			style = GetRange(BiomePots.Style.Granite);
 
 		if (y > Main.UnderworldLayer)
 			style = GetRange(BiomePots.Style.Hell);

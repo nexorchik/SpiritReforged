@@ -19,13 +19,13 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
 	{
-		var desc = Language.GetText("Mods.SpiritReforged.Tiles.Records.Worm");
+		var desc = Language.GetText(TileRecord.DescKey + ".Worm");
 		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(3));
 	}
 
 	public override void AddObjectData()
 	{
-		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
+		Main.tileOreFinderPriority[Type] = 575;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
 		TileObjectData.newTile.Origin = new(0, 1);
@@ -38,6 +38,8 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 		DustType = DustID.Plantera_Pink;
 	}
+
+	public override void AddMapData() => AddMapEntry(Color.MediumVioletRed, Language.GetText("Mods.SpiritReforged.Items.WormPotItem.DisplayName"));
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
@@ -152,15 +154,20 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY, data.CoordinateWidth, data.CoordinateHeights[tile.TileFrameY / 18]);
 		var dataOffset = new Vector2(data.DrawXOffset, data.DrawYOffset);
 
+		var color = Lighting.GetColor(i, j);
+
+		if (Main.LocalPlayer.findTreasure)
+			color = TileExtensions.GetSpelunkerTint(color);
+
 		spriteBatch.Draw(TextureAssets.Tile[tile.TileType].Value, drawPos + origin + dataOffset,
-			source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+			source, color, rotation, origin, 1, SpriteEffects.None, 0);
 	}
 
 	public LootTable AddLoot(int objectStyle)
 	{
 		var loot = new LootTable();
 
-		loot.Add(ItemDropRule.NotScalingWithLuckWithNumerator(ItemID.WhoopieCushion, 10, 6));
+		loot.Add(ItemDropRule.NotScalingWithLuckWithNumerator(ItemID.WhoopieCushion, 100, 15));
 		loot.AddCommon(ItemID.CanOfWorms, 1, 1, 2);
 
 		return loot;

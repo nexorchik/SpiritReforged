@@ -81,7 +81,7 @@ public abstract class SpreadBomb : BombProjectile
 			WorldUtils.Gen(pt, circle, new ClearReplaceable());
 			WorldUtils.Gen(pt, circle, Actions.Chain(new Modifiers.IsEmpty(), new Actions.SetTileKeepWall((ushort)tileType)).Output(data));
 
-			WorldUtils.Gen(pt, new ModShapes.All(data), new Actions.SetFrames(frameNeighbors: true));
+			WorldUtils.Gen(pt, new ModShapes.All(data), Actions.Chain(new Actions.SetFrames(frameNeighbors: true), new Send()));
 		}
 	}
 }

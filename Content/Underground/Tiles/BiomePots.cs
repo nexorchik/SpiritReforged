@@ -18,40 +18,52 @@ public class BiomePots : PotTile, ILootTile
 	/// <summary> Mirrors <see cref="Styles"/>. </summary>
 	public enum Style : int
 	{
-		Cavern, Gold, Ice, Desert, Jungle, Dungeon, Corruption, Crimson, Marble, Hell, Mushroom
+		Cavern, Ice, Desert, Jungle, Dungeon, Corruption, Crimson, Marble, Hell, Mushroom, Granite
 	}
+
+	public static readonly SoundStyle Break = new("SpiritReforged/Assets/SFX/Tile/PotBreak")
+	{
+		Volume = .16f,
+		PitchRange = (-.4f, 0)
+	};
+
+	public static readonly SoundStyle JungleBreak = new("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit")
+	{
+		Volume = .5f,
+		PitchRange = (0f, .3f)
+	};
+
+	public static readonly SoundStyle Squish = new("SpiritReforged/Assets/SFX/NPCDeath/Squish")
+	{
+		Volume = .25f
+	};
 
 	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
 	{
 		var record = new TileRecord(group.name, type, group.styles);
-
-		if (group.name == "BiomePotsGold")
-			RecordHandler.Records.Add(record.AddRating(5).AddDescription(Language.GetText(TileRecord.DescKey + ".CoinPortal")));
-		else
-			RecordHandler.Records.Add(record.AddRating(2).AddDescription(Language.GetText(TileRecord.DescKey + ".Biome")));
+		RecordHandler.Records.Add(record.AddRating(2).AddDescription(Language.GetText(TileRecord.DescKey + ".Biome")));
 	}
 
 	public override Dictionary<string, int[]> TileStyles => new()
 	{
 		{ "Cavern", [0, 1, 2] },
-		{ "Gold", [3, 4, 5] },
-		{ "Ice", [6, 7, 8] },
-		{ "Desert", [9, 10, 11] },
-		{ "Jungle", [12, 13, 14] },
-		{ "Dungeon", [15, 16, 17] },
-		{ "Corruption", [18, 19, 20] },
-		{ "Crimson", [21, 22, 23] },
-		{ "Marble", [24, 25, 26] },
-		{ "Hell", [27, 28, 29] },
-		{ "Mushroom", [30, 31, 32] }
-	};
+		{ "Ice", [3, 4, 5] },
+		{ "Desert", [6, 7, 8] },
+		{ "Jungle", [9, 10, 11] },
+		{ "Dungeon", [12, 13, 14] },
+		{ "Corruption", [15, 16, 17] },
+		{ "Crimson", [18, 19, 20] },
+		{ "Marble", [21, 22, 23] },
+		{ "Hell", [24, 25, 26] },
+		{ "Mushroom", [27, 28, 29] },
+        { "Granite", [30, 31, 32] }
+    };
 
 	/// <summary> Gets the <see cref="Style"/> associated with the given frame. </summary>
 	private static Style GetStyle(int frameY) => (Style)(frameY / 36);
 	/// <summary> Gets the coin multiplier value for this pot. </summary>
 	private static float GetValue(Style style) => style switch
 	{
-		Style.Gold => 0f,
 		Style.Ice => 1.4f,
 		Style.Desert => 2.25f,
 		Style.Jungle => 2f,
@@ -63,6 +75,24 @@ public class BiomePots : PotTile, ILootTile
 		_ => 1.25f
 	};
 
+	public override void AddMapData()
+	{
+		var name = Language.GetText($"MapObject.Pot");
+
+		AddMapEntry(new Color(150, 150, 150), name);
+		AddMapEntry(new Color(90, 139, 140), name);
+		AddMapEntry(new Color(226, 122, 47), name);
+		AddMapEntry(new Color(192, 136, 70), name);
+		AddMapEntry(new Color(203, 185, 151), name);
+		AddMapEntry(new Color(148, 159, 67), name);
+		AddMapEntry(new Color(198, 87, 93), name);
+		AddMapEntry(new Color(201, 183, 149), name);
+		AddMapEntry(new Color(73, 56, 41), name);
+		AddMapEntry(new Color(172, 155, 110), name);
+		AddMapEntry(new Color(69, 66, 121), name);
+	}
+	public override ushort GetMapOption(int i, int j) => (ushort)GetStyle(Main.tile[i, j].TileFrameY);
+
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
 		const int distance = 200;
@@ -73,11 +103,12 @@ public class BiomePots : PotTile, ILootTile
 		var world = new Vector2(i, j) * 16;
 		float strength = Main.LocalPlayer.DistanceSQ(world) / (distance * distance);
 
-		if (strength < 1 && Main.rand.NextFloat(10f) < 1f - strength)
+		if (strength < 1 && Main.rand.NextFloat(35f) < 1f - strength)
 		{
 			var d = Dust.NewDustDirect(world, 16, 16, DustID.TreasureSparkle, 0, 0, Scale: Main.rand.NextFloat());
 			d.noGravity = true;
 			d.velocity = new Vector2(0, -Main.rand.NextFloat(2f));
+			d.fadeIn = 1f;
 		}
 	}
 
@@ -92,10 +123,16 @@ public class BiomePots : PotTile, ILootTile
 				SoundEngine.PlaySound(SoundID.NPCHit1 with { Volume = .3f, Pitch = .25f }, pos);
 				SoundEngine.PlaySound(SoundID.NPCDeath1, pos);
 			}
+			else if (GetStyle(Main.tile[i, j].TileFrameY) is Style.Jungle)
+			{
+				SoundEngine.PlaySound(Squish, pos);
+				SoundEngine.PlaySound(JungleBreak, pos);
+				SoundEngine.PlaySound(SoundID.Dig, pos);
+			}
 			else
 			{
 				SoundEngine.PlaySound(SoundID.Shatter, pos);
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/PotBreak") with { Volume = .16f, PitchRange = (-.4f, 0), }, pos);
+				SoundEngine.PlaySound(Break, pos);
 			}
 
 			return false;
@@ -107,9 +144,6 @@ public class BiomePots : PotTile, ILootTile
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		var style = GetStyle(Main.tile[i, j].TileFrameY);
-
-		if (TileObjectData.IsTopLeft(i, j) && style is Style.Gold)
-			GlowTileHandler.AddGlowPoint(new Rectangle(i, j, 32, 32), Color.Goldenrod, 200);
 
 		if (style is Style.Mushroom)
 			Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Blue.ToVector3());
@@ -126,7 +160,7 @@ public class BiomePots : PotTile, ILootTile
 		int variant = frameX / 36;
 
 		var source = new EntitySource_TileBreak(i, j);
-		var position = new Vector2(i, j).ToWorldCoordinates(16, 16);
+		var center = new Vector2(i, j).ToWorldCoordinates(16, 16);
 		int dustType = DustID.Pot;
 
 		bool spawnSlime = PotteryTracker.Remaining == 1;
@@ -135,12 +169,12 @@ public class BiomePots : PotTile, ILootTile
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
 			#region loot
-			var p = Main.player[Player.FindClosest(position, 0, 0)];
-			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)position.X - 16, (int)position.Y - 16, 32, 32), p);
+			var p = Main.player[Player.FindClosest(center, 0, 0)];
+			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)center.X - 16, (int)center.Y - 16, 32, 32), p);
 
 			ItemMethods.SplitCoins((int)(CalculateCoinValue() * GetValue(style)), delegate (int type, int stack)
 			{
-				Item.NewItem(source, position, new Item(type, stack), noGrabDelay: true);
+				Item.NewItem(source, center, new Item(type, stack), noGrabDelay: true);
 			}); //Always drop coins
 
 			if (p.statLife < p.statLifeMax2)
@@ -148,19 +182,19 @@ public class BiomePots : PotTile, ILootTile
 				int stack = Main.rand.Next(3, 6);
 
 				for (int h = 0; h < stack; h++)
-					Item.NewItem(source, position, ItemID.Heart);
+					Item.NewItem(source, center, ItemID.Heart);
 			}
 			#endregion
 
 			if (spawnSlime)
-				NPC.NewNPCDirect(source, position, ModContent.NPCType<PotterySlime>());
+				NPC.NewNPCDirect(source, center, ModContent.NPCType<PotterySlime>());
 
 			if (style is Style.Mushroom && NPC.CountNPCS(ModContent.NPCType<StompableGnome>()) < 5)
 			{
 				int count = Main.rand.Next(1, 4);
 
 				for (int c = 0; c < count; c++)
-					NPC.NewNPCDirect(source, position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), ModContent.NPCType<StompableGnome>());
+					NPC.NewNPCDirect(source, center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), ModContent.NPCType<StompableGnome>());
 			}
 
 			if (Main.dedServ)
@@ -174,22 +208,11 @@ public class BiomePots : PotTile, ILootTile
 				for (int g = 0; g < 3; g++)
 				{
 					int goreType = Mod.Find<ModGore>("PotCavern" + (g + variant * 3 + 1)).Type;
-					Gore.NewGore(source, position, Vector2.Zero, goreType);
+					Gore.NewGore(source, center, Vector2.Zero, goreType);
 				}
 
 				dustType = DustID.Pot;
 
-				break;
-
-			case Style.Gold:
-
-				for (int g = 1; g < 4; g++)
-				{
-					int goreType = Mod.Find<ModGore>("PotGold" + g).Type;
-					Gore.NewGore(source, position, Vector2.Zero, goreType);
-				}
-
-				dustType = DustID.Gold;
 				break;
 
 			case Style.Ice:
@@ -197,7 +220,7 @@ public class BiomePots : PotTile, ILootTile
 				for (int g = 1; g < 4; g++)
 				{
 					int goreType = Mod.Find<ModGore>("PotIce" + g).Type;
-					Gore.NewGore(source, position, Vector2.Zero, goreType);
+					Gore.NewGore(source, center, Vector2.Zero, goreType);
 				}
 
 				dustType = DustID.Ice;
@@ -232,12 +255,14 @@ public class BiomePots : PotTile, ILootTile
 			case Style.Corruption:
 
 				dustType = DustID.CorruptGibs;
+				Gore.NewGore(source, center, Vector2.Zero, Mod.Find<ModGore>("PotCorrupt1").Type);
 
 				break;
 
 			case Style.Crimson:
 
 				dustType = DustID.Crimson;
+				Gore.NewGore(source, center, Vector2.Zero, Mod.Find<ModGore>("PotCrimson1").Type);
 
 				break;
 
@@ -263,10 +288,22 @@ public class BiomePots : PotTile, ILootTile
 				for (int g = 1; g < 4; g++)
 				{
 					int goreType = Mod.Find<ModGore>("PotMushroom" + g).Type;
-					Gore.NewGore(source, position, Vector2.Zero, goreType);
+					Gore.NewGore(source, center, Vector2.Zero, goreType);
 				}
 
 				dustType = DustID.MushroomSpray;
+
+				break;
+
+			case Style.Granite:
+
+				for (int g = 1; g < 4; g++)
+				{
+					int goreType = Mod.Find<ModGore>("PotGranite" + g).Type;
+					Gore.NewGore(source, center, Vector2.Zero, goreType);
+				}
+
+				dustType = DustID.Granite;
 
 				break;
 		}
@@ -274,7 +311,7 @@ public class BiomePots : PotTile, ILootTile
 		for (int d = 0; d < 20; d++)
 			Dust.NewDustPerfect(GetRandom(), dustType, Main.rand.NextVector2Unit(), Scale: Main.rand.NextFloat() + .25f);
 
-		Vector2 GetRandom(float distance = 15f) => position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(distance);
+		Vector2 GetRandom(float distance = 15f) => center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(distance);
 	}
 
 	public LootTable AddLoot(int objectStyle)
@@ -321,6 +358,7 @@ public class BiomePots : PotTile, ILootTile
 			Style.Dungeon => ItemID.Bone,
 			Style.Marble => ItemID.Javelin,
 			Style.Hell => ItemID.LivingFireBlock,
+			Style.Granite => ItemID.Geode,
 			_ => -1
 		};
 
@@ -328,6 +366,8 @@ public class BiomePots : PotTile, ILootTile
 		{
 			if (style is Style.Dungeon)
 				loot.Add(ItemDropRule.ByCondition(new DropConditions.Standard(Condition.DownedSkeletron), ItemID.Bone, 2, 10, 15));
+			if (style is Style.Granite)
+				loot.AddCommon(ItemID.Geode, 3);
 			else
 				loot.AddCommon(type, 2, 10, 15);
 		}
