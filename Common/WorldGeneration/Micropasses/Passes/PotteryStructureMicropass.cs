@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Content.Underground.Pottery;
 using SpiritReforged.Content.Underground.Tiles;
+using SpiritReforged.Content.Underground.Tiles.Potion;
 using Terraria.Utilities;
 using Terraria.WorldBuilding;
 
@@ -106,6 +107,7 @@ internal class PotteryStructureMicropass : Micropass
 		selection.Add(ModContent.TileType<WormPot>(), .05f);
 		selection.Add(ModContent.TileType<SilverPlatters>(), .05f);
 		selection.Add(ModContent.TileType<ScryingPot>(), .03f);
+		selection.Add(ModContent.TileType<PotionVats>(), .06f);
 
 		for (int i = 0; i < 200; i++)
 		{
