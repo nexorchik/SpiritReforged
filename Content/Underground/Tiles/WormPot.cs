@@ -44,7 +44,7 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (effectOnly || !fail || Autoloader.IsRubble(Type))
+		if (effectOnly || !fail || Autoloader.IsRubble(Type) || WorldGen.generatingWorld)
 			return;
 
 		fail = AdjustFrame(i, j);

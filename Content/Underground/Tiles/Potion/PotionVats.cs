@@ -86,7 +86,7 @@ public class PotionVats : PotTile, ICutAttempt
 			return;
 		}
 
-		if (effectOnly || !fail)
+		if (effectOnly || !fail || WorldGen.generatingWorld)
 			return;
 
 		fail = AdjustFrame(i, j);
