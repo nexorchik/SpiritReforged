@@ -8,13 +8,9 @@ CommonTooltips: {
 }
 
 Kelp: {
-	DisplayName: Alga Marinha
-	Tooltip: Deve ser plantada na água
 }
 
 PirateChestItem: {
-	DisplayName: Baú Pirata
-	Tooltip: ""
 }
 
 PirateKey: {
@@ -23,90 +19,48 @@ PirateKey: {
 }
 
 RawFish: {
-	DisplayName: Peixe Cru
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed}
-		'Pode ser comido... talvez cozinhar antes seja uma boa ideia?'
-		'''
 }
 
 SunkenTreasure: {
-	DisplayName: Tesouro Afundado
-	Tooltip:
-		'''
-		Clique direito para abrir
-		'Talvez ainda esteja cheio de tesouros valiosos'
-		'''
 }
 
 DriftwoodItem: {
-	DisplayName: Madeira à Deriva
-	Tooltip: ""
 }
 
 MusselItem: {
-	DisplayName: Mexilhão
-	Tooltip: ""
 }
 
 CrinoidItem: {
-	DisplayName: Crinóide
-	Tooltip: ""
 }
 
 PelicanItem: {
-	DisplayName: Pelicano
-	Tooltip: ""
 }
 
 SandPiperItem: {
-	DisplayName: Pássaro Maçarico
-	Tooltip: ""
 }
 
 TinyCrabItem: {
-	DisplayName: Caranguejo Pálido
-	Tooltip: ""
 }
 
 TubewormItem: {
-	DisplayName: Verme Tubular
-	Tooltip: ""
 }
 
 CascadeChestplate: {
-	DisplayName: Peitoral do Caçador de Recifes
-	Tooltip: 50% de resistência ao recuo
 }
 
 CascadeHelmet: {
-	DisplayName: Elmo do Caçador de Recifes
-	Tooltip: Permite respirar debaixo d'água
 }
 
 CascadeLeggings: {
-	DisplayName: Grevas do Caçador de Recifes
-	Tooltip: 15% de aumento de movimento na água
 }
 
 JellyfishStaff: {
-	DisplayName: Cajado de Água-Viva
-	Tooltip: Invoca uma água-viva pequenininha para lutar por você!
 }
 
 Lifesaver: {
-	DisplayName: Salva-Vidas
-	Tooltip:
-		'''
-		Invoca uma arraia montável
-		A arraia não consegue se mover em terra, mas pode flutuar sobre líquidos
-		'''
 }
 
 ClawCannon: {
-	DisplayName: Canhão de Garra
-	Tooltip: ""
 }
 
 IridescentScale: {
@@ -115,13 +69,9 @@ IridescentScale: {
 }
 
 OceanPendant: {
-	DisplayName: Tesouro do Tritão
-	Tooltip: Movimento subaquático amplamente aprimorado
 }
 
 ReefSpear: {
-	DisplayName: Perfurador dos Recifes
-	Tooltip: Clique direito para arremessar o tridente, aumentando o dano recebido pelo ataque principal
 }
 
 SkullSentry: {
@@ -130,494 +80,255 @@ SkullSentry: {
 }
 
 UrchinStaff: {
-	DisplayName: Arremessador de Ouriços
-	Tooltip: ""
 }
 
 GarInAJar: {
-	Tooltip: ""
-	DisplayName: Gar em um Jarro
 }
 
 GarItem: {
-	DisplayName: Gar
-	Tooltip: ""
 }
 
 SavannaDirtItem: {
-	DisplayName: Terra Grossa
-	Tooltip: ""
 }
 
 GoldGarItem: {
-	DisplayName: Gar Dourado
-	Tooltip: ""
 }
 
 Sushi: {
-	DisplayName: Sushi
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed}
-		Proporciona respiração debaixo d'água
-		'Gelado e fresco!'
-		'''
 }
 
 Nigiri: {
-	DisplayName: Nigiri
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed}
-		Proporciona movimento livre na água
-		'Corte perfeito'
-		'''
 }
 
 HoneySalmon: {
-	DisplayName: Salmão Glaciado com Mel
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed}
-		'A mistura perfeita entre doce e salgado!'
-		'''
 }
 
 FishChips: {
-	DisplayName: Peixe com Batata Frita
-	Tooltip: "{$BuffDescription.WellFed}"
 }
 
 CrystalFish: {
-	DisplayName: Salmão Cristalizado
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed2}
-		Aumenta o poder mágico
-		'''
 }
 
 RawMeat: {
-	DisplayName: Carne Crua
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed}
-		'Pode ser comida... talvez cozinhar antes seja uma boa ideia?'
-		'''
 }
 
 CookedMeat: {
-	DisplayName: Carne Cozida
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed}
-		'Assada à perfeição'
-		'''
 }
 
 GoldenCaviar: {
-	DisplayName: Caviar Dourado
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed3}
-		'O ápice da gastronomia'
-		'''
 }
 
-GarBannerItem.DisplayName: Bandeira de Gar
-
 CoconutMilk: {
-	DisplayName: Leite de Côco
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed}
-		'Nem precisa de copo!'
-		'''
 }
 
 DiverBody: {
-	DisplayName: Peitoral do Mergulhador Antigo
-	Tooltip: ""
 }
 
 DiverHead: {
-	DisplayName: Capacete do Mergulhador Antigo
-	Tooltip: ""
 }
 
 DiverLegs: {
-	DisplayName: Calças do Mergulhador Antigo
-	Tooltip: ""
 }
 
 SailorCap: {
-	DisplayName: Boné de Marinheiro
-	Tooltip: "'Todos a bordo!'"
 }
 
 StrippedBambooItem: {
-	DisplayName: Bambu Descascado
-	Tooltip: ""
 }
 
 BambooBarrelItem: {
-	DisplayName: Barril de Bambu
-	Tooltip: ""
 }
 
 BambooBenchItem: {
-	DisplayName: Banco de Bambu
-	Tooltip: ""
 }
 
 BambooBirdCageItem: {
-	DisplayName: Gaiola de Bambu
-	Tooltip: Alguns pássaros podem ser colocados dentro com clique direito
 }
 
 BambooPikeItem: {
-	DisplayName: Lança de Bambu
-	Tooltip: ""
 }
 
 BambooPotItem: {
-	DisplayName: Pote de Bambu
-	Tooltip: ""
 }
 
 SteamedMussels: {
-	DisplayName: Mexilhões ao Vapor
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed}
-		'Frescos e deliciosos'
-		'''
 }
 
 JellyCandle: {
-	DisplayName: Vela de Água-Viva
-	Tooltip: Invoca uma água-viva flutuante para te seguir
 }
 
 SmallDriftwoodItem: {
-	DisplayName: Madeira à Deriva Pequena
-	Tooltip: "'Esteticamente agradável'"
 }
 
 MediumDriftwoodItem: {
-	DisplayName: Madeira à Deriva Média
-	Tooltip: "'Esteticamente agradável'"
 }
 
 LargeDriftwoodItem: {
-	DisplayName: Madeira à Deriva Grande
-	Tooltip: "'Esteticamente agradável'"
 }
 
 DriftwoodChestplate: {
-	DisplayName: Peitoral de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodHelmet: {
-	DisplayName: Capacete de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodLeggings: {
-	DisplayName: Calças de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodPlatformItem: {
-	DisplayName: Plataforma de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodSword: {
-	DisplayName: Espada de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodWallItem: {
-	DisplayName: Parede de Madeira à Deriva
-	Tooltip: ""
 }
 
 Cloudstalk: {
-	DisplayName: Haste de Nuvem
-	Tooltip: "'Normalmente encontrado no alto'"
 }
 
 CloudstalkSeed: {
-	DisplayName: Semente de Haste de Nuvem
-	Tooltip: ""
 }
 
 DoubleJumpPotion: {
-	DisplayName: Poção do Zéfiro
-	Tooltip: Concede temporariamente um pulo duplo
 }
 
 FlightPotion: {
-	DisplayName: Poção de Voo
-	Tooltip: Aumenta a duração do voo em 25%
 }
 
 HangingCloudstalkItem: {
-	DisplayName: Haste de Nuvem Suspensa
-	Tooltip: ""
 }
 
 FloatingDriftwood: {
-	DisplayName: Madeira à Deriva Flutuante
-	Tooltip: ""
 }
 
 FishCrate: {
-	DisplayName: Caixa de Peixes
-	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
 Ambergris: {
-	DisplayName: Âmbar Cinzento
-	Tooltip:
-		'''
-		Muito valioso
-		'Você não quer saber de onde isso veio'
-		'''
 }
 
 MessageBottle: {
-	DisplayName: Mensagem na Garrafa
-	Tooltip:
-		'''
-		Invoca uma jangada montável
-		Aumenta o poder de pesca enquanto estiver na jangada
-		'''
 }
 
 GoldKillifishItem: {
-	DisplayName: Peixe Killi Dourado
-	Tooltip: ""
 }
 
 KillifishItem: {
-	DisplayName: Peixe Killi
-	Tooltip: ""
 }
 
-KillifishBannerItem.DisplayName: Bandeira de Peixe Killi
-
 BambooHalberd: {
-	DisplayName: Alabarda de Bambu
-	Tooltip: ""
 }
 
 BambooKendoBlade: {
-	DisplayName: Lâmina de Kendo de Bambu
-	Tooltip: Clique direito para avançar rapidamente
 }
 
 KoiTotem: {
-	DisplayName: Totem de Koi
-	Tooltip:
-		'''
-		Aumenta a habilidade de pesca quando colocado nas proximidades
-		Reabastece ocasionalmente a isca usada por último
-		'''
 }
 
 FairyWhistle: {
-	DisplayName: Apito de Fada
-	Tooltip: Chama uma fada protetora que flutua ao seu redor
 }
 
 TermiteItem: {
-	DisplayName: Cupim
-	Tooltip: ""
 }
 
 StarPowder: {
-	DisplayName: Pó Estelar
-	Tooltip: Lance na grama para energizá-la com luz estelar!
 }
 
 TermiteJar: {
-	DisplayName: Pote de Cupim
-	Tooltip: "'Um pesadelo ecológico'"
 }
 
 ButterflyStaff: {
-	DisplayName: Cajado de Borboleta Etérea
-	Tooltip:
-		'''
-		Invoca uma borboleta mágica para lutar por você
-		'Formada a partir de uma cerejeira perfeita'
-		'''
 }
 
 PoolNoodle: {
-	DisplayName: Macarrão de Piscina
-	Tooltip:
-		'''
-		3 de dano de invocação com tag
-		{$CommonItemTooltip.Whips}
-		Inimigos atingidos podem liberar explosões borbulhantes quando atingidos por invocações
-		'''
 }
 
 ToucaneItem: {
-	DisplayName: Toucano
-	Tooltip: Invoca um tucano irritado para lutar por você
 }
 
 QuenchPotion: {
-	DisplayName: Poção Refrescante
-	Tooltip: Outras poções duram 25% mais
 }
 
 LivingBaobabLeafWallItem: {
-	DisplayName: Parede de Folhas de Baobá Vivo
-	Tooltip: ""
 }
 
 LivingBaobabWallItem: {
-	DisplayName: Parede de Baobá Vivo
-	Tooltip: ""
 }
 
 LivingBaobabLeafWand: {
-	DisplayName: Varinha de Folhas de Baobá Vivo
-	Tooltip: ""
 }
 
 LivingBaobabWand: {
-	DisplayName: Varinha de Baobá Vivo
-	Tooltip: ""
 }
 
 WrithingSticks: {
-	DisplayName: Galhos Retorcidos
-	Tooltip: Invoca uma bolota de galhos amiga que te segue
 }
 
 BaobabFruit: {
-	DisplayName: Fruta de Baobá
-	Tooltip: "{$BuffDescription.WellFed}"
 }
 
 SavannaGrassSeeds: {
-	DisplayName: Sementes de Grama da Savana
-	Tooltip: ""
 }
 
 LeatherBackpack: {
-	DisplayName: Mochila de Couro
-	Tooltip:
-		'''
-		{$CommonTooltips.Backpack}
-		'Confortável, prática e ainda estilosa'
-		'''
 }
 
 Caryocar: {
-	DisplayName: Caryocar
-	Tooltip: "{$BuffDescription.WellFed}"
 }
 
 CustardApple: {
-	DisplayName: Fruta-do-Conde
-	Tooltip: "{$BuffDescription.WellFed}"
 }
 
 BeachUmbrellaItem: {
-	DisplayName: Guarda-Sol
-	Tooltip: ""
 }
 
 BigBuoy: {
-	DisplayName: Boia Grande
-	Tooltip: "{$ItemTooltip.CoralTorch}"
 }
 
 SmallBuoy: {
-	DisplayName: Boia Pequena
-	Tooltip: "{$ItemTooltip.CoralTorch}"
 }
 
 LoungeChairItem: {
-	DisplayName: Espreguiçadeira
-	Tooltip: ""
 }
 
 Omelette: {
-	DisplayName: Omelete
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed2}
-		'Cozido à perfeição'
-		'''
 }
 
 OstrichEgg: {
-	DisplayName: Ovo de Avestruz
-	Tooltip: "{$BuffDescription.WellFed}"
 }
 
 DrywoodItem: {
-	DisplayName: Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodBow: {
-	DisplayName: Arco de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodBreastplate: {
-	DisplayName: Peitoral de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodGreaves: {
-	DisplayName: Grevas de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodHammer: {
-	DisplayName: Martelo de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodHelmet: {
-	DisplayName: Capacete de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodSword: {
-	DisplayName: Espada de Madeira Seca
-	Tooltip: ""
 }
 
 HuntingRifle: {
-	DisplayName: Rifle de Caça
-	Tooltip: Causa mais dano a alvos distantes e ao ficar parado
 }
 
 SafariHat: {
-	DisplayName: Chapéu de Safári
-	Tooltip: ""
 }
 
 SafariShorts: {
-	DisplayName: Bermuda de Safári
-	Tooltip: ""
 }
 
 SafariVest: {
-	DisplayName: Colete de Safári
-	Tooltip: ""
 }
 
 SunStaff: {
@@ -626,43 +337,27 @@ SunStaff: {
 }
 
 SavannaMusicBoxItem: {
-	DisplayName: Caixa de Música (Savana)
-	Tooltip: ""
 }
 
 DrywoodBathtubItem: {
-	DisplayName: Banheira de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodBedItem: {
-	DisplayName: Cama de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodBookcaseItem: {
-	DisplayName: Estante de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodCandelabraItem: {
-	DisplayName: Candelabro de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodCandleItem: {
-	DisplayName: Vela de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodChairItem: {
-	DisplayName: Cadeira de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodClockItem: {
-	DisplayName: Relógio de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodCouchItem: {
@@ -671,227 +366,135 @@ DrywoodCouchItem: {
 }
 
 DrywoodDresserItem: {
-	DisplayName: Cômoda de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodLampItem: {
-	DisplayName: Luminária de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodPianoItem: {
-	DisplayName: Piano de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodSinkItem: {
-	DisplayName: Pia de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodTableItem: {
-	DisplayName: Mesa de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodToiletItem: {
-	DisplayName: Vaso Sanitário de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodWorkBenchItem: {
-	DisplayName: Bancada de Trabalho de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodLanternItem: {
-	DisplayName: Lanterna de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodSofaItem: {
-	DisplayName: Sofá de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodChestItem: {
-	DisplayName: Baú de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodDoorItem: {
-	DisplayName: Porta de Madeira Seca
-	Tooltip: ""
 }
 
 DriftwoodBarrelItem: {
-	DisplayName: Barril de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodBathtubItem: {
-	DisplayName: Banheira de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodBedItem: {
-	DisplayName: Cama de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodBenchItem: {
-	DisplayName: Banco de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodBookcaseItem: {
-	DisplayName: Estante de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodCandelabraItem: {
-	DisplayName: Candelabro de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodCandleItem: {
-	DisplayName: Vela de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodChairItem: {
-	DisplayName: Cadeira de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodChandelierItem: {
-	DisplayName: Lustre de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodClockItem: {
-	DisplayName: Relógio de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodDoorItem: {
-	DisplayName: Porta de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodDresserItem: {
-	DisplayName: Cômoda de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodLampItem: {
-	DisplayName: Luminária de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodPianoItem: {
-	DisplayName: Piano de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodSinkItem: {
-	DisplayName: Pia de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodTableItem: {
-	DisplayName: Mesa de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodToiletItem: {
-	DisplayName: Vaso Sanitário de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodWorkBenchItem: {
-	DisplayName: Bancada de Trabalho de Madeira à Deriva
-	Tooltip: ""
 }
 
 HerosMemorialStatueItem: {
-	DisplayName: Memorial de um Herói
-	Tooltip: Viva para sempre
 }
 
 DustyFieldsItem: {
-	DisplayName: Campos Empoeirados
-	Tooltip: "'S. Yaki'"
 }
 
 OrangeSkiesItem: {
-	DisplayName: Céus Alaranjados
-	Tooltip: "'S. Yaki'"
 }
 
 StrongWindsItem: {
-	DisplayName: Ventos Fortes
-	Tooltip: "'S. Yaki'"
 }
 
 WaningSunItem: {
-	DisplayName: Sol Poente
-	Tooltip: "'E. Sibellius'"
 }
 
 ScarecrowItem: {
-	DisplayName: Espantalho
-	Tooltip: ""
 }
 
 BotanistBody: {
-	DisplayName: Avental do Botânico
-	Tooltip: ""
 }
 
 BotanistHat: {
-	DisplayName: Chapéu de Palha de Girassol
-	Tooltip: Mantém você feliz
 }
 
 BotanistLegs: {
-	DisplayName: Calças do Botânico
-	Tooltip: 10% de aumento na velocidade de movimento
 }
 
 BeachTowel: {
-	DisplayName: Toalha de Praia
-	Tooltip: "'Te mantém seco, mas cuidado para não pular na água com ela!'"
 }
 
 BikiniBottom: {
-	DisplayName: Parte de Baixo do Bikini
-	Tooltip: "'Quem precisa de armadura quando você pode correr livre no sol!'"
 }
 
 BikiniTop: {
-	DisplayName: Parte de Cima do Bikini
-	Tooltip: "'Apesar do que se espera, isso realmente não oferece nenhum tipo de defesa.'"
 }
 
 SwimmingTrunks: {
-	DisplayName: Calções de Natação
-	Tooltip: "'Não oferecem muita proteção, mas são inegavelmente estilosos.'"
 }
 
 TintedGlasses: {
-	DisplayName: Óculos Escuros
-	Tooltip: "'Eles ajudam no visual, então é melhor mantê-los mesmo no escuro.'"
 }
 
 WheatgrassSeedPouch: {
-	DisplayName: Saquinho de Sementes de Grama de Trigo
-	Tooltip:
-		'''
-		Lança um punhado de sementes que crescem em grama
-		'Trepa e balança na sua mão'
-		'''
 }
 
 RoyalKhopesh: {
@@ -900,433 +503,206 @@ RoyalKhopesh: {
 }
 
 SavannaSandstormMusicBoxItem: {
-	Tooltip: ""
-	DisplayName: Caixa de Música (Tempestade de Areia)
 }
 
 FishLure: {
-	DisplayName: Isca de Peixe
-	Tooltip:
-		'''
-		{$ItemTooltip.CoralTorch}
-		Atrai cardumes de peixes para águas próximas
-		'''
 }
 
 DrywoodPlatformItem: {
-	DisplayName: Plataforma de Madeira Seca
-	Tooltip: ""
 }
 
 SavannaDirtWallItem: {
-	DisplayName: Parede de Terra Grossa
-	Tooltip: ""
 }
 
 GravelItem: {
-	DisplayName: Cascalho
-	Tooltip: ""
 }
 
 MagmastoneItem: {
-	DisplayName: Pedra de Magma
-	Tooltip: ""
 }
 
 SavannaCrateHardmode: {
-	DisplayName: Caixa de Safári
-	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
 SavannaCrate: {
-	DisplayName: Caixa de Campos
-	Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 }
 
 MineralSlag: {
-	DisplayName: Escória Mineral
-	Tooltip: Pode ser usado no Extrator
 }
 
-HyenaBannerItem.DisplayName: Bandeira de Hiena
-OstrichBannerItem.DisplayName: Bandeira de Avestruz
-
 SavannaCampfireItem: {
-	DisplayName: Fogueira da Savana
-	Tooltip: "{$ItemTooltip.Campfire}"
 }
 
 SavannaFountainItem: {
-	DisplayName: Fonte de Água da Savana
-	Tooltip: ""
 }
 
 DrywoodFenceItem: {
-	DisplayName: Cerca de Madeira Seca
-	Tooltip: ""
 }
 
 DrywoodWallItem: {
-	DisplayName: Parede de Madeira Seca
-	Tooltip: ""
 }
 
 ZiplineGun: {
-	DisplayName: Arma-Tirolesa
-	Tooltip:
-		'''
-		Cria um corda de tirolesa na posição do cursor para transportar jogadores
-		As cordas de tirolesa podem ser removidas ao passar o cursor sobre elas ou com um clique direito
-		'Não confundir com o canhão ferroviário'
-		'''
 	AssistantOn: Clique direito para ativar o assistente
 	AssistantOff: Clique direito para desativar o assistente
 }
 
 FrostbiteItem: {
-	DisplayName: Geada
-	Tooltip: Conjura uma nevasca à sua frente
 }
 
 RogueCrest: {
-	DisplayName: Brasão do Renegado
-	Tooltip:
-		'''
-		Invoca uma espada enferrujada para lutar por você
-		Essa espada não ocupa os espaços de invocação
-		Ocasionalmente causa Feridas Abertas, fazendo os inimigos sangrarem quando atingidos com ataques corpo a corpo ou chicotes
-		'''
 }
 
 GildedScarab: {
-	DisplayName: Escaravelho Dourado
-	Tooltip:
-		'''
-		Ser atingido concede um buff temporário à defesa
-		Proporciona mais defesa com base no dano recebido
-		'''
 }
 
 SparrowItem: {
-	DisplayName: Pardal
-	Tooltip: ""
 }
 
 Blunderbuss: {
-	DisplayName: Bacamarte
-	Tooltip: Dispara uma ampla espalhada de balas
 }
 
 SafekeeperRing: {
-	DisplayName: Anel do Guardião
-	Tooltip:
-		'''
-		Aumenta levemente o dano causado contra mortos-vivos
-		'Emite uma luz assustadora'
-		'''
 }
 
-PeevedTumblerBannerItem.DisplayName: Bandeira do Tumbler Irritado
-
 LeatherHood: {
-	DisplayName: Capuz do Atirador
-	Tooltip: Aumenta a chance de ataque crítico em 5%
 }
 
 LeatherLegs: {
-	DisplayName: Botas do Atirador
-	Tooltip: ""
 }
 
 LeatherPlate: {
-	DisplayName: Peitoral do Atirador
-	Tooltip: ""
 }
 
 ExplorerTreadsItem: {
-	DisplayName: Passadas do Explorador
-	Tooltip:
-		'''
-		+5% de velocidade de movimento para cada 10% de vida faltando
-		50% de chance de evitar armadilhas e perigos
-		'Explorar templos fica fácil como um passeio no parque'
-		'''
 }
 
 LeatherCloakItem: {
-	DisplayName: Capa de Couro
-	Tooltip:
-		'''
-		Imunidade aos ventos fortes de tempestades de areia
-		Aumenta a velocidade de movimento em 5% e a aceleração de corrida em 15%
-		'''
 }
 
 CactusStaff: {
-	DisplayName: Cajado de Cacto
-	Tooltip: Invoca paredes de cactos para te proteger
 }
 
 PearlString: {
-	DisplayName: Colar de Pérolas
-	Tooltip:
-		'''
-		Inimigos derrotados derrubam mais moedas
-		'Você se sente sortudo'
-		'''
 }
 
 DrywoodChandelierItem: {
-	DisplayName: Lustre de Madeira Seca
-	Tooltip: ""
 }
 
 DriftwoodLanternItem: {
-	DisplayName: Luminária de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodFenceItem: {
-	DisplayName: Cerca de Madeira à Deriva
-	Tooltip: ""
 }
 
 ArcaneNecklaceGold: {
-	DisplayName: Colar Arcano
-	Tooltip:
-		'''
-		Aumenta o mana máximo em 20
-		Inimigos atingidos podem derrubar estrelas de mana
-		'''
 }
 
 ArcaneNecklacePlatinum: {
-	DisplayName: "{$ArcaneNecklaceGold.DisplayName}"
-	Tooltip: "{$ArcaneNecklaceGold.Tooltip}"
 }
 
 PinBlue: {
-	DisplayName: Alfinete Azul
-	Tooltip: ""
 }
 
 PinGreen: {
-	DisplayName: Alfinete Verde
-	Tooltip: ""
 }
 
 PinRed: {
-	DisplayName: Alfinete Vermelho
-	Tooltip: ""
 }
 
 PinYellow: {
-	DisplayName: Alfinete Amarelo
-	Tooltip: ""
 }
 
 PinHive: {
-	DisplayName: Alfinete de Colmeia
-	Tooltip: ""
 }
 
 PinButterfly: {
-	DisplayName: Alfinete de Borboleta
-	Tooltip: ""
 }
 
 PinFaeling: {
-	DisplayName: Alfinete de Fada
-	Tooltip: ""
 }
 
 PinSavanna: {
-	DisplayName: Alfinete da Savana
-	Tooltip: ""
 }
 
 PinCuriosity: {
-	DisplayName: Alfinete da Curiosidade
-	Tooltip: ""
 }
 
 PinSky: {
-	DisplayName: Alfinete do Céu
-	Tooltip: ""
 }
 
 PinSword: {
-	DisplayName: Alfinete de Espada
-	Tooltip: ""
 }
 
 TornMapPiece: {
-	DisplayName: Pedaço de Mapa Rasgado
-	Tooltip: Revela o mapa ao redor
 }
 
 FashionableBackpack: {
-	DisplayName: Mochila Fashion
-	Tooltip:
-		'''
-		{$CommonTooltips.Backpack}
-		'Moderna, elegante e ainda assim eficiente'
-		'''
 }
 
 HikingBackpack: {
-	DisplayName: Mochila de Caminhada
-	Tooltip:
-		'''
-		{$CommonTooltips.Backpack}
-		'Utilitária, resistente e, acima de tudo, confortável'
-		'''
 }
 
 Minipack: {
-	DisplayName: Minimochila
-	Tooltip:
-		'''
-		{$CommonTooltips.Backpack}
-		'Pequena, leve e super compacta'
-		'''
 }
 
 PinkPack: {
-	DisplayName: Mochila Rosa
-	Tooltip:
-		'''
-		{$CommonTooltips.Backpack}
-		'A melhor cor, útil e ótima visibilidade à distância'
-		'''
 }
 
 PouchPack: {
-	DisplayName: Mochila Bolsa
-	Tooltip:
-		'''
-		{$CommonTooltips.Backpack}
-		'Simples, confortável e propensa a derramamentos'
-		'''
 }
 
 DyeCrateItem: {
-	DisplayName: Caixa de Corantes
-	Tooltip:
-		'''
-		{$CommonItemTooltip.RightClickToOpen}
-		'Tem um cheiro... surpreendentemente agradável!'
-		'''
 }
 
 SavannaNightMusicBoxItem: {
-	DisplayName: Caixa de Música (Noite na Savana)
-	Tooltip: ""
 }
 
 SavannaPylonItem: {
-	DisplayName: Pilar da Savana
-	Tooltip: "{$CommonItemTooltip.TeleportationPylon}"
 }
 
 CraneFeather: {
-	DisplayName: Pena de Grou
-	Tooltip: Aumenta a agilidade aérea
 }
 
 TatteredMap: {
-	DisplayName: Mapa Esfarrapado
-	Tooltip: ""
 }
 
 CrescentMelon: {
-	DisplayName: Melão Crescente
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed}
-		{$ItemTooltip.ManaRegenerationPotion}
-		'''
 }
 
 MidnightApple: {
-	DisplayName: Maçã da Meia-Noite
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed}
-		{$ItemTooltip.ManaRegenerationPotion}
-		'Brilha como o céu noturno'
-		'''
 }
 
 NightSky: {
-	DisplayName: Céu Noturno
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed2}
-		{$ItemTooltip.ManaRegenerationPotion}
-		'Tem gosto de cosmos'
-		'''
 }
 
 Pearlberry: {
-	DisplayName: Pérola de Fruta
-	Tooltip:
-		'''
-		{$BuffDescription.WellFed}
-		{$ItemTooltip.ManaRegenerationPotion}
-		'Reluz e brilha intensamente...'
-		'''
 }
 
 DriftwoodBow: {
-	DisplayName: Arco de Madeira à Deriva
-	Tooltip: ""
 }
 
 DriftwoodHammer: {
-	DisplayName: Martelo de Madeira à Deriva
-	Tooltip: ""
 }
 
 RemedyPotion: {
-	DisplayName: Poção do Remédio
-	Tooltip:
-		'''
-		Concede imunidade aos seguintes efeitos:
-		[list]
-		'''
 }
 
 CloudstalkBoxItem: {
-	DisplayName: Caixa de Plantio de Haste de Nuvem
-	Tooltip: ""
 }
 
-OceanSlimeBannerItem.DisplayName: Bandeira do Slime de Côco
-
 OceanDepthsBoxItem: {
-	DisplayName: Caixa de Música (Profundezas do Oceano)
-	Tooltip: ""
 }
 
 OstrichPants: {
-	DisplayName: Calças de Avestruz
-	Tooltip: ""
 }
 
 CampfireSpit: {
-	DisplayName: Espeto de Fogueira
-	Tooltip: Pode ser colocado em fogueiras
 }
 
 KillieFishbowl: {
-	DisplayName: Aquário de Killie
-	Tooltip: "'Talvez um aquário maior na próxima vez?'"
 }
 
 SparrowCageItem: {
-	DisplayName: Gaiola de Pardal
-	Tooltip: ""
 }
 
 PinBlood: {
@@ -1340,91 +716,51 @@ PinWulfrum: {
 }
 
 WayfarerHead: {
-	// DisplayName: Wayfarer's Hat
-	// Tooltip: Immunity to darkness
 }
 
 WayfarerBody: {
-	// DisplayName: Wayfarer's Rucksack
-	// Tooltip: 5% increased movement speed
 }
 
 WayfarerLegs: {
-	// DisplayName: Wayfarer's Pants
-	// Tooltip: 7% increased movement speed
 }
 
 AncientKoiTotem: {
-	// DisplayName: Ancient Koi Totem
-	// Tooltip: "{$Mods.SpiritReforged.Items.KoiTotem.Tooltip}"
 }
 
 BoomShroom: {
-	// DisplayName: Boom Shroom
-	/* Tooltip:
-		'''
-		All thrown explosives are much larger... and stronger
-		Downtime between throws is increased
-		''' */
 }
 
 ClayBomb: {
-	// DisplayName: Clay Bomb
-	// Tooltip: A small explosion that will spread clay
 }
 
 ClayBombSticky: {
-	// DisplayName: Sticky Clay Bomb
-	// Tooltip: "{$Mods.SpiritReforged.Items.ClayBomb.Tooltip}"
 }
 
 SandBomb: {
-	// DisplayName: Sand Bomb
-	// Tooltip: A small explosion that will spread sand
 }
 
 SandBombSticky: {
-	// DisplayName: Sticky Sand Bomb
-	// Tooltip: "{$Mods.SpiritReforged.Items.SandBomb.Tooltip}"
 }
 
 CoarseBomb: {
-	// DisplayName: Coarse Bomb
-	// Tooltip: A small explosion that will spread coarse dirt
 }
 
 CoarseBombSticky: {
-	// DisplayName: Sticky Coarse Bomb
-	// Tooltip: "{$Mods.SpiritReforged.Items.CoarseBomb.Tooltip}"
 }
 
 MudBomb: {
-	// DisplayName: Mud Bomb
-	// Tooltip: A small explosion that will spread mud
 }
 
 MudBombSticky: {
-	// DisplayName: Sticky Mud Bomb
-	// Tooltip: "{$Mods.SpiritReforged.Items.MudBomb.Tooltip}"
 }
 
 HideTunic: {
-	// DisplayName: Hide Tunic
-	// Tooltip: Increases melee size and knockback by 25%
 }
 
 PotteryWheelItem: {
-	// DisplayName: Pottery Wheel
-	/* Tooltip:
-		'''
-		Used for crafting decorative pots
-		<right> when placed to view available recipes
-		''' */
 }
 
 BiomePotsCavernItem: {
-	// DisplayName: Cavern Pot
-	// Tooltip: ""
 }
 
 OrnatePotsItem: {
@@ -1433,108 +769,66 @@ OrnatePotsItem: {
 }
 
 BiomePotsIceItem: {
-	// DisplayName: Frozen Pot
-	// Tooltip: ""
 }
 
 BiomePotsDesertItem: {
-	// DisplayName: Desert Pot
-	// Tooltip: ""
 }
 
 BiomePotsJungleItem: {
-	// DisplayName: Jungle Pot
-	// Tooltip: ""
 }
 
 BiomePotsDungeonItem: {
-	// DisplayName: Dungeon Pot
-	// Tooltip: ""
 }
 
 BiomePotsCorruptionItem: {
-	// DisplayName: Corrupt Pot
-	// Tooltip: ""
 }
 
 BiomePotsCrimsonItem: {
-	// DisplayName: Crimson Pot
-	// Tooltip: ""
 }
 
 BiomePotsMarbleItem: {
-	// DisplayName: Marble Pot
-	// Tooltip: ""
 }
 
 BiomePotsHellItem: {
-	// DisplayName: Obsidian Pot
-	// Tooltip: ""
 }
 
 BiomePotsMushroomItem: {
-	// DisplayName: Mushroom Pot
-	// Tooltip: ""
 }
 
 PotsCavernItem: {
-	// DisplayName: Small Cavern Pot
-	// Tooltip: ""
 }
 
 PotsIceItem: {
-	// DisplayName: Small Frozen Pot
-	// Tooltip: ""
 }
 
 PotsJungleItem: {
-	// DisplayName: Small Jungle Pot
-	// Tooltip: ""
 }
 
 PotsDungeonItem: {
-	// DisplayName: Small Dungeon Pot
-	// Tooltip: ""
 }
 
 PotsHellItem: {
-	// DisplayName: Small Obsidian Pot
-	// Tooltip: ""
 }
 
 PotsCorruptionItem: {
-	// DisplayName: Small Corrupt Pot
-	// Tooltip: ""
 }
 
 PotsSpiderItem: {
-	// DisplayName: Small Spider Pot
-	// Tooltip: ""
 }
 
 PotsCrimsonItem: {
-	// DisplayName: Small Crimson Pot
-	// Tooltip: ""
 }
 
 PotsPyramidItem: {
-	// DisplayName: Small Pyramid Pot
-	// Tooltip: ""
 }
 
 PotsTempleItem: {
-	// DisplayName: Small Temple Pot
-	// Tooltip: ""
 }
 
 PotsMarbleItem: {
-	// DisplayName: Small Marble Pot
-	// Tooltip: ""
 }
 
 PotsDesertItem: {
-	// DisplayName: Small Desert Pot
-	// Tooltip: ""
 }
 
 CommonPotsMushroomItem: {
@@ -1543,23 +837,15 @@ CommonPotsMushroomItem: {
 }
 
 SilverPlattersItem: {
-	// DisplayName: Silver Platter
-	// Tooltip: ""
 }
 
 StuffedPotsItem: {
-	// DisplayName: Stuffed Pot
-	// Tooltip: ""
 }
 
 WormPotItem: {
-	// DisplayName: Worm Pot
-	// Tooltip: ""
 }
 
 AetherShipmentItem: {
-	// DisplayName: Aether Shipment
-	// Tooltip: ""
 }
 
 PotionVatsAntiqueItem: {
@@ -1573,52 +859,30 @@ PotionVatsCloningItem: {
 }
 
 SilverFoodPlatterItem: {
-	// DisplayName: Silver Food Platter
-	// Tooltip: <right> to place item on platter
 }
 
 RadonMossItem: {
-	// DisplayName: Radon Moss
-	// Tooltip: "{$ItemTooltip.XenonMoss}"
 }
 
 OganessonMossItem: {
-	// DisplayName: Oganesson Moss
-	// Tooltip: A sight to dwell upon and never forget
 }
 
 RadonMossBrickItem: {
-	// DisplayName: Radon Moss Brick
-	// Tooltip: ""
 }
 
 RadonMossBrickWallItem: {
-	// DisplayName: Radon Moss Brick Wall
-	// Tooltip: ""
 }
 
 OganessonMossBrickItem: {
-	// DisplayName: Oganesson Moss Brick
-	// Tooltip: ""
 }
 
 OganessonMossBrickWallItem: {
-	// DisplayName: Oganesson Moss Brick Wall
-	// Tooltip: ""
 }
 
 ScryingPotItem: {
-	// DisplayName: Scrying Pot
-	// Tooltip: ""
 }
 
 BombCannon: {
-	// DisplayName: Bomb Cannon
-	/* Tooltip:
-		'''
-		Uses bombs as ammo
-		'A groundbreaking invention'
-		''' */
 }
 
 PotHead: {

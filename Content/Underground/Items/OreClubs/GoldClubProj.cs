@@ -39,9 +39,9 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 		float trailWidth = 25;
 		float intensity = 3;
 		float trailLengthMod = 1f;
-		float rotation = HoldAngle_Final + PiOver4 / 2;
+		float rotation = HoldAngle_Final - PiOver4 / 2;
 		if (Direction < 0)
-			rotation -= PiOver4/2;
+			rotation += PiOver4;
 
 		if (FullCharge)
 		{
