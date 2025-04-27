@@ -4,7 +4,6 @@ using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using static SpiritReforged.Content.Underground.Tiles.BiomePots;
 using Terraria.GameContent.ItemDropRules;
 using SpiritReforged.Common.ItemCommon;
 
@@ -78,9 +77,9 @@ public class OrnatePots : PotTile, ILootTile
 	public LootTable AddLoot(int objectStyle)
 	{
 		var loot = new LootTable();
-		loot.Add(ItemDropRule.Common(ItemID.GoldDust, 1, 2, 6));
 		loot.Add(ItemDropRule.Common(ItemID.LuckPotion, 2, 1, 2));
 		loot.Add(ItemDropRule.Common(ItemID.HealingPotion, 1, 1, 3));
+
 		return loot;
 	}
 

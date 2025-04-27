@@ -81,5 +81,6 @@ public class StuffedPots : PotTile, ILootTile
 			Gore.NewGore(source, new Vector2(i, j) * 16, Vector2.UnitY * -2f, Mod.Find<ModGore>("Stuffed1").Type);
 		}
 	}
+
 	public LootTable AddLoot(int objectStyle) => ModContent.GetInstance<Pots>().AddLoot(0); //Add Cavern Loot
 }

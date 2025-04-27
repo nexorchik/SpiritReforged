@@ -184,6 +184,9 @@ public class BiomePots : PotTile, ILootTile
 				for (int h = 0; h < stack; h++)
 					Item.NewItem(source, center, ItemID.Heart);
 			}
+
+			if (Main.rand.NextBool(100))
+				Projectile.NewProjectile(source, center, Vector2.UnitY * -4f, ProjectileID.CoinPortal, 0, 0);
 			#endregion
 
 			if (spawnSlime)
