@@ -91,7 +91,7 @@ internal class PotsMicropass : Micropass
 
 	private static bool CreateOrnate(int x, int y)
 	{
-		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
 
 		int type = ModContent.TileType<OrnatePots>();
@@ -102,7 +102,7 @@ internal class PotsMicropass : Micropass
 
 	private static bool CreatePotion(int x, int y)
 	{
-		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
 
 		int type = ModContent.TileType<PotionVats>();
@@ -124,7 +124,7 @@ internal class PotsMicropass : Micropass
 
 	private static bool CreateScrying(int x, int y)
 	{
-		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
 
 		int type = ModContent.TileType<ScryingPot>();
@@ -148,7 +148,7 @@ internal class PotsMicropass : Micropass
 	{
 		int wall = Main.tile[x, y].WallType;
 
-		if (y < Main.worldSurface && wall == WallID.None || y > Main.UnderworldLayer || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
+		if (y < Main.worldSurface && wall == WallID.None || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
 
 		int type = ModContent.TileType<WormPot>();
@@ -159,7 +159,7 @@ internal class PotsMicropass : Micropass
 
 	private static bool CreatePlatter(int x, int y)
 	{
-		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
 
 		int type = ModContent.TileType<SilverPlatters>();
@@ -170,7 +170,7 @@ internal class PotsMicropass : Micropass
 
 	private static bool CreateAether(int x, int y)
 	{
-		if (y < Main.worldSurface || y > Main.UnderworldLayer || !NearShimmer() || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !NearShimmer() || !CommonSurface(x, y))
 			return false;
 
 		int type = ModContent.TileType<AetherShipment>();
@@ -183,7 +183,7 @@ internal class PotsMicropass : Micropass
 
 	private static bool CreateUpsideDown(int x, int y)
 	{
-		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
 
 		int type = ModContent.TileType<UpsideDownPot>();
@@ -197,11 +197,13 @@ internal class PotsMicropass : Micropass
 	{
 		int tile = Main.tile[x, y + 1].TileType;
 		int wall = Main.tile[x, y].WallType;
-		int liquid = Main.tile[x, y].LiquidType;
+
+		if (Main.tile[x, y].LiquidType is LiquidID.Shimmer)
+			return false; //Never generate in shimmer
 
 		int style = -1;
 
-		if (wall is WallID.Dirt or WallID.GrassUnsafe || liquid is not LiquidID.Shimmer || tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite && y > Main.worldSurface)
+		if (wall is WallID.Dirt or WallID.GrassUnsafe || tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite && y > Main.worldSurface)
 			style = GetRange(BiomePots.Style.Cavern);
 
 		if (wall is WallID.SnowWallUnsafe || tile is TileID.SnowBlock or TileID.IceBlock or TileID.BreakableIce && y > Main.worldSurface)
@@ -277,9 +279,5 @@ internal class PotsMicropass : Micropass
 	}
 
 	/// <summary> Checks whether the below tile is contained in <see cref="CommonBlacklist"/>. </summary>
-	private static bool CommonSurface(int x, int y)
-	{
-		var t = Main.tile[x, y + 1];
-		return !CommonBlacklist.Contains(t.TileType);
-	}
+	private static bool CommonSurface(int x, int y) => !CommonBlacklist.Contains(Main.tile[x, y + 1].TileType) && Main.tile[x, y].LiquidType != LiquidID.Shimmer;
 }
