@@ -1584,7 +1584,7 @@ RadonMossItem: {
 
 OganessonMossItem: {
 	DisplayName: Oganesson Moss
-	Tooltip: A sight to dwell upon and never forget
+	Tooltip: "{$ItemTooltip.XenonMoss}"
 }
 
 RadonMossBrickItem: {
