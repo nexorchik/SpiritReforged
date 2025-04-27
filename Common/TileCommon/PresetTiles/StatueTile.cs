@@ -14,6 +14,7 @@ public abstract class StatueTile : ModTile, IAutoloadTileItem
 		Main.tileObsidianKill[Type] = true;
 		TileID.Sets.DisableSmartCursor[Type] = true;
 		TileID.Sets.IsAMechanism[Type] = true;
+		Main.tileSpelunker[Type] = true;
 
 		DustType = DustID.Stone;
 		AdjTiles = [TileID.Statues];

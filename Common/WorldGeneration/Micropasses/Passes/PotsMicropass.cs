@@ -54,11 +54,11 @@ internal class PotsMicropass : Micropass
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Caves");
 
 		Generate(CreateOrnate, Main.maxTilesX / WorldGen.WorldSizeSmallX * 10, out _);
-		Generate(CreatePotion, Main.maxTilesX / WorldGen.WorldSizeSmallX * 10, out _);
-		Generate(CreateScrying, Main.maxTilesX / WorldGen.WorldSizeSmallX * 9, out _);
-        Generate(CreateStuffed, Main.maxTilesX / WorldGen.WorldSizeSmallX * 9, out _);
-		Generate(CreateWorm, Main.maxTilesX / WorldGen.WorldSizeSmallX * 24, out _);
-		Generate(CreatePlatter, Main.maxTilesX / WorldGen.WorldSizeSmallX * 28, out _);
+		Generate(CreatePotion, Main.maxTilesX / WorldGen.WorldSizeSmallX * 46, out _);
+		Generate(CreateScrying, Main.maxTilesX / WorldGen.WorldSizeSmallX * 20, out _);
+        Generate(CreateStuffed, Main.maxTilesX / WorldGen.WorldSizeSmallX * 12, out _);
+		Generate(CreateWorm, Main.maxTilesX / WorldGen.WorldSizeSmallX * 18, out _);
+		Generate(CreatePlatter, Main.maxTilesX / WorldGen.WorldSizeSmallX * 24, out _);
 		Generate(CreateAether, Main.maxTilesX / WorldGen.WorldSizeSmallX * 3, out _);
 		Generate(CreateUpsideDown, Main.maxTilesX / WorldGen.WorldSizeSmallX * 4, out _);
 
@@ -91,7 +91,7 @@ internal class PotsMicropass : Micropass
 
 	private static bool CreateOrnate(int x, int y)
 	{
-		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
 			return false;
 
 		int type = ModContent.TileType<OrnatePots>();
@@ -102,7 +102,7 @@ internal class PotsMicropass : Micropass
 
 	private static bool CreatePotion(int x, int y)
 	{
-		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
 			return false;
 
 		int type = ModContent.TileType<PotionVats>();
@@ -124,7 +124,7 @@ internal class PotsMicropass : Micropass
 
 	private static bool CreateScrying(int x, int y)
 	{
-		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
 			return false;
 
 		int type = ModContent.TileType<ScryingPot>();
@@ -148,7 +148,7 @@ internal class PotsMicropass : Micropass
 	{
 		int wall = Main.tile[x, y].WallType;
 
-		if (y < Main.worldSurface && wall == WallID.None || y > Main.UnderworldLayer || !CommonSurface(x, y))
+		if (y < Main.worldSurface && wall == WallID.None || y > Main.UnderworldLayer || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
 			return false;
 
 		int type = ModContent.TileType<WormPot>();
@@ -159,7 +159,7 @@ internal class PotsMicropass : Micropass
 
 	private static bool CreatePlatter(int x, int y)
 	{
-		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
 			return false;
 
 		int type = ModContent.TileType<SilverPlatters>();
@@ -170,7 +170,7 @@ internal class PotsMicropass : Micropass
 
 	private static bool CreateAether(int x, int y)
 	{
-		if (y < Main.worldSurface || y > Main.UnderworldLayer || !NearShimmer() || !CommonSurface(x, y))
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !NearShimmer() || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
 			return false;
 
 		int type = ModContent.TileType<AetherShipment>();
@@ -183,7 +183,7 @@ internal class PotsMicropass : Micropass
 
 	private static bool CreateUpsideDown(int x, int y)
 	{
-		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y) || Main.tile[x, y].LiquidType == LiquidID.Shimmer)
 			return false;
 
 		int type = ModContent.TileType<UpsideDownPot>();
@@ -197,10 +197,11 @@ internal class PotsMicropass : Micropass
 	{
 		int tile = Main.tile[x, y + 1].TileType;
 		int wall = Main.tile[x, y].WallType;
+		int liquid = Main.tile[x, y].LiquidType;
 
 		int style = -1;
 
-		if (wall is WallID.Dirt or WallID.GrassUnsafe || tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite && y > Main.worldSurface)
+		if (wall is WallID.Dirt or WallID.GrassUnsafe || liquid is not LiquidID.Shimmer || tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite && y > Main.worldSurface)
 			style = GetRange(BiomePots.Style.Cavern);
 
 		if (wall is WallID.SnowWallUnsafe || tile is TileID.SnowBlock or TileID.IceBlock or TileID.BreakableIce && y > Main.worldSurface)

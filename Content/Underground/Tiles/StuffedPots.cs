@@ -8,7 +8,7 @@ using Terraria.GameContent.UI;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
-public class StuffedPots : PotTile
+public class StuffedPots : PotTile, ILootTile
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
 	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
@@ -81,4 +81,5 @@ public class StuffedPots : PotTile
 			Gore.NewGore(source, new Vector2(i, j) * 16, Vector2.UnitY * -2f, Mod.Find<ModGore>("Stuffed1").Type);
 		}
 	}
+	public LootTable AddLoot(int objectStyle) => ModContent.GetInstance<Pots>().AddLoot(0); //Add Cavern Loot
 }
