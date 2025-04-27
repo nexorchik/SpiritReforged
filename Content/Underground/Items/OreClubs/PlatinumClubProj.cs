@@ -12,10 +12,7 @@ namespace SpiritReforged.Content.Underground.Items.OreClubs;
 
 class PlatinumClubProj : BaseClubProj, ITrailProjectile
 {
-	private const int HIT_VFX_COOLDOWN_MAX = 30;
-
 	private bool _inputHeld = true;
-	private int _hitVfxCooldown = 0;
 
 	public PlatinumClubProj() : base(new Vector2(84)) { }
 
@@ -26,8 +23,6 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 	public override float LingerTimeRatio => 0.7f;
 
 	public override bool? CanDamage() => (GetWindupProgress < 0.5f || CheckAiState(AiStates.SWINGING)) ? null : false;
-
-	public override void SafeAI() => _hitVfxCooldown = (int)Max(_hitVfxCooldown - 1, 0);
 
 	public void DoTrailCreation(TrailManager tM)
 	{
@@ -74,12 +69,8 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 			target.velocity.X -= Projectile.knockBack * Projectile.direction * target.knockBackResist * 0.8f;
 		}
 
-		if (!Main.dedServ && _hitVfxCooldown == 0)
+		if (!Main.dedServ)
 		{
-			_hitVfxCooldown = HIT_VFX_COOLDOWN_MAX / 6;
-			if (FullCharge)
-				_hitVfxCooldown /= 2;
-
 			var direction = BaseRotation.ToRotationVector2();
 
 			var position = Vector2.Lerp(Projectile.Center, target.Center, 0.75f);
@@ -179,23 +170,21 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 	{
 		TrailManager.TryTrailKill(Projectile);
 		Projectile.ResetLocalNPCHitImmunity();
-		_hitVfxCooldown = 0;
 		TrailManager.ManualTrailSpawn(Projectile);
 
-		Player owner = Main.player[Projectile.owner];
-		int tempDirection = owner.direction;
-		if (owner == Main.LocalPlayer)
+		int tempDirection = Owner.direction;
+		if (Owner == Main.LocalPlayer)
 		{
-			int newDir = Math.Sign(Main.MouseWorld.X - owner.Center.X);
-			Projectile.velocity.X = newDir == 0 ? owner.direction : newDir;
+			int newDir = Math.Sign(Main.MouseWorld.X - Owner.Center.X);
+			Projectile.velocity.X = newDir == 0 ? Owner.direction : newDir;
 
-			if (newDir != owner.direction)
+			if (newDir != Owner.direction)
 				Projectile.netUpdate = true;
 		}
 
-		owner.ChangeDir((int)Projectile.velocity.X);
+		Owner.ChangeDir((int)Projectile.velocity.X);
 
-		if (tempDirection != owner.direction)
+		if (tempDirection != Owner.direction)
 			for (int i = 0; i < Projectile.oldRot.Length; i++)
 				Projectile.oldRot[i] = Projectile.oldRot[i] + PiOver2;
 	}
@@ -213,7 +202,7 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 			if (Projectile.direction > 0)
 				angle = -angle + Pi;
 
-			DoShockwaveCircle(Vector2.Lerp(Projectile.Center, Main.player[Projectile.owner].Center, 0.5f), 380, angle, 0.4f);
+			DoShockwaveCircle(Vector2.Lerp(Projectile.Center, Owner.Center, 0.5f), 380, angle, 0.4f);
 		}
 
 		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 240, PiOver2, 0.4f);

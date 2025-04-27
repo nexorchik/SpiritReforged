@@ -12,9 +12,7 @@ namespace SpiritReforged.Content.Underground.Items.OreClubs;
 
 class GoldClubProj : BaseClubProj, IManualTrailProjectile
 {
-	private const int HIT_VFX_COOLDOWN_MAX = 30;
-
-	private int _hitVfxCooldown = 0;
+	private bool _inputHeld = false;
 
 	private static Color LightGold => new(255, 249, 181);
 	private static Color DarkGold => new(227, 197, 105);
@@ -26,12 +24,10 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 
 	public override float WindupTimeRatio => 0.8f;
 
-	public override float HoldAngle_Intial => (Direction * base.HoldAngle_Intial) - (Direction < 0 ? PiOver4 : 0);
-	public override float HoldAngle_Final => (Direction * -base.HoldAngle_Final) - (Direction < 0 ? PiOver4 : 0);
-	public override float SwingAngle_Max => (Direction * base.SwingAngle_Max * 1.1f) - (Direction < 0 ? PiOver4 : 0);
+	public override float HoldAngle_Intial => base.HoldAngle_Intial * 1.5f;
+	public override float HoldAngle_Final => (Direction * base.HoldAngle_Final) - (Direction < 0 ? PiOver4 / 2 : 0);
+	public override float SwingAngle_Max => (Direction * base.SwingAngle_Max * 1.1f) - (Direction < 0 ? PiOver2 : 0);
 	public override float LingerTimeRatio => 1.5f;
-
-	public override void SafeAI() => _hitVfxCooldown = (int)Max(_hitVfxCooldown - 1, 0);
 
 	public void DoTrailCreation(TrailManager tM)
 	{
@@ -57,6 +53,29 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 
 	public override void OnSwingStart() => TrailManager.ManualTrailSpawn(Projectile);
 
+	internal override float ChargedScaleInterpolate(float progress) => (Direction == 1) ? base.ChargedScaleInterpolate(progress) : 1;
+
+	internal override float ChargedRotationInterpolate(float progress) => (Direction == 1) ? base.ChargedRotationInterpolate(progress) : Lerp(WrapAngle(BaseRotation), WrapAngle(HoldAngle_Final), 0.1f);
+
+	public override void Swinging(Player owner)
+	{
+		base.Swinging(owner);
+
+		if (owner.controlUseItem && GetSwingProgress < SwingShrinkThreshold)
+			_inputHeld = true;
+
+		if(GetSwingProgress > SwingShrinkThreshold && Direction == 1 && _inputHeld)
+		{
+			SetAiState(AiStates.CHARGING);
+			Direction = -1;
+			ResetData();
+			Projectile.ResetLocalNPCHitImmunity();
+			TrailManager.TryTrailKill(Projectile);
+
+			return;
+		}
+	}
+
 	public override void OnSmash(Vector2 position)
 	{
 		TrailManager.TryTrailKill(Projectile);
@@ -70,7 +89,7 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 			if (Projectile.direction > 0)
 				angle = -angle + Pi;
 
-			DoShockwaveCircle(Vector2.Lerp(Projectile.Center, Main.player[Projectile.owner].Center, 0.5f), 380, angle, 0.4f);
+			DoShockwaveCircle(Vector2.Lerp(Projectile.Center, Owner.Center, 0.5f), 380, angle, 0.4f);
 		}
 
 		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 240, PiOver2, 0.4f);
@@ -87,22 +106,41 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 		float shrinkProgress = (lingerProgress - shrinkThreshold) / (1 - shrinkThreshold);
 		shrinkProgress = Clamp(shrinkProgress, 0, 1);
 
-		Projectile.scale = Lerp(1, 0, EaseCircularOut.Ease(shrinkProgress));
+		if (Owner.controlUseItem && lingerProgress < shrinkThreshold)
+			_inputHeld = true;
 
-		if (_lingerTimer <= 0)
-			Projectile.Kill();
+		if (_inputHeld && lingerProgress >= shrinkThreshold && Direction == 1)
+		{
+			SetAiState(AiStates.CHARGING);
+			Direction = -1;
+			ResetData();
+			Projectile.ResetLocalNPCHitImmunity();
+
+			return;
+		}
+		else
+		{
+			Projectile.scale = Lerp(1, 0, EaseCircularOut.Ease(shrinkProgress));
+
+			if (_lingerTimer <= 0)
+				Projectile.Kill();
+		}
 
 		BaseRotation = Lerp(BaseRotation, SwingAngle_Max, EaseQuadIn.Ease(lingerProgress) / 5f);
 	}
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
-		if (!Main.dedServ && _hitVfxCooldown == 0)
+		if (Direction < 0 && target.knockBackResist > 0)
 		{
-			_hitVfxCooldown = HIT_VFX_COOLDOWN_MAX / 6;
-			if (FullCharge)
-				_hitVfxCooldown /= 2;
+			if (target.gravity != 0)
+				target.velocity.Y = -Projectile.knockBack * 0.75f;
 
+			target.velocity.Y -= Projectile.knockBack * target.knockBackResist * 0.25f;
+		}
+
+		if (!Main.dedServ)
+		{
 			var direction = -Vector2.UnitY.RotatedByRandom(Pi / 8);
 
 			var position = Vector2.Lerp(Projectile.Center, target.Center, 0.75f);

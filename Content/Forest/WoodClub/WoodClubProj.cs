@@ -47,7 +47,7 @@ class WoodClubProj : BaseClubProj, IManualTrailProjectile
 			if (Projectile.direction > 0)
 				angle = -angle + MathHelper.Pi;
 
-			DoShockwaveCircle(Vector2.Lerp(Projectile.Center, Main.player[Projectile.owner].Center, 0.5f), 280, angle, 0.4f);
+			DoShockwaveCircle(Vector2.Lerp(Projectile.Center, Owner.Center, 0.5f), 280, angle, 0.4f);
 		}
 
 		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 180, MathHelper.PiOver2, 0.4f);
@@ -55,9 +55,8 @@ class WoodClubProj : BaseClubProj, IManualTrailProjectile
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
-		Player owner = Main.player[Projectile.owner];
 		var basePosition = Vector2.Lerp(Projectile.Center, target.Center, 0.6f);
-		Vector2 directionUnit = basePosition.DirectionFrom(owner.MountedCenter);
+		Vector2 directionUnit = basePosition.DirectionFrom(Owner.MountedCenter);
 
 		int numParticles = FullCharge ? 12 : 8;
 		for(int i = 0; i < numParticles; i++)

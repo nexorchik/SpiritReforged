@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework.Graphics;
+using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Content.Forest.WoodClub;
@@ -26,6 +27,16 @@ public abstract partial class BaseClubProj : ModProjectile
 		Projectile.netUpdate = true;
 	}
 
+	public void ResetData()
+	{
+		_lingerTimer = LingerTime;
+		_swingTimer = 0;
+		_windupTimer = 0;
+		_flickerTime = 0;
+		_hasFlickered = false;
+		Charge = 0;
+	}
+
 	public void SetStats(int chargeTime, int swingTime, float damageScaling, float knockbackScaling)
 	{
 		ChargeTime = chargeTime;
@@ -33,10 +44,7 @@ public abstract partial class BaseClubProj : ModProjectile
 		DamageScaling = damageScaling;
 		KnockbackScaling = knockbackScaling;
 
-		_lingerTimer = LingerTime;
-		_swingTimer = 0;
-		_windupTimer = 0;
-		_flickerTime = 0;
+		ResetData();
 	}
 
 	private void TranslateRotation(Player owner, out float clubRotation, out float armRotation)
@@ -125,4 +133,6 @@ public abstract partial class BaseClubProj : ModProjectile
 	public float AngleRange => SwingAngle_Max - HoldAngle_Final;
 
 	public bool FullCharge => Charge == 1;
+
+	public Player Owner => Main.player[Projectile.owner];
 }
