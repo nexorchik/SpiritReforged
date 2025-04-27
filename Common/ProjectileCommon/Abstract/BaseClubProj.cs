@@ -151,9 +151,8 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 	public sealed override bool PreDraw(ref Color lightColor)
 	{
 		Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-		Player owner = Main.player[Projectile.owner];
-		Vector2 handPos = owner.GetFrontHandPosition(owner.compositeFrontArm.stretch, owner.compositeFrontArm.rotation);
-		Vector2 drawPos = handPos - Main.screenPosition + Vector2.UnitY * owner.gfxOffY;
+		Vector2 handPos = Owner.GetFrontHandPosition(Owner.compositeFrontArm.stretch, Owner.compositeFrontArm.rotation);
+		Vector2 drawPos = handPos - Main.screenPosition + Vector2.UnitY * Owner.gfxOffY;
 		Color drawColor = Projectile.GetAlpha(lightColor);
 
 		Rectangle topFrame = texture.Frame(1, Main.projFrames[Type]);

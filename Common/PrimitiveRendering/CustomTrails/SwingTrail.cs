@@ -5,16 +5,16 @@ using static SpiritReforged.Common.Easing.EaseFunction;
 
 namespace SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 
-public class SwingTrail(Projectile Projectile, Color LightColor, Color DarkColor, float Intensity, float Radians, float TrailLength, float Rotation, Vector2 Dist, Vector2 Width, EaseFunction DistanceEasing, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile, float dissolveThreshold = 0.9f) : BaseTrail(Projectile, layer)
+public class SwingTrail(Projectile Projectile, Color LightColor, Color DarkColor, float Intensity, float Radians, float TrailLength, float Rotation, Vector2 Dist, Vector2 Width, EaseFunction DistanceEasing, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile, float dissolveThreshold = 0.9f, bool useLightColor = true) : BaseTrail(Projectile, layer)
 {
-	public SwingTrail(Projectile Projectile, Color LightColor, Color DarkColor, float Intensity, float Radians, float TrailLength, float Rotation, float Dist, float Width, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile, float dissolveThreshold = 0.9f) 
-		: this(Projectile, LightColor, DarkColor, Intensity, Radians, TrailLength, Rotation, new Vector2(Dist), new Vector2(Width), Linear, SwingProgress, ShaderParams, layer, dissolveThreshold) { }
+	public SwingTrail(Projectile Projectile, Color LightColor, Color DarkColor, float Intensity, float Radians, float TrailLength, float Rotation, float Dist, float Width, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile, float dissolveThreshold = 0.9f, bool useLightColor = true) 
+		: this(Projectile, LightColor, DarkColor, Intensity, Radians, TrailLength, Rotation, new Vector2(Dist), new Vector2(Width), Linear, SwingProgress, ShaderParams, layer, dissolveThreshold, useLightColor) { }
 
-	public SwingTrail(Projectile Projectile, Color Color, float Intensity, float Radians, float TrailLength, float Rotation, Vector2 Dist, Vector2 Width, EaseFunction DistanceEasing, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile, float dissolveThreshold = 0.9f)
-	: this(Projectile, Color, Color, Intensity, Radians, TrailLength, Rotation, Dist, Width, DistanceEasing, SwingProgress, ShaderParams, layer, dissolveThreshold) { }
+	public SwingTrail(Projectile Projectile, Color Color, float Intensity, float Radians, float TrailLength, float Rotation, Vector2 Dist, Vector2 Width, EaseFunction DistanceEasing, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile, float dissolveThreshold = 0.9f, bool useLightColor = true)
+	: this(Projectile, Color, Color, Intensity, Radians, TrailLength, Rotation, Dist, Width, DistanceEasing, SwingProgress, ShaderParams, layer, dissolveThreshold, useLightColor) { }
 
-	public SwingTrail(Projectile Projectile, Color Color, float Intensity, float Radians, float TrailLength, float Rotation, float Dist, float Width, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile, float dissolveThreshold = 0.9f)
-	: this(Projectile, Color, Color, Intensity, Radians, TrailLength, Rotation, new Vector2(Dist), new Vector2(Width), Linear, SwingProgress, ShaderParams, layer, dissolveThreshold) { }
+	public SwingTrail(Projectile Projectile, Color Color, float Intensity, float Radians, float TrailLength, float Rotation, float Dist, float Width, Func<Projectile, float> SwingProgress, Func<SwingTrail, Effect> ShaderParams, TrailLayer layer = TrailLayer.UnderProjectile, float dissolveThreshold = 0.9f, bool useLightColor = true)
+	: this(Projectile, Color, Color, Intensity, Radians, TrailLength, Rotation, new Vector2(Dist), new Vector2(Width), Linear, SwingProgress, ShaderParams, layer, dissolveThreshold, useLightColor) { }
 
 	public Color LightColor { get; } = LightColor;
 	public Color DarkColor { get; } = DarkColor;
@@ -71,7 +71,6 @@ public class SwingTrail(Projectile Projectile, Color LightColor, Color DarkColor
 
 		float minDist = Dist.X;
 		float maxDist = Dist.Y;
-		bool useLightColor = true;
 		float opacityMod = EaseCubicIn.Ease(DissolveProgress);
 		float minWidth = Width.X;
 		float maxWidth = Width.Y;
