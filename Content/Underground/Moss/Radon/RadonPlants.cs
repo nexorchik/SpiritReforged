@@ -48,12 +48,18 @@ public class RadonPlants : OganessonPlants
 
 	public override IEnumerable<Item> GetItemDrops(int i, int j)
 	{
-		int heldType = Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(), 16, 16)].HeldItem.type;
+		int type = Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(), 16, 16)].HeldItem.type;
+		int drop = ModContent.ItemType<RadonMossItem>();
 
-		if (heldType is ItemID.PaintScraper or ItemID.SpectrePaintScraper)
+		if (type == ModContent.ItemType<LandscapingShears>())
+		{
+			if (Main.rand.NextBool(2))
+				yield return new Item(drop);
+		}
+		else if (type is ItemID.PaintScraper or ItemID.SpectrePaintScraper)
 		{
 			if (Main.rand.NextBool(9))
-				yield return new Item(ModContent.ItemType<RadonMossItem>());
+				yield return new Item(drop);
 		}
 	}
 

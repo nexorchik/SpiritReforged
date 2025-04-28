@@ -1,4 +1,4 @@
-﻿namespace SpiritReforged.Common.TileCommon.TileTag;
+﻿/*namespace SpiritReforged.Common.TileCommon.TileTag;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class TileTagAttribute(params TileTags[] tags) : Attribute
@@ -13,4 +13,4 @@ public enum TileTags
 	VineSway,
 	ChandelierSway,
 	HarvestableHerb
-}
+}*/

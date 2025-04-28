@@ -17,7 +17,7 @@ public class OganessonMoss : GrassTile
 		Main.tileLighted[Type] = true;
 		Main.tileMoss[Type] = true;
 
-		RegisterItemDrop(ItemID.StoneBlock);
+		RegisterItemDrop(ModContent.ItemType<OganessonMossItem>());
 		AddMapEntry(new Color(220, 220, 220));
 		this.Merge(TileID.Stone, TileID.GrayBrick);
 

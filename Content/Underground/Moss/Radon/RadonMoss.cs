@@ -16,7 +16,7 @@ public class RadonMoss : GrassTile
 
 		Main.tileLighted[Type] = true;
 
-		RegisterItemDrop(ItemID.StoneBlock);
+		RegisterItemDrop(ModContent.ItemType<RadonMossItem>());
 		AddMapEntry(new Color(252, 248, 3));
 		this.Merge(TileID.Stone, TileID.GrayBrick);
 
