@@ -1,6 +1,7 @@
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.CheckItemUse;
 using SpiritReforged.Content.Dusts;
+using SpiritReforged.Content.Underground.Moss.Radon;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Moss.Oganesson;
@@ -49,19 +50,49 @@ public class OganessonPlants : ModTile, ICheckItemUse
 		HitSound = SoundID.Grass;
 	}
 
+	public override void NumDust(int i, int j, bool fail, ref int num) => num = Main.rand.Next(1, 3);
+	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.3f, 0.3f, 0.3f);
+
+	public virtual bool? CheckItemUse(int type, int i, int j)
+	{
+		if (type is ItemID.PaintScraper or ItemID.SpectrePaintScraper || type == ModContent.ItemType<LandscapingShears>())
+		{
+			WorldGen.KillTile(i, j);
+			return true;
+		}
+
+		return null;
+	}
+
 	public override IEnumerable<Item> GetItemDrops(int i, int j)
 	{
 		int heldType = Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(), 16, 16)].HeldItem.type;
+		int drop = ModContent.ItemType<OganessonMossItem>();
 
-		if (heldType is ItemID.PaintScraper or ItemID.SpectrePaintScraper)
+		if (heldType == ModContent.ItemType<LandscapingShears>())
+		{
+			if (Main.rand.NextBool(2))
+				yield return new Item(drop);
+		}
+		else if (heldType is ItemID.PaintScraper or ItemID.SpectrePaintScraper)
 		{
 			if (Main.rand.NextBool(9))
-				yield return new Item(ModContent.ItemType<OganessonMossItem>());
+				yield return new Item(drop);
 		}
 	}
 
-	public override void NumDust(int i, int j, bool fail, ref int num) => num = Main.rand.Next(1, 3);
-	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.3f, 0.3f, 0.3f);
+	public override void MouseOver(int i, int j)
+	{
+		var p = Main.LocalPlayer;
+		int type = p.HeldItem.type;
+
+		if (type is ItemID.PaintScraper or ItemID.SpectrePaintScraper || type == ModContent.ItemType<LandscapingShears>())
+		{
+			p.cursorItemIconEnabled = true;
+			p.cursorItemIconID = ItemID.None;
+			p.noThrow = 2;
+		}
+	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
@@ -81,16 +112,5 @@ public class OganessonPlants : ModTile, ICheckItemUse
 
 		spriteBatch.Draw(texture, position, source, Color.White, 0, Vector2.Zero, 1, default, 0);
 		return false;
-	}
-
-	public virtual bool? CheckItemUse(int type, int i, int j)
-	{
-		if (type is ItemID.PaintScraper or ItemID.SpectrePaintScraper)
-		{
-			WorldGen.KillTile(i, j);
-			return true;
-		}
-
-		return null;
 	}
 }

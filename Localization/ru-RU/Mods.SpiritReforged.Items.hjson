@@ -1576,7 +1576,7 @@ RadonMossItem: {
 
 OganessonMossItem: {
 	// DisplayName: Oganesson Moss
-	// Tooltip: A sight to dwell upon and never forget
+	// Tooltip: "{$ItemTooltip.XenonMoss}"
 }
 
 RadonMossBrickItem: {
@@ -1689,4 +1689,9 @@ OganessonBobber: {
 RadonBobber: {
 	// DisplayName: Radon Bobber
 	// Tooltip: "{$ItemTooltip.FishingBobberGlowingArgon}"
+}
+
+LandscapingShears: {
+	// DisplayName: Landscaping Shears
+	// Tooltip: Increases yield when harvesting foliage
 }

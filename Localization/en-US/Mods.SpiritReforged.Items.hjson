@@ -1698,3 +1698,8 @@ RadonBobber: {
 	DisplayName: Radon Bobber
 	Tooltip: "{$ItemTooltip.FishingBobberGlowingArgon}"
 }
+
+LandscapingShears: {
+	DisplayName: Landscaping Shears
+	Tooltip: Increases yield when harvesting foliage
+}
