@@ -169,7 +169,7 @@ public class PotionVats : PotTile, ICutAttempt
 			float distance = player.DistanceSQ(origin) / (size * size);
 
 			if (distance < 1)
-				player.velocity = player.DirectionFrom(origin) * (1f - distance) * 2.5f;
+				player.velocity = player.DirectionFrom(origin) * (1f - distance) * 8f;
 		}
 	}
 
@@ -185,11 +185,22 @@ public class PotionVats : PotTile, ICutAttempt
 
 		if (Entity(i, j, true) is VatSlot slot)
 		{
-			ParticleHandler.SpawnParticle(new PulseCircle(new Vector2(i, j).ToWorldCoordinates(24, 40), slot.GetColor() * .025f, .25f, 200, 15, null, false, .1f));
+			var color = slot.GetColor();
+
+			for (int p = 0; p < 12; p++)
+			{
+				float magnitude = Main.rand.NextFloat();
+				var velocity = Main.rand.NextVector2Unit() * magnitude * 3f;
+
+				ParticleHandler.SpawnParticle(new VaporParticle(new Vector2(i, j).ToWorldCoordinates(24, 40), velocity, color.Additive(110), 1f - magnitude + 1.5f, Main.rand.Next(300, 500))
+				{
+					Rotation = Main.rand.NextFloat()
+				});
+			}
 
 			for (int d = 0; d < 50; d++)
 			{
-				var dust = Dust.NewDustDirect(new Vector2(i, j) * 16, 48, 80, DustID.FoodPiece, 0, 0, 0, slot.GetColor().Additive(120), Main.rand.NextFloat(.75f, 1.5f));
+				var dust = Dust.NewDustDirect(new Vector2(i, j) * 16, 48, 80, DustID.FoodPiece, 0, 0, 0, color.Additive(120), Main.rand.NextFloat(.75f, 1.5f));
 				dust.fadeIn = 1f;
 			}
 		}
