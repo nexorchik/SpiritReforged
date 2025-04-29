@@ -1,7 +1,6 @@
 ﻿using SpiritReforged.Common.Particle;
 using static SpiritReforged.Common.Easing.EaseFunction;
 using static Microsoft.Xna.Framework.MathHelper;
-using SpiritMod.Utilities;
 using SpiritReforged.Common.Visuals;
 
 namespace SpiritReforged.Content.Particles;
