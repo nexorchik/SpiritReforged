@@ -36,5 +36,5 @@ public class RadonMoss : GrassTile
 	}
 
 	protected virtual void GrowTiles(int i, int j) => TileExtensions.PlacePlant<RadonPlants>(i, j, Main.rand.Next(RadonPlants.StyleRange));
-	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.338f, 0.219f, 0.04f);
+	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.234f, 0.153f, 0.03f);
 }

@@ -26,5 +26,5 @@ public class RadonMossBrick : ModTile, IAutoloadTileItem
 		item.ResearchUnlockCount = 100;
 	}
 
-	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.45f, 0.425f, 0.05f);
+	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.338f, 0.219f, 0.04f);
 }
