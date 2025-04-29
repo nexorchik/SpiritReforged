@@ -211,7 +211,7 @@ public class DunceCrab : ModNPC
 				int rev = reverse ? -1 : 1;
 				Surface = (int)(Side)((Surface + 1 * NPC.direction * rev) % 4);
 
-				_turnCooldown = 2;
+				_turnCooldown = 4;
 			}
 		}
 
@@ -328,21 +328,23 @@ public class DunceCrab : ModNPC
 		return 0;
 	}
 
+	/// <summary> <inheritdoc cref="ModNPC.SpawnNPC"/><para/>
+	/// Attempts to spawn this NPC on a ceiling. </summary>
 	public override int SpawnNPC(int tileX, int tileY)
 	{
-		int surface = 0;
-		int y = tileY;
+		int surface = (int)Side.Up;
+		Point spawn = new(tileX * 16, tileY * 16);
 
-		while (WorldGen.InWorld(tileX, y, 20) && !WorldGen.SolidOrSlopedTile(tileX, y - 2)) //Attempt to spawn on a ceiling
-			y--;
+		while (WorldGen.InWorld(tileX, tileY, 20) && !WorldGen.SolidTile(tileX, tileY - 2))
+			tileY--;
 
-		if (!WorldGen.PlayerLOS(tileX, y))
+		if (!WorldGen.PlayerLOS(tileX, tileY))
 		{
-			tileY = y;
+			spawn.Y = tileY * 16 - 8;
 			surface = (int)Side.Down;
 		}
 
-		return NPC.NewNPC(new EntitySource_SpawnNPC(), tileX * 16, tileY * 16, Type, ai1: surface);
+		return NPC.NewNPC(new EntitySource_SpawnNPC(), spawn.X, spawn.Y, Type, ai1: surface);
 	}
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
