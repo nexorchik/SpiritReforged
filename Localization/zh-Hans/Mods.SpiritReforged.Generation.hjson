@@ -10,6 +10,7 @@ SavannaObjects: 正在填充稀树平原
 Ecotones: 正在绘制生态区地图
 // Caves: Decorating caves
 // NeonMosses: Glowing moss
+// Pottery: Stashing pots
 
 Signs: {
 	Underground: {

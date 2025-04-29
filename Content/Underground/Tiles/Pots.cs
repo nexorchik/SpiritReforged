@@ -1,6 +1,7 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Underground.Tiles;
@@ -31,6 +32,21 @@ public class Pots : PotTile, ILootTile
 
 			return groups;
 		}
+	}
+
+	public override void AddObjectData()
+	{
+		const int row = 3;
+
+		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
+		TileObjectData.newTile.Origin = new(0, 1);
+		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, TileObjectData.newTile.Width, 0);
+		TileObjectData.newTile.StyleWrapLimit = row;
+		TileObjectData.newTile.RandomStyleRange = 9;
+		TileObjectData.newTile.StyleHorizontal = true;
+		TileObjectData.newTile.UsesCustomCanPlace = true;
+		TileObjectData.newTile.DrawYOffset = 2;
+		TileObjectData.addTile(Type);
 	}
 
 	public LootTable AddLoot(int objectStyle)
