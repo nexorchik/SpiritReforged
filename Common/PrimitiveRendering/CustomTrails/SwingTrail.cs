@@ -43,9 +43,9 @@ public class SwingTrail(Projectile projectile, SwingTrailParameters parameters, 
 
 	private Player Owner => Main.player[Projectile.owner];
 
-	private Vector2 _center;
-
 	private int Direction => Main.player[Projectile.owner].direction;
+
+	private Vector2 _center;
 
 	private int _timeLeft = TIMELEFT_MAX;
 
