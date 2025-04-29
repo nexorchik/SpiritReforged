@@ -26,7 +26,7 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 	public override float WindupTimeRatio => 0.8f;
 
 	public override float HoldAngle_Intial => base.HoldAngle_Intial * 1.5f;
-	public override float HoldAngle_Final => (Direction * -base.HoldAngle_Final / 2) - (Direction < 0 ? PiOver4 * 0.66f : 0);
+	public override float HoldAngle_Final => (Direction * -base.HoldAngle_Final / 3) - (Direction < 0 ? PiOver4 * 0.66f : 0);
 	public override float SwingAngle_Max => (Direction * base.SwingAngle_Max * 1.1f) - (Direction < 0 ? PiOver4 * 1.1f : 0);
 
 	public override float LingerTimeRatio => 1.5f;

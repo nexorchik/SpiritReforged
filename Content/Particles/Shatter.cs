@@ -1,6 +1,8 @@
 ﻿using SpiritReforged.Common.Particle;
 using static SpiritReforged.Common.Easing.EaseFunction;
 using static Microsoft.Xna.Framework.MathHelper;
+using SpiritMod.Utilities;
+using SpiritReforged.Common.Visuals;
 
 namespace SpiritReforged.Content.Particles;
 
@@ -32,14 +34,13 @@ public class Shatter : Particle
 		Texture2D gradient = AssetLoader.LoadedTextures["Bloom"].Value;
 		spriteBatch.Draw(gradient, Position - Main.screenPosition, null, _baseColor.MultiplyRGB(lightColor) * EaseCubicIn.Ease(1 - Progress) * .75f, 0, gradient.Size() / 2, Scale, SpriteEffects.None, 0);
 
-		spriteBatch.Draw(Texture, Position - Main.screenPosition - Vector2.UnitX, null, lightColor.MultiplyRGB(new Color(255, 0, 0)), Rotation, Texture.Size() / 2, Scale, SpriteEffects.None, 0);
-		spriteBatch.Draw(Texture, Position - Main.screenPosition, null, lightColor.MultiplyRGB(new Color(0, 255, 0)), Rotation, Texture.Size() / 2, Scale, SpriteEffects.None, 0);
-		spriteBatch.Draw(Texture, Position - Main.screenPosition + Vector2.UnitX, null, lightColor.MultiplyRGB(new Color(0, 0, 255)), Rotation, Texture.Size() / 2, Scale, SpriteEffects.None, 0);
+		DrawAberration.DrawChromaticAberration(Vector2.UnitX, 1, delegate (Vector2 offset, Color colorMod)
+		{
+			spriteBatch.Draw(Texture, Position - Main.screenPosition + offset, null, lightColor.MultiplyRGBA(colorMod), Rotation, Texture.Size() / 2, Scale, SpriteEffects.None, 0);
 
-		float opacity = 0.3f;
-		float scale = Lerp(1.25f, 1f, Progress);
-		spriteBatch.Draw(Texture, Position - Main.screenPosition - Vector2.UnitX, null, lightColor.MultiplyRGB(new Color(255, 0, 0)) * opacity, Rotation + Pi, Texture.Size() / 2, Scale * scale, SpriteEffects.None, 0);
-		spriteBatch.Draw(Texture, Position - Main.screenPosition, null, lightColor.MultiplyRGB(new Color(0, 255, 0)) * opacity, Rotation + Pi, Texture.Size() / 2, Scale * scale, SpriteEffects.None, 0);
-		spriteBatch.Draw(Texture, Position - Main.screenPosition + Vector2.UnitX, null, lightColor.MultiplyRGB(new Color(0, 0, 255)) * opacity, Rotation + Pi, Texture.Size() / 2, Scale * scale, SpriteEffects.None, 0);
+			float opacity = 0.3f;
+			float scale = Lerp(1.25f, 1f, Progress);
+			spriteBatch.Draw(Texture, Position - Main.screenPosition + offset, null, lightColor.MultiplyRGBA(colorMod) * opacity, Rotation + Pi, Texture.Size() / 2, Scale * scale, SpriteEffects.None, 0);
+		});
 	}
 }
