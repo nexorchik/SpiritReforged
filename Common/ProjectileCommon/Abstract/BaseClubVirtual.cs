@@ -46,6 +46,10 @@ public abstract partial class BaseClubProj : ModProjectile
 	/// </summary>
 	public virtual float SwingShrinkThreshold => 0.5f;
 
+	/// <summary>
+	/// A flat multiplier to how fast the swing completes, ie dividing the effective "SwingTime" <br />
+	/// Returns 1f by default, and 1.2f if the swing is fully charged, meaning it completes the swing 20% faster when fully charged.
+	/// </summary>
 	public virtual float SwingSpeedMult => Charge == 1 ? 1.2f : 1f;
 
 	public virtual void Charging(Player owner)
