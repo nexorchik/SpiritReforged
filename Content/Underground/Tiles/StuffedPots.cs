@@ -1,14 +1,16 @@
 using RubbleAutoloader;
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.UI;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
-public class StuffedPots : PotTile
+public class StuffedPots : PotTile, ILootTile
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
 	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
@@ -52,8 +54,19 @@ public class StuffedPots : PotTile
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
+		var spawn = new Vector2(i, j).ToWorldCoordinates(16, 16);
 		if (Main.netMode != NetmodeID.MultiplayerClient && !Autoloader.IsRubble(Type))
+		{
+			var source = new EntitySource_TileBreak(i, j);
+			Projectile.NewProjectile(source, new Vector2(i, j).ToWorldCoordinates(16, 16), Vector2.UnitY * -4f, ProjectileID.CoinPortal, 0, 0);
+
+			ItemMethods.SplitCoins(Main.rand.Next(5000, 7000), delegate (int type, int stack)
+			{
+				Item.NewItem(new EntitySource_TileBreak(i, j), spawn, new Item(type, stack), noGrabDelay: true);
+			});
+
 			NPC.NewNPCDirect(new EntitySource_TileBreak(i, j), new Vector2(i, j).ToWorldCoordinates(16, 16), NPCID.SkeletonMerchant);
+		}
 
 		base.KillMultiTile(i, j, frameX, frameY);
 	}
@@ -80,5 +93,14 @@ public class StuffedPots : PotTile
 		{
 			Gore.NewGore(source, new Vector2(i, j) * 16, Vector2.UnitY * -2f, Mod.Find<ModGore>("Stuffed1").Type);
 		}
+	}
+
+	public LootTable AddLoot(int objectStyle)
+	{
+		var loot = new LootTable();
+		loot.Add(ItemDropRule.Common(ItemID.Glowstick, 1, 10, 25));
+		loot.Add(ItemDropRule.Common(ItemID.StrangeBrew, 1, 2, 8));
+
+		return loot;
 	}
 }

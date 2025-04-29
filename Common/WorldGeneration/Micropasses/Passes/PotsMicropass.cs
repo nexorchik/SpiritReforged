@@ -54,11 +54,11 @@ internal class PotsMicropass : Micropass
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Caves");
 
 		Generate(CreateOrnate, Main.maxTilesX / WorldGen.WorldSizeSmallX * 10, out _);
-		Generate(CreatePotion, Main.maxTilesX / WorldGen.WorldSizeSmallX * 10, out _);
-		Generate(CreateScrying, Main.maxTilesX / WorldGen.WorldSizeSmallX * 9, out _);
-        Generate(CreateStuffed, Main.maxTilesX / WorldGen.WorldSizeSmallX * 9, out _);
-		Generate(CreateWorm, Main.maxTilesX / WorldGen.WorldSizeSmallX * 24, out _);
-		Generate(CreatePlatter, Main.maxTilesX / WorldGen.WorldSizeSmallX * 28, out _);
+		Generate(CreatePotion, Main.maxTilesX / WorldGen.WorldSizeSmallX * 46, out _);
+		Generate(CreateScrying, Main.maxTilesX / WorldGen.WorldSizeSmallX * 20, out _);
+        Generate(CreateStuffed, Main.maxTilesX / WorldGen.WorldSizeSmallX * 12, out _);
+		Generate(CreateWorm, Main.maxTilesX / WorldGen.WorldSizeSmallX * 18, out _);
+		Generate(CreatePlatter, Main.maxTilesX / WorldGen.WorldSizeSmallX * 24, out _);
 		Generate(CreateAether, Main.maxTilesX / WorldGen.WorldSizeSmallX * 3, out _);
 		Generate(CreateUpsideDown, Main.maxTilesX / WorldGen.WorldSizeSmallX * 4, out _);
 
@@ -198,6 +198,9 @@ internal class PotsMicropass : Micropass
 		int tile = Main.tile[x, y + 1].TileType;
 		int wall = Main.tile[x, y].WallType;
 
+		if (Main.tile[x, y].LiquidType is LiquidID.Shimmer)
+			return false; //Never generate in shimmer
+
 		int style = -1;
 
 		if (wall is WallID.Dirt or WallID.GrassUnsafe || tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite && y > Main.worldSurface)
@@ -276,9 +279,5 @@ internal class PotsMicropass : Micropass
 	}
 
 	/// <summary> Checks whether the below tile is contained in <see cref="CommonBlacklist"/>. </summary>
-	private static bool CommonSurface(int x, int y)
-	{
-		var t = Main.tile[x, y + 1];
-		return !CommonBlacklist.Contains(t.TileType);
-	}
+	private static bool CommonSurface(int x, int y) => !CommonBlacklist.Contains(Main.tile[x, y + 1].TileType) && Main.tile[x, y].LiquidType != LiquidID.Shimmer;
 }

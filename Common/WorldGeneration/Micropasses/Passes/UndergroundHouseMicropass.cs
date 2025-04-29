@@ -49,7 +49,7 @@ internal class UndergroundHouseMicropass : ModSystem
 		{
 			int y = room.Height - 1 + room.Y;
 
-			if (!skipFlags.HasFlag(AddedHouseFlags.Sign) && WorldGen.genRand.NextBool(1) && PlaceDecorInRoom(room, room.Y + 1, TileID.Signs))
+			if (!skipFlags.HasFlag(AddedHouseFlags.Sign) && WorldGen.genRand.NextBool(5) && PlaceDecorInRoom(room, room.Y + 1, TileID.Signs))
 			{
 				hasPlaced = true;
 				skipFlags |= AddedHouseFlags.Sign;

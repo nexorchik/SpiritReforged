@@ -4,10 +4,12 @@ using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
+using SpiritReforged.Common.ItemCommon;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
-public class OrnatePots : PotTile
+public class OrnatePots : PotTile, ILootTile
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
 
@@ -42,10 +44,19 @@ public class OrnatePots : PotTile
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
+		var spawn = new Vector2(i, j).ToWorldCoordinates(16, 16);
 		if (!Autoloader.IsRubble(Type) && Main.netMode != NetmodeID.MultiplayerClient)
 		{
 			var source = new EntitySource_TileBreak(i, j);
 			Projectile.NewProjectile(source, new Vector2(i, j).ToWorldCoordinates(16, 16), Vector2.UnitY * -4f, ProjectileID.CoinPortal, 0, 0);
+
+			ItemMethods.SplitCoins(Main.rand.Next(10000, 20000), delegate (int type, int stack)
+			{
+				Item.NewItem(new EntitySource_TileBreak(i, j), spawn, new Item(type, stack), noGrabDelay: true);
+			});
+
+			var p = Main.player[Player.FindClosest(spawn, 0, 0)];
+			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)spawn.X - 16, (int)spawn.Y - 16, 32, 32), p);
 		}
 
 		base.KillMultiTile(i, j, frameX, frameY);
@@ -61,6 +72,15 @@ public class OrnatePots : PotTile
 			int goreType = Mod.Find<ModGore>("PotGold" + g).Type;
 			Gore.NewGore(source, position, Vector2.Zero, goreType);
 		}
+	}
+
+	public LootTable AddLoot(int objectStyle)
+	{
+		var loot = new LootTable();
+		loot.Add(ItemDropRule.Common(ItemID.LuckPotion, 2, 1, 2));
+		loot.Add(ItemDropRule.Common(ItemID.HealingPotion, 1, 1, 3));
+
+		return loot;
 	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)

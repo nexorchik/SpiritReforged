@@ -7,7 +7,9 @@ public class WheezerCloud : ModProjectile
 {
 	public const int Size = 40;
 	public const int TimeLeftMax = 280;
+
 	public float Progress => Projectile.timeLeft / (float)TimeLeftMax;
+	public bool DealDamage => Projectile.velocity.Length() > .5f;
 
 	public override void SetStaticDefaults() => Main.projFrames[Type] = 8;
 	public override void SetDefaults()
@@ -36,12 +38,12 @@ public class WheezerCloud : ModProjectile
 		foreach (var p in Main.ActivePlayers)
 		{
 			if (area.Contains(p.Center.ToPoint()))
-				p.AddBuff(BuffID.Poisoned, 300);
+				p.AddBuff(BuffID.Poisoned, 600);
 		}
 	}
 
-	public override bool CanHitPlayer(Player target) => false;
-	public override bool? CanHitNPC(NPC target) => false;
+	public override bool CanHitPlayer(Player target) => DealDamage;
+	public override bool? CanHitNPC(NPC target) => DealDamage ? null : false;
 
 	public override bool PreDraw(ref Color lightColor)
 	{
