@@ -64,13 +64,14 @@ internal class RecordPlayer : ModPlayer
 	/// <summary> The list of entries newly discovered by the player. Not saved. </summary>
 	private readonly HashSet<string> _newAndShiny = [];
 
-	//public void AddNew(string name) => _newAndShiny.Add(name);
 	public bool IsNew(string name) => _newAndShiny.Contains(name);
 	public bool RemoveNew(string name) => _newAndShiny.Remove(name);
 
 	public void Validate(string name)
 	{
-		_newAndShiny.Add(name);
+		if (!IsValidated(name))
+			_newAndShiny.Add(name);
+
 		_validated.Add(name);
 	}
 
