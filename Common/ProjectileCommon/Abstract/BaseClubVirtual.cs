@@ -96,7 +96,7 @@ public abstract partial class BaseClubProj : ModProjectile
 		//If the club is touching a tile and isn't currently meant to phase through tiles, do the smash
 		if (validTile && CanCollide(swingProgress))
 		{
-			SetAiState(AiStates.POST_SMASH);
+			SetAIState(AIStates.POST_SMASH);
 			OnSmash(Projectile.Center);
 			if (!Main.dedServ)
 			{
@@ -172,7 +172,7 @@ public abstract partial class BaseClubProj : ModProjectile
 	/// <returns></returns>
 	internal virtual bool CanCollide(float progress) => progress > SwingPhaseThreshold && progress < SwingShrinkThreshold;
 
-	internal virtual bool AllowUseTurn => CheckAiState(AiStates.CHARGING);
+	internal virtual bool AllowUseTurn => CheckAIState(AIStates.CHARGING);
 	internal virtual bool AllowRelease => true;
 
 	public virtual void SafeSetStaticDefaults() { }

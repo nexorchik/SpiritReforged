@@ -8,19 +8,13 @@ public static class DrawAberration
 	{
 		for (int i = -1; i <= 1; i++)
 		{
-			Color aberrationColor = Color.White;
-			switch (i)
+			var aberrationColor = i switch
 			{
-				case -1:
-					aberrationColor = new Color(255, 0, 0, 0);
-					break;
-				case 0:
-					aberrationColor = new Color(0, 255, 0, 0);
-					break;
-				case 1:
-					aberrationColor = new Color(0, 0, 255, 0);
-					break;
-			}
+				-1 => new Color(255, 0, 0, 0),
+				0 => new Color(0, 255, 0, 0),
+				1 => new Color(0, 0, 255, 0),
+				_ => Color.White,
+			};
 
 			Vector2 offset = direction.RotatedBy(MathHelper.PiOver2) * i;
 			offset *= strength;

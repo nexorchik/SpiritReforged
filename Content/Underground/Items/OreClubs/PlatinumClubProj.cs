@@ -14,15 +14,15 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 {
 	private bool _inputHeld = true;
 
-	public PlatinumClubProj() : base(new Vector2(84)) { }
-
 	public override float HoldAngle_Intial => Pi * 2.4f;
 	public override float HoldAngle_Final => -base.HoldAngle_Final / 2;
 	public override float WindupTimeRatio => 0.6f;
 	public override float PullbackWindupRatio => 0.7f;
 	public override float LingerTimeRatio => 0.7f;
 
-	public override bool? CanDamage() => (GetWindupProgress < 0.5f || CheckAiState(AiStates.SWINGING)) ? null : false;
+	public PlatinumClubProj() : base(new Vector2(84)) { }
+
+	public override bool? CanDamage() => (GetWindupProgress < 0.5f || CheckAIState(AIStates.SWINGING)) ? null : false;
 
 	public void DoTrailCreation(TrailManager tM)
 	{
@@ -30,14 +30,14 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 		float trailWidth = 26;
 		static float windupSwingProgress(Projectile proj) => (proj.ModProjectile is BaseClubProj club) ? EaseCubicInOut.Ease(EaseCircularOut.Ease(Lerp(club.GetWindupProgress, 0, club.PullbackWindupRatio))) : 0;
 
-		Func<Projectile, float> uSwingFunc = CheckAiState(AiStates.SWINGING) ? GetSwingProgressStatic : windupSwingProgress;
-		int swingDirection = CheckAiState(AiStates.SWINGING) ? 1 : -1;
+		Func<Projectile, float> uSwingFunc = CheckAIState(AIStates.SWINGING) ? GetSwingProgressStatic : windupSwingProgress;
+		int swingDirection = CheckAIState(AIStates.SWINGING) ? 1 : -1;
 		float uRange = AngleRange;
 		float uRot = HoldAngle_Final - PiOver4 / 2;
 		float dissolveThreshold = 0.9f;
 		float uLength = 0.8f;
 
-		if (CheckAiState(AiStates.CHARGING))
+		if (CheckAIState(AIStates.CHARGING))
 		{
 			trailWidth *= 0.8f;
 			trailDist *= 0.7f;
@@ -54,13 +54,22 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 			uRange *= 1.1f;
 		}
 
-		tM.CreateCustomTrail(new SwingTrail(Projectile, new Color(246, 216, 235, 160), new Color(178, 188, 220), 2.5f, swingDirection * uRange, uLength, uRot, trailDist, trailWidth, uSwingFunc, s => SwingTrail.NoiseSwingShaderParams(s, "FlameTrail", new Vector2(3f, 0.25f)), TrailLayer.UnderProjectile, dissolveThreshold));
-		tM.CreateCustomTrail(new SwingTrail(Projectile, new Color(246, 216, 235, 160), new Color(178, 188, 220), 2.5f, swingDirection * uRange, uLength, uRot, trailDist, trailWidth, uSwingFunc, s => SwingTrail.NoiseSwingShaderParams(s, "supPerlin", new Vector2(1.5f, 1.25f)), TrailLayer.UnderProjectile, dissolveThreshold));
+		SwingTrailParameters parameters = new(swingDirection * uRange, uRot, trailDist, trailWidth)
+		{
+			Color = new Color(246, 216, 235, 160),
+			SecondaryColor = new Color(178, 188, 220),
+			TrailLength = uLength,
+			Intensity = 2.5f,
+			DissolveThreshold = dissolveThreshold
+		};
+
+		tM.CreateCustomTrail(new SwingTrail(Projectile, parameters, uSwingFunc, s => SwingTrail.NoiseSwingShaderParams(s, "FlameTrail", new Vector2(3f, 0.25f)), TrailLayer.UnderProjectile));
+		tM.CreateCustomTrail(new SwingTrail(Projectile, parameters, uSwingFunc, s => SwingTrail.NoiseSwingShaderParams(s, "supPerlin", new Vector2(1.5f, 1.25f)), TrailLayer.UnderProjectile));
 	}
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
-		if (CheckAiState(AiStates.CHARGING))
+		if (CheckAIState(AIStates.CHARGING))
 		{
 			if (target.knockBackResist > 0 && target.gravity != 0)
 				target.velocity.Y = -Projectile.knockBack * 0.75f;
@@ -76,7 +85,7 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 			var position = Vector2.Lerp(Projectile.Center, target.Center, 0.75f);
 			SoundEngine.PlaySound(SoundID.Item70.WithVolumeScale(0.5f), position);
 
-			if (CheckAiState(AiStates.CHARGING))
+			if (CheckAIState(AIStates.CHARGING))
 			{
 				for (int i = 0; i < 2; i++)
 				{
@@ -104,7 +113,7 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 				}
 			}
 
-			if(CheckAiState(AiStates.SWINGING))
+			if(CheckAIState(AIStates.SWINGING))
 			{
 				var pos = position + direction;
 				float width = 230;
@@ -136,7 +145,7 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 
 	public override void OnHitPlayer(Player target, Player.HurtInfo info)
 	{
-		if(CheckAiState(AiStates.CHARGING) && !target.noKnockback)
+		if(CheckAIState(AIStates.CHARGING) && !target.noKnockback)
 			target.velocity.Y -= Projectile.knockBack;
 	}
 
@@ -214,12 +223,12 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 
 	public override void Swinging(Player owner) => base.Swinging(owner);
 
-	internal override bool AllowUseTurn => CheckAiState(AiStates.CHARGING) && GetWindupProgress >= 1 && _inputHeld;
+	internal override bool AllowUseTurn => CheckAIState(AIStates.CHARGING) && GetWindupProgress >= 1 && _inputHeld;
 	internal override bool AllowRelease => _inputHeld;
 
 	public override bool PreDrawExtras()
 	{
-		if (CheckAiState(AiStates.CHARGING) && GetWindupProgress < 1)
+		if (CheckAIState(AIStates.CHARGING) && GetWindupProgress < 1)
 			DrawAftertrail(Lighting.GetColor(Projectile.Center.ToTileCoordinates()) * EaseCubicOut.Ease(1 - GetWindupProgress));
 
 		return true;

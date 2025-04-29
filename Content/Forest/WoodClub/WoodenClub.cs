@@ -2,7 +2,7 @@
 
 namespace SpiritReforged.Content.Forest.WoodClub;
 
-public class WoodenClub() : ClubItem()
+public class WoodenClub : ClubItem
 {
 	public override void SafeSetDefaults()
 	{

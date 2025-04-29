@@ -65,7 +65,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Main.player[Projectile.owner].Center, endPoint, lineWidth, ref dummy);
 	}
 
-	public override bool? CanDamage() => CheckAiState(AiStates.SWINGING) ? null : false;
+	public override bool? CanDamage() => CheckAIState(AIStates.SWINGING) ? null : false;
 
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 	{
@@ -115,22 +115,22 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 
 		switch (AiState)
 		{
-			case (float)AiStates.CHARGING: 
+			case (float)AIStates.CHARGING: 
 				Charging(owner);
 				break;
 
-			case (float)AiStates.SWINGING:
+			case (float)AIStates.SWINGING:
 				Swinging(owner);
 				break;
 
-			case (float)AiStates.POST_SMASH:
+			case (float)AIStates.POST_SMASH:
 				AfterCollision();
 				break;
 		}
 
-		if (!owner.controlUseItem && _windupTimer >= WindupTime && CheckAiState(AiStates.CHARGING) && AllowRelease)
+		if (!owner.controlUseItem && _windupTimer >= WindupTime && CheckAIState(AIStates.CHARGING) && AllowRelease)
 		{
-			SetAiState(AiStates.SWINGING);
+			SetAIState(AIStates.SWINGING);
 			OnSwingStart();
 
 			if (!Main.dedServ)
@@ -159,7 +159,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		Rectangle bottomFrame = texture.Frame(1, Main.projFrames[Type], 0, 1);
 
 		//Aftertrail during swing
-		if (CheckAiState(AiStates.SWINGING))
+		if (CheckAIState(AIStates.SWINGING))
 			DrawAftertrail(lightColor);
 
 		Main.EntitySpriteDraw(texture, drawPos, topFrame, drawColor, Projectile.rotation, HoldPoint, Projectile.scale, Effects, 0);
@@ -167,7 +167,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		SafeDraw(Main.spriteBatch, lightColor);
 
 		//Flash when fully charged
-		if (CheckAiState(AiStates.CHARGING) && _flickerTime > 0)
+		if (CheckAIState(AIStates.CHARGING) && _flickerTime > 0)
 		{
 			float alpha = EaseQuadIn.Ease(EaseSine.Ease(_flickerTime / (float)MAX_FLICKERTIME));
 
@@ -180,17 +180,17 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 	//Multiplayer syncing
 	public override void SendExtraAI(BinaryWriter writer)
 	{
-		writer.Write(DamageScaling);
-		writer.Write(KnockbackScaling);
+		writer.Write((Half)DamageScaling);
+		writer.Write((Half)KnockbackScaling);
 
-		writer.Write(ChargeTime);
-		writer.Write(SwingTime);
+		writer.Write((ushort)ChargeTime);
+		writer.Write((ushort)SwingTime);
 
-		writer.Write(_lingerTimer);
-		writer.Write(_swingTimer);
-		writer.Write(_windupTimer);
+		writer.Write((ushort)_lingerTimer);
+		writer.Write((ushort)_swingTimer);
+		writer.Write((ushort)_windupTimer);
 
-		writer.Write(_flickerTime);
+		writer.Write((ushort)_flickerTime);
 		writer.Write(_hasFlickered);
 
 		SendExtraDataSafe(writer);
@@ -198,17 +198,17 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 
 	public override void ReceiveExtraAI(BinaryReader reader)
 	{
-		DamageScaling = reader.ReadSingle();
-		KnockbackScaling = reader.ReadSingle();
+		DamageScaling = (float)reader.ReadHalf();
+		KnockbackScaling = (float)reader.ReadHalf();
 
-		ChargeTime = reader.ReadInt32();
-		SwingTime = reader.ReadInt32();
+		ChargeTime = reader.ReadUInt16();
+		SwingTime = reader.ReadUInt16();
 
-		_lingerTimer = reader.ReadInt32();
-		_swingTimer = reader.ReadInt32();
-		_windupTimer = reader.ReadInt32();
+		_lingerTimer = reader.ReadUInt16();
+		_swingTimer = reader.ReadUInt16();
+		_windupTimer = reader.ReadUInt16();
 
-		_flickerTime = reader.ReadInt32();
+		_flickerTime = reader.ReadUInt16();
 		_hasFlickered = reader.ReadBoolean();
 
 		ReceiveExtraDataSafe(reader);

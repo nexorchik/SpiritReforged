@@ -17,11 +17,7 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 	private static Color DarkGold => new(227, 197, 105);
 	private static Color Ruby => new(216, 13, 13);
 
-	public GoldClubProj() : base(new Vector2(82)) { }
-
 	public int Direction { get; set; } = 1;
-
-	private bool _inputHeld = false;
 
 	public override float WindupTimeRatio => 0.8f;
 
@@ -31,6 +27,29 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 
 	public override float LingerTimeRatio => 1.5f;
 	public override float SwingShrinkThreshold => 0.5f;
+	public override float SwingSpeedMult => (Direction == 1 || !FullCharge) ? base.SwingSpeedMult : base.SwingSpeedMult * 0.9f;
+
+	private bool _inputHeld = false;
+
+	public GoldClubProj() : base(new Vector2(82)) { }
+
+	private Vector2 GetHammerTopPos()
+	{
+		Vector2 handPos = Owner.GetFrontHandPosition(Owner.compositeFrontArm.stretch, Owner.compositeFrontArm.rotation);
+		float rotation = Projectile.rotation - PiOver4 * Owner.direction;
+		if (Owner.direction < 0)
+			rotation -= Pi;
+
+		Vector2 directionUnit = rotation.ToRotationVector2();
+
+		return handPos + directionUnit * 70 * Projectile.scale;
+	}
+
+	internal override float ChargedScaleInterpolate(float progress) => (Direction == 1) ? base.ChargedScaleInterpolate(progress) : 1;
+
+	internal override float ChargedRotationInterpolate(float progress) => (Direction == 1) ? base.ChargedRotationInterpolate(progress) : Lerp(WrapAngle(BaseRotation), WrapAngle(HoldAngle_Final), 0.1f);
+
+	internal override bool CanCollide(float progress) => base.CanCollide(progress) && Direction == 1;
 
 	public void DoTrailCreation(TrailManager tM)
 	{
@@ -49,38 +68,30 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 			trailLengthMod *= 1.6f;
 		}
 
-		tM.CreateCustomTrail(new SwingTrail(Projectile, LightGold, DarkGold, intensity, AngleRange, 0.3f * trailLengthMod, rotation, trailDist, trailWidth, GetSwingProgressStatic, s => SwingTrail.NoiseSwingShaderParams(s, "vnoise", new Vector2(0.5f, 0.5f)), TrailLayer.UnderProjectile, 0.85f));
+		SwingTrailParameters parameters = new(AngleRange, rotation, trailDist, trailWidth)
+		{
+			Color = LightGold,
+			SecondaryColor = DarkGold,
+			Intensity = intensity,
+			TrailLength = 0.3f * trailLengthMod,
+			DissolveThreshold = 0.85f
+		};
 
-		tM.CreateCustomTrail(new SwingTrail(Projectile, Color.Pink, Ruby, intensity, AngleRange, 0.35f * trailLengthMod, rotation, trailDist, trailWidth / 3, GetSwingProgressStatic, s => SwingTrail.NoiseSwingShaderParams(s, "noiseCrystal", new Vector2(3f, 0.5f)), TrailLayer.UnderProjectile, 0.85f, false));
+		tM.CreateCustomTrail(new SwingTrail(Projectile, parameters, GetSwingProgressStatic, s => SwingTrail.NoiseSwingShaderParams(s, "vnoise", new Vector2(0.5f, 0.5f)), TrailLayer.UnderProjectile));
+
+		parameters.Color = Color.Pink;
+		parameters.SecondaryColor = Ruby;
+		parameters.Width /= 3;
+		parameters.TrailLength += 0.05f * trailLengthMod;
+		parameters.UseLightColor = false;
+
+		tM.CreateCustomTrail(new SwingTrail(Projectile, parameters, GetSwingProgressStatic, s => SwingTrail.NoiseSwingShaderParams(s, "noiseCrystal", new Vector2(3f, 0.5f)), TrailLayer.UnderProjectile));
 	}
 
 	public override void OnSwingStart()
 	{
 		TrailManager.TryTrailKill(Projectile);
 		TrailManager.ManualTrailSpawn(Projectile);
-	}
-
-	internal override float ChargedScaleInterpolate(float progress) => (Direction == 1) ? base.ChargedScaleInterpolate(progress) : 1;
-
-	internal override float ChargedRotationInterpolate(float progress) => (Direction == 1) ? base.ChargedRotationInterpolate(progress) : Lerp(WrapAngle(BaseRotation), WrapAngle(HoldAngle_Final), 0.1f);
-
-	internal override bool CanCollide(float progress) => base.CanCollide(progress) && Direction == 1;
-
-	public override float SwingSpeedMult => (Direction == 1 || !FullCharge) ? base.SwingSpeedMult : base.SwingSpeedMult * 0.9f;
-
-	private Vector2 HammerTopPos
-	{
-		get
-		{
-			Vector2 handPos = Owner.GetFrontHandPosition(Owner.compositeFrontArm.stretch, Owner.compositeFrontArm.rotation);
-			float rotation = Projectile.rotation - PiOver4 * Owner.direction;
-			if (Owner.direction < 0)
-				rotation -= Pi;
-
-			Vector2 directionUnit = rotation.ToRotationVector2();
-
-			return handPos + directionUnit * 70 * Projectile.scale;
-		}
 	}
 
 	public override void Swinging(Player owner)
@@ -100,7 +111,7 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 
 			static void ParticleDelegate(Particle p) => p.Velocity *= 0.85f;
 
-			ParticleHandler.SpawnParticle(new GlowParticle(HammerTopPos + Main.rand.NextVector2Square(5, 5), particleVel, Ruby, particleScale, Main.rand.Next(15, 20), 4, ParticleDelegate));
+			ParticleHandler.SpawnParticle(new GlowParticle(GetHammerTopPos() + Main.rand.NextVector2Square(5, 5), particleVel, Ruby, particleScale, Main.rand.Next(15, 20), 4, ParticleDelegate));
 		}
 
 		if (owner.controlUseItem && GetSwingProgress < SwingShrinkThreshold)
@@ -164,7 +175,7 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 
 	private void PrepareNextSwing()
 	{
-		SetAiState(AiStates.CHARGING);
+		SetAIState(AIStates.CHARGING);
 		Direction = -1;
 		ResetData();
 		Projectile.ResetLocalNPCHitImmunity();
@@ -228,18 +239,18 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 
 		Color color = Projectile.GetAlpha(Ruby.Additive()) * EaseQuadIn.Ease(starProgress) * Projectile.scale * 0.5f;
 
-		Main.spriteBatch.Draw(starTex, HammerTopPos - Main.screenPosition, null, color, 0, starOrigin, scale, SpriteEffects.None, 0);
+		Main.spriteBatch.Draw(starTex, GetHammerTopPos() - Main.screenPosition, null, color, 0, starOrigin, scale, SpriteEffects.None, 0);
 	}
 
 	internal override void SendExtraDataSafe(BinaryWriter writer)
 	{
-		writer.Write(Direction);
+		writer.Write((ushort)Direction);
 		writer.Write(_inputHeld);
 	}
 
 	internal override void ReceiveExtraDataSafe(BinaryReader reader)
 	{
-		Direction = reader.ReadInt32();
+		Direction = reader.ReadUInt16();
 		_inputHeld = reader.ReadBoolean();
 	}
 }

@@ -3,7 +3,7 @@ using SpiritReforged.Common.ProjectileCommon.Abstract;
 
 namespace SpiritReforged.Common.ItemCommon;
 
-public abstract class ClubItem() : ModItem
+public abstract class ClubItem : ModItem
 {
 	internal virtual int ChargeTime { get; set; }
 	internal virtual int SwingTime { get; set; }
@@ -36,17 +36,15 @@ public abstract class ClubItem() : ModItem
 	{
 		var proj = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI);
 
-		if (proj.ModProjectile is BaseClubProj clubProj)
-		{
-			float speedMult = player.GetTotalAttackSpeed(DamageClass.Melee);
-			float swingSpeedMult = MathHelper.Lerp(speedMult, 1, 0.5f);
+		var clubProj = proj.ModProjectile as BaseClubProj;
+		float speedMult = player.GetTotalAttackSpeed(DamageClass.Melee);
+		float swingSpeedMult = MathHelper.Lerp(speedMult, 1, 0.5f);
 
-			clubProj.SetStats(
-				(int)(ChargeTime * MathHelper.Max(.15f, 2 - speedMult)),
-				(int)(SwingTime * MathHelper.Max(.15f, 2 - swingSpeedMult)),
-				DamageScaling,
-				KnockbackScaling);
-		}
+		clubProj.SetStats(
+			(int)(ChargeTime * MathHelper.Max(.15f, 2 - speedMult)),
+			(int)(SwingTime * MathHelper.Max(.15f, 2 - swingSpeedMult)),
+			DamageScaling,
+			KnockbackScaling);
 
 		return false;
 	}

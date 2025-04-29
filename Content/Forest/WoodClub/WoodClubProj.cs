@@ -29,7 +29,15 @@ class WoodClubProj : BaseClubProj, IManualTrailProjectile
 			rotOffset = -MathHelper.PiOver4 / 2;
 		}
 
-		tM.CreateCustomTrail(new SwingTrail(Projectile, Color.White, Color.LightGray, 0.5f, AngleRange * angleRangeMod, 0.33f, -HoldAngle_Final + rotOffset, trailDist, trailWidth, GetSwingProgressStatic, SwingTrail.BasicSwingShaderParams));
+		SwingTrailParameters parameters = new(AngleRange * angleRangeMod, -HoldAngle_Final + rotOffset, trailDist, trailWidth)
+		{
+			Color = Color.White,
+			SecondaryColor = Color.LightGray,
+			TrailLength = 0.33f,
+			Intensity = 0.5f,
+		};
+
+		tM.CreateCustomTrail(new SwingTrail(Projectile, parameters, GetSwingProgressStatic, SwingTrail.BasicSwingShaderParams));
 	}
 
 	public override void OnSwingStart() => TrailManager.ManualTrailSpawn(Projectile);

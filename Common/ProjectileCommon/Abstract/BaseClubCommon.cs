@@ -12,16 +12,16 @@ namespace SpiritReforged.Common.ProjectileCommon.Abstract;
 
 public abstract partial class BaseClubProj : ModProjectile
 {
-	public enum AiStates
+	public enum AIStates
 	{
 		CHARGING,
 		SWINGING,
 		POST_SMASH
 	}
 
-	public bool CheckAiState(AiStates checkState) => AiState == (float)checkState;
+	public bool CheckAIState(AIStates checkState) => AiState == (float)checkState;
 
-	public void SetAiState(AiStates setState)
+	public void SetAIState(AIStates setState)
 	{
 		AiState = (float)setState;
 		Projectile.netUpdate = true;
@@ -115,7 +115,7 @@ public abstract partial class BaseClubProj : ModProjectile
 		for (int k = 0; k < Projectile.oldPos.Length; k++)
 		{
 			//Don't draw if rotation would be the default value
-			if (CheckAiState(AiStates.CHARGING) && Projectile.oldRot[k] == 0)
+			if (CheckAIState(AIStates.CHARGING) && Projectile.oldRot[k] == 0)
 				continue;
 
 			float progress = (Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length;
