@@ -35,11 +35,11 @@ public class Shatter : Particle
 
 		DrawAberration.DrawChromaticAberration(Vector2.UnitX, 1, delegate (Vector2 offset, Color colorMod)
 		{
-			spriteBatch.Draw(Texture, Position - Main.screenPosition + offset, null, lightColor.MultiplyRGBA(colorMod), Rotation, Texture.Size() / 2, Scale, SpriteEffects.None, 0);
+			spriteBatch.Draw(Texture, Position - Main.screenPosition + offset, null, lightColor.MultiplyRGB(colorMod), Rotation, Texture.Size() / 2, Scale, SpriteEffects.None, 0);
 
 			float opacity = 0.3f;
 			float scale = Lerp(1.25f, 1f, Progress);
-			spriteBatch.Draw(Texture, Position - Main.screenPosition + offset, null, lightColor.MultiplyRGBA(colorMod) * opacity, Rotation + Pi, Texture.Size() / 2, Scale * scale, SpriteEffects.None, 0);
+			spriteBatch.Draw(Texture, Position - Main.screenPosition + offset, null, lightColor.MultiplyRGB(colorMod) * opacity, Rotation + Pi, Texture.Size() / 2, Scale * scale, SpriteEffects.None, 0);
 		});
 	}
 }
