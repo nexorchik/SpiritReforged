@@ -98,6 +98,7 @@ internal class PotteryStructureMicropass : Micropass
 			y++;
 		}
 	}
+
 	private static void AddPots(Rectangle area)
 	{
 		WeightedRandom<int> selection = new();
