@@ -89,7 +89,7 @@ internal class PotsMicropass : Micropass
 		generated = pots;
 	}
 
-	private static bool CreateOrnate(int x, int y)
+	public static bool CreateOrnate(int x, int y)
 	{
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
@@ -100,7 +100,7 @@ internal class PotsMicropass : Micropass
 		return Main.tile[x, y].TileType == type;
 	}
 
-	private static bool CreatePotion(int x, int y)
+	public static bool CreatePotion(int x, int y)
 	{
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
@@ -122,7 +122,7 @@ internal class PotsMicropass : Micropass
 		return false;
 	}
 
-	private static bool CreateScrying(int x, int y)
+	public static bool CreateScrying(int x, int y)
 	{
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
@@ -133,7 +133,7 @@ internal class PotsMicropass : Micropass
 		return Main.tile[x, y].TileType == type;
 	}
 
-    private static bool CreateStuffed(int x, int y)
+	public static bool CreateStuffed(int x, int y)
     {
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || Main.tile[x, y].LiquidAmount > 100 || !CommonSurface(x, y))
 			return false;
@@ -144,7 +144,7 @@ internal class PotsMicropass : Micropass
 		return Main.tile[x, y].TileType == type;
 	}
 
-	private static bool CreateWorm(int x, int y)
+	public static bool CreateWorm(int x, int y)
 	{
 		int wall = Main.tile[x, y].WallType;
 
@@ -157,7 +157,7 @@ internal class PotsMicropass : Micropass
 		return Main.tile[x, y].TileType == type;
 	}
 
-	private static bool CreatePlatter(int x, int y)
+	public static bool CreatePlatter(int x, int y)
 	{
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
@@ -168,7 +168,7 @@ internal class PotsMicropass : Micropass
 		return Main.tile[x, y].TileType == type;
 	}
 
-	private static bool CreateAether(int x, int y)
+	public static bool CreateAether(int x, int y)
 	{
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || !NearShimmer() || !CommonSurface(x, y))
 			return false;
@@ -181,7 +181,7 @@ internal class PotsMicropass : Micropass
 		bool NearShimmer() => Math.Abs(x - GenVars.shimmerPosition.X) < Main.maxTilesX * .2f && Math.Abs(y - GenVars.shimmerPosition.Y) < Main.maxTilesY * .2f;
 	}
 
-	private static bool CreateUpsideDown(int x, int y)
+	public static bool CreateUpsideDown(int x, int y)
 	{
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
@@ -193,7 +193,7 @@ internal class PotsMicropass : Micropass
 	}
 
 	/// <summary> Picks a relevant biome pot style and places it (<see cref="BiomePots"/>). </summary>
-	private static bool CreateUncommon(int x, int y)
+	public static bool CreateUncommon(int x, int y)
 	{
 		int tile = Main.tile[x, y + 1].TileType;
 		int wall = Main.tile[x, y].WallType;
@@ -245,12 +245,12 @@ internal class PotsMicropass : Micropass
 		}
 	}
 
-	private static bool CreateStack(int x, int y)
+	public static bool CreateStack(int x, int y)
 	{
 		int tile = Main.tile[x, y + 1].TileType;
 		int wall = Main.tile[x, y].WallType;
 
-		if (wall is WallID.Dirt or WallID.GrassUnsafe || y > Main.worldSurface && y < Main.UnderworldLayer && tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite)
+		if (wall is WallID.Dirt or WallID.GrassUnsafe || y > Main.worldSurface && y < Main.UnderworldLayer && (tile is TileID.Dirt or TileID.Stone or TileID.ClayBlock or TileID.WoodBlock or TileID.Granite || WoodenPlatform(Main.tile[x, y + 1])))
 		{
 			if (Main.rand.NextBool()) //Generate a stack of 3 in a pyramid
 			{
@@ -276,6 +276,7 @@ internal class PotsMicropass : Micropass
 		return false;
 
 		static int GetRandomStyle() => WorldGen.genRand.Next(12);
+		static bool WoodenPlatform(Tile t) => t.TileType == TileID.Platforms && t.TileFrameY == 0;
 	}
 
 	/// <summary> Checks whether the below tile is contained in <see cref="CommonBlacklist"/>. </summary>

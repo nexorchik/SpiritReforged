@@ -30,7 +30,6 @@ public class UpsideDownPot : PotTile
 		TileObjectData.newTile.RandomStyleRange = row;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.UsesCustomCanPlace = true;
-		TileObjectData.newTile.DrawXOffset = 1;
 		TileObjectData.newTile.DrawYOffset = 2;
 		TileObjectData.addTile(Type);
 
