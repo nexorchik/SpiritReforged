@@ -15,7 +15,7 @@ public class WoodenClub : ClubItem
 		Item.crit = 4;
 		Item.value = Item.sellPrice(0, 0, 1, 0);
 		Item.rare = ItemRarityID.White;
-		Item.shoot = ModContent.ProjectileType<WoodClubProj>();
+		Item.shoot = ModContent.ProjectileType<WoodenClubProj>();
 	}
 
 	public override void AddRecipes()

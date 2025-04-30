@@ -1,10 +1,5 @@
-using Microsoft.Xna.Framework.Graphics;
-using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.Particle;
-using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
-using SpiritReforged.Content.Forest.WoodClub;
 using SpiritReforged.Content.Particles;
-using SpiritReforged.Content.Underground.Items.OreClubs;
 using static Microsoft.Xna.Framework.MathHelper;
 using static SpiritReforged.Common.Easing.EaseFunction;
 
