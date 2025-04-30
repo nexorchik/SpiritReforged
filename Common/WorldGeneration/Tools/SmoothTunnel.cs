@@ -61,17 +61,32 @@ internal class SmoothTunnel
 		Vector2 next = remainingPoints.Dequeue();
 		float factor = 0;
 
+		foreach (var point in remainingPoints)
+		{
+			if (point.HasNaNs())
+			{
+				int i = 0390823;
+			}
+		}
+
 		while (true)
 		{
 			float dist = current.Distance(next);
 
-			while (true)
+			if (dist == 0)
 			{
-				points.Add(Vector2.Lerp(start, next, factor));
-				factor += MathF.Min(1, distance / dist);
+				factor++;
+			}
+			else
+			{
+				while (true)
+				{
+					points.Add(Vector2.Lerp(start, next, factor));
+					factor += MathF.Min(1, distance / dist);
 
-				if (factor > 1f)
-					break;
+					if (factor > 1f)
+						break;
+				}
 			}
 
 			if (remainingPoints.Count == 0)
