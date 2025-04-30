@@ -17,13 +17,7 @@ public class TrailManager
 
 	private BasicEffect _basicEffect = AssetLoader.BasicShaderEffect; //Not readonly due to thread queue
 
-	public static void TryTrailKill(Projectile projectile)
-	{
-		//Contained data originally for determining faster trail dissipation speeds for certain projectiles
-		//But it was all hardcoded for spirit projectiles in this specific file and was a big if else chain and sucked
-		//
-		AssetLoader.VertexTrailManager.TryEndTrail(projectile, 1);
-	}
+	public static void TryTrailKill(Projectile projectile, float dissolveSpeed = -1) => AssetLoader.VertexTrailManager.TryEndTrail(projectile, dissolveSpeed);
 
 	public void CreateTrail(Projectile projectile, ITrailColor trailType, ITrailCap trailCap, ITrailPosition trailPosition, float widthAtFront, float maxLength, ITrailShader shader = null, TrailLayer layer = TrailLayer.UnderProjectile, float dissolveSpeed = -1)
 	{
@@ -70,7 +64,9 @@ public class TrailManager
 
 			if (trail.MyProjectile.whoAmI == projectile.whoAmI && trail is VertexTrail t)
 			{
-				t.DissolveSpeed = dissolveSpeed;
+				if(dissolveSpeed > 0) //Don't adjust dissolve speed if the parameter is negative (ie the default value)
+					t.DissolveSpeed = dissolveSpeed;
+
 				t.StartDissolve();
 			}
 
