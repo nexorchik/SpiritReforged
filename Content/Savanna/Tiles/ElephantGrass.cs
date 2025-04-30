@@ -3,7 +3,6 @@ using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.TileSway;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameContent.Drawing;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 

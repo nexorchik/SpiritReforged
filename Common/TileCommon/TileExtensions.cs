@@ -234,7 +234,7 @@ public static class TileExtensions
 		};
 
 		if (!current.HasTile && badSlope)
-			Placer.PlaceTile(coords.X, coords.Y, type, style);
+			Placer.PlaceTile(coords.X, coords.Y, type, style).Send();
 	}
 
 	/// <inheritdoc cref="PlacePlant(int, int, int, int)"/>

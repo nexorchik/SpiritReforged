@@ -36,20 +36,20 @@ public class SavannaGrass : GrassTile, IConvertibleTile
 			int grassChance = GrassAny() ? 6 : 30;
 
 			if (Main.rand.NextBool(grassChance))
-				Placer.PlaceTile<ElephantGrass>(i, j - 1, Main.rand.Next(5, 8));
+				Placer.PlaceTile<ElephantGrass>(i, j - 1, Main.rand.Next(5, 8)).Send();
 			else if (Main.rand.NextBool(10))
-				Placer.PlaceTile<SavannaFoliage>(i, j - 1);
+				Placer.PlaceTile<SavannaFoliage>(i, j - 1).Send();
 			else if (Main.rand.NextBool(1400) && WorldGen.PlaceTile(i, j - 1, TileID.DyePlants, true, style: 2))
 				NetMessage.SendTileSquare(-1, i, j - 1);
 
 			if (Main.rand.NextBool(100) && !WorldGen.PlayerLOS(i, j))
 			{
 				if (Main.rand.NextBool())
-					Placer.PlaceTile<TermiteMoundSmall>(i, j - 1);
+					Placer.PlaceTile<TermiteMoundSmall>(i, j - 1).Send();
 				else if (Main.rand.NextBool(3))
-					Placer.PlaceTile<TermiteMoundMedium>(i, j - 1);
+					Placer.PlaceTile<TermiteMoundMedium>(i, j - 1).Send();
 				else if (Main.rand.NextBool(5))
-					Placer.PlaceTile<TermiteMoundLarge>(i, j - 1);
+					Placer.PlaceTile<TermiteMoundLarge>(i, j - 1).Send();
 			}
 		}
 
@@ -70,7 +70,7 @@ public class SavannaGrass : GrassTile, IConvertibleTile
 			var pos = ((player.Bottom - new Vector2(0, 8 * player.gravDir)) / 16).ToPoint16();
 
 			if (!Main.tile[pos.X, pos.Y].HasTile)
-				Placer.PlaceTile<SavannaFoliage>(pos.X, pos.Y - 1);
+				Placer.PlaceTile<SavannaFoliage>(pos.X, pos.Y - 1).Send();
 		}
 	}
 
@@ -112,9 +112,9 @@ public class SavannaGrassCorrupt : SavannaGrass
 			int grassChance = GrassAny() ? 6 : 35;
 
 			if (Main.rand.NextBool(grassChance))
-				Placer.PlaceTile<ElephantGrassCorrupt>(i, j - 1, Main.rand.Next(5, 8));
+				Placer.PlaceTile<ElephantGrassCorrupt>(i, j - 1, Main.rand.Next(5, 8)).Send();
 			else if (Main.rand.NextBool(15))
-				Placer.PlaceTile<SavannaFoliageCorrupt>(i, j - 1);
+				Placer.PlaceTile<SavannaFoliageCorrupt>(i, j - 1).Send();
 		}
 
 		bool GrassAny()
@@ -145,9 +145,9 @@ public class SavannaGrassCrimson : SavannaGrass
 			int grassChance = GrassAny() ? 6 : 35;
 
 			if (Main.rand.NextBool(grassChance))
-				Placer.PlaceTile<ElephantGrassCrimson>(i, j - 1, Main.rand.Next(5, 8));
+				Placer.PlaceTile<ElephantGrassCrimson>(i, j - 1, Main.rand.Next(5, 8)).Send();
 			else if (Main.rand.NextBool(15))
-				Placer.PlaceTile<SavannaFoliageCrimson>(i, j - 1);
+				Placer.PlaceTile<SavannaFoliageCrimson>(i, j - 1).Send();
 		}
 
 		bool GrassAny()
@@ -178,9 +178,9 @@ public class SavannaGrassHallow : SavannaGrass
 			int grassChance = GrassAny() ? 6 : 30;
 
 			if (Main.rand.NextBool(grassChance))
-				Placer.PlaceTile<ElephantGrassHallow>(i, j - 1, Main.rand.Next(5, 8));
+				Placer.PlaceTile<ElephantGrassHallow>(i, j - 1, Main.rand.Next(5, 8)).Send();
 			else if (Main.rand.NextBool(10))
-				Placer.PlaceTile<SavannaFoliageHallow>(i, j - 1);
+				Placer.PlaceTile<SavannaFoliageHallow>(i, j - 1).Send();
 
 			if (Main.rand.NextBool(1400) && WorldGen.PlaceTile(i, j - 1, TileID.DyePlants, true, style: 2))
 				NetMessage.SendTileSquare(-1, i, j - 1, TileChangeType.None);

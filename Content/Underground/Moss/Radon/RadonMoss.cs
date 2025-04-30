@@ -2,6 +2,7 @@ using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Dusts;
+using SpiritReforged.Content.Underground.Moss.Oganesson;
 
 namespace SpiritReforged.Content.Underground.Moss.Radon;
 
@@ -16,7 +17,7 @@ public class RadonMoss : GrassTile
 
 		Main.tileLighted[Type] = true;
 
-		RegisterItemDrop(ItemID.StoneBlock);
+		RegisterItemDrop(ModContent.ItemType<RadonMossItem>());
 		AddMapEntry(new Color(252, 248, 3));
 		this.Merge(TileID.Stone, TileID.GrayBrick);
 
@@ -33,6 +34,11 @@ public class RadonMoss : GrassTile
 			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None); //Also spread to gray bricks
 
 		GrowTiles(i, j);
+	}
+
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		yield return new Item(ItemID.StoneBlock);
 	}
 
 	protected virtual void GrowTiles(int i, int j) => TileExtensions.PlacePlant<RadonPlants>(i, j, Main.rand.Next(RadonPlants.StyleRange));

@@ -1,6 +1,16 @@
 ﻿using System.Linq;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.TileCommon;
+
+public struct PlaceAttempt(bool success)
+{
+	public bool success = success;
+	/// <summary> Can only be safely used if <see cref="success"/> is true. </summary>
+	public TileObject data;
+
+	public readonly Point16 Coords => new(data.xCoord, data.yCoord);
+}
 
 /// <summary> Includes helper methods related to placing tiles. </summary>
 public static class Placer
@@ -22,44 +32,80 @@ public static class Placer
 		return Replaceable.Contains(tile.TileType) || Main.tileCut[tile.TileType] && TileID.Sets.BreakableWhenPlacing[tile.TileType];
 	}
 
-	/// <summary> Places a tile of <paramref name="type"/> at the given coordinates and automatically syncs it if necessary. </summary>
+	/// <summary> Places a tile of <paramref name="type"/> at the given coordinates and returns the resulting <see cref="PlaceAttempt"/>.<para/>
+	/// <see cref="Placer"/> Contains various methods to chain for additional functionality. </summary>
 	/// <param name="type"> The tile type to place. </param>
 	/// <param name="style"> The tile style to place. -1 tries to place a random style. </param>
-	public static bool PlaceTile(int i, int j, int type, int style = -1)
+	public static PlaceAttempt PlaceTile(int i, int j, int type, int style = -1)
 	{
-		int width = 1;
-		int height = 1;
 		var data = TileObjectData.GetTileData(type, 0);
 
 		if (data is null)
 			style = 0;
-		else
-		{
-			width = data.Width;
-			height = data.Height;
+		else if (style == -1)
+			style = Main.rand.Next(data.RandomStyleRange);
 
-			if (style == -1)
-				style = Main.rand.Next(data.RandomStyleRange);
+		if (TileObject.CanPlace(i, j, type, style, 0, out var objectData))
+		{
+			if (TileObject.Place(objectData) && Main.tile[i, j].TileType == type)
+				return new(true) { data = objectData };
 		}
 
-		WorldGen.PlaceTile(i, j, type, true, style: style);
+		return new(false);
+	}
 
-		if (Main.tile[i, j].TileType == type)
+	/// <summary> Calls <see cref="TileObjectData.CallPostPlacementPlayerHook"/> for this attempt, and outputs entity of T. </summary>
+	public static PlaceAttempt PostPlacement<T>(this PlaceAttempt a, out T entity) where T : class
+	{
+		if (a.success)
 		{
-			if (Main.netMode != NetmodeID.SinglePlayer)
+			var t = Framing.GetTileSafely(a.Coords);
+			var data = TileObjectData.GetTileData(t);
+
+			if (data != null)
 			{
-				TileExtensions.GetTopLeft(ref i, ref j);
-				NetMessage.SendTileSquare(-1, i, j, width, height);
-			}
+				TileObjectData.CallPostPlacementPlayerHook(a.data.xCoord, a.data.yCoord, a.data.type, a.data.style, 1, a.data.alternate, a.data);
 
-			return true;
+				int i = a.Coords.X;
+				int j = a.Coords.Y;
+
+				TileExtensions.GetTopLeft(ref i, ref j);
+
+				if (TileEntity.ByPosition.TryGetValue(new Point16(i, j), out var value) && value is T valueOfType)
+				{
+					entity = valueOfType;
+					return a;
+				}
+			}
 		}
 
-		return false;
+		entity = null;
+		return a with { success = false };
+	}
+
+	/// <summary> Calls <see cref="NetMessage.SendTileSquare"/> for this attempt.<br/>
+	/// This is almost always necessary for tiles placed during gameplay to sync in multiplayer. </summary>
+	public static PlaceAttempt Send(this PlaceAttempt a)
+	{
+		if (a.success)
+		{
+			var data = TileObjectData.GetTileData(a.data.type, 0);
+
+			if (Main.netMode != NetmodeID.SinglePlayer && data != null)
+			{
+				int i = a.Coords.X;
+				int j = a.Coords.Y;
+
+				TileExtensions.GetTopLeft(ref i, ref j);
+				NetMessage.SendTileSquare(-1, i, j, data.Width, data.Height);
+			}
+		}
+
+		return a;
 	}
 
 	///<inheritdoc cref="PlaceTile(int, int, int, int)"/>
-	public static bool PlaceTile<T>(int i, int j, int style = -1) where T : ModTile => PlaceTile(i, j, ModContent.TileType<T>(), style);
+	public static PlaceAttempt PlaceTile<T>(int i, int j, int style = -1) where T : ModTile => PlaceTile(i, j, ModContent.TileType<T>(), style);
 
 	/// <summary> Checks the surrounding area for herbs of <paramref name="type"/>.</summary>
 	/// <returns> true if fewer than 4 herbs are in range. </returns>

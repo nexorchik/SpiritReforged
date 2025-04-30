@@ -150,11 +150,6 @@ internal class LandscaperTile : GlobalTile
 				var t = Main.tile[i, j];
 				int drop = TileLoader.GetItemDropFromTypeAndStyle(t.TileType);
 
-				if (t.TileType == ModContent.TileType<OganessonMoss>())
-					drop = ModContent.ItemType<OganessonMossItem>();
-				else if (t.TileType == ModContent.TileType<RadonMoss>())
-					drop = ModContent.ItemType<RadonMossItem>(); //Hardcode item drops, unfortunately
-
 				Item.NewItem(new EntitySource_TileBreak(i, j), new Vector2(i, j).ToWorldCoordinates(), drop);
 			}
 

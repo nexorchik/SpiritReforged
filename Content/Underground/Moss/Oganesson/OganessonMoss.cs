@@ -17,7 +17,7 @@ public class OganessonMoss : GrassTile
 		Main.tileLighted[Type] = true;
 		Main.tileMoss[Type] = true;
 
-		RegisterItemDrop(ItemID.StoneBlock);
+		RegisterItemDrop(ModContent.ItemType<OganessonMossItem>());
 		AddMapEntry(new Color(220, 220, 220));
 		this.Merge(TileID.Stone, TileID.GrayBrick);
 
@@ -34,6 +34,11 @@ public class OganessonMoss : GrassTile
 			NetMessage.SendTileSquare(-1, i, j, 3, TileChangeType.None); //Also spread to gray bricks
 
 		GrowTiles(i, j);
+	}
+
+	public override IEnumerable<Item> GetItemDrops(int i, int j)
+	{
+		yield return new Item(ItemID.StoneBlock); //Drop stone blocks in every normal circumstance despite having a different type registered
 	}
 
 	protected virtual void GrowTiles(int i, int j) => TileExtensions.PlacePlant<OganessonPlants>(i, j, Main.rand.Next(OganessonPlants.StyleRange));
