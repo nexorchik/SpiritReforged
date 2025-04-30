@@ -1,7 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.PlayerCommon;
-using SpiritReforged.Common.ProjectileCommon.Abstract;
 using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Snow;
@@ -9,8 +8,8 @@ namespace SpiritReforged.Content.Snow;
 [AutoloadEquip(EquipType.Waist)]
 public class FrostGiantBelt : AccessoryItem
 {
-	/// <summary> Checks if <paramref name="player"/> is holding a club projectile. </summary>
-	public static bool ClubActive(Player player) => player.heldProj != -1 && Main.projectile[player.heldProj].ModProjectile is BaseClubProj;
+	/// <summary> Checks if <paramref name="player"/> is using a club projectile. </summary>
+	public static bool ClubActive(Player player) => player.HeldItem?.ModItem is ClubItem && player.ItemAnimationActive;
 	public override void SetStaticDefaults() => NPCLootDatabase.AddLoot(new(NPCLootDatabase.MatchId(NPCID.UndeadViking), ItemDropRule.Common(Type, 15)));
 
 	public override void SetDefaults()
