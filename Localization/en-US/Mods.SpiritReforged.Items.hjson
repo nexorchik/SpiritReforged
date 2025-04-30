@@ -1718,3 +1718,12 @@ PlatinumClub: {
 	DisplayName: Platinum Club
 	Tooltip: ""
 }
+
+FrostGiantBelt: {
+	DisplayName: Frost Giant Belt
+	Tooltip:
+		'''
+		50% knockback resistance while charging a club
+		Charging a club gradually increases defense
+		'''
+}
