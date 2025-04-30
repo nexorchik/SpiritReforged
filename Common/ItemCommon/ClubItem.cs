@@ -1,5 +1,6 @@
 ﻿using Terraria.DataStructures;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
+using SpiritReforged.Common.ProjectileCommon;
 
 namespace SpiritReforged.Common.ItemCommon;
 
@@ -34,17 +35,18 @@ public abstract class ClubItem : ModItem
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
-		var proj = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI);
+		PreNewProjectile.New(source, position, velocity, type, damage, knockback, player.whoAmI, preSpawnAction: delegate (Projectile p)
+		{
+			var clubProj = p.ModProjectile as BaseClubProj;
+			float speedMult = player.GetTotalAttackSpeed(DamageClass.Melee);
+			float swingSpeedMult = MathHelper.Lerp(speedMult, 1, 0.5f);
 
-		var clubProj = proj.ModProjectile as BaseClubProj;
-		float speedMult = player.GetTotalAttackSpeed(DamageClass.Melee);
-		float swingSpeedMult = MathHelper.Lerp(speedMult, 1, 0.5f);
-
-		clubProj.SetStats(
-			(int)(ChargeTime * MathHelper.Max(.15f, 2 - speedMult)),
-			(int)(SwingTime * MathHelper.Max(.15f, 2 - swingSpeedMult)),
-			DamageScaling,
-			KnockbackScaling);
+			clubProj.SetStats(
+				(int)(ChargeTime * MathHelper.Max(.15f, 2 - speedMult)),
+				(int)(SwingTime * MathHelper.Max(.15f, 2 - swingSpeedMult)),
+				DamageScaling,
+				KnockbackScaling);
+		});
 
 		return false;
 	}

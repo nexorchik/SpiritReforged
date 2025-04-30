@@ -1,3 +1,5 @@
+using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Visuals;
 using System.IO;
 using Terraria.Audio;
 using static Microsoft.Xna.Framework.MathHelper;
@@ -31,11 +33,24 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 
 	private bool _hasFlickered = false;
 
+	/// <summary><inheritdoc cref="ModProjectile.DisplayName"/><para/>
+	/// Automatically attempts to use the associated item localization. </summary>
+	public override LocalizedText DisplayName => Language.GetText("Mods.SpiritReforged.Items." + Name.Replace("Proj", string.Empty) + ".DisplayName");
+	/// <summary><inheritdoc cref="ModProjectile.Texture"/><para/>
+	/// Automatically attempts to use the associated item texture. </summary>
+	public override string Texture
+	{
+		get
+		{
+			string def = base.Texture;
+			return def.Remove(def.Length - 4); //Remove 'proj'
+		}
+	}
+
 	public sealed override void SetStaticDefaults()
 	{
 		ProjectileID.Sets.TrailCacheLength[Type] = 6;
 		ProjectileID.Sets.TrailingMode[Type] = 2;
-		Main.projFrames[Projectile.type] = 2;
 
 		SafeSetStaticDefaults();
 	}
@@ -69,7 +84,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 	{
-		if(FullCharge)
+		if (FullCharge)
 		{
 			modifiers.FinalDamage *= DamageScaling;
 			modifiers.Knockback *= KnockbackScaling;
@@ -156,7 +171,6 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		Color drawColor = Projectile.GetAlpha(lightColor);
 
 		Rectangle topFrame = texture.Frame(1, Main.projFrames[Type]);
-		Rectangle bottomFrame = texture.Frame(1, Main.projFrames[Type], 0, 1);
 
 		//Aftertrail during swing
 		if (CheckAIState(AIStates.SWINGING))
@@ -169,9 +183,10 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		//Flash when fully charged
 		if (CheckAIState(AIStates.CHARGING) && _flickerTime > 0)
 		{
+			Texture2D flash = TextureColorCache.ColorSolid(texture, Color.White);
 			float alpha = EaseQuadIn.Ease(EaseSine.Ease(_flickerTime / (float)MAX_FLICKERTIME));
 
-			Main.EntitySpriteDraw(texture, drawPos, bottomFrame, Color.White * alpha, Projectile.rotation, HoldPoint, Projectile.scale, Effects, 0);
+			Main.EntitySpriteDraw(flash, drawPos, topFrame, Color.White * alpha, Projectile.rotation, HoldPoint, Projectile.scale, Effects, 0);
 		}
 
 		return false;

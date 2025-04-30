@@ -1,5 +1,4 @@
 using SpiritReforged.Common.Easing;
-using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
@@ -8,9 +7,9 @@ using SpiritReforged.Content.Particles;
 
 namespace SpiritReforged.Content.Forest.WoodClub;
 
-class WoodClubProj : BaseClubProj, IManualTrailProjectile
+class WoodenClubProj : BaseClubProj, IManualTrailProjectile
 {
-	public WoodClubProj() : base(new Vector2(58)) { }
+	public WoodenClubProj() : base(new Vector2(58)) { }
 
 	public override float WindupTimeRatio => 0.8f;
 
