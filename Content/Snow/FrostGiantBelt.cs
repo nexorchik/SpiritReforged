@@ -1,6 +1,7 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.PlayerCommon;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Snow;
@@ -8,7 +9,8 @@ namespace SpiritReforged.Content.Snow;
 [AutoloadEquip(EquipType.Waist)]
 public class FrostGiantBelt : AccessoryItem
 {
-	public static bool HoldingClub(Player player) => player.HeldItem?.ModItem is ClubItem;
+	/// <summary> Checks if <paramref name="player"/> is holding a club projectile. </summary>
+	public static bool ClubActive(Player player) => player.heldProj != -1 && Main.projectile[player.heldProj].ModProjectile is BaseClubProj;
 	public override void SetStaticDefaults() => NPCLootDatabase.AddLoot(new(NPCLootDatabase.MatchId(NPCID.UndeadViking), ItemDropRule.Common(Type, 15)));
 
 	public override void SetDefaults()
@@ -26,7 +28,7 @@ internal class FrostGiantPlayer : ModPlayer
 
 	public override void UpdateEquips()
 	{
-		if (Player.HasAccessory<FrostGiantBelt>() && FrostGiantBelt.HoldingClub(Player) && Player.channel)
+		if (Player.HasAccessory<FrostGiantBelt>() && FrostGiantBelt.ClubActive(Player))
 		{
 			extraDefense = Math.Min(extraDefense + (float)(1f / 6f), 15);
 			Player.statDefense += (int)extraDefense;
@@ -39,7 +41,7 @@ internal class FrostGiantPlayer : ModPlayer
 
 	public override void ModifyHurt(ref Player.HurtModifiers modifiers)
 	{
-		if (Player.HasAccessory<FrostGiantBelt>() && FrostGiantBelt.HoldingClub(Player) && Player.channel)
+		if (Player.HasAccessory<FrostGiantBelt>() && FrostGiantBelt.ClubActive(Player))
 			modifiers.Knockback *= 0.5f;
 	}
 }
