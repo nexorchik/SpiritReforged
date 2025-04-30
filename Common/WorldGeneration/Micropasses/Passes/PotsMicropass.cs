@@ -106,16 +106,11 @@ internal class PotsMicropass : Micropass
 			return false;
 
 		int type = ModContent.TileType<PotionVats>();
-		WorldGen.PlaceTile(x, y, type, true, style: Main.rand.Next([0, 3, 6]));
+		var attempt = Placer.PlaceTile(x, y, type, style: Main.rand.Next([0, 3, 6])).PostPlacement<VatSlot>(out var slot);
 
-		if (Main.tile[x, y].TileType == type)
+		if (attempt.success)
 		{
-			TileExtensions.GetTopLeft(ref x, ref y);
-			TileEntity.PlaceEntityNet(x, y, ModContent.TileEntityType<VatSlot>());
-
-			if (TileEntity.ByPosition.TryGetValue(new Point16(x, y), out var value) && value is VatSlot slot)
-				slot.item = new Item(VatSlot.GetRandomPotion());
-
+			slot.item = new Item(VatSlot.GetRandomPotion());
 			return true;
 		}
 
@@ -247,6 +242,9 @@ internal class PotsMicropass : Micropass
 
 	public static bool CreateStack(int x, int y)
 	{
+		if (!CommonSurface(x, y))
+			return false;
+
 		int tile = Main.tile[x, y + 1].TileType;
 		int wall = Main.tile[x, y].WallType;
 
