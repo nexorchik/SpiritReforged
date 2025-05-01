@@ -8,20 +8,21 @@ namespace SpiritReforged.Content.Particles;
 public class Shatter : Particle
 {
 	Color _baseColor;
+	float _baseScale;
 
-	public Shatter(Vector2 position, Color baseColor, int maxTime)
+	public Shatter(Vector2 position, Color baseColor, float scale, int maxTime)
 	{
 		Position = position;
 		Rotation = Main.rand.NextFloat(TwoPi);
 		MaxTime = maxTime;
-		Scale = 0.3f;
+		_baseScale = scale;
 		_baseColor = baseColor;
 	}
 
 	public override void Update()
 	{
 		Color = _baseColor * EaseQuadOut.Ease(1 - Progress);
-		Scale = Lerp(0.48f, 0.55f, EaseSine.Ease(EaseCubicOut.Ease(Progress)));
+		Scale = Lerp(0.48f, 0.55f, EaseSine.Ease(EaseCubicOut.Ease(Progress))) * _baseScale;
 	}
 
 	public override ParticleDrawType DrawType => ParticleDrawType.CustomBatchedAdditiveBlend;

@@ -18,6 +18,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 
 	public int ChargeTime { get; private set; }
 	public int SwingTime { get; private set; }
+	public float MeleeSizeModifier { get; private set; }
 
 	internal int WindupTime => (int)(ChargeTime * WindupTimeRatio);
 	internal int LingerTime => (int)(SwingTime * LingerTimeRatio);
@@ -25,6 +26,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 	public float Charge { get => Projectile.ai[0]; set => Projectile.ai[0] = value; }
 	public float AiState { get => Projectile.ai[1]; set => Projectile.ai[1] = value; }
 	public float BaseRotation { get => Projectile.ai[2]; set => Projectile.ai[2] = value; }
+	public float BaseScale { get => Projectile.scale; set => Projectile.scale = value; }
 
 	protected int _lingerTimer;
 	protected int _swingTimer;
@@ -75,9 +77,9 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 	{
 		float dummy = 0;
 		float lineWidth = Size.Length() / 2;
-		var endPoint = Vector2.Lerp(Main.player[Projectile.owner].Center, Projectile.Center, Projectile.scale);
+		var endPoint = Owner.MountedCenter + Owner.DirectionTo(Projectile.Center) * TotalScale * Size;
 
-		return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Main.player[Projectile.owner].Center, endPoint, lineWidth, ref dummy);
+		return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Owner.MountedCenter, endPoint, lineWidth, ref dummy);
 	}
 
 	public override bool? CanDamage() => CheckAIState(AIStates.SWINGING) ? null : false;
@@ -176,7 +178,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		if (CheckAIState(AIStates.SWINGING))
 			DrawAftertrail(lightColor);
 
-		Main.EntitySpriteDraw(texture, drawPos, topFrame, drawColor, Projectile.rotation, HoldPoint, Projectile.scale, Effects, 0);
+		Main.EntitySpriteDraw(texture, drawPos, topFrame, drawColor, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
 
 		SafeDraw(Main.spriteBatch, lightColor);
 
@@ -186,7 +188,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 			Texture2D flash = TextureColorCache.ColorSolid(texture, Color.White);
 			float alpha = EaseQuadIn.Ease(EaseSine.Ease(_flickerTime / (float)MAX_FLICKERTIME));
 
-			Main.EntitySpriteDraw(flash, drawPos, topFrame, Color.White * alpha, Projectile.rotation, HoldPoint, Projectile.scale, Effects, 0);
+			Main.EntitySpriteDraw(flash, drawPos, topFrame, Color.White * alpha, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
 		}
 
 		return false;

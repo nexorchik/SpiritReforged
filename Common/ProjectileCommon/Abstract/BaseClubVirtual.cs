@@ -81,7 +81,7 @@ public abstract partial class BaseClubProj : ModProjectile
 		windupAnimProgress = Lerp(windupAnimProgress, Charge, PullbackWindupRatio);
 
 		BaseRotation = ChargedRotationInterpolate(windupAnimProgress);
-		Projectile.scale = ChargedScaleInterpolate(windupAnimProgress);
+		BaseScale = ChargedScaleInterpolate(windupAnimProgress);
 
 		--_flickerTime;
 	}
@@ -91,7 +91,7 @@ public abstract partial class BaseClubProj : ModProjectile
 		float swingProgress = GetSwingProgress;
 
 		bool validTile = Collision.SolidTiles(Projectile.position, Projectile.width, Projectile.height, true);
-		Projectile.scale = 1;
+		BaseScale = 1;
 
 		_swingTimer++;
 
@@ -118,7 +118,7 @@ public abstract partial class BaseClubProj : ModProjectile
 			float shrinkProgress = (swingProgress - SwingShrinkThreshold) / (1 - SwingShrinkThreshold);
 			shrinkProgress = Clamp(shrinkProgress, 0, 1);
 
-			Projectile.scale = Lerp(1, 0, EaseCubicIn.Ease(shrinkProgress));
+			BaseScale = Lerp(1, 0, EaseCubicIn.Ease(shrinkProgress));
 
 			if (swingProgress > 1)
 				Projectile.Kill();
@@ -136,7 +136,7 @@ public abstract partial class BaseClubProj : ModProjectile
 		float shrinkProgress = (lingerProgress - shrinkThreshold) / (1 - shrinkThreshold);
 		shrinkProgress = Clamp(shrinkProgress, 0, 1);
 
-		Projectile.scale = Lerp(1, 0, EaseCubicOut.Ease(EaseCircularIn.Ease(shrinkProgress)));
+		BaseScale = Lerp(1, 0, EaseCubicOut.Ease(EaseCircularIn.Ease(shrinkProgress)));
 
 		if (_lingerTimer <= 0)
 			Projectile.Kill();
