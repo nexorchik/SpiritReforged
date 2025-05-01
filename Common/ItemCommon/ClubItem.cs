@@ -1,7 +1,6 @@
 ﻿using Terraria.DataStructures;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Common.ProjectileCommon;
-using SpiritReforged.Content.Vanilla.Leather.HideTunic;
 
 namespace SpiritReforged.Common.ItemCommon;
 
