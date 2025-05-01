@@ -1,15 +1,33 @@
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.CheckItemUse;
 using SpiritReforged.Content.Dusts;
+using System.Linq;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Moss.Oganesson;
 
 public class OganessonPlants : ModTile, ICheckItemUse
 {
+	public enum Side : byte
+	{
+		Up,
+		Left,
+		Right,
+		Down
+	}
+
 	public const int StyleRange = 3;
 
 	public override void SetStaticDefaults()
+	{
+		TileDefaults();
+		ObjectData(new Color(180, 180, 180), ModContent.TileType<OganessonMoss>(), ModContent.TileType<OganessonMossGrayBrick>());
+
+		DustType = ModContent.DustType<OganessonMossDust>();
+		HitSound = SoundID.Grass;
+	}
+
+	public void TileDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
 		Main.tileLighted[Type] = true;
@@ -19,10 +37,13 @@ public class OganessonPlants : ModTile, ICheckItemUse
 		Main.tileCut[Type] = true;
 
 		TileID.Sets.SwaysInWindBasic[Type] = true;
+	}
 
+	public virtual void ObjectData(Color mapEntry, params int[] anchors)
+	{
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<OganessonMoss>(), ModContent.TileType<OganessonMossGrayBrick>()];
+		TileObjectData.newTile.AnchorValidTiles = anchors;
 		TileObjectData.newTile.RandomStyleRange = StyleRange;
 		TileObjectData.newTile.StyleHorizontal = true;
 
@@ -43,10 +64,7 @@ public class OganessonPlants : ModTile, ICheckItemUse
 
 		TileObjectData.addTile(Type);
 
-		AddMapEntry(new Color(180, 180, 180));
-
-		DustType = ModContent.DustType<OganessonMossDust>();
-		HitSound = SoundID.Grass;
+		AddMapEntry(mapEntry);
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = Main.rand.Next(1, 3);
@@ -93,6 +111,52 @@ public class OganessonPlants : ModTile, ICheckItemUse
 		}
 	}
 
+	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
+	{
+		const int styleLength = 3 * 18;
+
+		var t = Main.tile[i, j];
+		int frameX = resetFrame ? Main.rand.Next(3) * 18 : t.TileFrameX % styleLength;
+
+		t.TileFrameX = CheckSide(out bool failed);
+
+		if (resetFrame)
+			t.TileFrameY = 0;
+
+		if (failed)
+			WorldGen.KillTile(i, j);
+
+		short CheckSide(out bool failed)
+		{
+			Side side;
+
+			if (ValidSurface(i, j + 1))
+				side = Side.Up;
+			else if (ValidSurface(i, j - 1))
+				side = Side.Down;
+			else if (ValidSurface(i + 1, j))
+				side = Side.Left;
+			else if (ValidSurface(i - 1, j))
+				side = Side.Right;
+			else
+			{
+				failed = true;
+				return t.TileFrameX;
+			}
+
+			failed = false;
+			return (short)((int)side * styleLength + frameX);
+		}
+
+		bool ValidSurface(int i, int j)
+		{
+			var connectT = Framing.GetTileSafely(i, j);
+			return WorldGen.SolidTile(connectT) && TileObjectData.GetTileData(t) is TileObjectData data && data.AnchorValidTiles.Contains(connectT.TileType);
+		}
+
+		return false;
+	}
+
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		Tile t = Main.tile[i, j];
@@ -103,9 +167,9 @@ public class OganessonPlants : ModTile, ICheckItemUse
 
 		position += (t.TileFrameX / 18 / StyleRange) switch
 		{
-			1 => new Vector2(2, 0),
-			2 => new Vector2(-2, 0),
-			3 => new Vector2(0, -2),
+			(byte)Side.Left => new Vector2(2, 0),
+			(byte)Side.Right => new Vector2(-2, 0),
+			(byte)Side.Down => new Vector2(0, -2),
 			_ => new Vector2(0, 2),
 		};
 

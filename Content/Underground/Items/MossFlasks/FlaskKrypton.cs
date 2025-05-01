@@ -7,5 +7,6 @@ public class FlaskKrypton : MossFlask
 
 public class FlaskKryptonProjectile : MossFlaskProjectile
 {
-	public override (ushort, ushort) Types => (TileID.KryptonMoss, TileID.KryptonMossBrick);
+	public override MossConversion Conversion => new(TileID.KryptonMoss, TileID.KryptonMossBrick);
+	public override void CreateDust(int type) => base.CreateDust(DustID.KryptonMoss);
 }
