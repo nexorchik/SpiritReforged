@@ -20,8 +20,6 @@ public abstract partial class BaseClubProj : ModProjectile
 
 	public float TotalScale => BaseScale * MeleeSizeModifier;
 
-	public float BaseScale { get => Projectile.scale; set => Projectile.scale = value; }
-
 	public float AngleRange => SwingAngle_Max - HoldAngle_Final;
 
 	public bool FullCharge => Charge == 1;
