@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Terraria.DataStructures;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SpiritReforged.Common.TileCommon;
 
@@ -15,6 +16,8 @@ public struct PlaceAttempt(bool success)
 /// <summary> Includes helper methods related to placing tiles. </summary>
 public static class Placer
 {
+	private static Point16[] CardinalDirections = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
+
 	private static readonly int[] Replaceable = [TileID.Plants, TileID.Plants2, TileID.JunglePlants, TileID.JunglePlants2, 
 		TileID.CorruptPlants, TileID.CrimsonPlants, TileID.HallowedPlants, TileID.HallowedPlants2];
 
@@ -167,4 +170,37 @@ public static class Placer
 
 		return true;
 	}
+
+	/// <summary> Places a plant (or any other object) on any cardinal side of the given tile. This accounts for half bricks and slopes. </summary>
+	/// <param name="i">X position to place on.</param>
+	/// <param name="j">Y position to place on.</param>
+	/// <param name="type">Type of tile to place.</param>
+	/// <param name="style">The style of the tile placed.</param>
+	public static void PlacePlant(int i, int j, int type, int style = 0)
+	{
+		int offsetDir = Main.rand.Next(4);
+		var coords = new Point16(i, j) + CardinalDirections[offsetDir];
+		var self = Framing.GetTileSafely(i, j);
+		var current = Framing.GetTileSafely(coords);
+
+		bool badSlope = self.Slope == SlopeType.Solid || offsetDir switch
+		{
+			0 => !self.TopSlope && !self.IsHalfBlock,
+			1 => !self.LeftSlope,
+			2 => !self.RightSlope,
+			_ => !self.BottomSlope
+		};
+
+		if (!current.HasTile && badSlope)
+		{
+			WorldGen.PlaceTile(coords.X, coords.Y, type, true, style: style);
+
+			if (Main.netMode != NetmodeID.SinglePlayer)
+				NetMessage.SendTileSquare(-1, coords.X, coords.Y);
+		}
+	}
+
+	/// <inheritdoc cref="PlacePlant(int, int, int, int)"/>
+	/// <typeparam name="T">The type of ModTile to place.</typeparam>
+	public static void PlacePlant<T>(int i, int j, int style = 0) where T : ModTile => PlacePlant(i, j, ModContent.TileType<T>(), style);
 }

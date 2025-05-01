@@ -1,7 +1,6 @@
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.CheckItemUse;
 using SpiritReforged.Content.Dusts;
-using SpiritReforged.Content.Underground.Moss.Radon;
 using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Underground.Moss.Oganesson;
