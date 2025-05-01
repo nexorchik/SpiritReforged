@@ -21,8 +21,8 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 
 	public override float WindupTimeRatio => 0.8f;
 
-	public override float HoldAngle_Intial => base.HoldAngle_Intial * 1.5f;
-	public override float HoldAngle_Final => Direction * -base.HoldAngle_Final / 3 - (Direction < 0 ? PiOver4 * 0.66f : 0);
+	public override float HoldAngle_Intial => base.HoldAngle_Intial;
+	public override float HoldAngle_Final => Direction * base.HoldAngle_Final / 3 - (Direction < 0 ? PiOver4 * 0.66f : 0);
 	public override float SwingAngle_Max => Direction * base.SwingAngle_Max * 1.1f - (Direction < 0 ? PiOver4 * 1.1f : 0);
 
 	public override float LingerTimeRatio => 1.5f;
@@ -42,7 +42,7 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 
 		Vector2 directionUnit = rotation.ToRotationVector2();
 
-		return handPos + directionUnit * 70 * Projectile.scale;
+		return handPos + directionUnit * 70 * TotalScale;
 	}
 
 	internal override float ChargedScaleInterpolate(float progress) => (Direction == 1) ? base.ChargedScaleInterpolate(progress) : 1;
@@ -53,8 +53,8 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 
 	public void DoTrailCreation(TrailManager tM)
 	{
-		float trailDist = 78;
-		float trailWidth = 25;
+		float trailDist = 78 * MeleeSizeModifier;
+		float trailWidth = 25 * MeleeSizeModifier;
 		float intensity = 3;
 		float trailLengthMod = 1f;
 		float rotation = HoldAngle_Final - PiOver4 / 2;
@@ -164,7 +164,7 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 		}
 		else
 		{
-			Projectile.scale = Lerp(1, 0, EaseQuadOut.Ease(shrinkProgress));
+			BaseScale = Lerp(1, 0, EaseQuadOut.Ease(shrinkProgress));
 
 			if (_lingerTimer <= 0)
 				Projectile.Kill();
@@ -199,7 +199,7 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 			var position = Vector2.Lerp(Projectile.Center, target.Center, 0.75f);
 			SoundEngine.PlaySound(SoundID.Item70.WithVolumeScale(0.5f), position);
 
-			float width = 260;
+			float width = 260 * TotalScale;
 
 			var pos = position + direction;
 			float rotation = direction.ToRotation();
@@ -209,18 +209,18 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 
 			float shineRotation = Main.rand.NextFloatDirection();
 			for(int i = 0; i < 3; i++)
-				ParticleHandler.SpawnParticle(new DissipatingImage(pos, DarkGold, shineRotation, 0.12f, 0, "GodrayCircle", new Vector2(0), new Vector2(3, 1.5f), 18));
+				ParticleHandler.SpawnParticle(new DissipatingImage(pos, DarkGold, shineRotation, 0.12f, 0, "GodrayCircle", new Vector2(0), new Vector2(3, 1.5f) * TotalScale, 18));
 
-			ParticleHandler.SpawnParticle(new Shatter(position, DarkGold, 40));
+			ParticleHandler.SpawnParticle(new Shatter(position, DarkGold, TotalScale, 40));
 
 			float numLines = 16;
 			for (int i = 0; i < numLines; i++)
 			{
-				Vector2 velocity = Vector2.UnitX.RotatedBy(TwoPi * i / numLines);
+				Vector2 velocity = Vector2.UnitX.RotatedBy(TwoPi * i / numLines) * TotalScale;
 				velocity = velocity.RotatedByRandom(PiOver4);
 				velocity *= Main.rand.NextFloat(4, 7);
 
-				var line = new ImpactLine(position, velocity, DarkGold.Additive() * 0.5f, new Vector2(0.2f, 0.6f), Main.rand.Next(15, 20), 0.9f);
+				var line = new ImpactLine(position, velocity, DarkGold.Additive() * 0.5f, new Vector2(0.2f, 0.6f) * TotalScale, Main.rand.Next(15, 20), 0.9f);
 				line.UseLightColor = true;
 				ParticleHandler.SpawnParticle(line);
 			}
@@ -231,13 +231,13 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 	{
 		Texture2D starTex = AssetLoader.LoadedTextures["Star"].Value;
 
-		float maxSize = 0.6f * Projectile.scale;
+		float maxSize = 0.6f * TotalScale;
 		float starProgress = EaseQuadIn.Ease(Charge);
 
 		Vector2 scale = new Vector2(Lerp(0.8f, 1.2f, EaseSine.Ease(Main.GlobalTimeWrappedHourly * 2f % 1)), 0.4f) * Lerp(0, maxSize, starProgress) * 0.7f;
 		var starOrigin = starTex.Size() / 2;
 
-		Color color = Projectile.GetAlpha(Ruby.Additive()) * EaseQuadIn.Ease(starProgress) * Projectile.scale * 0.5f;
+		Color color = Projectile.GetAlpha(Ruby.Additive()) * EaseQuadIn.Ease(starProgress) * BaseScale * 0.5f;
 
 		Main.spriteBatch.Draw(starTex, GetHammerTopPos() - Main.screenPosition, null, color, 0, starOrigin, scale, SpriteEffects.None, 0);
 	}

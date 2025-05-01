@@ -1,6 +1,7 @@
 ﻿using Terraria.DataStructures;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Content.Vanilla.Leather.HideTunic;
 
 namespace SpiritReforged.Common.ItemCommon;
 
@@ -31,6 +32,9 @@ public abstract class ClubItem : ModItem
 	}
 
 	public override bool? CanAutoReuseItem(Player player) => false;
+
+	public override bool MeleePrefix() => true;
+
 	public override Vector2? HoldoutOffset() => new Vector2(-10, 0);
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -41,11 +45,14 @@ public abstract class ClubItem : ModItem
 			float speedMult = player.GetTotalAttackSpeed(DamageClass.Melee);
 			float swingSpeedMult = MathHelper.Lerp(speedMult, 1, 0.5f);
 
+			float scale = player.GetAdjustedItemScale(Item);
+
 			clubProj.SetStats(
 				(int)(ChargeTime * MathHelper.Max(.15f, 2 - speedMult)),
 				(int)(SwingTime * MathHelper.Max(.15f, 2 - swingSpeedMult)),
 				DamageScaling,
-				KnockbackScaling);
+				KnockbackScaling,
+				scale);
 		});
 
 		return false;

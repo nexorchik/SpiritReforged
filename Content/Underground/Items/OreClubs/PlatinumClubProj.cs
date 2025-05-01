@@ -26,8 +26,8 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 
 	public void DoTrailCreation(TrailManager tM)
 	{
-		float trailDist = 82;
-		float trailWidth = 26;
+		float trailDist = 82 * MeleeSizeModifier;
+		float trailWidth = 26 * MeleeSizeModifier;
 		static float windupSwingProgress(Projectile proj) => (proj.ModProjectile is BaseClubProj club) ? EaseCubicInOut.Ease(EaseCircularOut.Ease(Lerp(club.GetWindupProgress, 0, club.PullbackWindupRatio))) : 0;
 
 		Func<Projectile, float> uSwingFunc = CheckAIState(AIStates.SWINGING) ? GetSwingProgressStatic : windupSwingProgress;
@@ -116,7 +116,7 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 			if(CheckAIState(AIStates.SWINGING))
 			{
 				var pos = position + direction;
-				float width = 230;
+				float width = 230 * TotalScale;
 				float rotation = direction.ToRotation();
 
 				var p = new TexturedPulseCircle(pos, Color.White, Color.Silver, 0.6f, width, Main.rand.Next(20, 25), "Star2", new Vector2(4, 1), EaseCircularOut, false, 0.2f).WithSkew(.5f, rotation);
@@ -124,18 +124,18 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 
 				float shineRotation = Main.rand.NextFloatDirection();
 				for(int i = 0; i < 3; i++)
-					ParticleHandler.SpawnParticle(new DissipatingImage(pos, Color.White, shineRotation, 0.12f, 0, "GodrayCircle", new Vector2(0), new Vector2(4f, 1.5f), 18));
+					ParticleHandler.SpawnParticle(new DissipatingImage(pos, Color.White, shineRotation, 0.12f * TotalScale, 0, "GodrayCircle", new Vector2(0), new Vector2(4f, 1.5f), 18));
 				
-				ParticleHandler.SpawnParticle(new Shatter(position, Color.Silver, 40));
+				ParticleHandler.SpawnParticle(new Shatter(position, Color.Silver, TotalScale, 40));
 
 				float numLines = 16;
 				for(int i = 0; i < numLines; i++)
 				{
-					Vector2 velocity = Vector2.UnitX.RotatedBy(TwoPi * i / numLines);
+					Vector2 velocity = Vector2.UnitX.RotatedBy(TwoPi * i / numLines) * TotalScale;
 					velocity = velocity.RotatedByRandom(PiOver4);
 					velocity *= Main.rand.NextFloat(4, 7);
 
-					var line = new ImpactLine(position, velocity, Color.White * 0.5f, new Vector2(0.15f, 0.4f), Main.rand.Next(15, 20), 0.9f);
+					var line = new ImpactLine(position, velocity, Color.White * 0.5f, new Vector2(0.15f, 0.4f) * TotalScale, Main.rand.Next(15, 20), 0.9f);
 					line.UseLightColor = true;
 					ParticleHandler.SpawnParticle(line);
 				}
@@ -157,7 +157,7 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 			_lingerTimer -= 2;
 			float lingerProgress = _lingerTimer / (float)LingerTime;
 
-			Projectile.scale = Lerp(Projectile.scale, 0, EaseCircularOut.Ease(lingerProgress) / 4);
+			BaseScale = Lerp(BaseScale, 0, EaseCircularOut.Ease(lingerProgress) / 4);
 
 			if (_lingerTimer <= 0)
 				Projectile.Kill();

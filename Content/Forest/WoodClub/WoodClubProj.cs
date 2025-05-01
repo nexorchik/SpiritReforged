@@ -15,8 +15,8 @@ class WoodenClubProj : BaseClubProj, IManualTrailProjectile
 
 	public void DoTrailCreation(TrailManager tM)
 	{
-		float trailDist = 52;
-		float trailWidth = 30;
+		float trailDist = 52 * MeleeSizeModifier;
+		float trailWidth = 30 * MeleeSizeModifier;
 		float angleRangeMod = 1f;
 		float rotOffset = 0;
 
@@ -63,7 +63,7 @@ class WoodenClubProj : BaseClubProj, IManualTrailProjectile
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
 		var basePosition = Vector2.Lerp(Projectile.Center, target.Center, 0.6f);
-		Vector2 directionUnit = basePosition.DirectionFrom(Owner.MountedCenter);
+		Vector2 directionUnit = basePosition.DirectionFrom(Owner.MountedCenter) * TotalScale;
 
 		int numParticles = FullCharge ? 12 : 8;
 		for(int i = 0; i < numParticles; i++)
@@ -79,7 +79,7 @@ class WoodenClubProj : BaseClubProj, IManualTrailProjectile
 			rotationOffset *= Main.rand.NextFloat(0.9f, 1.1f);
 
 			Vector2 particleVel = directionUnit.RotatedBy(rotationOffset) * velocity;
-			var p = new ImpactLine(position, particleVel, Color.White * 0.5f, new Vector2(0.15f, 0.6f), Main.rand.Next(15, 20), 0.8f);
+			var p = new ImpactLine(position, particleVel, Color.White * 0.5f, new Vector2(0.15f, 0.6f) * TotalScale, Main.rand.Next(15, 20), 0.8f);
 			p.UseLightColor = true;
 			ParticleHandler.SpawnParticle(p);
 
@@ -87,7 +87,7 @@ class WoodenClubProj : BaseClubProj, IManualTrailProjectile
 				Dust.NewDustPerfect(position, DustID.t_LivingWood, particleVel / 3, Scale: 0.5f);
 		}
 
-		ParticleHandler.SpawnParticle(new SmokeCloud(basePosition, directionUnit * 3, Color.LightGray, 0.06f, EaseFunction.EaseCubicOut, 30));
-		ParticleHandler.SpawnParticle(new SmokeCloud(basePosition, directionUnit * 6, Color.LightGray, 0.08f, EaseFunction.EaseCubicOut, 30));
+		ParticleHandler.SpawnParticle(new SmokeCloud(basePosition, directionUnit * 3, Color.LightGray, 0.06f * TotalScale, EaseFunction.EaseCubicOut, 30));
+		ParticleHandler.SpawnParticle(new SmokeCloud(basePosition, directionUnit * 6, Color.LightGray, 0.08f * TotalScale, EaseFunction.EaseCubicOut, 30));
 	}
 }

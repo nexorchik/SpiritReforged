@@ -14,6 +14,20 @@ public abstract partial class BaseClubProj : ModProjectile
 		POST_SMASH
 	}
 
+	public float GetSwingProgress => SwingSpeedMult * _swingTimer / SwingTime;
+
+	public float GetWindupProgress => (ChargeTime > 0) ? _windupTimer / (float)WindupTime : 0;
+
+	public float TotalScale => BaseScale * MeleeSizeModifier;
+
+	public float BaseScale { get => Projectile.scale; set => Projectile.scale = value; }
+
+	public float AngleRange => SwingAngle_Max - HoldAngle_Final;
+
+	public bool FullCharge => Charge == 1;
+
+	public Player Owner => Main.player[Projectile.owner];
+
 	public bool CheckAIState(AIStates checkState) => AiState == (float)checkState;
 
 	public void SetAIState(AIStates setState)
@@ -32,12 +46,13 @@ public abstract partial class BaseClubProj : ModProjectile
 		Charge = 0;
 	}
 
-	public void SetStats(int chargeTime, int swingTime, float damageScaling, float knockbackScaling)
+	public void SetStats(int chargeTime, int swingTime, float damageScaling, float knockbackScaling, float sizeModifier)
 	{
 		ChargeTime = chargeTime;
 		SwingTime = swingTime;
 		DamageScaling = damageScaling;
 		KnockbackScaling = knockbackScaling;
+		MeleeSizeModifier = sizeModifier;
 
 		ResetData();
 	}
@@ -56,7 +71,7 @@ public abstract partial class BaseClubProj : ModProjectile
 		armRotation = output;
 	}
 
-	internal static void DoShockwaveCircle(Vector2 pos, float size, float xyRotation, float opacity)
+	internal void DoShockwaveCircle(Vector2 pos, float size, float xyRotation, float opacity)
 	{
 		var easeFunction = EaseCubicOut;
 		float ringWidth = 0.4f;
@@ -68,7 +83,7 @@ public abstract partial class BaseClubProj : ModProjectile
 			Color.LightGray * opacity,
 			Color.LightGray * opacity,
 			ringWidth,
-			size,
+			size * TotalScale,
 			lifetime,
 			"supPerlin",
 			new Vector2(2, 3),
@@ -84,7 +99,7 @@ public abstract partial class BaseClubProj : ModProjectile
 		{
 			Vector2 smokePos = Projectile.Bottom + Vector2.UnitX * Main.rand.NextFloat(-20, 20);
 
-			float scale = Main.rand.NextFloat(0.05f, 0.07f);
+			float scale = Main.rand.NextFloat(0.05f, 0.07f) * TotalScale;
 			scale *= 1 + chargeFactor / 2;
 
 			float speed = Main.rand.NextFloat(4);
@@ -115,19 +130,9 @@ public abstract partial class BaseClubProj : ModProjectile
 
 			float progress = (Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length;
 			Color trailColor = drawColor * progress * .125f;
-			Main.EntitySpriteDraw(texture, drawPos, topFrame, trailColor, Projectile.oldRot[k], HoldPoint, Projectile.scale, Effects, 0);
+			Main.EntitySpriteDraw(texture, drawPos, topFrame, trailColor, Projectile.oldRot[k], HoldPoint, TotalScale, Effects, 0);
 		}
 	}
 
-	public float GetSwingProgress => SwingSpeedMult * _swingTimer / SwingTime;
-
-	public float GetWindupProgress => (ChargeTime > 0) ? _windupTimer / (float)WindupTime : 0;
-
 	public static float GetSwingProgressStatic(Projectile Proj) => Proj.ModProjectile is BaseClubProj baseClub ? EaseQuadOut.Ease(baseClub.GetSwingProgress) : 0;
-
-	public float AngleRange => SwingAngle_Max - HoldAngle_Final;
-
-	public bool FullCharge => Charge == 1;
-
-	public Player Owner => Main.player[Projectile.owner];
 }
