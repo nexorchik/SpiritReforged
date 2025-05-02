@@ -66,23 +66,52 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		Projectile.friendly = true;
 		Projectile.penetrate = -1;
 		Projectile.tileCollide = false;
-		Projectile.ownerHitCheck = true;
+		//Projectile.ownerHitCheck = true;
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = -1;
 
 		SafeSetDefaults();
 	}
 
+	public override bool? CanDamage() => CheckAIState(AIStates.SWINGING) ? null : false;
+
 	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 	{
+		//Create a new hitbox at the intended tip of the club, and scale it up
+		var endPoint = Owner.MountedCenter + Owner.DirectionTo(Projectile.Center) * TotalScale * Size;
+		int width = (int)(projHitbox.Width * MeleeSizeModifier);
+		int height = (int)(projHitbox.Height * MeleeSizeModifier);
+		var newProjHitbox = new Rectangle((int)(endPoint.X - width / 2), (int)(endPoint.Y - height / 2), width, height);
+		if (newProjHitbox.Intersects(targetHitbox))
+			return true;
+
+		//Do line collision if the target is between the hitbox and the player
 		float dummy = 0;
 		float lineWidth = Size.Length() / 2;
-		var endPoint = Owner.MountedCenter + Owner.DirectionTo(Projectile.Center) * TotalScale * Size;
 
 		return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Owner.MountedCenter, endPoint, lineWidth, ref dummy);
 	}
+	
+	public override void CutTiles()
+	{
+		//Prevent tile cutting if the projectile isn't allowed to hit anything
+		if (CanDamage().HasValue)
+			if(CanDamage().Value == false)
+				return;
 
-	public override bool? CanDamage() => CheckAIState(AIStates.SWINGING) ? null : false;
+		//Tile cutting logic adapted from example mod, plots a tile line across the projectile as if it was a laser and cuts tiles that intersect with it
+		DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+		var cut = new Utils.TileActionAttempt(DelegateMethods.CutTiles);
+		var endPoint = Owner.MountedCenter + Owner.DirectionTo(Projectile.Center) * MeleeSizeModifier * Size;
+
+		Utils.PlotTileLine(Owner.MountedCenter, endPoint, Projectile.width * MeleeSizeModifier, cut);
+
+		//Additional line plotted between the projectile's current and last position, to catch instances where it moves super fast
+		var startCenter = Vector2.Lerp(Projectile.position, Owner.MountedCenter, 0.5f);
+		var oldCenter = Vector2.Lerp(Projectile.oldPosition, Owner.MountedCenter, 0.5f);
+
+		Utils.PlotTileLine(startCenter, oldCenter, Projectile.width * MeleeSizeModifier, cut);
+	}
 
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 	{

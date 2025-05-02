@@ -17,12 +17,12 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 	public override float HoldAngle_Intial => Pi * 2.4f;
 	public override float HoldAngle_Final => -base.HoldAngle_Final / 2;
 	public override float WindupTimeRatio => 0.6f;
-	public override float PullbackWindupRatio => 0.7f;
+	public override float PullbackWindupRatio => 0.7f; 
 	public override float LingerTimeRatio => 0.7f;
 
 	public PlatinumClubProj() : base(new Vector2(84)) { }
 
-	public override bool? CanDamage() => (GetWindupProgress < 0.5f || CheckAIState(AIStates.SWINGING)) ? null : false;
+	public override bool? CanDamage() => (GetWindupProgress < 0.75f || CheckAIState(AIStates.SWINGING)) ? null : false;
 
 	public void DoTrailCreation(TrailManager tM)
 	{
