@@ -29,6 +29,8 @@ internal class NPCShopHelper : GlobalNPC
 			if (entry.Condition(shop))
 			{
 				// Regenerate the item as otherwise the tooltips aren't populated right
+				// Since this doesn't Clone, it may remove data - this shouldn't be an issue but should be kept in mind
+				// (Cloning doesn't properly regenerate the tooltips)
 				Item item = entry.Entry.Item;
 				shop.Add(new NPCShop.Entry(new Item(item.type, item.stack)));
 			}
