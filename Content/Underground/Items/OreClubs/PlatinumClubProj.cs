@@ -41,8 +41,8 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 		if (CheckAIState(AIStates.CHARGING))
 		{
 			//Reduce starting width and distance, then reduce overall distance further
-			trailWidth.X *= 0.3f;
-			trailDist.X *= 0.3f;
+			trailWidth.X *= 0.2f;
+			trailDist.X *= 0.2f;
 			trailDist *= 0.9f;
 
 			uLength *= 0.33f;
