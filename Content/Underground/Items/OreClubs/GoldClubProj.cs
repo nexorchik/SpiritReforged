@@ -26,6 +26,7 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 	public override float SwingAngle_Max => Direction * base.SwingAngle_Max * 1.1f - (Direction < 0 ? PiOver4 * 1.1f : 0);
 
 	public override float LingerTimeRatio => 1.5f;
+	public override float SwingPhaseThreshold => 0.3f;
 	public override float SwingShrinkThreshold => 0.5f;
 	public override float SwingSpeedMult => (Direction == 1 || !FullCharge) ? base.SwingSpeedMult : base.SwingSpeedMult * 0.9f;
 

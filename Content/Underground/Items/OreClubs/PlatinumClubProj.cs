@@ -19,6 +19,7 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 	public override float WindupTimeRatio => 0.6f;
 	public override float PullbackWindupRatio => 0.7f; 
 	public override float LingerTimeRatio => 0.7f;
+	public override float SwingPhaseThreshold => 0.35f;
 
 	public PlatinumClubProj() : base(new Vector2(84)) { }
 
