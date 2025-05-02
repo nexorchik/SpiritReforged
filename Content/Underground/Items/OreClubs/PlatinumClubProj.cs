@@ -16,8 +16,8 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 
 	public override float HoldAngle_Intial => Pi * 2.4f;
 	public override float HoldAngle_Final => -base.HoldAngle_Final / 4;
-	public override float WindupTimeRatio => 2.6f;
-	public override float PullbackWindupRatio => 0.5f; 
+	public override float WindupTimeRatio => 2.2f;
+	public override float PullbackWindupRatio => 0.6f; 
 	public override float LingerTimeRatio => 0.7f;
 	public override float SwingPhaseThreshold => 0.3f;
 
