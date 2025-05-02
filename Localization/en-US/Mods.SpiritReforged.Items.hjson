@@ -1706,17 +1706,17 @@ LandscapingShears: {
 
 WoodenClub: {
 	DisplayName: Wooden Club
-	Tooltip: "Can be charged to increase damage and knockback"
+	Tooltip: Can be charged to increase damage and knockback
 }
 
 GoldClub: {
 	DisplayName: Golden Greathammer
-	Tooltip: "Use again during a swing to follow up with a chargeable uppercut"
+	Tooltip: Use again during a swing to follow up with a chargeable uppercut
 }
 
 PlatinumClub: {
 	DisplayName: Platinum Club
-	Tooltip: 
+	Tooltip:
 		'''
 		Does an upwards swing that knocks enemies into the air
 		Hold to follow up with a downwards slam

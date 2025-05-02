@@ -5,7 +5,14 @@ internal class NPCShopHelper : GlobalNPC
 {
 	public readonly struct ConditionalEntry(Func<NPCShop, bool> condition, NPCShop.Entry entry)
 	{
+		/// <summary>
+		/// The condition required for the given shop to have this entry. Usually used for checking for the right NPC.
+		/// </summary>
 		public readonly Func<NPCShop, bool> Condition = condition;
+
+		/// <summary>
+		/// The actual shop entry.
+		/// </summary>
 		public readonly NPCShop.Entry Entry = entry;
 	}
 
@@ -20,7 +27,11 @@ internal class NPCShopHelper : GlobalNPC
 		foreach (var entry in EntriesToAdd)
 		{
 			if (entry.Condition(shop))
-				shop.Add(entry.Entry);
+			{
+				// Regenerate the item as otherwise the tooltips aren't populated right
+				Item item = entry.Entry.Item;
+				shop.Add(new NPCShop.Entry(new Item(item.type, item.stack)));
+			}
 		}
 	}
 }
