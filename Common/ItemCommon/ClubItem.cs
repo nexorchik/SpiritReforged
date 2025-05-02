@@ -23,14 +23,11 @@ public abstract class ClubItem : ModItem
 		Item.noMelee = true;
 		Item.noUseGraphic = true;
 		Item.useTurn = true;
-		Item.autoReuse = false;
 		Item.shootSpeed = 1f;
 		Item.reuseDelay = 10;
 
 		SafeSetDefaults();
 	}
-
-	public override bool? CanAutoReuseItem(Player player) => false;
 
 	public override bool MeleePrefix() => true;
 
