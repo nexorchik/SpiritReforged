@@ -55,9 +55,9 @@ public class DunceCrab : ModNPC
 		NPC.aiStyle = -1;
 		NPC.noGravity = !NPC.IsABestiaryIconDummy; //Ensures the bestiary portrait is visually grounded
 		NPC.Size = new Vector2(24);
-		NPC.damage = 20;
-		NPC.lifeMax = 50;
-		NPC.defense = 8;
+		NPC.damage = 30;
+		NPC.lifeMax = 60;
+		NPC.defense = 12;
 		NPC.DeathSound = SoundID.NPCDeath16;
 		NPC.HitSound = SoundID.NPCHit33;
 		NPC.value = Item.buyPrice(silver: 1, copper: 50);
@@ -297,7 +297,7 @@ public class DunceCrab : ModNPC
 	public override bool ModifyCollisionData(Rectangle victimHitbox, ref int immunityCooldownSlot, ref MultipliableFloat damageMultiplier, ref Rectangle npcHitbox)
 	{
 		if ((State)Animation is State.Fall)
-			damageMultiplier *= 5f; //Deal 5x damage when falling
+			damageMultiplier *= 4f; //Deal 4x damage when falling
 
 		return true;
 	}
