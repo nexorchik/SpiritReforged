@@ -1,6 +1,4 @@
 ﻿using SpiritReforged.Common.MathHelpers;
-using System;
-using System.Collections.Generic;
 
 namespace SpiritReforged.Common.WorldGeneration.Tools;
 
@@ -18,8 +16,33 @@ internal class SmoothTunnel
 	public static Vector2[] GeneratePoints(Vector2[] points, VariationData data)
 	{
 		points = AddVariationToPoints(points, data);
+
+		if (HasNaNs(points))
+		{
+			int i = 0;
+		}
+
 		Vector2[] results = Spline.CreateSpline(points, 60);
+
+		if (HasNaNs(points))
+		{
+			int i = 0;
+		}
+
 		return CreateEquidistantSet(results, 10);
+	}
+
+	public static bool HasNaNs(Vector2[] points)
+	{
+		foreach (var point in points)
+		{
+			if (point.HasNaNs())
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private static Vector2[] AddVariationToPoints(Vector2[] points, VariationData data)
@@ -65,7 +88,7 @@ internal class SmoothTunnel
 		{
 			if (point.HasNaNs())
 			{
-				int i = 0390823;
+				return [];
 			}
 		}
 
