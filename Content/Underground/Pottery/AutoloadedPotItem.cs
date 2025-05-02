@@ -40,8 +40,11 @@ public sealed class AutoloadedPotItem(string baseName, string name, int style, i
 	}
 
 	public override void SetDefaults() => Item.DefaultToPlaceableTile(Tile.Type, _style);
-	public override void AddRecipes() => CreateRecipe().AddRecipeGroup("ClayAndMud", 5)
-		.AddTile(ModContent.TileType<PotteryWheel>()).AddCondition(Language.GetText("Mods.SpiritReforged.Conditions.Discovered"), RecordedPot).Register();
+	public override void AddRecipes()
+	{
+		CreateRecipe().AddRecipeGroup("ClayAndMud", 5).AddTile(ModContent.TileType<PotteryWheel>())
+			.AddCondition(Language.GetText("Mods.SpiritReforged.Conditions.Discovered"), RecordedPot).Register();
 
-	private bool RecordedPot() => Main.LocalPlayer.GetModPlayer<RecordPlayer>().IsValidated(_name);
+		bool RecordedPot() => Main.LocalPlayer.GetModPlayer<RecordPlayer>().IsValidated(_name);
+	}
 }

@@ -54,12 +54,12 @@ public class SkeletonHand : ModTile, IAutoloadRubble
 
 		var data = TileObjectData.GetTileData(t);
 		var source = new Rectangle(t.TileFrameX, t.TileFrameY, data.CoordinateWidth, data.CoordinateFullHeight);
-		var position = new Vector2(i, j) * 16 - new Vector2((source.Width - 16) / 2, source.Height - 16 - 4) + TileExtensions.TileOffset;
+		var position = new Vector2(i, j) * 16 - new Vector2((source.Width - 16) / 2, source.Height - 16 - 4);
 
 		float lerp = (float)Math.Sin(Main.timeForVisualEffects / 50f) * .25f;
 		float mult = MathHelper.Clamp(1f - Main.LocalPlayer.Distance(new Vector2(i, j) * 16) / 150f, 0, 1);
 
-		spriteBatch.Draw(GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value, position - Main.screenPosition, 
+		spriteBatch.Draw(GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value, position - Main.screenPosition + TileExtensions.TileOffset, 
 			source, Color.White * (mult + lerp), 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
 		if (!Main.gamePaused && mult > .15f && Main.rand.NextBool(5))
