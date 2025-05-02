@@ -188,9 +188,9 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 		if (Direction < 0 && target.knockBackResist > 0)
 		{
 			if (target.gravity != 0)
-				target.velocity.Y = -Projectile.knockBack * 0.75f;
+				target.velocity.Y = -Projectile.knockBack;
 
-			target.velocity.Y -= Projectile.knockBack * target.knockBackResist * 0.25f;
+			target.velocity.X -= Projectile.knockBack * Projectile.direction * target.knockBackResist * 0.5f;
 		}
 
 		if (!Main.dedServ)
