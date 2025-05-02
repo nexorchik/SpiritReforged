@@ -18,6 +18,8 @@ public class VaporParticle : Particle
 		Color = color;
 		Scale = scale;
 		MaxTime = timeLeft;
+
+		_frameCounter = Main.rand.NextFloat(NumFrames);
 	}
 
 	public override void Update()

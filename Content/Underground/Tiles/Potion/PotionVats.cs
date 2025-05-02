@@ -7,7 +7,6 @@ using Terraria.DataStructures;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Content.Forest.Cloud.Items;
 using SpiritReforged.Common.Particle;
-using SpiritReforged.Content.Particles;
 using System.Linq;
 
 namespace SpiritReforged.Content.Underground.Tiles.Potion;
