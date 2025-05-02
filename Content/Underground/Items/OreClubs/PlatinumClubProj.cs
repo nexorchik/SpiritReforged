@@ -15,11 +15,11 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 	private bool _inputHeld = true;
 
 	public override float HoldAngle_Intial => Pi * 2.4f;
-	public override float HoldAngle_Final => -base.HoldAngle_Final / 2;
-	public override float WindupTimeRatio => 0.6f;
-	public override float PullbackWindupRatio => 0.7f; 
+	public override float HoldAngle_Final => -base.HoldAngle_Final / 4;
+	public override float WindupTimeRatio => 2.6f;
+	public override float PullbackWindupRatio => 0.5f; 
 	public override float LingerTimeRatio => 0.7f;
-	public override float SwingPhaseThreshold => 0.35f;
+	public override float SwingPhaseThreshold => 0.3f;
 
 	public PlatinumClubProj() : base(new Vector2(84)) { }
 
@@ -27,21 +27,24 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 
 	public void DoTrailCreation(TrailManager tM)
 	{
-		float trailDist = 82 * MeleeSizeModifier;
-		float trailWidth = 26 * MeleeSizeModifier;
+		Vector2 trailDist = new(82 * MeleeSizeModifier);
+		Vector2 trailWidth = new(26 * MeleeSizeModifier);
 		static float windupSwingProgress(Projectile proj) => (proj.ModProjectile is BaseClubProj club) ? EaseCubicInOut.Ease(EaseCircularOut.Ease(Lerp(club.GetWindupProgress, 0, club.PullbackWindupRatio))) : 0;
 
 		Func<Projectile, float> uSwingFunc = CheckAIState(AIStates.SWINGING) ? GetSwingProgressStatic : windupSwingProgress;
 		int swingDirection = CheckAIState(AIStates.SWINGING) ? 1 : -1;
 		float uRange = AngleRange;
 		float uRot = HoldAngle_Final - PiOver4 / 2;
-		float dissolveThreshold = 0.9f;
+		float dissolveThreshold = 0.95f;
 		float uLength = 0.8f;
 
 		if (CheckAIState(AIStates.CHARGING))
 		{
-			trailWidth *= 0.8f;
-			trailDist *= 0.7f;
+			//Reduce starting width and distance, then reduce overall distance further
+			trailWidth.X *= 0.3f;
+			trailDist.X *= 0.3f;
+			trailDist *= 0.9f;
+
 			uLength *= 0.33f;
 			uRot += PiOver2 - PiOver4 / 2;
 			uRange = Math.Abs(HoldAngle_Final - HoldAngle_Intial);
@@ -55,13 +58,16 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 			uRange *= 1.1f;
 		}
 
-		SwingTrailParameters parameters = new(swingDirection * uRange, uRot, trailDist, trailWidth)
+		SwingTrailParameters parameters = new(swingDirection * uRange, uRot, trailDist.X, trailWidth.X)
 		{
 			Color = new Color(246, 216, 235, 160),
 			SecondaryColor = new Color(178, 188, 220),
 			TrailLength = uLength,
 			Intensity = 2.5f,
-			DissolveThreshold = dissolveThreshold
+			DissolveThreshold = dissolveThreshold,
+			DistanceEasing = EaseQuarticOut,
+			MaxDistance = trailDist.Y,
+			MaxWidth = trailWidth.Y,
 		};
 
 		tM.CreateCustomTrail(new SwingTrail(Projectile, parameters, uSwingFunc, s => SwingTrail.NoiseSwingShaderParams(s, "FlameTrail", new Vector2(3f, 0.25f)), TrailLayer.UnderProjectile));
@@ -73,9 +79,8 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 		if (CheckAIState(AIStates.CHARGING))
 		{
 			if (target.knockBackResist > 0 && target.gravity != 0)
-				target.velocity.Y = -Projectile.knockBack * 0.75f;
+				target.velocity.Y = -Projectile.knockBack;
 
-			target.velocity.Y -= Projectile.knockBack * target.knockBackResist * 0.25f;
 			target.velocity.X -= Projectile.knockBack * Projectile.direction * target.knockBackResist * 0.8f;
 		}
 
@@ -218,9 +223,25 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 240, PiOver2, 0.4f);
 	}
 
-	internal override float ChargedRotationInterpolate(float progress) => Lerp(HoldAngle_Intial, HoldAngle_Final, EaseCubicInOut.Ease(EaseCircularOut.Ease(progress)));
+	internal override float ChargedRotationInterpolate(float progress)
+	{
+		if (GetWindupProgress < 1)
+			return Lerp(HoldAngle_Intial, HoldAngle_Final, EaseCubicInOut.Ease(EaseCircularOut.Ease(progress)));
 
-	internal override float ChargedScaleInterpolate(float progress) => Lerp(0.2f, 1f, EaseCircularOut.Ease(progress));
+		//Smoother transition between windup and charge
+		else
+			return Lerp(BaseRotation, HoldAngle_Final, 0.12f);
+	}
+
+	internal override float ChargedScaleInterpolate(float progress)
+	{
+		if (GetWindupProgress < 1)
+			return Lerp(0.3f, 1f, EaseQuarticOut.Ease(progress));
+
+		//Smoother transition between windup and charge
+		else
+			return Lerp(BaseScale, 1, 0.12f);
+	}
 
 	public override void Swinging(Player owner) => base.Swinging(owner);
 

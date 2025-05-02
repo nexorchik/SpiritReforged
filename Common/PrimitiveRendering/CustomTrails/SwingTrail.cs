@@ -67,7 +67,7 @@ public class SwingTrail(Projectile projectile, SwingTrailParameters parameters, 
 
 		if (_swingProgress > Parameters.DissolveThreshold)
 		{
-			_timeLeft -= 10;
+			_timeLeft -= 5;
 			StartDissolve();
 		}
 	}
