@@ -75,6 +75,65 @@ public class BiomePots : PotTile, ILootTile
 		_ => 1.25f
 	};
 
+	public override void AddItemRecipes(ModItem modItem, StyleDatabase.StyleGroup group)
+	{
+		int wheel = ModContent.TileType<PotteryWheel>();
+		LocalizedText dicovered = AutoloadedPotItem.Discovered;
+		var function = (modItem as AutoloadedPotItem).RecordedPot;
+
+		switch (group.name)
+		{
+			case "BiomePotsCavern":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsIce":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.IceBlock, 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsJungle":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.RichMahogany, 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsDungeon":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Bone, 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsHell":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Obsidian, 2).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsCorruption":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.RottenChunk).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsSpider":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Cobweb, 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsCrimson":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Vertebrae).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsMarble":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Marble, 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsDesert":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Sandstone, 2).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsMushroom":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.GlowingMushroom).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsGranite":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Granite, 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+		}
+	}
+
+	public override ushort GetMapOption(int i, int j) => (ushort)GetStyle(Main.tile[i, j].TileFrameY);
 	public override void AddMapData()
 	{
 		var name = Language.GetText($"MapObject.Pot");
@@ -91,7 +150,6 @@ public class BiomePots : PotTile, ILootTile
 		AddMapEntry(new Color(172, 155, 110), name);
 		AddMapEntry(new Color(69, 66, 121), name);
 	}
-	public override ushort GetMapOption(int i, int j) => (ushort)GetStyle(Main.tile[i, j].TileFrameY);
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
