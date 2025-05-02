@@ -1617,6 +1617,7 @@ BombCannon: {
 	Tooltip:
 		'''
 		Uses bombs as ammo
+		Bombs fired from the cannon don't destroy tiles
 		'A groundbreaking invention'
 		'''
 }
