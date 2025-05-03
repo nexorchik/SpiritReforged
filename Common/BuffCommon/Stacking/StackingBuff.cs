@@ -1,26 +1,31 @@
 ﻿using System.Linq;
 
-namespace SpiritReforged.Common.BuffCommon;
+namespace SpiritReforged.Common.BuffCommon.Stacking;
 
 /// <summary> A stacking buff definition designed for NPCs. </summary>
 public abstract class StackingBuff : ILoadable
 {
 	#region handler
-	private static readonly Dictionary<Type, StackingBuff> Loaded = [];
-	public Mod Mod { get; private set; }
-
 	/// <summary> Creates a new instance from template T. </summary>
-	public static StackingBuff NewBuff<T>() where T : StackingBuff => Loaded[typeof(T)].MemberwiseClone() as StackingBuff;
+	public static StackingBuff NewBuff<T>() where T : StackingBuff => NewBuff(typeof(T).Name);
+	/// <summary> Creates a new instance from template <paramref name="name"/>. </summary>
+	public static StackingBuff NewBuff(string name) => Loaded[name].MemberwiseClone() as StackingBuff;
+
+	/// <summary> All <see cref="StackingBuff"/> instances created during load. Should not be modified. </summary>
+	private static readonly Dictionary<string, StackingBuff> Loaded = [];
+	public Mod Mod { get; private set; }
 
 	public void Unload() { }
 	public void Load(Mod mod)
 	{
 		Mod = mod;
-		Loaded.Add(GetType(), this);
+		Loaded.Add(Name, this);
 
 		Load();
 	}
 	#endregion
+
+	public string Name => GetType().Name;
 
 	public byte MaxStacks { get; protected set; } = 1;
 	public byte stacks;
@@ -32,7 +37,6 @@ public abstract class StackingBuff : ILoadable
 	/// <summary> Called whenever this buff is removed from an NPC. </summary>
 	public virtual void OnRemoved(bool timedOut) { }
 	public virtual void UpdateEffects(NPC npc) { }
-	public virtual void DrawDisplay(SpriteBatch spriteBatch, Vector2 position) { }
 }
 
 internal class StackingNPC : GlobalNPC
@@ -41,28 +45,23 @@ internal class StackingNPC : GlobalNPC
 
 	private readonly HashSet<StackingBuff> stackingBuffs = [];
 
+	/// <inheritdoc cref="AddBuff(string, int, byte, bool)"/>
+	internal void AddBuff<T>(int duration, byte stack) where T : StackingBuff => AddBuff(typeof(T).Name, duration, stack);
+
 	/// <param name="stack"> The number of stacks to add. </param>
-	/// <param name="replace"> Whether this buff should add stacks to a previously applied buff of the same type. </param>
-	internal void AddBuff<T>(int duration, byte stack, bool replace = false) where T : StackingBuff
+	internal void AddBuff(string name, int duration, byte stack)
 	{
-		var inst = StackingBuff.NewBuff<T>();
+		var inst = StackingBuff.NewBuff(name);
 		inst.OnAdded();
 
-		if (replace)
+		foreach (var item in stackingBuffs) //Stack with an existing buff
 		{
-			stackingBuffs.RemoveWhere(x => x.GetType() == typeof(T));
-		}
-		else
-		{
-			foreach (var item in stackingBuffs)
+			if (item.Name == name)
 			{
-				if (item.GetType() == typeof(T))
-				{
-					stack += item.stacks;
+				stack += item.stacks;
 
-					stackingBuffs.Remove(item);
-					break;
-				}
+				stackingBuffs.Remove(item);
+				break;
 			}
 		}
 
@@ -72,13 +71,14 @@ internal class StackingNPC : GlobalNPC
 		stackingBuffs.Add(inst);
 	}
 
-	internal bool RemoveBuff<T>() where T : StackingBuff
+	internal bool RemoveBuff<T>() where T : StackingBuff => RemoveBuff(typeof(T).Name);
+	internal bool RemoveBuff(string name)
 	{
 		bool value = false;
 
 		foreach (var item in stackingBuffs)
 		{
-			if (item.GetType() == typeof(T))
+			if (item.Name == name)
 			{
 				value = stackingBuffs.Remove(item);
 				item.OnRemoved(false);
@@ -120,36 +120,35 @@ internal class StackingNPC : GlobalNPC
 			entry.OnRemoved(true);
 		}
 	}
-
-	public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
-	{
-		const int padding = 16;
-		var pos = position + new Vector2(padding * (stackingBuffs.Count - 1) * -0.5f, 22);
-
-		foreach (var buff in stackingBuffs)
-		{
-			buff.DrawDisplay(Main.spriteBatch, pos);
-			pos.X += padding;
-		}
-
-		return null;
-	}
 }
 
 internal static class StackingHelper
 {
-	public static void AddStackingBuff<T>(this NPC npc, int duration, byte stack = 1) where T : StackingBuff
+	/// <param name="send"> Whether this interaction should be synced. </param>
+	public static void AddStackingBuff<T>(this NPC npc, int duration, byte stack = 1, bool send = true) where T : StackingBuff
 	{
 		if (npc.TryGetGlobalNPC(out StackingNPC sNPC))
+		{
 			sNPC.AddBuff<T>(duration, stack);
+
+			if (send && Main.netMode != NetmodeID.SinglePlayer)
+				new StackAddData(nameof(T), (short)npc.whoAmI, (short)duration, stack).Send();
+		}
 	}
 
-	public static bool RemoveStackingBuff<T>(this NPC npc) where T : StackingBuff
+	/// <param name="send"> Whether this interaction should be synced. </param>
+	public static bool RemoveStackingBuff<T>(this NPC npc, bool send = true) where T : StackingBuff
 	{
+		bool value = false;
 		if (npc.TryGetGlobalNPC(out StackingNPC sNPC))
-			return sNPC.RemoveBuff<T>();
+		{
+			value = sNPC.RemoveBuff<T>();
 
-		return false;
+			if (send && Main.netMode != NetmodeID.SinglePlayer)
+				new StackRemovalData(nameof(T), (short)npc.whoAmI).Send();
+		}
+
+		return value;
 	}
 
 	public static bool HasStackingBuff<T>(this NPC npc, out T value) where T : StackingBuff

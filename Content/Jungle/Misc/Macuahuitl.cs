@@ -4,9 +4,9 @@ using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Content.Particles;
-using SpiritReforged.Common.BuffCommon;
 using SpiritReforged.Common.Visuals;
 using static SpiritReforged.Common.Easing.EaseFunction;
+using SpiritReforged.Common.BuffCommon.Stacking;
 
 namespace SpiritReforged.Content.Jungle.Misc;
 
@@ -186,7 +186,9 @@ class MacuahuitlProj : BaseClubProj, IManualTrailProjectile
 
 		if (ChargeStrike)
 		{
-			target.RemoveStackingBuff<StackingBleed>();
+			if (!target.RemoveStackingBuff<StackingBleed>())
+				return;
+
 			float dirUnit = target.AngleFrom(Owner.Center);
 
 			ParticleHandler.SpawnParticle(new DissipatingImage(basePosition, Color.DarkRed, 0, 0.3f, Main.rand.NextFloat(-0.5f, 0.5f), "Fire", new(0.4f, 0.4f), new(3, 1.5f), 25) { UseLightColor = true });
@@ -214,16 +216,7 @@ class MacuahuitlProj : BaseClubProj, IManualTrailProjectile
 
 public class StackingBleed : StackingBuff
 {
-	private static Asset<Texture2D> Icon;
-	private float _pulse;
-
-	public override void Load() => Icon = ModContent.Request<Texture2D>((GetType().Namespace + '.' + GetType().Name).Replace('.', '/'));
-	public override void OnAdded()
-	{
-		MaxStacks = 10;
-		_pulse = 1f;
-	}
-
+	public override void OnAdded() => MaxStacks = 10;
 	public override void UpdateEffects(NPC npc)
 	{
 		npc.lifeRegen = Math.Min(npc.lifeRegen, 0) - 4 * stacks;
@@ -233,30 +226,5 @@ public class StackingBleed : StackingBuff
 			var d = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.Blood);
 			d.noGravity = true;
 		}
-
-		_pulse = Math.Max(_pulse - 0.1f, 0);
-	}
-
-	public override void DrawDisplay(SpriteBatch spriteBatch, Vector2 position)
-	{
-		var texture = Icon.Value;
-		position -= Main.screenPosition;
-		float scale = 1f + _pulse * 0.5f;
-
-		for (int i = 0; i < 4; i++)
-		{
-			var off = position + i switch
-			{
-				0 => new(2, 0),
-				1 => new(0, 2),
-				2 => new(-2, 0),
-				_ => new(0, -2)
-			};
-
-			spriteBatch.Draw(TextureColorCache.ColorSolid(texture, Color.White), off, null, Color.OrangeRed * .25f, 0, texture.Size() / 2, scale, default, 0);
-		}
-
-		spriteBatch.Draw(texture, position, null, Color.White, 0, texture.Size() / 2, scale, default, 0);
-		Utils.DrawBorderString(spriteBatch, stacks.ToString(), position, Main.MouseTextColorReal, scale * 0.8f);
 	}
 }
