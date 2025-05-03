@@ -1724,3 +1724,8 @@ FrostGiantBelt: {
 		Charging a club gradually increases defense
 		''' */
 }
+
+Macuahuitl: {
+	// DisplayName: Macuahuitl
+	// Tooltip: ""
+}
