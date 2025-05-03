@@ -1,10 +1,11 @@
-﻿using SpiritReforged.Common.Easing;
-using SpiritReforged.Common.ItemCommon;
+﻿using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Common.BuffCommon;
+using SpiritReforged.Common.Visuals;
 using static SpiritReforged.Common.Easing.EaseFunction;
 
 namespace SpiritReforged.Content.Jungle.Misc;
@@ -33,6 +34,7 @@ class MacuahuitlProj : BaseClubProj, IManualTrailProjectile
 {
 	public MacuahuitlProj() : base(new Vector2(82)) { }
 
+	public bool ChargeStrike => FullCharge && CheckAIState(AIStates.SWINGING);
 	public override float WindupTimeRatio => 0.8f;
 
 	public void DoTrailCreation(TrailManager tM)
@@ -132,16 +134,19 @@ class MacuahuitlProj : BaseClubProj, IManualTrailProjectile
 	public override bool? CanDamage() => CheckAIState(AIStates.POST_SMASH) ? false : null;
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 	{
-		if (FullCharge && !CheckAIState(AIStates.CHARGING))
+		if (ChargeStrike)
 		{
 			modifiers.FinalDamage *= DamageScaling;
 			modifiers.Knockback *= KnockbackScaling;
+
+			if (target.HasStackingBuff<StackingBleed>(out var buff))
+				modifiers.FinalDamage += buff.stacks * buff.duration * 0.001f; //Detonate stacks
 		}
 	}
 
 	public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
 	{
-		if (FullCharge && !CheckAIState(AIStates.CHARGING))
+		if (ChargeStrike)
 		{
 			modifiers.FinalDamage *= DamageScaling;
 			modifiers.Knockback *= KnockbackScaling;
@@ -153,14 +158,15 @@ class MacuahuitlProj : BaseClubProj, IManualTrailProjectile
 		var basePosition = Vector2.Lerp(Projectile.Center, target.Center, 0.6f);
 		Vector2 directionUnit = basePosition.DirectionFrom(Owner.MountedCenter) * TotalScale;
 
-		int numParticles = FullCharge ? 12 : 8;
+		int numParticles = ChargeStrike ? 12 : 8;
 		for (int i = 0; i < numParticles; i++)
 		{
 			float maxOffset = 15;
 			float offset = Main.rand.NextFloat(-maxOffset, maxOffset);
 			Vector2 position = basePosition + directionUnit.RotatedBy(MathHelper.PiOver2) * offset;
 			float velocity = MathHelper.Lerp(12, 2, Math.Abs(offset) / maxOffset) * Main.rand.NextFloat(0.9f, 1.1f);
-			if (FullCharge)
+
+			if (ChargeStrike)
 				velocity *= 1.5f;
 
 			float rotationOffset = MathHelper.PiOver4 * offset / maxOffset;
@@ -175,7 +181,82 @@ class MacuahuitlProj : BaseClubProj, IManualTrailProjectile
 				Dust.NewDustPerfect(position, DustID.t_LivingWood, particleVel / 3, Scale: 0.5f);
 		}
 
-		ParticleHandler.SpawnParticle(new SmokeCloud(basePosition, directionUnit * 3, Color.LightGray, 0.06f * TotalScale, EaseFunction.EaseCubicOut, 30));
-		ParticleHandler.SpawnParticle(new SmokeCloud(basePosition, directionUnit * 6, Color.LightGray, 0.08f * TotalScale, EaseFunction.EaseCubicOut, 30));
+		ParticleHandler.SpawnParticle(new SmokeCloud(basePosition, directionUnit * 3, Color.LightGray, 0.06f * TotalScale, EaseCubicOut, 30));
+		ParticleHandler.SpawnParticle(new SmokeCloud(basePosition, directionUnit * 6, Color.LightGray, 0.08f * TotalScale, EaseCubicOut, 30));
+
+		if (ChargeStrike)
+		{
+			target.RemoveStackingBuff<StackingBleed>();
+			float dirUnit = target.AngleFrom(Owner.Center);
+
+			ParticleHandler.SpawnParticle(new DissipatingImage(basePosition, Color.DarkRed, 0, 0.3f, Main.rand.NextFloat(-0.5f, 0.5f), "Fire", new(0.4f, 0.4f), new(3, 1.5f), 25) { UseLightColor = true });
+			ParticleHandler.SpawnParticle(new DissipatingImage(basePosition, Color.Red, 0, 0.15f, Main.rand.NextFloat(-0.5f, 0.5f), "Fire", new(0.4f, 0.4f), new(3, 1.5f), 25) { UseLightColor = true });
+
+			for (int i = 0; i < 3; i++)
+			{
+				float newRotation = dirUnit + Main.rand.NextFloat(-1.0f, 1.0f);
+				var color = Color.Lerp(Color.DarkRed, Color.Red, Main.rand.NextFloat());
+				var p = new TexturedPulseCircle(basePosition, color, Color.Black, Main.rand.NextFloat(1f, 3f), Main.rand.Next(100, 180), Main.rand.Next(10, 30), "SmokeSimple", new Vector2(2f, 1f), EaseCircularOut);
+
+				p.Velocity = (Vector2.UnitX * 3).RotatedBy(newRotation);
+				p.UseLightColor = true;
+				p.WithSkew(Main.rand.NextFloat(0.8f, 0.9f), newRotation + MathHelper.PiOver2);
+
+				ParticleHandler.SpawnParticle(p);
+			}
+		}
+		else
+		{
+			target.AddStackingBuff<StackingBleed>(300, 1);
+		}
+	}
+}
+
+public class StackingBleed : StackingBuff
+{
+	private static Asset<Texture2D> Icon;
+	private float _pulse;
+
+	public override void Load() => Icon = ModContent.Request<Texture2D>((GetType().Namespace + '.' + GetType().Name).Replace('.', '/'));
+	public override void OnAdded()
+	{
+		MaxStacks = 10;
+		_pulse = 1f;
+	}
+
+	public override void UpdateEffects(NPC npc)
+	{
+		npc.lifeRegen = Math.Min(npc.lifeRegen, 0) - 4 * stacks;
+		
+		if (Main.rand.NextFloat() < stacks / (float)MaxStacks)
+		{
+			var d = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.Blood);
+			d.noGravity = true;
+		}
+
+		_pulse = Math.Max(_pulse - 0.1f, 0);
+	}
+
+	public override void DrawDisplay(SpriteBatch spriteBatch, Vector2 position)
+	{
+		var texture = Icon.Value;
+		position -= Main.screenPosition;
+		float scale = 1f + _pulse * 0.5f;
+
+		for (int i = 0; i < 4; i++)
+		{
+			var off = position + i switch
+			{
+				0 => new(2, 0),
+				1 => new(0, 2),
+				2 => new(-2, 0),
+				_ => new(0, -2)
+			};
+
+			spriteBatch.Draw(TextureColorCache.ColorSolid(texture, Color.White), off, null, Color.OrangeRed * .25f, 0, texture.Size() / 2, scale, default, 0);
+		}
+
+		spriteBatch.Draw(texture, position, null, Color.White, 0, texture.Size() / 2, scale, default, 0);
+		Utils.DrawBorderString(spriteBatch, stacks.ToString(), position, Main.MouseTextColorReal, scale * 0.8f);
 	}
 }
