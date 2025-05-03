@@ -13,7 +13,6 @@ public abstract class StackingBuff : ILoadable
 
 	/// <summary> All <see cref="StackingBuff"/> instances created during load. Should not be modified. </summary>
 	private static readonly Dictionary<string, StackingBuff> Loaded = [];
-	public Mod Mod { get; private set; }
 
 	public void Unload() { }
 	public void Load(Mod mod)
@@ -25,6 +24,7 @@ public abstract class StackingBuff : ILoadable
 	}
 	#endregion
 
+	public Mod Mod { get; private set; }
 	public string Name => GetType().Name;
 
 	public byte MaxStacks { get; protected set; } = 1;
