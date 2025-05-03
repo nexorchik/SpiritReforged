@@ -375,7 +375,7 @@ public class Wheezer : ModNPC
 		var effects = (NPC.spriteDirection == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 		var pos = NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY);
 
-		Main.EntitySpriteDraw(texture, pos, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, effects);
+		Main.EntitySpriteDraw(texture, pos, NPC.frame, NPC.DrawColor(drawColor), NPC.rotation, origin, NPC.scale, effects);
 		return false;
 	}
 }

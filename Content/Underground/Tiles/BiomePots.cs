@@ -75,23 +75,7 @@ public class BiomePots : PotTile, ILootTile
 		_ => 1.25f
 	};
 
-	public override void AddMapData()
-	{
-		var name = Language.GetText($"MapObject.Pot");
-
-		AddMapEntry(new Color(150, 150, 150), name);
-		AddMapEntry(new Color(90, 139, 140), name);
-		AddMapEntry(new Color(226, 122, 47), name);
-		AddMapEntry(new Color(192, 136, 70), name);
-		AddMapEntry(new Color(203, 185, 151), name);
-		AddMapEntry(new Color(148, 159, 67), name);
-		AddMapEntry(new Color(198, 87, 93), name);
-		AddMapEntry(new Color(201, 183, 149), name);
-		AddMapEntry(new Color(73, 56, 41), name);
-		AddMapEntry(new Color(172, 155, 110), name);
-		AddMapEntry(new Color(69, 66, 121), name);
-	}
-	public override ushort GetMapOption(int i, int j) => (ushort)GetStyle(Main.tile[i, j].TileFrameY);
+	public override void AddMapData() => AddMapEntry(new Color(112, 60, 70), Language.GetText("MapObject.Pot"));
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
