@@ -1731,3 +1731,8 @@ FrostGiantBelt: {
 		Charging a club gradually increases defense
 		'''
 }
+
+UnstableAdze: {
+	DisplayName: Unstable Adze
+	Tooltip: ""
+}
