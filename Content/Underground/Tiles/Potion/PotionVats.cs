@@ -8,6 +8,7 @@ using SpiritReforged.Common.Misc;
 using SpiritReforged.Content.Forest.Cloud.Items;
 using SpiritReforged.Common.Particle;
 using System.Linq;
+using static SpiritReforged.Common.TileCommon.StyleDatabase;
 
 namespace SpiritReforged.Content.Underground.Tiles.Potion;
 
@@ -33,10 +34,19 @@ public class PotionVats : PotTile, ICutAttempt
 		return (id == -1) ? null : (VatSlot)TileEntity.ByID[id];
 	}
 
-	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
+	public override void AddRecord(int type, StyleGroup group)
 	{
 		var desc = Language.GetText(TileRecord.DescKey + ".Potion");
 		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(4));
+	}
+
+	public override void AddItemRecipes(ModItem modItem, StyleGroup group)
+	{
+		LocalizedText dicovered = AutoloadedPotItem.Discovered;
+		var function = (modItem as AutoloadedPotItem).RecordedPot;
+
+		modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Glass).AddRecipeGroup("GoldBars", 2)
+			.AddTile(ModContent.TileType<PotteryWheel>()).AddCondition(dicovered, function).Register();
 	}
 
 	public override void AddObjectData()

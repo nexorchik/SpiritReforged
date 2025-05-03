@@ -1,5 +1,7 @@
 using RubbleAutoloader;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
+using SpiritReforged.Content.Underground.Pottery;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
@@ -12,6 +14,25 @@ public class CommonPots : PotTile, ILootTile
 	};
 
 	private static int GetStyle(Tile t) => t.TileFrameY / 36;
+
+	public override void AddItemRecipes(ModItem modItem, StyleDatabase.StyleGroup group)
+	{
+		int wheel = ModContent.TileType<PotteryWheel>();
+		LocalizedText dicovered = AutoloadedPotItem.Discovered;
+		var function = (modItem as AutoloadedPotItem).RecordedPot;
+
+		switch (group.name)
+		{
+			case "CommonPotsMushroom":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.GlowingMushroom).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "CommonPotsGranite":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.GraniteBlock, 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+		}
+	}
+
 	public override bool CreateDust(int i, int j, ref int type)
 	{
 		if (!Autoloader.IsRubble(Type))
