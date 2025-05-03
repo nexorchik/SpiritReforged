@@ -64,7 +64,7 @@ public class Wheezer : ModNPC
 
 	public override void OnSpawn(IEntitySource source)
 	{
-		_style = (byte)(Main.rand.NextBool(10) ? 0 : Main.rand.Next(1, 4));
+		_style = (byte)(Main.rand.NextBool(10) ? 3 : Main.rand.Next(0, 3));
 		NPC.netUpdate = true;
 	}
 
@@ -283,9 +283,9 @@ public class Wheezer : ModNPC
 		string name = _style switch
 		{
 			1 => "Purple",
-			2 => "Red",
-			3 => "Teal",
-			_ => "Albino"
+			2 => "Teal",
+			3 => "Albino",
+			_ => "Red"
 		};
 
 		for (int i = 1; i < 5; i++)
@@ -314,10 +314,7 @@ public class Wheezer : ModNPC
 	public override void FindFrame(int frameHeight)
 	{
 		if (NPC.IsABestiaryIconDummy)
-		{
 			ChangeState(State.Walk);
-			_style = 2;
-		}
 
 		bool canLoop = (State)Animation is State.Walk;
 
@@ -375,7 +372,7 @@ public class Wheezer : ModNPC
 		var effects = (NPC.spriteDirection == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 		var pos = NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY);
 
-		Main.EntitySpriteDraw(texture, pos, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, effects);
+		Main.EntitySpriteDraw(texture, pos, NPC.frame, NPC.DrawColor(drawColor), NPC.rotation, origin, NPC.scale, effects);
 		return false;
 	}
 }

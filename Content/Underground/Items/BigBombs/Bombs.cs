@@ -35,13 +35,16 @@ public class Bomb : BombProjectile, ILargeExplosive
 	{
 		base.AI();
 
-		float oldScale = Projectile.scale; //Resize logic
-		Projectile.scale = Math.Min(Projectile.scale + .1f, 1);
-
-		if (Projectile.scale != oldScale)
+		if (!DealingDamage)
 		{
-			int size = (int)Math.Max(CommonSize * Projectile.scale, 2);
-			Projectile.Resize(size, size);
+			float oldScale = Projectile.scale; //Resize logic
+			Projectile.scale = Math.Min(Projectile.scale + .1f, 1);
+
+			if (Projectile.scale != oldScale)
+			{
+				int size = (int)Math.Max(CommonSize * Projectile.scale, 2);
+				Projectile.Resize(size, size);
+			}
 		}
 	}
 

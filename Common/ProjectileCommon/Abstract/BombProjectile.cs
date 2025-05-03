@@ -30,7 +30,7 @@ public abstract class BombProjectile : ModProjectile
 
 	public override void SetDefaults()
 	{
-		Projectile.friendly = Projectile.hostile = true;
+		Projectile.friendly = true;
 		Projectile.Size = new Vector2(15);
 		Projectile.penetrate = -1;
 		Projectile.usesLocalNPCImmunity = true;
@@ -67,7 +67,8 @@ public abstract class BombProjectile : ModProjectile
 		Projectile.TryShimmerBounce();
 	}
 
-	public static bool CheckStuck(Rectangle area)
+	/// <summary> Whether this bomb should stick to tiles. Used when <see cref="sticky"/> is true. </summary>
+	public virtual bool CheckStuck(Rectangle area)
 	{
 		const int padding = 2;
 		return Collision.SolidCollision(area.TopLeft() - new Vector2(padding), area.Width + padding * 2, area.Height + padding * 2);

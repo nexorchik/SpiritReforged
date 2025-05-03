@@ -1,12 +1,10 @@
 using RubbleAutoloader;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
-using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Underground.Pottery;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
-[AutoloadGlowmask("200,200,200")]
 public class CommonPots : PotTile, ILootTile
 {
 	public override Dictionary<string, int[]> TileStyles => new()

@@ -46,7 +46,7 @@ public class StackablePots : ModTile
 		TileObjectData.newTile.DrawYOffset = 2;
 		TileObjectData.addTile(Type);
 
-		AddMapEntry(new Color(100, 90, 35), Language.GetText(NameKey));
+		AddMapEntry(new Color(146, 76, 77), Language.GetText(NameKey));
 		DustType = -1;
 	}
 
