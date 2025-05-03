@@ -7,15 +7,16 @@ using Terraria.WorldBuilding;
 
 namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes.CaveEntrances;
 
+[Obsolete("Will not be implemented for Caves & Clubs for impl. reasons.")]
 internal class ArchwayEntrance : CaveEntrance
 {
-	public override CaveEntranceType Type => CaveEntranceType.Archways;
+	public override CaveEntranceType Type => CaveEntranceType.Vanilla;
 
 	public override void Generate(int x, int y)
 	{
 		List<Vector2> arches = [];
 		int repeats = WorldGen.genRand.NextBool(3) ? 2 : 1;
-		int floorY = WorldMethods.FindNearestBelow(x, y) + 1;
+		//int floorY = WorldMethods.FindNearestBelow(x, y) + 1;
 
 		for (int i = 0; i < repeats; ++i)
 		{
@@ -138,11 +139,6 @@ internal class ArchwayEntrance : CaveEntrance
 		}
 
 		var points = SmoothTunnel.GeneratePoints([.. positions], new SmoothTunnel.VariationData(5, (0.2f, 0.4f), (5, 10), 0.05f));
-
-		if (points.Length == 0)
-		{
-			int i = 0;
-		}
 
 		for (int i = 0; i < points.Length; i++)
 		{

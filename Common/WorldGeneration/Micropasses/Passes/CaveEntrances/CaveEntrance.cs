@@ -3,7 +3,6 @@
 public enum CaveEntranceType : byte
 {
 	Vanilla = 0,
-	Archways,
 	Karst,
 }
 
