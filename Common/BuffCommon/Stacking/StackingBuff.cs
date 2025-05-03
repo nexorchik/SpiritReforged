@@ -3,7 +3,7 @@
 namespace SpiritReforged.Common.BuffCommon.Stacking;
 
 /// <summary> A stacking buff definition designed for NPCs. </summary>
-public abstract class StackingBuff : ILoadable
+public abstract class StackingBuff : ModType
 {
 	#region handler
 	/// <summary> Creates a new instance from template T. </summary>
@@ -13,25 +13,21 @@ public abstract class StackingBuff : ILoadable
 
 	/// <summary> All <see cref="StackingBuff"/> instances created during load. Should not be modified. </summary>
 	private static readonly Dictionary<string, StackingBuff> Loaded = [];
-
-	public void Unload() { }
-	public void Load(Mod mod)
-	{
-		Mod = mod;
-		Loaded.Add(Name, this);
-
-		Load();
-	}
 	#endregion
-
-	public Mod Mod { get; private set; }
-	public string Name => GetType().Name;
 
 	public byte MaxStacks { get; protected set; } = 1;
 	public byte stacks;
 	public int duration;
 
-	public virtual void Load() { }
+	protected sealed override void Register() { }
+
+	public sealed override void Load()
+	{
+		Loaded.Add(Name, this);
+		Load(Mod);
+	}
+
+	public virtual void Load(Mod mod) { }
 	/// <summary> Called whenever this buff is added to an NPC. Can also be used to set defaults. </summary>
 	public virtual void OnAdded() { }
 	/// <summary> Called whenever this buff is removed from an NPC. </summary>
@@ -92,7 +88,7 @@ internal class StackingNPC : GlobalNPC
 
 	internal bool HasBuff<T>(out T value) where T : StackingBuff
 	{
-		if (stackingBuffs.FirstOrDefault(x => x.GetType() == typeof(T)) is StackingBuff def)
+		if (stackingBuffs.FirstOrDefault(x => x is T) is StackingBuff def)
 		{
 			value = def as T;
 			return true;

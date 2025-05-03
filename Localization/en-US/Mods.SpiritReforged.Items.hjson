@@ -1737,7 +1737,7 @@ Macuahuitl: {
 	DisplayName: Macuahuitl
 	Tooltip:
 		'''
-		Is rapidly swung around the user, inflicting bleed
+		Can be rapidly swung around the user, inflicting bleed
 		Charged strikes deal bonus damage to bleeding enemies
 		'''
 }
