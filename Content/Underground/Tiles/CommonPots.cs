@@ -1,10 +1,8 @@
 using RubbleAutoloader;
 using SpiritReforged.Common.TileCommon.PresetTiles;
-using SpiritReforged.Common.Visuals.Glowmasks;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
-[AutoloadGlowmask("200,200,200")]
 public class CommonPots : PotTile, ILootTile
 {
 	public override Dictionary<string, int[]> TileStyles => new()
@@ -14,8 +12,6 @@ public class CommonPots : PotTile, ILootTile
 	};
 
 	private static int GetStyle(Tile t) => t.TileFrameY / 36;
-	public override void SetStaticDefaults() => base.SetStaticDefaults();
-
 	public override bool CreateDust(int i, int j, ref int type)
 	{
 		if (!Autoloader.IsRubble(Type))
