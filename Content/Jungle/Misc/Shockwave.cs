@@ -11,7 +11,7 @@ public class Shockwave : ModProjectile
 
 	public override void SetDefaults()
 	{
-		Projectile.Size = new Vector2(32);
+		Projectile.Size = new Vector2(60);
 		Projectile.penetrate = -1;
 		Projectile.friendly = true;
 		Projectile.hide = true;

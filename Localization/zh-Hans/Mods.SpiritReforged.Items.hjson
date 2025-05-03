@@ -1735,5 +1735,9 @@ FrostGiantBelt: {
 
 Macuahuitl: {
 	// DisplayName: Macuahuitl
-	// Tooltip: ""
+	/* Tooltip:
+		'''
+		Is rapidly swung around the user
+		Charged strikes release a powerful shockwave
+		''' */
 }

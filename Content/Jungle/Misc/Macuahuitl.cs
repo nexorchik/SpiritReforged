@@ -11,12 +11,12 @@ namespace SpiritReforged.Content.Jungle.Misc;
 
 public class Macuahuitl : ClubItem
 {
-	internal override float DamageScaling => 12.5f;
+	internal override float DamageScaling => 4f;
 	internal override float KnockbackScaling => 5f;
 
 	public override void SafeSetDefaults()
 	{
-		Item.damage = 20;
+		Item.damage = 18;
 		Item.knockBack = 2;
 		ChargeTime = 40;
 		SwingTime = 24;
@@ -24,7 +24,7 @@ public class Macuahuitl : ClubItem
 		Item.height = 60;
 		Item.crit = 4;
 		Item.value = Item.sellPrice(0, 1, 0, 0);
-		Item.rare = ItemRarityID.Orange;
+		Item.rare = ItemRarityID.Blue;
 		Item.shoot = ModContent.ProjectileType<MacuahuitlProj>();
 	}
 }
@@ -88,11 +88,15 @@ class MacuahuitlProj : BaseClubProj, IManualTrailProjectile
 	public override void SafeSetDefaults()
 	{
 		Projectile.usesLocalNPCImmunity = true;
-		Projectile.localNPCHitCooldown = 30;
+		Projectile.localNPCHitCooldown = 20;
 	}
 
-	public override void OnSwingStart() => TrailManager.ManualTrailSpawn(Projectile);
 	internal override void ChargeComplete(Player owner) => TrailManager.ManualTrailSpawn(Projectile);
+	public override void OnSwingStart()
+	{
+		TrailManager.ManualTrailSpawn(Projectile);
+		Projectile.ResetLocalNPCHitImmunity();
+	}
 
 	internal override float ChargedRotationInterpolate(float progress)
 	{
@@ -113,8 +117,13 @@ class MacuahuitlProj : BaseClubProj, IManualTrailProjectile
 
 			DoShockwaveCircle(Vector2.Lerp(Projectile.Center, Owner.Center, 0.5f), 280, angle, 0.4f);
 
-			Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.UnitX * Projectile.direction * 8,
-				ModContent.ProjectileType<Shockwave>(), (int)(Projectile.damage * DamageScaling) / 2, Projectile.knockBack * KnockbackScaling / 2f, Projectile.owner);
+			var velocity = Vector2.UnitX * Projectile.direction * 8;
+			var center = Projectile.Center - Vector2.UnitY * 8;
+
+			int damage = (int)(Projectile.damage * DamageScaling) / 2;
+			float knockback = Projectile.knockBack * KnockbackScaling / 2f;
+
+			Projectile.NewProjectile(Projectile.GetSource_FromAI(), center, velocity, ModContent.ProjectileType<Shockwave>(), damage, knockback, Projectile.owner);
 		}
 
 		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 180, MathHelper.PiOver2, 0.4f);
@@ -123,7 +132,7 @@ class MacuahuitlProj : BaseClubProj, IManualTrailProjectile
 	public override bool? CanDamage() => CheckAIState(AIStates.POST_SMASH) ? false : null;
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 	{
-		if (FullCharge && !CheckAIState(AIStates.SWINGING))
+		if (FullCharge && !CheckAIState(AIStates.CHARGING))
 		{
 			modifiers.FinalDamage *= DamageScaling;
 			modifiers.Knockback *= KnockbackScaling;
@@ -132,7 +141,7 @@ class MacuahuitlProj : BaseClubProj, IManualTrailProjectile
 
 	public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
 	{
-		if (FullCharge && !CheckAIState(AIStates.SWINGING))
+		if (FullCharge && !CheckAIState(AIStates.CHARGING))
 		{
 			modifiers.FinalDamage *= DamageScaling;
 			modifiers.Knockback *= KnockbackScaling;
