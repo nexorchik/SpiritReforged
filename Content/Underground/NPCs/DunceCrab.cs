@@ -46,7 +46,7 @@ public class DunceCrab : ModNPC
 
 	/// <summary> Determines the colouration of this crab. </summary>
 	private byte _style;
-	private int _turnCooldown;
+	private bool _justTurned;
 
 	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 7;
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Caverns");
@@ -102,6 +102,7 @@ public class DunceCrab : ModNPC
 		}
 
 		TileCollision();
+		_justTurned = false;
 
 		bool Colliding()
 		{
@@ -201,18 +202,19 @@ public class DunceCrab : ModNPC
 		TryTurnAround();
 
 		float gravity = 2;
-		NPC.rotation = Utils.AngleLerp(NPC.rotation, MathHelper.WrapAngle(Angle), .13f);
-		NPC.velocity = new Vector2(NPC.direction, gravity).RotatedBy(Angle);
-		_turnCooldown = Math.Max(_turnCooldown - 1, 0);
+		float speed = (Side)Surface is Side.Up ? 1.5f : 1f;
+
+		NPC.rotation = Utils.AngleLerp(NPC.rotation, MathHelper.WrapAngle(Angle), 0.12f);
+		NPC.velocity = new Vector2(NPC.direction * speed, gravity).RotatedBy(Angle);
 
 		void ResolveSide(bool reverse = false)
 		{
-			if (_turnCooldown == 0)
+			if (!_justTurned)
 			{
 				int rev = reverse ? -1 : 1;
 				Surface = (int)(Side)((Surface + 1 * NPC.direction * rev) % 4);
 
-				_turnCooldown = 4;
+				_justTurned = true;
 			}
 		}
 
@@ -227,6 +229,12 @@ public class DunceCrab : ModNPC
 
 	private void TryTurnAround(int time = 10)
 	{
+		var target = Main.player[NPC.target];
+
+		//Move away from the target when nearby and grounded
+		if ((Side)Surface is Side.Up && NPC.Distance(target.Center) < 150)
+			NPC.direction = (target.Center.X < NPC.Center.X) ? 1 : -1;
+
 		if (NPC.velocity.Length() < .05f) //Turn around
 		{
 			if (++NPC.localAI[0] > time)

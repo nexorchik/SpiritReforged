@@ -87,7 +87,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 	public override void AnimateTile(ref int frame, ref int frameCounter)
 	{
-		if (++frameCounter >= 4)
+		if (++frameCounter >= 6)
 		{
 			frameCounter = 0;
 			frame = ++frame % 8;
