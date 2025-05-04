@@ -1741,3 +1741,13 @@ Macuahuitl: {
 		Charged strikes deal bonus damage to bleeding enemies
 		''' */
 }
+
+BassSlapper: {
+	// DisplayName: Bass Slapper
+	// Tooltip: ""
+}
+
+UnstableAdze: {
+	// DisplayName: Unstable Adze
+	// Tooltip: ""
+}
