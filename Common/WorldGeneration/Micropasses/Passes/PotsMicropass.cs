@@ -4,7 +4,7 @@ using System.Linq;
 using Terraria.WorldBuilding;
 using SpiritReforged.Content.Underground.Tiles.Potion;
 using SpiritReforged.Common.TileCommon;
-using Terraria.DataStructures;
+using static SpiritReforged.Common.WorldGeneration.WorldMethods;
 
 namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
 
@@ -62,35 +62,17 @@ internal class PotsMicropass : Micropass
 		Generate(CreateAether, Main.maxTilesX / WorldGen.WorldSizeSmallX * 3, out _);
 		Generate(CreateUpsideDown, Main.maxTilesX / WorldGen.WorldSizeSmallX * 4, out _);
 
-		Generate(CreateStack, (int)(Main.maxTilesX * Main.maxTilesY * 0.0005), out _); //Normal pot generation weight is 0.0008
-		Generate(CreateUncommon, (int)(Main.maxTilesX * Main.maxTilesY * 0.00055), out int pots);
+		Generate(CreateStack, (int)(Main.maxTilesX * Main.maxTilesY * 0.0005), out _, maxTries: 4000); //Normal pot generation weight is 0.0008
+		Generate(CreateUncommon, (int)(Main.maxTilesX * Main.maxTilesY * 0.00055), out int pots, maxTries: 4000);
 
 		PotteryTracker.Remaining = (ushort)Main.rand.Next(pots / 2);
 	}
 
-	/// <param name="count"> The target number of successes. </param>
-	/// <param name="generated"> The actual number of successes. </param>
-	private static void Generate(GenDelegate del, int count, out int generated)
-	{
-		const int maxTries = 5000; //Failsafe
-		int pots = 0;
-
-		for (int t = 0; t < maxTries; t++) //Generate uncommon pots
-		{
-			int x = WorldGen.genRand.Next(20, Main.maxTilesX - 20);
-			int y = WorldGen.genRand.Next((int)GenVars.worldSurfaceHigh, Main.maxTilesY - 20);
-
-			WorldMethods.FindGround(x, ref y);
-
-			if (del(x, y - 1) && ++pots >= count)
-				break;
-		}
-
-		generated = pots;
-	}
-
 	public static bool CreateOrnate(int x, int y)
 	{
+		FindGround(x, ref y);
+		y--;
+
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
 
@@ -102,6 +84,9 @@ internal class PotsMicropass : Micropass
 
 	public static bool CreatePotion(int x, int y)
 	{
+		FindGround(x, ref y);
+		y--;
+
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
 
@@ -119,6 +104,9 @@ internal class PotsMicropass : Micropass
 
 	public static bool CreateScrying(int x, int y)
 	{
+		FindGround(x, ref y);
+		y--;
+
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
 
@@ -130,6 +118,9 @@ internal class PotsMicropass : Micropass
 
 	public static bool CreateStuffed(int x, int y)
     {
+		FindGround(x, ref y);
+		y--;
+
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || Main.tile[x, y].LiquidAmount > 100 || !CommonSurface(x, y))
 			return false;
 
@@ -141,6 +132,9 @@ internal class PotsMicropass : Micropass
 
 	public static bool CreateWorm(int x, int y)
 	{
+		FindGround(x, ref y);
+		y--;
+
 		int wall = Main.tile[x, y].WallType;
 
 		if (y < Main.worldSurface && wall == WallID.None || y > Main.UnderworldLayer || !CommonSurface(x, y))
@@ -154,6 +148,9 @@ internal class PotsMicropass : Micropass
 
 	public static bool CreatePlatter(int x, int y)
 	{
+		FindGround(x, ref y);
+		y--;
+
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
 
@@ -165,6 +162,9 @@ internal class PotsMicropass : Micropass
 
 	public static bool CreateAether(int x, int y)
 	{
+		FindGround(x, ref y);
+		y--;
+
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || !NearShimmer() || !CommonSurface(x, y))
 			return false;
 
@@ -178,6 +178,9 @@ internal class PotsMicropass : Micropass
 
 	public static bool CreateUpsideDown(int x, int y)
 	{
+		FindGround(x, ref y);
+		y--;
+
 		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
 			return false;
 
@@ -190,6 +193,9 @@ internal class PotsMicropass : Micropass
 	/// <summary> Picks a relevant biome pot style and places it (<see cref="BiomePots"/>). </summary>
 	public static bool CreateUncommon(int x, int y)
 	{
+		FindGround(x, ref y);
+		y--;
+
 		int tile = Main.tile[x, y + 1].TileType;
 		int wall = Main.tile[x, y].WallType;
 
@@ -242,6 +248,9 @@ internal class PotsMicropass : Micropass
 
 	public static bool CreateStack(int x, int y)
 	{
+		FindGround(x, ref y);
+		y--;
+
 		if (!CommonSurface(x, y))
 			return false;
 
@@ -252,7 +261,7 @@ internal class PotsMicropass : Micropass
 		{
 			if (Main.rand.NextBool()) //Generate a stack of 3 in a pyramid
 			{
-				if (!WorldMethods.AreaClear(x - 1, y - 3, 4, 4))
+				if (!AreaClear(x - 1, y - 3, 4, 4))
 					return false;
 
 				WorldGen.PlaceTile(x - 1, y, ModContent.TileType<StackablePots>(), true, style: GetRandomStyle());
@@ -261,7 +270,7 @@ internal class PotsMicropass : Micropass
 			}
 			else //Generate a stack of 2 in a tower
 			{
-				if (!WorldMethods.AreaClear(x, y - 5, 2, 4))
+				if (!AreaClear(x, y - 5, 2, 4))
 					return false;
 
 				for (int s = 0; s < 2; s++)
