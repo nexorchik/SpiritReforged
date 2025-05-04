@@ -18,6 +18,8 @@ public static class NPCHelper
 			tagNPC.ApplySummonTag(damage, npc.whoAmI, sync);
 	}
 
+	public static Color DrawColor(this NPC npc, Color drawColor) => npc.GetAlpha(npc.GetNPCColorTintedByBuffs(drawColor));
+
 	public static void BuffImmune(int type, bool whipsToo = false)
 	{
 		if (whipsToo)

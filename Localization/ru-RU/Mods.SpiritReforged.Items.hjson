@@ -1609,6 +1609,7 @@ BombCannon: {
 	/* Tooltip:
 		'''
 		Uses bombs as ammo
+		Bombs fired from the cannon don't destroy tiles
 		'A groundbreaking invention'
 		''' */
 }
@@ -1724,12 +1725,11 @@ FrostGiantBelt: {
 		''' */
 }
 
-UnstableAdze: {
-	// DisplayName: Unstable Adze
-	// Tooltip: ""
-}
-
-BassSlapper: {
-	// DisplayName: Bass Slapper
-	// Tooltip: ""
+Macuahuitl: {
+	// DisplayName: Macuahuitl
+	/* Tooltip:
+		'''
+		Can be rapidly swung around the user, inflicting bleed
+		Charged strikes deal bonus damage to bleeding enemies
+		''' */
 }

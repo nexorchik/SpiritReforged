@@ -8,16 +8,25 @@ using SpiritReforged.Content.Vanilla.Food;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
+using static SpiritReforged.Common.TileCommon.StyleDatabase;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
 public class SilverPlatters : PotTile, ILootTile
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
-	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
+	public override void AddRecord(int type, StyleGroup group)
 	{
 		var desc = Language.GetText("Mods.SpiritReforged.Tiles.Records.Platter");
 		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(3));
+	}
+
+	public override void AddItemRecipes(ModItem modItem, StyleGroup group)
+	{
+		LocalizedText dicovered = AutoloadedPotItem.Discovered;
+		var function = (modItem as AutoloadedPotItem).RecordedPot;
+
+		modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddRecipeGroup("SilverBars", 2).AddTile(ModContent.TileType<PotteryWheel>()).AddCondition(dicovered, function).Register();
 	}
 
 	public override void AddObjectData()

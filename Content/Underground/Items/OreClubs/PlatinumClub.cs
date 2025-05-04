@@ -4,7 +4,7 @@ namespace SpiritReforged.Content.Underground.Items.OreClubs;
 
 public class PlatinumClub : ClubItem
 {
-	internal override float DamageScaling => 1.5f;
+	internal override float DamageScaling => 1.66f;
 
 	public override void SafeSetDefaults()
 	{

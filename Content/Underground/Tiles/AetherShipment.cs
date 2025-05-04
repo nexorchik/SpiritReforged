@@ -8,6 +8,7 @@ using SpiritReforged.Content.Particles;
 using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using static SpiritReforged.Common.TileCommon.StyleDatabase;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
@@ -22,6 +23,15 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 	{
 		var desc = Language.GetText("Mods.SpiritReforged.Tiles.Records.Aether");
 		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(6));
+	}
+
+	public override void AddItemRecipes(ModItem modItem, StyleGroup group)
+	{
+		LocalizedText dicovered = AutoloadedPotItem.Discovered;
+		var function = (modItem as AutoloadedPotItem).RecordedPot;
+
+		modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.StoneBlock, 5).AddIngredient(ItemID.ShimmerTorch)
+			.AddTile(ModContent.TileType<PotteryWheel>()).AddCondition(dicovered, function).Register();
 	}
 
 	public override void AddObjectData()

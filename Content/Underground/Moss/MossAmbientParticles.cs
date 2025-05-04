@@ -20,7 +20,7 @@ internal class MossAmbientParticles : GlobalTile
 {
 	public override void NearbyEffects(int i, int j, int type, bool closer)
 	{
-		if (MossTileCounts.InNeonMoss && closer && Main.rand.NextBool(2400))
+		if (MossTileCounts.InNeonMoss && !Main.gamePaused && closer && Main.rand.NextBool(2400))
 		{
 			if (type == TileID.XenonMoss)
 				SpawnMossAmbientParticles(i, j, new Color(0, 184, 255));
