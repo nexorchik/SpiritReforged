@@ -64,9 +64,9 @@ internal class PotteryStructureMicropass : Micropass
 		WorldUtils.Gen(pt - new Point(halfWidth, 2), new Shapes.Rectangle(halfWidth * 2, 1), Actions.Chain(new Modifiers.IsNotSolid(), new Actions.PlaceTile(TileID.Platforms)));
 		
 		for (int i = 0; i < 3; i++)
-			CreateColumn(x - radius + (int)(radius * 2 * (i / 2f)), y - 2, i == 1);
+			CreateColumn(x - radius + (int)(radius * 2 * (i / 2f)), y - 2);
 
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 30; i++)
 		{
 			var webPoint = WorldGen.genRand.NextVector2FromRectangle(area).ToPoint();
 			if (WorldGen.SolidOrSlopedTile(webPoint.X, webPoint.Y))
@@ -75,18 +75,17 @@ internal class PotteryStructureMicropass : Micropass
 				continue;
 			}
 
-			WorldUtils.Gen(webPoint, new Shapes.Circle(3), Actions.Chain(new Modifiers.IsTouching(true, TileID.Stone, TileID.WoodenBeam), 
-				new Modifiers.Blotches(), new Modifiers.Dither(), new Modifiers.IsEmpty(), new Actions.PlaceTile(TileID.Cobweb)));
+			WorldUtils.Gen(webPoint, new Shapes.Circle(4), Actions.Chain(new Modifiers.IsTouching(true, TileID.WoodenBeam), 
+				new Modifiers.Blotches(4), new Modifiers.Dither(), new Modifiers.IsEmpty(), new Actions.PlaceTile(TileID.Cobweb)));
 		}
 
-		WorldMethods.FindGround(x, ref y);
-		WorldGen.PlaceTile(x, y - 1, ModContent.TileType<PotteryWheel>(), true, true);
+		WorldGen.PlaceTile(x, y - 3, ModContent.TileType<PotteryWheel>(), true, true);
 
 		AddPots(area);
 		return true;
 	}
 
-	private static void CreateColumn(int x, int y, bool avoidTiles = false)
+	private static void CreateColumn(int x, int y)
 	{
 		for (int i = x - 2; i <= x + 2; i++)
 			WorldGen.PlaceTile(i, y, TileID.WoodBlock, true, true); //Solid block top
@@ -98,11 +97,10 @@ internal class PotteryStructureMicropass : Micropass
 			int planked = WallID.Planked;
 
 			WorldGen.PlaceWall(x - 1, y, planked);
-			WorldGen.PlaceWall(x, y, WallID.Wood);
+			WorldGen.PlaceWall(x, y, planked);
 			WorldGen.PlaceWall(x + 1, y, planked);
 
-			if (!avoidTiles)
-				WorldGen.PlaceTile(x, y, TileID.WoodenBeam, true);
+			WorldGen.PlaceTile(x, y, TileID.WoodenBeam, true);
 
 			y++;
 		}
@@ -115,7 +113,7 @@ internal class PotteryStructureMicropass : Micropass
 		selection.Add(ModContent.TileType<StackablePots>(), .4f);
 		selection.Add(ModContent.TileType<Pots>());
 		selection.Add(ModContent.TileType<UpsideDownPot>(), .005f);
-		selection.Add(ModContent.TileType<OrnatePots>(), .008f);
+		selection.Add(ModContent.TileType<OrnatePots>(), .005f);
 		selection.Add(ModContent.TileType<WormPot>(), .05f);
 		selection.Add(ModContent.TileType<SilverPlatters>(), .05f);
 		selection.Add(ModContent.TileType<ScryingPot>(), .03f);
