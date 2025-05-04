@@ -1732,3 +1732,12 @@ FrostGiantBelt: {
 		Charging a club gradually increases defense
 		'''
 }
+
+Macuahuitl: {
+	DisplayName: Macuahuitl
+	Tooltip:
+		'''
+		Can be rapidly swung around the user, inflicting bleed
+		Charged strikes deal bonus damage to bleeding enemies
+		'''
+}
