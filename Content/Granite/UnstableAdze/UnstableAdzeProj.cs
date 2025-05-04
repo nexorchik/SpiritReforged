@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework.Graphics;
 using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.MathHelpers;
 using SpiritReforged.Common.Misc;
@@ -8,7 +7,6 @@ using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Particles;
-using Terraria;
 
 namespace SpiritReforged.Content.Granite.UnstableAdze;
 
@@ -16,7 +14,7 @@ class UnstableAdzeProj : BaseClubProj, IManualTrailProjectile
 {
 	public UnstableAdzeProj() : base(new Vector2(96)) { }
 
-	public override float WindupTimeRatio => 0.8f;
+	public override float WindupTimeRatio => 0.9f;
 
 	public void DoTrailCreation(TrailManager tM)
 	{
@@ -62,9 +60,10 @@ class UnstableAdzeProj : BaseClubProj, IManualTrailProjectile
 		TrailManager.TryTrailKill(Projectile);
 		Collision.HitTiles(Projectile.position, Vector2.UnitY, Projectile.width, Projectile.height);
 
-		DustClouds(8);
+		DustClouds(12);
 
-		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 250, MathHelper.PiOver2, 0.4f);
+		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 200, MathHelper.PiOver2, 0.6f);
+		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 240, MathHelper.PiOver2, 0.6f);
 		
 		if(FullCharge)
 		{
@@ -77,6 +76,8 @@ class UnstableAdzeProj : BaseClubProj, IManualTrailProjectile
 
 			ParticleHandler.SpawnParticle(new TexturedPulseCircle(particlePos, easedCyan(0.33f), 1f, 220, 25, "EnergyTrail", new Vector2(2, 0.5f), EaseFunction.EaseQuarticOut, endRingWidth: 0.3f).WithSkew(0.85f, particleRot));
 			ParticleHandler.SpawnParticle(new TexturedPulseCircle(particlePos, easedCyan(0.33f), 1f, 280, 20, "EnergyTrail", new Vector2(2, 0.5f), EaseFunction.EaseQuarticOut, endRingWidth: 0.3f).WithSkew(0.85f + Main.rand.NextFloat(-0.1f, 0.05f), particleRot + Main.rand.NextFloat(-0.1f, 0.1f)));
+
+			//Find a solid tile with an empty tile above it to spawn the projectile on
 
 			Vector2 spawnPos = particlePos;
 			Point tilepos = spawnPos.ToTileCoordinates();

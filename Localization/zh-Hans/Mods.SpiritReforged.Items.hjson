@@ -1736,3 +1736,8 @@ UnstableAdze: {
 	// DisplayName: Unstable Adze
 	// Tooltip: ""
 }
+
+BassSlapper: {
+	// DisplayName: Bass Slapper
+	// Tooltip: ""
+}

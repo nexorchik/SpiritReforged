@@ -11,9 +11,9 @@ public class UnstableAdze : ClubItem
 
 	public override void SafeSetDefaults()
 	{
-		Item.damage = 32;
+		Item.damage = 53;
 		Item.knockBack = 8;
-		ChargeTime = 50;
+		ChargeTime = 40;
 		SwingTime = 30;
 		Item.width = 60;
 		Item.height = 60;
@@ -21,13 +21,5 @@ public class UnstableAdze : ClubItem
 		Item.value = Item.sellPrice(0, 0, 30, 0);
 		Item.rare = ItemRarityID.Blue;
 		Item.shoot = ModContent.ProjectileType<UnstableAdzeProj>();
-	}
-
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ItemID.PlatinumBar, 20);
-		recipe.AddTile(TileID.Anvils);
-		recipe.Register();
 	}
 }
