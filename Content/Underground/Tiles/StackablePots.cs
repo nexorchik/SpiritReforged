@@ -112,7 +112,12 @@ public class StackablePots : ModTile
 		Offsets.TryGetValue(Get(i, j), out var offset);
 		position += offset.ToVector2(); //Handle stack offset
 
-		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
+		var color = Lighting.GetColor(i, j);
+
+		if (Main.LocalPlayer.findTreasure)
+			color = TileExtensions.GetSpelunkerTint(color);
+
+		spriteBatch.Draw(texture, position, source, color, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
 		return false;
 	}
 }
