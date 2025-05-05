@@ -82,7 +82,6 @@ public abstract class MossFlaskProjectile : ModProjectile
 
 	public override void SetDefaults() => Projectile.CloneDefaults(ProjectileID.HolyWater);
 	public override bool? CanCutTiles() => false;
-	public override bool? CanDamage() => false;
 
 	public override void OnKill(int timeLeft)
 	{
