@@ -75,14 +75,15 @@ public class TrailManager
 		}
 	}
 
-	public static void ManualTrailSpawn(Projectile projectile)
+	/// <param name="send"> Whether trail creation should be synced. Not normally consistent because projectile.whoAmI differs between clients. </param>
+	public static void ManualTrailSpawn(Projectile projectile, bool send = false)
 	{
-		if (projectile.ModProjectile is IManualTrailProjectile)
-		{
-			if (Main.netMode == NetmodeID.SinglePlayer)
-				(projectile.ModProjectile as IManualTrailProjectile).DoTrailCreation(AssetLoader.VertexTrailManager);
-			else
-				new SpawnTrailData(projectile.whoAmI).Send();
-		}
+		if (projectile.ModProjectile is not IManualTrailProjectile)
+			return;
+
+		if (send && Main.netMode != NetmodeID.SinglePlayer)
+			new SpawnTrailData(projectile.whoAmI).Send();
+		else
+			(projectile.ModProjectile as IManualTrailProjectile).DoTrailCreation(AssetLoader.VertexTrailManager);
 	}
 }

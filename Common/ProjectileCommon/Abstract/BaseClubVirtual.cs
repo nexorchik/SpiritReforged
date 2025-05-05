@@ -74,7 +74,6 @@ public abstract partial class BaseClubProj : ModProjectile
 
 			_flickerTime = MAX_FLICKERTIME;
 			_hasFlickered = true;
-			Projectile.netUpdate = true;
 		}
 
 		float windupAnimProgress = _windupTimer / (float)WindupTime;
