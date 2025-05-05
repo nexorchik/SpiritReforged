@@ -1,4 +1,3 @@
-using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Visuals;
 using System.IO;
 using Terraria.Audio;
@@ -95,9 +94,8 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 	public override void CutTiles()
 	{
 		//Prevent tile cutting if the projectile isn't allowed to hit anything
-		if (CanDamage().HasValue)
-			if(CanDamage().Value == false)
-				return;
+		if (CanDamage() is false)
+			return;
 
 		//Tile cutting logic adapted from example mod, plots a tile line across the projectile as if it was a laser and cuts tiles that intersect with it
 		DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
@@ -135,38 +133,35 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 	{
 		SafeAI();
 
-		Player owner = Main.player[Projectile.owner];
-
-		if (owner.dead)
+		if (Owner.dead)
 			Projectile.Kill();
 
-		owner.heldProj = Projectile.whoAmI;
+		Owner.heldProj = Projectile.whoAmI;
 
 		if (AllowUseTurn)
 		{
-			if (owner == Main.LocalPlayer)
+			if (Owner == Main.LocalPlayer)
 			{
-				int newDir = Math.Sign(Main.MouseWorld.X - owner.Center.X);
-				Projectile.velocity.X = newDir == 0 ? owner.direction : newDir;
+				int newDir = Math.Sign(Main.MouseWorld.X - Owner.Center.X);
+				Projectile.velocity.X = newDir == 0 ? Owner.direction : newDir;
 
-				if (newDir != owner.direction)
+				if (newDir != Owner.direction)
 					Projectile.netUpdate = true;
 			}
 
-			owner.ChangeDir((int)Projectile.velocity.X);
+			Owner.ChangeDir((int)Projectile.velocity.X);
 		}
-
 		else
-			owner.direction = Math.Sign(Projectile.velocity.X);
+			Owner.direction = Math.Sign(Projectile.velocity.X);
 
 		switch (AiState)
 		{
 			case (float)AIStates.CHARGING: 
-				Charging(owner);
+				Charging(Owner);
 				break;
 
 			case (float)AIStates.SWINGING:
-				Swinging(owner);
+				Swinging(Owner);
 				break;
 
 			case (float)AIStates.POST_SMASH:
@@ -174,29 +169,29 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 				break;
 		}
 
-		if (!owner.controlUseItem && _windupTimer >= WindupTime && CheckAIState(AIStates.CHARGING) && AllowRelease)
+		if (!Owner.controlUseItem && _windupTimer >= WindupTime && CheckAIState(AIStates.CHARGING) && AllowRelease)
 		{
 			SetAIState(AIStates.SWINGING);
 			OnSwingStart();
 
 			if (!Main.dedServ)
-				SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing.WithPitchOffset(-0.75f), owner.Center);
+				SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing.WithPitchOffset(-0.75f), Owner.Center);
 		}
 
-		TranslateRotation(owner, out float clubRotation, out float armRotation);
+		TranslateRotation(Owner, out float clubRotation, out float armRotation);
 		Projectile.rotation = clubRotation;
 
-		owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters, armRotation);
-		owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.ThreeQuarters, armRotation);
-		Projectile.position.X = owner.Center.X - (int)(Math.Cos(armRotation - PiOver2) * Size.X) - Projectile.width / 2;
-		Projectile.position.Y = owner.Center.Y - (int)(Math.Sin(armRotation - PiOver2) * Size.Y) - Projectile.height / 2 - owner.gfxOffY;
+		Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters, armRotation);
+		Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.ThreeQuarters, armRotation);
+		Projectile.position.X = Owner.Center.X - (int)(Math.Cos(armRotation - PiOver2) * Size.X) - Projectile.width / 2;
+		Projectile.position.Y = Owner.Center.Y - (int)(Math.Sin(armRotation - PiOver2) * Size.Y) - Projectile.height / 2 - Owner.gfxOffY;
 
-		owner.itemAnimation = owner.itemTime = 2;
+		Owner.itemAnimation = Owner.itemTime = 2;
 	}
 
 	public sealed override bool PreDraw(ref Color lightColor)
 	{
-		Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+		Texture2D texture = TextureAssets.Projectile[Type].Value;
 		Vector2 handPos = Owner.GetFrontHandPosition(Owner.compositeFrontArm.stretch, Owner.compositeFrontArm.rotation);
 		Vector2 drawPos = handPos - Main.screenPosition + Vector2.UnitY * Owner.gfxOffY;
 		Color drawColor = Projectile.GetAlpha(lightColor);
@@ -228,6 +223,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 	{
 		writer.Write((Half)DamageScaling);
 		writer.Write((Half)KnockbackScaling);
+		writer.Write((Half)MeleeSizeModifier);
 
 		writer.Write((ushort)ChargeTime);
 		writer.Write((ushort)SwingTime);
@@ -246,6 +242,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 	{
 		DamageScaling = (float)reader.ReadHalf();
 		KnockbackScaling = (float)reader.ReadHalf();
+		MeleeSizeModifier = (float)reader.ReadHalf();
 
 		ChargeTime = reader.ReadUInt16();
 		SwingTime = reader.ReadUInt16();

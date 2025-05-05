@@ -56,8 +56,7 @@ public abstract partial class BaseClubProj : ModProjectile
 	{
 		if (_windupTimer < WindupTime)
 		{
-			_windupTimer++;
-			if (_windupTimer == WindupTime)
+			if (++_windupTimer == WindupTime)
 				WindupComplete(owner);
 		}
 		else
@@ -72,6 +71,7 @@ public abstract partial class BaseClubProj : ModProjectile
 
 			if (!Main.dedServ)
 				SoundEngine.PlaySound(SoundID.NPCDeath7, Projectile.Center);
+
 			_flickerTime = MAX_FLICKERTIME;
 			_hasFlickered = true;
 			Projectile.netUpdate = true;
@@ -196,6 +196,6 @@ public abstract partial class BaseClubProj : ModProjectile
 	internal virtual void SendExtraDataSafe(BinaryWriter writer) { }
 	internal virtual void ReceiveExtraDataSafe(BinaryReader reader) { }
 
-	public virtual SpriteEffects Effects => Main.player[Projectile.owner].direction * (int)Main.player[Projectile.owner].gravDir < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+	public virtual SpriteEffects Effects => Owner.direction * (int)Owner.gravDir < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 	public virtual Vector2 HoldPoint => Effects == SpriteEffects.FlipHorizontally ? Size * (1 - HoldPointRatio) : new Vector2(Size.X * HoldPointRatio, Size.Y * (1 - HoldPointRatio));
 }
