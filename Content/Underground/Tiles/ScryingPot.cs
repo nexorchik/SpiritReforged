@@ -76,7 +76,10 @@ public class ScryingPot : PotTile, ILootTile
 
 		if (!Main.dedServ)
 		{
-			TornMapPiece.LightMap(i, j, 280, out _, .5f);
+			int pWhoAmI = Player.FindClosest(new Vector2(i, j) * 16, 32, 32);
+
+			if (Main.myPlayer == pWhoAmI)
+				TornMapPiece.LightMap(i, j, 280, out _, .5f); //Only reveal the map for the nearest player
 
 			ParticleHandler.SpawnParticle(new TexturedPulseCircle(spawn, Color.MediumPurple * .15f, .25f, 400, 20, "supPerlin", Vector2.One, Common.Easing.EaseFunction.EaseQuadOut));
 			SoundEngine.PlaySound(SoundID.NPCDeath6 with { Pitch = .5f }, spawn);

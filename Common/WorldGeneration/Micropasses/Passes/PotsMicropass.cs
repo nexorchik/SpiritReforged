@@ -53,7 +53,7 @@ internal class PotsMicropass : Micropass
 	{
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Caves");
 
-		Generate(CreateOrnate, Main.maxTilesX / WorldGen.WorldSizeSmallX * 10, out _);
+		Generate(CreateOrnate, Main.maxTilesX / WorldGen.WorldSizeSmallX * 5, out _);
 		Generate(CreatePotion, Main.maxTilesX / WorldGen.WorldSizeSmallX * 46, out _);
 		Generate(CreateScrying, Main.maxTilesX / WorldGen.WorldSizeSmallX * 20, out _);
         Generate(CreateStuffed, Main.maxTilesX / WorldGen.WorldSizeSmallX * 12, out _);
