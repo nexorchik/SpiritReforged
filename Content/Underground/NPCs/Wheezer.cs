@@ -70,6 +70,8 @@ public class Wheezer : ModNPC
 
 	public override void AI()
 	{
+		return; //DEBUG
+
 		if (_explosiveDeath)
 		{
 			ExplodeOnDeath();
