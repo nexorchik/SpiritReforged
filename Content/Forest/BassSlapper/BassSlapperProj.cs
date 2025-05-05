@@ -3,12 +3,18 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
+using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using SpiritReforged.Content.Particles;
+using System.IO;
 
 namespace SpiritReforged.Content.Forest.BassSlapper;
 
 class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 {
+	private const int MAX_SLAMS = 3;
+
+	private int _numSlams = 0;
+
 	public BassSlapperProj() : base(new Vector2(76, 84)) { }
 
 	public override float WindupTimeRatio => 0.8f;
@@ -24,15 +30,15 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 		{
 			trailDist *= 1.1f;
 			trailWidth *= 1.1f;
-			angleRangeMod = 1.2f;
-			rotOffset = -MathHelper.PiOver4 / 2;
+			angleRangeMod = 1.1f;
+			rotOffset = 0;
 		}
 
 		SwingTrailParameters parameters = new(AngleRange * angleRangeMod, -HoldAngle_Final + rotOffset, trailDist, trailWidth)
 		{
 			Color = Color.White,
 			SecondaryColor = new(139, 140, 70),
-			TrailLength = 0.6f,
+			TrailLength = 0.5f,
 			Intensity = 0.75f,
 		};
 
@@ -51,36 +57,55 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 
 	public override void OnSwingStart() => TrailManager.ManualTrailSpawn(Projectile);
 
+	public override void AfterCollision()
+	{
+		if(_numSlams < MAX_SLAMS && FullCharge)
+		{
+			_lingerTimer--;
+			float lingerProgress = _lingerTimer / (float)LingerTime;
+			lingerProgress = 1 - lingerProgress;
+			BaseRotation = MathHelper.Lerp(BaseRotation, HoldAngle_Final, EaseFunction.EaseCubicOut.Ease(lingerProgress) / 6f);
+
+			if(lingerProgress >= 0.66f)
+			{
+				SetAIState(AIStates.SWINGING);
+				ResetData();
+				Charge = 1;
+				Projectile.ResetLocalNPCHitImmunity();
+				OnSwingStart();
+			}
+
+			return;
+		}
+
+		base.AfterCollision();
+	}
+
 	public override void OnSmash(Vector2 position)
 	{
+		++_numSlams;
 		TrailManager.TryTrailKill(Projectile);
 		Collision.HitTiles(Projectile.position, Vector2.UnitY, Projectile.width, Projectile.height);
 
 		DustClouds(6);
 
 		//placeholder water dust
-		for(int i = 0; i < 25; i++)
+		for(int i = 0; i < 10; i++)
 		{
 			float maxOffset = 35 * TotalScale;
 			float offset = Main.rand.NextFloat(-maxOffset, maxOffset);
-			Vector2 dustPos = Projectile.Bottom + Vector2.UnitX * Main.rand.NextFloat(-30, 30);
-			float velocity = MathHelper.Lerp(6, 2, EaseFunction.EaseCircularOut.Ease(Math.Abs(offset) / maxOffset)) * Main.rand.NextFloat(0.9f, 1.1f);
+			Vector2 dustPos = Projectile.Bottom + Vector2.UnitX * offset;
+			float velocity = MathHelper.Lerp(4, 0, EaseFunction.EaseCircularIn.Ease(Math.Abs(offset) / maxOffset));
 			if (FullCharge)
 				velocity *= 1.33f;
 
-			Dust.NewDustPerfect(dustPos, DustID.Water, -Vector2.UnitY * velocity, 0, Color.White, Scale: Main.rand.NextFloat(0.5f, 2f));
+			ParticleHandler.SpawnParticle(new BubbleParticle(dustPos, velocity * -Vector2.UnitY, Main.rand.NextFloat(0.2f, 0.4f), Main.rand.Next(20, 40)));
+
+			for(int j = 0; j < 2; j++)
+				Dust.NewDustPerfect(dustPos + Main.rand.NextVector2Circular(4, 4), DustID.Water, velocity * -Vector2.UnitY * Main.rand.NextFloat(), Scale : Main.rand.NextFloat(2));
 		}
 
-		if (FullCharge)
-		{
-			float angle = MathHelper.PiOver4 * 1.5f;
-			if (Projectile.direction > 0)
-				angle = -angle + MathHelper.Pi;
-
-			DoShockwaveCircle(Vector2.Lerp(Projectile.Center, Owner.Center, 0.5f), 280, angle, 0.4f);
-		}
-
-		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 180, MathHelper.PiOver2, 0.4f);
+		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 220, MathHelper.PiOver2, 0.4f);
 	}
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -110,4 +135,7 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 			ParticleHandler.SpawnParticle(p);
 		}
 	}
+
+	internal override void SendExtraDataSafe(BinaryWriter writer) => writer.Write((short)_numSlams);
+	internal override void ReceiveExtraDataSafe(BinaryReader reader) => _numSlams = reader.ReadInt16();
 }

@@ -1736,10 +1736,10 @@ Macuahuitl: {
 
 BassSlapper: {
 	// DisplayName: Bass Slapper
-	// Tooltip: ""
+	// Tooltip: Fully charging does multiple slams in quick succession
 }
 
 UnstableAdze: {
-	// DisplayName: Unstable Adze
-	// Tooltip: ""
+	// DisplayName: Shockhammer
+	// Tooltip: Fully charging releases a shockwave that travels along tiles
 }
