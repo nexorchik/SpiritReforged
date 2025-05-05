@@ -6,6 +6,7 @@ using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
+using Terraria.ID;
 
 namespace SpiritReforged.Content.Underground.NPCs;
 
@@ -118,6 +119,26 @@ public class DunceCrab : ModNPC
 		NPC.collideY = false;
 
 		NPC.velocity = CollisionCheckHelper.NoSlopeCollision(NPC.position, NPC.velocity, NPC.width, NPC.height);
+
+		if (Collision.LavaCollision(NPC.position, NPC.width, NPC.height)) //Take lava damage
+		{
+			if (Main.remixWorld)
+			{
+				NPC.AddBuff(BuffID.OnFire, 180);
+			}
+			else
+			{
+				NPC.AddBuff(BuffID.OnFire, 420);
+
+				var hit = new NPC.HitInfo() { Damage = 50 };
+				NPC.StrikeNPC(hit, noPlayerInteraction: true);
+
+				if (Main.dedServ)
+					NetMessage.SendStrikeNPC(NPC, in hit);
+			}
+
+			NPC.lavaWet = true;
+		}
 
 		if (NPC.oldVelocity.X != NPC.velocity.X)
 			NPC.collideX = true;
