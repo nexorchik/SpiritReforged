@@ -78,7 +78,7 @@ public class TrailManager
 	/// <param name="send"> Whether trail creation should be synced. Not normally consistent because projectile.whoAmI differs between clients. </param>
 	public static void ManualTrailSpawn(Projectile projectile, bool send = false)
 	{
-		if (projectile.ModProjectile is not IManualTrailProjectile)
+		if (Main.dedServ || projectile.ModProjectile is not IManualTrailProjectile)
 			return;
 
 		if (send && Main.netMode != NetmodeID.SinglePlayer)
