@@ -32,7 +32,7 @@ public class OceanPlayer : ModPlayer
 			if (attempt.rare && Main.rand.NextBool(30))
 				itemDrop = ModContent.ItemType<Items.Lifesaver.Lifesaver>();
 
-			if (attempt.rare && Main.rand.NextBool(22))
+			if (attempt.uncommon && Main.rand.NextBool(40))
 				itemDrop = ModContent.ItemType<Items.BassClub.BassSlapper>();
 		}
 	}
