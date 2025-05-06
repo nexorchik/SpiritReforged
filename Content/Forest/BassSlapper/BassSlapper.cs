@@ -4,14 +4,14 @@ namespace SpiritReforged.Content.Forest.BassSlapper;
 
 public class BassSlapper : ClubItem
 {
-	internal override float DamageScaling => 1.5f;
+	internal override float DamageScaling => 1.25f;
 
 	public override void SafeSetDefaults()
 	{
 		Item.damage = 28;
-		Item.knockBack = 8;
-		ChargeTime = 40;
-		SwingTime = 30;
+		Item.knockBack = 14;
+		ChargeTime = 50;
+		SwingTime = 26;
 		Item.width = 60;
 		Item.height = 60;
 		Item.crit = 4;

@@ -3,9 +3,13 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
+using SpiritReforged.Common.Visuals;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using SpiritReforged.Content.Particles;
 using System.IO;
+using Terraria.Audio;
+using static SpiritReforged.Common.Easing.EaseFunction;
+using static Microsoft.Xna.Framework.MathHelper;
 
 namespace SpiritReforged.Content.Forest.BassSlapper;
 
@@ -17,11 +21,15 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 
 	public BassSlapperProj() : base(new Vector2(76, 84)) { }
 
-	public override float WindupTimeRatio => 0.8f;
+	public override float HoldAngle_Intial => base.HoldAngle_Intial * 1.25f;
+
+	public override float WindupTimeRatio => 0.5f;
+	public override float PullbackWindupRatio => 0.5f;
+	public override float HoldPointRatio => 0.15f;
 
 	public void DoTrailCreation(TrailManager tM)
 	{
-		float trailDist = 70 * MeleeSizeModifier;
+		float trailDist = 64 * MeleeSizeModifier;
 		float trailWidth = 50 * MeleeSizeModifier;
 		float angleRangeMod = 1f;
 		float rotOffset = 0;
@@ -30,7 +38,7 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 		{
 			trailDist *= 1.1f;
 			trailWidth *= 1.1f;
-			angleRangeMod = 1.1f;
+			angleRangeMod = 1.125f;
 			rotOffset = 0;
 		}
 
@@ -55,7 +63,13 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 		tM.CreateCustomTrail(new SwingTrail(Projectile, parameters, GetSwingProgressStatic, SwingTrail.BasicSwingShaderParams));
 	}
 
-	public override void OnSwingStart() => TrailManager.ManualTrailSpawn(Projectile);
+	public override void OnSwingStart()
+	{
+		TrailManager.ManualTrailSpawn(Projectile);
+		if (_numSlams == 0)
+			for (int i = 0; i < 6; i++)
+				Projectile.oldRot[i] = Projectile.rotation;
+	}
 
 	public override void AfterCollision()
 	{
@@ -64,7 +78,7 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 			_lingerTimer--;
 			float lingerProgress = _lingerTimer / (float)LingerTime;
 			lingerProgress = 1 - lingerProgress;
-			BaseRotation = MathHelper.Lerp(BaseRotation, HoldAngle_Final, EaseFunction.EaseCubicOut.Ease(lingerProgress) / 6f);
+			BaseRotation = Lerp(BaseRotation, HoldAngle_Final, EaseCubicOut.Ease(lingerProgress) / 6f);
 
 			if(lingerProgress >= 0.66f)
 			{
@@ -95,7 +109,7 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 			float maxOffset = 35 * TotalScale;
 			float offset = Main.rand.NextFloat(-maxOffset, maxOffset);
 			Vector2 dustPos = Projectile.Bottom + Vector2.UnitX * offset;
-			float velocity = MathHelper.Lerp(4, 0, EaseFunction.EaseCircularIn.Ease(Math.Abs(offset) / maxOffset));
+			float velocity = Lerp(3, 0, EaseCircularIn.Ease(Math.Abs(offset) / maxOffset));
 			if (FullCharge)
 				velocity *= 1.33f;
 
@@ -105,13 +119,18 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 				Dust.NewDustPerfect(dustPos + Main.rand.NextVector2Circular(4, 4), DustID.Water, velocity * -Vector2.UnitY * Main.rand.NextFloat(), Scale : Main.rand.NextFloat(2));
 		}
 
-		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 220, MathHelper.PiOver2, 0.4f);
+		DoShockwaveCircle(Projectile.Bottom - Vector2.UnitY * 8, 220, PiOver2, 0.4f);
+
+		SoundEngine.PlaySound(SoundID.NPCHit9.WithPitchOffset(-0.25f).WithVolumeScale(0.5f), Projectile.Center);
+		SoundEngine.PlaySound(SoundID.NPCHit1.WithPitchOffset(-0.25f), Projectile.Center);
 	}
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
 		if (Main.dedServ)
 			return;
+
+		SoundEngine.PlaySound(SoundID.NPCHit1.WithPitchOffset(0.25f), Projectile.Center);
 
 		var basePosition = Vector2.Lerp(Projectile.Center, target.Center, 0.6f);
 		Vector2 directionUnit = basePosition.DirectionFrom(Owner.MountedCenter) * TotalScale;
@@ -121,12 +140,12 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 		{
 			float maxOffset = 15;
 			float offset = Main.rand.NextFloat(-maxOffset, maxOffset);
-			Vector2 position = basePosition + directionUnit.RotatedBy(MathHelper.PiOver2) * offset;
-			float velocity = MathHelper.Lerp(12, 2, Math.Abs(offset) / maxOffset) * Main.rand.NextFloat(0.9f, 1.1f);
+			Vector2 position = basePosition + directionUnit.RotatedBy(PiOver2) * offset;
+			float velocity = Lerp(12, 2, Math.Abs(offset) / maxOffset) * Main.rand.NextFloat(0.9f, 1.1f);
 			if (FullCharge)
 				velocity *= 1.5f;
 
-			float rotationOffset = MathHelper.PiOver4 * offset / maxOffset;
+			float rotationOffset = PiOver4 * offset / maxOffset;
 			rotationOffset *= Main.rand.NextFloat(0.9f, 1.1f);
 
 			Vector2 particleVel = directionUnit.RotatedBy(rotationOffset) * velocity;
@@ -134,6 +153,58 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 			p.UseLightColor = true;
 			ParticleHandler.SpawnParticle(p);
 		}
+	}
+
+	public override bool OverrideDraw(SpriteBatch spriteBatch, Texture2D texture, Color lightColor, Vector2 handPosition, Vector2 drawPosition)
+	{
+		float lerpRotation(float lerpFactor)
+		{
+			if (CheckAIState(AIStates.CHARGING))
+				return Projectile.rotation;
+
+			return Lerp(Projectile.rotation, Projectile.oldRot[5], lerpFactor);
+		}
+
+		Vector2 TailPos = drawPosition;
+		Vector2 BodyPos = drawPosition + TotalScale * new Vector2(20 * Owner.direction, -15).RotatedBy(Projectile.rotation);
+		Vector2 HeadPos = BodyPos + TotalScale * new Vector2(26 * Owner.direction, -34).RotatedBy(lerpRotation(0.4f));
+
+		int frameHeight = texture.Height / 3;
+		var TailFrame = new Rectangle(0, 0, texture.Width, frameHeight);
+		var BodyFrame = new Rectangle(0, frameHeight, texture.Width, frameHeight);
+		var HeadFrame = new Rectangle(0, frameHeight * 2, texture.Width, frameHeight);
+
+		Vector2 getHoldPoint(Vector2 input) => Effects == SpriteEffects.FlipHorizontally ? Size * (new Vector2(1) - input) : new Vector2(Size.X * input.X, Size.Y * (1 - input.Y));
+
+		Color drawColor = Projectile.GetAlpha(lightColor);
+		Main.EntitySpriteDraw(texture, BodyPos, BodyFrame, drawColor, lerpRotation(0.4f), getHoldPoint(new(0.416f, 0.333f)), TotalScale, Effects, 0);
+		Main.EntitySpriteDraw(texture, HeadPos, HeadFrame, drawColor, lerpRotation(0.7f), getHoldPoint(new(0.763f, 0.738f)), TotalScale, Effects, 0);
+		Main.EntitySpriteDraw(texture, TailPos, TailFrame, drawColor, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+
+		//Flash when fully charged
+		if (CheckAIState(AIStates.CHARGING) && _flickerTime > 0)
+		{
+			Texture2D flash = TextureColorCache.ColorSolid(texture, Color.White);
+			float alpha = EaseQuadIn.Ease(EaseSine.Ease(_flickerTime / (float)MAX_FLICKERTIME));
+
+			Main.EntitySpriteDraw(flash, TailPos, TailFrame, Color.White * alpha, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+			Main.EntitySpriteDraw(flash, BodyPos, BodyFrame, Color.White * alpha, lerpRotation(0.4f), getHoldPoint(new(0.416f, 0.333f)), TotalScale, Effects, 0);
+			Main.EntitySpriteDraw(flash, HeadPos, HeadFrame, Color.White * alpha, lerpRotation(0.7f), getHoldPoint(new(0.763f, 0.738f)), TotalScale, Effects, 0);
+		}
+
+		return true;
+	}
+
+	internal override void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+	{
+		if (FullCharge && _numSlams < MAX_SLAMS - 1)
+			modifiers.Knockback *= 0.3f;
+	}
+
+	internal override void SafeModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
+	{
+		if (FullCharge && _numSlams < MAX_SLAMS - 1)
+			modifiers.Knockback *= 0.3f;
 	}
 
 	internal override void SendExtraDataSafe(BinaryWriter writer) => writer.Write((short)_numSlams);

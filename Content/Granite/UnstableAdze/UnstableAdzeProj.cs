@@ -113,22 +113,19 @@ class UnstableAdzeProj : BaseClubProj, IManualTrailProjectile
 		}
 	}
 
-	public override void SafeDraw(SpriteBatch spriteBatch, Color lightColor)
+	public override void SafeDraw(SpriteBatch spriteBatch, Texture2D texture, Color lightColor, Vector2 handPosition, Vector2 drawPosition)
 	{
 		Texture2D glowTex = GlowmaskItem.ItemIdToGlowmask[ModContent.ItemType<UnstableAdze>()].Glowmask.Value;
 
-		Vector2 handPos = Owner.GetFrontHandPosition(Owner.compositeFrontArm.stretch, Owner.compositeFrontArm.rotation);
-		Vector2 drawPos = handPos - Main.screenPosition + Vector2.UnitY * Owner.gfxOffY;
-
-		for(int i = 0; i < 6; i++)
+		for (int i = 0; i < 6; i++)
 		{
 			Vector2 offset = Vector2.UnitX.RotatedBy(MathHelper.TwoPi * i / 6f);
 			float opacity = 0.1f * EaseFunction.EaseCircularIn.Ease(Charge) * EaseFunction.EaseSine.Ease(Main.GlobalTimeWrappedHourly % 1);
 
-			Main.EntitySpriteDraw(glowTex, drawPos + offset, glowTex.Frame(), Color.White.Additive() * opacity, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+			Main.EntitySpriteDraw(glowTex, drawPosition + offset, glowTex.Frame(), Color.White.Additive() * opacity, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
 		}
 
-		Main.EntitySpriteDraw(glowTex, drawPos, glowTex.Frame(), Color.White.Additive() * MathHelper.Lerp(Charge, 1, 0.5f) * 0.75f, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+		Main.EntitySpriteDraw(glowTex, drawPosition, glowTex.Frame(), Color.White.Additive() * MathHelper.Lerp(Charge, 1, 0.5f) * 0.75f, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
 	}
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
