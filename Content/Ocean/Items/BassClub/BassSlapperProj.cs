@@ -1,4 +1,3 @@
-using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
@@ -11,7 +10,7 @@ using Terraria.Audio;
 using static SpiritReforged.Common.Easing.EaseFunction;
 using static Microsoft.Xna.Framework.MathHelper;
 
-namespace SpiritReforged.Content.Forest.BassSlapper;
+namespace SpiritReforged.Content.Ocean.Items.BassClub;
 
 class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 {
