@@ -1,6 +1,6 @@
 ﻿using SpiritReforged.Common.ItemCommon;
 
-namespace SpiritReforged.Content.Forest.BassSlapper;
+namespace SpiritReforged.Content.Ocean.Items.BassClub;
 
 public class BassSlapper : ClubItem
 {

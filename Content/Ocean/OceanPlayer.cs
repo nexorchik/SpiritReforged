@@ -1,4 +1,5 @@
-﻿using Terraria.DataStructures;
+﻿using SpiritReforged.Common.ModCompat;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Content.Ocean;
 
@@ -15,7 +16,7 @@ public class OceanPlayer : ModPlayer
 
 	private static bool NotInDepths(Player plr)
 	{
-		if (ModLoader.TryGetMod("ThoriumMod", out Mod thor) && thor.TryFind("DepthsBiome", out ModBiome aquaticDepths))
+		if (CrossMod.Thorium.Enabled && CrossMod.Thorium.Instance.TryFind("DepthsBiome", out ModBiome aquaticDepths))
 			return !plr.InModBiome(aquaticDepths);
 
 		return true;
@@ -23,10 +24,17 @@ public class OceanPlayer : ModPlayer
 
 	public override void CatchFish(FishingAttempt attempt, ref int itemDrop, ref int npcSpawn, ref AdvancedPopupRequest sonar, ref Vector2 sonarPosition)
 	{
-		if (Player.ZoneBeach && attempt.veryrare && Main.rand.NextBool(15))
-			itemDrop = ModContent.ItemType<Items.SunkenTreasure>();
-		if (Player.ZoneBeach && attempt.rare && Main.rand.NextBool(30))
-			itemDrop = ModContent.ItemType<Items.Lifesaver.Lifesaver>();
+		if (Player.ZoneBeach)
+		{
+			if (attempt.veryrare && Main.rand.NextBool(15))
+				itemDrop = ModContent.ItemType<Items.SunkenTreasure>();
+
+			if (attempt.rare && Main.rand.NextBool(30))
+				itemDrop = ModContent.ItemType<Items.Lifesaver.Lifesaver>();
+
+			if (attempt.rare && Main.rand.NextBool(22))
+				itemDrop = ModContent.ItemType<Items.BassClub.BassSlapper>();
+		}
 	}
 
 	/// <summary>
