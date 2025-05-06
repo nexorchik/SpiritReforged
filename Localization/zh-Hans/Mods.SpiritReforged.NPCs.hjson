@@ -351,5 +351,6 @@ Wheezer: {
 
 WorldFrog: {
 	// DisplayName: World Frog
-	// Reports.CavesAndClubs: Caves and Clubs Test..!
+	// Dialogue: Ribbit.
+	// Reports.CavesAndClubs: Hocus pocus - don't look so blue, I've filled your caves with pots to loot anew!
 }

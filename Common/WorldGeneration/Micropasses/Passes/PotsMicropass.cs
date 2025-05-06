@@ -4,6 +4,7 @@ using System.Linq;
 using Terraria.WorldBuilding;
 using SpiritReforged.Content.Underground.Tiles.Potion;
 using SpiritReforged.Common.TileCommon;
+using static SpiritReforged.Common.WorldGeneration.WorldMethods;
 
 namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
 
@@ -51,18 +52,24 @@ internal class PotsMicropass : Micropass
 	public override void Run(GenerationProgress progress, Terraria.IO.GameConfiguration config)
 	{
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Caves");
+		RunMultipliedTask(1);
+	}
 
-		Generate(CreateOrnate, Main.maxTilesX / WorldGen.WorldSizeSmallX * 5, out _);
-		Generate(CreatePotion, Main.maxTilesX / WorldGen.WorldSizeSmallX * 46, out _);
-		Generate(CreateScrying, Main.maxTilesX / WorldGen.WorldSizeSmallX * 20, out _);
-        Generate(CreateStuffed, Main.maxTilesX / WorldGen.WorldSizeSmallX * 12, out _);
-		Generate(CreateWorm, Main.maxTilesX / WorldGen.WorldSizeSmallX * 18, out _);
-		Generate(CreatePlatter, Main.maxTilesX / WorldGen.WorldSizeSmallX * 24, out _);
-		Generate(CreateAether, Main.maxTilesX / WorldGen.WorldSizeSmallX * 3, out _);
-		Generate(CreateUpsideDown, Main.maxTilesX / WorldGen.WorldSizeSmallX * 4, out _);
+	public static void RunMultipliedTask(float multiplier)
+	{
+		float scale = Main.maxTilesX / (float)WorldGen.WorldSizeSmallX * multiplier;
 
-		Generate(CreateStack, (int)(Main.maxTilesX * Main.maxTilesY * 0.0005), out _); //Normal pot generation weight is 0.0008
-		Generate(CreateUncommon, (int)(Main.maxTilesX * Main.maxTilesY * 0.00055), out int pots);
+		Generate(CreateOrnate, (int)(scale * 5), out _);
+		Generate(CreatePotion, (int)(scale * 46), out _);
+		Generate(CreateScrying, (int)(scale * 20), out _);
+		Generate(CreateStuffed, (int)(scale * 12), out _);
+		Generate(CreateWorm, (int)(scale * 18), out _);
+		Generate(CreatePlatter, (int)(scale * 24), out _);
+		Generate(CreateAether, (int)(scale * 3), out _);
+		Generate(CreateUpsideDown, (int)(scale * 4), out _);
+
+		Generate(CreateStack, (int)(Main.maxTilesX * Main.maxTilesY * 0.0005 * multiplier), out _); //Normal pot generation weight is 0.0008
+		Generate(CreateUncommon, (int)(Main.maxTilesX * Main.maxTilesY * 0.00055 * multiplier), out int pots);
 
 		PotteryTracker.Remaining = (ushort)Main.rand.Next(pots / 2);
 	}
@@ -79,7 +86,7 @@ internal class PotsMicropass : Micropass
 			int x = WorldGen.genRand.Next(20, Main.maxTilesX - 20);
 			int y = WorldGen.genRand.Next((int)GenVars.worldSurfaceHigh, Main.maxTilesY - 20);
 
-			WorldMethods.FindGround(x, ref y);
+			FindGround(x, ref y);
 
 			if (del(x, y - 1) && ++pots >= count)
 				break;
@@ -94,7 +101,7 @@ internal class PotsMicropass : Micropass
 			return false;
 
 		int type = ModContent.TileType<OrnatePots>();
-		WorldGen.PlaceTile(x, y, type, true, style: Main.rand.Next(3));
+		Placer.Check(x, y, type).IsClear().Place();
 
 		return Main.tile[x, y].TileType == type;
 	}
@@ -105,7 +112,7 @@ internal class PotsMicropass : Micropass
 			return false;
 
 		int type = ModContent.TileType<PotionVats>();
-		var attempt = Placer.PlaceTile(x, y, type, style: Main.rand.Next([0, 3, 6])).PostPlacement<VatSlot>(out var slot);
+		var attempt = Placer.Check(x, y, type, style: Main.rand.Next([0, 3, 6])).IsClear().Place().PostPlacement<VatSlot>(out var slot);
 
 		if (attempt.success)
 		{
@@ -122,7 +129,7 @@ internal class PotsMicropass : Micropass
 			return false;
 
 		int type = ModContent.TileType<ScryingPot>();
-		WorldGen.PlaceTile(x, y, type, true);
+		Placer.Check(x, y, type).IsClear().Place();
 
 		return Main.tile[x, y].TileType == type;
 	}
@@ -133,7 +140,7 @@ internal class PotsMicropass : Micropass
 			return false;
 
 		int type = ModContent.TileType<StuffedPots>();
-		WorldGen.PlaceTile(x, y, type, true, style: Main.rand.Next(3));
+		Placer.Check(x, y, type).IsClear().Place();
 
 		return Main.tile[x, y].TileType == type;
 	}
@@ -146,7 +153,7 @@ internal class PotsMicropass : Micropass
 			return false;
 
 		int type = ModContent.TileType<WormPot>();
-		WorldGen.PlaceTile(x, y, type, true);
+		Placer.Check(x, y, type).IsClear().Place();
 
 		return Main.tile[x, y].TileType == type;
 	}
@@ -157,7 +164,7 @@ internal class PotsMicropass : Micropass
 			return false;
 
 		int type = ModContent.TileType<SilverPlatters>();
-		WorldGen.PlaceTile(x, y, type, true, style: Main.rand.Next(3));
+		Placer.Check(x, y, type).IsClear().Place();
 
 		return Main.tile[x, y].TileType == type;
 	}
@@ -168,7 +175,7 @@ internal class PotsMicropass : Micropass
 			return false;
 
 		int type = ModContent.TileType<AetherShipment>();
-		WorldGen.PlaceTile(x, y, type, true);
+		Placer.Check(x, y, type).IsClear().Place();
 
 		return Main.tile[x, y].TileType == type;
 
@@ -181,7 +188,7 @@ internal class PotsMicropass : Micropass
 			return false;
 
 		int type = ModContent.TileType<UpsideDownPot>();
-		WorldGen.PlaceTile(x, y, type, true);
+		Placer.Check(x, y, type).IsClear().Place();
 
 		return Main.tile[x, y].TileType == type;
 	}
@@ -192,8 +199,8 @@ internal class PotsMicropass : Micropass
 		int tile = Main.tile[x, y + 1].TileType;
 		int wall = Main.tile[x, y].WallType;
 
-		if (Main.tile[x, y].LiquidType is LiquidID.Shimmer)
-			return false; //Never generate in shimmer
+		if (Main.tile[x, y].LiquidType is LiquidID.Shimmer || !AreaClear(x, y - 1, 2, 2, true))
+			return false; //Never generate in shimmer or over other tiles
 
 		int style = -1;
 
@@ -251,7 +258,7 @@ internal class PotsMicropass : Micropass
 		{
 			if (Main.rand.NextBool()) //Generate a stack of 3 in a pyramid
 			{
-				if (!WorldMethods.AreaClear(x - 1, y - 3, 4, 4))
+				if (!AreaClear(x - 1, y - 3, 4, 4, true))
 					return false;
 
 				WorldGen.PlaceTile(x - 1, y, ModContent.TileType<StackablePots>(), true, style: GetRandomStyle());
@@ -260,7 +267,7 @@ internal class PotsMicropass : Micropass
 			}
 			else //Generate a stack of 2 in a tower
 			{
-				if (!WorldMethods.AreaClear(x, y - 5, 2, 4))
+				if (!AreaClear(x, y - 5, 2, 4, true))
 					return false;
 
 				for (int s = 0; s < 2; s++)

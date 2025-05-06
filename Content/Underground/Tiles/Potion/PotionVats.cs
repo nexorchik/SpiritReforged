@@ -9,6 +9,7 @@ using SpiritReforged.Content.Forest.Cloud.Items;
 using SpiritReforged.Common.Particle;
 using System.Linq;
 using static SpiritReforged.Common.TileCommon.StyleDatabase;
+using static SpiritReforged.Common.WorldGeneration.WorldMethods;
 
 namespace SpiritReforged.Content.Underground.Tiles.Potion;
 
@@ -95,7 +96,7 @@ public class PotionVats : PotTile, ICutAttempt
 			return;
 		}
 
-		if (effectOnly || !fail || WorldGen.generatingWorld)
+		if (effectOnly || !fail || Generating)
 			return;
 
 		fail = AdjustFrame(i, j);

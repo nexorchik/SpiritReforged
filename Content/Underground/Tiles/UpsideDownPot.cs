@@ -1,8 +1,9 @@
 using RubbleAutoloader;
-using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Underground.Pottery;
 using Terraria.DataStructures;
+using static SpiritReforged.Common.TileCommon.StyleDatabase;
+using static SpiritReforged.Common.WorldGeneration.WorldMethods;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
@@ -10,7 +11,7 @@ public class UpsideDownPot : PotTile
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0] } };
 
-	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
+	public override void AddRecord(int type, StyleGroup group)
 	{
 		var record = new TileRecord(group.name, type, group.styles);
 		RecordHandler.Records.Add(record.AddRating(5).AddDescription(Language.GetText(TileRecord.DescKey + ".UpsideDown")));
@@ -40,7 +41,7 @@ public class UpsideDownPot : PotTile
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
-		if (WorldGen.generatingWorld || Autoloader.IsRubble(Type))
+		if (Generating || Autoloader.IsRubble(Type))
 			return;
 
 		var source = new EntitySource_TileBreak(i, j);

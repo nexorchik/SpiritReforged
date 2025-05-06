@@ -1,8 +1,13 @@
 ﻿using MonoMod.Utils;
+using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.Visuals;
 using SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
+using SpiritReforged.Content.Particles;
 using System.Linq;
 using System.Reflection;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ModLoader.IO;
 
@@ -11,6 +16,9 @@ namespace SpiritReforged.Content.Forest.Misc;
 [AutoloadHead]
 public class WorldFrog : ModNPC
 {
+	private bool _updated;
+	private float _glowIntensity;
+
 	public override void SetStaticDefaults()
 	{
 		Main.npcFrameCount[Type] = 10;
@@ -19,66 +27,91 @@ public class WorldFrog : ModNPC
 		NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, new NPCID.Sets.NPCBestiaryDrawModifiers()
 		{ Hide = true });
 	}
+	public override void SetDefaults() => NPC.CloneDefaults(NPCID.TownSlimeBlue);
 
-	public override void SetDefaults()
+	public override void AI()
 	{
-		NPC.CloneDefaults(NPCID.TownSlimeBlue);
-		NPC.townNPC = false;
+		if (!_updated)
+			return;
+
+		var player = Main.player[Player.FindClosest(NPC.position, NPC.width, NPC.height)];
+		if (player.talkNPC == -1)
+		{
+			VanishEffects(NPC.GetSource_FromAI());
+			SoundEngine.PlaySound(NPC.DeathSound, NPC.Center);
+
+			NPC.active = false;
+		}
+
+		_glowIntensity = Math.Max(_glowIntensity - 0.1f, 0);
 	}
 
 	public override void SetChatButtons(ref string button, ref string button2)
 	{
 		if (UpdaterSystem.Instance.AnyTask())
-			button = "Update";
+			button = Language.GetTextValue("Mods.SpiritReforged.NPCs.WorldFrog.Button");
 	}
 
 	public override void OnChatButtonClicked(bool firstButton, ref string shopName)
 	{
 		UpdaterSystem.RunFirstTask(out string report);
 		Main.npcChatText = report;
+
+		_updated = true;
+		_glowIntensity = 1;
+
+		for (int i = 0; i < 10; i++)
+		{
+			var position = NPC.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(20f);
+			float scale = Main.rand.NextFloat(0.5f);
+			int maxTime = Main.rand.Next(5, 30);
+			var velocity = Vector2.UnitY * -Main.rand.NextFloat();
+
+			ParticleHandler.SpawnParticle(new GlowParticle(position, velocity, Color.Lerp(Color.Cyan, Color.Goldenrod, Main.rand.NextFloat()).Additive(), scale, maxTime));
+			ParticleHandler.SpawnParticle(new GlowParticle(position, velocity, Color.White.Additive(), scale * 0.75f, maxTime));
+		}
+
+		SoundEngine.PlaySound(SoundID.Item176, NPC.Center);
 	}
 
 	public override bool CanChat() => true;
-	public override string GetChat()
-	{
-		return base.GetChat();
-	}
+	public override string GetChat() => Language.GetTextValue("Mods.SpiritReforged.NPCs.WorldFrog.Dialogue");
 
-	public override bool CheckActive() => false;
 	public override void HitEffect(NPC.HitInfo hit)
 	{
-		if (Main.dedServ)
-			return;
+		if (!Main.dedServ && NPC.life <= 0)
+			VanishEffects(NPC.GetSource_Death());
+	}
 
-		if (NPC.life <= 0)
-		{
-			for (int i = 1; i < 6; i++)
-			{
-				int goreType = Mod.Find<ModGore>(nameof(Hiker) + i).Type;
-				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity, goreType);
-			}
-		}
+	private void VanishEffects(IEntitySource source)
+	{
+		int goreType = Mod.Find<ModGore>(nameof(WorldFrog)).Type;
+		Gore.NewGore(source, NPC.Top, NPC.velocity, goreType);
 
-		for (int d = 0; d < 8; d++)
-			Dust.NewDustPerfect(Main.rand.NextVector2FromRectangle(NPC.getRect()), DustID.Blood,
-				Main.rand.NextVector2Unit() * 1.5f, 0, default, Main.rand.NextFloat(1f, 1.5f));
+		for (int i = 0; i < 3; i++)
+			Gore.NewGore(source, Main.rand.NextVector2FromRectangle(NPC.getRect()), Vector2.Zero, GoreID.Smoke1);
 	}
 
 	public override void FindFrame(int frameHeight)
 	{
+		const float rate = 0.2f;
 		NPC.frame.Width = 36;
 
-		bool moving = NPC.velocity.X != 0;
+		bool moving = NPC.velocity != Vector2.Zero;
 		int lastFrame = moving ? 5 : Main.npcFrameCount[Type];
 
-		if (!moving)
+		if (NPC.velocity.Y != 0) //Falling
 		{
-			if (NPC.frameCounter > 0.15f || Main.rand.NextBool(50))
-				NPC.frameCounter += 0.15f;
+			NPC.frameCounter = 0;
+		}
+		else if (!moving)
+		{
+			if (NPC.frameCounter > rate || Main.rand.NextBool(50))
+				NPC.frameCounter += rate;
 		}
 		else
 		{
-			NPC.frameCounter += 0.15f;
+			NPC.frameCounter += rate;
 		}
 
 		NPC.frameCounter = NPC.frameCounter % lastFrame;
@@ -99,6 +132,10 @@ public class WorldFrog : ModNPC
 		var position = NPC.Bottom - screenPos + new Vector2(0, NPC.gfxOffY);
 
 		spriteBatch.Draw(texture, position, frame, NPC.DrawColor(drawColor), NPC.rotation, origin, NPC.scale, effects, 0);
+
+		if (_glowIntensity > 0)
+			spriteBatch.Draw(TextureColorCache.ColorSolid(texture, Color.White), position, frame, NPC.GetAlpha(Color.White) * _glowIntensity, NPC.rotation, origin, NPC.scale, effects, 0);
+
 		return false;
 	}
 }
@@ -117,18 +154,17 @@ internal class UpdaterSystem : ModSystem
 	public static UpdaterSystem Instance { get; private set; }
 
 	public static Version LastVersion { get; private set; }
+	public static bool RunningTask { get; private set; }
 	private static readonly Dictionary<Version, TaskDelegate> Tasks = [];
 
 	#region tModLoader hooks
 	public override void Load() => Instance = this;
 
 	public override void PostWorldGen() => LastVersion = SpiritReforgedMod.Instance.Version;
-	public override void ClearWorld() => LastVersion = null;
-
-	public override void OnWorldLoad()
+	public override void ClearWorld()
 	{
-		if (Main.netMode == NetmodeID.SinglePlayer && AnyTask()) //Only spawn in singleplayer to avoid potential complications
-			NPC.NewNPC(new EntitySource_SpawnNPC(), Main.spawnTileX * 16, Main.spawnTileY * 16, ModContent.NPCType<WorldFrog>());
+		if (!WorldGen.generatingWorld)
+			LastVersion = null;
 	}
 
 	public override void SaveWorldData(TagCompound tag)
@@ -136,7 +172,18 @@ internal class UpdaterSystem : ModSystem
 		if (LastVersion != null)
 			tag[nameof(LastVersion)] = LastVersion;
 	}
-	public override void LoadWorldData(TagCompound tag) => LastVersion = tag.Get<Version>(nameof(LastVersion));
+
+	public override void LoadWorldData(TagCompound tag)
+	{
+		LastVersion = tag.Get<Version>(nameof(LastVersion));
+
+		//World Frog spawn
+		int frog = ModContent.NPCType<WorldFrog>();
+
+		if (Main.netMode == NetmodeID.SinglePlayer && NPC.CountNPCS(frog) == 0 && AnyTask()) //Only spawn in singleplayer to avoid potential complications
+			NPC.NewNPC(new EntitySource_SpawnNPC(), Main.spawnTileX * 16, Main.spawnTileY * 16, frog);
+	}
+
 	//public override void NetSend(BinaryWriter writer) => writer.Write(LastVersion.ToString());
 	//public override void NetReceive(BinaryReader reader) => LastVersion = new(reader.ReadString());
 	#endregion
@@ -160,17 +207,21 @@ internal class UpdaterSystem : ModSystem
 	/// <see cref="AnyTask"/> must return true for this to be called safely. </summary>
 	public static void RunFirstTask(out string report)
 	{
+		RunningTask = true;
+
 		var task = Tasks.OrderBy(x => x.Key).First();
 		task.Value.Invoke(out string reportKey);
 
 		report = Language.GetTextValue("Mods.SpiritReforged.NPCs.WorldFrog.Reports." + reportKey);
 		LastVersion = task.Key;
+
+		RunningTask = false;
 	}
 
 	[Ver("0.1.1.0")]
 	private static void CavesAndClubs(out string report)
 	{
-		ModContent.GetInstance<PotsMicropass>().Run(new(), null);
+		PotsMicropass.RunMultipliedTask(0.5f);
 		report = "CavesAndClubs";
 	}
 }

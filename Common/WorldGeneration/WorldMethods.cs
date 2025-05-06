@@ -1,3 +1,4 @@
+using SpiritReforged.Content.Forest.Misc;
 using System.Linq;
 using Terraria.DataStructures;
 
@@ -5,6 +6,9 @@ namespace SpiritReforged.Common.WorldGeneration;
 
 public class WorldMethods
 {
+	/// <summary> Whether the world is being generated or <see cref="UpdaterSystem"/> is running a generation task. </summary>
+	public static bool Generating => WorldGen.generatingWorld || UpdaterSystem.RunningTask;
+
 	internal static int FindNearestBelow(int x, int y)
 	{
 		while (!WorldGen.SolidTile(x, y))
@@ -97,7 +101,7 @@ public class WorldMethods
 		}
 	}
 
-	public static int AreaCount(int i, int j, int width, int height)
+	public static int AreaCount(int i, int j, int width, int height, bool countNonSolid)
 	{
 		int count = 0; 
 
@@ -106,7 +110,8 @@ public class WorldMethods
 			for (int y = j; y < j + height; ++y)
 			{
 				Tile tile = Framing.GetTileSafely(x, y);
-				if (tile.HasTile && Main.tileSolid[tile.TileType])
+
+				if (tile.HasTile && (countNonSolid || Main.tileSolid[tile.TileType]))
 					count++;
 			}
 		}
@@ -114,7 +119,7 @@ public class WorldMethods
 		return count;
 	}
 
-	public static bool AreaClear(int i, int j, int width, int height) => AreaCount(i, j, width, height) == 0;
+	public static bool AreaClear(int i, int j, int width, int height, bool countNonSolid = false) => AreaCount(i, j, width, height, countNonSolid) == 0;
 
 	/// <summary> Checks whether this tile area is completely submerged in water. </summary>
 	public static bool Submerged(int i, int j, int width, int height)

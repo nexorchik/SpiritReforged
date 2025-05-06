@@ -9,6 +9,7 @@ using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using static SpiritReforged.Common.TileCommon.StyleDatabase;
+using static SpiritReforged.Common.WorldGeneration.WorldMethods;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
@@ -19,7 +20,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 	private const int FullHeight = 36;
 	private static Color GlowColor => Main.DiscoColor;//Color.Lerp(Color.Magenta, Color.CadetBlue, (float)(Math.Sin(Main.timeForVisualEffects / 40f) / 2f) + .5f);
 
-	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
+	public override void AddRecord(int type, StyleGroup group)
 	{
 		var desc = Language.GetText("Mods.SpiritReforged.Tiles.Records.Aether");
 		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(6));
@@ -78,7 +79,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (effectOnly || !fail || Autoloader.IsRubble(Type) || WorldGen.generatingWorld)
+		if (effectOnly || !fail || Autoloader.IsRubble(Type) || Generating)
 			return;
 
 		fail = AdjustFrame(i, j);
