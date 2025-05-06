@@ -165,31 +165,39 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 			return Lerp(Projectile.rotation, Projectile.oldRot[5], lerpFactor);
 		}
 
+		Vector2 GetSegmentPosition(Vector2 lastPos, Vector2 lastOrigin, Vector2 curOrigin, float rotation) =>
+			lastPos + TotalScale * new Vector2((curOrigin.X - lastOrigin.X) * Owner.direction, -(curOrigin.Y - lastOrigin.Y)).RotatedBy(rotation);
+
+		Vector2 getHoldPoint(Vector2 input) => Effects == SpriteEffects.FlipHorizontally ? Size - input : new Vector2(input.X, Size.Y - input.Y);
+
+		Vector2 tailOffset = new(14);
+		Vector2 bodyOffset = new(22);
+		Vector2 headOffset = new(54, 62);
+
+		float bodyRotation = lerpRotation(0.42f);
+		float headRotation = lerpRotation(0.8f);
+
 		Vector2 TailPos = drawPosition;
-		Vector2 BodyPos = drawPosition + TotalScale * new Vector2(20 * Owner.direction, -15).RotatedBy(Projectile.rotation);
-		Vector2 HeadPos = BodyPos + TotalScale * new Vector2(26 * Owner.direction, -34).RotatedBy(lerpRotation(0.4f));
+		Vector2 BodyPos = GetSegmentPosition(TailPos, tailOffset, bodyOffset, Projectile.rotation);
+		Vector2 HeadPos = GetSegmentPosition(BodyPos, bodyOffset, headOffset, bodyRotation);
 
 		int frameHeight = texture.Height / 3;
 		var TailFrame = new Rectangle(0, 0, texture.Width, frameHeight);
 		var BodyFrame = new Rectangle(0, frameHeight, texture.Width, frameHeight);
 		var HeadFrame = new Rectangle(0, frameHeight * 2, texture.Width, frameHeight);
 
-		Vector2 getHoldPoint(Vector2 input) => Effects == SpriteEffects.FlipHorizontally ? Size * (new Vector2(1) - input) : new Vector2(Size.X * input.X, Size.Y * (1 - input.Y));
-
 		Color drawColor = Projectile.GetAlpha(lightColor);
-		Main.EntitySpriteDraw(texture, BodyPos, BodyFrame, drawColor, lerpRotation(0.4f), getHoldPoint(new(0.416f, 0.333f)), TotalScale, Effects, 0);
-		Main.EntitySpriteDraw(texture, HeadPos, HeadFrame, drawColor, lerpRotation(0.7f), getHoldPoint(new(0.763f, 0.738f)), TotalScale, Effects, 0);
-		Main.EntitySpriteDraw(texture, TailPos, TailFrame, drawColor, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+		Main.EntitySpriteDraw(texture, TailPos, TailFrame, drawColor, Projectile.rotation, getHoldPoint(tailOffset), TotalScale, Effects, 0);
+		Main.EntitySpriteDraw(texture, BodyPos, BodyFrame, drawColor, bodyRotation, getHoldPoint(bodyOffset), TotalScale, Effects, 0);
+		Main.EntitySpriteDraw(texture, HeadPos, HeadFrame, drawColor, headRotation, getHoldPoint(headOffset), TotalScale, Effects, 0);
 
 		//Flash when fully charged
 		if (CheckAIState(AIStates.CHARGING) && _flickerTime > 0)
 		{
-			Texture2D flash = TextureColorCache.ColorSolid(texture, Color.White);
+			Texture2D flash = TextureColorCache.ColorSolid(TextureAssets.Item[ModContent.ItemType<BassSlapper>()].Value, Color.White);
 			float alpha = EaseQuadIn.Ease(EaseSine.Ease(_flickerTime / (float)MAX_FLICKERTIME));
 
-			Main.EntitySpriteDraw(flash, TailPos, TailFrame, Color.White * alpha, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
-			Main.EntitySpriteDraw(flash, BodyPos, BodyFrame, Color.White * alpha, lerpRotation(0.4f), getHoldPoint(new(0.416f, 0.333f)), TotalScale, Effects, 0);
-			Main.EntitySpriteDraw(flash, HeadPos, HeadFrame, Color.White * alpha, lerpRotation(0.7f), getHoldPoint(new(0.763f, 0.738f)), TotalScale, Effects, 0);
+			Main.EntitySpriteDraw(flash, drawPosition, null, Color.White * alpha, Projectile.rotation, getHoldPoint(tailOffset), TotalScale, Effects, 0);
 		}
 
 		return true;
