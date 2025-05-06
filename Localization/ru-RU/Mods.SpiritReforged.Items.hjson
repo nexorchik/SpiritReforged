@@ -1743,3 +1743,8 @@ UnstableAdze: {
 	// DisplayName: Shockhammer
 	// Tooltip: Fully charging releases a shockwave that travels along tiles
 }
+
+Shockhammer: {
+	// DisplayName: Shockhammer
+	// Tooltip: ""
+}

@@ -176,8 +176,8 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 		Vector2 bodyOffset = new(22);
 		Vector2 headOffset = new(54, 62);
 
-		float bodyRotation = lerpRotation(0.42f);
-		float headRotation = lerpRotation(0.8f);
+		float bodyRotation = lerpRotation(0.5f);
+		float headRotation = lerpRotation(0.9f);
 
 		Vector2 TailPos = drawPosition;
 		Vector2 BodyPos = GetSegmentPosition(TailPos, tailOffset, bodyOffset, Projectile.rotation);

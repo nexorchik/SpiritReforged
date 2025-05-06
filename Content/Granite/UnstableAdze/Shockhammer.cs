@@ -1,4 +1,5 @@
 using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ModCompat.Classic;
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.GameContent.ItemDropRules;
@@ -6,7 +7,8 @@ using Terraria.GameContent.ItemDropRules;
 namespace SpiritReforged.Content.Granite.UnstableAdze;
 
 [AutoloadGlowmask("255, 255, 255")]
-public class UnstableAdze : ClubItem
+[FromClassic("RageBlazeDecapitator")]
+public class Shockhammer : ClubItem
 {
 	internal override float DamageScaling => 1.5f;
 
@@ -27,6 +29,6 @@ public class UnstableAdze : ClubItem
 		Item.crit = 4;
 		Item.value = Item.sellPrice(0, 0, 30, 0);
 		Item.rare = ItemRarityID.Blue;
-		Item.shoot = ModContent.ProjectileType<UnstableAdzeProj>();
+		Item.shoot = ModContent.ProjectileType<ShockhammerProj>();
 	}
 }

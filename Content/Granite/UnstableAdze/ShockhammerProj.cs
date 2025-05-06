@@ -4,15 +4,16 @@ using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
+using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Particles;
 
 namespace SpiritReforged.Content.Granite.UnstableAdze;
 
-class UnstableAdzeProj : BaseClubProj, IManualTrailProjectile
+class ShockhammerProj : BaseClubProj, IManualTrailProjectile
 {
-	public UnstableAdzeProj() : base(new Vector2(96)) { }
+	public ShockhammerProj() : base(new Vector2(96)) { }
 
 	public override float WindupTimeRatio => 0.9f;
 
@@ -105,17 +106,14 @@ class UnstableAdzeProj : BaseClubProj, IManualTrailProjectile
 			spawnPos = tilepos.ToWorldCoordinates();
 
 			Vector2 velocity = Vector2.UnitX * 12 * Owner.direction;
-			int id = Projectile.NewProjectile(Projectile.GetSource_FromAI("ClubSmash"), spawnPos, velocity, ModContent.ProjectileType<EnergizedShockwave>(), (int)(Projectile.damage * DamageScaling), Projectile.knockBack, Projectile.owner);
-			Main.projectile[id].position.Y -= Projectile.height + 16;
-
-			if (Main.netMode != NetmodeID.SinglePlayer)
-				NetMessage.SendData(MessageID.SyncProjectile, number: id);
+			PreNewProjectile.New(Projectile.GetSource_FromAI("ClubSmash"), spawnPos, velocity, ModContent.ProjectileType<EnergizedShockwave>(), (int)(Projectile.damage * DamageScaling), Projectile.knockBack, Projectile.owner,
+				preSpawnAction : delegate(Projectile projectile) { projectile.height += 16; });
 		}
 	}
 
 	public override void SafeDraw(SpriteBatch spriteBatch, Texture2D texture, Color lightColor, Vector2 handPosition, Vector2 drawPosition)
 	{
-		Texture2D glowTex = GlowmaskItem.ItemIdToGlowmask[ModContent.ItemType<UnstableAdze>()].Glowmask.Value;
+		Texture2D glowTex = GlowmaskItem.ItemIdToGlowmask[ModContent.ItemType<Shockhammer>()].Glowmask.Value;
 
 		for (int i = 0; i < 6; i++)
 		{
