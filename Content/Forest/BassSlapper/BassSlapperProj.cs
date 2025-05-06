@@ -26,6 +26,8 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 	public override float WindupTimeRatio => 0.5f;
 	public override float PullbackWindupRatio => 0.5f;
 	public override float HoldPointRatio => 0.15f;
+	public override float SwingPhaseThreshold => 0.3f;
+	public override float SwingShrinkThreshold => 0.6f;
 
 	public void DoTrailCreation(TrailManager tM)
 	{
