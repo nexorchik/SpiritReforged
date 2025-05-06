@@ -29,10 +29,10 @@ public class WorldMethods
 	/// <summary> Scans up, then down for the nearest surface tile. </summary>
 	public static int FindGround(int i, ref int j)
 	{
-		while (WorldGen.SolidOrSlopedTile(i, j - 1) && j > 20)
+		while (j > 20 && WorldGen.SolidOrSlopedTile(i, j - 1))
 			j--; //Up
 
-		while (!WorldGen.SolidOrSlopedTile(i, j) && j < Main.maxTilesY - 20)
+		while (j < Main.maxTilesY - 20 && !WorldGen.SolidOrSlopedTile(i, j))
 			j++; //Down
 
 		return j;

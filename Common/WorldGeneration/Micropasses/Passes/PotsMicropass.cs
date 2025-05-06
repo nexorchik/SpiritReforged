@@ -4,7 +4,6 @@ using System.Linq;
 using Terraria.WorldBuilding;
 using SpiritReforged.Content.Underground.Tiles.Potion;
 using SpiritReforged.Common.TileCommon;
-using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
 
