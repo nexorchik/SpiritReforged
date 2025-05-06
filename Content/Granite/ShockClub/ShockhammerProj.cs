@@ -109,7 +109,7 @@ class ShockhammerProj : BaseClubProj, IManualTrailProjectile
 				var velocity = Vector2.UnitX * 12 * Owner.direction;
 
 				PreNewProjectile.New(Projectile.GetSource_FromAI("ClubSmash"), spawnPos, velocity, ModContent.ProjectileType<EnergizedShockwave>(), (int)(Projectile.damage * DamageScaling), Projectile.knockBack, Projectile.owner,
-					preSpawnAction: delegate (Projectile projectile) { projectile.height += 16; });
+					preSpawnAction: delegate (Projectile projectile) { projectile.position.Y -= Projectile.height + 16; });
 			}
 		}
 	}
