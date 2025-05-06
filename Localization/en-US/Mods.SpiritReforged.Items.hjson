@@ -1741,3 +1741,8 @@ Macuahuitl: {
 		Charged strikes deal bonus damage to bleeding enemies
 		'''
 }
+
+Bowlder: {
+	DisplayName: Bowlder
+	Tooltip: Charged strikes release a deadly bowlder
+}

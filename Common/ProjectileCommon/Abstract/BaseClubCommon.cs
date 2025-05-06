@@ -178,7 +178,7 @@ public abstract partial class BaseClubProj : ModProjectile
 		Vector2 drawPos = handPos - Main.screenPosition + Vector2.UnitY * owner.gfxOffY;
 		Color drawColor = Projectile.GetAlpha(lightColor);
 
-		Rectangle topFrame = texture.Frame(1, Main.projFrames[Type]);
+		Rectangle topFrame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
 
 		for (int k = 0; k < Projectile.oldPos.Length; k++)
 		{

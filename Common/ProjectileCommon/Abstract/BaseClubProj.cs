@@ -196,7 +196,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		Vector2 drawPos = handPos - Main.screenPosition + Vector2.UnitY * Owner.gfxOffY;
 		Color drawColor = Projectile.GetAlpha(lightColor);
 
-		Rectangle topFrame = texture.Frame(1, Main.projFrames[Type]);
+		Rectangle topFrame = texture.Frame(1, Main.projFrames[Type],  0, Projectile.frame);
 
 		//Aftertrail during swing
 		if (CheckAIState(AIStates.SWINGING))
