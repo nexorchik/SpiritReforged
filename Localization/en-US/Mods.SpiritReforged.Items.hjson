@@ -1741,3 +1741,18 @@ Macuahuitl: {
 		Charged strikes deal bonus damage to bleeding enemies
 		'''
 }
+
+BassSlapper: {
+	DisplayName: Bass Slapper
+	Tooltip: Fully charging does multiple slams in quick succession
+}
+
+UnstableAdze: {
+	DisplayName: Shockhammer
+	Tooltip: Fully charging releases a shockwave that travels along tiles
+}
+
+Shockhammer: {
+	DisplayName: Shockhammer
+	Tooltip: ""
+}

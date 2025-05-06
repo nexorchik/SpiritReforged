@@ -8,7 +8,7 @@ namespace SpiritReforged.Common.ProjectileCommon.Abstract;
 
 public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 {
-	private const int MAX_FLICKERTIME = 20;
+	internal const int MAX_FLICKERTIME = 20;
 
 	internal readonly Vector2 Size = textureSize;
 
@@ -43,6 +43,10 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 	{
 		get
 		{
+			//Return default if the club projectile has its own texture
+			if (ModContent.HasAsset(base.Texture))
+				return base.Texture;
+
 			string def = base.Texture;
 			return def.Remove(def.Length - 4); //Remove 'proj'
 		}
@@ -118,6 +122,8 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 			modifiers.FinalDamage *= DamageScaling;
 			modifiers.Knockback *= KnockbackScaling;
 		}
+
+		SafeModifyHitNPC(target, ref modifiers);
 	}
 
 	public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
@@ -127,6 +133,8 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 			modifiers.FinalDamage *= DamageScaling;
 			modifiers.Knockback *= KnockbackScaling;
 		}
+
+		SafeModifyHitPlayer(target, ref modifiers);
 	}
 
 	public sealed override void AI()
@@ -196,23 +204,25 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		Vector2 drawPos = handPos - Main.screenPosition + Vector2.UnitY * Owner.gfxOffY;
 		Color drawColor = Projectile.GetAlpha(lightColor);
 
-		Rectangle topFrame = texture.Frame(1, Main.projFrames[Type]);
-
-		//Aftertrail during swing
-		if (CheckAIState(AIStates.SWINGING))
-			DrawAftertrail(lightColor);
-
-		Main.EntitySpriteDraw(texture, drawPos, topFrame, drawColor, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
-
-		SafeDraw(Main.spriteBatch, lightColor);
-
-		//Flash when fully charged
-		if (CheckAIState(AIStates.CHARGING) && _flickerTime > 0)
+		if(!OverrideDraw(Main.spriteBatch, texture, lightColor, handPos, drawPos))
 		{
-			Texture2D flash = TextureColorCache.ColorSolid(texture, Color.White);
-			float alpha = EaseQuadIn.Ease(EaseSine.Ease(_flickerTime / (float)MAX_FLICKERTIME));
+			//Aftertrail during swing
+			float trailOpacity = 1;
+			if (AllowedAftertrailDraw(ref trailOpacity))
+				DrawAftertrail(texture, lightColor * trailOpacity, drawPos);
 
-			Main.EntitySpriteDraw(flash, drawPos, topFrame, Color.White * alpha, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+			Main.EntitySpriteDraw(texture, drawPos, null, drawColor, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+
+			SafeDraw(Main.spriteBatch, texture, lightColor, handPos, drawPos);
+
+			//Flash when fully charged
+			if (CheckAIState(AIStates.CHARGING) && _flickerTime > 0)
+			{
+				Texture2D flash = TextureColorCache.ColorSolid(texture, Color.White);
+				float alpha = EaseQuadIn.Ease(EaseSine.Ease(_flickerTime / (float)MAX_FLICKERTIME));
+
+				Main.EntitySpriteDraw(flash, drawPos, null, Color.White * alpha, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+			}
 		}
 
 		return false;
