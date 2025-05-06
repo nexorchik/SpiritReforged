@@ -1739,12 +1739,7 @@ BassSlapper: {
 	// Tooltip: Fully charging does multiple slams in quick succession
 }
 
-UnstableAdze: {
-	// DisplayName: Shockhammer
-	// Tooltip: Fully charging releases a shockwave that travels along tiles
-}
-
 Shockhammer: {
 	// DisplayName: Shockhammer
-	// Tooltip: ""
+	// Tooltip: Fully charging releases a shockwave that travels along tiles
 }

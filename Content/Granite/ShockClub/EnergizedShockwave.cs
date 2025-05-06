@@ -1,13 +1,12 @@
 ﻿using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 using SpiritReforged.Common.PrimitiveRendering;
 using Terraria.DataStructures;
-using Microsoft.Xna.Framework.Graphics;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Common.Easing;
 
-namespace SpiritReforged.Content.Granite.UnstableAdze;
+namespace SpiritReforged.Content.Granite.ShockClub;
 
 public class EnergizedShockwave : ModProjectile
 {

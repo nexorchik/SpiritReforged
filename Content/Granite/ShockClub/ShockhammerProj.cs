@@ -9,7 +9,7 @@ using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Particles;
 
-namespace SpiritReforged.Content.Granite.UnstableAdze;
+namespace SpiritReforged.Content.Granite.ShockClub;
 
 class ShockhammerProj : BaseClubProj, IManualTrailProjectile
 {
@@ -103,11 +103,14 @@ class ShockhammerProj : BaseClubProj, IManualTrailProjectile
 					break;
 			}
 
-			spawnPos = tilepos.ToWorldCoordinates();
+			if (Main.myPlayer == Projectile.owner)
+			{
+				spawnPos = tilepos.ToWorldCoordinates();
+				var velocity = Vector2.UnitX * 12 * Owner.direction;
 
-			Vector2 velocity = Vector2.UnitX * 12 * Owner.direction;
-			PreNewProjectile.New(Projectile.GetSource_FromAI("ClubSmash"), spawnPos, velocity, ModContent.ProjectileType<EnergizedShockwave>(), (int)(Projectile.damage * DamageScaling), Projectile.knockBack, Projectile.owner,
-				preSpawnAction : delegate(Projectile projectile) { projectile.height += 16; });
+				PreNewProjectile.New(Projectile.GetSource_FromAI("ClubSmash"), spawnPos, velocity, ModContent.ProjectileType<EnergizedShockwave>(), (int)(Projectile.damage * DamageScaling), Projectile.knockBack, Projectile.owner,
+					preSpawnAction: delegate (Projectile projectile) { projectile.height += 16; });
+			}
 		}
 	}
 

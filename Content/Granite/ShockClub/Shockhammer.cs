@@ -4,9 +4,9 @@ using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using Terraria.GameContent.ItemDropRules;
 
-namespace SpiritReforged.Content.Granite.UnstableAdze;
+namespace SpiritReforged.Content.Granite.ShockClub;
 
-[AutoloadGlowmask("255, 255, 255")]
+[AutoloadGlowmask("255,255,255")]
 [FromClassic("RageBlazeDecapitator")]
 public class Shockhammer : ClubItem
 {
