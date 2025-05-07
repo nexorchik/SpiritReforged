@@ -43,6 +43,13 @@ public class Wheezer : ModNPC
 	private int _idleTimer;
 	private bool _resetIdle = true;
 
+	public static readonly SoundStyle WheezerHit = new("SpiritReforged/Assets/SFX/NPCHit/WheezerHit")
+	{
+		Volume = .2f,
+		PitchVariance = .4f,
+		SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
+	};
+
 	public override void SetStaticDefaults()
 	{
 		Main.npcFrameCount[Type] = 13;
@@ -71,6 +78,12 @@ public class Wheezer : ModNPC
 
 	public override void AI()
 	{
+		if (!Main.dedServ)
+		{
+			if (Main.rand.NextBool(700))
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/WheezerIdle") with { Volume = .45f, SoundLimitBehavior = SoundLimitBehavior.IgnoreNew }, NPC.Center);
+		}
+
 		if (_explosiveDeath)
 		{
 			ExplodeOnDeath();
@@ -148,7 +161,10 @@ public class Wheezer : ModNPC
 			NPC.velocity.X *= .9f;
 
 			if ((int)NPC.frameCounter == 6)
+			{
+				SoundEngine.PlaySound(SoundID.Item34 with { PitchRange = (-.35f, .35f), Volume = .5f, SoundLimitBehavior = SoundLimitBehavior.IgnoreNew }, NPC.Center);
 				SoundEngine.PlaySound(SoundID.NPCHit36 with { PitchRange = (-.2f, .2f), SoundLimitBehavior = SoundLimitBehavior.IgnoreNew }, NPC.Center);
+			} 
 
 			if (Main.netMode != NetmodeID.MultiplayerClient && NPC.frameCounter > 5f && LocalCounter % 6 == 0)
 			{
@@ -273,10 +289,12 @@ public class Wheezer : ModNPC
 			return;
 
 		for (int k = 0; k < 11; k++)
-			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hit.HitDirection, -1f, 0, default, .61f);
+			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hit.HitDirection, -1f, 0, default, Main.rand.NextFloat(.55f, .95f));
 
 		if (NPC.life <= 0 && !Main.expertMode)
 			SpawnGores();
+
+		SoundEngine.PlaySound(WheezerHit, NPC.Center);
 	}
 
 	private void SpawnGores()
