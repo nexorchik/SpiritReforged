@@ -11,6 +11,7 @@ using SpiritReforged.Content.Ocean.Items.PoolNoodle;
 using SpiritReforged.Content.Ocean.Items.Vanity;
 using SpiritReforged.Content.Ocean.Items.Vanity.Towel;
 using SpiritReforged.Content.Underground.Items.BoulderClub;
+using SpiritReforged.Content.Underground.Items;
 using SpiritReforged.Content.Underground.Items.ExplorerTreads;
 using SpiritReforged.Content.Underground.Items.Zipline;
 using static SpiritReforged.Common.WorldGeneration.Chests.ChestPoolUtils;
@@ -45,5 +46,6 @@ public class ChestLoot : ModSystem
 		AddToVanillaChest(new ChestInfo(ModContent.ItemType<TornMapPiece>(), 2, 0.18f), (int)VanillaChestID.Gold, Main.rand.Next(1, 4));
 
 		AddToVanillaChest(new ChestInfo(ModContent.ItemType<Bowlder>(), 2, 0.3f), (int)VanillaChestID2.Trapped, 1, TileID.Containers2);
+		AddToVanillaChest(new ChestInfo(ModContent.ItemType<Blasphemer>(), 1, 0.25f), (int)VanillaChestID.ShadowLocked, 1);
 	}
 }
