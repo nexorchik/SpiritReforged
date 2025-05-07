@@ -1,5 +1,6 @@
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Content.Vanilla.Food;
 using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -339,6 +340,7 @@ public class Wheezer : ModNPC
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
+		npcLoot.AddCommon(ModContent.ItemType<Hummus>(), 30);
 		npcLoot.Add(ItemDropRule.Common(ItemID.PotatoChips, 35));
 		npcLoot.Add(ItemDropRule.Common(ItemID.DepthMeter, 80));
 		npcLoot.Add(ItemDropRule.Common(ItemID.Compass, 80));

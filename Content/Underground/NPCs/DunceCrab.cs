@@ -2,6 +2,7 @@ using SpiritReforged.Common.MathHelpers;
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Content.Vanilla.Food;
 using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -379,6 +380,7 @@ public class DunceCrab : ModNPC
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
+		npcLoot.AddCommon(ModContent.ItemType<Hummus>(), 30);
 		npcLoot.AddCommon(ItemID.PotatoChips, 30);
 		npcLoot.AddCommon(ItemID.DepthMeter, 28);
 		npcLoot.AddCommon(ItemID.Compass, 32);
