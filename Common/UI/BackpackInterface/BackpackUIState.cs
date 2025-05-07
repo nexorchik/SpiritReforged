@@ -98,7 +98,8 @@ internal class BackpackUIState : AutoUIState
 
 		if (!clear)
 		{
-			int baseX = 570;
+			const float spacing = 33.5f;
+			int baseX = 571;
 
 			if (ModLoader.HasMod("PotionSlots"))
 			{
@@ -124,8 +125,8 @@ internal class BackpackUIState : AutoUIState
 			{
 				var newSlot = new PackInventorySlot(items, i)
 				{
-					Left = new StyleDimension(baseX + xOff * 32, 0),
-					Top = new StyleDimension(105 + yOff * 33, 0),
+					Left = new StyleDimension(baseX + xOff * spacing, 0),
+					Top = new StyleDimension(105 + yOff * spacing, 0),
 					Width = StyleDimension.FromPixels(32),
 					Height = StyleDimension.FromPixels(32)
 				};

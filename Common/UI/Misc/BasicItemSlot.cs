@@ -1,5 +1,6 @@
 ﻿using Terraria.UI;
 using Terraria.GameContent.UI.Elements;
+using Terraria.UI.Gamepad;
 
 namespace SpiritReforged.Common.UI.Misc;
 
