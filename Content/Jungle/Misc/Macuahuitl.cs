@@ -6,6 +6,7 @@ using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Content.Particles;
 using static SpiritReforged.Common.Easing.EaseFunction;
 using SpiritReforged.Common.BuffCommon.Stacking;
+using SpiritReforged.Common.NPCCommon;
 
 namespace SpiritReforged.Content.Jungle.Misc;
 
@@ -13,6 +14,8 @@ public class Macuahuitl : ClubItem
 {
 	internal override float DamageScaling => 4f;
 	internal override float KnockbackScaling => 5f;
+
+	public override void SetStaticDefaults() => NPCShopHelper.AddEntry(new NPCShopHelper.ConditionalEntry((shop) => shop.NpcType == NPCID.WitchDoctor, new NPCShop.Entry(Type)));
 
 	public override void SafeSetDefaults()
 	{
@@ -23,8 +26,8 @@ public class Macuahuitl : ClubItem
 		Item.width = 60;
 		Item.height = 60;
 		Item.crit = 4;
-		Item.value = Item.sellPrice(0, 1, 0, 0);
-		Item.rare = ItemRarityID.Blue;
+		Item.value = Item.sellPrice(0, 1, 50, 0);
+		Item.rare = ItemRarityID.Orange;
 		Item.shoot = ModContent.ProjectileType<MacuahuitlProj>();
 	}
 }
