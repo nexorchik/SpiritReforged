@@ -39,6 +39,7 @@ public abstract class ToiletTile : FurnitureTile
 		TileObjectData.addAlternate(1);
 		TileObjectData.addTile(Type);
 
+		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsChair);
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("MapObject.Toilet"));
 		AdjTiles = [TileID.Toilets];
 		DustType = -1;

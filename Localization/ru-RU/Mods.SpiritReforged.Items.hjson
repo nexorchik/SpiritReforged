@@ -1734,6 +1734,16 @@ Macuahuitl: {
 		''' */
 }
 
+BassSlapper: {
+	// DisplayName: Bass Slapper
+	// Tooltip: Fully charging does multiple slams in quick succession
+}
+
+Shockhammer: {
+	// DisplayName: Shockhammer
+	// Tooltip: Fully charging releases a shockwave that travels along tiles
+}
+
 Blasphemer: {
 	// DisplayName: Blasphemer
 	// Tooltip: Charged strikes erupt into a fiery geyser
