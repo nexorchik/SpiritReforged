@@ -30,6 +30,16 @@ public class StargrassTile : GrassTile
 		DustType = DustID.Flare_Blue;
 	}
 
+	public override void Convert(int i, int j, int conversionType)
+	{
+		switch (conversionType)
+		{
+			case BiomeConversionID.PurificationPowder:
+				WorldGen.ConvertTile(i, j, TileID.Grass);
+				return;
+		}
+	}
+
 	public override void FloorVisuals(Player player)
 	{
 		int chance = (int)Math.Clamp(50 - 7.5f * player.velocity.Length(), 1, 50);
