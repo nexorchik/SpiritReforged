@@ -1744,6 +1744,11 @@ Shockhammer: {
 	// Tooltip: Fully charging releases a shockwave that travels along tiles
 }
 
+Bowlder: {
+	// DisplayName: Bowlder
+	// Tooltip: Charged strikes release a deadly bowlder
+}
+
 Blasphemer: {
 	// DisplayName: Blasphemer
 	// Tooltip: Charged strikes erupt into a fiery geyser

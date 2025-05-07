@@ -174,7 +174,7 @@ public abstract partial class BaseClubProj : ModProjectile
 	{
 		Color drawColor = Projectile.GetAlpha(lightColor);
 
-		Rectangle topFrame = texture.Frame(1, Main.projFrames[Type]);
+		Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
 
 		for (int k = 0; k < Projectile.oldPos.Length; k++)
 		{
@@ -184,7 +184,7 @@ public abstract partial class BaseClubProj : ModProjectile
 
 			float progress = (Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length;
 			Color trailColor = drawColor * progress * .125f;
-			Main.EntitySpriteDraw(texture, drawPosition, topFrame, trailColor, Projectile.oldRot[k], HoldPoint, TotalScale, Effects, 0);
+			Main.EntitySpriteDraw(texture, drawPosition, frame, trailColor, Projectile.oldRot[k], HoldPoint, TotalScale, Effects, 0);
 		}
 	}
 
