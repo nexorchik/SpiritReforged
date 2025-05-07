@@ -18,11 +18,5 @@ public class WoodenClub : ClubItem
 		Item.shoot = ModContent.ProjectileType<WoodenClubProj>();
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ItemID.Wood, 30);
-		recipe.AddTile(TileID.WorkBenches);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.Wood, 30).AddTile(TileID.WorkBenches).Register();
 }

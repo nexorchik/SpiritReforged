@@ -21,11 +21,5 @@ public class GoldClub : ClubItem
 		Item.shoot = ModContent.ProjectileType<GoldClubProj>();
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ItemID.GoldBar, 20);
-		recipe.AddTile(TileID.Anvils);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.GoldBar, 20).AddTile(TileID.Anvils).Register();
 }

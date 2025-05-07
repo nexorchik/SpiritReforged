@@ -21,11 +21,5 @@ public class PlatinumClub : ClubItem
 		Item.UseSound = SoundID.DD2_MonkStaffSwing.WithPitchOffset(-0.5f);
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ItemID.PlatinumBar, 20);
-		recipe.AddTile(TileID.Anvils);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.PlatinumBar, 20).AddTile(TileID.Anvils).Register();
 }
