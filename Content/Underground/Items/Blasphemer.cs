@@ -109,13 +109,10 @@ class BlasphemerProj : BaseClubProj, IManualTrailProjectile
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffID.OnFire, 300);
 
-	public override void SafeDraw(SpriteBatch spriteBatch, Color lightColor)
+	public override void SafeDraw(SpriteBatch spriteBatch, Texture2D texture, Color lightColor, Vector2 handPosition, Vector2 drawPosition)
 	{
 		var glow = GlowmaskProjectile.ProjIdToGlowmask[Type].Glowmask.Value;
-		Vector2 handPos = Owner.GetFrontHandPosition(Owner.compositeFrontArm.stretch, Owner.compositeFrontArm.rotation);
-		Vector2 drawPos = handPos - Main.screenPosition + Vector2.UnitY * Owner.gfxOffY;
-
-		Main.EntitySpriteDraw(glow, drawPos, null, Projectile.GetAlpha(Color.White * GetWindupProgress), Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+		Main.EntitySpriteDraw(glow, drawPosition, null, Projectile.GetAlpha(Color.White * GetWindupProgress), Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
 	}
 }
 
