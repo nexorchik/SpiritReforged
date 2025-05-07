@@ -122,7 +122,7 @@ internal class BackpackUIState : AutoUIState
 
 			for (int i = 0; i < items.Length; ++i) //Add backpack storage slots
 			{
-				var newSlot = new BasicItemSlot(items, i, scale: .6f)
+				var newSlot = new PackInventorySlot(items, i)
 				{
 					Left = new StyleDimension(baseX + xOff * 32, 0),
 					Top = new StyleDimension(105 + yOff * 33, 0),
