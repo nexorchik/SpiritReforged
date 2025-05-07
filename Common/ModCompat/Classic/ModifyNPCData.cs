@@ -10,7 +10,7 @@ internal class ModifyNPCData : GlobalNPC
 	{
 		foreach (var rule in npcLoot.Get())
 		{
-			if (rule is CommonDrop drop && SpiritClassic.ClassicToReforged.TryGetValue(drop.itemId, out int reforged))
+			if (rule is CommonDrop drop && SpiritClassic.ClassicItemToReforged.TryGetValue(drop.itemId, out int reforged))
 				drop.itemId = reforged;
 		}
 	}
@@ -19,8 +19,17 @@ internal class ModifyNPCData : GlobalNPC
 	{
 		foreach (var entry in shop.ActiveEntries)
 		{
-			if (SpiritClassic.ClassicToReforged.TryGetValue(entry.Item.type, out int reforgedType))
+			if (SpiritClassic.ClassicItemToReforged.TryGetValue(entry.Item.type, out int reforgedType))
 				entry.Item.ChangeItemType(reforgedType);
+		}
+	}
+
+	public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
+	{
+		foreach (var entry in pool)
+		{
+			if (SpiritClassic.ClassicNPCToReforged.ContainsKey(entry.Key))
+				pool[entry.Key] = 0f; //Disable spawn
 		}
 	}
 }
