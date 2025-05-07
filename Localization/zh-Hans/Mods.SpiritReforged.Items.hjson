@@ -1751,3 +1751,8 @@ Shockhammer: {
 	// DisplayName: Shockhammer
 	// Tooltip: Fully charging releases a shockwave that travels along tiles
 }
+
+Bowlder: {
+	// DisplayName: Bowlder
+	// Tooltip: Charged strikes release a deadly bowlder
+}

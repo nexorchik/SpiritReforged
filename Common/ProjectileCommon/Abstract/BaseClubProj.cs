@@ -203,15 +203,16 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		Vector2 handPos = Owner.GetFrontHandPosition(Owner.compositeFrontArm.stretch, Owner.compositeFrontArm.rotation);
 		Vector2 drawPos = handPos - Main.screenPosition + Vector2.UnitY * Owner.gfxOffY;
 		Color drawColor = Projectile.GetAlpha(lightColor);
+		Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
 
-		if(!OverrideDraw(Main.spriteBatch, texture, lightColor, handPos, drawPos))
+		if (!OverrideDraw(Main.spriteBatch, texture, lightColor, handPos, drawPos))
 		{
 			//Aftertrail during swing
 			float trailOpacity = 1;
 			if (AllowedAftertrailDraw(ref trailOpacity))
 				DrawAftertrail(texture, lightColor * trailOpacity, drawPos);
 
-			Main.EntitySpriteDraw(texture, drawPos, null, drawColor, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+			Main.EntitySpriteDraw(texture, drawPos, frame, drawColor, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
 
 			SafeDraw(Main.spriteBatch, texture, lightColor, handPos, drawPos);
 
@@ -221,7 +222,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 				Texture2D flash = TextureColorCache.ColorSolid(texture, Color.White);
 				float alpha = EaseQuadIn.Ease(EaseSine.Ease(_flickerTime / (float)MAX_FLICKERTIME));
 
-				Main.EntitySpriteDraw(flash, drawPos, null, Color.White * alpha, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+				Main.EntitySpriteDraw(flash, drawPos, frame, Color.White * alpha, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
 			}
 		}
 
