@@ -248,12 +248,13 @@ class PlatinumClubProj : BaseClubProj, ITrailProjectile
 	internal override bool AllowUseTurn => CheckAIState(AIStates.CHARGING) && GetWindupProgress >= 1 && _inputHeld;
 	internal override bool AllowRelease => _inputHeld;
 
-	public override bool PreDrawExtras()
+	public override bool AllowedAftertrailDraw(ref float trailOpacity)
 	{
-		if (CheckAIState(AIStates.CHARGING) && GetWindupProgress < 1)
-			DrawAftertrail(Lighting.GetColor(Projectile.Center.ToTileCoordinates()) * EaseCubicOut.Ease(1 - GetWindupProgress));
+		if (base.AllowedAftertrailDraw(ref trailOpacity))
+			return true;
 
-		return true;
+		trailOpacity = EaseCubicOut.Ease(1 - GetWindupProgress);
+		return CheckAIState(AIStates.CHARGING) && GetWindupProgress < 1;
 	}
 
 	internal override void SendExtraDataSafe(BinaryWriter writer) => writer.Write(_inputHeld);

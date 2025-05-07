@@ -170,15 +170,11 @@ public abstract partial class BaseClubProj : ModProjectile
 	/// Shorthand form for drawing the club's aftertrail, used by default during the swing.
 	/// </summary>
 	/// <param name="lightColor"></param>
-	internal void DrawAftertrail(Color lightColor)
+	internal void DrawAftertrail(Texture2D texture, Color lightColor, Vector2 drawPosition)
 	{
-		Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-		Player owner = Main.player[Projectile.owner];
-		Vector2 handPos = owner.GetFrontHandPosition(owner.compositeFrontArm.stretch, owner.compositeFrontArm.rotation);
-		Vector2 drawPos = handPos - Main.screenPosition + Vector2.UnitY * owner.gfxOffY;
 		Color drawColor = Projectile.GetAlpha(lightColor);
 
-		Rectangle topFrame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
+		Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
 
 		for (int k = 0; k < Projectile.oldPos.Length; k++)
 		{
@@ -188,7 +184,7 @@ public abstract partial class BaseClubProj : ModProjectile
 
 			float progress = (Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length;
 			Color trailColor = drawColor * progress * .125f;
-			Main.EntitySpriteDraw(texture, drawPos, topFrame, trailColor, Projectile.oldRot[k], HoldPoint, TotalScale, Effects, 0);
+			Main.EntitySpriteDraw(texture, drawPosition, frame, trailColor, Projectile.oldRot[k], HoldPoint, TotalScale, Effects, 0);
 		}
 	}
 
