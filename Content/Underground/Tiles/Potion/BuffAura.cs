@@ -40,7 +40,7 @@ public class BuffAura : ModProjectile
 
 		foreach (var p in Main.ActivePlayers)
 		{
-			if (p.getRect().Intersects(Projectile.getRect()) && !p.HasBuff(buffType))
+			if (p.getRect().Intersects(Projectile.getRect()))
 				p.AddBuff(buffType, buffTime);
 		}
 

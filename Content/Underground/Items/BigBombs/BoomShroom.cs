@@ -12,8 +12,8 @@ public class BoomShroom : AccessoryItem
 	{
 		Item.width = 28;
 		Item.height = 20;
-		Item.value = Item.sellPrice(0, 3, 0, 0);
-		Item.rare = ItemRarityID.Blue;
+		Item.value = Item.sellPrice(0, 1, 50, 0);
+		Item.rare = ItemRarityID.Orange;
 		Item.accessory = true;
 	}
 

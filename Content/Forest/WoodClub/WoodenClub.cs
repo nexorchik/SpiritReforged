@@ -13,7 +13,7 @@ public class WoodenClub : ClubItem
 		Item.width = 60;
 		Item.height = 60;
 		Item.crit = 4;
-		Item.value = Item.sellPrice(0, 0, 1, 0);
+		Item.value = Item.sellPrice(0, 0, 0, 76);
 		Item.rare = ItemRarityID.White;
 		Item.shoot = ModContent.ProjectileType<WoodenClubProj>();
 	}

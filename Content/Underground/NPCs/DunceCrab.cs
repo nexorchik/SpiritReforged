@@ -2,10 +2,12 @@ using SpiritReforged.Common.MathHelpers;
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Content.Vanilla.Food;
 using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
+using Terraria.ID;
 
 namespace SpiritReforged.Content.Underground.NPCs;
 
@@ -40,7 +42,22 @@ public class DunceCrab : ModNPC
 
 	public static readonly SoundStyle ShellHide = new("SpiritReforged/Assets/SFX/Ambient/Jar")
 	{
-		PitchVariance = .25f,
+		Volume = .65f,
+		PitchVariance = .3f,
+		SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
+	};
+
+	public static readonly SoundStyle ShellHit = new("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit")
+	{
+		Volume = 1.1f,
+		PitchVariance = .5f,
+		SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
+	};
+
+	public static readonly SoundStyle CrunchHit = new("SpiritReforged/Assets/SFX/NPCHit/CrunchHit")
+	{
+		Volume = .45f,
+		PitchVariance = .3f,
 		SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
 	};
 
@@ -118,6 +135,26 @@ public class DunceCrab : ModNPC
 		NPC.collideY = false;
 
 		NPC.velocity = CollisionCheckHelper.NoSlopeCollision(NPC.position, NPC.velocity, NPC.width, NPC.height);
+
+		if (Collision.LavaCollision(NPC.position, NPC.width, NPC.height)) //Take lava damage
+		{
+			if (Main.remixWorld)
+			{
+				NPC.AddBuff(BuffID.OnFire, 180);
+			}
+			else
+			{
+				NPC.AddBuff(BuffID.OnFire, 420);
+
+				var hit = new NPC.HitInfo() { Damage = 50 };
+				NPC.StrikeNPC(hit, noPlayerInteraction: true);
+
+				if (Main.dedServ)
+					NetMessage.SendStrikeNPC(NPC, in hit);
+			}
+
+			NPC.lavaWet = true;
+		}
 
 		if (NPC.oldVelocity.X != NPC.velocity.X)
 			NPC.collideX = true;
@@ -273,7 +310,7 @@ public class DunceCrab : ModNPC
 		if (Main.dedServ)
 			return;
 
-		int blood = 4;
+		int blood = 7;
 		if (NPC.life <= 0)
 		{
 			blood = 15;
@@ -287,6 +324,8 @@ public class DunceCrab : ModNPC
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GreenBlood);
 
 		SoundEngine.PlaySound(SoundID.NPCHit1 with { Pitch = .2f }, NPC.Center);
+		SoundEngine.PlaySound(ShellHit, NPC.Center);
+		SoundEngine.PlaySound(CrunchHit, NPC.Center);
 	}
 
 	public override void FindFrame(int frameHeight)
@@ -358,6 +397,7 @@ public class DunceCrab : ModNPC
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
+		npcLoot.AddCommon(ModContent.ItemType<Hummus>(), 30);
 		npcLoot.AddCommon(ItemID.PotatoChips, 30);
 		npcLoot.AddCommon(ItemID.DepthMeter, 28);
 		npcLoot.AddCommon(ItemID.Compass, 32);

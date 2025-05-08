@@ -52,6 +52,10 @@ public abstract partial class BaseClubProj : ModProjectile
 	/// </summary>
 	public virtual float SwingSpeedMult => Charge == 1 ? 1.2f : 1f;
 
+	internal virtual bool AllowUseTurn => CheckAIState(AIStates.CHARGING);
+
+	internal virtual bool AllowRelease => true;
+
 	public virtual void Charging(Player owner)
 	{
 		if (_windupTimer < WindupTime)
@@ -176,12 +180,13 @@ public abstract partial class BaseClubProj : ModProjectile
 	/// <returns></returns>
 	internal virtual bool CanCollide(float progress) => progress > SwingPhaseThreshold && progress < SwingShrinkThreshold;
 
-	internal virtual bool AllowUseTurn => CheckAIState(AIStates.CHARGING);
-	internal virtual bool AllowRelease => true;
-
 	public virtual void SafeSetStaticDefaults() { }
 	public virtual void SafeSetDefaults() { }
 	public virtual void SafeAI() { }
+	public virtual void SafeDraw(SpriteBatch spriteBatch, Texture2D texture, Color lightColor, Vector2 handPosition, Vector2 drawPosition) { }
+
+	internal virtual void SafeModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) { }
+	internal virtual void SafeModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) { }
 
 	internal virtual void DuringCharge(Player owner, float windupProgress, float chargeProgress) { }
 
@@ -191,7 +196,8 @@ public abstract partial class BaseClubProj : ModProjectile
 
 	public virtual void OnSwingStart() { }
 	public virtual void OnSmash(Vector2 position) { }
-	public virtual void SafeDraw(SpriteBatch spriteBatch, Color lightColor) { }
+	public virtual bool OverrideDraw(SpriteBatch spriteBatch, Texture2D texture, Color lightColor, Vector2 handPosition, Vector2 drawPosition) => false;
+	public virtual bool AllowedAftertrailDraw(ref float trailOpacity) => CheckAIState(AIStates.SWINGING);
 
 	internal virtual void SendExtraDataSafe(BinaryWriter writer) { }
 	internal virtual void ReceiveExtraDataSafe(BinaryReader reader) { }

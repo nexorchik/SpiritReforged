@@ -1,5 +1,4 @@
 using SpiritReforged.Common.TileCommon;
-using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Dusts;
 using SpiritReforged.Content.Underground.Moss.Oganesson;
@@ -7,19 +6,12 @@ using SpiritReforged.Content.Underground.Moss.Oganesson;
 namespace SpiritReforged.Content.Underground.Moss.Radon;
 
 [AutoloadGlowmask("224,232,70")]
-public class RadonMoss : GrassTile
+public class RadonMoss : OganessonMoss
 {
-	protected override int DirtType => TileID.Stone;
-
-	public override void SetStaticDefaults()
+	public override void SetEntry()
 	{
-		base.SetStaticDefaults();
-
-		Main.tileLighted[Type] = true;
-
 		RegisterItemDrop(ModContent.ItemType<RadonMossItem>());
 		AddMapEntry(new Color(252, 248, 3));
-		this.Merge(TileID.Stone, TileID.GrayBrick);
 
 		DustType = ModContent.DustType<RadonMossDust>();
 		HitSound = SoundID.Grass;
@@ -41,6 +33,6 @@ public class RadonMoss : GrassTile
 		yield return new Item(ItemID.StoneBlock);
 	}
 
-	protected virtual void GrowTiles(int i, int j) => Placer.PlacePlant<RadonPlants>(i, j, Main.rand.Next(RadonPlants.StyleRange));
+	protected override void GrowTiles(int i, int j) => Placer.PlacePlant<RadonPlants>(i, j, Main.rand.Next(RadonPlants.StyleRange));
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.234f, 0.153f, 0.03f);
 }

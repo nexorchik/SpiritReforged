@@ -31,4 +31,6 @@ FallingBaobabFruit.DisplayName: Падающий плод баобаба
 // BuffAura.DisplayName: Buff Aura
 // WheezerCloud.DisplayName: Poisonous Gas
 // Shockwave.DisplayName: Shockwave
-// FlyingDebris.DisplayName: Flying Debris
+// EnergizedShockwave.DisplayName: Energized Shockwave
+// RollingBowlder.DisplayName: Rolling Bowlder
+// Firespike.DisplayName: Firespike
