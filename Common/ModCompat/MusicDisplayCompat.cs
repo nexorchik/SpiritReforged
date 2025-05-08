@@ -1,13 +1,11 @@
-﻿using static SpiritReforged.Common.ModCompat.CrossMod;
-
-namespace SpiritReforged.Common.ModCompat;
+﻿namespace SpiritReforged.Common.ModCompat;
 
 internal class MusicDisplayCompat : ModSystem
 {
-	public override bool IsLoadingEnabled(Mod mod) => MusicDisplay.Enabled;
+	public override bool IsLoadingEnabled(Mod mod) => CrossMod.MusicDisplay.Enabled;
 	public override void PostSetupContent()
 	{
-		var display = (Mod)MusicDisplay;
+		var display = (Mod)CrossMod.MusicDisplay;
 		LocalizedText modName = Language.GetText("Mods.SpiritReforged.MusicDisplay.ModName");
 
 		void AddMusic(string name)

@@ -13,7 +13,6 @@ using SpiritReforged.Content.Savanna.Items.Vanity;
 using SpiritReforged.Content.Savanna.Tiles;
 using Terraria.DataStructures;
 using Terraria.WorldBuilding;
-using static SpiritReforged.Common.ModCompat.CrossMod;
 
 namespace SpiritReforged.Common.ModCompat;
 
@@ -21,10 +20,10 @@ internal class NewBeginningsCompat : ModSystem
 {
 	public static Asset<Texture2D> GetIcon(string name) => ModContent.Request<Texture2D>("SpiritReforged/Common/ModCompat/NewBeginningsOrigins/" + name);
 
-	public override bool IsLoadingEnabled(Mod mod) => NewBeginnings.Enabled;
+	public override bool IsLoadingEnabled(Mod mod) => CrossMod.NewBeginnings.Enabled;
 	public override void Load()
 	{
-		var beginnings = (Mod)NewBeginnings;
+		var beginnings = (Mod)CrossMod.NewBeginnings;
 
 		beginnings.Call("Delay", () =>
 		{
