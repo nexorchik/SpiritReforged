@@ -1,4 +1,4 @@
-﻿using SpiritReforged.Common.ModCompat.Classic;
+﻿using SpiritReforged.Common.ModCompat;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Content.Particles;
@@ -17,7 +17,7 @@ public class HydrothermalVentPlume : ModProjectile
 	{
 		DropPool.Add(ModContent.ItemType<MineralSlagPickup>(), 4);
 
-		if (SpiritClassic.Enabled && SpiritClassic.ClassicMod.TryFind("SulfurDeposit", out ModItem sulfur))
+		if (CrossMod.Classic.Enabled && CrossMod.Classic.TryFind("SulfurDeposit", out ModItem sulfur))
 			DropPool.Add(sulfur.Type, 3);
 	}
 

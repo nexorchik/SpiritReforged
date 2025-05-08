@@ -31,9 +31,9 @@ public class SavannaCrateHardmode : ModItem
 
 		if (CrossMod.Fables.Enabled)
 		{
-			if (CrossMod.Fables.Instance.TryFind("ToxicBlowpipe", out ModItem toxicBLowpipe))
+			if (CrossMod.Fables.TryFind("ToxicBlowpipe", out ModItem toxicBLowpipe))
 				dropOptions = dropOptions.Append(toxicBLowpipe.Type).ToArray();
-			if (CrossMod.Fables.Instance.TryFind("CrackshotColt", out ModItem crackshotColt))
+			if (CrossMod.Fables.TryFind("CrackshotColt", out ModItem crackshotColt))
 				dropOptions = dropOptions.Append(crackshotColt.Type).ToArray();
 		}
 

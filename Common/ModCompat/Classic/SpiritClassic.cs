@@ -8,32 +8,12 @@ internal class SpiritClassic : ModSystem
 {
 	private const string ClassicName = "SpiritMod";
 
-	/// <summary> Whether Spirit Classic is enabled. </summary>
-	public static bool Enabled => Loaded || ModLoader.HasMod(ClassicName);
-	/// <summary> The loaded Spirit Classic mod instance. Check <see cref="Enabled"/> before using. </summary>
-	internal static Mod ClassicMod = null;
-
 	/// <summary> Spirit Classic items and their Reforged replacements. </summary>
 	internal static readonly Dictionary<int, int> ClassicItemToReforged = [];
 	/// <summary> Spirit Classic NPCs and their Reforged replacements. </summary>
 	internal static readonly Dictionary<int, int> ClassicNPCToReforged = [];
 
-	private static bool Loaded = false;
-
-	public override bool IsLoadingEnabled(Mod mod)
-	{
-		if (!Enabled)
-			return false;
-
-		ClassicMod = ModLoader.GetMod(ClassicName);
-		Loaded = true;
-
-		mod.AddContent((ObsoleteItem)Activator.CreateInstance(typeof(ObsoleteItem)));
-		mod.AddContent((ModifyNPCData)Activator.CreateInstance(typeof(ModifyNPCData)));
-
-		return true;
-	}
-
+	public override bool IsLoadingEnabled(Mod mod) => CrossMod.Classic.Enabled;
 	public override void SetStaticDefaults()
 	{
 		foreach (var item in Mod.GetContent<ModItem>()) //Populate Classic/Reforged counterpart item array
@@ -55,8 +35,8 @@ internal class SpiritClassic : ModSystem
 		}
 
 		#region local
-		static int ClassicItem(ModItem modItem) => ClassicMod.TryFind(GetName(modItem), out ModItem item) ? item.Type : -1;
-		static int ClassicNPC(ModNPC modNPC) => ClassicMod.TryFind(GetName(modNPC), out ModNPC npc) ? npc.Type : -1;
+		static int ClassicItem(ModItem modItem) => CrossMod.Classic.TryFind(GetName(modItem), out ModItem item) ? item.Type : -1;
+		static int ClassicNPC(ModNPC modNPC) => CrossMod.Classic.TryFind(GetName(modNPC), out ModNPC npc) ? npc.Type : -1;
 
 		static string GetName(ModType t)
 		{
@@ -75,10 +55,10 @@ internal class SpiritClassic : ModSystem
 
 	public override void AddRecipes()
 	{
-		if (ClassicMod.TryFind("Chitin", out ModItem chitin))
+		if (CrossMod.Classic.TryFind("Chitin", out ModItem chitin))
 			Recipe.Create(ModContent.ItemType<GildedScarab>()).AddRecipeGroup("GoldBars", 5).AddIngredient(chitin.Type, 8).AddTile(TileID.Anvils).Register();
 
-		if (ClassicMod.TryFind("SeraphimBulwark", out ModItem bulwark) && ClassicMod.TryFind("ManaShield", out ModItem manaShield) && ClassicMod.TryFind("SoulShred", out ModItem soul))
+		if (CrossMod.Classic.TryFind("SeraphimBulwark", out ModItem bulwark) && CrossMod.Classic.TryFind("ManaShield", out ModItem manaShield) && CrossMod.Classic.TryFind("SoulShred", out ModItem soul))
 			Recipe.Create(bulwark.Type).AddIngredient(ModContent.ItemType<ArcaneNecklacePlatinum>()).AddIngredient(manaShield.Type).AddIngredient(soul.Type, 5).AddTile(TileID.TinkerersWorkbench).Register();
 	}
 
@@ -161,7 +141,7 @@ internal class SpiritClassic : ModSystem
 	/// <summary> Manually adds a ModItem replacement entry to <see cref="ClassicItemToReforged"/>, if loaded. </summary>
 	public static void AddItemReplacement(string classicName, int reforgedType)
 	{
-		if (Enabled && ClassicMod.TryFind(classicName, out ModItem item))
+		if (CrossMod.Classic.Enabled && CrossMod.Classic.TryFind(classicName, out ModItem item))
 			AddItemReplacement(item.Type, reforgedType);
 	}
 
@@ -172,7 +152,7 @@ internal class SpiritClassic : ModSystem
 		ClassicItemToReforged.Add(classicType, reforgedType);
 		ItemID.Sets.ShimmerTransformToItem[classicType] = reforgedType; //Populate shimmer transformations
 
-		ClassicMod.Call("AddItemDefinition", classicType, reforgedType);
+		((Mod)CrossMod.Classic).Call("AddItemDefinition", classicType, reforgedType);
 	}
 }
 

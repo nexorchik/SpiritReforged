@@ -51,13 +51,13 @@ public class SunkenTreasure : FloatingItem
 		itemLoot.Add(DropRules.LootPoolDrop.SameStack(6, 10, 1, 4, 1, ItemID.GoldBar, ItemID.SilverBar, ItemID.TungstenBar, ItemID.PlatinumBar));
 		itemLoot.Add(DropRules.LootPoolDrop.SameStack(5, 7, 1, 4, 1, ItemID.Ruby, ItemID.Emerald, ItemID.Topaz, ItemID.Amethyst, ItemID.Diamond, ItemID.Sapphire, ItemID.Amber));
 
-		if (SpiritClassic.Enabled && SpiritClassic.ClassicMod.TryFind("ExplosiveRum", out ModItem rum))
+		if (CrossMod.Classic.Enabled && CrossMod.Classic.TryFind("ExplosiveRum", out ModItem rum))
 			itemLoot.AddCommon(rum.Type, 1, 45, 71); //Spirit Classic compatibility; temporary until Explosive Rum is added to Reforged
 
 		//Thorium Crossmod
 		if (CrossMod.Thorium.Enabled)
 		{
-			if (CrossMod.Thorium.Instance.TryFind("Opal", out ModItem opal) && CrossMod.Thorium.Instance.TryFind("Aquamarine", out ModItem aquamarine))
+			if (CrossMod.Thorium.TryFind("Opal", out ModItem opal) && CrossMod.Thorium.TryFind("Aquamarine", out ModItem aquamarine))
 				itemLoot.Add(DropRules.LootPoolDrop.SameStack(5, 7, 1, 4, 1, opal.Type, aquamarine.Type));
 		}
 

@@ -2,10 +2,11 @@
 
 namespace SpiritReforged.Common.ModCompat.Classic;
 
-/// <summary> Modifies Classic NPC shops and drop tables. </summary>
-[Autoload(false)]
+/// <summary> Modifies Classic NPC shops, spawn rates, and drop tables. </summary>
 internal class ModifyNPCData : GlobalNPC
 {
+	public override bool IsLoadingEnabled(Mod mod) => CrossMod.Classic.Enabled;
+
 	public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
 	{
 		foreach (var rule in npcLoot.Get())
