@@ -27,7 +27,7 @@ public static class CollisionCheckHelper
 		return false;
 	}
 
-	public static bool CanHitLineSolidTop(Vector2 start, Vector2 end)
+	public static bool LineOfSightSolidTop(Vector2 start, Vector2 end)
 	{
 		Vector2 checkPoint = start;
 		int numChecks = (int)(start.Distance(end) / 16f);
