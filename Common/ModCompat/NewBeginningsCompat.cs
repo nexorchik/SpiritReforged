@@ -23,7 +23,7 @@ internal class NewBeginningsCompat : ModSystem
 	public override bool IsLoadingEnabled(Mod mod) => CrossMod.NewBeginnings.Enabled;
 	public override void Load()
 	{
-		var beginnings = (Mod)CrossMod.NewBeginnings;
+		var beginnings = CrossMod.NewBeginnings.Instance;
 
 		beginnings.Call("Delay", () =>
 		{

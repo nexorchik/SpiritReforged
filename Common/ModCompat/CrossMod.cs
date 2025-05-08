@@ -26,7 +26,7 @@ internal static class CrossMod
 
 		/// <summary> The mod instance associated with this entry.
 		/// <br/>Should not be used unless you know that this mod is enabled (<see cref="Enabled"/>). </summary>
-		private readonly Mod Instance
+		public readonly Mod Instance
 		{
 			get
 			{
