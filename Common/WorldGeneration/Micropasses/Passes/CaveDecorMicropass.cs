@@ -1,6 +1,5 @@
 ﻿using Terraria.WorldBuilding;
 using SpiritReforged.Content.Underground.Tiles;
-using static SpiritReforged.Common.WorldGeneration.WorldMethods;
 using SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 
 namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
@@ -23,8 +22,8 @@ internal class CaveDecorMicropass : Micropass
 		int maxCarts = Main.maxTilesX / WorldGen.WorldSizeSmallX * 17;
 		int maxShrooms = Main.maxTilesX / WorldGen.WorldSizeSmallX * WorldGen.genRand.Next(3, 5);
 
-		Generate(CreateCart, maxCarts, out _, maxTries: 1800);
-		Generate(CreateShroom, maxShrooms, out _, new Rectangle(20, (int)Main.rockLayer, Main.maxTilesX - 40, Main.maxTilesY - (int)Main.rockLayer - 20));
+		WorldMethods.Generate(CreateCart, maxCarts, out _, maxTries: 1800);
+		WorldMethods.Generate(CreateShroom, maxShrooms, out _, new Rectangle(20, (int)Main.rockLayer, Main.maxTilesX - 40, Main.maxTilesY - (int)Main.rockLayer - 20));
 	}
 
 	private static bool CreateCart(int x, int y)
@@ -40,7 +39,7 @@ internal class CaveDecorMicropass : Micropass
 
 	private static bool CreateShroom(int x, int y)
 	{
-		FindGround(x, ref y);
+		WorldMethods.FindGround(x, ref y);
 
 		if (Main.tile[x, y].TileType != TileID.Stone)
 			return false;
