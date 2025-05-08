@@ -178,7 +178,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 			OnSwingStart();
 
 			if (!Main.dedServ)
-				SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing.WithPitchOffset(-0.75f), Owner.Center);
+				SoundEngine.PlaySound(DefaultSwing, Owner.Center);
 		}
 
 		TranslateRotation(Owner, out float clubRotation, out float armRotation);

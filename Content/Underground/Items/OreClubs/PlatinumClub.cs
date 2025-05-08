@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 
 namespace SpiritReforged.Content.Underground.Items.OreClubs;
 
@@ -18,7 +19,7 @@ public class PlatinumClub : ClubItem
 		Item.value = Item.sellPrice(0, 0, 36, 0);
 		Item.rare = ItemRarityID.White;
 		Item.shoot = ModContent.ProjectileType<PlatinumClubProj>();
-		Item.UseSound = SoundID.DD2_MonkStaffSwing.WithPitchOffset(-0.5f);
+		Item.UseSound = BaseClubProj.DefaultSwing;
 	}
 
 	public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.PlatinumBar, 20).AddTile(TileID.Anvils).Register();

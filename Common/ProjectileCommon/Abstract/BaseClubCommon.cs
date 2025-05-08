@@ -1,5 +1,6 @@
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
+using Terraria.Audio;
 using static Microsoft.Xna.Framework.MathHelper;
 using static SpiritReforged.Common.Easing.EaseFunction;
 
@@ -7,6 +8,13 @@ namespace SpiritReforged.Common.ProjectileCommon.Abstract;
 
 public abstract partial class BaseClubProj : ModProjectile
 {
+	public static readonly SoundStyle DefaultSwing = new("SpiritReforged/Assets/SFX/Item/GenericClubWhoosh")
+	{
+		Volume = 0.66f
+	};
+
+	public static readonly SoundStyle DefaultSmash = new("SpiritReforged/Assets/SFX/Item/GenericClubImpact");
+
 	/// <summary>
 	/// Returns the current progress through the club's swing, adjusted for the swing speed multiplier.
 	/// </summary>
