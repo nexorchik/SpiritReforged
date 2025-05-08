@@ -1761,3 +1761,8 @@ Blasphemer: {
 	DisplayName: Blasphemer
 	Tooltip: Charged strikes erupt into a fiery geyser
 }
+
+Hummus: {
+	DisplayName: Hummus
+	Tooltip: "Warm and tasty!"
+}

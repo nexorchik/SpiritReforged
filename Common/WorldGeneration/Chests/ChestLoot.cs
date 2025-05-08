@@ -27,7 +27,6 @@ public class ChestLoot : ModSystem
 		AddToVanillaChest(new ChestInfo([ModContent.ItemType<BeachTowel>(), ModContent.ItemType<BikiniBottom>(), ModContent.ItemType<BikiniTop>(), ModContent.ItemType<SwimmingTrunks>(), ModContent.ItemType<TintedGlasses>()], 1, 0.5f), (int)VanillaChestID.Water, 1);
 		
 		AddToVanillaChest(new ChestInfo(ModContent.ItemType<ToucaneItem>(), 1, 0.25f), (int)VanillaChestID.Ivy, 1);
-		AddToVanillaChest(new ChestInfo(ModContent.ItemType<Macuahuitl>(), 1, 0.22f), (int)VanillaChestID.Ivy, 1);
 		AddToVanillaChest(new ChestInfo(ModContent.ItemType<DyeCrateItem>(), 1, 0.5f), (int)VanillaChestID.Ivy, 1);
 		AddToVanillaChest(new ChestInfo(ModContent.ItemType<DyeCrateItem>(), 1, 0.33f), (int)VanillaChestID.Jungle, 1);
 
