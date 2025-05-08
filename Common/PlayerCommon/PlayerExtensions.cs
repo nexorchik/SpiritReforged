@@ -23,4 +23,13 @@ internal static class PlayerExtensions
 		player.fullRotation = rotation;
 		player.fullRotationOrigin = origin ?? player.fullRotationOrigin;
 	}
+
+	public static Vector2 GetHandRotated(this Player player, Player.CompositeArmStretchAmount stretch, float rotation) => player.RotatedRelativePoint(player.GetFrontHandPosition(stretch, rotation));
+	public static Vector2 GetHandRotated(this Player player)
+	{
+		var stretch = player.compositeFrontArm.stretch;
+		float rotation = player.compositeFrontArm.rotation;
+
+		return player.GetHandRotated(stretch, rotation);
+	}
 }

@@ -102,12 +102,8 @@ public abstract partial class BaseClubProj : ModProjectile
 		ResetData();
 	}
 
-	/// <summary>
-	/// Translates the club's base rotation to the value needed for drawing the projectile and player arm, without the programmer needing to offset the rotation and account for player direction.
-	/// </summary>
-	/// <param name="owner"></param>
-	/// <param name="clubRotation"></param>
-	/// <param name="armRotation"></param>
+	/// <summary> Translates the club's base rotation to the value needed for drawing the projectile and player arm, without the programmer needing to offset the rotation and account for player direction.
+	/// <br/> This does not account for <see cref="Player.fullRotation"/>, which must be calculated independently. </summary>
 	private void TranslateRotation(Player owner, out float clubRotation, out float armRotation)
 	{
 		float output = BaseRotation * owner.gravDir + 1.7f;
