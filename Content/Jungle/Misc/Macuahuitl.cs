@@ -4,10 +4,10 @@ using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Content.Particles;
-using static SpiritReforged.Common.Easing.EaseFunction;
 using SpiritReforged.Common.BuffCommon.Stacking;
 using SpiritReforged.Common.NPCCommon;
-using SpiritReforged.Common.ModCompat.Classic;
+using SpiritReforged.Common.ModCompat;
+using static SpiritReforged.Common.Easing.EaseFunction;
 
 namespace SpiritReforged.Content.Jungle.Misc;
 
@@ -18,7 +18,7 @@ public class Macuahuitl : ClubItem
 
 	public override void SetStaticDefaults()
 	{
-		if (!SpiritClassic.Enabled)
+		if (!CrossMod.Classic.Enabled)
 			NPCShopHelper.AddEntry(new NPCShopHelper.ConditionalEntry((shop) => shop.NpcType == NPCID.WitchDoctor, new NPCShop.Entry(Type)));
 	}
 
