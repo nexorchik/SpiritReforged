@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.ModCompat;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
@@ -12,7 +13,14 @@ public class HydrothermalVentPlume : ModProjectile
 
 	public override string Texture => "Terraria/Images/NPC_0";
 
-	public override void SetStaticDefaults() => DropPool.Add(ModContent.ItemType<MineralSlagPickup>(), 4);
+	public override void SetStaticDefaults()
+	{
+		DropPool.Add(ModContent.ItemType<MineralSlagPickup>(), 4);
+
+		if (CrossMod.Classic.Enabled && CrossMod.Classic.TryFind("SulfurDeposit", out ModItem sulfur))
+			DropPool.Add(sulfur.Type, 3);
+	}
+
 	public override void SetDefaults()
 	{
 		Projectile.ignoreWater = true;

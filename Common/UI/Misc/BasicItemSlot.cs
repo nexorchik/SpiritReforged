@@ -1,5 +1,6 @@
 ﻿using Terraria.UI;
 using Terraria.GameContent.UI.Elements;
+using Terraria.UI.Gamepad;
 
 namespace SpiritReforged.Common.UI.Misc;
 
@@ -8,9 +9,9 @@ internal class BasicItemSlot : UIElement
 {
 	public float Scale { get; private set; }
 
-	private readonly Item[] _items;
-	private readonly int _index;
-	private readonly int _context;
+	protected readonly Item[] _items;
+	protected readonly int _index;
+	protected readonly int _context;
 
 	public BasicItemSlot(Item item, int context = ItemSlot.Context.ChestItem, float scale = .85f)
 	{

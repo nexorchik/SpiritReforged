@@ -85,6 +85,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		int width = (int)(projHitbox.Width * MeleeSizeModifier);
 		int height = (int)(projHitbox.Height * MeleeSizeModifier);
 		var newProjHitbox = new Rectangle((int)(endPoint.X - width / 2), (int)(endPoint.Y - height / 2), width, height);
+
 		if (newProjHitbox.Intersects(targetHitbox))
 			return true;
 
@@ -145,22 +146,16 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 			Projectile.Kill();
 
 		Owner.heldProj = Projectile.whoAmI;
+		Owner.direction = Math.Sign(Projectile.direction);
 
-		if (AllowUseTurn)
+		if (AllowUseTurn && Projectile.owner == Main.myPlayer)
 		{
-			if (Owner == Main.LocalPlayer)
-			{
-				int newDir = Math.Sign(Main.MouseWorld.X - Owner.Center.X);
-				Projectile.velocity.X = newDir == 0 ? Owner.direction : newDir;
+			int newDir = Math.Sign(Main.MouseWorld.X - Owner.Center.X);
+			Projectile.velocity.X = newDir == 0 ? Owner.direction : newDir;
 
-				if (newDir != Owner.direction)
-					Projectile.netUpdate = true;
-			}
-
-			Owner.ChangeDir((int)Projectile.velocity.X);
+			if (newDir != Owner.direction)
+				Projectile.netUpdate = true;
 		}
-		else
-			Owner.direction = Math.Sign(Projectile.velocity.X);
 
 		switch (AiState)
 		{
@@ -183,7 +178,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 			OnSwingStart();
 
 			if (!Main.dedServ)
-				SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing.WithPitchOffset(-0.75f), Owner.Center);
+				SoundEngine.PlaySound(DefaultSwing, Owner.Center);
 		}
 
 		TranslateRotation(Owner, out float clubRotation, out float armRotation);
@@ -243,9 +238,6 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		writer.Write((ushort)_swingTimer);
 		writer.Write((ushort)_windupTimer);
 
-		writer.Write((ushort)_flickerTime);
-		writer.Write(_hasFlickered);
-
 		SendExtraDataSafe(writer);
 	}
 
@@ -261,9 +253,6 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		_lingerTimer = reader.ReadUInt16();
 		_swingTimer = reader.ReadUInt16();
 		_windupTimer = reader.ReadUInt16();
-
-		_flickerTime = reader.ReadUInt16();
-		_hasFlickered = reader.ReadBoolean();
 
 		ReceiveExtraDataSafe(reader);
 	}

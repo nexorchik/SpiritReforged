@@ -26,7 +26,7 @@ public class Blasphemer : ClubItem
 		Item.width = 60;
 		Item.height = 60;
 		Item.crit = 8;
-		Item.value = Item.sellPrice(0, 0, 1, 0);
+		Item.value = Item.sellPrice(0, 1, 20, 0);
 		Item.rare = ItemRarityID.Orange;
 		Item.shoot = ModContent.ProjectileType<BlasphemerProj>();
 	}

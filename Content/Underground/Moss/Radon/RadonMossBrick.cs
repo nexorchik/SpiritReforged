@@ -4,7 +4,7 @@ using SpiritReforged.Common.Visuals.Glowmasks;
 
 namespace SpiritReforged.Content.Underground.Moss.Radon;
 
-[AutoloadGlowmask("255,255,255")]
+[AutoloadGlowmask("225,225,225")]
 public class RadonMossBrick : ModTile, IAutoloadTileItem
 {
 	public void AddItemRecipes(ModItem item) => item.CreateRecipe(4).AddIngredient(ItemMethods.AutoItemType<RadonMoss>()).AddIngredient(ItemID.ClayBlock, 10).AddTile(TileID.Furnaces).Register();
@@ -26,5 +26,5 @@ public class RadonMossBrick : ModTile, IAutoloadTileItem
 		item.ResearchUnlockCount = 100;
 	}
 
-	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.338f, 0.219f, 0.04f);
+	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.318f * 1.1f, 0.23f * 1.1f, 0.04f * 1.1f);
 }

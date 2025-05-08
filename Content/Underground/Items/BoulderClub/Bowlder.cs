@@ -24,7 +24,7 @@ public class Bowlder : ClubItem
 		Item.width = 60;
 		Item.height = 60;
 		Item.crit = 4;
-		Item.value = Item.sellPrice(0, 0, 1, 0);
+		Item.value = Item.sellPrice(0, 0, 70, 0);
 		Item.rare = ItemRarityID.Blue;
 		Item.shoot = ModContent.ProjectileType<BowlderProj>();
 	}

@@ -4,6 +4,7 @@ using SpiritReforged.Content.Underground.Tiles;
 using SpiritReforged.Content.Underground.WayfarerSet;
 using Terraria.DataStructures;
 using static SpiritReforged.Common.TileCommon.StyleDatabase;
+using static SpiritReforged.Common.WorldGeneration.WorldMethods;
 
 namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
@@ -92,7 +93,7 @@ public abstract class PotTile : ModTile, IRecordTile, IAutoloadRubble
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
-		if (Autoloader.IsRubble(Type) || WorldGen.generatingWorld)
+		if (Autoloader.IsRubble(Type) || Generating)
 			return;
 
 		if (Main.netMode != NetmodeID.MultiplayerClient && this is ILootTile loot)

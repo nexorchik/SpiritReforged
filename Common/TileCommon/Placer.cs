@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using SpiritReforged.Common.WorldGeneration;
+using System.Linq;
 using Terraria.DataStructures;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SpiritReforged.Common.TileCommon;
 
@@ -16,7 +16,7 @@ public struct PlaceAttempt(bool success)
 /// <summary> Includes helper methods related to placing tiles. </summary>
 public static class Placer
 {
-	private static Point16[] CardinalDirections = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
+	private static readonly Point16[] CardinalDirections = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
 
 	private static readonly int[] Replaceable = [TileID.Plants, TileID.Plants2, TileID.JunglePlants, TileID.JunglePlants2, 
 		TileID.CorruptPlants, TileID.CrimsonPlants, TileID.HallowedPlants, TileID.HallowedPlants2];
@@ -35,11 +35,25 @@ public static class Placer
 		return Replaceable.Contains(tile.TileType) || Main.tileCut[tile.TileType] && TileID.Sets.BreakableWhenPlacing[tile.TileType];
 	}
 
-	/// <summary> Places a tile of <paramref name="type"/> at the given coordinates and returns the resulting <see cref="PlaceAttempt"/>.<para/>
+	#region placeAttempt
+	/// <summary> Places a tile of <paramref name="type"/> at the given coordinates and returns the resulting <see cref="PlaceAttempt"/>.<br/>
+	/// This method is the combined version of <see cref="Check"/> and <see cref="Place"/>. <para/>
 	/// <see cref="Placer"/> Contains various methods to chain for additional functionality. </summary>
 	/// <param name="type"> The tile type to place. </param>
 	/// <param name="style"> The tile style to place. -1 tries to place a random style. </param>
 	public static PlaceAttempt PlaceTile(int i, int j, int type, int style = -1)
+	{
+		var result = Check(i, j, type, style);
+
+		if (result.success)
+			return result.Place();
+
+		return new(false);
+	}
+
+	/// <summary> Checks whether the given area if valid for placement.<br/>
+	/// Allows you to fit additional safety checks between placement like <see cref="IsClear"/>. </summary>
+	public static PlaceAttempt Check(int i, int j, int type, int style = -1)
 	{
 		var data = TileObjectData.GetTileData(type, 0);
 
@@ -50,11 +64,47 @@ public static class Placer
 
 		if (TileObject.CanPlace(i, j, type, style, 0, out var objectData))
 		{
-			if (TileObject.Place(objectData) && Main.tile[i, j].TileType == type)
-				return new(true) { data = objectData };
+			objectData.random = -1;
+			return new(true) { data = objectData };
 		}
 
 		return new(false);
+	}
+
+	/// <summary> Calls <see cref="WorldMethods.AreaClear"/> attuned to the tile dimensions of <paramref name="type"/>.<br/>
+	/// <see cref="PlaceAttempt.success"/> can be true without providing TileObject data after this method runs. </summary>
+	public static PlaceAttempt IsClear(this PlaceAttempt a)
+	{
+		if (a.success)
+		{
+			var coords = a.Coords;
+
+			int type = a.data.type;
+			var data = TileObjectData.GetTileData(type, 0);
+
+			var size = new Point16(1, 1);
+			var origin = Point16.Zero;
+
+			if (data is not null)
+			{
+				size = new Point16(data.Width, data.Height);
+				origin = data.Origin;
+			}
+
+			if (WorldMethods.AreaClear(coords.X - origin.X, coords.Y - origin.Y, size.X, size.Y, true))
+				return a;
+		}
+
+		return a with { success = false };
+	}
+
+	/// <summary> Actually places the tile from <see cref="Check"/>. See <see cref="PlaceTile"/> for the simplified version. </summary>
+	public static PlaceAttempt Place(this PlaceAttempt a)
+	{
+		if (a.success && TileObject.Place(a.data) && Framing.GetTileSafely(a.Coords).TileType == a.data.type)
+			return a;
+
+		return a;
 	}
 
 	/// <summary> Calls <see cref="TileObjectData.CallPostPlacementPlayerHook"/> for this attempt, and outputs entity of T. </summary>
@@ -109,6 +159,7 @@ public static class Placer
 
 	///<inheritdoc cref="PlaceTile(int, int, int, int)"/>
 	public static PlaceAttempt PlaceTile<T>(int i, int j, int style = -1) where T : ModTile => PlaceTile(i, j, ModContent.TileType<T>(), style);
+	#endregion
 
 	/// <summary> Checks the surrounding area for herbs of <paramref name="type"/>.</summary>
 	/// <returns> true if fewer than 4 herbs are in range. </returns>

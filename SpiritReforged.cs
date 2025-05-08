@@ -22,6 +22,7 @@ namespace SpiritReforged;
 
 public partial class SpiritReforgedMod : Mod
 {
+	public const string ModName = "SpiritReforged";
 	public static SpiritReforgedMod Instance { get; private set; }
 
 	public SpiritReforgedMod()

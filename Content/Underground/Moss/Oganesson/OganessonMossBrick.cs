@@ -27,5 +27,5 @@ public class OganessonMossBrick : ModTile, IAutoloadTileItem
 
 	}
 
-	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.3f, 0.3f, 0.3f);
+	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.35f, 0.35f, 0.35f);
 }
