@@ -352,5 +352,6 @@ Wheezer: {
 WorldFrog: {
 	// DisplayName: World Frog
 	// Dialogue: Ribbit.
+	// Button: Update World
 	// Reports.CavesAndClubs: Hocus pocus - don't look so blue, I've filled your caves with pots to loot anew!
 }
