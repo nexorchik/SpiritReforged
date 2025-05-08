@@ -50,6 +50,12 @@ public class Wheezer : ModNPC
 		SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
 	};
 
+	public static readonly SoundStyle WheezerAmbient = new("SpiritReforged/Assets/SFX/Ambient/WheezerIdle")
+	{
+		Volume = .45f,
+		SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
+	};
+
 	public override void SetStaticDefaults()
 	{
 		Main.npcFrameCount[Type] = 13;
@@ -81,7 +87,7 @@ public class Wheezer : ModNPC
 		if (!Main.dedServ)
 		{
 			if (Main.rand.NextBool(700))
-				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/WheezerIdle") with { Volume = .45f, SoundLimitBehavior = SoundLimitBehavior.IgnoreNew }, NPC.Center);
+				SoundEngine.PlaySound(WheezerAmbient, NPC.Center);
 		}
 
 		if (_explosiveDeath)

@@ -32,12 +32,8 @@ public class StargrassTile : GrassTile
 
 	public override void Convert(int i, int j, int conversionType)
 	{
-		switch (conversionType)
-		{
-			case BiomeConversionID.PurificationPowder:
-				WorldGen.ConvertTile(i, j, TileID.Grass);
-				return;
-		}
+		if (conversionType == BiomeConversionID.PurificationPowder)
+			WorldGen.ConvertTile(i, j, TileID.Grass);
 	}
 
 	public override void FloorVisuals(Player player)
