@@ -37,7 +37,7 @@ public static class Placer
 
 	#region placeAttempt
 	/// <summary> Places a tile of <paramref name="type"/> at the given coordinates and returns the resulting <see cref="PlaceAttempt"/>.<br/>
-	/// This method is the combound version of <see cref="Check"/> and <see cref="Place"/>. <para/>
+	/// This method is the combined version of <see cref="Check"/> and <see cref="Place"/>. <para/>
 	/// <see cref="Placer"/> Contains various methods to chain for additional functionality. </summary>
 	/// <param name="type"> The tile type to place. </param>
 	/// <param name="style"> The tile style to place. -1 tries to place a random style. </param>
@@ -102,7 +102,7 @@ public static class Placer
 	public static PlaceAttempt Place(this PlaceAttempt a)
 	{
 		if (a.success && TileObject.Place(a.data) && Framing.GetTileSafely(a.Coords).TileType == a.data.type)
-			return a with { success = true };
+			return a;
 
 		return a;
 	}
