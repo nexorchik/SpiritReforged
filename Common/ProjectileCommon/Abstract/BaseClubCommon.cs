@@ -123,6 +123,26 @@ public abstract partial class BaseClubProj : ModProjectile
 	}
 
 	/// <summary>
+	/// Returns where the top of the club should draw, rather than the projectile center used for collision. <br />
+	/// Can input an offset to move the output backwards down the club
+	/// </summary>
+	/// <param name="offset"></param>
+	/// <returns></returns>
+	public Vector2 GetHeadPosition(Vector2 offset)
+	{
+		Vector2 handPos = Owner.GetFrontHandPosition(Owner.compositeFrontArm.stretch, Owner.compositeFrontArm.rotation);
+		float rotation = Projectile.rotation - PiOver4 * Owner.direction;
+		if (Owner.direction < 0)
+			rotation -= Pi;
+
+		Vector2 directionUnit = rotation.ToRotationVector2();
+
+		return handPos + directionUnit * (Size - offset) * TotalScale;
+	}
+
+	public Vector2 GetHeadPosition(float offset = 0) => GetHeadPosition(new Vector2(offset));
+
+	/// <summary>
 	/// Quickly does a shockwave circle visual, used primarily for clubs slamming into tiles.
 	/// </summary>
 	/// <param name="pos"></param>
@@ -152,14 +172,14 @@ public abstract partial class BaseClubProj : ModProjectile
 	/// Quickly does a dust cloud visual, used primarily for clubs slamming into tiles.
 	/// </summary>
 	/// <param name="maxClouds"></param>
-	internal void DustClouds(int maxClouds)
+	internal void DustClouds(int maxClouds, Vector2? positionOverride = null)
 	{
 		float chargeFactor = Clamp(EaseQuadIn.Ease(Charge), 0.33f, 1f);
 		float chargeFactorLerped = Lerp(chargeFactor, 1, 0.5f);
 
 		for (int i = 0; i < maxClouds * chargeFactorLerped; i++)
 		{
-			Vector2 smokePos = Projectile.Bottom + Vector2.UnitX * Main.rand.NextFloat(-20, 20);
+			Vector2 smokePos = (positionOverride ?? Projectile.Bottom) + Vector2.UnitX * Main.rand.NextFloat(-20, 20);
 
 			float scale = Main.rand.NextFloat(0.05f, 0.07f) * TotalScale;
 			scale *= 1 + chargeFactor / 2;
