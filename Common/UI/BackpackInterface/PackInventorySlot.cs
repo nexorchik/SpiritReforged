@@ -5,21 +5,8 @@ namespace SpiritReforged.Common.UI.BackpackInterface;
 
 internal class PackInventorySlot(Item[] items, int index) : BasicItemSlot(items, index, ItemSlot.Context.ChestItem, .6f)
 {
-	private static Asset<Texture2D> favourite;
-	private Asset<Texture2D> Favourite
-	{
-		get
-		{
-			if (favourite?.IsLoaded == true)
-				return favourite;
-			else
-			{
-				favourite = ModContent.Request<Texture2D>((GetType().Namespace + '.' + "Slot_Favourite").Replace('.', '/'));
-				return TextureAssets.InventoryBack5; //Return a placeholder for one tick because loading is deferred
-			}
-		}
-	}
-
+	private static readonly Asset<Texture2D> Favourite = ModContent.Request<Texture2D>((typeof(PackInventorySlot).Namespace + '.' + "Slot_Favourite").Replace('.', '/'), AssetRequestMode.ImmediateLoad);
+	
 	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
 		if (_items[_index].favorited && Favourite.IsLoaded) //Draw a unique favourite texture
