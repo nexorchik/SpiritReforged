@@ -1,7 +1,6 @@
 using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.Visuals;
 using System.IO;
-using Terraria;
 using Terraria.Audio;
 using static Microsoft.Xna.Framework.MathHelper;
 using static SpiritReforged.Common.Easing.EaseFunction;
@@ -186,22 +185,18 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		TranslateRotation(Owner, out float clubRotation, out float armRotation);
 		Projectile.rotation = clubRotation + Owner.fullRotation;
 
+		float rotation = armRotation - PiOver2;
+		Projectile.Center = Owner.RotatedRelativePoint(Owner.Center - new Vector2((int)(Math.Cos(rotation) * Size.X), (int)(Math.Sin(rotation) * Size.Y)));
+
 		Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters, armRotation);
-		Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.ThreeQuarters, armRotation);
-
-		var center = Owner.MountedCenter;
-		float x = center.X - (int)(Math.Cos(armRotation - PiOver2) * Size.X);
-		float y = center.Y - (int)(Math.Sin(armRotation - PiOver2) * Size.Y);
-		Projectile.Center = Owner.RotatedRelativePoint(new Vector2(x, y));
-
 		Owner.itemAnimation = Owner.itemTime = 2;
 	}
 
 	public sealed override bool PreDraw(ref Color lightColor)
 	{
 		Texture2D texture = TextureAssets.Projectile[Type].Value;
-		Vector2 handPos = Owner.GetHandRotated();
-		Vector2 drawPos = handPos - Main.screenPosition + Vector2.UnitY * Owner.gfxOffY;
+		Vector2 handPos = Owner.GetHandRotated(); //GetHandRotated also gets gfxOffY
+		Vector2 drawPos = handPos - Main.screenPosition;
 		Color drawColor = Projectile.GetAlpha(lightColor);
 		Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
 
