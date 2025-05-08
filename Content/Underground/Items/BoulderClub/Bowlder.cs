@@ -86,6 +86,8 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 				if (backwardsMovement)
 					adjustedTrajectory = StoredShotTrajectory;
 
+				adjustedTrajectory += owner.velocity / 3;
+
 				//Prevent spawning inside or through tiles
 				Vector2 spawnPos = Projectile.Center;
 
