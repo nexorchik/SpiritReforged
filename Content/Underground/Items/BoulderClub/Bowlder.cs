@@ -79,7 +79,11 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 	{
 		base.Swinging(owner);
 
-		if (FullCharge && GetSwingProgress >= 0.25f && Projectile.frame == 0)
+		float launchAngle = StoredShotTrajectory.ToRotation();
+		launchAngle += MathHelper.PiOver2;
+		float launchThreshold = MathHelper.Lerp(0.22f, 0.28f, launchAngle / MathHelper.Pi);
+
+		if (FullCharge && GetSwingProgress >= launchThreshold && Projectile.frame == 0)
 		{
 			if (Main.myPlayer == Projectile.owner)
 			{

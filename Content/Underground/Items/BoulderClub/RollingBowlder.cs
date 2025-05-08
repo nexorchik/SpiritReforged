@@ -58,7 +58,7 @@ class RollingBowlder : ModProjectile
 		for (int i = 1; i < 6; i++)
 		{
 			int type = Mod.Find<ModGore>("Bowlder" + i).Type;
-			Gore.NewGore(Projectile.GetSource_Death(), Projectile.position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), velocity * 0.1f, type, Projectile.scale);
+			Gore.NewGore(Projectile.GetSource_Death(), Projectile.position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), velocity * 0.5f, type, Projectile.scale);
 		}
 
 		for (int i = 0; i < 15; i++)
