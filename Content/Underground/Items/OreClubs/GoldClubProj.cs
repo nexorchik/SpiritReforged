@@ -245,13 +245,13 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 
 	internal override void SendExtraDataSafe(BinaryWriter writer)
 	{
-		writer.Write(Direction);
+		writer.Write((sbyte)Direction);
 		writer.Write(_inputHeld);
 	}
 
 	internal override void ReceiveExtraDataSafe(BinaryReader reader)
 	{
-		Direction = reader.ReadInt32();
+		Direction = reader.ReadSByte();
 		_inputHeld = reader.ReadBoolean();
 	}
 }
