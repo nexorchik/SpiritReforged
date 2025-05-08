@@ -6,6 +6,7 @@ using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Common.MathHelpers;
+using System.IO;
 
 namespace SpiritReforged.Content.Underground.Items.BoulderClub;
 
@@ -30,6 +31,8 @@ public class Bowlder : ClubItem
 
 class BowlderProj : BaseClubProj, IManualTrailProjectile
 {
+	public const float SHOOT_SPEED = 8;
+
 	public BowlderProj() : base(new Vector2(72)) { }
 
 	public Vector2 StoredShotTrajectory;
@@ -64,7 +67,7 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 		TrailManager.ManualTrailSpawn(Projectile);
 		if(FullCharge && Main.myPlayer == Owner.whoAmI)
 		{
-			StoredShotTrajectory = Owner.GetArcVel(Main.MouseWorld, 0.5f, 8);
+			StoredShotTrajectory = Owner.GetArcVel(Main.MouseWorld, 0.5f, SHOOT_SPEED);
 			StoredTargetPos = Main.MouseWorld - Owner.MountedCenter;
 
 			Projectile.netUpdate = true;
@@ -195,5 +198,17 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 
 		ParticleHandler.SpawnParticle(new SmokeCloud(basePosition, directionUnit * 3, Color.LightGray, 0.06f * TotalScale, EaseFunction.EaseCubicOut, 30));
 		ParticleHandler.SpawnParticle(new SmokeCloud(basePosition, directionUnit * 6, Color.LightGray, 0.08f * TotalScale, EaseFunction.EaseCubicOut, 30));
+	}
+
+	internal override void SendExtraDataSafe(BinaryWriter writer)
+	{
+		writer.WritePackedVector2(StoredShotTrajectory);
+		writer.WritePackedVector2(StoredTargetPos);
+	}
+
+	internal override void ReceiveExtraDataSafe(BinaryReader reader)
+	{
+		StoredShotTrajectory = reader.ReadPackedVector2();
+		StoredTargetPos = reader.ReadPackedVector2();
 	}
 }

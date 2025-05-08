@@ -10,7 +10,9 @@ class RollingBowlder : ModProjectile
 {
 	public const int MaxPenetrate = 3;
 
-	private bool _hasCollided = false;
+	private int Direction { get => (int)Projectile.ai[0]; set => Projectile.ai[0] = value; }
+
+	private bool HasCollided { get => Projectile.ai[1] == 1; set => Projectile.ai[1] = value ? 1 : 0; }
 
 	public static readonly SoundStyle Break = new("SpiritReforged/Assets/SFX/Tile/StoneCrack2")
 	{
@@ -79,7 +81,7 @@ class RollingBowlder : ModProjectile
 		if (Projectile.velocity.X == 0)
 			Projectile.Kill();
 
-		if (oldVelocity.Y > 3.5f || !_hasCollided)
+		if (oldVelocity.Y > 3.5f || !HasCollided)
 		{
 			SoundEngine.PlaySound(Hit.WithVolumeScale(0.5f), Projectile.Center);
 
@@ -88,10 +90,11 @@ class RollingBowlder : ModProjectile
 
 			Projectile.velocity.Y = oldVelocity.Y * -0.5f;
 
-			if (!_hasCollided && Projectile.velocity.X is > (-4) and < 4)
-				Projectile.velocity.X = MathHelper.Clamp(Projectile.ai[0] * -Projectile.velocity.Y, -4, 4);
+			const float minSpeed = BowlderProj.SHOOT_SPEED / 2;
+			if (!HasCollided && Projectile.velocity.X is > -minSpeed and < minSpeed)
+				Projectile.velocity.X = MathHelper.Clamp(Direction * -Projectile.velocity.Y, -minSpeed, minSpeed);
 
-			_hasCollided = true;
+			HasCollided = true;
 		}
 
 		return false;
@@ -106,7 +109,7 @@ class RollingBowlder : ModProjectile
 
 	public override bool PreDraw(ref Color lightColor)
 	{
-		float velocityRatio = Math.Abs(Projectile.velocity.Length() / 8f);
+		float velocityRatio = Math.Abs(Projectile.velocity.Length() / BowlderProj.SHOOT_SPEED);
 		velocityRatio = MathHelper.Clamp(velocityRatio, 0, 1);
 		velocityRatio = EaseFunction.EaseQuadIn.Ease(velocityRatio);
 
