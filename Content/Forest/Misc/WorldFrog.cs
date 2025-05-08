@@ -13,7 +13,6 @@ using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Forest.Misc;
 
-[AutoloadHead]
 public class WorldFrog : ModNPC
 {
 	private bool _updated;
@@ -27,7 +26,12 @@ public class WorldFrog : ModNPC
 		NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, new NPCID.Sets.NPCBestiaryDrawModifiers()
 		{ Hide = true });
 	}
-	public override void SetDefaults() => NPC.CloneDefaults(NPCID.TownSlimeBlue);
+
+	public override void SetDefaults()
+	{
+		NPC.CloneDefaults(NPCID.TownSlimeBlue);
+		NPC.townNPC = false;
+	}
 
 	public override void AI()
 	{
@@ -43,7 +47,7 @@ public class WorldFrog : ModNPC
 			NPC.active = false;
 		}
 
-		_glowIntensity = Math.Max(_glowIntensity - 0.1f, 0);
+		_glowIntensity = Math.Max(_glowIntensity - 0.07f, 0);
 	}
 
 	public override void SetChatButtons(ref string button, ref string button2)
@@ -180,7 +184,7 @@ internal class UpdaterSystem : ModSystem
 		//World Frog spawn
 		int frog = ModContent.NPCType<WorldFrog>();
 
-		if (Main.netMode == NetmodeID.SinglePlayer && NPC.CountNPCS(frog) == 0 && AnyTask()) //Only spawn in singleplayer to avoid potential complications
+		if (Main.netMode == NetmodeID.SinglePlayer && AnyTask()) //Only spawn in singleplayer to avoid potential complications
 			NPC.NewNPC(new EntitySource_SpawnNPC(), Main.spawnTileX * 16, Main.spawnTileY * 16, frog);
 	}
 
