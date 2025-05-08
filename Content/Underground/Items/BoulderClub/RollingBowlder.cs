@@ -8,7 +8,9 @@ namespace SpiritReforged.Content.Underground.Items.BoulderClub;
 
 class RollingBowlder : ModProjectile
 {
-	public const int MaxPenetrate = 5;
+	public const int MaxPenetrate = 3;
+
+	private bool _hasCollided = false;
 
 	public static readonly SoundStyle Break = new("SpiritReforged/Assets/SFX/Tile/StoneCrack2")
 	{
@@ -41,12 +43,6 @@ class RollingBowlder : ModProjectile
 
 	public override void AI()
 	{
-		if (Projectile.velocity.Y == 0 && Main.rand.NextBool(10))
-		{
-			SoundEngine.PlaySound(Hit.WithVolumeScale(0.2f), Projectile.Center);
-			Projectile.velocity.Y -= 3;
-		}
-
 		Projectile.velocity.Y += 0.5f;
 		Projectile.rotation += Projectile.velocity.X * 0.06f;
 
@@ -83,7 +79,7 @@ class RollingBowlder : ModProjectile
 		if (Projectile.velocity.X == 0)
 			Projectile.Kill();
 
-		if (Projectile.velocity.Y > 1f)
+		if (oldVelocity.Y > 3.5f || !_hasCollided)
 		{
 			SoundEngine.PlaySound(Hit.WithVolumeScale(0.5f), Projectile.Center);
 
@@ -91,14 +87,30 @@ class RollingBowlder : ModProjectile
 			Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
 
 			Projectile.velocity.Y = oldVelocity.Y * -0.5f;
+
+			if (!_hasCollided && Projectile.velocity.X is > (-4) and < 4)
+				Projectile.velocity.X = MathHelper.Clamp(Projectile.ai[0] * -Projectile.velocity.Y, -4, 4);
+
+			_hasCollided = true;
 		}
 
 		return false;
 	}
 
+	public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
+	{
+		fallThrough = false;
+
+		return base.TileCollideStyle(ref width, ref height, ref fallThrough, ref hitboxCenterFrac);
+	}
+
 	public override bool PreDraw(ref Color lightColor)
 	{
-		Projectile.QuickDrawTrail();
+		float velocityRatio = Math.Abs(Projectile.velocity.Length() / 8f);
+		velocityRatio = MathHelper.Clamp(velocityRatio, 0, 1);
+		velocityRatio = EaseFunction.EaseQuadIn.Ease(velocityRatio);
+
+		Projectile.QuickDrawTrail(baseOpacity: velocityRatio * 0.5f);
 		Projectile.QuickDraw();
 		
 		return false;

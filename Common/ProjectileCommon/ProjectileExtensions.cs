@@ -48,10 +48,10 @@ internal static class ProjectileExtensions
 		effect ??= proj.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
 		if (batch == null)
-			Main.EntitySpriteDraw(tex, proj.Center - Main.screenPosition, proj.DrawFrame(), color, rot ?? proj.rotation,
+			Main.EntitySpriteDraw(tex, proj.Center - Main.screenPosition + Vector2.UnitY * proj.gfxOffY, proj.DrawFrame(), color, rot ?? proj.rotation,
 				origin ?? proj.DrawFrame().Size() / 2, proj.scale, effect ?? (proj.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
 		else
-			batch.Draw(tex, proj.Center - Main.screenPosition, proj.DrawFrame(), color, rot ?? proj.rotation,
+			batch.Draw(tex, proj.Center - Main.screenPosition + Vector2.UnitY * proj.gfxOffY, proj.DrawFrame(), color, rot ?? proj.rotation,
 				origin ?? proj.DrawFrame().Size() / 2, proj.scale, effect ?? (proj.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
 	}
 
@@ -79,7 +79,7 @@ internal static class ProjectileExtensions
 		{
 			float opacityMod = (ProjectileID.Sets.TrailCacheLength[proj.type] - i) / (float)ProjectileID.Sets.TrailCacheLength[proj.type];
 			opacityMod *= baseOpacity;
-			Vector2 drawPosition = proj.oldPos[i] + proj.Size / 2 - Main.screenPosition;
+			Vector2 drawPosition = proj.oldPos[i] + proj.Size / 2 - Main.screenPosition + Vector2.UnitY * proj.gfxOffY;
 
 			if (batch == null)
 				Main.EntitySpriteDraw(tex, drawPosition, proj.DrawFrame(), color * opacityMod,

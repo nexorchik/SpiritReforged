@@ -144,14 +144,14 @@ public abstract partial class BaseClubProj : ModProjectile
 	/// Quickly does a dust cloud visual, used primarily for clubs slamming into tiles.
 	/// </summary>
 	/// <param name="maxClouds"></param>
-	internal void DustClouds(int maxClouds)
+	internal void DustClouds(int maxClouds, Vector2? positionOverride = null)
 	{
 		float chargeFactor = Clamp(EaseQuadIn.Ease(Charge), 0.33f, 1f);
 		float chargeFactorLerped = Lerp(chargeFactor, 1, 0.5f);
 
 		for (int i = 0; i < maxClouds * chargeFactorLerped; i++)
 		{
-			Vector2 smokePos = Projectile.Bottom + Vector2.UnitX * Main.rand.NextFloat(-20, 20);
+			Vector2 smokePos = (positionOverride ?? Projectile.Bottom) + Vector2.UnitX * Main.rand.NextFloat(-20, 20);
 
 			float scale = Main.rand.NextFloat(0.05f, 0.07f) * TotalScale;
 			scale *= 1 + chargeFactor / 2;

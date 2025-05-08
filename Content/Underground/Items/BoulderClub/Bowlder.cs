@@ -5,8 +5,7 @@ using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Content.Particles;
-using SpiritReforged.Common.ProjectileCommon;
-using Terraria.Audio;
+using SpiritReforged.Common.MathHelpers;
 
 namespace SpiritReforged.Content.Underground.Items.BoulderClub;
 
@@ -33,6 +32,9 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 {
 	public BowlderProj() : base(new Vector2(72)) { }
 
+	public Vector2 StoredShotTrajectory;
+	public Vector2 StoredTargetPos;
+
 	public override float WindupTimeRatio => 0.6f;
 
 	public override string Texture => (GetType().Namespace + '.' + Name).Replace('.', '/');
@@ -57,7 +59,18 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 		}
 	}
 
-	public override void OnSwingStart() => TrailManager.ManualTrailSpawn(Projectile);
+	public override void OnSwingStart()
+	{
+		TrailManager.ManualTrailSpawn(Projectile);
+		if(FullCharge && Main.myPlayer == Owner.whoAmI)
+		{
+			StoredShotTrajectory = Owner.GetArcVel(Main.MouseWorld, 0.5f, 8);
+			StoredTargetPos = Main.MouseWorld - Owner.MountedCenter;
+
+			Projectile.netUpdate = true;
+		}
+	}
+
 	public override void Swinging(Player owner)
 	{
 		base.Swinging(owner);
@@ -66,12 +79,68 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 		{
 			if (Main.myPlayer == Projectile.owner)
 			{
-				var velocity = new Vector2(Projectile.direction * 8, 0);
-				Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, velocity, ModContent.ProjectileType<RollingBowlder>(), (int)(Projectile.damage * DamageScaling), Projectile.knockBack, Projectile.owner);
+				var adjustedTrajectory = ArcVelocityHelper.GetArcVel(Projectile.Center - Owner.MountedCenter, StoredTargetPos, 0.5f, StoredShotTrajectory.Length());
+
+				//Prevent backwards or no movement if aiming straight down with a slightly less accurate calc
+				bool backwardsMovement = Projectile.direction > 0 && adjustedTrajectory.X < 0 || Projectile.direction < 0 && adjustedTrajectory.X > 0;
+				if (backwardsMovement)
+					adjustedTrajectory = StoredShotTrajectory;
+
+				//Prevent spawning inside or through tiles
+				Vector2 spawnPos = Projectile.Center;
+
+				bool spawnInTile = Collision.SolidTiles(spawnPos - new Vector2(16), 32, 32, true);
+				bool ownerLineCheck = CollisionCheckHelper.CanHitLineSolidTop(spawnPos, owner.MountedCenter);
+
+				while ((spawnInTile || ownerLineCheck) && spawnPos.Y > owner.MountedCenter.Y)
+					spawnPos.Y--;
+
+				Projectile.NewProjectile(Projectile.GetSource_FromAI(), spawnPos, adjustedTrajectory, ModContent.ProjectileType<RollingBowlder>(), (int)(Projectile.damage * DamageScaling), Projectile.knockBack, Projectile.owner, Owner.direction);
+				
+				if(!Main.dedServ)
+				{
+					for (int i = 1; i < 7; i++)
+					{
+						int type = Mod.Find<ModGore>("BowlderRope" + i).Type;
+						Gore.NewGore(Projectile.GetSource_Death(), Projectile.position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), adjustedTrajectory * 0.1f, type);
+					}
+
+					for (int i = 0; i < 8; i++)
+					{
+						var random = (adjustedTrajectory * Main.rand.NextFloat()).RotatedByRandom(1) / 3;
+						Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Rope, random.X, random.Y, Scale: Main.rand.NextFloat());
+					}
+				}
 			}
 
 			Projectile.frame = 1;
 		}
+	}
+
+	internal override float SwingingRotationInterpolate(float progress)
+	{
+		float baseRot = base.SwingingRotationInterpolate(progress);
+		if (FullCharge)
+		{
+			var temp = new Vector2(Math.Abs(StoredShotTrajectory.X), StoredShotTrajectory.Y);
+			float baseOffset = temp.ToRotation();
+			float offset = baseOffset;
+			int offsetSign = Math.Sign(offset);
+
+			//Slightly constrain the starting offset to reduce big jumps in position
+			if (Math.Abs(offset) > 0.25f)
+				offset = MathHelper.Lerp(offset, 0.25f * offsetSign, 0.5f);
+
+			if (Math.Abs(offset) > 0.75f)
+				offset = MathHelper.Lerp(offset, 0.25f * offsetSign, 0.75f);
+
+			//Then gradually restore it
+			offset = MathHelper.Lerp(offset, temp.ToRotation(), EaseFunction.EaseQuadOut.Ease(GetSwingProgress));
+
+			baseRot += offset;
+		}
+
+		return baseRot;
 	}
 
 	internal override bool CanCollide(float progress) => !FullCharge;
