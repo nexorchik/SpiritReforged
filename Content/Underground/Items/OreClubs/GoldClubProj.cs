@@ -99,7 +99,7 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 	{
 		base.Swinging(owner);
 
-		if(!Main.rand.NextBool(3) && GetSwingProgress < SwingShrinkThreshold)
+		if (!Main.rand.NextBool(3) && GetSwingProgress < SwingShrinkThreshold)
 		{
 			Vector2 particleVel = Projectile.position.DirectionFrom(Projectile.oldPosition).RotatedByRandom(Pi / 6) * Main.rand.NextFloat(3, 5);
 			int particleTime = Main.rand.Next(15, 25);
@@ -118,7 +118,7 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 		if (owner.controlUseItem && GetSwingProgress < SwingShrinkThreshold)
 			_inputHeld = true;
 
-		if(GetSwingProgress > SwingShrinkThreshold && Direction == 1 && _inputHeld)
+		if (GetSwingProgress > SwingShrinkThreshold && Direction == 1 && _inputHeld)
 		{
 			PrepareNextSwing();
 			return;
@@ -246,13 +246,13 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 
 	internal override void SendExtraDataSafe(BinaryWriter writer)
 	{
-		writer.Write((ushort)Direction);
+		writer.Write((sbyte)Direction);
 		writer.Write(_inputHeld);
 	}
 
 	internal override void ReceiveExtraDataSafe(BinaryReader reader)
 	{
-		Direction = reader.ReadUInt16();
+		Direction = reader.ReadSByte();
 		_inputHeld = reader.ReadBoolean();
 	}
 }
