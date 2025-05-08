@@ -16,6 +16,7 @@ public abstract class ClubItem : ModItem
 	public sealed override void SetDefaults()
 	{
 		Item.channel = true;
+		Item.autoReuse = true;
 		Item.useTime = 320;
 		Item.useAnimation = 320;
 		Item.useStyle = ItemUseStyleID.Swing;

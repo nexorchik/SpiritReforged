@@ -1,5 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.ProjectileCommon;
@@ -16,7 +17,12 @@ namespace SpiritReforged.Content.Underground.Items;
 [AutoloadGlowmask("255,255,255")]
 public class BombCannon : ModItem
 {
-	public override void SetStaticDefaults() => AmmoDatabase.RegisterAmmo(ItemID.Bomb, ItemID.Bomb, ItemID.StickyBomb, ItemID.BouncyBomb, ItemID.BombFish);
+	public override void SetStaticDefaults()
+	{
+		AmmoDatabase.RegisterAmmo(ItemID.Bomb, ItemID.Bomb, ItemID.StickyBomb, ItemID.BouncyBomb, ItemID.BombFish);
+		NPCShopHelper.AddEntry(new NPCShopHelper.ConditionalEntry((shop) => shop.NpcType == NPCID.Demolitionist, new NPCShop.Entry(Type, Condition.DownedEarlygameBoss)));
+	}
+
 	public override void SetDefaults()
 	{
 		Item.width = 44;
@@ -25,7 +31,7 @@ public class BombCannon : ModItem
 		Item.useStyle = ItemUseStyleID.Shoot;
 		Item.noMelee = true;
 		Item.noUseGraphic = true;
-		Item.value = Item.sellPrice(0, 1, 0, 0);
+		Item.value = Item.buyPrice(0, 3, 75, 0);
 		Item.rare = ItemRarityID.Blue;
 		Item.autoReuse = true;
 		Item.useAmmo = ItemID.Bomb;
@@ -44,9 +50,6 @@ public class BombCannon : ModItem
 	}
 
 	public override bool CanConsumeAmmo(Item ammo, Player player) => !player.channel; //Ammo consumption happens in BombCannonHeld
-
-	public override void AddRecipes() => CreateRecipe().AddRecipeGroup(RecipeGroupID.IronBar, 8)
-		.AddIngredient(ItemID.Timer3Second).AddTile(TileID.Anvils).Register();
 }
 
 [AutoloadGlowmask("255,255,255", false)]

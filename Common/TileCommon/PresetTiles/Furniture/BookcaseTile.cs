@@ -27,6 +27,7 @@ public abstract class BookcaseTile : FurnitureTile
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 18];
 		TileObjectData.addTile(Type);
 
+		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Bookcase"));
 		AdjTiles = [TileID.Bookcases];
 		DustType = -1;

@@ -8,7 +8,7 @@ namespace SpiritReforged.Common.ProjectileCommon.Abstract;
 
 public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 {
-	private const int MAX_FLICKERTIME = 20;
+	internal const int MAX_FLICKERTIME = 20;
 
 	internal readonly Vector2 Size = textureSize;
 
@@ -43,6 +43,10 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 	{
 		get
 		{
+			//Return default if the club projectile has its own texture
+			if (ModContent.HasAsset(base.Texture))
+				return base.Texture;
+
 			string def = base.Texture;
 			return def.Remove(def.Length - 4); //Remove 'proj'
 		}
@@ -81,6 +85,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		int width = (int)(projHitbox.Width * MeleeSizeModifier);
 		int height = (int)(projHitbox.Height * MeleeSizeModifier);
 		var newProjHitbox = new Rectangle((int)(endPoint.X - width / 2), (int)(endPoint.Y - height / 2), width, height);
+
 		if (newProjHitbox.Intersects(targetHitbox))
 			return true;
 
@@ -118,6 +123,8 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 			modifiers.FinalDamage *= DamageScaling;
 			modifiers.Knockback *= KnockbackScaling;
 		}
+
+		SafeModifyHitNPC(target, ref modifiers);
 	}
 
 	public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
@@ -127,6 +134,8 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 			modifiers.FinalDamage *= DamageScaling;
 			modifiers.Knockback *= KnockbackScaling;
 		}
+
+		SafeModifyHitPlayer(target, ref modifiers);
 	}
 
 	public sealed override void AI()
@@ -137,22 +146,16 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 			Projectile.Kill();
 
 		Owner.heldProj = Projectile.whoAmI;
+		Owner.direction = Math.Sign(Projectile.direction);
 
-		if (AllowUseTurn)
+		if (AllowUseTurn && Projectile.owner == Main.myPlayer)
 		{
-			if (Owner == Main.LocalPlayer)
-			{
-				int newDir = Math.Sign(Main.MouseWorld.X - Owner.Center.X);
-				Projectile.velocity.X = newDir == 0 ? Owner.direction : newDir;
+			int newDir = Math.Sign(Main.MouseWorld.X - Owner.Center.X);
+			Projectile.velocity.X = newDir == 0 ? Owner.direction : newDir;
 
-				if (newDir != Owner.direction)
-					Projectile.netUpdate = true;
-			}
-
-			Owner.ChangeDir((int)Projectile.velocity.X);
+			if (newDir != Owner.direction)
+				Projectile.netUpdate = true;
 		}
-		else
-			Owner.direction = Math.Sign(Projectile.velocity.X);
 
 		switch (AiState)
 		{
@@ -195,24 +198,27 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		Vector2 handPos = Owner.GetFrontHandPosition(Owner.compositeFrontArm.stretch, Owner.compositeFrontArm.rotation);
 		Vector2 drawPos = handPos - Main.screenPosition + Vector2.UnitY * Owner.gfxOffY;
 		Color drawColor = Projectile.GetAlpha(lightColor);
+		Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
 
-		Rectangle topFrame = texture.Frame(1, Main.projFrames[Type]);
-
-		//Aftertrail during swing
-		if (CheckAIState(AIStates.SWINGING))
-			DrawAftertrail(lightColor);
-
-		Main.EntitySpriteDraw(texture, drawPos, topFrame, drawColor, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
-
-		SafeDraw(Main.spriteBatch, lightColor);
-
-		//Flash when fully charged
-		if (CheckAIState(AIStates.CHARGING) && _flickerTime > 0)
+		if (!OverrideDraw(Main.spriteBatch, texture, lightColor, handPos, drawPos))
 		{
-			Texture2D flash = TextureColorCache.ColorSolid(texture, Color.White);
-			float alpha = EaseQuadIn.Ease(EaseSine.Ease(_flickerTime / (float)MAX_FLICKERTIME));
+			//Aftertrail during swing
+			float trailOpacity = 1;
+			if (AllowedAftertrailDraw(ref trailOpacity))
+				DrawAftertrail(texture, lightColor * trailOpacity, drawPos);
 
-			Main.EntitySpriteDraw(flash, drawPos, topFrame, Color.White * alpha, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+			Main.EntitySpriteDraw(texture, drawPos, frame, drawColor, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+
+			SafeDraw(Main.spriteBatch, texture, lightColor, handPos, drawPos);
+
+			//Flash when fully charged
+			if (CheckAIState(AIStates.CHARGING) && _flickerTime > 0)
+			{
+				Texture2D flash = TextureColorCache.ColorSolid(texture, Color.White);
+				float alpha = EaseQuadIn.Ease(EaseSine.Ease(_flickerTime / (float)MAX_FLICKERTIME));
+
+				Main.EntitySpriteDraw(flash, drawPos, frame, Color.White * alpha, Projectile.rotation, HoldPoint, TotalScale, Effects, 0);
+			}
 		}
 
 		return false;
@@ -232,9 +238,6 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		writer.Write((ushort)_swingTimer);
 		writer.Write((ushort)_windupTimer);
 
-		writer.Write((ushort)_flickerTime);
-		writer.Write(_hasFlickered);
-
 		SendExtraDataSafe(writer);
 	}
 
@@ -250,9 +253,6 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		_lingerTimer = reader.ReadUInt16();
 		_swingTimer = reader.ReadUInt16();
 		_windupTimer = reader.ReadUInt16();
-
-		_flickerTime = reader.ReadUInt16();
-		_hasFlickered = reader.ReadBoolean();
 
 		ReceiveExtraDataSafe(reader);
 	}

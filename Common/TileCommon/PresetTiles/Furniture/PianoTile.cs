@@ -28,6 +28,7 @@ public abstract class PianoTile : FurnitureTile
 		TileObjectData.newTile.CoordinateHeights = [16, 16];
 		TileObjectData.addTile(Type);
 
+		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
 		AddMapEntry(new Color(100, 100, 60), Language.GetText("ItemName.Piano"));
 		AdjTiles = [TileID.Pianos];
 		DustType = -1;

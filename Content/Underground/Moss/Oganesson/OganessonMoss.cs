@@ -12,14 +12,24 @@ public class OganessonMoss : GrassTile
 
 	public override void SetStaticDefaults()
 	{
-		base.SetStaticDefaults();
-
+		Main.tileSolid[Type] = true;
+		Main.tileBlockLight[Type] = true;
+		Main.tileBlendAll[Type] = true;
 		Main.tileLighted[Type] = true;
 		Main.tileMoss[Type] = true;
 
+		this.Merge(DirtType, TileID.GrayBrick);
+		TileID.Sets.NeedsGrassFramingDirt[Type] = DirtType;
+		TileID.Sets.NeedsGrassFraming[Type] = true;
+		TileID.Sets.Conversion.Moss[Type] = true;
+
+		SetEntry();
+	}
+
+	public virtual void SetEntry()
+	{
 		RegisterItemDrop(ModContent.ItemType<OganessonMossItem>());
 		AddMapEntry(new Color(220, 220, 220));
-		this.Merge(TileID.Stone, TileID.GrayBrick);
 
 		DustType = ModContent.DustType<OganessonMossDust>();
 		HitSound = SoundID.Grass;

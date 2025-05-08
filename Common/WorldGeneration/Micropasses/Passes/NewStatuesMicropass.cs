@@ -17,7 +17,7 @@ internal class NewStatuesMicropass : Micropass
 
 	public override void Run(GenerationProgress progress, Terraria.IO.GameConfiguration config)
 	{
-		const int maxTries = 5000; //Failsafe
+		const int maxTries = 1000; //Failsafe
 		const int numPerType = 4;
 
 		progress.Message = Lang.gen[29].Value; //Localization for `Statues`
@@ -32,7 +32,7 @@ internal class NewStatuesMicropass : Micropass
 
 			WorldMethods.FindGround(x, ref y);
 
-			if (y > Main.UnderworldLayer || WorldGen.oceanDepths(x, y))
+			if (y > Main.UnderworldLayer || y < (int)Main.worldSurface || WorldGen.oceanDepths(x, y))
 				continue;
 
 			int type = Statues[Math.Clamp(statues / numPerType, 0, Statues.Count - 1)];

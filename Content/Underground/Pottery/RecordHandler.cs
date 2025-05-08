@@ -85,13 +85,18 @@ internal class RecordGlobalTile : GlobalTile
 {
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
+		const int maxDistance = 800;
+
 		if (effectOnly || fail)
 			return;
 
 		if (RecordHandler.Matching(i, j, out string name))
 		{
-			var p = Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(16, 16), 0, 0)];
-			p.GetModPlayer<RecordPlayer>().Validate(name);
+			var world = new Vector2(i, j).ToWorldCoordinates();
+			var p = Main.player[Player.FindClosest(world, 16, 16)];
+
+			if (p.DistanceSQ(world) < maxDistance * maxDistance)
+				p.GetModPlayer<RecordPlayer>().Validate(name);
 		}
 	}
 }

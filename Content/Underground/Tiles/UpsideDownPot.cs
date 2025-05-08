@@ -60,7 +60,7 @@ public class PotHead : ModItem
 		Item.width = 24;
 		Item.height = 24;
 		Item.value = Item.sellPrice(gold: 3);
-		Item.rare = ItemRarityID.Blue;
+		Item.rare = ItemRarityID.White;
 		Item.vanity = true;
 	}
 }

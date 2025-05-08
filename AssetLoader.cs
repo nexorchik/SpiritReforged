@@ -13,6 +13,7 @@ internal static class AssetLoader
 	public static BasicEffect BasicShaderEffect;
 	public static IDictionary<string, Asset<Texture2D>> LoadedTextures = new Dictionary<string, Asset<Texture2D>>();
 	public static IDictionary<string, Effect> LoadedShaders = new Dictionary<string, Effect>();
+	public static string EmptyTexture => "SpiritReforged/Assets/Textures/Empty";
 
 	public static void Load(Mod mod)
 	{

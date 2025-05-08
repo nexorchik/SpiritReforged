@@ -99,7 +99,7 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 	{
 		base.Swinging(owner);
 
-		if(!Main.rand.NextBool(3) && GetSwingProgress < SwingShrinkThreshold)
+		if (!Main.rand.NextBool(3) && GetSwingProgress < SwingShrinkThreshold)
 		{
 			Vector2 particleVel = Projectile.position.DirectionFrom(Projectile.oldPosition).RotatedByRandom(Pi / 6) * Main.rand.NextFloat(3, 5);
 			int particleTime = Main.rand.Next(15, 25);
@@ -118,7 +118,7 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 		if (owner.controlUseItem && GetSwingProgress < SwingShrinkThreshold)
 			_inputHeld = true;
 
-		if(GetSwingProgress > SwingShrinkThreshold && Direction == 1 && _inputHeld)
+		if (GetSwingProgress > SwingShrinkThreshold && Direction == 1 && _inputHeld)
 		{
 			PrepareNextSwing();
 			return;
@@ -228,30 +228,31 @@ class GoldClubProj : BaseClubProj, IManualTrailProjectile
 		}
 	}
 
-	public override void SafeDraw(SpriteBatch spriteBatch, Color lightColor)
+	public override void SafeDraw(SpriteBatch spriteBatch, Texture2D texture, Color lightColor, Vector2 handPosition, Vector2 drawPosition)
 	{
-		Texture2D starTex = AssetLoader.LoadedTextures["Star"].Value;
+		Texture2D starTex = AssetLoader.LoadedTextures["Star2"].Value;
 
 		float maxSize = 0.6f * TotalScale;
 		float starProgress = EaseQuadIn.Ease(Charge);
 
-		Vector2 scale = new Vector2(Lerp(0.8f, 1.2f, EaseSine.Ease(Main.GlobalTimeWrappedHourly * 2f % 1)), 0.4f) * Lerp(0, maxSize, starProgress) * 0.7f;
+		Vector2 scale = new Vector2(Lerp(0.8f, 1.2f, EaseSine.Ease(Main.GlobalTimeWrappedHourly * 2f % 1)), 0.4f) * Lerp(0, maxSize, starProgress) * 0.4f;
 		var starOrigin = starTex.Size() / 2;
 
 		Color color = Projectile.GetAlpha(Ruby.Additive()) * EaseQuadIn.Ease(starProgress) * BaseScale * 0.5f;
 
 		Main.spriteBatch.Draw(starTex, GetHammerTopPos() - Main.screenPosition, null, color, 0, starOrigin, scale, SpriteEffects.None, 0);
+		Main.spriteBatch.Draw(starTex, GetHammerTopPos() - Main.screenPosition, null, color, 0, starOrigin, scale / 2, SpriteEffects.None, 0);
 	}
 
 	internal override void SendExtraDataSafe(BinaryWriter writer)
 	{
-		writer.Write((ushort)Direction);
+		writer.Write((sbyte)Direction);
 		writer.Write(_inputHeld);
 	}
 
 	internal override void ReceiveExtraDataSafe(BinaryReader reader)
 	{
-		Direction = reader.ReadUInt16();
+		Direction = reader.ReadSByte();
 		_inputHeld = reader.ReadBoolean();
 	}
 }
