@@ -1,19 +1,20 @@
 using RubbleAutoloader;
 using SpiritReforged.Common.ItemCommon;
-using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.UI;
+using static SpiritReforged.Common.TileCommon.StyleDatabase;
+using static SpiritReforged.Common.WorldGeneration.WorldMethods;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
 public class StuffedPots : PotTile, ILootTile
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0, 1, 2] } };
-	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
+	public override void AddRecord(int type, StyleGroup group)
 	{
 		var desc = Language.GetText("Mods.SpiritReforged.Tiles.Records.Stuffed");
 		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(5));
@@ -55,7 +56,7 @@ public class StuffedPots : PotTile, ILootTile
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
 		var spawn = new Vector2(i, j).ToWorldCoordinates(16, 16);
-		if (Main.netMode != NetmodeID.MultiplayerClient && !Autoloader.IsRubble(Type))
+		if (Main.netMode != NetmodeID.MultiplayerClient && !Autoloader.IsRubble(Type) && !Generating)
 		{
 			var source = new EntitySource_TileBreak(i, j);
 			Projectile.NewProjectile(source, new Vector2(i, j).ToWorldCoordinates(16, 16), Vector2.UnitY * -4f, ProjectileID.CoinPortal, 0, 0);
