@@ -115,6 +115,26 @@ public abstract partial class BaseClubProj : ModProjectile
 	}
 
 	/// <summary>
+	/// Returns where the top of the club should draw, rather than the projectile center used for collision. <br />
+	/// Can input an offset to move the output backwards down the club
+	/// </summary>
+	/// <param name="offset"></param>
+	/// <returns></returns>
+	public Vector2 GetHeadPosition(Vector2 offset)
+	{
+		Vector2 handPos = Owner.GetFrontHandPosition(Owner.compositeFrontArm.stretch, Owner.compositeFrontArm.rotation);
+		float rotation = Projectile.rotation - PiOver4 * Owner.direction;
+		if (Owner.direction < 0)
+			rotation -= Pi;
+
+		Vector2 directionUnit = rotation.ToRotationVector2();
+
+		return handPos + directionUnit * (Size - offset) * TotalScale;
+	}
+
+	public Vector2 GetHeadPosition(float offset = 0) => GetHeadPosition(new Vector2(offset));
+
+	/// <summary>
 	/// Quickly does a shockwave circle visual, used primarily for clubs slamming into tiles.
 	/// </summary>
 	/// <param name="pos"></param>

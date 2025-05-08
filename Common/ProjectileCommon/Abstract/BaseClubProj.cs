@@ -191,8 +191,8 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 
 		Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters, armRotation);
 		Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.ThreeQuarters, armRotation);
-		Projectile.position.X = Owner.Center.X - (int)(Math.Cos(armRotation - PiOver2) * Size.X) - Projectile.width / 2;
-		Projectile.position.Y = Owner.Center.Y - (int)(Math.Sin(armRotation - PiOver2) * Size.Y) - Projectile.height / 2 - Owner.gfxOffY;
+		Projectile.position.X = Owner.MountedCenter.X - (int)(Math.Cos(armRotation - PiOver2) * Size.X) - Projectile.width / 2;
+		Projectile.position.Y = Owner.MountedCenter.Y - (int)(Math.Sin(armRotation - PiOver2) * Size.Y) - Projectile.height / 2 - Owner.gfxOffY;
 
 		Owner.itemAnimation = Owner.itemTime = 2;
 	}

@@ -7,6 +7,7 @@ using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Common.MathHelpers;
 using System.IO;
+using SpiritReforged.Common.ProjectileCommon;
 
 namespace SpiritReforged.Content.Underground.Items.BoulderClub;
 
@@ -92,22 +93,26 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 				adjustedTrajectory += owner.velocity / 3;
 
 				//Prevent spawning inside or through tiles
-				Vector2 spawnPos = Projectile.Center;
+				Vector2 spawnPos = GetHeadPosition(16);
 
-				bool spawnInTile = Collision.SolidTiles(spawnPos - new Vector2(16), 32, 32, true);
+				bool spawnInTile = Collision.SolidTiles(spawnPos - new Vector2(16) * MeleeSizeModifier, (int)(32 * MeleeSizeModifier), (int)(32 * MeleeSizeModifier), true);
 				bool ownerLineCheck = CollisionCheckHelper.CanHitLineSolidTop(spawnPos, owner.MountedCenter);
 
 				while ((spawnInTile || ownerLineCheck) && spawnPos.Y > owner.MountedCenter.Y)
 					spawnPos.Y--;
 
-				Projectile.NewProjectile(Projectile.GetSource_FromAI(), spawnPos, adjustedTrajectory, ModContent.ProjectileType<RollingBowlder>(), (int)(Projectile.damage * DamageScaling), Projectile.knockBack, Projectile.owner, Owner.direction);
-				
-				if(!Main.dedServ)
+				PreNewProjectile.New(Projectile.GetSource_FromAI(), spawnPos, adjustedTrajectory, ModContent.ProjectileType<RollingBowlder>(), (int)(Projectile.damage * DamageScaling), Projectile.knockBack, Projectile.owner, Owner.direction, preSpawnAction: delegate (Projectile p)
+				{
+					p.Size *= MeleeSizeModifier;
+					p.scale = MeleeSizeModifier;
+				});
+
+				if (!Main.dedServ)
 				{
 					for (int i = 1; i < 7; i++)
 					{
 						int type = Mod.Find<ModGore>("BowlderRope" + i).Type;
-						Gore.NewGore(Projectile.GetSource_Death(), Projectile.position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), adjustedTrajectory * 0.1f, type);
+						Gore.NewGore(Projectile.GetSource_Death(), Projectile.position + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), adjustedTrajectory * 0.1f, type, MeleeSizeModifier);
 					}
 
 					for (int i = 0; i < 8; i++)
