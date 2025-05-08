@@ -49,10 +49,10 @@ public class FishCrate : FloatingItem
 		// Thorium Crossmod
 		if (CrossMod.Thorium.Enabled)
 		{
-			if (CrossMod.Thorium.Instance.TryFind("HatFish", out ModItem hatfish))
+			if (CrossMod.Thorium.TryFind("HatFish", out ModItem hatfish))
 				itemLoot.AddCommon(hatfish.Type, 25);
 
-			if (CrossMod.Thorium.Instance.TryFind("SubterraneanBulb", out ModItem anglerBulb))
+			if (CrossMod.Thorium.TryFind("SubterraneanBulb", out ModItem anglerBulb))
 				itemLoot.AddCommon(anglerBulb.Type, 100);
 		}
 	}

@@ -1,6 +1,5 @@
 ﻿using SpiritReforged.Content.Desert.GildedScarab;
 using SpiritReforged.Content.Forest.ArcaneNecklace;
-using SpiritReforged.Content.Ocean.Hydrothermal;
 
 namespace SpiritReforged.Common.ModCompat.Classic;
 
@@ -9,29 +8,12 @@ internal class SpiritClassic : ModSystem
 {
 	private const string ClassicName = "SpiritMod";
 
-	/// <summary> Whether Spirit Classic is enabled. </summary>
-	public static bool Enabled => Loaded || ModLoader.HasMod(ClassicName);
-	/// <summary> The loaded Spirit Classic mod instance. Check <see cref="Enabled"/> before using. </summary>
-	internal static Mod ClassicMod = null;
 	/// <summary> Spirit Classic items and their Reforged replacements. </summary>
-	internal static readonly Dictionary<int, int> ClassicToReforged = [];
+	internal static readonly Dictionary<int, int> ClassicItemToReforged = [];
+	/// <summary> Spirit Classic NPCs and their Reforged replacements. </summary>
+	internal static readonly Dictionary<int, int> ClassicNPCToReforged = [];
 
-	private static bool Loaded = false;
-
-	public override bool IsLoadingEnabled(Mod mod)
-	{
-		if (!Enabled)
-			return false;
-
-		ClassicMod = ModLoader.GetMod(ClassicName);
-		Loaded = true;
-
-		mod.AddContent((ObsoleteItem)Activator.CreateInstance(typeof(ObsoleteItem)));
-		mod.AddContent((ModifyNPCData)Activator.CreateInstance(typeof(ModifyNPCData)));
-
-		return true;
-	}
-
+	public override bool IsLoadingEnabled(Mod mod) => CrossMod.Classic.Enabled;
 	public override void SetStaticDefaults()
 	{
 		foreach (var item in Mod.GetContent<ModItem>()) //Populate Classic/Reforged counterpart item array
@@ -40,32 +22,43 @@ internal class SpiritClassic : ModSystem
 			if (id == -1)
 				continue;
 
-			AddReplacement(id, item.Type);
+			AddItemReplacement(id, item.Type);
 		}
 
-		if (ClassicMod.TryFind("SulfurDeposit", out ModItem sulfur)) //Add Sulfur to our Hydrothermal vent pool
-			HydrothermalVentPlume.DropPool.Add(sulfur.Type, 3);
+		foreach (var npc in Mod.GetContent<ModNPC>()) //Populate Classic/Reforged counterpart NPC array
+		{
+			int id = ClassicNPC(npc);
+			if (id == -1)
+				continue;
 
-		static int ClassicItem(ModItem modItem)
+			ClassicNPCToReforged.Add(id, npc.Type);
+		}
+
+		#region local
+		static int ClassicItem(ModItem modItem) => CrossMod.Classic.TryFind(GetName(modItem), out ModItem item) ? item.Type : -1;
+		static int ClassicNPC(ModNPC modNPC) => CrossMod.Classic.TryFind(GetName(modNPC), out ModNPC npc) ? npc.Type : -1;
+
+		static string GetName(ModType t)
 		{
 			string name; //Match the provided attribute name, otherwise, match internal names
-			var attr = (FromClassicAttribute)Attribute.GetCustomAttribute(modItem.GetType(), typeof(FromClassicAttribute), false);
+			var attr = (FromClassicAttribute)Attribute.GetCustomAttribute(t.GetType(), typeof(FromClassicAttribute), false);
 
 			if (attr != null)
 				name = attr.name;
 			else
-				name = modItem.Name;
+				name = t.Name;
 
-			return ClassicMod.TryFind(name, out ModItem item) ? item.Type : -1;
+			return name;
 		}
+		#endregion
 	}
 
 	public override void AddRecipes()
 	{
-		if (ClassicMod.TryFind("Chitin", out ModItem chitin))
+		if (CrossMod.Classic.TryFind("Chitin", out ModItem chitin))
 			Recipe.Create(ModContent.ItemType<GildedScarab>()).AddRecipeGroup("GoldBars", 5).AddIngredient(chitin.Type, 8).AddTile(TileID.Anvils).Register();
 
-		if (ClassicMod.TryFind("SeraphimBulwark", out ModItem bulwark) && ClassicMod.TryFind("ManaShield", out ModItem manaShield) && ClassicMod.TryFind("SoulShred", out ModItem soul))
+		if (CrossMod.Classic.TryFind("SeraphimBulwark", out ModItem bulwark) && CrossMod.Classic.TryFind("ManaShield", out ModItem manaShield) && CrossMod.Classic.TryFind("SoulShred", out ModItem soul))
 			Recipe.Create(bulwark.Type).AddIngredient(ModContent.ItemType<ArcaneNecklacePlatinum>()).AddIngredient(manaShield.Type).AddIngredient(soul.Type, 5).AddTile(TileID.TinkerersWorkbench).Register();
 	}
 
@@ -96,19 +89,19 @@ internal class SpiritClassic : ModSystem
 		SpiritReforgedMod.Instance.Logger.Info(modLog.Remove(modLog.Length - 2, 2));
 	}
 
-	/// <summary> Modifies recipes added by Classic if the result isn't contained in <see cref="ClassicToReforged"/> but ingredients are. </summary>
+	/// <summary> Modifies recipes added by Classic if the result isn't contained in <see cref="ClassicItemToReforged"/> but ingredients are. </summary>
 	private static bool ModifyRecipe(Recipe recipe, out bool modified)
 	{
 		modified = false;
 
-		if (ClassicToReforged.ContainsKey(recipe.createItem.type))
+		if (ClassicItemToReforged.ContainsKey(recipe.createItem.type))
 			return false; //The result is obsolete
 
 		for (int i = recipe.requiredItem.Count - 1; i >= 0; i--)
 		{
 			var ingredient = recipe.requiredItem[i];
 
-			if (!ingredient.IsAir && ClassicToReforged.TryGetValue(ingredient.type, out int reforgedType))
+			if (!ingredient.IsAir && ClassicItemToReforged.TryGetValue(ingredient.type, out int reforgedType))
 			{
 				int stack = ingredient.stack;
 
@@ -140,31 +133,31 @@ internal class SpiritClassic : ModSystem
 		{
 			var item = items[i];
 
-			if (!item.IsAir && ClassicToReforged.TryGetValue(item.type, out int reforgedType))
+			if (!item.IsAir && ClassicItemToReforged.TryGetValue(item.type, out int reforgedType))
 				item.ChangeItemType(reforgedType);
 		}
 	}
 
-	/// <summary> Manually adds a ModItem replacement entry to <see cref="ClassicToReforged"/>, if loaded. </summary>
-	public static void AddReplacement(string classicName, int reforgedType)
+	/// <summary> Manually adds a ModItem replacement entry to <see cref="ClassicItemToReforged"/>, if loaded. </summary>
+	public static void AddItemReplacement(string classicName, int reforgedType)
 	{
-		if (Enabled && ClassicMod.TryFind(classicName, out ModItem item))
-			AddReplacement(item.Type, reforgedType);
+		if (CrossMod.Classic.Enabled && CrossMod.Classic.TryFind(classicName, out ModItem item))
+			AddItemReplacement(item.Type, reforgedType);
 	}
 
-	/// <summary> Manually adds a ModItem replacement entry to <see cref="ClassicToReforged"/> <para/>
+	/// <summary> Manually adds a ModItem replacement entry to <see cref="ClassicItemToReforged"/> <para/>
 	/// Only use this method after checking if Classic is enabled. </summary>
-	public static void AddReplacement(int classicType, int reforgedType)
+	private static void AddItemReplacement(int classicType, int reforgedType)
 	{
-		ClassicToReforged.Add(classicType, reforgedType);
+		ClassicItemToReforged.Add(classicType, reforgedType);
 		ItemID.Sets.ShimmerTransformToItem[classicType] = reforgedType; //Populate shimmer transformations
 
-		ClassicMod.Call("AddItemDefinition", classicType, reforgedType);
+		((Mod)CrossMod.Classic).Call("AddItemDefinition", classicType, reforgedType);
 	}
 }
 
-/// <summary> Denotes an item replacement for Spirit Classic. </summary>
-/// <param name="classicName"> The internal name of item to replace. </param>
+/// <summary> Denotes a content replacement for Spirit Classic. </summary>
+/// <param name="classicName"> The internal name of content to replace. </param>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
 public class FromClassicAttribute(string classicName) : Attribute
 {

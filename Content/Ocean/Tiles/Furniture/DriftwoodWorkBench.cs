@@ -11,6 +11,6 @@ public class DriftwoodWorkBench : WorkBenchTile
 	public override void StaticDefaults()
 	{
 		base.StaticDefaults();
-		SpiritClassic.AddReplacement("DriftwoodWorkbenchItem", this.AutoItem().type);
+		SpiritClassic.AddItemReplacement("DriftwoodWorkbenchItem", this.AutoItem().type);
 	}
 }

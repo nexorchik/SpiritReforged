@@ -16,7 +16,7 @@ public class OceanPlayer : ModPlayer
 
 	private static bool NotInDepths(Player plr)
 	{
-		if (CrossMod.Thorium.Enabled && CrossMod.Thorium.Instance.TryFind("DepthsBiome", out ModBiome aquaticDepths))
+		if (CrossMod.Thorium.Enabled && CrossMod.Thorium.TryFind("DepthsBiome", out ModBiome aquaticDepths))
 			return !plr.InModBiome(aquaticDepths);
 
 		return true;

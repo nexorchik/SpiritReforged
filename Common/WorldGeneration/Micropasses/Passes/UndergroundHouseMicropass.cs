@@ -219,19 +219,19 @@ internal class UndergroundHouseMicropass : ModSystem
 
 		if (CrossMod.Thorium.Enabled)
 		{
-			if (CrossMod.Thorium.Instance.TryFind(GenVars.iron == TileID.Iron ? "IronShield" : "LeadShield", out ModItem shield))
+			if (CrossMod.Thorium.TryFind(GenVars.iron == TileID.Iron ? "IronShield" : "LeadShield", out ModItem shield))
 				accType.Add(shield.Type, 0.1f);
 
-			if (CrossMod.Thorium.Instance.TryFind("FrostburnPouch", out ModItem frostburnPouch))
+			if (CrossMod.Thorium.TryFind("FrostburnPouch", out ModItem frostburnPouch))
 				accType.Add(frostburnPouch.Type, 0.1f);
 
-			if (CrossMod.Thorium.Instance.TryFind("LeatherSheath", out ModItem leatherSheath))
+			if (CrossMod.Thorium.TryFind("LeatherSheath", out ModItem leatherSheath))
 				accType.Add(leatherSheath.Type, 0.3f);
 
-			if (CrossMod.Thorium.Instance.TryFind("DartPouch", out ModItem dartPouch))
+			if (CrossMod.Thorium.TryFind("DartPouch", out ModItem dartPouch))
 				accType.Add(dartPouch.Type, 0.2f);
 
-			if (CrossMod.Thorium.Instance.TryFind("Wreath", out ModItem wreath))
+			if (CrossMod.Thorium.TryFind("Wreath", out ModItem wreath))
 				accType.Add(wreath.Type, 0.1f);
 		}
 
