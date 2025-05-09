@@ -1,5 +1,6 @@
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Common.ProjectileCommon.Abstract;

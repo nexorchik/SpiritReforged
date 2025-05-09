@@ -17,7 +17,7 @@ public class Bowlder : ClubItem
 
 	public override void SafeSetDefaults()
 	{
-		Item.damage = 50;
+		Item.damage = 45;
 		Item.knockBack = 8;
 		ChargeTime = 45;
 		SwingTime = 35;

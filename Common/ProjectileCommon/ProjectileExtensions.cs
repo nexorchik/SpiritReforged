@@ -42,6 +42,7 @@ internal static class ProjectileExtensions
 	{
 		Texture2D tex = TextureAssets.Projectile[proj.type].Value;
 		Color color = proj.GetAlpha(drawColor ?? Lighting.GetColor((int)proj.Center.X / 16, (int)proj.Center.Y / 16));
+
 		if (drawColor != null)
 			color.A = (byte)(drawColor.Value.A * proj.Opacity);
 
@@ -116,4 +117,6 @@ internal static class ProjectileExtensions
 				projectile.frame = loopFrame;
 		}
 	}
+
+	public static bool BelongsToPlayer(this Projectile p) => !(p.npcProj || p.owner == 255 || p.trap);
 }

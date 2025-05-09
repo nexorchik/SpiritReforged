@@ -1,4 +1,5 @@
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 using static Microsoft.Xna.Framework.MathHelper;
@@ -102,12 +103,8 @@ public abstract partial class BaseClubProj : ModProjectile
 		ResetData();
 	}
 
-	/// <summary>
-	/// Translates the club's base rotation to the value needed for drawing the projectile and player arm, without the programmer needing to offset the rotation and account for player direction.
-	/// </summary>
-	/// <param name="owner"></param>
-	/// <param name="clubRotation"></param>
-	/// <param name="armRotation"></param>
+	/// <summary> Translates the club's base rotation to the value needed for drawing the projectile and player arm, without the programmer needing to offset the rotation and account for player direction.
+	/// <br/> This does not account for <see cref="Player.fullRotation"/>, which must be calculated independently. </summary>
 	private void TranslateRotation(Player owner, out float clubRotation, out float armRotation)
 	{
 		float output = BaseRotation * owner.gravDir + 1.7f;
@@ -130,7 +127,7 @@ public abstract partial class BaseClubProj : ModProjectile
 	/// <returns></returns>
 	public Vector2 GetHeadPosition(Vector2 offset)
 	{
-		Vector2 handPos = Owner.GetFrontHandPosition(Owner.compositeFrontArm.stretch, Owner.compositeFrontArm.rotation);
+		Vector2 handPos = Owner.GetHandRotated();
 		float rotation = Projectile.rotation - PiOver4 * Owner.direction;
 		if (Owner.direction < 0)
 			rotation -= Pi;
