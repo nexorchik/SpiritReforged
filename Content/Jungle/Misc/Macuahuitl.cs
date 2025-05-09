@@ -25,7 +25,7 @@ public class Macuahuitl : ClubItem
 
 	public override void SafeSetDefaults()
 	{
-		Item.damage = 18;
+		Item.damage = 16;
 		Item.knockBack = 2;
 		ChargeTime = 40;
 		SwingTime = 24;

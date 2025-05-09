@@ -5,8 +5,6 @@ using SpiritReforged.Common.PrimitiveRendering.CustomTrails;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Content.Particles;
-using SpiritReforged.Common.ProjectileCommon;
-using Terraria.Audio;
 
 namespace SpiritReforged.Content.Underground.Items.BoulderClub;
 
@@ -16,7 +14,7 @@ public class Bowlder : ClubItem
 
 	public override void SafeSetDefaults()
 	{
-		Item.damage = 50;
+		Item.damage = 45;
 		Item.knockBack = 8;
 		ChargeTime = 45;
 		SwingTime = 35;

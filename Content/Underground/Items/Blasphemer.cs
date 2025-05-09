@@ -19,7 +19,7 @@ public class Blasphemer : ClubItem
 	public override void SetStaticDefaults() => ItemLootDatabase.AddItemRule(ItemID.ObsidianLockbox, ItemDropRule.Common(Type, 5));
 	public override void SafeSetDefaults()
 	{
-		Item.damage = 65;
+		Item.damage = 38;
 		Item.knockBack = 6;
 		ChargeTime = 40;
 		SwingTime = 24;
