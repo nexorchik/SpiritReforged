@@ -1,10 +1,15 @@
+using SpiritReforged.Content.Forest.Misc;
 using System.Linq;
 using Terraria.DataStructures;
+using Terraria.WorldBuilding;
 
 namespace SpiritReforged.Common.WorldGeneration;
 
 public class WorldMethods
 {
+	/// <summary> Whether the world is being generated or <see cref="UpdaterSystem"/> is running a generation task. </summary>
+	public static bool Generating => WorldGen.generatingWorld || UpdaterSystem.RunningTask;
+
 	internal static int FindNearestBelow(int x, int y)
 	{
 		while (!WorldGen.SolidTile(x, y))
@@ -29,25 +34,39 @@ public class WorldMethods
 	/// <summary> Scans up, then down for the nearest surface tile. </summary>
 	public static int FindGround(int i, ref int j)
 	{
-		while (WorldGen.SolidOrSlopedTile(i, j - 1) && j > 20)
+		while (j > 20 && WorldGen.SolidOrSlopedTile(i, j - 1))
 			j--; //Up
 
-		while (!WorldGen.SolidOrSlopedTile(i, j) && j < Main.maxTilesY - 20)
+		while (j < Main.maxTilesY - 20 && !WorldGen.SolidOrSlopedTile(i, j))
 			j++; //Down
 
 		return j;
 	}
 
-	/// <summary> Scans up, then down for the nearest surface tile. </summary>
-	public static int FindGround(int i, int j)
+	/// <summary> Scans up, then down for the nearest surface tile. Breaks if near any world edge and returns false. </summary>
+	public static bool SafeFindGround(int i, ref int j)
 	{
-		while (WorldGen.SolidOrSlopedTile(i, j - 1) && j > 20)
+		while (WorldGen.SolidOrSlopedTile(i, j - 1))
+		{
+			if (!WorldGen.InWorld(i, j, 5))
+			{
+				return false;
+			}
+
 			j--; //Up
+		}
 
-		while (!WorldGen.SolidOrSlopedTile(i, j) && j < Main.maxTilesY - 20)
+		while (!WorldGen.SolidOrSlopedTile(i, j))
+		{
+			if (!WorldGen.InWorld(i, j, 5))
+			{
+				return false;
+			}
+
 			j++; //Down
+		}
 
-		return j;
+		return true;
 	}
 
 	public static void CragSpike(int X, int Y, int length, int height, ushort type2, float slope, float sloperight)
@@ -83,7 +102,7 @@ public class WorldMethods
 		}
 	}
 
-	public static int AreaCount(int i, int j, int width, int height)
+	public static int AreaCount(int i, int j, int width, int height, bool countNonSolid)
 	{
 		int count = 0; 
 
@@ -92,7 +111,8 @@ public class WorldMethods
 			for (int y = j; y < j + height; ++y)
 			{
 				Tile tile = Framing.GetTileSafely(x, y);
-				if (tile.HasTile && Main.tileSolid[tile.TileType])
+
+				if (tile.HasTile && (countNonSolid || Main.tileSolid[tile.TileType]))
 					count++;
 			}
 		}
@@ -100,7 +120,7 @@ public class WorldMethods
 		return count;
 	}
 
-	public static bool AreaClear(int i, int j, int width, int height) => AreaCount(i, j, width, height) == 0;
+	public static bool AreaClear(int i, int j, int width, int height, bool countNonSolid = false) => AreaCount(i, j, width, height, countNonSolid) == 0;
 
 	/// <summary> Checks whether this tile area is completely submerged in water. </summary>
 	public static bool Submerged(int i, int j, int width, int height)
@@ -164,5 +184,39 @@ public class WorldMethods
 		int surfaceAverage = (int)Math.Abs(MathHelper.Lerp(startY, endY, .5f));
 
 		return Math.Abs(startY - endY) <= maxDeviance && Math.Abs(average - surfaceAverage) <= maxDeviance;
+	}
+
+	/// <returns> Whether gen was successful. </returns>
+	public delegate bool GenDelegate(int x, int y);
+	/// <summary> Selects a random location within <paramref name="area"/> and calls <paramref name="del"/>. </summary>
+	/// <param name="del"></param>
+	/// <param name="count"> The desired number of items to generate. </param>
+	/// <param name="generated"> The actual number of items generated. </param>
+	/// <param name="area"> The area to select a point within. Provides a valid default area. </param>
+	/// <param name="maxTries"> The unconditional maximum number of locations that can be selected. </param>
+	public static void Generate(GenDelegate del, int count, out int generated, Rectangle area = default, int maxTries = 1000)
+	{
+		int currentCount = 0;
+
+		if (area == default) //Default area
+		{
+			int top = (int)GenVars.worldSurfaceHigh;
+			int left = 20;
+
+			area = new(left, top, Main.maxTilesX - left - 20, Main.maxTilesY - top - 20);
+		}
+
+		for (int t = 0; t < maxTries; t++)
+		{
+			Vector2 random = WorldGen.genRand.NextVector2FromRectangle(area);
+
+			int x = (int)random.X;
+			int y = (int)random.Y;
+
+			if (del(x, y) && ++currentCount >= count)
+				break;
+		}
+
+		generated = currentCount;
 	}
 }

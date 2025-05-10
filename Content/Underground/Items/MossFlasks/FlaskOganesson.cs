@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Content.Underground.Moss.Oganesson;
+﻿using SpiritReforged.Content.Dusts;
+using SpiritReforged.Content.Underground.Moss.Oganesson;
 
 namespace SpiritReforged.Content.Underground.Items.MossFlasks;
 
@@ -9,5 +10,6 @@ public class FlaskOganesson : MossFlask
 
 public class FlaskOganessonProjectile : MossFlaskProjectile
 {
-	public override (ushort, ushort) Types => ((ushort)ModContent.TileType<OganessonMoss>(), (ushort)ModContent.TileType<OganessonMossGrayBrick>());
+	public override MossConversion Conversion => new((ushort)ModContent.TileType<OganessonMoss>(), (ushort)ModContent.TileType<OganessonMossGrayBrick>(), (ushort)ModContent.TileType<OganessonPlants>());
+	public override void CreateDust(int type) => base.CreateDust(ModContent.DustType<OganessonMossDust>());
 }

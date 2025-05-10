@@ -18,7 +18,7 @@ public class BiomePots : PotTile, ILootTile
 	/// <summary> Mirrors <see cref="Styles"/>. </summary>
 	public enum Style : int
 	{
-		Cavern, Gold, Ice, Desert, Jungle, Dungeon, Corruption, Crimson, Marble, Hell, Mushroom, Granite
+		Cavern, Ice, Desert, Jungle, Dungeon, Corruption, Crimson, Marble, Hell, Mushroom, Granite
 	}
 
 	public static readonly SoundStyle Break = new("SpiritReforged/Assets/SFX/Tile/PotBreak")
@@ -41,35 +41,29 @@ public class BiomePots : PotTile, ILootTile
 	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
 	{
 		var record = new TileRecord(group.name, type, group.styles);
-
-		if (group.name == "BiomePotsGold")
-			RecordHandler.Records.Add(record.AddRating(5).AddDescription(Language.GetText(TileRecord.DescKey + ".CoinPortal")));
-		else
-			RecordHandler.Records.Add(record.AddRating(2).AddDescription(Language.GetText(TileRecord.DescKey + ".Biome")));
+		RecordHandler.Records.Add(record.AddRating(2).AddDescription(Language.GetText(TileRecord.DescKey + ".Biome")));
 	}
 
 	public override Dictionary<string, int[]> TileStyles => new()
 	{
 		{ "Cavern", [0, 1, 2] },
-		{ "Gold", [3, 4, 5] },
-		{ "Ice", [6, 7, 8] },
-		{ "Desert", [9, 10, 11] },
-		{ "Jungle", [12, 13, 14] },
-		{ "Dungeon", [15, 16, 17] },
-		{ "Corruption", [18, 19, 20] },
-		{ "Crimson", [21, 22, 23] },
-		{ "Marble", [24, 25, 26] },
-		{ "Hell", [27, 28, 29] },
-		{ "Mushroom", [30, 31, 32] },
-		{ "Granite", [33, 34, 35] }
-	};
+		{ "Ice", [3, 4, 5] },
+		{ "Desert", [6, 7, 8] },
+		{ "Jungle", [9, 10, 11] },
+		{ "Dungeon", [12, 13, 14] },
+		{ "Corruption", [15, 16, 17] },
+		{ "Crimson", [18, 19, 20] },
+		{ "Marble", [21, 22, 23] },
+		{ "Hell", [24, 25, 26] },
+		{ "Mushroom", [27, 28, 29] },
+        { "Granite", [30, 31, 32] }
+    };
 
 	/// <summary> Gets the <see cref="Style"/> associated with the given frame. </summary>
 	private static Style GetStyle(int frameY) => (Style)(frameY / 36);
 	/// <summary> Gets the coin multiplier value for this pot. </summary>
 	private static float GetValue(Style style) => style switch
 	{
-		Style.Gold => 0f,
 		Style.Ice => 1.4f,
 		Style.Desert => 2.25f,
 		Style.Jungle => 2f,
@@ -81,24 +75,65 @@ public class BiomePots : PotTile, ILootTile
 		_ => 1.25f
 	};
 
-	public override void AddMapData()
+	public override void AddItemRecipes(ModItem modItem, StyleDatabase.StyleGroup group)
 	{
-		var name = Language.GetText($"MapObject.Pot");
+		int wheel = ModContent.TileType<PotteryWheel>();
+		LocalizedText dicovered = AutoloadedPotItem.Discovered;
+		var function = (modItem as AutoloadedPotItem).RecordedPot;
 
-		AddMapEntry(new Color(150, 150, 150), name);
-		AddMapEntry(Color.Gold, name);
-		AddMapEntry(new Color(90, 139, 140), name);
-		AddMapEntry(new Color(226, 122, 47), name);
-		AddMapEntry(new Color(192, 136, 70), name);
-		AddMapEntry(new Color(203, 185, 151), name);
-		AddMapEntry(new Color(148, 159, 67), name);
-		AddMapEntry(new Color(198, 87, 93), name);
-		AddMapEntry(new Color(201, 183, 149), name);
-		AddMapEntry(new Color(73, 56, 41), name);
-		AddMapEntry(new Color(172, 155, 110), name);
-		AddMapEntry(new Color(69, 66, 121), name);
+		switch (group.name)
+		{
+			case "BiomePotsCavern":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsIce":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.IceBlock, 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsJungle":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.RichMahogany, 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsDungeon":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Bone, 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsHell":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Obsidian, 2).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsCorruption":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.RottenChunk).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsSpider":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Cobweb, 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsCrimson":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Vertebrae).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsMarble":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Marble, 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsDesert":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Sandstone, 2).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsMushroom":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.GlowingMushroom).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+
+			case "BiomePotsGranite":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Granite, 3).AddTile(wheel).AddCondition(dicovered, function).Register();
+				break;
+		}
 	}
-	public override ushort GetMapOption(int i, int j) => (ushort)GetStyle(Main.tile[i, j].TileFrameY);
+
+	public override void AddMapData() => AddMapEntry(new Color(112, 60, 70), Language.GetText("MapObject.Pot"));
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
@@ -152,9 +187,6 @@ public class BiomePots : PotTile, ILootTile
 	{
 		var style = GetStyle(Main.tile[i, j].TileFrameY);
 
-		if (TileObjectData.IsTopLeft(i, j) && style is Style.Gold)
-			GlowTileHandler.AddGlowPoint(new Rectangle(i, j, 32, 32), Color.Goldenrod * .5f, 200);
-
 		if (style is Style.Mushroom)
 			Lighting.AddLight(new Vector2(i, j).ToWorldCoordinates(), Color.Blue.ToVector3());
 
@@ -194,6 +226,9 @@ public class BiomePots : PotTile, ILootTile
 				for (int h = 0; h < stack; h++)
 					Item.NewItem(source, center, ItemID.Heart);
 			}
+
+			if (Main.rand.NextBool(100))
+				Projectile.NewProjectile(source, center, Vector2.UnitY * -4f, ProjectileID.CoinPortal, 0, 0);
 			#endregion
 
 			if (spawnSlime)
@@ -206,9 +241,6 @@ public class BiomePots : PotTile, ILootTile
 				for (int c = 0; c < count; c++)
 					NPC.NewNPCDirect(source, center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f), ModContent.NPCType<StompableGnome>());
 			}
-
-			if (style is Style.Gold)
-				Projectile.NewProjectile(source, center, Vector2.UnitY * -4f, ProjectileID.CoinPortal, 0, 0);
 
 			if (Main.dedServ)
 				return;
@@ -226,17 +258,6 @@ public class BiomePots : PotTile, ILootTile
 
 				dustType = DustID.Pot;
 
-				break;
-
-			case Style.Gold:
-
-				for (int g = 1; g < 4; g++)
-				{
-					int goreType = Mod.Find<ModGore>("PotGold" + g).Type;
-					Gore.NewGore(source, center, Vector2.Zero, goreType);
-				}
-
-				dustType = DustID.Gold;
 				break;
 
 			case Style.Ice:

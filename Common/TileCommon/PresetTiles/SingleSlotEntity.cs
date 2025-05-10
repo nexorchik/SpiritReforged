@@ -15,9 +15,9 @@ public abstract class SingleSlotEntity : ModTileEntity
 	/// <returns> Whether an interaction has occured. </returns>
 	public virtual bool OnInteract(Player player)
 	{
-		bool success = CanAddItem(player.HeldItem);
+		bool success = CanAdd();
 
-		if (!item.IsAir)
+		if (!item.IsAir) //Drop the item already in the slot
 		{
 			ItemMethods.NewItemSynced(player.GetSource_TileInteraction(Position.X, Position.Y), item, Position.ToVector2() * 16, true);
 			item.TurnToAir();
@@ -27,7 +27,9 @@ public abstract class SingleSlotEntity : ModTileEntity
 
 		if (success)
 		{
-			if (CanAddItem(player.HeldItem))
+			player.GamepadEnableGrappleCooldown();
+
+			if (CanAdd()) //Add a new item to the slot of possible
 			{
 				item = ItemLoader.TransferWithLimit(player.inventory[player.selectedItem], 1);
 
@@ -35,17 +37,26 @@ public abstract class SingleSlotEntity : ModTileEntity
 					Main.mouseItem = player.inventory[player.selectedItem].Clone(); //Consume mouseItem like vanilla does
 			}
 
-			if (!item.IsAir)
-				player.PlayDroppedItemAnimation(20);
-
 			player.releaseUseItem = false;
 			player.mouseInterface = true;
+
+			if (!item.IsAir)
+			{
+				player.PlayDroppedItemAnimation(20);
+				Recipe.FindRecipes();
+			}
 
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				new SingleSlotData((short)ID, item).Send();
 		}
 
 		return success;
+
+		bool CanAdd()
+		{
+			var item = player.HeldItem;
+			return CanAddItem(item) && !item.favorited;
+		}
 	}
 
 	/// <summary> Removes <see cref="item"/> and automatically syncs it. </summary>

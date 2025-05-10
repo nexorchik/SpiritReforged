@@ -7,5 +7,6 @@ public class FlaskXenon : MossFlask
 
 public class FlaskXenonProjectile : MossFlaskProjectile
 {
-	public override (ushort, ushort) Types => (TileID.XenonMoss, TileID.XenonMossBrick);
+	public override MossConversion Conversion => new(TileID.XenonMoss, TileID.XenonMossBrick);
+	public override void CreateDust(int type) => base.CreateDust(DustID.XenonMoss);
 }

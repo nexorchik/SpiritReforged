@@ -1419,7 +1419,7 @@ BiomePotsCavernItem: {
 	// Tooltip: ""
 }
 
-BiomePotsGoldItem: {
+OrnatePotsItem: {
 	// DisplayName: Ornate Pot
 	// Tooltip: ""
 }
@@ -1576,7 +1576,7 @@ RadonMossItem: {
 
 OganessonMossItem: {
 	// DisplayName: Oganesson Moss
-	// Tooltip: A sight to dwell upon and never forget
+	// Tooltip: "{$ItemTooltip.XenonMoss}"
 }
 
 RadonMossBrickItem: {
@@ -1609,18 +1609,9 @@ BombCannon: {
 	/* Tooltip:
 		'''
 		Uses bombs as ammo
+		Bombs fired from the cannon don't destroy tiles
 		'A groundbreaking invention'
 		''' */
-}
-
-RadonMossBobberItem: {
-	// DisplayName: Radon Moss Fishing Bobber
-	// Tooltip: "{$ItemTooltip.FishingBobberGlowingArgon}"
-}
-
-OganessonMossBobberItem: {
-	// DisplayName: Oganesson Moss Fishing Bobber
-	// Tooltip: "{$ItemTooltip.FishingBobberGlowingArgon}"
 }
 
 PotHead: {
@@ -1689,4 +1680,81 @@ BiomePotsGraniteItem: {
 CommonPotsGraniteItem: {
 	// DisplayName: Small Granite Pot
 	// Tooltip: ""
+}
+
+OganessonBobber: {
+	// DisplayName: Oganesson Bobber
+	// Tooltip: "{$ItemTooltip.FishingBobberGlowingArgon}"
+}
+
+RadonBobber: {
+	// DisplayName: Radon Bobber
+	// Tooltip: "{$ItemTooltip.FishingBobberGlowingArgon}"
+}
+
+LandscapingShears: {
+	// DisplayName: Landscaping Shears
+	// Tooltip: Increases yield when harvesting foliage
+}
+
+WoodenClub: {
+	// DisplayName: Wooden Club
+	// Tooltip: Can be charged to increase damage and knockback
+}
+
+GoldClub: {
+	// DisplayName: Golden Greathammer
+	// Tooltip: Use again during a swing to follow up with a chargeable uppercut
+}
+
+PlatinumClub: {
+	// DisplayName: Platinum Scepter
+	/* Tooltip:
+		'''
+		Does an upwards swing that knocks enemies into the air
+		Hold to follow up with a downwards slam
+		''' */
+}
+
+FrostGiantBelt: {
+	// DisplayName: Frost Giant Belt
+	/* Tooltip:
+		'''
+		50% knockback resistance while charging a club
+		Charging a club gradually increases defense
+		''' */
+}
+
+Macuahuitl: {
+	// DisplayName: Macuahuitl
+	/* Tooltip:
+		'''
+		Can be rapidly swung around the user, inflicting bleed
+		Charged strikes deal bonus damage to bleeding enemies
+		''' */
+}
+
+BassSlapper: {
+	// DisplayName: Bass Slapper
+	// Tooltip: Fully charging does multiple slams in quick succession
+}
+
+Shockhammer: {
+	// DisplayName: Shockhammer
+	// Tooltip: Fully charging releases a shockwave that travels along tiles
+}
+
+Bowlder: {
+	// DisplayName: Bowlder
+	// Tooltip: Charged strikes release a deadly bowlder
+}
+
+Blasphemer: {
+	// DisplayName: Blasphemer
+	// Tooltip: Charged strikes erupt into a fiery geyser
+}
+
+Hummus: {
+	// DisplayName: Hummus
+	// Tooltip: Warm and tasty!
 }

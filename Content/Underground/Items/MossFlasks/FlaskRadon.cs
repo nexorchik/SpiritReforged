@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Content.Underground.Moss.Radon;
+﻿using SpiritReforged.Content.Dusts;
+using SpiritReforged.Content.Underground.Moss.Radon;
 
 namespace SpiritReforged.Content.Underground.Items.MossFlasks;
 
@@ -9,5 +10,6 @@ public class FlaskRadon : MossFlask
 
 public class FlaskRadonProjectile : MossFlaskProjectile
 {
-	public override (ushort, ushort) Types => ((ushort)ModContent.TileType<RadonMoss>(), (ushort)ModContent.TileType<RadonMossGrayBrick>());
+	public override MossConversion Conversion => new((ushort)ModContent.TileType<RadonMoss>(), (ushort)ModContent.TileType<RadonMossGrayBrick>(), (ushort)ModContent.TileType<RadonPlants>());
+	public override void CreateDust(int type) => base.CreateDust(ModContent.DustType<RadonMossDust>());
 }

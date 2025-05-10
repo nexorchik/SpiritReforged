@@ -1,14 +1,15 @@
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
 
 namespace SpiritReforged.Content.Underground.Moss.Oganesson;
 
-[AutoloadGlowmask("255,255,255")]
 public class OganessonMossItem : ModItem
 {
 	public override void SetStaticDefaults()
 	{
-		ItemID.Sets.DisableAutomaticPlaceableDrop[Type] = true;
 		Item.ResearchUnlockCount = 25;
+
+		ItemID.Sets.DisableAutomaticPlaceableDrop[Type] = true;
 		ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.RainbowMoss;
 	}
 
@@ -35,6 +36,12 @@ public class OganessonMossItem : ModItem
 	}
 
 	public override void Update(ref float gravity, ref float maxFallSpeed) => Lighting.AddLight(Item.position, .252f, .252f, .252f);
+
+	public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+	{
+		Item.DrawInWorld(Color.White, rotation, scale);
+		return false;
+	}
 
 	public override bool? UseItem(Player player)
 	{

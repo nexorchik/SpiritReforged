@@ -1,5 +1,6 @@
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Content.Vanilla.Food;
 using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -29,6 +30,8 @@ public class Wheezer : ModNPC
 
 	private bool OnTransitionFrame => NPC.frameCounter == LastFrame - 1;
 	private int LastFrame => endFrames[(int)Animation % endFrames.Length];
+	/// <summary> Whether the animation should be reversed. </summary>
+	private bool Reverse => (State)Animation is State.Walk && _cooldown > 0;
 
 	/// <summary> Determines the colouration of this NPC. </summary>
 	private byte _style;
@@ -38,6 +41,20 @@ public class Wheezer : ModNPC
 	private bool _explosiveDeath;
 	/// <summary> Tracks for how long this NPC has stayed in the same spot. </summary>
 	private int _idleTimer;
+	private bool _resetIdle = true;
+
+	public static readonly SoundStyle WheezerHit = new("SpiritReforged/Assets/SFX/NPCHit/WheezerHit")
+	{
+		Volume = .2f,
+		PitchVariance = .4f,
+		SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
+	};
+
+	public static readonly SoundStyle WheezerAmbient = new("SpiritReforged/Assets/SFX/Ambient/WheezerIdle")
+	{
+		Volume = .45f,
+		SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
+	};
 
 	public override void SetStaticDefaults()
 	{
@@ -46,28 +63,33 @@ public class Wheezer : ModNPC
 	}
 
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Caverns");
-
 	public override void SetDefaults()
 	{
 		NPC.Size = new(30, 36);
-		NPC.damage = 18;
-		NPC.defense = 9;
-		NPC.lifeMax = 50;
+		NPC.damage = 25;
+		NPC.defense = 8;
+		NPC.lifeMax = 80;
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath53;
-		NPC.value = 120;
-		NPC.knockBackResist = .35f;
+		NPC.value = 150;
+		NPC.knockBackResist = .25f;
 		NPC.aiStyle = -1;
 	}
 
 	public override void OnSpawn(IEntitySource source)
 	{
-		_style = (byte)(Main.rand.NextBool(10) ? 0 : Main.rand.Next(1, 4));
+		_style = (byte)(Main.rand.NextBool(10) ? 3 : Main.rand.Next(0, 3));
 		NPC.netUpdate = true;
 	}
 
 	public override void AI()
 	{
+		if (!Main.dedServ)
+		{
+			if (Main.rand.NextBool(700))
+				SoundEngine.PlaySound(WheezerAmbient, NPC.Center);
+		}
+
 		if (_explosiveDeath)
 		{
 			ExplodeOnDeath();
@@ -84,6 +106,11 @@ public class Wheezer : ModNPC
 		NPC.spriteDirection = NPC.direction;
 		LocalCounter = ++LocalCounter;
 		_cooldown = Math.Max(_cooldown - 1, 0);
+
+		if (_resetIdle)
+			_idleTimer = 0;
+
+		_resetIdle = true;
 	}
 
 	private void ExplodeOnDeath()
@@ -103,7 +130,7 @@ public class Wheezer : ModNPC
 				{
 					var velocity = Vector2.UnitX.RotatedBy(MathHelper.TwoPi / images * i);
 
-					PreNewProjectile.New(Entity.GetSource_FromAI(), NPC.Center + velocity * 2, velocity * 5f, type, preSpawnAction: delegate (Projectile p)
+					PreNewProjectile.New(Entity.GetSource_FromAI(), NPC.Center + velocity * 2, velocity * 5f, type, 10, 1, preSpawnAction: delegate (Projectile p)
 					{ p.scale *= 1.5f; });
 				}
 
@@ -127,18 +154,23 @@ public class Wheezer : ModNPC
 
 	private void WalkingBehaviour(bool canHit)
 	{
-		const int attackDistance = 90;
+		const int attackDistance = 100;
+		const int backOffDistance = 200;
+
 		var target = Main.player[NPC.target];
 
 		if (target.DistanceSQ(NPC.Center) < attackDistance * attackDistance && canHit && _cooldown == 0)
 			ChangeState(State.Wheeze);
 
-		if ((State)Animation is State.Wheeze)
+		if ((State)Animation is State.Wheeze) //Attack
 		{
 			NPC.velocity.X *= .9f;
 
 			if ((int)NPC.frameCounter == 6)
+			{
+				SoundEngine.PlaySound(SoundID.Item34 with { PitchRange = (-.35f, .35f), Volume = .5f, SoundLimitBehavior = SoundLimitBehavior.IgnoreNew }, NPC.Center);
 				SoundEngine.PlaySound(SoundID.NPCHit36 with { PitchRange = (-.2f, .2f), SoundLimitBehavior = SoundLimitBehavior.IgnoreNew }, NPC.Center);
+			} 
 
 			if (Main.netMode != NetmodeID.MultiplayerClient && NPC.frameCounter > 5f && LocalCounter % 6 == 0)
 			{
@@ -156,32 +188,39 @@ public class Wheezer : ModNPC
 		}
 		else
 		{
-			if (target.Center.Y < NPC.Center.Y - 16 * 4)
-			{
-				NPC.velocity.X *= .92f;
-				_idleTimer++;
+			ChangeState(State.Walk);
 
+			if (_cooldown == 0)
+			{
 				if (Math.Abs(NPC.velocity.X) < .5f)
 				{
 					ChangeState(State.Idle);
 					NPC.frameCounter = 0;
 				}
 
-				return;
+				int targetX = (Math.Abs(NPC.Center.X - target.Center.X) < 16) ? 0 : NPC.direction;
+				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, targetX, .1f);
 			}
 			else
-				NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction, .1f);
+			{
+				if (NPC.DistanceSQ(target.Center) < backOffDistance * backOffDistance)
+				{
+					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * -.5f, .1f); //Back off when on cooldown
+				}
+				else
+				{
+					NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, 0, .1f); //Stop when far enough away
+					ChangeState(State.Idle);
+				}
+			}
 
-			ChangeState(State.Walk);
 			Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
 
 			if ((NPC.collideX || FoundGap()) && NPC.velocity.Y == 0)
 				NPC.velocity.Y = -5f; //Jump
 
 			if (NPC.collideX)
-				_idleTimer++;
-			else
-				_idleTimer = 0;
+				MakeIdle();
 		}
 
 		bool FoundGap()
@@ -193,8 +232,11 @@ public class Wheezer : ModNPC
 
 	private bool TrySleeping(bool canHit)
 	{
-		const int idleDistance = 300;
+		const int idleDistance = 500;
 		var target = Main.player[NPC.target];
+
+		if (target.DistanceSQ(NPC.Center) > idleDistance * idleDistance && !canHit)
+			MakeIdle();
 
 		if ((State)Animation is State.Hiccup)
 		{
@@ -206,7 +248,7 @@ public class Wheezer : ModNPC
 		}
 		else
 		{
-			if ((target.DistanceSQ(NPC.Center) > idleDistance * idleDistance || _idleTimer > 120) && !canHit)
+			if (_idleTimer > 180 && !canHit)
 				ChangeState(State.Sleep);
 			else if ((State)Animation is State.Sleep)
 				ChangeState(State.Wake);
@@ -226,6 +268,18 @@ public class Wheezer : ModNPC
 		return (State)Animation is State.Sleep or State.Hiccup or State.Wake;
 	}
 
+	private void MakeIdle(bool reset = false)
+	{
+		if (reset)
+		{
+			_idleTimer = 0;
+			return;
+		}
+
+		_resetIdle = false;
+		_idleTimer++;
+	}
+
 	private void ChangeState(State to)
 	{
 		if ((State)Animation == to)
@@ -241,10 +295,12 @@ public class Wheezer : ModNPC
 			return;
 
 		for (int k = 0; k < 11; k++)
-			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hit.HitDirection, -1f, 0, default, .61f);
+			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hit.HitDirection, -1f, 0, default, Main.rand.NextFloat(.55f, .95f));
 
 		if (NPC.life <= 0 && !Main.expertMode)
 			SpawnGores();
+
+		SoundEngine.PlaySound(WheezerHit, NPC.Center);
 	}
 
 	private void SpawnGores()
@@ -252,9 +308,9 @@ public class Wheezer : ModNPC
 		string name = _style switch
 		{
 			1 => "Purple",
-			2 => "Red",
-			3 => "Teal",
-			_ => "Albino"
+			2 => "Teal",
+			3 => "Albino",
+			_ => "Red"
 		};
 
 		for (int i = 1; i < 5; i++)
@@ -290,10 +346,13 @@ public class Wheezer : ModNPC
 		NPC.frame.Width = 80;
 		NPC.frame.X = NPC.frame.Width * (int)Animation + NPC.frame.Width * endFrames.Length * _style;
 
-		NPC.frameCounter += 0.15f;
-		NPC.frameCounter = canLoop ? NPC.frameCounter % LastFrame : Math.Min(NPC.frameCounter, LastFrame - 1);
-		int frame = (int)NPC.frameCounter;
+		NPC.frameCounter += Reverse ? -0.15f : 0.15f;
+		if (NPC.frameCounter < 0)
+			NPC.frameCounter = LastFrame - 1;
 
+		NPC.frameCounter = canLoop ? NPC.frameCounter % LastFrame : Math.Min(NPC.frameCounter, LastFrame - 1);
+
+		int frame = (int)NPC.frameCounter;
 		NPC.frame.Y = frame * frameHeight;
 
 		if (canLoop && NPC.velocity.Y != 0) //Jump
@@ -305,6 +364,7 @@ public class Wheezer : ModNPC
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
+		npcLoot.AddCommon(ModContent.ItemType<Hummus>(), 30);
 		npcLoot.Add(ItemDropRule.Common(ItemID.PotatoChips, 35));
 		npcLoot.Add(ItemDropRule.Common(ItemID.DepthMeter, 80));
 		npcLoot.Add(ItemDropRule.Common(ItemID.Compass, 80));
@@ -334,11 +394,11 @@ public class Wheezer : ModNPC
 	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 	{
 		var texture = TextureAssets.Npc[Type].Value;
-		var origin = new Vector2(NPC.frame.Width / 2, NPC.frame.Height - NPC.height / 2 - 4);
+		var origin = new Vector2(NPC.frame.Width / 2 + 8 * -NPC.spriteDirection, NPC.frame.Height - NPC.height / 2 - 4);
 		var effects = (NPC.spriteDirection == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 		var pos = NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY);
 
-		Main.EntitySpriteDraw(texture, pos, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, effects);
+		Main.EntitySpriteDraw(texture, pos, NPC.frame, NPC.DrawColor(drawColor), NPC.rotation, origin, NPC.scale, effects);
 		return false;
 	}
 }

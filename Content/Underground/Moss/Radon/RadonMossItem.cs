@@ -1,15 +1,14 @@
-using SpiritReforged.Common.Visuals.Glowmasks;
-using Terraria.GameContent.UI;
+using SpiritReforged.Common.ItemCommon;
 
 namespace SpiritReforged.Content.Underground.Moss.Radon;
 
-[AutoloadGlowmask("255,255,255")]
 public class RadonMossItem : ModItem
 {
 	public override void SetStaticDefaults()
 	{
-		ItemID.Sets.DisableAutomaticPlaceableDrop[Type] = true;
 		Item.ResearchUnlockCount = 25;
+
+		ItemID.Sets.DisableAutomaticPlaceableDrop[Type] = true;
 		ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.RainbowMoss;
 	}
 
@@ -36,6 +35,12 @@ public class RadonMossItem : ModItem
 	}
 
 	public override void Update(ref float gravity, ref float maxFallSpeed) => Lighting.AddLight(Item.position, .252f, .228f, .03f);
+
+	public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+	{
+		Item.DrawInWorld(Color.White, rotation, scale);
+		return false;
+	}
 
 	public override bool? UseItem(Player player)
 	{

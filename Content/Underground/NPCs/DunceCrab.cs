@@ -1,9 +1,13 @@
+using SpiritReforged.Common.MathHelpers;
+using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Content.Vanilla.Food;
 using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
+using Terraria.ID;
 
 namespace SpiritReforged.Content.Underground.NPCs;
 
@@ -38,12 +42,28 @@ public class DunceCrab : ModNPC
 
 	public static readonly SoundStyle ShellHide = new("SpiritReforged/Assets/SFX/Ambient/Jar")
 	{
-		PitchVariance = .25f,
+		Volume = .65f,
+		PitchVariance = .3f,
+		SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
+	};
+
+	public static readonly SoundStyle ShellHit = new("SpiritReforged/Assets/SFX/NPCHit/HardNaturalHit")
+	{
+		Volume = 1.1f,
+		PitchVariance = .5f,
+		SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
+	};
+
+	public static readonly SoundStyle CrunchHit = new("SpiritReforged/Assets/SFX/NPCHit/CrunchHit")
+	{
+		Volume = .45f,
+		PitchVariance = .3f,
 		SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
 	};
 
 	/// <summary> Determines the colouration of this crab. </summary>
 	private byte _style;
+	private bool _justTurned;
 
 	public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 7;
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Caverns");
@@ -52,15 +72,16 @@ public class DunceCrab : ModNPC
 	{
 		NPC.aiStyle = -1;
 		NPC.noGravity = !NPC.IsABestiaryIconDummy; //Ensures the bestiary portrait is visually grounded
-		NPC.Size = new Vector2(16); //Hitbox size directly affects tile collision accuracy
-		NPC.damage = 20;
-		NPC.lifeMax = 50;
-		NPC.defense = 8;
-		NPC.direction = 1;
+		NPC.Size = new Vector2(24);
+		NPC.damage = 30;
+		NPC.lifeMax = 60;
+		NPC.defense = 12;
 		NPC.DeathSound = SoundID.NPCDeath16;
 		NPC.HitSound = SoundID.NPCHit33;
 		NPC.value = Item.buyPrice(silver: 1, copper: 50);
 		NPC.knockBackResist = .5f;
+		NPC.noTileCollide = true; //Do our own tile collision
+		NPC.behindTiles = true;
 	}
 
 	public override void OnSpawn(IEntitySource source)
@@ -73,22 +94,19 @@ public class DunceCrab : ModNPC
 	{
 		NPC.TargetClosest(false);
 
+		if (NPC.direction == 0)
+			NPC.direction = (Main.player[NPC.target].Center.X < NPC.Center.X) ? -1 : 1; //Face the player initially
+
 		NPC.spriteDirection = NPC.direction;
 		NPC.noGravity = false;
-		NPC.behindTiles = false;
-		NPC.height = 16;
+		NPC.height = 24;
 
 		if ((State)Animation is State.Fall or State.Flail)
 		{
 			NPC.noGravity = true;
-			NPC.behindTiles = true;
 			NPC.height = 48; //Extend the hitbox for more convincing falling collision
 
 			FallAndEmbed();
-		}
-		else if (NPC.wet)
-		{
-			CrawlInWater();
 		}
 		else if (Colliding())
 		{
@@ -100,6 +118,9 @@ public class DunceCrab : ModNPC
 			NPC.frameCounter = 0;
 		}
 
+		TileCollision();
+		_justTurned = false;
+
 		bool Colliding()
 		{
 			const int fluff = 2;
@@ -107,14 +128,42 @@ public class DunceCrab : ModNPC
 		}
 	}
 
-	private void CrawlInWater()
+	private void TileCollision()
 	{
-		TryTurnAround();
+		NPC.oldVelocity = NPC.velocity;
+		NPC.collideX = false;
+		NPC.collideY = false;
 
-		NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * 1.5f, .09f);
+		NPC.velocity = CollisionCheckHelper.NoSlopeCollision(NPC.position, NPC.velocity, NPC.width, NPC.height);
 
-		Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
-		NPC.rotation = Utils.AngleLerp(NPC.rotation, Math.Min(NPC.velocity.X, 3f) * .07f, .15f);
+		if (Collision.LavaCollision(NPC.position, NPC.width, NPC.height)) //Take lava damage
+		{
+			if (Main.remixWorld)
+			{
+				NPC.AddBuff(BuffID.OnFire, 180);
+			}
+			else
+			{
+				NPC.AddBuff(BuffID.OnFire, 420);
+
+				var hit = new NPC.HitInfo() { Damage = 50 };
+				NPC.StrikeNPC(hit, noPlayerInteraction: true);
+
+				if (Main.dedServ)
+					NetMessage.SendStrikeNPC(NPC, in hit);
+			}
+
+			NPC.lavaWet = true;
+		}
+
+		if (NPC.oldVelocity.X != NPC.velocity.X)
+			NPC.collideX = true;
+
+		if (NPC.oldVelocity.Y != NPC.velocity.Y)
+			NPC.collideY = true;
+
+		NPC.oldPosition = NPC.position;
+		NPC.oldDirection = NPC.direction;
 	}
 
 	private void FallAndEmbed()
@@ -150,7 +199,7 @@ public class DunceCrab : ModNPC
 		var target = Main.player[NPC.target];
 		int distanceX = (int)Math.Abs(NPC.Center.X - target.Center.X);
 
-		if ((Side)Surface is Side.Down && target.Center.Y > NPC.Center.Y && distanceX < 16 * 8)
+		if ((Side)Surface is Side.Down && target.Center.Y > NPC.Center.Y && distanceX < 16 * 8 && Collision.CanHit(NPC, target))
 		{
 			ChangeState(State.Hide);
 			NPC.rotation = MathHelper.Pi;
@@ -181,7 +230,7 @@ public class DunceCrab : ModNPC
 
 		ChangeState(State.Crawl, false);
 
-		if (!NPC.collideX && !NPC.collideY && !IntersectsSlope()) //If not colliding with anything (after crawling over an edge, for example), make a turn
+		if (!NPC.collideX && !NPC.collideY) //If not colliding with anything (after crawling over an edge, for example), make a turn
 			ResolveSide();
 
 		if (Colliding(true)) //If colliding on the side, make a reverse turn
@@ -190,13 +239,20 @@ public class DunceCrab : ModNPC
 		TryTurnAround();
 
 		float gravity = 2;
-		NPC.rotation = Utils.AngleLerp(NPC.rotation, MathHelper.WrapAngle(Angle), .13f);
-		NPC.velocity = new Vector2(NPC.direction, gravity).RotatedBy(Angle);
+		float speed = (Side)Surface is Side.Up ? 1.5f : 1f;
+
+		NPC.rotation = Utils.AngleLerp(NPC.rotation, MathHelper.WrapAngle(Angle), 0.12f);
+		NPC.velocity = new Vector2(NPC.direction * speed, gravity).RotatedBy(Angle);
 
 		void ResolveSide(bool reverse = false)
 		{
-			int rev = reverse ? -1 : 1;
-			Surface = (int)(Side)((Surface + 1 * NPC.direction * rev) % 4);
+			if (!_justTurned)
+			{
+				int rev = reverse ? -1 : 1;
+				Surface = (int)(Side)((Surface + 1 * NPC.direction * rev) % 4);
+
+				_justTurned = true;
+			}
 		}
 
 		bool Colliding(bool x)
@@ -210,6 +266,12 @@ public class DunceCrab : ModNPC
 
 	private void TryTurnAround(int time = 10)
 	{
+		var target = Main.player[NPC.target];
+
+		//Move away from the target when nearby and grounded
+		if ((Side)Surface is Side.Up && NPC.Distance(target.Center) < 150)
+			NPC.direction = (target.Center.X < NPC.Center.X) ? 1 : -1;
+
 		if (NPC.velocity.Length() < .05f) //Turn around
 		{
 			if (++NPC.localAI[0] > time)
@@ -222,27 +284,6 @@ public class DunceCrab : ModNPC
 		{
 			NPC.localAI[0] = 0;
 		}
-	}
-
-	private bool IntersectsSlope() //Slopes are a problem.
-	{
-		var area = NPC.getRect();
-
-		for (int i = 0; i < 4; i++)
-		{
-			Vector2 pos = i switch
-			{
-				1 => area.TopRight(),
-				2 => area.BottomRight(),
-				3 => area.BottomLeft(),
-				_ => area.TopLeft()
-			};
-
-			if (Framing.GetTileSafely(pos).Slope != SlopeType.Solid)
-				return true;
-		}
-
-		return false;
 	}
 
 	private void ChangeState(State to, bool resetCounter = true)
@@ -269,7 +310,7 @@ public class DunceCrab : ModNPC
 		if (Main.dedServ)
 			return;
 
-		int blood = 4;
+		int blood = 7;
 		if (NPC.life <= 0)
 		{
 			blood = 15;
@@ -283,6 +324,8 @@ public class DunceCrab : ModNPC
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GreenBlood);
 
 		SoundEngine.PlaySound(SoundID.NPCHit1 with { Pitch = .2f }, NPC.Center);
+		SoundEngine.PlaySound(ShellHit, NPC.Center);
+		SoundEngine.PlaySound(CrunchHit, NPC.Center);
 	}
 
 	public override void FindFrame(int frameHeight)
@@ -302,7 +345,7 @@ public class DunceCrab : ModNPC
 	public override bool ModifyCollisionData(Rectangle victimHitbox, ref int immunityCooldownSlot, ref MultipliableFloat damageMultiplier, ref Rectangle npcHitbox)
 	{
 		if ((State)Animation is State.Fall)
-			damageMultiplier *= 5f; //Deal 5x damage when falling
+			damageMultiplier *= 4f; //Deal 4x damage when falling
 
 		return true;
 	}
@@ -328,25 +371,33 @@ public class DunceCrab : ModNPC
 		int y = spawnInfo.SpawnTileY;
 
 		if (y > Main.worldSurface && spawnInfo.Player.ZonePurity && !spawnInfo.Water && NPC.IsValidSpawningGroundTile(x, y))
-			return .09f;
+			return Main.hardMode ? .06f : .12f;
 
 		return 0;
 	}
 
+	/// <summary> <inheritdoc cref="ModNPC.SpawnNPC"/><para/>
+	/// Attempts to spawn this NPC on a ceiling. </summary>
 	public override int SpawnNPC(int tileX, int tileY)
 	{
-		int y = tileY;
-		while (WorldGen.InWorld(tileX, y, 20) && !WorldGen.SolidOrSlopedTile(tileX, y - 1)) //Attempt to spawn on a ceiling
-			y--;
+		int surface = (int)Side.Up;
+		Point spawn = new(tileX * 16, tileY * 16);
 
-		if (!WorldGen.PlayerLOS(tileX, y))
-			tileY = y;
+		while (WorldGen.InWorld(tileX, tileY, 20) && !WorldGen.SolidTile(tileX, tileY - 2))
+			tileY--;
 
-		return NPC.NewNPC(new EntitySource_SpawnNPC(), tileX * 16, tileY * 16, Type);
+		if (!WorldGen.PlayerLOS(tileX, tileY))
+		{
+			spawn.Y = tileY * 16 - 8;
+			surface = (int)Side.Down;
+		}
+
+		return NPC.NewNPC(new EntitySource_SpawnNPC(), spawn.X, spawn.Y, Type, ai1: surface);
 	}
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
+		npcLoot.AddCommon(ModContent.ItemType<Hummus>(), 30);
 		npcLoot.AddCommon(ItemID.PotatoChips, 30);
 		npcLoot.AddCommon(ItemID.DepthMeter, 28);
 		npcLoot.AddCommon(ItemID.Compass, 32);
@@ -362,9 +413,7 @@ public class DunceCrab : ModNPC
 		var origin = new Vector2(NPC.frame.Width / 2, NPC.frame.Height - NPC.height / 2 - 4);
 		var effects = (NPC.spriteDirection == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-		Main.EntitySpriteDraw(texture, NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY),
-			NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, effects);
-
+		Main.EntitySpriteDraw(texture, NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY), NPC.frame, NPC.DrawColor(drawColor), NPC.rotation, origin, NPC.scale, effects);
 		return false;
 	}
 }

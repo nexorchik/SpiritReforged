@@ -12,6 +12,7 @@ public abstract class MossFlask : ModItem
 	public override void SetDefaults()
 	{
 		Item.CloneDefaults(ItemID.HolyWater);
+		Item.damage = 10;
 		Item.rare = ItemRarityID.Blue;
 		Item.value = Item.sellPrice(0, 0, 1, 0);
 
@@ -22,8 +23,16 @@ public abstract class MossFlask : ModItem
 
 public abstract class MossFlaskProjectile : ModProjectile
 {
+	public readonly record struct MossConversion(ushort Stone, ushort Brick, ushort Plant = TileID.LongMoss)
+	{
+		public readonly ushort Stone = Stone;
+		public readonly ushort Brick = Brick;
+		public readonly ushort Plant = Plant;
+	}
+
 	private static ushort[] StoneTypes;
 	private static ushort[] BrickTypes;
+	private static ushort[] PlantTypes;
 
 	private int _itemType = -1;
 	public int ItemType
@@ -37,8 +46,7 @@ public abstract class MossFlaskProjectile : ModProjectile
 		}
 	}
 
-	/// <summary> The stone and brick types to place, respectively. </summary>
-	public abstract (ushort, ushort) Types { get; }
+	public abstract MossConversion Conversion { get; }
 
 	public override string Texture => base.Texture.Replace("Projectile", string.Empty);
 	public override LocalizedText DisplayName => ItemLoader.GetItem(ItemType).DisplayName;
@@ -49,22 +57,31 @@ public abstract class MossFlaskProjectile : ModProjectile
 		{
 			List<ushort> stone = [];
 			List<ushort> brick = [];
+			List<ushort> plant = [];
 
 			stone.Add(TileID.Stone);
 			brick.Add(TileID.GrayBrick);
+			plant.Add(TileID.LongMoss);
 
 			foreach (var flask in Mod.GetContent<MossFlaskProjectile>())
 			{
-				stone.Add(flask.Types.Item1);
-				brick.Add(flask.Types.Item2);
+				stone.Add(flask.Conversion.Stone);
+				brick.Add(flask.Conversion.Brick);
+
+				ushort plantValue = flask.Conversion.Plant;
+
+				if (plantValue != 0)
+					plant.Add(plantValue);
 			} //Gather a list based on registered Types
 
 			StoneTypes = [.. stone];
 			BrickTypes = [.. brick];
+			PlantTypes = [.. plant];
 		}
 	}
 
 	public override void SetDefaults() => Projectile.CloneDefaults(ProjectileID.HolyWater);
+	public override bool? CanCutTiles() => false;
 
 	public override void OnKill(int timeLeft)
 	{
@@ -75,16 +92,24 @@ public abstract class MossFlaskProjectile : ModProjectile
 			var pt = Projectile.Center.ToTileCoordinates();
 			ShapeData data = new();
 
-			WorldUtils.Gen(pt, new Shapes.Circle(area), Actions.Chain(new Modifiers.OnlyTiles(StoneTypes), new Modifiers.IsTouchingAir(true), new ReplaceType(Types.Item1).Output(data)));
-			WorldUtils.Gen(pt, new Shapes.Circle(area), Actions.Chain(new Modifiers.OnlyTiles(BrickTypes), new Modifiers.IsTouchingAir(true), new ReplaceType(Types.Item2).Output(data)));
+			WorldUtils.Gen(pt, new Shapes.Circle(area), Actions.Chain(new Modifiers.OnlyTiles(StoneTypes), new Modifiers.SkipTiles(Conversion.Stone), new SolidIsTouchingAir(true), new ReplaceType(Conversion.Stone).Output(data)));
+			WorldUtils.Gen(pt, new Shapes.Circle(area), Actions.Chain(new Modifiers.OnlyTiles(BrickTypes), new Modifiers.SkipTiles(Conversion.Brick), new SolidIsTouchingAir(true), new ReplaceType(Conversion.Brick).Output(data)));
+			WorldUtils.Gen(pt, new Shapes.Circle(area), Actions.Chain(new Modifiers.OnlyTiles(PlantTypes), new Modifiers.SkipTiles(Conversion.Plant), new ReplaceType(Conversion.Plant).Output(data)));
 
-			WorldUtils.Gen(pt, new ModShapes.All(data), Actions.Chain(new Actions.SetFrames(), new Send()));
+			WorldUtils.Gen(pt, new ModShapes.All(data), Actions.Chain(new Actions.SetFrames(true), new Send()));
 		}
 
 		SoundEngine.PlaySound(SoundID.Shatter, Projectile.Center);
+		CreateDust(DustID.KryptonMoss);
 
 		for (int i = 0; i < 10; i++)
 			Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Glass);
+	}
+
+	public virtual void CreateDust(int type)
+	{
+		for (int i = 0; i < 8; i++)
+			Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, type).fadeIn = 1.2f;
 	}
 
 	public override bool PreDraw(ref Color lightColor)

@@ -42,12 +42,20 @@ public class Starflower : ModTile, ISwayTile
 		TileObjectData.addTile(Type);
 
 		DustType = DustID.Grass;
-		AddMapEntry(new Color(20, 190, 130));
+
+		LocalizedText name = CreateMapEntryName();
+		AddMapEntry(new Color(20, 190, 130), name);
+		AddMapEntry(new Color(255, 210, 90), name);
 		RegisterItemDrop(ItemID.Sunflower);
 	}
 
-	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
+	public override ushort GetMapOption(int i, int j)
+	{
+		var t = Main.tile[i, j];
+		return (ushort)((t.TileFrameY < 36) ? 1 : 0);
+	}
 
+	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
 		if (!closer)
@@ -55,7 +63,6 @@ public class Starflower : ModTile, ISwayTile
 	}
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (.3f, .28f, .1f);
-
 	public void DrawSway(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		if (!TileExtensions.GetVisualInfo(i, j, out var color, out var texture))

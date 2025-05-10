@@ -25,13 +25,13 @@ public class OceanGlobalTile : GlobalTile
 			if (above.LiquidAmount == 255) //water stuff
 			{
 				if (Main.rand.NextBool(35)) //Ocean kelp
-					Placer.PlaceTile<OceanKelp>(i, j - 1);
+					Placer.PlaceTile<OceanKelp>(i, j - 1).Send();
 				else if (Main.rand.NextBool(60)) //1x2 kelp
-					Placer.PlaceTile<OceanDecor1x2>(i, j - 1);
+					Placer.PlaceTile<OceanDecor1x2>(i, j - 1).Send();
 				else if (Main.rand.NextBool(80)) //2x2 kelp
-					Placer.PlaceTile<OceanDecor2x2>(i, j - 1);
+					Placer.PlaceTile<OceanDecor2x2>(i, j - 1).Send();
 				else if (Main.rand.NextBool(90)) //2x3 kelp
-					Placer.PlaceTile<OceanDecor2x3>(i, j - 1);
+					Placer.PlaceTile<OceanDecor2x3>(i, j - 1).Send();
 			}
 			else if (Main.rand.NextBool(6))
 				SpawnSeagrass(i, j, 5);
@@ -57,7 +57,7 @@ public class OceanGlobalTile : GlobalTile
 		} //Checks whether grass is in range (left or right) of the tile at these coordinates
 
 		if (GrassInRange())
-			Placer.PlaceTile<Seagrass>(i, j - 1);
+			Placer.PlaceTile<Seagrass>(i, j - 1).Send();
 	}
 
 	private static void SpawnMussels(int i, int j)
@@ -72,7 +72,7 @@ public class OceanGlobalTile : GlobalTile
 		var current = Framing.GetTileSafely(coords);
 		if (!current.HasTile && current.LiquidAmount > 155 && current.LiquidType == LiquidID.Water && WorldGen.CountNearBlocksTypes(i, j, limitRadius, spawnLimit, type) < spawnLimit)
 		{
-			Placer.PlaceTile<Mussel>(coords.X, coords.Y, Main.rand.Next(Mussel.StyleRange));
+			Placer.PlaceTile<Mussel>(coords.X, coords.Y, Main.rand.Next(Mussel.StyleRange)).Send();
 			return;
 		}
 	}

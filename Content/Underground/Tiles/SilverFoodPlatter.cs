@@ -32,7 +32,9 @@ public class SilverFoodPlatter : SingleSlotTile<PlatterSlot>, IAutoloadTileItem
 
 	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
 	{
-		if (!TileDrawing.IsVisible(Main.tile[i, j]) || !TileObjectData.IsTopLeft(i, j))
+		var t = Main.tile[i, j];
+
+		if (!TileDrawing.IsVisible(t) || !TileObjectData.IsTopLeft(i, j))
 			return;
 
 		if (Entity(i, j) is PlatterSlot slot && !slot.item.IsAir)
@@ -50,7 +52,9 @@ public class SilverFoodPlatter : SingleSlotTile<PlatterSlot>, IAutoloadTileItem
 			float scale = 1f;
 			ItemSlot.GetItemLight(ref currentColor, ref scale, slot.item);
 
-			var position = new Vector2(i * 16 - (int)Main.screenPosition.X + 16, j * 16 - (int)Main.screenPosition.Y + 18) + TileExtensions.TileOffset;
+			int yOffset = 18 - t.TileFrameX / 36 * 2;
+
+			var position = new Vector2(i * 16 - (int)Main.screenPosition.X + 16, j * 16 - (int)Main.screenPosition.Y + yOffset) + TileExtensions.TileOffset;
 			spriteBatch.Draw(texture, position, source, currentColor, 0f, origin, scale, default, 0);
 
 			if (slot.item.color != default)

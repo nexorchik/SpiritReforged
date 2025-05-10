@@ -18,5 +18,10 @@ public class FlaskHelium : MossFlask
 
 public class FlaskHeliumProjectile : MossFlaskProjectile
 {
-	public override (ushort, ushort) Types => (TileID.RainbowMoss, TileID.RainbowMossBrick);
+	public override MossConversion Conversion => new(TileID.RainbowMoss, TileID.RainbowMossBrick);
+	public override void CreateDust(int type)
+	{
+		for (int i = 0; i < 8; i++)
+			Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.RainbowRod, newColor: Main.DiscoColor).noGravity = true;
+	}
 }

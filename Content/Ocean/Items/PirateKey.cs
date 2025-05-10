@@ -1,10 +1,10 @@
-﻿using SpiritReforged.Common.ModCompat.Classic;
+﻿using SpiritReforged.Common.ModCompat;
 
 namespace SpiritReforged.Content.Ocean.Items;
 
 public class PirateKey : ModItem
 {
-	public override bool IsLoadingEnabled(Mod mod) => SpiritClassic.Enabled;
+	public override bool IsLoadingEnabled(Mod mod) => CrossMod.Classic.Enabled;
 	public override void SetDefaults()
 	{
 		Item.width = 14;

@@ -7,6 +7,7 @@ using SpiritReforged.Content.Ocean.Items;
 using SpiritReforged.Common.WorldGeneration;
 using Terraria.Utilities;
 using SpiritReforged.Common.ModCompat.Classic;
+using SpiritReforged.Common.ModCompat;
 
 namespace SpiritReforged.Content.Ocean;
 
@@ -135,6 +136,13 @@ public class OceanGeneration : ModSystem
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.PopulateOcean");
 
 		PlaceOceanPendant();
+
+		if (_oceanInfos.Item1 == Rectangle.Empty || _oceanInfos.Item2 == Rectangle.Empty)
+		{
+			_oceanInfos.Item1 = new Rectangle(40, (int)Main.worldSurface - 200, WorldGen.beachDistance, 200);
+			_oceanInfos.Item2 = new Rectangle(Main.maxTilesX - 40 - WorldGen.beachDistance, (int)Main.worldSurface - 200, WorldGen.beachDistance, 200);
+		}
+
 		PlaceWaterChests(_oceanInfos.Item1, _oceanInfos.Item2);
 
 		PopulateOcean(_oceanInfos.Item1, 0);
@@ -143,7 +151,7 @@ public class OceanGeneration : ModSystem
 
 	private static void PopulateOcean(Rectangle bounds, int side)
 	{
-		if (SpiritClassic.Enabled)
+		if (CrossMod.Classic.Enabled)
 			PlacePirateChest(side == 0 ? bounds.Right : bounds.Left, side);
 
 		PlaceSunkenTreasure(side == 0 ? bounds.Right : bounds.Left, side);
@@ -265,7 +273,7 @@ public class OceanGeneration : ModSystem
 	{
 		const int maxTries = 200;
 
-		if (!SpiritClassic.ClassicMod.TryFind("DuelistLegacy", out ModItem duelist) || !SpiritClassic.ClassicMod.TryFind("LadyLuck", out ModItem ladyLuck))
+		if (!CrossMod.Classic.TryFind("DuelistLegacy", out ModItem duelist) || !CrossMod.Classic.TryFind("LadyLuck", out ModItem ladyLuck))
 			return;
 
 		for (int t = 0; t < maxTries; t++)

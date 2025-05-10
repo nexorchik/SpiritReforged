@@ -14,6 +14,7 @@ public abstract class StatueTile : ModTile, IAutoloadTileItem
 		Main.tileObsidianKill[Type] = true;
 		TileID.Sets.DisableSmartCursor[Type] = true;
 		TileID.Sets.IsAMechanism[Type] = true;
+		Main.tileSpelunker[Type] = true;
 
 		DustType = DustID.Stone;
 		AdjTiles = [TileID.Statues];
@@ -58,7 +59,7 @@ public abstract class StatueTile : ModTile, IAutoloadTileItem
 				Wiring.SkipWire(x, y);
 		}
 
-		Vector2 spawn = new Vector2(i, j).ToWorldCoordinates(width / 2f * 16, height / 2f * 16);
+		Vector2 spawn = new Vector2(i, j).ToWorldCoordinates(width / 2f * 16 - 8, height * 16);
 		StatueSpawn(i, j, spawn);
 	}
 

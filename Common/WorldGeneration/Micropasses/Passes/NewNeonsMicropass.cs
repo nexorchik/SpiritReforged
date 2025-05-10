@@ -14,15 +14,14 @@ internal class NewNeonsMicropass : Micropass
 	public override void Load(Mod mod)
 	{
 		neonMossValue = typeof(WorldGen).GetField("neonMossType", BindingFlags.Static | BindingFlags.NonPublic);
-
 		On_WorldGen.randMoss += ForceNewMoss;
 	}
 
-	private void ForceNewMoss(On_WorldGen.orig_randMoss orig, bool justNeon)
+	private static void ForceNewMoss(On_WorldGen.orig_randMoss orig, bool justNeon)
 	{
 		orig(justNeon);
 
-		if (WorldGen.genRand.NextBool(1))
+		if (WorldGen.genRand.NextBool(6))
 			neonMossValue.SetValue(null, (ushort)(WorldGen.genRand.NextBool() ? ModContent.TileType<RadonMoss>() : ModContent.TileType<OganessonMoss>()));
 	}
 

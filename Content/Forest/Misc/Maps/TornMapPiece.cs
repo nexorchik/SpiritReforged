@@ -3,9 +3,6 @@ using SpiritReforged.Common.ModCompat.Classic;
 using SpiritReforged.Common.WorldGeneration.Micropasses.Passes.CaveEntrances;
 using SpiritReforged.Common.WorldGeneration.Noise;
 using Terraria.Audio;
-using Terraria.DataStructures;
-using Terraria.GameContent.Biomes;
-using Terraria.GameContent.Biomes.CaveHouse;
 using Terraria.GameContent.ItemDropRules;
 
 namespace SpiritReforged.Content.Forest.Misc.Maps;
@@ -50,7 +47,7 @@ public class TornMapPiece : ModItem
 				dust.noGravity = true;
 				dust.position = player.Center - Vector2.Normalize(vector) * 34f;
 			}
-
+			
 			var point = (player.Center / 16).ToPoint16();
 			LightMap(point.X, point.Y, Radius, out bool ping); //Only light up the user's map
 

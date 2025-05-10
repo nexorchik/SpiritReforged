@@ -7,8 +7,9 @@ using Terraria.DataStructures;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Content.Forest.Cloud.Items;
 using SpiritReforged.Common.Particle;
-using SpiritReforged.Content.Particles;
 using System.Linq;
+using static SpiritReforged.Common.TileCommon.StyleDatabase;
+using static SpiritReforged.Common.WorldGeneration.WorldMethods;
 
 namespace SpiritReforged.Content.Underground.Tiles.Potion;
 
@@ -34,15 +35,41 @@ public class PotionVats : PotTile, ICutAttempt
 		return (id == -1) ? null : (VatSlot)TileEntity.ByID[id];
 	}
 
-	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
+	public override void AddRecord(int type, StyleGroup group)
 	{
 		var desc = Language.GetText(TileRecord.DescKey + ".Potion");
 		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(4));
 	}
 
+	public override void AddItemRecipes(ModItem modItem, StyleGroup group)
+	{
+		LocalizedText dicovered = AutoloadedPotItem.Discovered;
+		var function = (modItem as AutoloadedPotItem).RecordedPot;
+
+		switch (group.name)
+		{
+			case "PotionVatsAntique":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Glass).AddRecipeGroup("GoldBars", 2)
+					.AddTile(ModContent.TileType<PotteryWheel>()).AddCondition(dicovered, function).Register();
+				break;
+
+			case "PotionVatsCloning":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Glass).AddRecipeGroup(RecipeGroupID.IronBar, 2)
+					.AddTile(ModContent.TileType<PotteryWheel>()).AddCondition(dicovered, function).Register();
+				break;
+
+			case "PotionVatsAlchemy":
+				modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.Glass).AddRecipeGroup("CopperBars", 2)
+					.AddTile(ModContent.TileType<PotteryWheel>()).AddCondition(dicovered, function).Register();
+				break;
+		}
+	}
+
 	public override void AddObjectData()
 	{
 		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
+		Main.tileSpelunker[Type] = true;
+		Main.tileOreFinderPriority[Type] = 575;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3);
 		TileObjectData.newTile.Height = 5;
@@ -84,7 +111,7 @@ public class PotionVats : PotTile, ICutAttempt
 			return;
 		}
 
-		if (effectOnly || !fail)
+		if (effectOnly || !fail || Generating)
 			return;
 
 		fail = AdjustFrame(i, j);
@@ -167,7 +194,7 @@ public class PotionVats : PotTile, ICutAttempt
 			float distance = player.DistanceSQ(origin) / (size * size);
 
 			if (distance < 1)
-				player.velocity = player.DirectionFrom(origin) * (1f - distance) * 2.5f;
+				player.velocity = player.DirectionFrom(origin) * (1f - distance) * 8f;
 		}
 	}
 
@@ -183,11 +210,22 @@ public class PotionVats : PotTile, ICutAttempt
 
 		if (Entity(i, j, true) is VatSlot slot)
 		{
-			ParticleHandler.SpawnParticle(new PulseCircle(new Vector2(i, j).ToWorldCoordinates(24, 40), slot.GetColor() * .025f, .25f, 200, 15, null, false, .1f));
+			var color = slot.GetColor();
+
+			for (int p = 0; p < 12; p++)
+			{
+				float magnitude = Main.rand.NextFloat();
+				var velocity = Main.rand.NextVector2Unit() * magnitude * 3f;
+
+				ParticleHandler.SpawnParticle(new VaporParticle(new Vector2(i, j).ToWorldCoordinates(24, 40), velocity, color.Additive(110), 1f - magnitude + 1.5f, Main.rand.Next(300, 500))
+				{
+					Rotation = Main.rand.NextFloat()
+				});
+			}
 
 			for (int d = 0; d < 50; d++)
 			{
-				var dust = Dust.NewDustDirect(new Vector2(i, j) * 16, 48, 80, DustID.FoodPiece, 0, 0, 0, slot.GetColor().Additive(120), Main.rand.NextFloat(.75f, 1.5f));
+				var dust = Dust.NewDustDirect(new Vector2(i, j) * 16, 48, 80, DustID.FoodPiece, 0, 0, 0, color.Additive(120), Main.rand.NextFloat(.75f, 1.5f));
 				dust.fadeIn = 1f;
 			}
 		}

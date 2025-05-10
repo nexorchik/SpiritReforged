@@ -64,13 +64,14 @@ internal class RecordPlayer : ModPlayer
 	/// <summary> The list of entries newly discovered by the player. Not saved. </summary>
 	private readonly HashSet<string> _newAndShiny = [];
 
-	//public void AddNew(string name) => _newAndShiny.Add(name);
 	public bool IsNew(string name) => _newAndShiny.Contains(name);
 	public bool RemoveNew(string name) => _newAndShiny.Remove(name);
 
 	public void Validate(string name)
 	{
-		_newAndShiny.Add(name);
+		if (!IsValidated(name))
+			_newAndShiny.Add(name);
+
 		_validated.Add(name);
 	}
 
@@ -84,13 +85,18 @@ internal class RecordGlobalTile : GlobalTile
 {
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
+		const int maxDistance = 800;
+
 		if (effectOnly || fail)
 			return;
 
 		if (RecordHandler.Matching(i, j, out string name))
 		{
-			var p = Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(16, 16), 0, 0)];
-			p.GetModPlayer<RecordPlayer>().Validate(name);
+			var world = new Vector2(i, j).ToWorldCoordinates();
+			var p = Main.player[Player.FindClosest(world, 16, 16)];
+
+			if (p.DistanceSQ(world) < maxDistance * maxDistance)
+				p.GetModPlayer<RecordPlayer>().Validate(name);
 		}
 	}
 }

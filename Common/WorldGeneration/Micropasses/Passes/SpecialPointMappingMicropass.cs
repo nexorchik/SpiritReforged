@@ -1,5 +1,4 @@
-﻿using SpiritReforged.Common.ModCompat;
-using SpiritReforged.Common.TileCommon;
+﻿using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.WorldGeneration.Chests;
 using SpiritReforged.Common.WorldGeneration.PointOfInterest;
 using SpiritReforged.Content.Forest.Botanist.Tiles;
@@ -10,6 +9,7 @@ using SpiritReforged.Content.Ocean.Items.Pearl;
 using SpiritReforged.Content.Savanna.Tiles;
 using Terraria.IO;
 using Terraria.WorldBuilding;
+using static SpiritReforged.Common.ModCompat.CrossMod;
 
 namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
 
@@ -27,7 +27,7 @@ internal class SpecialPointMappingMicropass : Micropass
 			return true;
 		}
 
-		if (CrossMod.Fables.Instance.TryFind("WulfrumVault", out ModTile tile))
+		if (Fables.TryFind("WulfrumVault", out ModTile tile))
 		{
 			type = WulfrumVaultType = tile.Type;
 			return true;
@@ -68,7 +68,7 @@ internal class SpecialPointMappingMicropass : Micropass
 						PointOfInterestSystem.AddPoint(new(i, j), InterestType.EnchantedSword);
                     else if (tile.TileType == ModContent.TileType<ButterflyStump>() && tile.TileFrameX == 0 && tile.TileFrameY == 0)
 						PointOfInterestSystem.AddPoint(new(i, j), InterestType.ButterflyShrine);
-					else if (CrossMod.Fables.Enabled && TryGetWulfrumVaultType(out int type) && type == tile.TileType && TileObjectData.IsTopLeft(i, j))
+					else if (Fables.Enabled && TryGetWulfrumVaultType(out int type) && type == tile.TileType && TileObjectData.IsTopLeft(i, j))
 						PointOfInterestSystem.AddPoint(new(i, j), InterestType.WulfrumBunker);
 					else
 					{
@@ -82,7 +82,7 @@ internal class SpecialPointMappingMicropass : Micropass
 			}
 		}
 
-		if (CrossMod.Thorium.Enabled && CrossMod.Thorium.Instance.Call("GetBloodChamberBounds") is Rectangle bounds)
+		if (Thorium.Enabled && ((Mod)Thorium).Call("GetBloodChamberBounds") is Rectangle bounds)
 			PointOfInterestSystem.AddPoint(bounds.Center().ToPoint16(), InterestType.BloodAltar);
 
 		PointOfInterestSystem.Instance.WorldGen_PointsOfInterestByPosition = PointOfInterestSystem.Instance.PointsOfInterestByPosition;

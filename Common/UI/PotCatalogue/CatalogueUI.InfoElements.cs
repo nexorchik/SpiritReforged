@@ -101,15 +101,46 @@ public partial class CatalogueUI : AutoUIState
 	private bool DescInfo_Action(SpriteBatch spriteBatch, Rectangle bounds)
 	{
 		//Draw star rating
-		const int count = 5;
-		int space = StarDim.Width() + 2;
+		int count = Math.Max(Selected.record.rating, (byte)5);
+		int space = StarDim.Width() + 4;
 
-		for (int i = 0; i < count; i++)
+		if (Selected.record.rating > 5) //Draw > 5 rainbow rating
 		{
-			var texture = ((i < Selected.record.rating) ? StarLight : StarDim).Value;
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, Main.UIScaleMatrix);
 
-			var position = bounds.Top() + new Vector2(space * i - space * 2, 10);
-			spriteBatch.Draw(texture, position, null, Color.White, 0, texture.Size() / 2, 1, default, 0);
+			var shader = AssetLoader.LoadedShaders["Rainbow"];
+			var texture = StarLight.Value;
+
+			for (int i = 0; i < count; i++)
+			{
+				float alpha = Main.GlobalTimeWrappedHourly * 1.5f + i * 0.1f;
+
+				shader.Parameters["map"].SetValue(texture);
+				shader.Parameters["alpha"].SetValue(alpha * 3 % 6);
+				shader.Parameters["coloralpha"].SetValue(alpha);
+				shader.Parameters["shineSpeed"].SetValue(1f);
+				shader.Parameters["shaderLerp"].SetValue(1f);
+				shader.CurrentTechnique.Passes[0].Apply();
+
+				float hover = (float)Math.Sin((Main.timeForVisualEffects + i * 30f) / 20f) / 2;
+				var position = bounds.Top() + new Vector2((int)(space * i - space * (count / 2f - .5f)), 10 + hover);
+
+				spriteBatch.Draw(texture, position, null, Color.White, 0, texture.Size() / 2, 1, default, 0);
+			}
+
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Main.UIScaleMatrix);
+		}
+		else
+		{
+			for (int i = 0; i < count; i++)
+			{
+				var texture = ((i < Selected.record.rating) ? StarLight : StarDim).Value;
+
+				var position = bounds.Top() + new Vector2((int)(space * i - space * (count / 2f - .5f)), 10);
+				spriteBatch.Draw(texture, position, null, Color.White, 0, texture.Size() / 2, 1, default, 0);
+			}
 		}
 
 		//Draw description

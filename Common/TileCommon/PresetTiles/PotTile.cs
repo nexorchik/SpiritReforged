@@ -3,6 +3,8 @@ using SpiritReforged.Content.Underground.Pottery;
 using SpiritReforged.Content.Underground.Tiles;
 using SpiritReforged.Content.Underground.WayfarerSet;
 using Terraria.DataStructures;
+using static SpiritReforged.Common.TileCommon.StyleDatabase;
+using static SpiritReforged.Common.WorldGeneration.WorldMethods;
 
 namespace SpiritReforged.Common.TileCommon.PresetTiles;
 
@@ -30,19 +32,28 @@ public abstract class PotTile : ModTile, IRecordTile, IAutoloadRubble
 		if (Name.Contains("Rubble")) //Autoloader.IsRubble is unusuable before before loading is complete
 			return;
 
-		StyleDatabase.OnPopulateStyleGroups += AutoloadFromGroup;
+		OnPopulateStyleGroups += AutoloadFromGroup;
 		Load(Mod);
 	}
 
-	public virtual void AddRecord(int type, StyleDatabase.StyleGroup group) => RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles));
+	public virtual void AddRecord(int type, StyleGroup group) => RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles));
 	public virtual void AutoloadFromGroup()
 	{
-		foreach (var c in StyleDatabase.Groups[Type])
-			Mod.AddContent(new AutoloadedPotItem(Name + "Rubble", c.name, c.styles[0], c.styles.Length));
+		foreach (var c in Groups[Type])
+			Mod.AddContent(new AutoloadedPotItem(Name + "Rubble", c, AddItemRecipes));
 	}
 
-	/// <summary> <inheritdoc cref="ModType.SetStaticDefaults"/><para/>
-	/// Automatically sets common pot data by type. See <see cref="AddObjectData"/> and <see cref="AddMapData">
+	/// <summary> Allows you to override the recipe of a pot item created in <see cref="AutoloadFromGroup"/>. </summary>
+	public virtual void AddItemRecipes(ModItem modItem, StyleGroup group)
+	{
+		LocalizedText dicovered = AutoloadedPotItem.Discovered;
+		var function = (modItem as AutoloadedPotItem).RecordedPot;
+
+		modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddTile(ModContent.TileType<PotteryWheel>()).AddCondition(dicovered, function).Register();
+	}
+
+	/// <summary> <inheritdoc cref="ModBlockType.SetStaticDefaults"/><para/>
+	/// Automatically sets common pot data by type. See <see cref="AddObjectData"/> and <see cref="AddMapData"/>
 	/// </summary>
 	public override void SetStaticDefaults()
 	{
@@ -82,7 +93,7 @@ public abstract class PotTile : ModTile, IRecordTile, IAutoloadRubble
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
-		if (Autoloader.IsRubble(Type) || WorldGen.generatingWorld)
+		if (Autoloader.IsRubble(Type) || Generating)
 			return;
 
 		if (Main.netMode != NetmodeID.MultiplayerClient && this is ILootTile loot)

@@ -49,7 +49,7 @@ internal class UndergroundHouseMicropass : ModSystem
 		{
 			int y = room.Height - 1 + room.Y;
 
-			if (!skipFlags.HasFlag(AddedHouseFlags.Sign) && WorldGen.genRand.NextBool(1) && PlaceDecorInRoom(room, room.Y + 1, TileID.Signs))
+			if (!skipFlags.HasFlag(AddedHouseFlags.Sign) && WorldGen.genRand.NextBool(5) && PlaceDecorInRoom(room, room.Y + 1, TileID.Signs))
 			{
 				hasPlaced = true;
 				skipFlags |= AddedHouseFlags.Sign;
@@ -219,19 +219,19 @@ internal class UndergroundHouseMicropass : ModSystem
 
 		if (CrossMod.Thorium.Enabled)
 		{
-			if (CrossMod.Thorium.Instance.TryFind(GenVars.iron == TileID.Iron ? "IronShield" : "LeadShield", out ModItem shield))
+			if (CrossMod.Thorium.TryFind(GenVars.iron == TileID.Iron ? "IronShield" : "LeadShield", out ModItem shield))
 				accType.Add(shield.Type, 0.1f);
 
-			if (CrossMod.Thorium.Instance.TryFind("FrostburnPouch", out ModItem frostburnPouch))
+			if (CrossMod.Thorium.TryFind("FrostburnPouch", out ModItem frostburnPouch))
 				accType.Add(frostburnPouch.Type, 0.1f);
 
-			if (CrossMod.Thorium.Instance.TryFind("LeatherSheath", out ModItem leatherSheath))
+			if (CrossMod.Thorium.TryFind("LeatherSheath", out ModItem leatherSheath))
 				accType.Add(leatherSheath.Type, 0.3f);
 
-			if (CrossMod.Thorium.Instance.TryFind("DartPouch", out ModItem dartPouch))
+			if (CrossMod.Thorium.TryFind("DartPouch", out ModItem dartPouch))
 				accType.Add(dartPouch.Type, 0.2f);
 
-			if (CrossMod.Thorium.Instance.TryFind("Wreath", out ModItem wreath))
+			if (CrossMod.Thorium.TryFind("Wreath", out ModItem wreath))
 				accType.Add(wreath.Type, 0.1f);
 		}
 
@@ -239,6 +239,21 @@ internal class UndergroundHouseMicropass : ModSystem
 		{
 			Item[] inv = [new(ModContent.ItemType<WayfarerHead>()), new(ModContent.ItemType<WayfarerBody>()), new(ModContent.ItemType<WayfarerLegs>()),
 				new(), new(), new(), new(), new()];
+
+			float chance = Main.rand.NextFloat();
+
+			if (chance < .10f)
+			{
+				inv[0] = new(ItemID.AncientGoldHelmet);
+				inv[1] = new();
+				inv[2] = new();
+			}
+			else if (chance < .15f)
+			{
+				inv[0] = new(ItemID.AncientIronHelmet);
+				inv[1] = new();
+				inv[2] = new();
+			}
 
 			if (!TileEntity.ByPosition.TryGetValue(position, out TileEntity te) || te is not TEDisplayDoll mannequin)
 			{

@@ -10,6 +10,7 @@ SavannaObjects: Наполнение саванны
 // Ecotones: Mapping ecotones
 // Caves: Decorating caves
 // NeonMosses: Glowing moss
+// Pottery: Stashing pots
 
 Signs: {
 	Underground: {

@@ -1,5 +1,4 @@
 ﻿using SpiritReforged.Common.WorldGeneration.Chests;
-using SpiritReforged.Content.Underground.Moss.Oganesson;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 
@@ -7,8 +6,6 @@ namespace SpiritReforged.Common.TileCommon;
 
 public static class TileExtensions
 {
-	private static Point16[] CardinalDirections = [new Point16(0, -1), new Point16(-1, 0), new Point16(1, 0), new Point16(0, 1)];
-
 	/// <summary> Gets common visual info related to the tile at the given coordinates, such as painted color. </summary>
 	/// <param name="i"> The X coordinate. </param>
 	/// <param name="j"> The Y coordinate.</param>
@@ -54,6 +51,17 @@ public static class TileExtensions
 		return color;
 
 		Color GetIntensity(float value) => color.MultiplyRGB(Color.Lerp(Color.White, paint, value));
+	}
+
+	public static Color GetSpelunkerTint(Color color)
+	{
+		if (color.R < 200)
+			color.R = 200;
+
+		if (color.G < 170)
+			color.G = 170;
+
+		return color;
 	}
 
 	public static Vector2 TileOffset => Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
@@ -200,34 +208,4 @@ public static class TileExtensions
 			Main.tileMerge[id][tile.Type] = true;
 		}
 	}
-
-	/// <summary>
-	/// Places a plant (or any other object) on any cardinal side of the given tile. This accounts for half bricks and slopes.
-	/// </summary>
-	/// <param name="i">X position to place on.</param>
-	/// <param name="j">Y position to place on.</param>
-	/// <param name="type">Type of tile to place.</param>
-	/// <param name="style">The style of the tile placed.</param>
-	public static void PlacePlant(int i, int j, int type, int style = 0)
-	{
-		int offsetDir = Main.rand.Next(4);
-		var coords = new Point16(i, j) + CardinalDirections[offsetDir];
-		var self = Framing.GetTileSafely(i, j);
-		var current = Framing.GetTileSafely(coords);
-
-		bool badSlope = self.Slope == SlopeType.Solid || offsetDir switch
-		{
-			0 => !self.TopSlope && !self.IsHalfBlock,
-			1 => !self.LeftSlope,
-			2 => !self.RightSlope,
-			_ => !self.BottomSlope
-		};
-
-		if (!current.HasTile && badSlope)
-			Placer.PlaceTile(coords.X, coords.Y, type, style);
-	}
-
-	/// <inheritdoc cref="PlacePlant(int, int, int, int)"/>
-	/// <typeparam name="T">The type of ModTile to place.</typeparam>
-	public static void PlacePlant<T>(int i, int j, int style = 0) where T : ModTile => PlacePlant(i, j, ModContent.TileType<T>(), style);
 }

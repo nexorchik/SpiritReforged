@@ -8,6 +8,8 @@ using SpiritReforged.Content.Particles;
 using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using static SpiritReforged.Common.TileCommon.StyleDatabase;
+using static SpiritReforged.Common.WorldGeneration.WorldMethods;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
@@ -18,15 +20,23 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 	private const int FullHeight = 36;
 	private static Color GlowColor => Main.DiscoColor;//Color.Lerp(Color.Magenta, Color.CadetBlue, (float)(Math.Sin(Main.timeForVisualEffects / 40f) / 2f) + .5f);
 
-	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
+	public override void AddRecord(int type, StyleGroup group)
 	{
 		var desc = Language.GetText("Mods.SpiritReforged.Tiles.Records.Aether");
-		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(5));
+		RecordHandler.Records.Add(new TileRecord(group.name, type, group.styles).AddDescription(desc).AddRating(6));
+	}
+
+	public override void AddItemRecipes(ModItem modItem, StyleGroup group)
+	{
+		LocalizedText dicovered = AutoloadedPotItem.Discovered;
+		var function = (modItem as AutoloadedPotItem).RecordedPot;
+
+		modItem.CreateRecipe().AddRecipeGroup("ClayAndMud", 3).AddIngredient(ItemID.StoneBlock, 5).AddIngredient(ItemID.ShimmerTorch)
+			.AddTile(ModContent.TileType<PotteryWheel>()).AddCondition(dicovered, function).Register();
 	}
 
 	public override void AddObjectData()
 	{
-		Main.tileCut[Type] = !Autoloader.IsRubble(Type);
 		Main.tileOreFinderPriority[Type] = 575;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
@@ -69,7 +79,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
-		if (effectOnly || !fail || Autoloader.IsRubble(Type))
+		if (effectOnly || !fail || Autoloader.IsRubble(Type) || Generating)
 			return;
 
 		fail = AdjustFrame(i, j);
@@ -78,7 +88,7 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 	public override void AnimateTile(ref int frame, ref int frameCounter)
 	{
-		if (++frameCounter >= 4)
+		if (++frameCounter >= 6)
 		{
 			frameCounter = 0;
 			frame = ++frame % 8;
@@ -167,7 +177,12 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 		var source = new Rectangle(tile.TileFrameX, tile.TileFrameY + Main.tileFrame[Type] * FullHeight, data.CoordinateWidth, data.CoordinateHeights[tile.TileFrameY / 18]);
 		var dataOffset = new Vector2(data.DrawXOffset, data.DrawYOffset);
 
-		spriteBatch.Draw(TextureAssets.Tile[tile.TileType].Value, drawPos + origin + dataOffset, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
+        var color = Lighting.GetColor(i, j);
+
+        if (Main.LocalPlayer.findTreasure)
+            color = TileExtensions.GetSpelunkerTint(color);
+
+        spriteBatch.Draw(TextureAssets.Tile[tile.TileType].Value, drawPos + origin + dataOffset, source, color, rotation, origin, 1, SpriteEffects.None, 0);
 
 		if (tile.TileFrameX % 36 == 18 && tile.TileFrameY % 36 == 18) //Bottom right frame
 		{

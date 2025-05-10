@@ -28,12 +28,15 @@ internal class WayfarerGlobalTile : GlobalTile
 
 	public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
+		const int maxDistance = 800;
+
 		if (effectOnly || fail)
 			return;
 
-		var player = Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(), 16, 16)];
+		var world = new Vector2(i, j).ToWorldCoordinates();
+		var player = Main.player[Player.FindClosest(world, 16, 16)];
 
-		if (player.GetModPlayer<WayfarerPlayer>().active && PotTypes.Contains(type))
+		if (ActiveAndInRange() && PotTypes.Contains(type))
 		{
 			if (!player.HasBuff<ExplorerPot>())
 				DoFX(player);
@@ -41,13 +44,15 @@ internal class WayfarerGlobalTile : GlobalTile
 			player.AddBuff(ModContent.BuffType<ExplorerPot>(), 600);
 		}
 
-		if (player.GetModPlayer<WayfarerPlayer>().active && Main.tileSpelunker[type] && Main.tileSolid[type])
+		if (ActiveAndInRange() && Main.tileSpelunker[type] && Main.tileSolid[type])
 		{
 			if (!player.HasBuff<ExplorerMine>())
 				DoFX(player);
 
 			player.AddBuff(ModContent.BuffType<ExplorerMine>(), 600);
 		}
+
+		bool ActiveAndInRange() => player.GetModPlayer<WayfarerPlayer>().active && player.DistanceSQ(world) < maxDistance * maxDistance;
 	}
 
 	private static void DoFX(Player player)

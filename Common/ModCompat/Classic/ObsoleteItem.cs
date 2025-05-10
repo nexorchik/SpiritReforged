@@ -2,22 +2,14 @@
 
 namespace SpiritReforged.Common.ModCompat.Classic;
 
-/// <summary> Indicates that Classic items contained in <see cref="SpiritClassic.ClassicToReforged"/> are shimmerable into Reforged versions. </summary>
-[Autoload(false)]
+/// <summary> Indicates that Classic items contained in <see cref="SpiritClassic.ClassicItemToReforged"/> are shimmerable into Reforged versions. </summary>
 internal class ObsoleteItem : GlobalItem
 {
 	private const string Shimmerable = "Shimmerable";
 
-	public override bool AppliesToEntity(Item entity, bool lateInstantiation) => SpiritClassic.ClassicToReforged.ContainsKey(entity.type);
+	public override bool IsLoadingEnabled(Mod mod) => CrossMod.Classic.Enabled;
 
-	/*public override void UpdateInventory(Item item, Player player)
-	{
-		item.ChangeItemType(SpiritClassic.ClassicToReforged[item.type]);
-
-		if (player.whoAmI == Main.myPlayer)
-			SoundEngine.PlaySound(SoundID.Item176);
-	}*/
-
+	public override bool AppliesToEntity(Item entity, bool lateInstantiation) => SpiritClassic.ClassicItemToReforged.ContainsKey(entity.type);
 	public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
 	{
 		string text = Language.GetTextValue("Mods.SpiritReforged.Items.CommonTooltips.Shimmerable");

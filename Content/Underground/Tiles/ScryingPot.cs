@@ -1,13 +1,14 @@
 using RubbleAutoloader;
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Particle;
-using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Forest.Misc.Maps;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Content.Underground.Pottery;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using static SpiritReforged.Common.TileCommon.StyleDatabase;
+using static SpiritReforged.Common.WorldGeneration.WorldMethods;
 
 namespace SpiritReforged.Content.Underground.Tiles;
 
@@ -15,7 +16,7 @@ public class ScryingPot : PotTile, ILootTile
 {
 	public override Dictionary<string, int[]> TileStyles => new() { { string.Empty, [0] } };
 
-	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
+	public override void AddRecord(int type, StyleGroup group)
 	{
 		var record = new TileRecord(group.name, type, group.styles);
 		RecordHandler.Records.Add(record.AddRating(3).AddDescription(Language.GetText(TileRecord.DescKey + ".Scrying")));
@@ -34,7 +35,6 @@ public class ScryingPot : PotTile, ILootTile
 		TileObjectData.newTile.RandomStyleRange = row;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.newTile.UsesCustomCanPlace = true;
-		TileObjectData.newTile.DrawXOffset = 1;
 		TileObjectData.newTile.DrawYOffset = 2;
 		TileObjectData.addTile(Type);
 
@@ -60,7 +60,7 @@ public class ScryingPot : PotTile, ILootTile
 
 	public override void KillMultiTile(int i, int j, int frameX, int frameY)
 	{
-		if (WorldGen.generatingWorld || Autoloader.IsRubble(Type))
+		if (Generating || Autoloader.IsRubble(Type))
 			return;
 
 		var spawn = new Vector2(i, j).ToWorldCoordinates(16, 16);
@@ -77,7 +77,10 @@ public class ScryingPot : PotTile, ILootTile
 
 		if (!Main.dedServ)
 		{
-			TornMapPiece.LightMap(i, j, 280, out _, .5f);
+			int pWhoAmI = Player.FindClosest(new Vector2(i, j) * 16, 32, 32);
+
+			if (Main.myPlayer == pWhoAmI)
+				TornMapPiece.LightMap(i, j, 280, out _, .5f); //Only reveal the map for the nearest player
 
 			ParticleHandler.SpawnParticle(new TexturedPulseCircle(spawn, Color.MediumPurple * .15f, .25f, 400, 20, "supPerlin", Vector2.One, Common.Easing.EaseFunction.EaseQuadOut));
 			SoundEngine.PlaySound(SoundID.NPCDeath6 with { Pitch = .5f }, spawn);
