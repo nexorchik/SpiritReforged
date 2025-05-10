@@ -5,7 +5,7 @@ using System.Linq;
 using Terraria.DataStructures;
 using Terraria.WorldBuilding;
 
-namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes.CaveEntrances;
+namespace SpiritReforged.Common.WorldGeneration.Micropasses.CaveEntrances;
 
 [Obsolete("Will not be implemented for Caves & Clubs for impl. reasons.")]
 internal class ArchwayEntrance : CaveEntrance
@@ -19,9 +19,7 @@ internal class ArchwayEntrance : CaveEntrance
 		//int floorY = WorldMethods.FindNearestBelow(x, y) + 1;
 
 		for (int i = 0; i < repeats; ++i)
-		{
 			GenerateEntireArchway(x, y, arches, repeats == 1 ? null : i == 1);
-		}
 
 		//foreach (var ar in arches)
 		//	PlaceArches(ar);
@@ -91,9 +89,7 @@ internal class ArchwayEntrance : CaveEntrance
 		var holes = new Vector2[Main.rand.Next(1, 3)];
 
 		if (forceEdges is not null)
-		{
 			top.Y -= 20;
-		}
 
 		for (int i = 0; i < holes.Length; ++i)
 			holes[i] = GetPoint(Main.rand.NextFloat(0.3f, 0.7f));
@@ -106,9 +102,7 @@ internal class ArchwayEntrance : CaveEntrance
 			factor += 0.04f;
 
 			if (factor > 1)
-			{
 				break;
-			}
 		}
 
 		Vector2 GetPoint(float factor) => Vector2.Lerp(Vector2.Lerp(start, top, factor), Vector2.Lerp(top, end, factor), factor);
@@ -168,7 +162,6 @@ internal class ArchwayEntrance : CaveEntrance
 	public static void CircleOpening(Vector2 pos, float size)
 	{
 		for (int i = (int)(pos.X - size); i < (int)pos.X + size; ++i)
-		{
 			for (int j = (int)(pos.Y - size); j < (int)pos.Y + size; ++j)
 			{
 				float distance = Vector2.Distance(pos, new Vector2(i, j));
@@ -179,12 +172,9 @@ internal class ArchwayEntrance : CaveEntrance
 					tile.HasTile = false;
 
 					if (tile.WallType > 0)
-					{
 						tile.WallType = distance > size * 0.9f ? WallID.Dirt : WallID.GrassUnsafe;
-					}
 				}
 			}
-		}
 	}
 
 	/// <summary>
@@ -208,18 +198,12 @@ internal class ArchwayEntrance : CaveEntrance
 	public static void DirtCircle(Vector2 pos, float size, bool isWall)
 	{
 		for (int i = (int)(pos.X - size); i < (int)pos.X + size; ++i)
-		{
 			for (int j = (int)(pos.Y - size); j < (int)pos.Y + size; ++j)
-			{
 				if (Vector2.DistanceSquared(pos, new Vector2(i, j)) < size * size)
-				{
 					if (isWall)
 						WorldGen.PlaceWall(i, j, WallID.DirtUnsafe, true);
 					else
 						WorldGen.PlaceTile(i, j, TileID.Dirt, true);
-				}
-			}
-		}
 	}
 
 	public override bool ModifyOpening(ref int x, ref int y, bool isCavinator)

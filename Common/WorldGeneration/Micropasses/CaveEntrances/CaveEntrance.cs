@@ -1,4 +1,4 @@
-﻿namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes.CaveEntrances;
+﻿namespace SpiritReforged.Common.WorldGeneration.Micropasses.CaveEntrances;
 
 public enum CaveEntranceType : byte
 {

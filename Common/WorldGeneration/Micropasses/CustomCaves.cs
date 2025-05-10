@@ -1,31 +1,35 @@
-﻿using SpiritReforged.Common.WorldGeneration.Micropasses.Passes.CaveEntrances;
+﻿using SpiritReforged.Common.WorldGeneration.Micropasses.CaveEntrances;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Generation;
-using Terraria.GameContent.UI.Elements;
 using Terraria.IO;
 using Terraria.WorldBuilding;
 
-namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
+namespace SpiritReforged.Common.WorldGeneration.Micropasses;
 
-internal class CustomCaveEntranceMicropass : Micropass
+/// <summary>
+/// Handles replacing mountain caves with our custom caves.
+/// </summary>
+internal class CustomCaves : ILoadable
 {
-	public override string WorldGenName => "Cave Entrances";
-
 	private static readonly Dictionary<Point16, CaveEntranceType> _caveTypeByPositions = [];
 
 	private static bool AddingMountainCaves = false;
 
-	public override void Load(Mod mod)
+	public void Load(Mod mod)
 	{
 		On_WorldGen.Mountinater += OverrideGenMound;
 		On_WorldGen.Cavinator += ModifyCavinatorForCaveType;
 		On_WorldGen.CaveOpenater += On_WorldGen_CaveOpenater;
 
 		var pass = WorldGen.VanillaGenPasses.Values.FirstOrDefault(x => x.Name == "Mountain Caves");
-		
+
 		if (pass != null)
 			WorldGen.DetourPass((PassLegacy)pass, AddFlagToMountainCavePass);
+	}
+
+	public void Unload()
+	{
 	}
 
 	private void AddFlagToMountainCavePass(WorldGen.orig_GenPassDetour orig, object self, GenerationProgress progress, GameConfiguration configuration)
@@ -65,7 +69,7 @@ internal class CustomCaveEntranceMicropass : Micropass
 
 	private void OverrideGenMound(On_WorldGen.orig_Mountinater orig, int i, int j)
 	{
-		CaveEntranceType type = CaveEntranceType.Canyon;
+		var type = (CaveEntranceType)WorldGen.genRand.Next(3);
 
 		if (type == CaveEntranceType.Vanilla)
 			orig(i, j);
@@ -73,11 +77,5 @@ internal class CustomCaveEntranceMicropass : Micropass
 			CaveEntrance.EntranceByType[type].Generate(i, j);
 
 		_caveTypeByPositions.Add(new(i, j), type);
-	}
-
-	public override int GetWorldGenIndexInsert(List<GenPass> passes, ref bool afterIndex) => passes.FindIndex(genpass => genpass.Name.Equals("Sunflowers"));
-
-	public override void Run(GenerationProgress progress, Terraria.IO.GameConfiguration config)
-	{
 	}
 }

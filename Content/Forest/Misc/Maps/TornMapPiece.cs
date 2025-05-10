@@ -1,6 +1,5 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.ModCompat.Classic;
-using SpiritReforged.Common.WorldGeneration.Micropasses.Passes.CaveEntrances;
 using SpiritReforged.Common.WorldGeneration.Noise;
 using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
@@ -31,9 +30,6 @@ public class TornMapPiece : ModItem
 
 	public override bool? UseItem(Player player)
 	{
-		Point16 pos = Main.MouseWorld.ToTileCoordinates16();
-		CanyonEntrance.DigCavern(pos.X, pos.Y, 80);
-		return true;
 		const int Radius = 170;
 
 		if (Main.myPlayer == player.whoAmI && !Main.dedServ)
