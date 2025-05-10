@@ -162,7 +162,19 @@ internal class UpdaterSystem : ModSystem
 	private static readonly Dictionary<Version, TaskDelegate> Tasks = [];
 
 	#region tModLoader hooks
-	public override void Load() => Instance = this;
+	public override void Load()
+	{
+		Instance = this;
+		On_Player.Hooks.EnterWorld += SpawnFrog;
+	}
+
+	private static void SpawnFrog(On_Player.Hooks.orig_EnterWorld orig, int playerIndex)
+	{
+		orig(playerIndex);
+
+		if (Main.netMode == NetmodeID.SinglePlayer && Instance.AnyTask()) //Only spawn in singleplayer to avoid potential complications
+			NPC.NewNPC(new EntitySource_SpawnNPC(), Main.spawnTileX * 16, Main.spawnTileY * 16, ModContent.NPCType<WorldFrog>());
+	}
 
 	public override void PostWorldGen() => LastVersion = SpiritReforgedMod.Instance.Version;
 	public override void ClearWorld()
@@ -171,21 +183,11 @@ internal class UpdaterSystem : ModSystem
 			LastVersion = null;
 	}
 
+	public override void LoadWorldData(TagCompound tag) => LastVersion = tag.Get<Version>(nameof(LastVersion));
 	public override void SaveWorldData(TagCompound tag)
 	{
 		if (LastVersion != null)
 			tag[nameof(LastVersion)] = LastVersion;
-	}
-
-	public override void LoadWorldData(TagCompound tag)
-	{
-		LastVersion = tag.Get<Version>(nameof(LastVersion));
-
-		//World Frog spawn
-		int frog = ModContent.NPCType<WorldFrog>();
-
-		if (Main.netMode == NetmodeID.SinglePlayer && AnyTask()) //Only spawn in singleplayer to avoid potential complications
-			NPC.NewNPC(new EntitySource_SpawnNPC(), Main.spawnTileX * 16, Main.spawnTileY * 16, frog);
 	}
 
 	//public override void NetSend(BinaryWriter writer) => writer.Write(LastVersion.ToString());

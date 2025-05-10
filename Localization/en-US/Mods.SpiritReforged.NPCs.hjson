@@ -348,6 +348,12 @@ PotterySlime: {
 		26: Swain
 	}
 
+	Chatter: {
+		0: Wubba dooble doo?
+		1: Plip plop. Blorp.
+		2: Wawa.
+	}
+
 	Entry: Believe it or not, this slime is world-renowned in the art of ceramics. You're in the presence of a contemporary master!
 }
 

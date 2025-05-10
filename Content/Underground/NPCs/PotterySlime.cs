@@ -40,7 +40,7 @@ public class PotterySlime : ModNPC
 	}
 
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Underground");
-	public override string GetChat() => Language.GetTextValue("SlimeBlueChatter.Chatter_" + Main.rand.Next(1, 4));
+	public override string GetChat() => Language.GetTextValue("Mods.SpiritReforged.NPCs.PotterySlime.Chatter." + Main.rand.Next(0, 3));
 	public override void SetChatButtons(ref string button, ref string button2) => button = Language.GetTextValue("UI.PetTheAnimal"); //Pet
 	public override bool CanTownNPCSpawn(int numTownNPCs) => PotteryTracker.Remaining == 0;
 
