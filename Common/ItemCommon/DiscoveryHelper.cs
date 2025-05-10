@@ -33,8 +33,17 @@ internal class DiscoveryHelper : ModPlayer
 	{
 		ILCursor c = new(il);
 
-		c.GotoNext(x => x.MatchLdsfld<Main>("screenHeight"));
-		c.GotoPrev(MoveType.Before, x => x.MatchLdsfld<Main>("player"));
+		//if (!c.TryGotoNext(x => x.MatchLdsfld<Main>("screenHeight")))
+		//{
+			LogUtils.LogIL("Draw Discovery Popup", "Member 'screenHeight' not found.");
+			return;
+		//}
+
+		if (!c.TryGotoPrev(MoveType.Before, x => x.MatchLdsfld<Main>("player")))
+		{
+			LogUtils.LogIL("Draw Discovery Popup", "Member 'player' not found.");
+			return;
+		}
 
 		c.EmitLdloc0();
 		c.EmitDelegate(PreDrawPopup);

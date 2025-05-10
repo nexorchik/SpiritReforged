@@ -1,5 +1,6 @@
 ﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using SpiritReforged.Common.Misc;
 using System.Linq;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
@@ -53,20 +54,18 @@ internal class SecretSeedSystem : ModSystem
 	{
 		ILCursor c = new(il);
 
-		string logName = nameof(InjectCustomSeed);
 		var p_seed = c.Method.Parameters.Where(x => x.Name == "seed").FirstOrDefault();
-
-		if (p_seed == default)
-		{
-			SpiritReforgedMod.Instance.Logger.Info($"IL edit '{logName}' failed; all required parameters not found.");
+		//if (p_seed == default)
+		//{
+			LogUtils.LogIL("Custom World Seeds", "Parameter 'seed' not found.");
 			Failed = true;
 
 			return;
-		}
+		//}
 
 		if (!c.TryGotoNext(MoveType.After, x => x.MatchStsfld<Main>("zenithWorld")))
 		{
-			SpiritReforgedMod.Instance.Logger.Info($"IL edit '{logName}' failed; member 'zenithWorld' not found.");
+			LogUtils.LogIL("Custom World Seeds", "Member 'zenithWorld' not found.");
 			Failed = true;
 
 			return;

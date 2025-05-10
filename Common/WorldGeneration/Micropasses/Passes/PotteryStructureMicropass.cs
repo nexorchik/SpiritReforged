@@ -19,6 +19,7 @@ internal class PotteryStructureMicropass : Micropass
 
 	public override void Run(GenerationProgress progress, Terraria.IO.GameConfiguration config)
 	{
+		const int xPadding = 40;
 		const int maxTries = 1000; //Failsafe
 
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Pottery");
@@ -29,12 +30,12 @@ internal class PotteryStructureMicropass : Micropass
 
 		for (int t = 0; t < maxTries; t++)
 		{
-			int x = WorldGen.genRand.Next(20, Main.maxTilesX - 20);
+			int x = WorldGen.genRand.Next(xPadding, Main.maxTilesX - xPadding);
 			int y = WorldGen.genRand.Next((int)Main.worldSurface, Main.UnderworldLayer - 20);
 
 			WorldMethods.FindGround(x, ref y);
 
-			if (y > Main.UnderworldLayer || y < Main.worldSurface || WorldGen.oceanDepths(x, y))
+			if ( y > Main.UnderworldLayer || y < Main.worldSurface || WorldGen.oceanDepths(x, y))
 				continue;
 
 			if (CreateStructure(x, y, ref regions) && ++structures >= maxStructures)

@@ -98,7 +98,12 @@ internal class ResistanceTextHandler : ILoadable
 	{
 		ILCursor c = new(il);
 
-		c.GotoNext(MoveType.After, x => x.MatchCall<CombatText>("NewText"));
+		if (!c.TryGotoNext(MoveType.After, x => x.MatchCall<CombatText>("NewText")))
+		{
+			LogUtils.LogIL("Track Combat Text", "Method 'CombatText.NewText' not found.");
+			return;
+		}
+
 		c.EmitDelegate(SetText); //Only track player damage associated text
 	}
 

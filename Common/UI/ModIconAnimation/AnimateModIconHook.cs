@@ -1,4 +1,6 @@
 ﻿using MonoMod.RuntimeDetour;
+using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.UI.ErrorLog;
 using SpiritReforged.Common.UI.Misc;
 using System.Reflection;
 using Terraria.GameContent.UI.Elements;
@@ -53,6 +55,15 @@ internal class AnimateModIconHook : ILoadable
 				var menuButton = new UIMenuThemeButton(SpiritReforgedMod.Instance.Assets.Request<Texture2D>("icon_small"));
 				menuButton.Left.Set(426, 0);
 				menuButton.Top.Set(42, 0);
+
+				element.Append(menuButton);
+			}
+
+			if (LogUtils.Logs.Count != 0) //Add the optional error log
+			{
+				var menuButton = new UIErrorLogButton();
+				menuButton.Left.Set(184, 0);
+				menuButton.Top.Set(38, 0);
 
 				element.Append(menuButton);
 			}
