@@ -4,6 +4,7 @@ public enum CaveEntranceType : byte
 {
 	Vanilla = 0,
 	Karst,
+	Canyon,
 }
 
 internal abstract class CaveEntrance : ILoadable

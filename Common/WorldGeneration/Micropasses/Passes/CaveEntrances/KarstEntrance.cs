@@ -7,8 +7,6 @@ internal class KarstEntrance : CaveEntrance
 {
 	public override CaveEntranceType Type => CaveEntranceType.Karst;
 
-	public static readonly Dictionary<Point16, int> _direction = []; 
-
 	public override void Generate(int x, int y)
 	{
 		y += 16;
