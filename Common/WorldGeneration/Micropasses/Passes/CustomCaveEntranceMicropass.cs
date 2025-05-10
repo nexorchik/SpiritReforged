@@ -65,7 +65,7 @@ internal class CustomCaveEntranceMicropass : Micropass
 
 	private void OverrideGenMound(On_WorldGen.orig_Mountinater orig, int i, int j)
 	{
-		CaveEntranceType type = CaveEntranceType.Karst;
+		CaveEntranceType type = CaveEntranceType.Canyon;
 
 		if (type == CaveEntranceType.Vanilla)
 			orig(i, j);

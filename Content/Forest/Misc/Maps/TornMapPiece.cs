@@ -35,7 +35,7 @@ public class TornMapPiece : ModItem
 	public override bool? UseItem(Player player)
 	{
 		Point16 pos = Main.MouseWorld.ToTileCoordinates16();
-		ModContent.GetInstance<CanyonEntrance>().DigCavern(pos.X, pos.Y, 80);
+		CanyonEntrance.DigCavern(pos.X, pos.Y, 80);
 		return true;
 		const int Radius = 170;
 
