@@ -1,5 +1,5 @@
-﻿using MonoMod.Cil;
-using SpiritReforged.Common.Misc;
+﻿using ILLogger;
+using MonoMod.Cil;
 using Terraria.GameInput;
 
 namespace SpiritReforged.Common.Visuals.CustomText;
@@ -156,19 +156,19 @@ internal class SignTagHandler : ILoadable
 
 		if (!c.TryGotoNext(x => x.MatchCallvirt<SpriteBatch>("End")))
 		{
-			LogUtils.LogIL("Modify Sign Hover", "Method 'SpriteBatch.End' not found.");
+			SpiritReforgedMod.Instance.LogIL("Modify Sign Hover", "Method 'SpriteBatch.End' not found.");
 			return;
 		}
 
 		if (!c.TryGotoPrev(MoveType.After, x => x.MatchBrtrue(out label)))
 		{
-			LogUtils.LogIL("Modify Sign Hover", "IL Instruction 'Brtrue' not found.");
+			SpiritReforgedMod.Instance.LogIL("Modify Sign Hover", "IL Instruction 'Brtrue' not found.");
 			return;
 		}
 
 		if (label is null)
 		{
-			LogUtils.LogIL("Modify Sign Hover", "Label was null.");
+			SpiritReforgedMod.Instance.LogIL("Modify Sign Hover", "Label was null.");
 			return;
 		}
 

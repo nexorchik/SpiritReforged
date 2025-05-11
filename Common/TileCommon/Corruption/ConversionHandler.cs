@@ -1,7 +1,7 @@
-﻿using Mono.Cecil.Cil;
+﻿using ILLogger;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
-using SpiritReforged.Common.Misc;
 using System.Linq;
 using Terraria.DataStructures;
 
@@ -47,7 +47,7 @@ internal class ConversionHandler : ModSystem
 
 		if (p_good == default)
 		{
-			LogUtils.LogIL("On Hardmode Evils", "Parameter 'good' not found.");
+			SpiritReforgedMod.Instance.LogIL("On Hardmode Evils", "Parameter 'good' not found.");
 			return;
 		}
 

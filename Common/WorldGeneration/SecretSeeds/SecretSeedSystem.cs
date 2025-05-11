@@ -1,6 +1,6 @@
-﻿using Mono.Cecil.Cil;
+﻿using ILLogger;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using SpiritReforged.Common.Misc;
 using System.Linq;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
@@ -55,17 +55,17 @@ internal class SecretSeedSystem : ModSystem
 		ILCursor c = new(il);
 
 		var p_seed = c.Method.Parameters.Where(x => x.Name == "seed").FirstOrDefault();
-		//if (p_seed == default)
-		//{
-			LogUtils.LogIL("Custom World Seeds", "Parameter 'seed' not found.");
+		if (p_seed == default)
+		{
+			SpiritReforgedMod.Instance.LogIL("Custom World Seeds", "Parameter 'seed' not found.");
 			Failed = true;
 
 			return;
-		//}
+		}
 
 		if (!c.TryGotoNext(MoveType.After, x => x.MatchStsfld<Main>("zenithWorld")))
 		{
-			LogUtils.LogIL("Custom World Seeds", "Member 'zenithWorld' not found.");
+			SpiritReforgedMod.Instance.LogIL("Custom World Seeds", "Member 'zenithWorld' not found.");
 			Failed = true;
 
 			return;

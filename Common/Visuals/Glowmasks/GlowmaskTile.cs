@@ -1,6 +1,6 @@
-﻿using Mono.Cecil.Cil;
+﻿using ILLogger;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.TileCommon;
 using System.Linq;
 using Terraria.GameContent.Drawing;
@@ -26,25 +26,25 @@ internal class GlowmaskTile : GlobalTile
 
 		if (p_typeCache == default)
 		{
-			LogUtils.LogIL("Inject Glowmask Data", "Parameter 'typeCache' not found.");
+			SpiritReforgedMod.Instance.LogIL("Inject Glowmask Data", "Parameter 'typeCache' not found.");
 			return;
 		}
 
 		if (p_glowTexture == default)
 		{
-			LogUtils.LogIL("Inject Glowmask Data", "Parameter 'glowTexture' not found.");
+			SpiritReforgedMod.Instance.LogIL("Inject Glowmask Data", "Parameter 'glowTexture' not found.");
 			return;
 		}
 
 		if (p_glowColor == default)
 		{
-			LogUtils.LogIL("Inject Glowmask Data", "Parameter 'glowColor' not found.");
+			SpiritReforgedMod.Instance.LogIL("Inject Glowmask Data", "Parameter 'glowColor' not found.");
 			return;
 		}
 
 		if (p_glowSourceRect == default)
 		{
-			LogUtils.LogIL("Inject Glowmask Data", "Parameter 'glowSourceRect' not found.");
+			SpiritReforgedMod.Instance.LogIL("Inject Glowmask Data", "Parameter 'glowSourceRect' not found.");
 			return;
 		}
 

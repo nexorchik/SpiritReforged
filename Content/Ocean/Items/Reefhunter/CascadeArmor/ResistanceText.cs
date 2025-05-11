@@ -1,4 +1,5 @@
-﻿using Mono.Cecil.Cil;
+﻿using ILLogger;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using SpiritReforged.Common.Misc;
 
@@ -100,7 +101,7 @@ internal class ResistanceTextHandler : ILoadable
 
 		if (!c.TryGotoNext(MoveType.After, x => x.MatchCall<CombatText>("NewText")))
 		{
-			LogUtils.LogIL("Track Combat Text", "Method 'CombatText.NewText' not found.");
+			SpiritReforgedMod.Instance.LogIL("Track Combat Text", "Method 'CombatText.NewText' not found.");
 			return;
 		}
 

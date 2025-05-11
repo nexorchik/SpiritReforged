@@ -1,5 +1,5 @@
-﻿using MonoMod.Cil;
-using SpiritReforged.Common.Misc;
+﻿using ILLogger;
+using MonoMod.Cil;
 
 namespace SpiritReforged.Common.Visuals;
 
@@ -25,7 +25,7 @@ internal class BGStyleSystem : ModSystem
 
 		if (!c.TryGotoNext(x => x.MatchLdsfld("Terraria.ModLoader.GlobalBackgroundStyleLoader", "loaded")))
 		{
-			LogUtils.LogIL("Override Background Style", "Instruction 'GlobalBackgroundStyleLoader.loaded' not found.");
+			SpiritReforgedMod.Instance.LogIL("Override Background Style", "Instruction 'GlobalBackgroundStyleLoader.loaded' not found.");
 			return;
 		}
 

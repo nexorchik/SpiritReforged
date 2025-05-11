@@ -1,4 +1,5 @@
-﻿using MonoMod.Cil;
+﻿using ILLogger;
+using MonoMod.Cil;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
@@ -33,15 +34,15 @@ internal class DiscoveryHelper : ModPlayer
 	{
 		ILCursor c = new(il);
 
-		//if (!c.TryGotoNext(x => x.MatchLdsfld<Main>("screenHeight")))
-		//{
-			LogUtils.LogIL("Draw Discovery Popup", "Member 'screenHeight' not found.");
+		if (!c.TryGotoNext(x => x.MatchLdsfld<Main>("screenHeight")))
+		{
+			SpiritReforgedMod.Instance.LogIL("Draw Discovery Popup", "Member 'screenHeight' not found.");
 			return;
-		//}
+		}
 
 		if (!c.TryGotoPrev(MoveType.Before, x => x.MatchLdsfld<Main>("player")))
 		{
-			LogUtils.LogIL("Draw Discovery Popup", "Member 'player' not found.");
+			SpiritReforgedMod.Instance.LogIL("Draw Discovery Popup", "Member 'player' not found.");
 			return;
 		}
 

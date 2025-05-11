@@ -1,6 +1,6 @@
-﻿using Mono.Cecil.Cil;
+﻿using ILLogger;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using SpiritReforged.Common.Misc;
 
 namespace SpiritReforged.Common.TileCommon;
 
@@ -28,7 +28,7 @@ internal class ModifySmartTarget : ModSystem
 		}
 		else
 		{
-			LogUtils.LogIL("Modify Smart Target", "Method 'Step_StaffOfRegrowth' not found.");
+			SpiritReforgedMod.Instance.LogIL("Modify Smart Target", "Method 'Step_StaffOfRegrowth' not found.");
 		}
 	}
 
