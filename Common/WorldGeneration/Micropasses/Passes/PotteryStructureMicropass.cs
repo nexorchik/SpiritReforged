@@ -35,7 +35,7 @@ internal class PotteryStructureMicropass : Micropass
 
 			WorldMethods.FindGround(x, ref y);
 
-			if ( y > Main.UnderworldLayer || y < Main.worldSurface || WorldGen.oceanDepths(x, y))
+			if (y > Main.UnderworldLayer || y < Main.worldSurface || WorldGen.oceanDepths(x, y))
 				continue;
 
 			if (CreateStructure(x, y, ref regions) && ++structures >= maxStructures)
