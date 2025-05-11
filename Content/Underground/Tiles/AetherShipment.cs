@@ -1,6 +1,8 @@
 using RubbleAutoloader;
+using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.TileCommon.TileSway;
@@ -97,6 +99,9 @@ public class AetherShipment : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 	public bool OnCutAttempt(int i, int j)
 	{
+		if (ClubQuickKill(i, j))
+			return true;
+
 		bool fail = AdjustFrame(i, j);
 		ISwayTile.SetInstancedRotation(i, j, Main.rand.NextFloat(-1f, 1f) * 4f, fail);
 

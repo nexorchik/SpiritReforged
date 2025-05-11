@@ -1,4 +1,6 @@
 using RubbleAutoloader;
+using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Content.Underground.Pottery;

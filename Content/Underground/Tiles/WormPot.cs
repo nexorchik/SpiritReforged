@@ -64,6 +64,9 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 
 	public bool OnCutAttempt(int i, int j)
 	{
+		if (ClubQuickKill(i, j))
+			return true;
+
 		bool fail = AdjustFrame(i, j);
 		ISwayTile.SetInstancedRotation(i, j, Main.rand.NextFloat(-1f, 1f) * 4f, fail);
 
