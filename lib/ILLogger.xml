@@ -4,8 +4,18 @@
         <name>ILLogger</name>
     </assembly>
     <members>
+        <member name="T:ILLogger.Common.MenuErrorPopup">
+            <summary> Handles popups used to indicate errors as they occur. See <see cref="M:ILLogger.Common.MenuErrorPopup.CreatePopup"/>. </summary>
+        </member>
+        <member name="M:ILLogger.Common.MenuErrorPopup.CreatePopup">
+            <summary> Creates a popup. </summary>
+        </member>
         <member name="T:ILLogger.Logger">
             <summary> The Core of ILLogger. </summary>
+        </member>
+        <member name="M:ILLogger.Logger.Load(Terraria.ModLoader.Mod)">
+            <summary> Manually loads required data to <paramref name="mod"/> if <see cref="M:ILLogger.LogUtils.LogIL(Terraria.ModLoader.Mod,System.String,System.String)"/> isn't called first. </summary>
+            <param name="mod"> Your mod. </param>
         </member>
         <member name="T:ILLogger.LogUtils">
             <summary> Includes static helpers related to logging. See <see cref="M:ILLogger.LogUtils.LogIL(Terraria.ModLoader.Mod,System.String,System.String)"/>. </summary>
