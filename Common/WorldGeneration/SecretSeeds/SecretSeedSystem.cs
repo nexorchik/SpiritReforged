@@ -1,4 +1,5 @@
-﻿using Mono.Cecil.Cil;
+﻿using ILLogger;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System.Linq;
 using Terraria.GameContent.UI.Elements;
@@ -20,7 +21,7 @@ internal class SecretSeedSystem : ModSystem
 
 	private static readonly Dictionary<string, SecretSeed> SecretSeeds = [];
 
-	public static SecretSeed GetSeed<T>() where T : SecretSeed => SecretSeeds.Values.Where(x => x.GetType() == typeof(T)).FirstOrDefault();
+	public static SecretSeed GetSeed<T>() where T : SecretSeed => SecretSeeds.Values.Where(x => x is T).FirstOrDefault();
 	public static void RegisterSeed(SecretSeed seed) => SecretSeeds.Add(seed.Name, seed);
 
 	public override void Load()
@@ -53,12 +54,10 @@ internal class SecretSeedSystem : ModSystem
 	{
 		ILCursor c = new(il);
 
-		string logName = nameof(InjectCustomSeed);
 		var p_seed = c.Method.Parameters.Where(x => x.Name == "seed").FirstOrDefault();
-
 		if (p_seed == default)
 		{
-			SpiritReforgedMod.Instance.Logger.Info($"IL edit '{logName}' failed; all required parameters not found.");
+			SpiritReforgedMod.Instance.LogIL("Custom World Seeds", "Parameter 'seed' not found.");
 			Failed = true;
 
 			return;
@@ -66,7 +65,7 @@ internal class SecretSeedSystem : ModSystem
 
 		if (!c.TryGotoNext(MoveType.After, x => x.MatchStsfld<Main>("zenithWorld")))
 		{
-			SpiritReforgedMod.Instance.Logger.Info($"IL edit '{logName}' failed; member 'zenithWorld' not found.");
+			SpiritReforgedMod.Instance.LogIL("Custom World Seeds", "Member 'zenithWorld' not found.");
 			Failed = true;
 
 			return;
