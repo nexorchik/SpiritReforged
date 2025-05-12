@@ -370,8 +370,16 @@ Wheezer: {
 }
 
 WorldFrog: {
-	DisplayName: World Frog
-	Dialogue: Ribbit.
+	DisplayName: Helpful Looking Frog
 	Button: Update World
-	Reports.CavesAndClubs: Hocus pocus - don't look so blue, I've filled your caves with pots to loot anew!
+
+	Dialogue: {
+		0: If you're looking for some new changes to your world, I might be able to help.
+		1: Ribbit.
+	}
+
+	Reports: {
+		CavesAndClubs_0: Hocus pocus - don't look so blue, I've filled your caves with pots to loot anew!
+		CavesAndClubs_1: Abra kadabra I bestow upon you new pots, should you head underground you'll enjoy them lots!
+	}
 }

@@ -15,6 +15,7 @@ namespace SpiritReforged.Content.Forest.Misc;
 
 public class WorldFrog : ModNPC
 {
+	private bool _chattedOnce;
 	private bool _updated;
 	private float _glowIntensity;
 
@@ -54,6 +55,8 @@ public class WorldFrog : ModNPC
 	{
 		if (UpdaterSystem.Instance.AnyTask())
 			button = Language.GetTextValue("Mods.SpiritReforged.NPCs.WorldFrog.Button");
+
+		_chattedOnce = true;
 	}
 
 	public override void OnChatButtonClicked(bool firstButton, ref string shopName)
@@ -79,7 +82,7 @@ public class WorldFrog : ModNPC
 	}
 
 	public override bool CanChat() => true;
-	public override string GetChat() => Language.GetTextValue("Mods.SpiritReforged.NPCs.WorldFrog.Dialogue");
+	public override string GetChat() => Language.GetTextValue("Mods.SpiritReforged.NPCs.WorldFrog.Dialogue." + (_chattedOnce ? 1 : 0));
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
@@ -133,7 +136,7 @@ public class WorldFrog : ModNPC
 
 		var frame = NPC.frame with { Width = NPC.frame.Width - 2, Height = NPC.frame.Height - 2 };
 		var origin = new Vector2(frame.Width / 2, frame.Height);
-		var position = NPC.Bottom - screenPos + new Vector2(0, NPC.gfxOffY);
+		var position = NPC.Bottom - screenPos + new Vector2(0, NPC.gfxOffY + 2);
 
 		spriteBatch.Draw(texture, position, frame, NPC.DrawColor(drawColor), NPC.rotation, origin, NPC.scale, effects, 0);
 
@@ -218,7 +221,7 @@ internal class UpdaterSystem : ModSystem
 		var task = Tasks.OrderBy(x => x.Key).First();
 		task.Value.Invoke(out string reportKey);
 
-		report = Language.GetTextValue("Mods.SpiritReforged.NPCs.WorldFrog.Reports." + reportKey);
+		report = Language.GetTextValue("Mods.SpiritReforged.NPCs.WorldFrog.Reports." + reportKey + $"_{Main.rand.Next(2)}"); //Always two dialogue options
 		LastVersion = task.Key;
 
 		RunningTask = false;

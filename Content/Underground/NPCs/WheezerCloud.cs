@@ -29,6 +29,7 @@ public class WheezerCloud : ModProjectile
 		Projectile.rotation += Projectile.velocity.X * .01f;
 
 		Projectile.velocity *= .9f;
+		Projectile.velocity.Y = Math.Max(Projectile.velocity.Y - 0.02f, -0.5f); //Slowly rise over time
 		Projectile.UpdateFrame(15);
 
 		int square = (int)(Size * Projectile.scale);
