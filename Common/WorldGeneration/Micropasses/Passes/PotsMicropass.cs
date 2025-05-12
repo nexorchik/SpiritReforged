@@ -57,7 +57,8 @@ internal class PotsMicropass : Micropass
 
 	public static void RunMultipliedTask(float multiplier)
 	{
-		float scale = Main.maxTilesX / (float)WorldGen.WorldSizeSmallX * multiplier;
+		float worldScale = Main.maxTilesX / (float)WorldGen.WorldSizeSmallX;
+		float scale = (worldScale + (worldScale - 1)) * multiplier;
 
 		Generate(CreateOrnate, (int)(scale * 5), out _);
 		Generate(CreatePotion, (int)(scale * 46), out _);
