@@ -20,7 +20,7 @@ Misc: {
 	}
 
 	NoStock: 无库存
-	GraveText: <wavy>这段文字旧得泛黄；你看不清上面写的是什么。
+	GraveText: <wavy>其上文字年久失色；令你难以辨认。
 	MenuButton: 使用菜单样式
 }
 
