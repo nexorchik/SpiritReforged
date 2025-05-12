@@ -81,7 +81,7 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 
 		float launchAngle = StoredShotTrajectory.ToRotation();
 		launchAngle += MathHelper.PiOver2;
-		float launchThreshold = MathHelper.Lerp(0.22f, 0.28f, launchAngle / MathHelper.Pi);
+		float launchThreshold = MathHelper.Lerp(0.2f, 0.28f, launchAngle / MathHelper.Pi);
 
 		if (FullCharge && GetSwingProgress >= launchThreshold && Projectile.frame == 0)
 		{
@@ -90,9 +90,8 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 				var adjustedTrajectory = ArcVelocityHelper.GetArcVel(Projectile.Center - Owner.MountedCenter, StoredTargetPos, 0.5f, StoredShotTrajectory.Length());
 
 				//Prevent backwards or no movement if aiming straight down with a slightly less accurate calc
-				bool backwardsMovement = Projectile.direction > 0 && adjustedTrajectory.X < 0 || Projectile.direction < 0 && adjustedTrajectory.X > 0;
-				if (backwardsMovement)
-					adjustedTrajectory = StoredShotTrajectory;
+				while (Projectile.direction > 0 && adjustedTrajectory.X < 0 || Projectile.direction < 0 && adjustedTrajectory.X > 0)
+					adjustedTrajectory = Vector2.Lerp(adjustedTrajectory, StoredShotTrajectory, 0.5f);
 
 				adjustedTrajectory += owner.velocity / 3;
 
@@ -100,15 +99,21 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 				Vector2 spawnPos = GetHeadPosition(16);
 
 				bool spawnInTile = Collision.SolidTiles(spawnPos - new Vector2(16) * MeleeSizeModifier, (int)(32 * MeleeSizeModifier), (int)(32 * MeleeSizeModifier), true);
-				bool ownerLineCheck = CollisionCheckHelper.LineOfSightSolidTop(spawnPos, owner.MountedCenter);
+				bool ownerLineCheck = CollisionCheckHelper.LineOfSightSolidTop(spawnPos + Vector2.UnitY * 16 * MeleeSizeModifier, owner.MountedCenter);
 
-				while ((spawnInTile || ownerLineCheck) && spawnPos.Y > owner.MountedCenter.Y)
+				bool wasInTile = false;
+				while ((spawnInTile || ownerLineCheck) && spawnPos.Y + 8 > owner.MountedCenter.Y)
+				{
+					wasInTile = true;
 					spawnPos.Y--;
+				}
 
 				PreNewProjectile.New(Projectile.GetSource_FromAI(), spawnPos, adjustedTrajectory, ModContent.ProjectileType<RollingBowlder>(), (int)(Projectile.damage * DamageScaling), Projectile.knockBack, Projectile.owner, Owner.direction, preSpawnAction: delegate (Projectile p)
 				{
 					p.Size *= MeleeSizeModifier;
 					p.scale = MeleeSizeModifier;
+					if (wasInTile)
+						p.velocity.Y *= 1.5f;
 				});
 
 				if (!Main.dedServ)
