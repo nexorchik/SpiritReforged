@@ -41,7 +41,6 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 
 	public override float WindupTimeRatio => 0.6f;
 
-	public override string Texture => (GetType().Namespace + '.' + Name).Replace('.', '/');
 	public override void SafeSetStaticDefaults() => Main.projFrames[Type] = 2;
 
 	public void DoTrailCreation(TrailManager tM)
