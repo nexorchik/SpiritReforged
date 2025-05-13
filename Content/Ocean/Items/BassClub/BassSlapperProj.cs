@@ -9,6 +9,7 @@ using System.IO;
 using Terraria.Audio;
 using static SpiritReforged.Common.Easing.EaseFunction;
 using static Microsoft.Xna.Framework.MathHelper;
+using SpiritReforged.Common.Misc;
 
 namespace SpiritReforged.Content.Ocean.Items.BassClub;
 
@@ -136,10 +137,10 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 		var basePosition = Vector2.Lerp(Projectile.Center, target.Center, 0.6f);
 		Vector2 directionUnit = basePosition.DirectionFrom(Owner.MountedCenter) * TotalScale;
 
-		if (FullCharge)
-			ParticleHandler.SpawnParticle(new SlapperHit(basePosition, 1, hit.Crit));
+		ParticleHandler.SpawnParticle(new SlapperHit(basePosition, FullCharge ? 1 : 0.75f, hit.Crit));
 
-		int numParticles = FullCharge ? 12 : 8;
+		int numParticles = FullCharge ? 12 : 6;
+		Color particleColor = hit.Crit ? Color.Red : Color.Goldenrod;
 		for (int i = 0; i < numParticles; i++)
 		{
 			float maxOffset = 15;
@@ -153,8 +154,8 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 			rotationOffset *= Main.rand.NextFloat(0.9f, 1.1f);
 
 			Vector2 particleVel = directionUnit.RotatedBy(rotationOffset) * velocity;
-			var p = new ImpactLine(position, particleVel, Color.White * 0.5f, new Vector2(0.15f, 0.6f) * TotalScale, Main.rand.Next(15, 20), 0.8f);
-			p.UseLightColor = true;
+			var p = new ImpactLine(position, particleVel, particleColor.Additive(160) * 0.75f, new Vector2(0.4f, 0.8f) * TotalScale, Main.rand.Next(12, 16), 0.8f);
+			p.UseLightColor = false;
 			ParticleHandler.SpawnParticle(p);
 		}
 	}
@@ -179,8 +180,8 @@ class BassSlapperProj : BaseClubProj, IManualTrailProjectile
 		Vector2 bodyOffset2 = new(40, 48);
 		Vector2 headOffset = new(54, 62);
 
-		float bodyRotation1 = lerpRotation(0.5f);
-		float bodyRotation2 = lerpRotation(0.7f);
+		float bodyRotation1 = lerpRotation(0.3f);
+		float bodyRotation2 = lerpRotation(0.6f);
 		float headRotation = lerpRotation(0.9f);
 
 		Vector2 TailPos = drawPosition;
