@@ -11,6 +11,12 @@ Records: {
 
 		Value increases when further underground.
 		'''
+	Zenith:
+		'''
+		A common pot which sometimes contains useful goodies... this one is needlessly gaudy.
+
+		Value increases when further underground.
+		'''
 	Potion: Contains a potent brew.
 	UpsideDown: `Manufacturing error`
 	Worm: Scatters a variety of worms when destroyed.

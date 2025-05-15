@@ -4,9 +4,12 @@ using MonoMod.Utils;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.Particle;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals;
+using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Content.Underground.Tiles;
 using System.Linq;
 using System.Reflection;
 using Terraria.Audio;
@@ -57,7 +60,7 @@ public class WorldFrog : ModNPC
 	public override void SetChatButtons(ref string button, ref string button2)
 	{
 		if (UpdaterSystem.Instance.AnyTask())
-			button = Language.GetTextValue(LocPath + ".Button");
+			button = Language.GetTextValue(LocPath + "Button");
 	}
 
 	public override void OnChatButtonClicked(bool firstButton, ref string shopName)
@@ -95,6 +98,7 @@ public class WorldFrog : ModNPC
 		return sounds.FormatWith(dialogue);
 	}
 
+	public override bool CheckActive() => false;
 	public override bool CanChat() => true;
 	public override string GetChat() => FrogifyText(Language.GetTextValue(LocPath + "Dialogue." + Main.rand.Next(3)));
 
@@ -245,6 +249,36 @@ internal class UpdaterSystem : ModSystem
 	private static void CavesAndClubs(out string report)
 	{
 		PotsMicropass.RunMultipliedTask(0.5f);
+		WorldMethods.Generate(CreateCommon, (int)(Main.maxTilesX / (float)WorldGen.WorldSizeSmallX * 250), out _);
+
 		report = "CavesAndClubs";
+
+		static bool CreateCommon(int x, int y) //Manually place common pot variants because they normally happen as conversion
+		{
+			WorldMethods.FindGround(x, ref y);
+			y--;
+
+			if (y < Main.worldSurface || y > Main.UnderworldLayer)
+				return false;
+
+			int ground = Framing.GetTileSafely(x, y + 1).TileType;
+			int type = ModContent.TileType<CommonPots>();
+
+			switch (ground)
+			{
+				case TileID.MushroomGrass:
+					Placer.Check(x, y, type, Main.rand.Next(3)).IsClear().Place();
+					break;
+
+				case TileID.Granite:
+					Placer.Check(x, y, type, Main.rand.Next([3, 4, 5])).IsClear().Place();
+					break;
+
+				default:
+					return false;
+			}
+
+			return Main.tile[x, y].TileType == type;
+		}
 	}
 }

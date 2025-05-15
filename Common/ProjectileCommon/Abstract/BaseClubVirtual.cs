@@ -52,6 +52,11 @@ public abstract partial class BaseClubProj : ModProjectile
 	/// </summary>
 	public virtual float SwingSpeedMult => Charge == 1 ? 1.2f : 1f;
 
+	/// <summary>
+	/// A flat multiplier to how fast the charge and windup complete, ie dividing the effective "ChargeTime"
+	/// </summary>
+	public virtual float ChargeSpeedMult => 1f;
+
 	internal virtual bool AllowUseTurn => CheckAIState(AIStates.CHARGING);
 
 	internal virtual bool AllowRelease => true;
@@ -65,7 +70,7 @@ public abstract partial class BaseClubProj : ModProjectile
 		}
 		else
 		{
-			Charge += 1f / ChargeTime;
+			Charge += ChargeSpeedMult / ChargeTime;
 			Charge = Min(Charge, 1);
 		}
 

@@ -1766,3 +1766,13 @@ Hummus: {
 	DisplayName: Hummus
 	Tooltip: Warm and tasty!
 }
+
+ZenithPotsItem: {
+	DisplayName: Zenith Pot
+	Tooltip: ""
+}
+
+ZenithPotsPaleItem: {
+	DisplayName: "{$Mods.SpiritReforged.Items.CommonPotsZenithItem.DisplayName}"
+	Tooltip: ""
+}
