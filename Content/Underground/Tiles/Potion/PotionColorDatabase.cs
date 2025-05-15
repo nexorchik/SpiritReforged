@@ -1,4 +1,6 @@
 ﻿using SpiritReforged.Content.Forest.Cloud.Items;
+using SpiritReforged.Content.Forest.Misc.Remedy;
+using SpiritReforged.Content.Savanna.Items.Gar;
 
 namespace SpiritReforged.Content.Underground.Tiles.Potion;
 
@@ -50,7 +52,16 @@ internal static class PotionColorDatabase
 		{ ItemID.ThornsPotion, new Color(192, 232, 163) },
 		{ ItemID.TitanPotion, new Color(80, 161, 86) },
 		{ ItemID.WarmthPotion, new Color(255, 236, 185) },
-		{ ItemID.WaterWalkingPotion, new Color(92, 134, 240) }
+		{ ItemID.WaterWalkingPotion, new Color(92, 134, 240) },
+		{ ItemID.StinkPotion, new Color(114, 158, 19) },
+		{ ItemID.LovePotion, Color.Red },
+		{ ItemID.TeleportationPotion, new Color(147, 0, 240) },
+		{ ItemID.RecallPotion, new Color(10, 177, 209) },
+		{ ItemID.GenderChangePotion, new Color(188, 183, 222) },
+		{ ItemID.WormholePotion, new Color(37, 201, 252) },
+		{ ModContent.ItemType<RemedyPotion>(), new Color(184, 255, 195) },
+		{ ModContent.ItemType<QuenchPotion>(), new Color(129, 255, 245) },
+		{ ModContent.ItemType<DoubleJumpPotion>(), new Color(147, 132, 207) },
 	};
 
 	public static void RegisterColor(int item, Color color, bool decorative) 
