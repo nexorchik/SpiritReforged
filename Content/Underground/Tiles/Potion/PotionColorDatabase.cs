@@ -2,7 +2,7 @@
 
 namespace SpiritReforged.Content.Underground.Tiles.Potion;
 
-internal class PotionColorDatabase : ModSystem
+internal static class PotionColorDatabase
 {
 	internal static readonly Dictionary<int, Color> NaturalBrewColors = new()
 	{
