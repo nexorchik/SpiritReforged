@@ -182,8 +182,13 @@ internal class RollingCart : ModProjectile
 
 			Projectile.velocity.Y = 0;
 			Projectile.velocity.X *= .985f;
+			float speed = Math.Abs(Projectile.velocity.X);
 
-			if (Math.Abs(Projectile.velocity.X) > 3)
+			if (speed > 9f)
+			{
+				Projectile.Kill();
+			}
+			else if (speed > 3f)
 			{
 				for (int i = 0; i < 2; i++)
 				{
