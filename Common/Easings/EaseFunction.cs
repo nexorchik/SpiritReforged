@@ -37,7 +37,20 @@ public abstract class EaseFunction
 		return new PolynomialEase((float x) => (float)(1 + c3 * Math.Pow(x - 1, 3) + c1 * Math.Pow(x - 1, 2)));
 	}
 
-	public static float CompoundEase(EaseFunction easeStart, EaseFunction easeEnd, float curTime, float cutOff = 0.5f)
+	public static EaseFunction CompoundEase(EaseFunction[] inputs)
+	{
+		float func(float x)
+		{
+			for (int i = 0; i < inputs.Length; i++)
+				x = inputs[i].Ease(x);
+
+			return x;
+		}
+
+		return new PolynomialEase(func);
+	}
+
+	public static float MultistepEase(EaseFunction easeStart, EaseFunction easeEnd, float curTime, float cutOff = 0.5f)
 	{
 		float inverseCutoff = 1 - cutOff;
 		float easeStartRate = 1 / cutOff;
@@ -48,7 +61,7 @@ public abstract class EaseFunction
 			return cutOff + easeEnd.Ease(easeEndRate * (curTime - cutOff)) * inverseCutoff;
 	}
 
-	public static float CompoundEaseLerp(EaseFunction easeStart, EaseFunction easeEnd, float curTime, EaseFunction interpolationEase = null)
+	public static float MultistepEaseLerp(EaseFunction easeStart, EaseFunction easeEnd, float curTime, EaseFunction interpolationEase = null)
 	{
 		interpolationEase ??= Linear;
 
