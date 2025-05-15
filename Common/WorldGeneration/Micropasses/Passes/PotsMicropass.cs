@@ -102,7 +102,7 @@ internal class PotsMicropass : Micropass
 
 		if (attempt.success)
 		{
-			slot.item = new Item(VatSlot.GetRandomPotion());
+			slot.item = new Item(VatSlot.GetRandomNaturalPotion());
 			return true;
 		}
 

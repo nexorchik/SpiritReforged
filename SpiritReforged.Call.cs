@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Content.Forest.Safekeeper;
 using SpiritReforged.Content.Savanna.Ecotone;
 using SpiritReforged.Content.Underground.Tiles;
+using SpiritReforged.Content.Underground.Tiles.Potion;
 
 namespace SpiritReforged;
 
@@ -28,6 +29,10 @@ public partial class SpiritReforgedMod : Mod
 				case "GetSavannaArea":
 					{
 						return SavannaEcotone.SavannaArea;
+					}
+				case "AddPotionVat":
+					{
+						return PotionColorDatabase.ParseNewPotion(args[1..]);
 					}
 				default:
 					{

@@ -1,4 +1,6 @@
 ﻿using RubbleAutoloader;
+using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Content.Underground.Pottery;
 using SpiritReforged.Content.Underground.Tiles;
 using SpiritReforged.Content.Underground.WayfarerSet;
@@ -184,5 +186,25 @@ public abstract class PotTile : ModTile, IRecordTile, IAutoloadRubble
 			value *= 1.1f;
 
 		return value;
+	}
+
+	/// <summary>
+	/// Forcefully kills this tile instantly if the nearest player is using a fully charged club.<br/>
+	/// This is meant to be used in <see cref="ICutAttempt.OnCutAttempt(int, int)"/>.
+	/// </summary>
+	/// <param name="i">X position of the tile.</param>
+	/// <param name="j">Y position of the tile.</param>
+	/// <returns>If the club killed this tile.</returns>
+	internal static bool ClubQuickKill(int i, int j)
+	{
+		var p = Main.player[Player.FindClosest(new Vector2(i, j) * 16, 16, 16)];
+
+		if (p.HeldItem.ModItem is ClubItem && p.heldProj != -1 && Main.projectile[p.heldProj].ModProjectile is BaseClubProj club && club.FullCharge)
+		{
+			WorldGen.KillTile(i, j);
+			return true;
+		}
+
+		return false;
 	}
 }
