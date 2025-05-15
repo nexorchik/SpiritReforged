@@ -67,6 +67,7 @@ internal class RecordPlayer : ModPlayer
 	public bool IsNew(string name) => _newAndShiny.Contains(name);
 	public bool RemoveNew(string name) => _newAndShiny.Remove(name);
 
+	/// <summary> Unlocks the entry of <paramref name="name"/> for this player. </summary>
 	public void Validate(string name)
 	{
 		if (!IsValidated(name))
@@ -75,6 +76,7 @@ internal class RecordPlayer : ModPlayer
 		_validated.Add(name);
 	}
 
+	/// <returns> Whether the entry of <paramref name="name"/> is unlocked for this player. </returns>
 	public bool IsValidated(string name) => _validated.Contains(name);
 
 	public override void SaveData(TagCompound tag) => tag[nameof(_validated)] = _validated;

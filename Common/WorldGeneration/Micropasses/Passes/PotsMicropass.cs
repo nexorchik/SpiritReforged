@@ -72,6 +72,9 @@ internal class PotsMicropass : Micropass
 		Generate(CreateStack, (int)(Main.maxTilesX * Main.maxTilesY * 0.0005 * multiplier), out _, maxTries: 4000); //Normal pot generation weight is 0.0008
 		Generate(CreateUncommon, (int)(Main.maxTilesX * Main.maxTilesY * 0.00055 * multiplier), out int pots, maxTries: 4000);
 
+		if (Main.zenithWorld)
+			Generate(CreateZenith, (int)(scale * 200), out _);
+
 		PotteryTracker.Remaining = (ushort)Main.rand.Next(pots / 2);
 	}
 
@@ -193,6 +196,22 @@ internal class PotsMicropass : Micropass
 
 		int type = ModContent.TileType<UpsideDownPot>();
 		Placer.Check(x, y, type).IsClear().Place();
+
+		return Main.tile[x, y].TileType == type;
+	}
+
+	public static bool CreateZenith(int x, int y)
+	{
+		FindGround(x, ref y);
+		y--;
+
+		if (y < Main.worldSurface || y > Main.UnderworldLayer || !CommonSurface(x, y))
+			return false;
+
+		int type = ModContent.TileType<CommonPots>();
+		int style = (WorldGen.SavedOreTiers.Gold == TileID.Gold) ? WorldGen.genRand.Next(6, 9) : WorldGen.genRand.Next(9, 12);
+
+		Placer.Check(x, y, type, style).IsClear().Place();
 
 		return Main.tile[x, y].TileType == type;
 	}

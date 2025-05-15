@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.BuffCommon;
 using SpiritReforged.Common.ItemCommon;
+using Terraria.Graphics.CameraModifiers;
 
 namespace SpiritReforged.Common.PlayerCommon;
 
@@ -33,5 +34,12 @@ internal static class PlayerExtensions
 		float rotation = player.compositeFrontArm.rotation;
 
 		return player.GetHandRotated(stretch, rotation);
+	}
+
+	public static void SimpleShakeScreen(this Player player, float strength, float vibrationCycles, int frames, float distanceFalloff, string uniqueIdentity = null)
+	{
+		var direction = (Main.rand.NextFloat() * ((float)Math.PI * 2f)).ToRotationVector2();
+		PunchCameraModifier modifier = new(player.Center, direction, strength, vibrationCycles, frames, distanceFalloff, uniqueIdentity);
+		Main.instance.CameraModifiers.Add(modifier);
 	}
 }

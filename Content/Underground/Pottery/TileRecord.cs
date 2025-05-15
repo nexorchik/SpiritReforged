@@ -12,9 +12,17 @@ public struct TileRecord(string key, int tileType, params int[] tileStyles)
 	public int type = tileType;
 	public int[] styles = tileStyles;
 
+	public bool hidden = false;
 	public byte rating = 1;
 	public string name = Language.GetTextValue($"Mods.SpiritReforged.Items.{key}Item.DisplayName");
 	public string description = Language.GetTextValue(DescKey + ".Common");
+
+	/// <summary> Hides this record until discovered. </summary>
+	public TileRecord Hide()
+	{
+		hidden = true;
+		return this;
+	}
 
 	public TileRecord AddRating(byte value)
 	{

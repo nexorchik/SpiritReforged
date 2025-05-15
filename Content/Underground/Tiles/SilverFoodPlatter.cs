@@ -70,6 +70,6 @@ public class PlatterSlot : SingleSlotEntity
 	public override bool IsTileValidForEntity(int x, int y)
 	{
 		var t = Framing.GetTileSafely(x, y);
-		return t.HasTile && t.TileType == ModContent.TileType<SilverFoodPlatter>() && t.TileFrameX % 36 == 0;
+		return t.HasTile && t.TileType == ModContent.TileType<SilverFoodPlatter>();
 	}
 }

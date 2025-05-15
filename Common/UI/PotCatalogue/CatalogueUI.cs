@@ -57,7 +57,8 @@ public partial class CatalogueUI : AutoUIState
 			bool locked = !Main.LocalPlayer.GetModPlayer<RecordPlayer>().IsValidated(value.key);
 			bool newAndShiny = Main.LocalPlayer.GetModPlayer<RecordPlayer>().IsNew(value.key);
 
-			_entries.AddEntry(new CatalogueEntry(value, locked, newAndShiny));
+			if (!value.hidden || !locked)
+				_entries.AddEntry(new CatalogueEntry(value, locked, newAndShiny));
 		}
 	}
 
