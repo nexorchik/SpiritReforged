@@ -269,10 +269,10 @@ public class Hiker : WorldNPC
 		if (SpawnedToday || spawnInfo.Invasion || spawnInfo.Water)
 			return 0; //Never spawn during an invasion, in water or if already spawned that day
 
-		float multiplier = Main.hardMode ? .5f : ((NPC.downedBoss1 || NPC.downedSlimeKing) ? 1f : 2f);
+		float multiplier = Main.hardMode ? .5f : ((NPC.downedBoss1 || NPC.downedSlimeKing) ? 1f : 2f); //Double the rate pre-boss, and halve it in hardmode
 
 		if ((spawnInfo.Player.ZoneSnow || InnerThird(spawnInfo.SpawnTileX) && spawnInfo.Player.InZonePurity()) && spawnInfo.Player.ZoneOverworldHeight && Main.dayTime)
-			return .0019f * multiplier; //Spawn most commonly in the Snow and inner thirds of the Forest during the day
+			return .0024f * multiplier; //Spawn most commonly in the Snow and inner thirds of the Forest during the day
 
 		return 0;
 
