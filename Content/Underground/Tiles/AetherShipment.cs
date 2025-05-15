@@ -1,8 +1,6 @@
 using RubbleAutoloader;
-using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
-using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PresetTiles;
 using SpiritReforged.Common.TileCommon.TileSway;
