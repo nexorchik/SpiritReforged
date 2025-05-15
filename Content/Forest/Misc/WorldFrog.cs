@@ -1,4 +1,6 @@
-﻿using MonoMod.Utils;
+﻿using Humanizer;
+using Microsoft.Xna.Framework.Input;
+using MonoMod.Utils;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.Particle;
@@ -15,7 +17,8 @@ namespace SpiritReforged.Content.Forest.Misc;
 
 public class WorldFrog : ModNPC
 {
-	private bool _chattedOnce;
+	public const string LocPath = "Mods.SpiritReforged.NPCs.WorldFrog.";
+
 	private bool _updated;
 	private float _glowIntensity;
 
@@ -54,15 +57,13 @@ public class WorldFrog : ModNPC
 	public override void SetChatButtons(ref string button, ref string button2)
 	{
 		if (UpdaterSystem.Instance.AnyTask())
-			button = Language.GetTextValue("Mods.SpiritReforged.NPCs.WorldFrog.Button");
-
-		_chattedOnce = true;
+			button = Language.GetTextValue(LocPath + ".Button");
 	}
 
 	public override void OnChatButtonClicked(bool firstButton, ref string shopName)
 	{
 		UpdaterSystem.RunFirstTask(out string report);
-		Main.npcChatText = report;
+		Main.npcChatText = FrogifyText(Language.GetTextValue(LocPath + "Reports." + report + $"_{Main.rand.Next(2)}"));
 
 		_updated = true;
 		_glowIntensity = 1;
@@ -81,8 +82,21 @@ public class WorldFrog : ModNPC
 		SoundEngine.PlaySound(SoundID.Item176, NPC.Center);
 	}
 
+	private static string FrogifyText(string dialogue)
+	{
+		string sounds = string.Empty;
+
+		for (int i = 0; i < Main.rand.Next(1, 3); i++)
+			sounds += Language.GetTextValue(LocPath + "Sounds." + Main.rand.Next(2)) + ", ";
+
+		sounds = sounds.Remove(sounds.Length - 2, 2);
+		sounds += " ({0})";
+
+		return sounds.FormatWith(dialogue);
+	}
+
 	public override bool CanChat() => true;
-	public override string GetChat() => Language.GetTextValue("Mods.SpiritReforged.NPCs.WorldFrog.Dialogue." + (_chattedOnce ? 1 : 0));
+	public override string GetChat() => FrogifyText(Language.GetTextValue(LocPath + "Dialogue." + Main.rand.Next(3)));
 
 	public override void HitEffect(NPC.HitInfo hit)
 	{
@@ -221,7 +235,7 @@ internal class UpdaterSystem : ModSystem
 		var task = Tasks.OrderBy(x => x.Key).First();
 		task.Value.Invoke(out string reportKey);
 
-		report = Language.GetTextValue("Mods.SpiritReforged.NPCs.WorldFrog.Reports." + reportKey + $"_{Main.rand.Next(2)}"); //Always two dialogue options
+		report = reportKey;
 		LastVersion = task.Key;
 
 		RunningTask = false;

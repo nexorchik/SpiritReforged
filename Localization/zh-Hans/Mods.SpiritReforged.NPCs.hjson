@@ -373,13 +373,19 @@ WorldFrog: {
 	// DisplayName: Helpful Looking Frog
 	// Button: Update World
 
+	Sounds: {
+		// 0: Croak
+		// 1: Ribbit
+	}
+
 	Dialogue: {
-		// 0: If you're looking for some new changes to your world, I might be able to help.
-		// 1: Ribbit.
+		// 0: If you wish to look for things to explore, I've got an offer for you - I implore!
+		// 1: You look for things new? Betwixt my hands, an offer I drew!
+		// 2: My magicks sense something missing in the air; but - you should not despair!
 	}
 
 	Reports: {
 		// CavesAndClubs_0: Hocus pocus - don't look so blue, I've filled your caves with pots to loot anew!
-		// CavesAndClubs_1: Abra kadabra I bestow upon you new pots, should you head underground you'll enjoy them lots!
+		// CavesAndClubs_1: Abra kadabra I bestow upon you pots anew; should you head underground you'll enjoy them true!
 	}
 }
