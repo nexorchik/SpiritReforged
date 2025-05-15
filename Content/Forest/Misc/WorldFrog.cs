@@ -57,7 +57,7 @@ public class WorldFrog : ModNPC
 	public override void SetChatButtons(ref string button, ref string button2)
 	{
 		if (UpdaterSystem.Instance.AnyTask())
-			button = Language.GetTextValue(LocPath + ".Button");
+			button = Language.GetTextValue(LocPath + "Button");
 	}
 
 	public override void OnChatButtonClicked(bool firstButton, ref string shopName)
@@ -95,6 +95,7 @@ public class WorldFrog : ModNPC
 		return sounds.FormatWith(dialogue);
 	}
 
+	public override bool CheckActive() => false;
 	public override bool CanChat() => true;
 	public override string GetChat() => FrogifyText(Language.GetTextValue(LocPath + "Dialogue." + Main.rand.Next(3)));
 
