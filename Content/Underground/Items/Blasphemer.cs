@@ -14,6 +14,8 @@ namespace SpiritReforged.Content.Underground.Items;
 [AutoloadGlowmask("255,255,255")]
 public class Blasphemer : ClubItem
 {
+	public override bool IsLoadingEnabled(Mod mod) => false;
+
 	internal override float DamageScaling => 2.5f;
 
 	public override void SetStaticDefaults() => ItemLootDatabase.AddItemRule(ItemID.ObsidianLockbox, ItemDropRule.Common(Type, 5));
@@ -39,6 +41,7 @@ class BlasphemerProj : BaseClubProj, IManualTrailProjectile
 
 	public override float WindupTimeRatio => 0.8f;
 
+	public override bool IsLoadingEnabled(Mod mod) => false;
 	public void DoTrailCreation(TrailManager tM)
 	{
 		float trailDist = 80 * MeleeSizeModifier;
@@ -120,6 +123,7 @@ class Firespike : ModProjectile
 {
 	public const int TimeLeftMax = 180;
 
+	public override bool IsLoadingEnabled(Mod mod) => false;
 	public override string Texture => "Terraria/Images/Projectile_0";
 	public override void SetDefaults()
 	{
