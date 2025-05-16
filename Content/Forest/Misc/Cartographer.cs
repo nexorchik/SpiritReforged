@@ -14,7 +14,7 @@ using SpiritReforged.Common.ModCompat;
 
 namespace SpiritReforged.Content.Forest.Misc;
 
-public class Cartographer : WorldNPC
+public class Cartographer : WorldNPC, ITravelNPC
 {
 	protected override bool CloneNewInstances => true;
 
@@ -162,13 +162,24 @@ public class Cartographer : WorldNPC
 		float multiplier = MathHelper.Lerp(1.75f, .5f, spawnInfo.Player.GetModPlayer<PinPlayer>().PinProgress) * (Main.hardMode ? .6f : 1f);
 
 		if (spawnInfo.SpawnTileY > Main.worldSurface && spawnInfo.SpawnTileY < Main.UnderworldLayer && !spawnInfo.Player.ZoneEvil())
-			return .00018f * multiplier; //Rarely spawn in caves above underworld height
+			return .00023f * multiplier; //Rarely spawn in caves above underworld height
 
 		if ((spawnInfo.Player.InModBiome<SavannaBiome>() || spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneJungle || OuterThirds(spawnInfo.SpawnTileX) && spawnInfo.Player.InZonePurity() && !spawnInfo.Player.ZoneSkyHeight) && Main.dayTime)
-			return .0019f * multiplier; //Spawn most commonly in the Savanna, Desert, Jungle, and outer thirds of the Forest during the day
+			return .0024f * multiplier; //Spawn most commonly in the Savanna, Desert, Jungle, and outer thirds of the Forest during the day
 
 		return 0;
 
 		static bool OuterThirds(int x) => x < Main.maxTilesX / 3 || x > Main.maxTilesX - Main.maxTilesY / 3;
+	}
+
+	public bool CanSpawnTraveler()
+	{
+		foreach (var p in Main.ActivePlayers)
+		{
+			if (p.TryGetModPlayer(out PinPlayer pinPl) && pinPl.PinProgress != 0)
+				return true;
+		}
+
+		return false;
 	}
 }
