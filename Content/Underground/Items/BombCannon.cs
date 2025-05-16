@@ -25,6 +25,8 @@ namespace SpiritReforged.Content.Underground.Items;
 [AutoloadGlowmask("255,255,255")]
 public class BombCannon : ModItem
 {
+	public const float ContactDamagePercentage = 0.25f;
+
 	public override void SetStaticDefaults()
 	{
 		AmmoDatabase.RegisterAmmo(ItemID.Bomb, ItemID.Bomb, ItemID.StickyBomb, ItemID.BouncyBomb, ItemID.BombFish);
@@ -34,7 +36,7 @@ public class BombCannon : ModItem
 	public override void SetDefaults()
 	{
 		Item.DamageType = DamageClass.Ranged;
-		Item.damage = 60;
+		Item.damage = 80;
 		Item.width = 44;
 		Item.height = 48;
 		Item.useTime = Item.useAnimation = 30;
@@ -60,6 +62,17 @@ public class BombCannon : ModItem
 	}
 
 	public override bool CanConsumeAmmo(Item ammo, Player player) => !player.channel; //Ammo consumption happens in BombCannonHeld
+
+	public override void ModifyTooltips(List<TooltipLine> tooltips)
+	{
+		StatModifier rangedStat = Main.LocalPlayer.GetTotalDamage(DamageClass.Ranged);
+
+		foreach (TooltipLine line in tooltips)
+		{
+			if (line.Mod == "Terraria" && line.Name == "Damage") //Replace the vanilla text with our own
+				line.Text = $"{(int)rangedStat.ApplyTo(Item.damage * ContactDamagePercentage)}-{(int)rangedStat.ApplyTo(Item.damage)}" + Language.GetText("LegacyTooltip.3");
+		}
+	}
 }
 
 [AutoloadGlowmask("255,255,255", false)]
@@ -300,7 +313,7 @@ internal class BombCannonShot : BombProjectile, ITrailProjectile
 					{
 						Player owner = Main.player[Projectile.owner];
 						owner.ApplyDamageToNPC(npc,
-								   (int)owner.GetTotalDamage<RangedDamageClass>().ApplyTo(DamageModifier * _damage / 4f),
+								   (int)owner.GetTotalDamage<RangedDamageClass>().ApplyTo(DamageModifier * _damage * BombCannon.ContactDamagePercentage),
 								   Projectile.knockBack,
 								   Projectile.velocity.X > 0 ? 1 : -1,
 								   Main.rand.Next(100) < Projectile.CritChance,
