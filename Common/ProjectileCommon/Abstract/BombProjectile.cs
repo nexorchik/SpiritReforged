@@ -1,4 +1,5 @@
-﻿using Terraria.Audio;
+﻿using System.IO;
+using Terraria.Audio;
 
 namespace SpiritReforged.Common.ProjectileCommon.Abstract;
 
@@ -14,13 +15,15 @@ public abstract class BombProjectile : ModProjectile
 	/// <summary> Whether this bomb sticks to tiles according to <see cref="CheckStuck"/>. </summary>
 	public bool sticky;
 
-	private int _damage;
-	private float _knockback;
+	private bool _startedExplosion;
+
+	internal int _damage;
+	internal float _knockback;
 
 	/// <summary> Sets the timeLeft and timeLeftMax values for this projectile, for convenience. </summary>
-	protected void SetTimeLeft(int value) => Projectile.timeLeft = timeLeftMax = value;
+	public void SetTimeLeft(int value) => Projectile.timeLeft = timeLeftMax = value;
 	/// <summary> Sets the damage and knockback values for this projectile <b>specifically when exploding</b>. </summary>
-	protected void SetDamage(int damage, float knockback = 8f)
+	public void SetDamage(int damage, float knockback = 8f)
 	{
 		_damage = damage;
 		_knockback = knockback;
@@ -62,6 +65,12 @@ public abstract class BombProjectile : ModProjectile
 		{
 			DealingDamage = true;
 			Projectile.PrepareBombToBlow();
+
+			if (!_startedExplosion)
+			{
+				_startedExplosion = true;
+				StartExplosion();
+			}
 		}
 
 		Projectile.TryShimmerBounce();
@@ -90,6 +99,8 @@ public abstract class BombProjectile : ModProjectile
 			dust.noGravity = true;
 		}
 	}
+
+	public virtual void StartExplosion() { }
 
 	public override void OnKill(int timeLeft)
 	{
@@ -129,4 +140,8 @@ public abstract class BombProjectile : ModProjectile
 		Projectile.QuickDraw();
 		return false;
 	}
+
+	public override void SendExtraAI(BinaryWriter writer) => writer.Write(_startedExplosion);
+
+	public override void ReceiveExtraAI(BinaryReader reader) => _startedExplosion = reader.ReadBoolean();
 }
