@@ -27,9 +27,13 @@ public class BombCannon : ModItem
 {
 	public const float ContactDamagePercentage = 0.25f;
 
+	public static int[] AmmoBombIDs = [ItemID.Bomb, ItemID.StickyBomb, ItemID.BouncyBomb, ItemID.BombFish];
+	public static int[] StickyBombProjIDs = [ProjectileID.BouncyBomb, ModContent.ProjectileType<BombBouncy>()];
+	public static int[] BouncyBombProjIDs = [ProjectileID.StickyBomb, ModContent.ProjectileType<BombSticky>(), ProjectileID.BombFish, ModContent.ProjectileType<BombFish>()];
+
 	public override void SetStaticDefaults()
 	{
-		AmmoDatabase.RegisterAmmo(ItemID.Bomb, ItemID.Bomb, ItemID.StickyBomb, ItemID.BouncyBomb, ItemID.BombFish);
+		AmmoDatabase.RegisterAmmo(ItemID.Bomb, AmmoBombIDs);
 		NPCShopHelper.AddEntry(new NPCShopHelper.ConditionalEntry((shop) => shop.NpcType == NPCID.Demolitionist, new NPCShop.Entry(Type, Condition.DownedEarlygameBoss)));
 	}
 
@@ -180,15 +184,13 @@ internal class BombCannonHeld : ModProjectile
 		if (Projectile.owner == Main.myPlayer)
 		{
 			var velocity = Projectile.velocity * Progress;
-			int[] bouncyBombs = [ProjectileID.BouncyBomb, ModContent.ProjectileType<BombBouncy>()];
-			int[] stickyBombs = [ProjectileID.StickyBomb, ModContent.ProjectileType<BombSticky>(), ProjectileID.BombFish, ModContent.ProjectileType<BombFish>()];
 			PreNewProjectile.New(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<BombCannonShot>(), 0, Projectile.knockBack, Projectile.owner, ShootType, 1, preSpawnAction: delegate (Projectile p)
 			{
 				p.timeLeft = (int)(p.timeLeft * (1f - Progress));
 
 				var bomb = p.ModProjectile as BombCannonShot;
-				bomb.Bouncy = bouncyBombs.Contains(ShootType);
-				bomb.sticky = stickyBombs.Contains(ShootType);
+				bomb.Bouncy = BombCannon.BouncyBombProjIDs.Contains(ShootType);
+				bomb.sticky = BombCannon.StickyBombProjIDs.Contains(ShootType);
 				bomb.SetDamage(Projectile.damage);
 
 				if(Main.player[Projectile.owner].HasAccessory<BoomShroom>())
