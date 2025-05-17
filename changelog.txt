@@ -1,4 +1,10 @@
-v.0.1.0.10
-- Added failsafes for Ocean generation
-- Added failsafes for Blunderbuss and Pearl String generation
-- This will pair with an upcoming Remnants patch adding more compatibility on their end, too!
+v.0.1.1
+Caves and Clubs Update
+- Added two new Cave Entrances that replaces the typical ‘grassy hill’ on the World Surface: Lush Caves and Canyons
+- Added two new Glowing Moss cavern types: Radon (yellow) and Oganesson
+- Added four new music tracks, including one for the main menu
+- Clubs have returned to Spirit Reforged, with brand new resprites, visuals, and gameplay feel!
+- Added Uncommon Biome Pots, rarer and more bountiful versions of pots in every single biome
+- Added Rare Pots! Rare pots are unique breakables you can find scattered across the world with unique outcome
+- Added a Potstiary, a new way to keep track of all the rare and unique pots you encounter
+...and so much more! Check out our full changelog on the Team Spirit Discord.
