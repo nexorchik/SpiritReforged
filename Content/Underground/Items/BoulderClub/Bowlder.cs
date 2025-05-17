@@ -8,6 +8,7 @@ using SpiritReforged.Content.Particles;
 using SpiritReforged.Common.MathHelpers;
 using System.IO;
 using SpiritReforged.Common.ProjectileCommon;
+using Terraria.Audio;
 
 namespace SpiritReforged.Content.Underground.Items.BoulderClub;
 
@@ -107,7 +108,7 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 					spawnPos.Y--;
 				}
 
-				PreNewProjectile.New(Projectile.GetSource_FromAI(), spawnPos, adjustedTrajectory, ModContent.ProjectileType<RollingBowlder>(), (int)(Projectile.damage * DamageScaling), Projectile.knockBack, Projectile.owner, Owner.direction, preSpawnAction: delegate (Projectile p)
+				PreNewProjectile.New(Projectile.GetSource_FromAI(), spawnPos, adjustedTrajectory * MeleeSizeModifier, ModContent.ProjectileType<RollingBowlder>(), (int)(Projectile.damage * DamageScaling), Projectile.knockBack, Projectile.owner, Owner.direction, preSpawnAction: delegate (Projectile p)
 				{
 					p.Size *= MeleeSizeModifier;
 					p.scale = MeleeSizeModifier;
@@ -117,6 +118,9 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 
 				if (!Main.dedServ)
 				{
+					SoundEngine.PlaySound(SoundID.NPCHit3.WithVolumeScale(1).WithPitchOffset(1), spawnPos);
+					SoundEngine.PlaySound(SoundID.NPCHit18.WithVolumeScale(0.75f).WithPitchOffset(0.5f), spawnPos);
+
 					for (int i = 1; i < 7; i++)
 					{
 						int type = Mod.Find<ModGore>("BowlderRope" + i).Type;
