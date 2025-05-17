@@ -1,4 +1,2 @@
-v.0.1.0.10
-- Added failsafes for Ocean generation
-- Added failsafes for Blunderbuss and Pearl String generation
-- This will pair with an upcoming Remnants patch adding more compatibility on their end, too!
+v.0.1.1 | Caves and Clubs
+Full Changelog: https://docs.google.com/document/d/1yh4zf_O8pmwImVhOP6oaFN0UZje2PZaRlp0YZ3n2d74/edit?usp=sharing
