@@ -28,8 +28,8 @@ public class BombCannon : ModItem
 	public const float ContactDamagePercentage = 0.25f;
 
 	public static int[] AmmoBombIDs = [ItemID.Bomb, ItemID.StickyBomb, ItemID.BouncyBomb, ItemID.BombFish];
-	public static int[] StickyBombProjIDs = [ProjectileID.BouncyBomb, ModContent.ProjectileType<BombBouncy>()];
-	public static int[] BouncyBombProjIDs = [ProjectileID.StickyBomb, ModContent.ProjectileType<BombSticky>(), ProjectileID.BombFish, ModContent.ProjectileType<BombFish>()];
+	public static int[] BouncyBombProjIDs = [ProjectileID.BouncyBomb, ModContent.ProjectileType<BombBouncy>()];
+	public static int[] StickyBombProjIDs = [ProjectileID.StickyBomb, ModContent.ProjectileType<BombSticky>(), ProjectileID.BombFish, ModContent.ProjectileType<BombFish>()];
 
 	public override void SetStaticDefaults()
 	{
@@ -190,8 +190,8 @@ internal class BombCannonHeld : ModProjectile
 				p.timeLeft = (int)(p.timeLeft * (1f - Progress));
 
 				var bomb = p.ModProjectile as BombCannonShot;
-				bomb.Bouncy = BombCannon.BouncyBombProjIDs.Contains(ShootType);
-				bomb.sticky = BombCannon.StickyBombProjIDs.Contains(ShootType);
+				bomb.Bouncy = BombCannon.StickyBombProjIDs.Contains(ShootType);
+				bomb.sticky = BombCannon.BouncyBombProjIDs.Contains(ShootType);
 				bomb.SetDamage(Projectile.damage);
 
 				if(Main.player[Projectile.owner].HasAccessory<BoomShroom>())
