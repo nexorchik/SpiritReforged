@@ -41,6 +41,7 @@ public class BombCannon : ModItem
 	{
 		Item.DamageType = DamageClass.Ranged;
 		Item.damage = 80;
+		Item.knockBack = 6;
 		Item.width = 44;
 		Item.height = 48;
 		Item.useTime = Item.useAnimation = 30;
