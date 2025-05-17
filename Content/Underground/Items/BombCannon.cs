@@ -198,7 +198,7 @@ internal class BombCannonHeld : ModProjectile
 				{
 					bomb.BoomShroom = true;
 					bomb.area = 15;
-					p.Size = new Vector2(32);
+					p.Resize(32, 32);
 					bomb.SetDamage((int)(Projectile.damage * 1.5f));
 					p.scale = 0;
 				}
