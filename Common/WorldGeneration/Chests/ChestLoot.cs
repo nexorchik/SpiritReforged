@@ -45,6 +45,6 @@ public class ChestLoot : ModSystem
 		AddToVanillaChest(new ChestInfo(ModContent.ItemType<TornMapPiece>(), 2, 0.18f), (int)VanillaChestID.Gold, Main.rand.Next(1, 4));
 
 		AddToVanillaChest(new ChestInfo(ModContent.ItemType<Bowlder>(), 1, 0.3f), (int)VanillaChestID2.Trapped, 1, TileID.Containers2);
-		AddToVanillaChest(new ChestInfo(ModContent.ItemType<Blasphemer>(), 1, 0.25f), (int)VanillaChestID.ShadowLocked, 1);
+		//AddToVanillaChest(new ChestInfo(ModContent.ItemType<Blasphemer>(), 1, 0.25f), (int)VanillaChestID.ShadowLocked, 1);
 	}
 }

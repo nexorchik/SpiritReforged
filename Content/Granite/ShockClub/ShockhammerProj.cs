@@ -8,6 +8,7 @@ using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Content.Particles;
+using Terraria.Audio;
 
 namespace SpiritReforged.Content.Granite.ShockClub;
 
@@ -111,6 +112,8 @@ class ShockhammerProj : BaseClubProj, IManualTrailProjectile
 
 				PreNewProjectile.New(Projectile.GetSource_FromAI("ClubSmash"), spawnPos, velocity, ModContent.ProjectileType<EnergizedShockwave>(), (int)(Projectile.damage * DamageScaling), Projectile.knockBack, Projectile.owner,
 					preSpawnAction: delegate (Projectile projectile) { projectile.position.Y -= Projectile.height + 16; });
+
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/MagicCast1") with { Pitch = 0.5f, Volume = 1.5f }, Projectile.Center);
 			}
 		}
 	}
