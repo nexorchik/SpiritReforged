@@ -10,6 +10,9 @@
         <member name="M:RubbleAutoloader.Autoloader.IsRubble(System.Int32)">
             <returns> Whether <paramref name="type"/> is an autoloaded rubble tile. </returns>
         </member>
+        <member name="M:RubbleAutoloader.Autoloader.GetRubble``1">
+            <summary> Gets the rubble type associated with the given <see cref="T:Terraria.ModLoader.ModTile"/>. </summary>
+        </member>
         <member name="M:RubbleAutoloader.Autoloader.Load(Terraria.ModLoader.Mod)">
             <summary> Initializes rubble autoloading. Must be called directly in <paramref name="mod"/>'s Load method. </summary>
             <param name="mod"> your mod. </param>
@@ -59,6 +62,9 @@
         </member>
         <member name="T:RubbleAutoloader.RubbleGlobalTile">
             <summary> Prevents normal item drops for autoloaded rubble tiles. </summary>
+        </member>
+        <member name="M:RubbleAutoloader.RubbleGlobalTile.ValidItem(System.Int32)">
+            <summary> Checks whether the item drop associated with the <see cref="P:RubbleAutoloader.IAutoloadRubble.Data"/> of <paramref name="type"/> is valid.</summary>
         </member>
         <member name="M:RubbleAutoloader.TileTypeBuilder.CreateDynamic(System.Object,System.String,System.String,System.Type@)">
             <summary> Dynamically creates a Type based on <paramref name="sourceObject"/>, specifically for a rubble tile. </summary>

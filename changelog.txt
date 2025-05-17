@@ -1,6 +1,6 @@
 v.0.1.1
 Caves and Clubs Update
-- Added two new Cave Entrances that replaces the typical ‘grassy hill’ on the World Surface: Lush Caves and Canyons
+- Added two new Cave Entrances that replaces the typical â€˜grassy hillâ€™ on the World Surface: Lush Caves and Canyons
 - Added two new Glowing Moss cavern types: Radon (yellow) and Oganesson
 - Added four new music tracks, including one for the main menu
 - Clubs have returned to Spirit Reforged, with brand new resprites, visuals, and gameplay feel!

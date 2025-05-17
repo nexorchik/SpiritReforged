@@ -1,4 +1,5 @@
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Common.TileCommon.PresetTiles;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 

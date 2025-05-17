@@ -41,7 +41,7 @@ public class HangingCloudstalk : ModTile, ISwayTile, IAutoloadTileItem
 
 		DustType = -1;
 
-		SpiritClassic.AddReplacement("HangingCloudstalk", this.AutoItem().type);
+		SpiritClassic.AddItemReplacement("HangingCloudstalk", this.AutoItem().type);
 	}
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => (r, g, b) = (0.2f, 0.2f, 0.4f);

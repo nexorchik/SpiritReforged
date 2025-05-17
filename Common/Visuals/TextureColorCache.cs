@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using SpiritReforged.Common.Misc;
+using System.Linq;
 
 namespace SpiritReforged.Common.Visuals;
 
@@ -6,11 +7,12 @@ namespace SpiritReforged.Common.Visuals;
 [Autoload(Side = ModSide.Client)]
 internal class TextureColorCache
 {
-	private static readonly Dictionary<Texture2D, Color> brightestColorCache = [];
+	private static readonly Dictionary<Texture2D, Color> BrightestColorCache = [];
+	private static readonly Dictionary<Texture2D, Texture2D> SolidTextureCache = [];
 
 	public static Color GetBrightestColor(Texture2D texture)
 	{
-		if (brightestColorCache.TryGetValue(texture, out Color value))
+		if (BrightestColorCache.TryGetValue(texture, out Color value))
 			return value;
 
 		var data = new Color[texture.Width * texture.Height];
@@ -20,7 +22,31 @@ internal class TextureColorCache
 		if (brightest == default)
 			brightest = Color.White;
 
-		brightestColorCache.Add(texture, brightest);
+		BrightestColorCache.Add(texture, brightest);
 		return brightest;
+	}
+
+	public static Texture2D ColorSolid(Texture2D texture, Color color)
+	{
+		if (SolidTextureCache.TryGetValue(texture, out var textureFromCache))
+			return textureFromCache;
+
+		var data = new Color[texture.Width * texture.Height];
+		texture.GetData(data);
+
+		for (int i = data.Length - 1; i >= 0; i--)
+		{
+			if (data[i] != Color.Transparent)
+			{
+				byte alpha = data[i].A;
+				data[i] = color.Additive(alpha);
+			}
+		}
+
+		var textureToCache = new Texture2D(Main.graphics.GraphicsDevice, texture.Width, texture.Height);
+		textureToCache.SetData(data);
+
+		SolidTextureCache.Add(texture, textureToCache);
+		return textureToCache;
 	}
 }

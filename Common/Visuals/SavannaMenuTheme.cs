@@ -5,11 +5,11 @@ namespace SpiritReforged.Common.Visuals;
 internal class SavannaMenuTheme : ModMenu
 {
 	public override ModSurfaceBackgroundStyle MenuBackgroundStyle => ModContent.GetInstance<SavannaBGStyle>();
-	//public override string DisplayName => "Savanna"; //Uses the mod's display name
+	public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Music/TitleTheme");
 
 	public override void OnSelected() => SpiritLogo.Reset();
 
-	public override void Update(bool isOnTitleScreen) => SpiritLogo.Update(1 / 60f, isOnTitleScreen);
+	public override void Update(bool isOnTitleScreen) => SpiritLogo.Update(1 / 60f);
 
 	public static void SavannaOrangePalette(out Color outlineColor, out Color underlineColor, out Color shadowColor, //General colors
 		out Color sFillColor, out Color sGradientTopColor, out Color sGradientBottomColor, out Color sOutlineGlowColor, //S colors

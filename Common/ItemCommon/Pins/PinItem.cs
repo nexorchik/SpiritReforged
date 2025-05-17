@@ -8,16 +8,11 @@ public abstract class PinItem : ModItem
 	public override string Texture => base.Texture + "Item";
 
 	/// <summary>
-	/// <inheritdoc/>
-	/// <para/>Automatically adds required pin data to <see cref="PinMapLayer"/> and <see cref="PinSystem"/> databases.
-	/// </summary>
+	/// <inheritdoc/><para/>Automatically adds required pin data to <see cref="PinMapLayer"/> and <see cref="PinSystem"/> databases. </summary>
 	public override void SetStaticDefaults()
 	{
 		Item.ResearchUnlockCount = 1;
-
-		PinMapLayer.Textures ??= [];
-		PinMapLayer.Textures.Add(Name, ModContent.Request<Texture2D>(base.Texture + "Map"));
-		PinSystem.ItemByName.Add(Name, Item);
+		PinSystem.DataByName.Add(Name, new(Item, ModContent.Request<Texture2D>(base.Texture + "Map")));
 	}
 
 	public override void SetDefaults()
