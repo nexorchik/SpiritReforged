@@ -2,6 +2,7 @@ using SpiritReforged.Common.BuffCommon;
 using SpiritReforged.Common.MathHelpers;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Jungle.Toucane;

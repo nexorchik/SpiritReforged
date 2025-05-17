@@ -1,7 +1,6 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.ModCompat.Classic;
 using SpiritReforged.Common.TileCommon.PresetTiles;
-using SpiritReforged.Common.TileCommon.TileTag;
 using SpiritReforged.Content.Jungle.Bamboo.Tiles;
 using System.Linq;
 using Terraria.GameContent.ItemDropRules;
@@ -54,13 +53,14 @@ public class Cloudstalk : ModItem
 	}
 }
 
-[TileTag(TileTags.HarvestableHerb)]
 public class CloudstalkTile : HerbTile
 {
 	private const float BloomWindSpeed = 20; //Constant for bloom wind speed, in mph
 
-	public override void StaticDefaults()
+	public override void SetStaticDefaults()
 	{
+		base.SetStaticDefaults();
+
 		TileObjectData.newTile.CopyFrom(TileObjectData.StyleAlch);
 		TileObjectData.newTile.AnchorValidTiles = [TileID.Grass, TileID.HallowedGrass, TileID.JungleGrass, ModContent.TileType<Savanna.Tiles.SavannaGrass>(), 
 			ModContent.TileType<Savanna.Tiles.SavannaGrassHallow>(), TileID.Cloud, TileID.RainCloud, TileID.SnowCloud];
@@ -73,17 +73,12 @@ public class CloudstalkTile : HerbTile
 		DustType = DustID.Cloud;
 	}
 
-	public override IEnumerable<Item> ItemDrops(int i, int j, int herbStack, int seedStack)
-	{
-		if (herbStack > 0)
-			yield return new Item(ModContent.ItemType<Cloudstalk>()) { stack = herbStack };
-		if (seedStack > 0)
-			yield return new Item(ModContent.ItemType<CloudstalkSeed>()) { stack = seedStack };
-	}
+	public override IEnumerable<Item> GetItemDrops(int i, int j) => GetYield(i, j, ModContent.ItemType<Cloudstalk>(), ModContent.ItemType<CloudstalkSeed>());
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
 		float windSpeed = Math.Abs(Main.windSpeedCurrent) * 50;
+
 		if (windSpeed > BloomWindSpeed && GetStage(i, j) == PlantStage.Growing)
 			SetStage(i, j, PlantStage.Grown);
 		else if (windSpeed <= BloomWindSpeed && GetStage(i, j) == PlantStage.Grown)

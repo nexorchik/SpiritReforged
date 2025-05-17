@@ -32,7 +32,7 @@ internal class CloudGlobalTile : GlobalTile
 		if (validAnchor && ground.Slope == SlopeType.Solid && !ground.IsHalfBlock && tile.LiquidAmount < 100 && Placer.IsReplaceable(i, j) && Placer.CanPlaceHerb(i, j, herbType))
 		{
 			tile.ClearTile();
-			Placer.PlaceTile(i, j, herbType);
+			Placer.PlaceTile(i, j, herbType).Send();
 		}
 	}
 }

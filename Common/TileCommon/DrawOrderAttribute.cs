@@ -1,4 +1,5 @@
-﻿using MonoMod.Cil;
+﻿using ILLogger;
+using MonoMod.Cil;
 using SpiritReforged.Common.TileCommon.TileSway;
 using System.Linq;
 using Terraria.DataStructures;
@@ -28,6 +29,10 @@ internal class DrawOrderAttribute(params Layer[] layers) : Attribute
 
 internal class DrawOrderSystem : ModSystem
 {
+	internal static event Action DrawTilesSolidEvent;
+	internal static event Action DrawTilesNonSolidEvent;
+	internal static event Action PostDrawPlayersEvent;
+
 	/// <summary> Stores tile types and defined layer pairs on load. </summary>
 	private static readonly Dictionary<int, Layer[]> DrawOrderTypes = []; 
 
@@ -76,18 +81,18 @@ internal class DrawOrderSystem : ModSystem
 			{
 				if (!c.TryGotoNext(x => x.MatchCallvirt<SpriteBatch>("End")))
 				{
-					SpiritReforgedMod.Instance.Logger.Debug("Failed goto SpriteBatch.End; Index: " + i);
+					SpiritReforgedMod.Instance.LogIL("Draw Order Solids", $"Method 'SpriteBatch.End' index {i} not found.");
 					return;
 				}
 			}
 
-			c.EmitDelegate(() => Draw(Layer.Solid)); //Emit a delegate so we can draw just before the spritebatch ends
+			c.EmitDelegate(() => DrawTilesSolidEvent?.Invoke()); //Emit a delegate so we can draw just before the spritebatch ends
 		};
 
 		On_Main.DoDraw_Tiles_NonSolid += static (On_Main.orig_DoDraw_Tiles_NonSolid orig, Main self) =>
 		{
 			orig(self);
-			Draw(Layer.NonSolid);
+			DrawTilesNonSolidEvent?.Invoke();
 		};
 
 		On_Main.DrawPlayers_AfterProjectiles += static (On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self) =>
@@ -95,9 +100,13 @@ internal class DrawOrderSystem : ModSystem
 			orig(self);
 
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-			Draw(Layer.OverPlayers);
+			PostDrawPlayersEvent?.Invoke();
 			Main.spriteBatch.End();
 		};
+
+		PostDrawPlayersEvent += () => Draw(Layer.OverPlayers);
+		DrawTilesNonSolidEvent += () => Draw(Layer.NonSolid);
+		DrawTilesSolidEvent += () => Draw(Layer.Solid);
 		#endregion
 	}
 

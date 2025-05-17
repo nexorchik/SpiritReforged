@@ -16,8 +16,8 @@ public abstract class GrassTile : ModTile
 		}
 	}
 
-	/// <summary>
-	/// <inheritdoc/><para/>Also automatically controls common grass tile settings.
+	/// <summary> <inheritdoc/>
+	/// <para/>Also automatically controls common grass tile settings.
 	/// </summary>
 	public override void SetStaticDefaults()
 	{
@@ -39,11 +39,13 @@ public abstract class GrassTile : ModTile
 		return true;
 	}
 
+	public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
 	public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 	{
 		if (!effectOnly) //Change self into dirt
 		{
 			fail = true;
+			WorldGen.KillTile_MakeTileDust(i, j, Main.tile[i, j]);
 			Framing.GetTileSafely(i, j).TileType = (ushort)DirtType;
 		}
 	}

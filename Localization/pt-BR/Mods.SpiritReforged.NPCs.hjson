@@ -314,3 +314,78 @@ HideZombieSmall: {
 	DisplayName: "{$NPCName.Zombie}"
 	Entry: Seu traje é um sucesso na última moda dos mortos-vivos.
 }
+
+PotterySlime: {
+	// DisplayName: Pottery Slime
+
+	Names: {
+		// 0: Sable
+		// 1: Saki
+		// 2: Sal
+		// 3: Santra
+		// 4: Sark
+		// 5: Sassafrass
+		// 6: Satya
+		// 7: Sawyl
+		// 8: Seppo
+		// 9: Shammy
+		// 10: Shard
+		// 11: Shio
+		// 12: Silas
+		// 13: Silica
+		// 14: Silty
+		// 15: Sleet
+		// 16: Sloan
+		// 17: Snap
+		// 18: Soggy
+		// 19: Soda
+		// 20: Sonya
+		// 21: Sparta
+		// 22: Splet
+		// 23: Spot
+		// 24: Stratton
+		// 25: Sullivan
+		// 26: Swain
+	}
+
+	Chatter: {
+		// 0: Wubba dooble doo?
+		// 1: Plip plop. Blorp.
+		// 2: Wawa.
+	}
+
+	// Entry: Believe it or not, this slime is world-renowned in the art of ceramics. You're in the presence of a contemporary master!
+}
+
+// StompableGnome.DisplayName: Stompable Gnome
+
+DunceCrab: {
+	// DisplayName: Dunce Crab
+	// Entry: ""
+}
+
+Wheezer: {
+	// DisplayName: Wheezer
+	// Entry: A weezer is an extremely toxic relative of the salamander, known for aggressive behavior. Oddly enough, their favorite food is a budding holly plant, contradictory to their carnivorous tendencies.
+}
+
+WorldFrog: {
+	// DisplayName: Helpful Looking Frog
+	// Button: Update World
+
+	Sounds: {
+		// 0: Croak
+		// 1: Ribbit
+	}
+
+	Dialogue: {
+		// 0: If you wish to look for things to explore, I've got an offer for you - I implore!
+		// 1: You look for things new? Betwixt my hands, an offer I drew!
+		// 2: My magicks sense something missing in the air; but - you should not despair!
+	}
+
+	Reports: {
+		// CavesAndClubs_0: Hocus pocus - don't look so blue, I've filled your caves with pots to loot anew!
+		// CavesAndClubs_1: Abra kadabra I bestow upon you pots anew; should you head underground you'll enjoy them true!
+	}
+}

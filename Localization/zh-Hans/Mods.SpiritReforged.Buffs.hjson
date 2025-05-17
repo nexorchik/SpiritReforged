@@ -97,3 +97,13 @@ OpenWounds: {
 	DisplayName: 开放性伤口
 	Description: 易流血
 }
+
+ExplorerPot: {
+	// DisplayName: Explorer's Thrill
+	// Description: You're eager for more!
+}
+
+ExplorerMine: {
+	// DisplayName: Explorer's Vigor
+	// Description: Keep digging!
+}

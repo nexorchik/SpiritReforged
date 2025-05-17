@@ -88,7 +88,7 @@ internal class PinUIState : AutoUIState
 		else
 		{
 			int count = 0;
-			foreach (string name in PinSystem.ItemByName.Keys)
+			foreach (string name in PinSystem.DataByName.Keys)
 			{
 				Append(new PinUISlot(name)
 				{
@@ -132,8 +132,8 @@ internal class PinUIState : AutoUIState
 				spriteBatch.Draw(AssetLoader.LoadedTextures["GodrayCircle"].Value, glowPos, null,
 					(Color.Orange with { A = 0 }) * (.5f - lerp * .025f), (float)Main.timeForVisualEffects / 120, AssetLoader.LoadedTextures["GodrayCircle"].Size() / 2, .1f - lerp * .01f, default, 0);
 
-				DrawGodray.DrawGodrays(Main.spriteBatch, glowPos, Color.Goldenrod with { A = 0 }, 22, 10, 5);
-				DrawGodray.DrawGodrays(Main.spriteBatch, glowPos, Color.White with { A = 0 }, 16, 5, 5);
+				DrawHelpers.DrawGodrays(Main.spriteBatch, glowPos, Color.Goldenrod with { A = 0 }, 22, 10, 5);
+				DrawHelpers.DrawGodrays(Main.spriteBatch, glowPos, Color.White with { A = 0 }, 16, 5, 5);
 			}
 
 			spriteBatch.Draw(buttonTexture.Value, position, source, color);

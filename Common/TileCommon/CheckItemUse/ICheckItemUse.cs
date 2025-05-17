@@ -2,7 +2,8 @@
 
 internal interface ICheckItemUse
 {
-	/// <summary> Allows you to make things happen when a player targets this tile and uses an item, like the Staff of Regrowth growing grass on dirt. </summary>
+	/// <summary> Allows you to make things happen when a player targets this tile and uses an item, like the Staff of Regrowth growing grass on dirt.<br/>
+	/// Behaviours are registered as delegates. See <see cref="CheckItem.RegisterTileCheck"/> to manually add one. </summary>
 	/// <param name="type"> The type of item used. </param>
 	/// <param name="i"> The selected tile's X position. </param>
 	/// <param name="j"> The selected tile's Y position. </param>

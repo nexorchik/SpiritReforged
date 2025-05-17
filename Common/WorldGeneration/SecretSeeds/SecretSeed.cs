@@ -1,4 +1,5 @@
-﻿using Terraria.IO;
+﻿using SpiritReforged.Common.Visuals;
+using Terraria.IO;
 
 namespace SpiritReforged.Common.WorldGeneration.Seeds;
 
@@ -11,7 +12,7 @@ public abstract class SecretSeed : ILoadable, IModType
 	/// <summary> The name/key of this custom seed for input. <b>Not</b> for saving. </summary>
 	public abstract string Key { get; }
 	/// <summary> The path of the icon to display on worlds generated with this seed. </summary>
-	public virtual string Icon => (GetType().Namespace + $".{GetType().Name}_Icon").Replace('.', '/');
+	public virtual string Icon => DrawHelpers.RequestLocal(GetType(), GetType().Name + "_Icon");
 
 	public virtual Asset<Texture2D> GetIcon(WorldFileData data)
 		=> ModContent.Request<Texture2D>(Icon + (data.IsHardMode ? "Hallow" : string.Empty) + (data.HasCorruption ? "Corruption" : "Crimson"), AssetRequestMode.ImmediateLoad);

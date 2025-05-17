@@ -25,6 +25,6 @@ public class StrippedBamboo : ModTile, IAutoloadTileItem
 		AddMapEntry(new Color(145, 128, 109));
 
 		this.AutoItem().ResearchUnlockCount = 100;
-		SpiritClassic.AddReplacement("StrippedBamboo", this.AutoItem().type);
+		SpiritClassic.AddItemReplacement("StrippedBamboo", this.AutoItem().type);
 	}
 }

@@ -19,21 +19,6 @@ internal class Recipes : ModSystem
 
 		groupEntries = null;
 
-		RecipeGroup BaseGroup(object GroupName, int[] Items)
-		{
-			string Name = "";
-			Name += GroupName switch
-			{
-				//modcontent items
-				int i => Lang.GetItemNameValue((int)GroupName),
-				//vanilla item ids
-				short s => Lang.GetItemNameValue((short)GroupName),
-				//custom group names
-				_ => GroupName.ToString(),
-			};
-			return new RecipeGroup(() => Language.GetTextValue("LegacyMisc.37") + " " + Name, Items);
-		}
-
 		RecipeGroup.RegisterGroup("CopperBars", BaseGroup(ItemID.CopperBar, [ItemID.CopperBar, ItemID.TinBar]));
 		RecipeGroup.RegisterGroup("SilverBars", BaseGroup(ItemID.SilverBar, [ItemID.SilverBar, ItemID.TungstenBar]));
 		RecipeGroup.RegisterGroup("GoldBars", BaseGroup(ItemID.GoldBar, [ItemID.GoldBar, ItemID.PlatinumBar]));
@@ -41,6 +26,21 @@ internal class Recipes : ModSystem
 		RecipeGroup.RegisterGroup("PHMEvilMaterial", BaseGroup(ItemID.ShadowScale, [ItemID.ShadowScale, ItemID.TissueSample]));
 		RecipeGroup.RegisterGroup("EvilMaterial", BaseGroup(ItemID.CursedFlame, [ItemID.CursedFlame, ItemID.Ichor]));
 		RecipeGroup.RegisterGroup("Shells", BaseGroup(ItemID.Seashell, [ItemID.Seashell, ItemID.TulipShell, ItemID.JunoniaShell, ItemID.LightningWhelkShell]));
-		//RecipeGroup.RegisterGroup("ArcaneNecklace", BaseGroup(ModContent.ItemType<ArcaneNecklaceGold>(), [ModContent.ItemType<ArcaneNecklaceGold>(), ModContent.ItemType<ArcaneNecklacePlatinum>()]));
+		RecipeGroup.RegisterGroup("ClayAndMud", BaseGroup(ItemID.ClayBlock, [ItemID.ClayBlock, ItemID.MudBlock]));
+	}
+
+	public static RecipeGroup BaseGroup(object GroupName, int[] Items)
+	{
+		string Name = "";
+		Name += GroupName switch
+		{
+			//modcontent items
+			int i => Lang.GetItemNameValue((int)GroupName),
+			//vanilla item ids
+			short s => Lang.GetItemNameValue((short)GroupName),
+			//custom group names
+			_ => GroupName.ToString(),
+		};
+		return new RecipeGroup(() => Language.GetTextValue("LegacyMisc.37") + " " + Name, Items);
 	}
 }

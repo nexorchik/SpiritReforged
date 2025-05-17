@@ -1,7 +1,7 @@
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
-using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Common.ProjectileCommon.Abstract;
 using Terraria.Audio;
 
 namespace SpiritReforged.Content.Forest.RoguesCrest;
@@ -121,8 +121,8 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 		{
 			target.AddBuff(ModContent.BuffType<OpenWounds>(), 60 * 10);
 
-			ParticleHandler.SpawnParticle(new Particles.ImpactLine(Projectile.Center, Projectile.velocity * .1f, Color.Red.Additive(), new Vector2(.75f, 8), 8, Projectile) { noLight = true });
-			ParticleHandler.SpawnParticle(new Particles.ImpactLine(Projectile.Center, Projectile.velocity * .1f, Color.White.Additive(), new Vector2(.3f, 5), 8, Projectile) { noLight = true });
+			ParticleHandler.SpawnParticle(new Particles.ImpactLine(Projectile.Center, Projectile.velocity * .1f, Color.Red.Additive(), new Vector2(.75f, 8), 8, Projectile) { NoLight = true });
+			ParticleHandler.SpawnParticle(new Particles.ImpactLine(Projectile.Center, Projectile.velocity * .1f, Color.White.Additive(), new Vector2(.3f, 5), 8, Projectile) { NoLight = true });
 
 			ParticleHandler.SpawnParticle(new Particles.LightBurst(target.Center, 0, Color.Red, .5f, 10) { noLight = true });
 			ParticleHandler.SpawnParticle(new Particles.LightBurst(target.Center, 0, Color.White, .3f, 10) { noLight = true });
