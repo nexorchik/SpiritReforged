@@ -1,7 +1,7 @@
 Records: {
 	CoinPortal:
 		'''
-		永远有一个金币传送门。
+		永远包含一个金币传送门。
 
 		幸运的发现！
 		'''
@@ -17,14 +17,14 @@ Records: {
 
 		所处位置越深，价值越高。
 		'''
-	Potion: 里面有强力药水。
-	UpsideDown: `生产错误r`
+	Potion: 内含强效混合物。
+	UpsideDown: `生产错误`
 	Worm: 被破坏时会掉出各种蠕虫。
 	Platter: 一份热腾腾的饭菜，随时可取。是谁落在这儿的呢？
 	Aether: 提供各种实用又闪亮的升级物品。
 	Stuffed: 在这种地方遇到商人真奇怪，他们简直是自找麻烦。
 	Scrying: 被破坏时能揭示大片地图。
-	Biome: 比普通的罐子里有更多种类的战利品。
+	Biome: 比常见的罐子包含更多种类的战利品。
 }
 
 SunkenTreasureTile.MapEntry: 沉没的宝藏
