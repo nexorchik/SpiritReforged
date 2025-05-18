@@ -54,7 +54,7 @@ public class PotteryWheel : ModTile, IAutoloadTileItem
 
 	public override void NearbyEffects(int i, int j, bool closer)
 	{
-		if (!TileObjectData.IsTopLeft(i, j))
+		if (Main.dedServ || !TileObjectData.IsTopLeft(i, j))
 			return;
 
 		var world = new Vector2(i, j).ToWorldCoordinates(16, 16);
