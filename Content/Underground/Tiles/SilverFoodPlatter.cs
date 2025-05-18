@@ -65,6 +65,7 @@ public class SilverFoodPlatter : SingleSlotTile<PlatterSlot>, IAutoloadTileItem
 
 public class PlatterSlot : SingleSlotEntity
 {
+	public override bool PlayDroppedAnimation => false;
 	public override bool CanAddItem(Item item) => ItemID.Sets.IsFood[item.type];
 
 	public override bool IsTileValidForEntity(int x, int y)
