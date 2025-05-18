@@ -1,5 +1,6 @@
 ﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
+using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 
@@ -30,7 +31,7 @@ internal class WayfarerGlobalTile : GlobalTile
 	{
 		const int maxDistance = 800;
 
-		if (effectOnly || fail)
+		if (WorldMethods.Generating || effectOnly || fail)
 			return;
 
 		var world = new Vector2(i, j).ToWorldCoordinates();
@@ -52,7 +53,7 @@ internal class WayfarerGlobalTile : GlobalTile
 			player.AddBuff(ModContent.BuffType<ExplorerMine>(), 600);
 		}
 
-		bool ActiveAndInRange() => player.GetModPlayer<WayfarerPlayer>().active && player.DistanceSQ(world) < maxDistance * maxDistance;
+		bool ActiveAndInRange() => player.TryGetModPlayer(out WayfarerPlayer p) && p.active && player.DistanceSQ(world) < maxDistance * maxDistance;
 	}
 
 	private static void DoFX(Player player)
