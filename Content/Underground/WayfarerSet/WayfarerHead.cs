@@ -1,3 +1,6 @@
+using SpiritReforged.Common.ModCompat;
+using SpiritReforged.Content.Forest.Botanist.Items;
+
 namespace SpiritReforged.Content.Underground.WayfarerSet;
 
 [AutoloadEquip(EquipType.Head)]
@@ -14,6 +17,7 @@ public class WayfarerHead : ModItem
 		Item.defense = 1;
 	}
 
+	public override bool IsArmorSet(Item head, Item body, Item legs) => body.type == ModContent.ItemType<WayfarerBody>() && legs.type == ModContent.ItemType<WayfarerLegs>();
 	public override void UpdateEquip(Player player) => player.buffImmune[BuffID.Darkness] = true;
 
 	public override void UpdateArmorSet(Player player)
@@ -21,6 +25,4 @@ public class WayfarerHead : ModItem
 		player.setBonus = Language.GetTextValue("Mods.SpiritReforged.SetBonuses.Wayfarer");
 		player.GetModPlayer<WayfarerPlayer>().active = true;
 	}
-
-	public override bool IsArmorSet(Item head, Item body, Item legs) => body.type == ModContent.ItemType<WayfarerBody>() && legs.type == ModContent.ItemType<WayfarerLegs>();
 }
