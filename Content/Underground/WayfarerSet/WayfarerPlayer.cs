@@ -31,7 +31,7 @@ internal class WayfarerGlobalTile : GlobalTile
 	{
 		const int maxDistance = 800;
 
-		if (WorldMethods.Generating || effectOnly || fail)
+		if (WorldMethods.Generating || effectOnly || fail || Main.gameMenu)
 			return;
 
 		var world = new Vector2(i, j).ToWorldCoordinates();
