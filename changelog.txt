@@ -1,4 +1,4 @@
-v.0.1.1
+v0.1.1
 Caves and Clubs Update
 - Added two new Cave Entrances that replaces the typical ‘grassy hill’ on the World Surface: Lush Caves and Canyons
 - Added two new Glowing Moss cavern types: Radon (yellow) and Oganesson
