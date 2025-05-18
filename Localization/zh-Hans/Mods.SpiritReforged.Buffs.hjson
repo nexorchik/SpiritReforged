@@ -99,11 +99,11 @@ OpenWounds: {
 }
 
 ExplorerPot: {
-	// DisplayName: Explorer's Thrill
-	// Description: You're eager for more!
+	DisplayName: 探险家的兴奋
+	Description: 你渴望更多！
 }
 
 ExplorerMine: {
-	// DisplayName: Explorer's Vigor
-	// Description: Keep digging!
+	DisplayName: 探险家的活力
+	Description: 挖下去吧！
 }
