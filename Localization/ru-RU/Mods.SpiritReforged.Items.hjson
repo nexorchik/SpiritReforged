@@ -1765,6 +1765,6 @@ ZenithPotsItem: {
 }
 
 ZenithPotsPaleItem: {
-	// DisplayName: "{$Mods.SpiritReforged.Items.CommonPotsZenithItem.DisplayName}"
+	// DisplayName: "{$Mods.SpiritReforged.Items.ZenithPotsItem.DisplayName}"
 	// Tooltip: ""
 }
