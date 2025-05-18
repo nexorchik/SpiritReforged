@@ -108,12 +108,17 @@ public partial class CatalogueUI : AutoUIState
 		}
 	}
 
+	protected override void DrawSelf(SpriteBatch spriteBatch)
+	{
+		if (ContainsPoint(Main.MouseScreen))
+			Main.LocalPlayer.mouseInterface = true;
+
+		base.DrawSelf(spriteBatch);
+	}
+
 	public override void Update(GameTime gameTime)
 	{
 		base.Update(gameTime);
-
-		if (ContainsPoint(Main.MouseScreen))
-			Main.LocalPlayer.mouseInterface = true;
 
 		if (!Main.playerInventory)
 			UISystem.SetInactive<CatalogueUI>();

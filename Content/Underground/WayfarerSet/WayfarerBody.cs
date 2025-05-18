@@ -10,7 +10,6 @@ public class WayfarerBody : ModItem
 	}
 
 	public override void SetStaticDefaults() => ArmorIDs.Body.Sets.NeedsToDrawArm[Item.bodySlot] = true;
-
 	public override void SetDefaults()
 	{
 		Item.width = 30;
