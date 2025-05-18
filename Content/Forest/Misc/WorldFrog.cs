@@ -245,7 +245,7 @@ internal class UpdaterSystem : ModSystem
 		RunningTask = false;
 	}
 
-	[Ver("0.1.1.0")]
+	[Ver("0.1.1")]
 	private static void CavesAndClubs(out string report)
 	{
 		PotsMicropass.RunMultipliedTask(0.5f);
