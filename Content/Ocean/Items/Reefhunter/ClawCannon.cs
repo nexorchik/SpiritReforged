@@ -1,4 +1,5 @@
 using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.ModCompat;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
@@ -10,6 +11,7 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter;
 
 public class ClawCannon : ModItem
 {
+	public override void SetStaticDefaults() => Item.AddElement(MoRHelper.Water, true);
 	public override void SetDefaults()
 	{
 		Item.damage = 15;

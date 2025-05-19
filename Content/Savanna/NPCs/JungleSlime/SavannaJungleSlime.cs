@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ModCompat;
 using SpiritReforged.Content.Savanna.Biome;
 using Terraria;
 using Terraria.GameContent.Bestiary;
@@ -10,6 +11,9 @@ public class SavannaJungleSlime : ModNPC
 	{ 
 		Main.npcFrameCount[Type] = 2;
 		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.ShimmerSlime;
+
+		NPC.AddElement(MoRHelper.Water);
+		NPC.AddNPCElementList(MoRHelper.NPCType_Slime);
 	}
 
 	public override void SetDefaults()

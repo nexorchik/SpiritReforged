@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.WorldGeneration;
+﻿using SpiritReforged.Common.ModCompat;
+using SpiritReforged.Common.WorldGeneration;
 using System.IO;
 using Terraria.GameContent.Bestiary;
 using Terraria.ModLoader.IO;
@@ -29,6 +30,8 @@ public class PotterySlime : ModNPC
 		{ Velocity = 0.25f };
 
 		NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, drawModifiers);
+
+		NPC.AddNPCElementList(MoRHelper.NPCType_Slime);
 	}
 
 	public override void SetDefaults()

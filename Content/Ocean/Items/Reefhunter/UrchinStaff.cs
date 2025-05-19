@@ -3,11 +3,17 @@ using SpiritReforged.Content.Ocean.Items.Reefhunter.Projectiles;
 using Terraria.DataStructures;
 using Terraria.Audio;
 using SpiritReforged.Common.ProjectileCommon;
+using SpiritReforged.Common.ModCompat;
 
 namespace SpiritReforged.Content.Ocean.Items.Reefhunter;
 
 public class UrchinStaff : ModItem
 {
+	public override void SetStaticDefaults()
+	{
+		Item.AddElement(MoRHelper.Poison);
+		Item.AddElement(MoRHelper.Water, true);
+	}
 	public override void SetDefaults()
 	{
 		Item.damage = 18;

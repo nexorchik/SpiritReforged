@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ModCompat;
 using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.Visuals;
 using System.IO;
@@ -74,6 +75,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = -1;
 
+		Projectile.SetHammerBonus();
 		SafeSetDefaults();
 	}
 

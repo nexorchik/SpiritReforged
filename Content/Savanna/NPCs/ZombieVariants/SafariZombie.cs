@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ModCompat;
 using SpiritReforged.Common.NPCCommon.Abstract;
 using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Items.HuntingRifle;
@@ -17,6 +18,9 @@ public class SafariZombie : ReplaceNPC
 		Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
 		NPCID.Sets.Zombies[Type] = true;
 		NPCID.Sets.ShimmerTransformToNPC[Type] = NPCID.Skeleton;
+
+		NPC.AddNPCElementList(MoRHelper.NPCType_Undead);
+		NPC.AddNPCElementList(MoRHelper.NPCType_Humanoid);
 	}
 
 	public override void SetDefaults()

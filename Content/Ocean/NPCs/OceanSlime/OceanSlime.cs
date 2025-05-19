@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ModCompat;
 using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Content.Vanilla.Food;
 using Terraria.Audio;
@@ -16,6 +17,9 @@ public class OceanSlime : ModNPC
 		Main.npcFrameCount[Type] = 2;
 		NPCHelper.ImmuneTo(this, BuffID.Poisoned, BuffID.Venom);
 		NPCID.Sets.ShimmerTransformToNPC[Type] = NPCID.ShimmerSlime;
+
+		NPC.AddElement(MoRHelper.Water);
+		NPC.AddNPCElementList(MoRHelper.NPCType_Slime);
 	}
 
 	public override void SetDefaults()

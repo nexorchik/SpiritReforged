@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ModCompat;
 using SpiritReforged.Common.NPCCommon.Abstract;
 using Terraria.GameContent.Bestiary;
 
@@ -14,6 +15,12 @@ public class TridentZombie : ReplaceNPC
 		Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.ArmedZombie];
 		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.BoneThrowingSkeleton;
 		NPCID.Sets.Zombies[Type] = true;
+
+		NPC.AddElement(MoRHelper.Water);
+		NPC.AddNPCElementList(MoRHelper.NPCType_Undead);
+		NPC.AddNPCElementList(MoRHelper.NPCType_Humanoid);
+		NPC.AddNPCElementList(MoRHelper.NPCType_Wet);
+		NPC.AddNPCElementList(MoRHelper.NPCType_Armed);
 	}
 
 	public override void SetDefaults()

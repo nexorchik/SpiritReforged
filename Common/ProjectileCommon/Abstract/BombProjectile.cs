@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using SpiritReforged.Common.ModCompat;
+using System.IO;
 using Terraria.Audio;
 
 namespace SpiritReforged.Common.ProjectileCommon.Abstract;
@@ -29,7 +30,12 @@ public abstract class BombProjectile : ModProjectile
 		_knockback = knockback;
 	}
 
-	public override void SetStaticDefaults() => ProjectileID.Sets.Explosive[Type] = true;
+	public override void SetStaticDefaults()
+	{
+		ProjectileID.Sets.Explosive[Type] = true;
+
+		Projectile.AddElement(MoRHelper.Explosive);
+	}
 
 	public override void SetDefaults()
 	{

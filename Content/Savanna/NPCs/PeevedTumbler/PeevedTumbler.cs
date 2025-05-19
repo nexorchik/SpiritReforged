@@ -1,4 +1,5 @@
 using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ModCompat;
 using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.Tiles;
 using System.IO;
@@ -20,6 +21,11 @@ public class PeevedTumbler : ModNPC
 	{
 		NPCID.Sets.TrailCacheLength[Type] = 5;
 		NPCID.Sets.TrailingMode[Type] = 3;
+
+		NPC.AddElement(MoRHelper.Earth);
+		NPC.AddElement(MoRHelper.Wind);
+		NPC.AddNPCElementList(MoRHelper.NPCType_Hot);
+		NPC.AddNPCElementList(MoRHelper.NPCType_Inorganic);
 	}
 
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Sandstorm");

@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.ItemCommon;
+using SpiritReforged.Common.ModCompat;
 
 namespace SpiritReforged.Content.Forest.WoodClub;
 

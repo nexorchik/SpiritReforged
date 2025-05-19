@@ -13,6 +13,7 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
 using Microsoft.Xna.Framework.Graphics;
+using SpiritReforged.Common.ModCompat;
 
 namespace SpiritReforged.Content.Desert.Scarabeus.Items.Projectiles;
 
@@ -50,6 +51,8 @@ public class RoyalKhopeshHeld : ModProjectile
 	{
 		ProjectileID.Sets.TrailCacheLength[Type] = 15;
 		ProjectileID.Sets.TrailingMode[Type] = 2;
+
+		Projectile.AddElement(MoRHelper.Earth);
 	}
 
 	public override void SetDefaults()
@@ -241,6 +244,8 @@ public class RoyalKhopeshHeld : ModProjectile
 
 	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 	{
+		MoRHelper.Decapitation(target, ref damageDone, ref hit.Crit);
+
 		if (Main.dedServ)
 			return;
 

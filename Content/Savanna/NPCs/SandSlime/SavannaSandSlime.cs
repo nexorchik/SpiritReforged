@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ModCompat;
 using SpiritReforged.Content.Savanna.Biome;
 using SpiritReforged.Content.Savanna.DustStorm;
 using SpiritReforged.Content.Savanna.Tiles;
@@ -11,6 +12,11 @@ public class SavannaSandSlime : ModNPC
 	{
 		Main.npcFrameCount[Type] = 3;
 		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.ShimmerSlime;
+
+		NPC.AddElement(MoRHelper.Earth);
+		NPC.AddElement(MoRHelper.Water);
+		NPC.AddNPCElementList(MoRHelper.NPCType_Slime);
+		NPC.AddNPCElementList(MoRHelper.NPCType_Hot);
 	}
 
 	public override void SetDefaults()
