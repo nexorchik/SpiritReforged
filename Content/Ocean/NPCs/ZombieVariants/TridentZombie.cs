@@ -16,11 +16,11 @@ public class TridentZombie : ReplaceNPC
 		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.BoneThrowingSkeleton;
 		NPCID.Sets.Zombies[Type] = true;
 
-		NPC.AddElement(MoRHelper.Water);
-		NPC.AddNPCElementList(MoRHelper.NPCType_Undead);
-		NPC.AddNPCElementList(MoRHelper.NPCType_Humanoid);
-		NPC.AddNPCElementList(MoRHelper.NPCType_Wet);
-		NPC.AddNPCElementList(MoRHelper.NPCType_Armed);
+		MoRHelper.AddElement(NPC, MoRHelper.Water);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Undead);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Humanoid);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Wet);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Armed);
 	}
 
 	public override void SetDefaults()

@@ -19,8 +19,8 @@ public class FrostbiteItem : ModItem
 	{
 		DiscoveryHelper.RegisterPickup(Type, new SoundStyle("SpiritReforged/Assets/SFX/Ambient/MagicFeedback1"));
 
-		Item.AddElement(MoRHelper.Wind);
-		Item.AddElement(MoRHelper.Ice, true);
+		MoRHelper.AddElement(Item, MoRHelper.Wind);
+		MoRHelper.AddElement(Item, MoRHelper.Ice, true);
 	}
 
 	public override void SetDefaults()

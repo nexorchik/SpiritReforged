@@ -8,12 +8,12 @@ namespace SpiritReforged.Content.Savanna.NPCs.JungleSlime;
 public class SavannaJungleSlime : ModNPC
 {
 	public override void SetStaticDefaults()
-	{ 
+	{
 		Main.npcFrameCount[Type] = 2;
 		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.ShimmerSlime;
 
-		NPC.AddElement(MoRHelper.Water);
-		NPC.AddNPCElementList(MoRHelper.NPCType_Slime);
+		MoRHelper.AddElement(NPC, MoRHelper.Water);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Slime);
 	}
 
 	public override void SetDefaults()

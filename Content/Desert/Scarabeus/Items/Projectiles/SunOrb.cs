@@ -7,7 +7,6 @@ using SpiritReforged.Content.Particles;
 using static SpiritReforged.Common.Easing.EaseFunction;
 using static Microsoft.Xna.Framework.MathHelper;
 using System.IO;
-using SpiritReforged.Common.ModCompat;
 
 namespace SpiritReforged.Content.Desert.Scarabeus.Items.Projectiles;
 

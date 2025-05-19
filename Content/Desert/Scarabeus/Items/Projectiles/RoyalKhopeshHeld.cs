@@ -52,7 +52,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		ProjectileID.Sets.TrailCacheLength[Type] = 15;
 		ProjectileID.Sets.TrailingMode[Type] = 2;
 
-		Projectile.AddElement(MoRHelper.Earth);
+		MoRHelper.AddElement(Projectile, MoRHelper.Earth);
 	}
 
 	public override void SetDefaults()
@@ -98,11 +98,14 @@ public class RoyalKhopeshHeld : ModProjectile
 		float progress = AiTimer / SwingTime;
 		switch (Combo)
 		{
-			case 0: FirstSwing(progress, direction);
+			case 0:
+				FirstSwing(progress, direction);
 				break;
-			case 1: DoubleSwing(progress, ref direction);
+			case 1:
+				DoubleSwing(progress, ref direction);
 				break;
-			default: FinalSwing(progress, direction);
+			default:
+				FinalSwing(progress, direction);
 				break;
 		}
 
@@ -234,7 +237,7 @@ public class RoyalKhopeshHeld : ModProjectile
 
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 	{
-		if(Combo == 2)
+		if (Combo == 2)
 		{
 			modifiers.FinalDamage *= 1.5f;
 			modifiers.FlatBonusDamage += Min(target.defense / 2, 20);
@@ -320,7 +323,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		Texture2D tex = TextureAssets.Projectile[Projectile.type].Value;
 		float baseOpacity = 0.4f;
 
-		for(int i = 0; i < ProjectileID.Sets.TrailCacheLength[Type]; i++)
+		for (int i = 0; i < ProjectileID.Sets.TrailCacheLength[Type]; i++)
 		{
 			if (oldScale[i] == 0)
 				return;
@@ -358,7 +361,7 @@ public class RoyalKhopeshHeld : ModProjectile
 		}
 
 		//Fix trail drawing to account for windup swing, set different params on windup swing
-		if(Combo == 2)
+		if (Combo == 2)
 		{
 			if (progress < WINDUP_TIME)
 				return;

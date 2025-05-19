@@ -16,7 +16,7 @@ public class WheezerCloud : ModProjectile
 	{
 		Main.projFrames[Type] = 8;
 
-		Projectile.AddElement(MoRHelper.Wind);
+		MoRHelper.AddElement(Projectile, MoRHelper.Wind);
 	}
 	public override void SetDefaults()
 	{

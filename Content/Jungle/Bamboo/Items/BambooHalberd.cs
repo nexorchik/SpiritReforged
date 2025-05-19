@@ -46,7 +46,7 @@ public class BambooHalberdProj : ModProjectile
 		Projectile.tileCollide = false;
 		Projectile.ownerHitCheck = true;
 
-		Projectile.SetSpearBonus();
+		MoRHelper.SetSpearBonus(Projectile);
 	}
 
 	public override void AI()

@@ -75,7 +75,7 @@ public abstract partial class BaseClubProj(Vector2 textureSize) : ModProjectile
 		Projectile.usesLocalNPCImmunity = true;
 		Projectile.localNPCHitCooldown = -1;
 
-		Projectile.SetHammerBonus();
+		MoRHelper.SetHammerBonus(Projectile);
 		SafeSetDefaults();
 	}
 

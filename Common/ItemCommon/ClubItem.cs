@@ -28,7 +28,7 @@ public abstract class ClubItem : ModItem
 		Item.shootSpeed = 1f;
 		Item.reuseDelay = 10;
 
-		Item.SetHammerBonus();
+		MoRHelper.SetHammerBonus(Item);
 
 		SafeSetDefaults();
 	}

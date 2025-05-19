@@ -18,8 +18,8 @@ public class TumbleZombie : ReplaceNPC
 		NPCID.Sets.Zombies[Type] = true;
 		NPCID.Sets.ShimmerTransformToNPC[Type] = NPCID.Skeleton;
 
-		NPC.AddNPCElementList(MoRHelper.NPCType_Undead);
-		NPC.AddNPCElementList(MoRHelper.NPCType_Humanoid);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Undead);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Humanoid);
 	}
 
 	public override void SetDefaults()

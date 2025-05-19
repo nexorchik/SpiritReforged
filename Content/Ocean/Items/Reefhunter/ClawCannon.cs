@@ -11,7 +11,7 @@ namespace SpiritReforged.Content.Ocean.Items.Reefhunter;
 
 public class ClawCannon : ModItem
 {
-	public override void SetStaticDefaults() => Item.AddElement(MoRHelper.Water, true);
+	public override void SetStaticDefaults() => MoRHelper.AddElement(Item, MoRHelper.Water, true);
 	public override void SetDefaults()
 	{
 		Item.damage = 15;
@@ -40,12 +40,12 @@ public class ClawCannon : ModItem
 			PulseCircle[] pulseCircles =
 			[
 				new PulseCircle(position + velocity, Cannonbubble.RINGCOLOR, Cannonbubble.RINGCOLOR * 0.5f, 0.5f, 80, 60, EaseFunction.EaseCircularOut),
-                new PulseCircle(position + velocity * 1.5f, Cannonbubble.RINGCOLOR, Cannonbubble.RINGCOLOR * 0.5f, 0.5f, 110, 60, EaseFunction.EaseCircularOut),
+				new PulseCircle(position + velocity * 1.5f, Cannonbubble.RINGCOLOR, Cannonbubble.RINGCOLOR * 0.5f, 0.5f, 110, 60, EaseFunction.EaseCircularOut),
 			];
 
-			for(int i = 0; i < pulseCircles.Length; i++)
+			for (int i = 0; i < pulseCircles.Length; i++)
 			{
-				pulseCircles[i].Velocity = 0.5f * Vector2.Normalize(velocity) / (1 + 2*i);
+				pulseCircles[i].Velocity = 0.5f * Vector2.Normalize(velocity) / (1 + 2 * i);
 				ParticleHandler.SpawnParticle(pulseCircles[i].WithSkew(0.85f, velocity.ToRotation() - MathHelper.Pi).UsesLightColor());
 			}
 

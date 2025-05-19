@@ -12,7 +12,7 @@ public class ToucaneItem : ModItem
 		ItemLootDatabase.AddItemRule(ItemID.JungleFishingCrate, ItemDropRule.Common(Type, 4));
 		ItemLootDatabase.AddItemRule(ItemID.JungleFishingCrateHard, ItemDropRule.Common(Type, 8));
 
-		Item.AddElement(MoRHelper.Nature, true);
+		MoRHelper.AddElement(Item, MoRHelper.Nature, true);
 	}
 
 	public override void SetDefaults()

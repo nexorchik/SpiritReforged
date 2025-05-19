@@ -10,8 +10,8 @@ public class FairyWhistle : ModItem
 {
 	public override void SetStaticDefaults()
 	{
-		Item.AddElement(MoRHelper.Arcane);
-		Item.AddElement(MoRHelper.Nature, true);
+		MoRHelper.AddElement(Item, MoRHelper.Arcane);
+		MoRHelper.AddElement(Item, MoRHelper.Nature, true);
 	}
 	public override void SetDefaults()
 	{

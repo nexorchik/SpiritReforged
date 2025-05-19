@@ -42,118 +42,153 @@ public static class MoRHelper
 
 	// ------------------------------------------------------------------------------------------------------
 	// These go in SetStaticDefaults()
-	public static void AddItemToBluntSwing(this Item item)
+	public static void AddItemToBluntSwing(int itemType)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return;
-		redemption.Call("addItemToBluntSwing", item.type);
+		redemption.Call("addItemToBluntSwing", itemType);
 	}
-	public static void AddElement(this Entity entity, int ElementID, bool projsInheritElements = false)
+
+	public static void AddElement(Entity entity, int elementID, bool projsInheritElements = false)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return;
 		if (entity is Item item)
-			redemption.Call("addElementItem", ElementID, item.type, projsInheritElements);
+			redemption.Call("addElementItem", elementID, item.type, projsInheritElements);
 		else if (entity is NPC npc)
-			redemption.Call("addElementNPC", ElementID, npc.type);
+			redemption.Call("addElementNPC", elementID, npc.type);
 		else if (entity is Projectile proj)
-			redemption.Call("addElementProj", ElementID, proj.type, projsInheritElements);
+			redemption.Call("addElementProj", elementID, proj.type, projsInheritElements);
 	}
-	public static void AddNPCElementList(this NPC npc, string TypeString)
+
+	public static void AddElementToItem(int type, int elementID, bool projsInheritElements = false)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return;
-		redemption.Call("addNPCToElementTypeList", TypeString, npc.type);
+		redemption.Call("addElementItem", elementID, type, projsInheritElements);
 	}
+
+	public static void AddElementToNPC(int type, int elementID)
+	{
+		if (!CrossMod.Redemption.Enabled)
+			return;
+		redemption.Call("addElementNPC", elementID, type);
+	}
+
+	public static void AddElementToProjectile(int type, int elementID, bool projsInheritElements = false)
+	{
+		if (!CrossMod.Redemption.Enabled)
+			return;
+		redemption.Call("addElementProj", elementID, type, projsInheritElements);
+	}
+
+	public static void AddNPCToElementList(int npcType, string typeString)
+	{
+		if (!CrossMod.Redemption.Enabled)
+			return;
+		redemption.Call("addNPCToElementTypeList", typeString, npcType);
+	}
+
 	// ------------------------------------------------------------------------------------------------------
 	// These are dynamic, so they can go in SetDefaults or wherever you want to update them
 	// Keep in mind they don't get reset, so not required to put in an Update method that happens every frame
-	public static void OverrideElement(this Entity entity, int ElementID, int overrideID = 1)
+	public static void OverrideElement(Entity entity, int elementID, int overrideID = 1)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return;
 		if (entity is Item item)
-			redemption.Call("elementOverrideItem", item, ElementID, overrideID);
+			redemption.Call("elementOverrideItem", item, elementID, overrideID);
 		else if (entity is NPC npc)
-			redemption.Call("elementOverrideNPC", npc, ElementID, overrideID);
+			redemption.Call("elementOverrideNPC", npc, elementID, overrideID);
 		else if (entity is Projectile proj)
-			redemption.Call("elementOverrideProj", proj, ElementID, overrideID);
+			redemption.Call("elementOverrideProj", proj, elementID, overrideID);
 	}
-	public static void OverrideElementMultiplier(this NPC npc, int ElementID, float value = 1, bool dontSetMultipliers = false)
+
+	public static void OverrideElementMultiplier(NPC npc, int elementID, float value = 1, bool dontSetMultipliers = false)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return;
-		redemption.Call("elementMultiplier", npc, ElementID, value, dontSetMultipliers);
+		redemption.Call("elementMultiplier", npc, elementID, value, dontSetMultipliers);
 	}
-	public static void NoBossMultiplierCap(this NPC npc, bool uncap = true)
+
+	public static void NoBossMultiplierCap(NPC npc, bool uncap = true)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return;
 		redemption.Call("uncapBossElementMultiplier", npc, uncap);
 	}
-	public static void HideElementIcon(this Item item, int ElementID, bool hidden = true)
+
+	public static void HideElementIcon(Item item, int elementID, bool hidden = true)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return;
-		redemption.Call("hideElementIcon", item, ElementID, hidden);
+		redemption.Call("hideElementIcon", item, elementID, hidden);
 	}
+
 	public static bool Decapitation(NPC target, ref int damageDone, ref bool crit, int chance = 200)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return false;
 		return (bool)redemption.Call("decapitation", target, damageDone, crit, chance);
 	}
-	public static bool SetSlashBonus(this Item item, bool setBonus = true)
+
+	public static bool SetSlashBonus(Item item, bool setBonus = true)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return false;
 		return (bool)redemption.Call("setSlashBonus", item, setBonus);
 	}
-	public static bool SetAxeBonus(this Item item, bool setBonus = true)
+
+	public static bool SetAxeBonus(Item item, bool setBonus = true)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return false;
 		return (bool)redemption.Call("setAxeBonus", item, setBonus);
 	}
-	public static bool SetAxeBonus(this Projectile proj, bool setBonus = true)
+
+	public static bool SetAxeBonus(Projectile proj, bool setBonus = true)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return false;
 		return (bool)redemption.Call("setAxeProj", proj, setBonus);
 	}
-	public static bool SetHammerBonus(this Item item, bool setBonus = true)
+
+	public static bool SetHammerBonus(Item item, bool setBonus = true)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return false;
 		return (bool)redemption.Call("setHammerBonus", item, setBonus);
 	}
-	public static bool SetHammerBonus(this Projectile proj, bool setBonus = true)
+
+	public static bool SetHammerBonus(Projectile proj, bool setBonus = true)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return false;
 		return (bool)redemption.Call("setHammerProj", proj, setBonus);
 	}
+
 	// Items already have "ItemID.Sets.Spears[Item.type]" to set them as spears
-	public static bool SetSpearBonus(this Projectile proj, bool setBonus = true)
+	public static bool SetSpearBonus(Projectile proj, bool setBonus = true)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return false;
 		return (bool)redemption.Call("setSpearProj", proj, setBonus);
 	}
+
 	// ------------------------------------------------------------------------------------------------------
-	public static bool HasElement(this Entity entity, int ElementID)
+	public static bool HasElement(Entity entity, int elementID)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return false;
 		if (entity is Item item)
-			return (bool)redemption.Call("hasElementItem", item, ElementID);
+			return (bool)redemption.Call("hasElementItem", item, elementID);
 		else if (entity is NPC npc)
-			return (bool)redemption.Call("elementOverrideNPC", npc, ElementID);
+			return (bool)redemption.Call("elementOverrideNPC", npc, elementID);
 		else if (entity is Projectile proj)
-			return (bool)redemption.Call("elementOverrideProj", proj, ElementID);
+			return (bool)redemption.Call("elementOverrideProj", proj, elementID);
 		return false;
 	}
-	public static int GetFirstElement(this Entity entity, bool ignoreExplosive = false)
+	public static int GetFirstElement(Entity entity, bool ignoreExplosive = false)
 	{
 		if (!CrossMod.Redemption.Enabled)
 			return 0;

@@ -22,10 +22,10 @@ public class PeevedTumbler : ModNPC
 		NPCID.Sets.TrailCacheLength[Type] = 5;
 		NPCID.Sets.TrailingMode[Type] = 3;
 
-		NPC.AddElement(MoRHelper.Earth);
-		NPC.AddElement(MoRHelper.Wind);
-		NPC.AddNPCElementList(MoRHelper.NPCType_Hot);
-		NPC.AddNPCElementList(MoRHelper.NPCType_Inorganic);
+		MoRHelper.AddElement(NPC, MoRHelper.Earth);
+		MoRHelper.AddElement(NPC, MoRHelper.Wind);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Hot);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Inorganic);
 	}
 
 	public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "Sandstorm");
@@ -73,8 +73,8 @@ public class PeevedTumbler : ModNPC
 			if ((int)NPC.velocity.X == 0)
 				if (NPC.velocity.Y == 0 && ++Counter % 60 == 0)
 					NPC.velocity.Y = -5; //Jump over tall terrain if stuck
-			else
-				Counter = 0;
+				else
+					Counter = 0;
 
 			NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, Math.Sign(target.Center.X - NPC.Center.X) * maxSpeed, .01f);
 		}

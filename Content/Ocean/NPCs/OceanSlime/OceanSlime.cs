@@ -18,8 +18,8 @@ public class OceanSlime : ModNPC
 		NPCHelper.ImmuneTo(this, BuffID.Poisoned, BuffID.Venom);
 		NPCID.Sets.ShimmerTransformToNPC[Type] = NPCID.ShimmerSlime;
 
-		NPC.AddElement(MoRHelper.Water);
-		NPC.AddNPCElementList(MoRHelper.NPCType_Slime);
+		MoRHelper.AddElement(NPC, MoRHelper.Water);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Slime);
 	}
 
 	public override void SetDefaults()
@@ -92,7 +92,7 @@ public class OceanSlime : ModNPC
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
 		npcLoot.AddCommon(ItemID.Gel, 1, 1, 3);
-		npcLoot.AddCommon<CoconutMilk>(); 
+		npcLoot.AddCommon<CoconutMilk>();
 		npcLoot.AddCommon(ItemID.SlimeStaff, 10000);
 	}
 }

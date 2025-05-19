@@ -14,8 +14,8 @@ public class JellyfishStaff : ModItem
 		NPCLootDatabase.AddLoot(new(NPCLootDatabase.MatchId(NPCID.PinkJellyfish), ItemDropRule.Common(Type, 100)));
 		NPCLootDatabase.AddLoot(new(NPCLootDatabase.MatchId(NPCID.BlueJellyfish), ItemDropRule.Common(Type, 500)));
 
-		Item.AddElement(MoRHelper.Thunder);
-		Item.AddElement(MoRHelper.Water, true);
+		MoRHelper.AddElement(Item, MoRHelper.Thunder);
+		MoRHelper.AddElement(Item, MoRHelper.Water, true);
 	}
 
 	public override void SetDefaults()

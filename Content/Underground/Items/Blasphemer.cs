@@ -23,7 +23,7 @@ public class Blasphemer : ClubItem
 	{
 		ItemLootDatabase.AddItemRule(ItemID.ObsidianLockbox, ItemDropRule.Common(Type, 5));
 
-		Item.AddElement(MoRHelper.Fire, true);
+		MoRHelper.AddElement(Item, MoRHelper.Fire, true);
 	}
 	public override void SafeSetDefaults()
 	{

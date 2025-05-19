@@ -17,7 +17,7 @@ public class CactusWallProj : ModProjectile
 		ProjectileID.Sets.DontAttachHideToAlpha[Type] = true;
 		Main.projFrames[Type] = 3;
 
-		Projectile.AddElement(MoRHelper.Nature);
+		MoRHelper.AddElement(Projectile, MoRHelper.Nature);
 	}
 
 	public override void SetDefaults()

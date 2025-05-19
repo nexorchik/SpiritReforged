@@ -11,8 +11,8 @@ public class UrchinStaff : ModItem
 {
 	public override void SetStaticDefaults()
 	{
-		Item.AddElement(MoRHelper.Poison);
-		Item.AddElement(MoRHelper.Water, true);
+		MoRHelper.AddElement(Item, MoRHelper.Poison);
+		MoRHelper.AddElement(Item, MoRHelper.Water, true);
 	}
 	public override void SetDefaults()
 	{

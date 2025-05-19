@@ -17,7 +17,7 @@ public class PotterySlime : ModNPC
 		NPCID.Sets.HatOffsetY[Type] = 0;
 		NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Shimmer] = true;
 		NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
-		
+
 		NPCID.Sets.CannotSitOnFurniture[Type] = false;
 		NPCID.Sets.TownNPCBestiaryPriority.Add(Type);
 		NPCID.Sets.PlayerDistanceWhilePetting[Type] = 26;
@@ -31,7 +31,7 @@ public class PotterySlime : ModNPC
 
 		NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, drawModifiers);
 
-		NPC.AddNPCElementList(MoRHelper.NPCType_Slime);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Slime);
 	}
 
 	public override void SetDefaults()

@@ -34,7 +34,7 @@ public abstract class BombProjectile : ModProjectile
 	{
 		ProjectileID.Sets.Explosive[Type] = true;
 
-		Projectile.AddElement(MoRHelper.Explosive);
+		MoRHelper.AddElement(Projectile, MoRHelper.Explosive);
 	}
 
 	public override void SetDefaults()

@@ -10,7 +10,7 @@ public class ReefSpear : ModItem
 	{
 		ItemID.Sets.Spears[Type] = true;
 
-		Item.AddElement(MoRHelper.Water);
+		MoRHelper.AddElement(Item, MoRHelper.Water);
 	}
 	public override void SetDefaults()
 	{

@@ -21,7 +21,7 @@ public class PoolNoodle : ModItem
 		ItemLootDatabase.AddItemRule(ItemID.OceanCrate, ItemDropRule.Common(Type, 8));
 		ItemLootDatabase.AddItemRule(ItemID.OceanCrateHard, ItemDropRule.Common(Type, 8));
 
-		Item.AddElement(MoRHelper.Water, true);
+		MoRHelper.AddElement(Item, MoRHelper.Water, true);
 	}
 
 	public override void SetDefaults()

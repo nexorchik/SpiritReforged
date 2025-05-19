@@ -44,7 +44,7 @@ public class ReefSpearProjectile : ModProjectile
 		Projectile.ownerHitCheck = true;
 		DrawHeldProjInFrontOfHeldItemAndArms = false;
 
-		Projectile.SetSpearBonus();
+		MoRHelper.SetSpearBonus(Projectile);
 	}
 
 	public override bool? CanDamage() => true;

@@ -18,8 +18,8 @@ public class Shockhammer : ClubItem
 		NPCLootDatabase.AddLoot(new(NPCLootDatabase.MatchId(NPCID.GraniteFlyer), ItemDropRule.Common(Type, 20)));
 		NPCLootDatabase.AddLoot(new(NPCLootDatabase.MatchId(NPCID.GraniteGolem), ItemDropRule.Common(Type, 20)));
 
-		Item.AddElement(MoRHelper.Earth);
-		Item.AddElement(MoRHelper.Thunder, true);
+		MoRHelper.AddElement(Item, MoRHelper.Earth);
+		MoRHelper.AddElement(Item, MoRHelper.Thunder, true);
 	}
 
 	public override void SafeSetDefaults()

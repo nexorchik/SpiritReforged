@@ -15,9 +15,9 @@ public class KelpZombie : ReplaceNPC
 		NPCID.Sets.Zombies[Type] = true;
 		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Skeleton;
 
-		NPC.AddNPCElementList(MoRHelper.NPCType_Undead);
-		NPC.AddNPCElementList(MoRHelper.NPCType_Humanoid);
-		NPC.AddNPCElementList(MoRHelper.NPCType_Wet);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Undead);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Humanoid);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Wet);
 	}
 
 	public override void SetDefaults()

@@ -23,6 +23,6 @@ public class RogueCrest : MinionAccessory
 		Item.rare = ItemRarityID.Blue;
 		Item.defense = 1;
 
-		Item.SetSlashBonus();
+		MoRHelper.SetSlashBonus(Item);
 	}
 }

@@ -13,8 +13,8 @@ public class SunStaff : ModItem
 	{
 		Item.staff[Type] = true;
 
-		Item.AddElement(MoRHelper.Fire);
-		Item.AddElement(MoRHelper.Holy, true);
+		MoRHelper.AddElement(Item, MoRHelper.Fire);
+		MoRHelper.AddElement(Item, MoRHelper.Holy, true);
 	}
 
 	public override void SetDefaults()

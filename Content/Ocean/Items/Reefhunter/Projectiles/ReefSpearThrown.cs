@@ -39,7 +39,7 @@ public class ReefSpearThrown : ModProjectile
 		Projectile.DamageType = DamageClass.Melee;
 		Projectile.aiStyle = 0;
 
-		Projectile.SetSpearBonus();
+		MoRHelper.SetSpearBonus(Projectile);
 	}
 
 	public override bool? CanDamage() => !HasTarget;

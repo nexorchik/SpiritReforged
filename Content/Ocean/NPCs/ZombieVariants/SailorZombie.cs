@@ -6,7 +6,7 @@ namespace SpiritReforged.Content.Ocean.NPCs.ZombieVariants;
 
 public class SailorZombie : ReplaceNPC
 {
-	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie, 
+	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie,
 		NPCID.PincushionZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
 
 	public override void StaticDefaults()
@@ -15,9 +15,9 @@ public class SailorZombie : ReplaceNPC
 		NPCID.Sets.Zombies[Type] = true;
 		NPCID.Sets.ShimmerTransformToNPC[NPC.type] = NPCID.Skeleton;
 
-		NPC.AddNPCElementList(MoRHelper.NPCType_Undead);
-		NPC.AddNPCElementList(MoRHelper.NPCType_Humanoid);
-		NPC.AddNPCElementList(MoRHelper.NPCType_Wet);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Undead);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Humanoid);
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Wet);
 	}
 
 	public override void SetDefaults()

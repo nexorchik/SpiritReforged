@@ -17,7 +17,7 @@ public class Bowlder : ClubItem
 {
 	internal override float DamageScaling => 1.3f;
 
-	public override void SetStaticDefaults() => Item.AddElement(MoRHelper.Earth, true);
+	public override void SetStaticDefaults() => MoRHelper.AddElement(Item, MoRHelper.Earth, true);
 	public override void SafeSetDefaults()
 	{
 		Item.damage = 45;
