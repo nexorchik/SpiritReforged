@@ -33,17 +33,20 @@ public class UndeadNPC : GlobalNPC
 		{
 			case 2:
 				{
-					if (args[1] is int customType)
+					if (args[0] is int customType)
 						return UndeadTypes.Add(customType);
-
-					break;
+					else
+						throw new ArgumentException("AddUndead parameter 0 should be an int!");
 				}
 			case 3:
 				{
-					if (args[1] is int customType && args[2] is bool excludeDeathAnim)
-						return UndeadTypes.Add(customType) && (!excludeDeathAnim || NoDeathAnim.Add(customType));
+					if (args[0] is not int customType)
+						throw new ArgumentException("AddUndead parameter 0 should be an int!");
 
-					break;
+					if (args[1] is not bool excludeDeathAnim)
+						throw new ArgumentException("AddUndead parameter 1 should be a bool!");
+
+					return UndeadTypes.Add(customType) && (!excludeDeathAnim || NoDeathAnim.Add(customType));
 				}
 		}
 
@@ -54,12 +57,6 @@ public class UndeadNPC : GlobalNPC
 	internal static bool IsUndeadType(int type) => UndeadTypes.Contains(type) || NPCID.Sets.Zombies[type] || NPCID.Sets.Skeletons[type] || NPCID.Sets.DemonEyes[type];
 	private static bool ShouldTrackGore(NPC self) => self.TryGetGlobalNPC(out UndeadNPC _) && Interaction(self).HasAccessory<SafekeeperRing>();
 	public override bool AppliesToEntity(NPC entity, bool lateInstantiation) => IsUndeadType(entity.type);
-
-	public override void SetStaticDefaults()
-	{
-		if (CrossMod.Fables.Enabled && CrossMod.Fables.TryFind("SirNautilus", out ModNPC n))
-			UndeadTypes.Add(n.Type);
-	}
 
 	#region detours
 	public override void Load()
