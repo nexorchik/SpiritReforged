@@ -1,4 +1,5 @@
-﻿using SpiritReforged.Common.WorldGeneration;
+﻿using SpiritReforged.Common.ModCompat;
+using SpiritReforged.Common.WorldGeneration;
 using System.IO;
 using Terraria.GameContent.Bestiary;
 using Terraria.ModLoader.IO;
@@ -16,7 +17,7 @@ public class PotterySlime : ModNPC
 		NPCID.Sets.HatOffsetY[Type] = 0;
 		NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Shimmer] = true;
 		NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
-		
+
 		NPCID.Sets.CannotSitOnFurniture[Type] = false;
 		NPCID.Sets.TownNPCBestiaryPriority.Add(Type);
 		NPCID.Sets.PlayerDistanceWhilePetting[Type] = 26;
@@ -29,6 +30,8 @@ public class PotterySlime : ModNPC
 		{ Velocity = 0.25f };
 
 		NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, drawModifiers);
+
+		MoRHelper.AddNPCToElementList(Type, MoRHelper.NPCType_Slime);
 	}
 
 	public override void SetDefaults()

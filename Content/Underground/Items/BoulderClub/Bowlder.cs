@@ -9,6 +9,7 @@ using SpiritReforged.Common.MathHelpers;
 using System.IO;
 using SpiritReforged.Common.ProjectileCommon;
 using Terraria.Audio;
+using SpiritReforged.Common.ModCompat;
 
 namespace SpiritReforged.Content.Underground.Items.BoulderClub;
 
@@ -16,6 +17,7 @@ public class Bowlder : ClubItem
 {
 	internal override float DamageScaling => 1.3f;
 
+	public override void SetStaticDefaults() => MoRHelper.AddElement(Item, MoRHelper.Earth, true);
 	public override void SafeSetDefaults()
 	{
 		Item.damage = 45;
@@ -66,7 +68,7 @@ class BowlderProj : BaseClubProj, IManualTrailProjectile
 	public override void OnSwingStart()
 	{
 		TrailManager.ManualTrailSpawn(Projectile);
-		if(FullCharge && Main.myPlayer == Owner.whoAmI)
+		if (FullCharge && Main.myPlayer == Owner.whoAmI)
 		{
 			StoredShotTrajectory = Owner.GetArcVel(Main.MouseWorld, 0.5f, SHOOT_SPEED);
 			StoredTargetPos = Main.MouseWorld - Owner.MountedCenter;

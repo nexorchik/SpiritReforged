@@ -8,6 +8,7 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
+using SpiritReforged.Common.ModCompat;
 
 namespace SpiritReforged.Content.Underground.Items;
 
@@ -18,7 +19,12 @@ public class Blasphemer : ClubItem
 
 	internal override float DamageScaling => 2.5f;
 
-	public override void SetStaticDefaults() => ItemLootDatabase.AddItemRule(ItemID.ObsidianLockbox, ItemDropRule.Common(Type, 5));
+	public override void SetStaticDefaults()
+	{
+		ItemLootDatabase.AddItemRule(ItemID.ObsidianLockbox, ItemDropRule.Common(Type, 5));
+
+		MoRHelper.AddElement(Item, MoRHelper.Fire, true);
+	}
 	public override void SafeSetDefaults()
 	{
 		Item.damage = 38;

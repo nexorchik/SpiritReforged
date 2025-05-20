@@ -1,4 +1,5 @@
 using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.ModCompat;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.ProjectileCommon.Abstract;
@@ -135,6 +136,8 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 			SoundEngine.PlaySound(BigSwing, Projectile.Center);
 			SoundEngine.PlaySound(SoundID.NPCDeath12 with { Volume = .1f, Pitch = .25f }, Projectile.Center);
 		}
+
+		MoRHelper.Decapitation(target, ref damageDone, ref hit.Crit);
 	}
 
 	public override bool DoAutoFrameUpdate(ref int framesPerSecond, ref int startFrame, ref int endFrame)

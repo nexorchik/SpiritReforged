@@ -1,3 +1,4 @@
+using SpiritReforged.Common.ModCompat;
 using SpiritReforged.Common.ModCompat.Classic;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -12,6 +13,12 @@ public class FairyWhistle : ModItem
 		PitchVariance = .3f,
 		Volume = 1.2f
 	};
+
+	public override void SetStaticDefaults()
+	{
+		MoRHelper.AddElement(Item, MoRHelper.Arcane);
+		MoRHelper.AddElement(Item, MoRHelper.Nature, true);
+	}
 
 	public override void SetDefaults()
 	{

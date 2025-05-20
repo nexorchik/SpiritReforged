@@ -19,6 +19,7 @@ using Terraria.DataStructures;
 using static SpiritReforged.Common.Easing.EaseFunction;
 using static Microsoft.Xna.Framework.Color;
 using static Microsoft.Xna.Framework.MathHelper;
+using Terraria.GameContent.Tile_Entities;
 
 namespace SpiritReforged.Content.Underground.Items;
 
@@ -308,13 +309,14 @@ internal class BombCannonShot : BombProjectile, ITrailProjectile
 
 			//Hacky fake collision logic, due to the explosive projectile set seeming to always make bombs explode instantly on hit
 			//Might be missing something to ensure proper interactions with accessories and other on hit effects?
+			Player owner = Main.player[Projectile.owner];
 			foreach (NPC npc in Main.ActiveNPCs)
 			{
 				if (npc.Hitbox.Intersects(Projectile.Hitbox))
 				{
-					if(Projectile.localNPCImmunity[npc.whoAmI] == 0)
+					bool animalFriendshipCheck = npc.CountsAsACritter && owner.dontHurtCritters;
+					if(Projectile.localNPCImmunity[npc.whoAmI] == 0 && !npc.friendly && !animalFriendshipCheck)
 					{
-						Player owner = Main.player[Projectile.owner];
 						owner.ApplyDamageToNPC(npc,
 								   (int)owner.GetTotalDamage<RangedDamageClass>().ApplyTo(DamageModifier * _damage * BombCannon.ContactDamagePercentage),
 								   Projectile.knockBack,
