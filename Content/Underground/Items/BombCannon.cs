@@ -59,7 +59,7 @@ public class BombCannon : ModItem
 
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
-		if (player.HasAccessory<BoomShroom>())
+		if (player.HasEquip<BoomShroom>())
 			type = BoomShroomPlayer.MakeLarge(type);
 
 		Projectile.NewProjectile(source, position, velocity, Item.shoot, damage, knockback, player.whoAmI, type, 0, velocity.Length());
@@ -194,7 +194,7 @@ internal class BombCannonHeld : ModProjectile
 				bomb.sticky = BombCannon.BouncyBombProjIDs.Contains(ShootType);
 				bomb.SetDamage(Projectile.damage);
 
-				if(Main.player[Projectile.owner].HasAccessory<BoomShroom>())
+				if(Main.player[Projectile.owner].HasEquip<BoomShroom>())
 				{
 					bomb.BoomShroom = true;
 					bomb.area = 15;

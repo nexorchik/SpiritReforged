@@ -11,6 +11,24 @@ public class UndeadNPC : GlobalNPC
 {
 	private const float DecayRate = .025f;
 
+	public static readonly SoundStyle DustScatter = new("SpiritReforged/Assets/SFX/NPCDeath/Dust_1")
+	{
+		Pitch = .75f,
+		PitchVariance = .25f
+	};
+
+	public static readonly SoundStyle ExplosionLiquid = new("SpiritReforged/Assets/SFX/Projectile/Explosion_Liquid")
+	{
+		Pitch = .8f,
+		PitchVariance = .2f
+	};
+
+	public static readonly SoundStyle Fire = new("SpiritReforged/Assets/SFX/NPCDeath/Fire_1")
+	{
+		Pitch = .25f,
+		PitchVariance = .2f
+	};
+
 	private static readonly HashSet<int> UndeadTypes = [NPCID.Zombie, NPCID.ZombieDoctor, NPCID.ZombieElf, NPCID.ZombieElfBeard, NPCID.ZombieElfGirl, NPCID.ZombieEskimo, 
 		NPCID.ZombieMerman, NPCID.ZombieMushroom, NPCID.ZombieMushroomHat, NPCID.ZombiePixie, NPCID.ZombieRaincoat, NPCID.ZombieSuperman, NPCID.ZombieSweater, 
 		NPCID.ZombieXmas, NPCID.ArmedTorchZombie, NPCID.ArmedZombie, NPCID.ArmedZombieCenx, NPCID.ArmedZombieEskimo, NPCID.ArmedZombiePincussion, NPCID.ArmedZombieSlimed, 
@@ -45,7 +63,7 @@ public class UndeadNPC : GlobalNPC
 
 	/// <summary> Checks whether the NPC of the given type is considered "undead". </summary>
 	internal static bool IsUndeadType(int type) => UndeadTypes.Contains(type) || NPCID.Sets.Zombies[type] || NPCID.Sets.Skeletons[type] || NPCID.Sets.DemonEyes[type];
-	private static bool ShouldTrackGore(NPC self) => self.TryGetGlobalNPC(out UndeadNPC _) && Interaction(self).HasAccessory<SafekeeperRing>();
+	private static bool ShouldTrackGore(NPC self) => self.TryGetGlobalNPC(out UndeadNPC _) && Interaction(self).HasEquip<SafekeeperRing>();
 	public override bool AppliesToEntity(NPC entity, bool lateInstantiation) => IsUndeadType(entity.type);
 
 	#region detours
@@ -116,7 +134,7 @@ public class UndeadNPC : GlobalNPC
 
 	public override void HitEffect(NPC npc, NPC.HitInfo hit)
 	{
-		if (npc.life <= 0 && Interaction(npc).HasAccessory<SafekeeperRing>())
+		if (npc.life <= 0 && Interaction(npc).HasEquip<SafekeeperRing>())
 		{
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
@@ -149,8 +167,8 @@ public class UndeadNPC : GlobalNPC
 		if (Main.dedServ)
 			return;
 
-		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Fire_1") with { Pitch = .25f, PitchVariance = .2f }, npc.Center);
-		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/Explosion_Liquid") with { Pitch = .8f, PitchVariance = .2f }, npc.Center);
+		SoundEngine.PlaySound(Fire, npc.Center);
+		SoundEngine.PlaySound(ExplosionLiquid, npc.Center);
 
 		var pos = npc.Center;
 		for (int i = 0; i < 3; i++)
@@ -172,7 +190,7 @@ public class UndeadNPC : GlobalNPC
 
 		if ((_decayTime -= DecayRate) <= 0)
 		{
-			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Dust_1") with { Pitch = .75f, PitchVariance = .25f }, npc.Center);
+			SoundEngine.PlaySound(DustScatter, npc.Center);
 			npc.active = false;
 		}
 
