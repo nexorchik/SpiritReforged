@@ -16,7 +16,7 @@ public static class ParticleDetours
 	{
 		orig(self);
 		Main.spriteBatch.End();
-		Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, default, default, RasterizerState.CullNone, default, Main.Transform);
+		Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, default, default, RasterizerState.CullNone, default, Main.GameViewMatrix.TransformationMatrix);
 		ParticleHandler.DrawAllParticles(Main.spriteBatch, ParticleLayer.AbovePlayer);
 		Main.spriteBatch.RestartToDefault();
 	}
@@ -29,7 +29,7 @@ public static class ParticleDetours
 
 	private static void AtProjectile(On_Main.orig_DrawProjectiles orig, Main self)
 	{
-		Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, default, default, RasterizerState.CullNone, default, Main.Transform);
+		Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, default, default, RasterizerState.CullNone, default, Main.GameViewMatrix.TransformationMatrix);
 		ParticleHandler.DrawAllParticles(Main.spriteBatch, ParticleLayer.BelowProjectile);
 		Main.spriteBatch.End();
 		orig(self);
