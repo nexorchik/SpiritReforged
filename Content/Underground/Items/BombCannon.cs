@@ -187,7 +187,7 @@ internal class BombCannonHeld : ModProjectile
 		if (Projectile.owner == Main.myPlayer)
 		{
 			var velocity = Projectile.velocity * Progress;
-			bool boomShroom = owner.HasAccessory<BoomShroom>();
+			bool boomShroom = owner.HasEquip<BoomShroom>();
 			int type = boomShroom ? ModContent.ProjectileType<BigCannonBomb>() : ModContent.ProjectileType<CannonBomb>();
 
 			PreNewProjectile.New(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity, type, (int)(Projectile.damage * BombCannon.ContactDamagePercentage), Projectile.knockBack, Projectile.owner, ShootType, 1, preSpawnAction: delegate (Projectile p)
