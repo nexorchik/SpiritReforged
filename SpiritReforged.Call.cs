@@ -24,7 +24,7 @@ public partial class SpiritReforgedMod : Mod
 			{
 				case "AddUndead":
 					{
-						return UndeadNPC.AddCustomUndead(args);
+						return UndeadNPC.AddCustomUndead(args[1..]);
 					}
 				case "GetSavannaArea":
 					{
