@@ -55,7 +55,7 @@ public class UndeadNPC : GlobalNPC
 
 	/// <summary> Checks whether the NPC of the given type is considered "undead". </summary>
 	internal static bool IsUndeadType(int type) => UndeadTypes.Contains(type) || NPCID.Sets.Zombies[type] || NPCID.Sets.Skeletons[type] || NPCID.Sets.DemonEyes[type];
-	private static bool ShouldTrackGore(NPC self) => self.TryGetGlobalNPC(out UndeadNPC _) && Interaction(self).HasAccessory<SafekeeperRing>();
+	private static bool ShouldTrackGore(NPC self) => self.TryGetGlobalNPC(out UndeadNPC _) && Interaction(self).HasEquip<SafekeeperRing>();
 	public override bool AppliesToEntity(NPC entity, bool lateInstantiation) => IsUndeadType(entity.type);
 
 	#region detours
@@ -88,7 +88,7 @@ public class UndeadNPC : GlobalNPC
 	public override bool CheckDead(NPC npc)
 	{
 		bool value = base.CheckDead(npc);
-		if (value && Main.netMode != NetmodeID.MultiplayerClient && Interaction(npc).HasAccessory<SafekeeperRing>() && !NoDeathAnim.Contains(npc.type))
+		if (value && Main.netMode != NetmodeID.MultiplayerClient && Interaction(npc).HasEquip<SafekeeperRing>() && !NoDeathAnim.Contains(npc.type))
 			UndeadDecay.StartEffect(npc);
 
 		return value;
