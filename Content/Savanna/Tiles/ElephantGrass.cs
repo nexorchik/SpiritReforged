@@ -201,7 +201,7 @@ public class ElephantGrass : ModTile, IConvertibleTile, ICutAttempt
 	public bool OnCutAttempt(int i, int j)
 	{
 		var p = Main.player[Player.FindClosest(new Vector2(i, j) * 16, 16, 16)];
-		return p.HeldItem.type == ItemID.Sickle; //Only allow this tile to be cut using a sickle
+		return p.HeldItem.type is ItemID.Sickle or ItemID.LawnMower; //Only allow this tile to be cut using a sickle or lawnmower
 	}
 }
 

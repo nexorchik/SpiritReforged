@@ -21,9 +21,9 @@ public class TermiteMoundLarge : ModTile
 		TileObjectData.newTile.Height = 5;
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 16, 16];
 		TileObjectData.newTile.Origin = new(2, 4);
-		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, 3, 0);
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaGrassCorrupt>(), 
-			ModContent.TileType<SavannaGrassCrimson>(), ModContent.TileType<SavannaGrassHallow>(), ModContent.TileType<SavannaDirt>()];
+		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile, TileObjectData.newTile.Width, 0);
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaGrassCorrupt>(), ModContent.TileType<SavannaGrassCrimson>(), 
+			ModContent.TileType<SavannaGrassHallow>(), ModContent.TileType<SavannaDirt>(), ModContent.TileType<SavannaGrassHallowMowed>(), ModContent.TileType<SavannaGrassMowed>()];
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.addTile(Type);
 

@@ -38,7 +38,7 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 	public override void PreAddObjectData()
 	{
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>()];
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrass>(), ModContent.TileType<SavannaGrassMowed>()];
 
 		AddMapEntry(new Color(120, 80, 75), Language.GetText("MapObject.Tree"));
 		RegisterItemDrop(ItemMethods.AutoItemType<Drywood>());
@@ -276,7 +276,7 @@ public class AcaciaTreeHallow : AcaciaTree
 		base.PreAddObjectData();
 
 		TileID.Sets.Hallow[Type] = true;
-		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrassHallow>()];
+		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<SavannaGrassHallow>(), ModContent.TileType<SavannaGrassHallowMowed>()];
 	}
 
 	public override void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
