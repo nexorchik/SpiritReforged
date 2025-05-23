@@ -1,6 +1,7 @@
 using SpiritReforged.Common.ItemCommon;
 using SpiritReforged.Common.TileCommon.Corruption;
 using SpiritReforged.Common.TileCommon.PresetTiles;
+using Terraria.GameContent.Metadata;
 
 namespace SpiritReforged.Content.Savanna.Tiles;
 
@@ -13,6 +14,7 @@ public class SavannaGrassMowed : GrassTile
 	{
 		base.SetStaticDefaults();
 
+		TileMaterials.SetForTileId(Type, TileMaterials.GetByTileId(TileID.GolfGrass));
 		RegisterItemDrop(ItemMethods.AutoItemType<SavannaDirt>());
 		AddMapEntry(MapColor);
 	}

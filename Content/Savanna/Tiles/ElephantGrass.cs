@@ -21,6 +21,7 @@ public class ElephantGrass : ModTile, IConvertibleTile, ICutAttempt
 		Main.tileBlockLight[Type] = false;
 		Main.tileFrameImportant[Type] = true;
 		Main.tileNoFail[Type] = true;
+		Main.tileCut[Type] = true;
 
 		TileID.Sets.BreakableWhenPlacing[Type] = true;
 
