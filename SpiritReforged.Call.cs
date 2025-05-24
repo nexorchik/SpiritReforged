@@ -43,7 +43,7 @@ public partial class SpiritReforgedMod : Mod
 						if (args.Length > 2)
 							throw new ArgumentException("args should be 2 elements long (\"HasBackpack\", player)!");
 
-						return player.GetModPlayer<BackpackPlayer>().backpack is not null;
+						return player.GetModPlayer<BackpackPlayer>().backpack.ModItem is BackpackItem;
 					}
 				default:
 					{
