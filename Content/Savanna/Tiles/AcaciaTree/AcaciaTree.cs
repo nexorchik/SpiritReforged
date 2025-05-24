@@ -55,9 +55,11 @@ public class AcaciaTree : CustomTree, IConvertibleTile
 
 	public override void NearbyEffects(int i, int j, bool closer) //Spawn platforms
 	{
-		var pt = new Point16(i, j);
+		if (closer || !IsTreeTop(i, j))
+			return;
 
-		if (IsTreeTop(i, j) && !Platforms.Where(x => x.TreePosition == pt).Any())
+		var pt = new Point16(i, j);
+		if (!Platforms.Any(x => x.TreePosition == pt))
 		{
 			//Spawn our entity at direct tile coordinates where it can reposition itself after updating
 			SimpleEntitySystem.NewEntity(typeof(TreetopPlatform), pt.ToVector2());
