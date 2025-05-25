@@ -13,8 +13,6 @@ namespace SpiritReforged.Common.WorldGeneration.Micropasses.Passes;
 
 internal class UndergroundHouseMicropass : ModSystem
 {
-	public readonly record struct Doll(TEDisplayDoll Entity, string BiomeName);
-
 	[Flags]
 	private enum AddedHouseFlags : byte
 	{
