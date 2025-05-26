@@ -50,7 +50,7 @@ internal class UndergroundMannequinInventory : MannequinInventory
 				AccType.Add(bowString.Type, 0.25f);
 
 			if (CrossMod.Redemption.TryFind("ShellNecklace", out ModItem shellNecklace))
-				AccType.Add(bowString.Type, 0.1f);
+				AccType.Add(shellNecklace.Type, 0.1f);
 		}
 	}
 
