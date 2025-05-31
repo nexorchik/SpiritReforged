@@ -37,6 +37,9 @@ internal class AchievementModifications : GlobalItem
 
 	private static void CompleteAchievement(Achievement achievement)
 	{
+		if (achievement.IsCompleted)
+			return;
+
 		ref int completedCount = ref GetCount(achievement);
 		completedCount = GetConditions(achievement).Count - 1;
 
