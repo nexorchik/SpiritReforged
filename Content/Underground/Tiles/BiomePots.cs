@@ -212,7 +212,10 @@ public class BiomePots : PotTile, ILootTile
 		{
 			#region loot
 			var p = Main.player[Player.FindClosest(center, 0, 0)];
-			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)center.X - 16, (int)center.Y - 16, 32, 32), p);
+			var loot = new LootTable();
+
+			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j]), loot);
+			loot.Resolve(new Rectangle((int)center.X - 16, (int)center.Y - 16, 32, 32), p);
 
 			ItemMethods.SplitCoins((int)(CalculateCoinValue() * GetValue(style)), delegate (int type, int stack)
 			{
@@ -359,9 +362,8 @@ public class BiomePots : PotTile, ILootTile
 		Vector2 GetRandom(float distance = 15f) => center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(distance);
 	}
 
-	public LootTable AddLoot(int objectStyle)
+	public void AddLoot(int objectStyle, ILoot loot)
 	{
-		var loot = new LootTable();
 		var style = GetStyle(objectStyle / 3 * 36);
 
 		if (style is Style.Dungeon)
@@ -426,7 +428,6 @@ public class BiomePots : PotTile, ILootTile
 		branch.Add(ItemDropRule.Common(ItemID.HealingPotion, 1, 1, 3));
 
 		loot.Add(new OneFromRulesRule(1, [.. branch]));
-		return loot;
 
 		int ArrowType()
 		{

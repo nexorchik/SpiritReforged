@@ -1,6 +1,7 @@
 ﻿using SpiritReforged.Common.ItemCommon.Backpacks;
 using SpiritReforged.Content.Forest.Safekeeper;
 using SpiritReforged.Content.Savanna.Ecotone;
+using SpiritReforged.Content.Underground.Pottery;
 using SpiritReforged.Content.Underground.Tiles.Potion;
 
 namespace SpiritReforged;
@@ -53,6 +54,10 @@ public partial class SpiritReforgedMod : Mod
 							throw new ArgumentException("HasBackpack parameters should be 2 elements long: (\"HasBackpack\", player)!");
 
 						return player.GetModPlayer<BackpackPlayer>().backpack.ModItem is BackpackItem;
+					}
+				case "AddPotstiaryRecord":
+					{
+						return RecordHandler.ManualAddRecord(args[1..]);
 					}
 				default:
 					{

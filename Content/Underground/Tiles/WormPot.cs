@@ -135,7 +135,10 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 			}
 
 			var p = Main.player[Player.FindClosest(position, 0, 0)];
-			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)position.X - 16, (int)position.Y - 16, 32, 32), p);
+			var loot = new LootTable();
+
+			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j]), loot);
+			loot.Resolve(new Rectangle((int)position.X - 16, (int)position.Y - 16, 32, 32), p);
 
 			ItemMethods.SplitCoins(Main.rand.Next(30000, 50000), delegate (int type, int stack)
 			{
@@ -177,13 +180,9 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 			source, color, rotation, origin, 1, SpriteEffects.None, 0);
 	}
 
-	public LootTable AddLoot(int objectStyle)
+	public void AddLoot(int objectStyle, ILoot loot)
 	{
-		var loot = new LootTable();
-
 		loot.Add(ItemDropRule.NotScalingWithLuckWithNumerator(ItemID.WhoopieCushion, 100, 15));
 		loot.AddCommon(ItemID.CanOfWorms, 1, 1, 2);
-
-		return loot;
 	}
 }

@@ -7,7 +7,7 @@ namespace SpiritReforged.Content.Underground.Tiles;
 /// Does not drop items automatically unless used alongside <see cref="PotTile"/>. See <see cref="LootTable.Resolve"/>. </summary>
 public interface ILootTile
 {
-	public LootTable AddLoot(int objectStyle);
+	public void AddLoot(int objectStyle, ILoot loot);
 }
 
 /// <summary> A self-contained loot table. </summary>

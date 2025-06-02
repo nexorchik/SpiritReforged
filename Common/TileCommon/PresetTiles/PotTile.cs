@@ -98,12 +98,14 @@ public abstract class PotTile : ModTile, IRecordTile, IAutoloadRubble
 		if (Autoloader.IsRubble(Type) || Generating)
 			return;
 
-		if (Main.netMode != NetmodeID.MultiplayerClient && this is ILootTile loot)
+		if (Main.netMode != NetmodeID.MultiplayerClient && RecordHandler.ActionByType.TryGetValue(Type, out var action))
 		{
 			var position = new Vector2(i, j).ToWorldCoordinates(16, 16);
-
 			var p = Main.player[Player.FindClosest(position, 0, 0)];
-			loot.AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)position.X - 16, (int)position.Y - 16, 32, 32), p);
+			var loot = new LootTable();
+
+			action.Invoke(TileObjectData.GetTileStyle(Main.tile[i, j]), loot);
+			loot.Resolve(new Rectangle((int)position.X - 16, (int)position.Y - 16, 32, 32), p);
 		}
 
 		if (!Main.dedServ)

@@ -72,7 +72,10 @@ public class ScryingPot : PotTile, ILootTile
 			});
 
 			var p = Main.player[Player.FindClosest(spawn, 0, 0)];
-			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j])).Resolve(new Rectangle((int)spawn.X - 16, (int)spawn.Y - 16, 32, 32), p);
+			var loot = new LootTable();
+
+			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j]), loot);
+			loot.Resolve(new Rectangle((int)spawn.X - 16, (int)spawn.Y - 16, 32, 32), p);
 		}
 
 		if (!Main.dedServ)
@@ -100,11 +103,9 @@ public class ScryingPot : PotTile, ILootTile
 		}
 	}
 
-	public LootTable AddLoot(int objectStyle)
+	public void AddLoot(int objectStyle, ILoot loot)
 	{
-		var loot = new LootTable();
 		loot.AddOneFromOptions(1, ItemID.NightOwlPotion, ItemID.ShinePotion, ItemID.BiomeSightPotion, ItemID.TrapsightPotion, ItemID.HunterPotion, ItemID.SpelunkerPotion);
-		return loot;
 	}
 
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
