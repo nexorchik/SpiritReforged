@@ -70,15 +70,8 @@ public class SilverPlatters : PotTile, ILootTile
 
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 		{
-			var p = Main.player[Player.FindClosest(center, 0, 0)];
-
 			for (int x = 0; x < 2; x++) //Roll twice
-			{
-				var loot = new LootTable();
-
-				AddLoot(TileObjectData.GetTileStyle(t), loot);
-				loot.Resolve(new Rectangle((int)center.X - 16, (int)center.Y - 16, 32, 32), p);
-			}
+				LootTable.Resolve(i, j, Type, frameX, frameY);
 		}
 
 		if (!Main.dedServ)

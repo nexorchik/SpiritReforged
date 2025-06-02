@@ -134,16 +134,12 @@ public class WormPot : PotTile, ISwayTile, ILootTile, ICutAttempt
 				npc.velocity = (Vector2.UnitY * -Main.rand.NextFloat(.5f, 2f)).RotatedByRandom(2f);
 			}
 
-			var p = Main.player[Player.FindClosest(position, 0, 0)];
-			var loot = new LootTable();
-
-			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j]), loot);
-			loot.Resolve(new Rectangle((int)position.X - 16, (int)position.Y - 16, 32, 32), p);
-
 			ItemMethods.SplitCoins(Main.rand.Next(30000, 50000), delegate (int type, int stack)
 			{
 				Item.NewItem(new EntitySource_TileBreak(i, j), position, new Item(type, stack), noGrabDelay: true);
 			});
+
+			LootTable.Resolve(i, j, Type, frameX, frameY);
 		}
 
 		if (!Main.dedServ)

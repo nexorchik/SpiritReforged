@@ -71,11 +71,7 @@ public class ScryingPot : PotTile, ILootTile
 				Item.NewItem(new EntitySource_TileBreak(i, j), spawn, new Item(type, stack), noGrabDelay: true);
 			});
 
-			var p = Main.player[Player.FindClosest(spawn, 0, 0)];
-			var loot = new LootTable();
-
-			AddLoot(TileObjectData.GetTileStyle(Main.tile[i, j]), loot);
-			loot.Resolve(new Rectangle((int)spawn.X - 16, (int)spawn.Y - 16, 32, 32), p);
+			LootTable.Resolve(i, j, Type, frameX, frameY);
 		}
 
 		if (!Main.dedServ)
