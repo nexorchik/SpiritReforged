@@ -55,7 +55,7 @@ public struct TileRecord
 
 	public readonly void DrawIcon(SpriteBatch spriteBatch, Vector2 position, Color color)
 	{
-		const int maxSize = 4;
+		const int maxSize = 5;
 
 		int tileStyle = styles[0];
 		var data = TileObjectData.GetTileData(type, 0);
@@ -72,17 +72,17 @@ public struct TileRecord
 		if (wrapLimit == 0)
 			wrapLimit = (data.RandomStyleRange == 0) ? 2000 : data.RandomStyleRange;
 
-		for (int x = 0; x < width; x++)
+		for (int x = 0; x < Math.Min(width, maxSize); x++)
 		{
-			for (int y = 0; y < height; y++)
+			for (int y = 0; y < Math.Min(height, maxSize); y++)
 			{
 				var start = FrameStart(x, y);
-				var source = new Rectangle(start.X, start.Y, 16, 16);
+				var source = new Rectangle(start.X, start.Y, data.CoordinateWidth, data.CoordinateHeights[y]);
 				source.Y += Main.tileFrame[type] * data.CoordinateFullHeight; //Animation
 
-				if (x == maxSize)
+				if (x == maxSize - 1)
 					source.Width = 8; //Avoid clipping
-				if (y == maxSize)
+				if (y == maxSize - 1)
 					source.Height = 8;
 
 				var center = new Vector2(width * 16 / 2, height * 16 / 2);
