@@ -1791,3 +1791,8 @@ SavannaSandstormOtherworldMusicBoxItem: {
 	DisplayName: 异界音乐盒（沙尘暴）
 	Tooltip: ""
 }
+
+SavannaTorchItem: {
+	// DisplayName: Savanna Torch Item
+	// Tooltip: ""
+}

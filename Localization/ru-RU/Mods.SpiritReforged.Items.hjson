@@ -1760,7 +1760,7 @@ Hummus: {
 }
 
 ZenithPotsItem: {
-	DisplayName: Зенитный горшочек 
+	DisplayName: Зенитный горшочек
 	Tooltip: ""
 }
 
@@ -1782,4 +1782,9 @@ OtherworldSavannaNightMusicBoxItem: {
 SavannaSandstormOtherworldMusicBoxItem: {
 	DisplayName: Музыкальная шкатулка (Песчаный шторм)
 	Tooltip: ""
+}
+
+SavannaTorchItem: {
+	// DisplayName: Savanna Torch Item
+	// Tooltip: ""
 }
