@@ -57,26 +57,8 @@ public abstract class TorchTile : ModTile
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = Main.rand.Next(1, 3);
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 	{
-		Tile tile = Main.tile[i, j];
-
-		// If the torch is on
-		if (tile.TileFrameX < 66)
-		{
-			int style = TileObjectData.GetTileStyle(Main.tile[i, j]);
-			// Make it emit the following light.
-			if (style == 0)
-			{
-				r = 0.9f;
-				g = 0.9f;
-				b = 0.9f;
-			}
-			else if (style == 1)
-			{
-				r = 0.5f;
-				g = 1.5f;
-				b = 0.5f;
-			}
-		}
+		if (Main.tile[i, j].TileFrameX < 66)
+			(r, g, b) = (0.9f, 0.9f, 0.9f);
 	}
 
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = WorldGen.SolidTile(i, j - 1) ? 4 : 0;
@@ -88,8 +70,6 @@ public abstract class TorchTile : ModTile
 			return;
 
 		int offsetY = WorldGen.SolidTile(i, j - 1) ? 4 : 0;
-		Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
-
 		ulong randSeed = Main.TileFrameSeed ^ (ulong)((long)j << 32 | (long)(uint)i);
 		var frame = new Rectangle(tile.TileFrameX, tile.TileFrameY, 20, 20);
 
@@ -97,7 +77,7 @@ public abstract class TorchTile : ModTile
 		{
 			float xx = Utils.RandomInt(ref randSeed, -10, 11) * 0.15f;
 			float yy = Utils.RandomInt(ref randSeed, -10, 1) * 0.35f;
-			var position = new Vector2(i * 16 - (int)Main.screenPosition.X - 4 / 2f + xx, j * 16 - (int)Main.screenPosition.Y + offsetY + yy) + zero;
+			var position = new Vector2(i * 16 - (int)Main.screenPosition.X - 4 / 2f + xx, j * 16 - (int)Main.screenPosition.Y + offsetY + yy) + TileExtensions.TileOffset;
 
 			spriteBatch.Draw(GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value, position, frame, new Color(100, 100, 100, 0), 0f, default, 1f, SpriteEffects.None, 0f);
 		}

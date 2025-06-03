@@ -1793,6 +1793,6 @@ SavannaSandstormOtherworldMusicBoxItem: {
 }
 
 SavannaTorchItem: {
-	DisplayName: Savanna Torch Item
+	DisplayName: Savanna Torch
 	Tooltip: ""
 }
