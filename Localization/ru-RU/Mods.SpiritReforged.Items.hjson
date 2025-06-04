@@ -1760,7 +1760,7 @@ Hummus: {
 }
 
 ZenithPotsItem: {
-	DisplayName: Зенитный горшочек 
+	DisplayName: Зенитный горшочек
 	Tooltip: ""
 }
 
