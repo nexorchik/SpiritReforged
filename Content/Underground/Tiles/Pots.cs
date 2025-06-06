@@ -124,10 +124,9 @@ public class Pots : PotTile, ILootTile
 		TileObjectData.addTile(Type);
 	}
 
-	public LootTable AddLoot(int objectStyle)
+	public void AddLoot(int objectStyle, ILoot loot)
 	{
 		string styleName = StyleDatabase.GetName(Type, (byte)objectStyle);
-		var loot = new LootTable();
 
 		List<IItemDropRule> branch = []; //Full branch to select ONE option from
 
@@ -166,7 +165,6 @@ public class Pots : PotTile, ILootTile
 			branch.Add(ItemDropRule.Common(ItemID.Rope, 1, 20, 40));
 
 		loot.Add(new OneFromRulesRule(1, [.. branch]));
-		return loot;
 
 		int TorchType()
 		{
