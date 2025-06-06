@@ -40,8 +40,18 @@ public class BiomePots : PotTile, ILootTile
 
 	public override void AddRecord(int type, StyleDatabase.StyleGroup group)
 	{
-		var record = new TileRecord(group.name, type, group.styles);
-		RecordHandler.Records.Add(record.AddRating(2).AddDescription(Language.GetText(TileRecord.DescKey + ".Biome")));
+		var record = new TileRecord(group.name, type, group.styles).AddRating(2).AddDescription(Language.GetText(TileRecord.DescKey + ".Biome"));
+
+		if (group.name == "BiomePotsCrimson")
+		{
+			record.Hide(() => !WorldGen.crimson); //Conditionally hide some entries
+		}
+		else if (group.name == "BiomePotsCorruption")
+		{
+			record.Hide(() => WorldGen.crimson);
+		}
+
+		RecordHandler.Records.Add(record);
 	}
 
 	public override Dictionary<string, int[]> TileStyles => new()
