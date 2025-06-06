@@ -1783,3 +1783,8 @@ SavannaSandstormOtherworldMusicBoxItem: {
 	DisplayName: Музыкальная шкатулка (Песчаный шторм)
 	Tooltip: ""
 }
+
+SavannaTorchItem: {
+	// DisplayName: Savanna Torch
+	// Tooltip: ""
+}
