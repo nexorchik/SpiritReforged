@@ -7,6 +7,8 @@ namespace SpiritReforged.Common.TileCommon.PresetTiles;
 [AutoloadGlowmask("255,255,255")]
 public abstract class TorchTile : ModTile
 {
+	public virtual Vector3 Light => new(0.9f);
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileLighted[Type] = true;
@@ -58,7 +60,7 @@ public abstract class TorchTile : ModTile
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 	{
 		if (Main.tile[i, j].TileFrameX < 66)
-			(r, g, b) = (0.9f, 0.9f, 0.9f);
+			(r, g, b) = (Light.X, Light.Y, Light.Z);
 	}
 
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) => offsetY = WorldGen.SolidTile(i, j - 1) ? 4 : 0;
