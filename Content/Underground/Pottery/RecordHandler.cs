@@ -83,8 +83,17 @@ public class RecordHandler : ModSystem
 		if (args.Length > 3 && args[3] is byte rating)
 			e.AddRating(rating);
 
-		if (args.Length > 4 && args[4] is bool hidden && hidden)
-			e.Hide();
+		if (args.Length > 4) //Hidden
+		{
+			if (args[4] is bool hidden && hidden)
+			{
+				e.Hide();
+			}
+			else if (args[4] is Func<bool> hiddenFunc)
+			{
+				e.Hide(hiddenFunc);
+			}
+		}
 
 		if (args.Length > 5) //Add a loot pool
 		{
