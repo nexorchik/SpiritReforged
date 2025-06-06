@@ -83,12 +83,12 @@ public class RecordHandler : ModSystem
 		if (args.Length > 3 && args[3] is byte rating)
 			e.AddRating(rating);
 
-		if (args.Length > 4 && args[4] is bool hidden && hidden == true)
+		if (args.Length > 4 && args[4] is bool hidden && hidden)
 			e.Hide();
 
 		if (args.Length > 5) //Add a loot pool
 		{
-			if (args[5] is bool hasBasicLoot && hasBasicLoot == true)
+			if (args[5] is bool hasBasicLoot && hasBasicLoot)
 			{
 				ActionByType.Add(type, ModContent.GetInstance<Pots>().AddLoot);
 			}

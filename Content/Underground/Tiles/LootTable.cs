@@ -53,7 +53,7 @@ public readonly struct LootTable() : ILoot
 	{
 		if (RecordHandler.ActionByType.TryGetValue(type, out var action))
 		{
-			Tile t = new(); //Fabricate a tile //If this method is called in KillMultiTile, the tile at (i, j) is unusable
+			Tile t = new(); //Fabricate a tile. If this method is called in KillMultiTile, the tile at (i, j) is unusable
 			t.TileFrameX = (short)frameX;
 			t.TileFrameY = (short)frameY;
 			t.TileType = type;
