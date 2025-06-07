@@ -9,6 +9,7 @@ using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using SpiritReforged.Common.ModCompat;
+using SpiritReforged.Common.ItemCommon.Abstract;
 
 namespace SpiritReforged.Content.Underground.Items;
 

@@ -170,7 +170,7 @@ public class RoastGlobalTile : GlobalTile
 			{ ItemID.Marshmallow, ItemID.CookedMarshmallow }, 
 			{ ItemID.Squirrel, ItemID.GrilledSquirrel },
 			{ ItemID.SquirrelRed, ItemID.GrilledSquirrel },
-			{ ItemMethods.AutoItemType<Sparrow>(), ItemID.RoastedBird },
+			{ AutoContent.ItemType<Sparrow>(), ItemID.RoastedBird },
 			{ ModContent.ItemType<RawFish>(), ItemID.CookedFish },
 			{ ItemID.Bass, ItemID.CookedFish }, 
 			{ ItemID.Trout, ItemID.CookedFish }, 
