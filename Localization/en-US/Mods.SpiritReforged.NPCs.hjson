@@ -39,23 +39,23 @@ OceanSlime: {
 }
 
 DiverZombie: {
+	DisplayName: "{$NPCName.Zombie}"
 	Entry: Who knew those oxygen tanks needed to have actual oxygen in them?
-	DisplayName: Zombie
 }
 
 KelpZombie: {
+	DisplayName: "{$NPCName.Zombie}"
 	Entry: Fish fear me, women fear me, men fear me, children fear me, for I am the undead.
-	DisplayName: Zombie
 }
 
 SailorZombie: {
+	DisplayName: "{$NPCName.Zombie}"
 	Entry: Despite their current status, they used to run this really nice luxury cruiser you should check out sometime.
-	DisplayName: Zombie
 }
 
 TridentZombie: {
+	DisplayName: "{$NPCName.Zombie}"
 	Entry: Their trident clearly didn't do them much good in life. It's still quite pointy, so watch out.
-	DisplayName: Zombie
 }
 
 Killifish: {
@@ -84,8 +84,8 @@ PeevedTumbler: {
 }
 
 Sparrow: {
-	Entry: Much like its forest cousin, the world-famous Bird, Sparrows are simple. They fly about, picking at termites and enjoying the Savanna air.
 	DisplayName: Sparrow
+	Entry: Much like its forest cousin, the world-famous Bird, Sparrows are simple. They fly about, picking at termites and enjoying the Savanna air.
 }
 
 SafariZombie: {
