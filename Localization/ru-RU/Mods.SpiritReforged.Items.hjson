@@ -985,7 +985,7 @@ ZiplineGun: {
 
 FrostbiteItem: {
 	DisplayName: Метельник
-        Tooltip: Вызывает снежную бурю перед вами
+	Tooltip: Вызывает снежную бурю перед вами
 }
 
 RogueCrest: {
@@ -1789,5 +1789,10 @@ OtherworldSavannaNightMusicBoxItem: {
 
 SavannaSandstormOtherworldMusicBoxItem: {
 	DisplayName: Потусторонняя музыкальная шкатулка (Пыльная буря)
+	Tooltip: ""
+}
+
+SavannaTorchItem: {
+	DisplayName: Факел саванны
 	Tooltip: ""
 }
