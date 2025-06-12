@@ -1,0 +1,38 @@
+HydrothermalVentPlume.DisplayName: Дымовой шлейф
+Cannonbubble.DisplayName: Пушечный пузырь
+UrchinBall.DisplayName: Шар морского ежа
+UrchinSpike.DisplayName: Игла морского ежа
+JellyfishBolt.DisplayName: Электрический разряд
+JellyfishMinion.DisplayName: Маленькая медуза
+ReefWrathProj.DisplayName: Коралловая ярость
+JellyfishPet.DisplayName: Ручная медуза
+FairyMinion.DisplayName: Фея-миньон
+FairyProj.DisplayName: Магический заряд
+StarPowderProj.DisplayName: Звёздная пыль
+ButterflyMinion.DisplayName: Эфирная бабочка
+ToucanFeather.DisplayName: Перо тукана
+ToucanMinion.DisplayName: Тукан-миньон
+TumblerPet.DisplayName: Ручное перекати-поле
+SunOrb.DisplayName: Солнечный шар
+SunStaffHeld.DisplayName: Солнечный посох
+WheatgrassSeedProjectile.DisplayName: Семена пырея
+RoyalKhopeshHeld.DisplayName: Королевский хопеш
+Zipline.DisplayName: Рельсовая дорога
+RogueKnifeMinion.DisplayName: Ржавый нож
+CactusWallProj.DisplayName: Кактусовая стена
+SkullSentryEye.DisplayName: Глаз черепа-часового
+SkullSentryMucus.DisplayName: Слизь черепа-часового
+SkullSentrySentry.DisplayName: Череп плотоядки
+ZiplineProj.DisplayName: Снаряд рельсовой дороги
+FallingBaobabFruit.DisplayName: Падающий плод баобаба
+RollingCart.DisplayName: Катящаяся вагонетка
+RadonMossBobber.DisplayName: Поплавок с радоновым мхом
+OganessonMossBobber.DisplayName: Поплавок с огнессоновым мхом
+BuffAura.DisplayName: Аура баффа
+WheezerCloud.DisplayName: Ядовитый газ
+Shockwave.DisplayName: Ударная волна
+EnergizedShockwave.DisplayName: Энергитическая ударная волна
+RollingBowlder.DisplayName: Катящийся булыжник
+Firespike.DisplayName: Огнешип
+CannonBomb.DisplayName: Выстрел бомбопушки
+BigCannonBomb.DisplayName: "{$Mods.SpiritReforged.Projectiles.CannonBomb.DisplayName}"
