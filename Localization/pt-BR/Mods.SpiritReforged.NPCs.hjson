@@ -39,23 +39,23 @@ OceanSlime: {
 }
 
 DiverZombie: {
+	DisplayName: "{$NPCName.Zombie}"
 	Entry: Quem diria que tanques de oxigênio precisavam ter oxigênio de verdade neles?
-	DisplayName: Zumbi
 }
 
 KelpZombie: {
+	DisplayName: "{$NPCName.Zombie}"
 	Entry: Peixes me temem, mulheres me temem, homens me temem, crianças me temem, porque eu sou o morto-vivo.
-	DisplayName: Zumbi
 }
 
 SailorZombie: {
+	DisplayName: "{$NPCName.Zombie}"
 	Entry: Apesar do estado atual, eles costumavam comandar um luxuoso cruzeiro que você deveria visitar um dia.
-	DisplayName: Zumbi
 }
 
 TridentZombie: {
+	DisplayName: "{$NPCName.Zombie}"
 	Entry: Seu tridente claramente não ajudou muito em vida. Ainda está bem pontudo, então tome cuidado.
-	DisplayName: Zumbi
 }
 
 Killifish: {
@@ -84,8 +84,8 @@ PeevedTumbler: {
 }
 
 Sparrow: {
-	Entry: Muito parecido com seu primo da floresta, o mundialmente famoso Pássaro, Pardais são simples. Eles voam por aí, bicando cupins e aproveitando o ar da Savana.
 	DisplayName: Pardal
+	Entry: Muito parecido com seu primo da floresta, o mundialmente famoso Pássaro, Pardais são simples. Eles voam por aí, bicando cupins e aproveitando o ar da Savana.
 }
 
 SafariZombie: {
